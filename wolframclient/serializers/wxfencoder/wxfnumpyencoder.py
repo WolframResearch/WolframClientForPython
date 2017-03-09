@@ -2,12 +2,12 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wxfserializer.utils.wxfutils import VersionParser
-from wxfserializer.wxfencoder import WXFEncoder
-from wxfserializer.wxfexpr import ArrayTypes
+from wolframclient.serializers.wxfencoder.wxfencoder import WXFEncoder
+from wolframclient.serializers.wxfencoder.wxfexpr import ArrayTypes
+from wolframclient.serializers.wxfencoder.wxfutils import VersionParser
 
 import numpy
-import wxfserializer.wxfexpr as wxfexpr
+import wolframclient.serializers.wxfencoder.wxfexpr as wxfexpr
 
 __all__ = [
     'NumPyWXFEncoder',

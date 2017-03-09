@@ -2,33 +2,34 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-try:
-    import numpy
-    from wxfserializer.serializer import WXFExprSerializer
-    from wxfserializer.wxfdataconsumer import InMemoryWXFDataConsumer
-    from wxfserializer.wxfencoder import DefaultWXFEncoder
-    from wxfserializer.wxfexprprovider import WXFExprProvider
-    from wxfserializer.wxfnumpyencoder import NumPyWXFEncoder
-    NUMPY = True
-except ImportError:
-    NUMPY = False
-    pass
+from wolframclient.serializers.wxfencoder.serializer import WXFExprSerializer
+from wolframclient.serializers.wxfencoder.wxfencoder import DefaultWXFEncoder
+from wolframclient.serializers.wxfencoder.wxfexprprovider import WXFExprProvider
+from wolframclient.tests.utils.base import TestCase as BaseTestCase
+from wolframclient.utils import six
 
 import unittest
 
-@unittest.skipIf(not NUMPY, 'NumPy not found. Skipping numpy tests.')
-class TestNumpySerialization(unittest.TestCase):
-    @staticmethod
-    def initDefault():
-        return TestNumpySerialization.init(True, False)
+try:
+    import numpy
+    from wolframclient.serializers.wxfencoder.wxfnumpyencoder import NumPyWXFEncoder
+except ImportError:
+    numpy = False
 
-    @staticmethod
-    def initBothArraySupport():
-        return TestNumpySerialization.init(True, True)
+@unittest.skipIf(not numpy, 'NumPy not found. Skipping numpy tests.')
+class TestCase(BaseTestCase):
 
-    @staticmethod
-    def initOnlyRA():
-        return TestNumpySerialization.init(False, True)
+    @classmethod
+    def initDefault(cls):
+        return cls.init(True, False)
+
+    @classmethod
+    def initBothArraySupport(cls):
+        return cls.init(True, True)
+
+    @classmethod
+    def initOnlyRA(cls):
+        return cls.init(False, True)
 
     @staticmethod
     def init(pa, ra):
@@ -38,9 +39,9 @@ class TestNumpySerialization(unittest.TestCase):
 
         expr_provider.add_encoder(numpy_encoder)
         expr_provider.add_encoder(DefaultWXFEncoder())
-        data_consumer = InMemoryWXFDataConsumer()
-        serializer = WXFExprSerializer(expr_provider, data_consumer)
-        return (serializer, data_consumer)
+        stream = six.BytesIO()
+        serializer = WXFExprSerializer(stream, expr_provider=expr_provider)
+        return (serializer, stream)
 
     def test_dimensions(self):
         provider = WXFExprProvider(NumPyWXFEncoder())
@@ -57,36 +58,36 @@ class TestNumpySerialization(unittest.TestCase):
         self.assertEqual(str(err.exception), "Dimensions must be positive integers.")
 
     def test_int8_PA(self):
-        s, d = TestNumpySerialization.initDefault()
+        s, d = self.initDefault()
         arr = numpy.array([[-(1 << 7), -1], [1, (1 << 7) - 1]], numpy.int8)
         s.serialize(arr)
         self.assertEqual(
-            d.data(), b'\x38\x3a\xc1\x00\x02\x02\x02\x80\xff\x01\x7f')
+            d.getvalue(), b'\x38\x3a\xc1\x00\x02\x02\x02\x80\xff\x01\x7f')
 
     def test_int8_Both(self):
-        s, d = TestNumpySerialization.initBothArraySupport()
+        s, d = self.initBothArraySupport()
         arr = numpy.array([[-(1 << 7), -1], [1, (1 << 7) - 1]], numpy.int8)
         s.serialize(arr)
         self.assertEqual(
-            d.data(), b'\x38\x3a\xc1\x00\x02\x02\x02\x80\xff\x01\x7f')
+            d.getvalue(), b'\x38\x3a\xc1\x00\x02\x02\x02\x80\xff\x01\x7f')
 
     def test_int8_RA(self):
-        s, d = TestNumpySerialization.initOnlyRA()
+        s, d = self.initOnlyRA()
         arr = numpy.array([[-(1 << 7), -1], [1, (1 << 7) - 1]], numpy.int8)
         s.serialize(arr)
         self.assertEqual(
-            d.data(), b'\x38\x3a\xc2\x00\x02\x02\x02\x80\xff\x01\x7f')
+            d.getvalue(), b'\x38\x3a\xc2\x00\x02\x02\x02\x80\xff\x01\x7f')
 
     def test_uint8_PA(self):
-        s, d = TestNumpySerialization.initDefault()
+        s, d = self.initDefault()
         arr = numpy.array([[0,(1 << 7)]], numpy.uint8)
         s.serialize(arr)
         self.assertEqual(
-            d.data(), b'\x38\x3a\xc1\x01\x02\x01\x02\x00\x00\x80\x00')
+            d.getvalue(), b'\x38\x3a\xc1\x01\x02\x01\x02\x00\x00\x80\x00')
 
     def test_uint8_RA(self):
-        s, d = TestNumpySerialization.initBothArraySupport()
+        s, d = self.initBothArraySupport()
         arr = numpy.array([[0, (1 << 7)]], numpy.uint8)
         s.serialize(arr)
         self.assertEqual(
-            d.data(), b'\x38\x3a\xc2\x10\x02\x01\x02\x00\x80')
+            d.getvalue(), b'\x38\x3a\xc2\x10\x02\x01\x02\x00\x80')

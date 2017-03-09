@@ -43,7 +43,7 @@ Initialize the serializer with the new encoder:
 ```
 expr_provider = WXFExprProvider()
 expr_provider.add_encoder(MyClassEncoder())
-data_consumer = InMemoryWXFDataConsumer()
+data_consumer = InMemoryDataConsumer()
 serializer = WXFExprSerializer(expr_provider, data_consumer)
 ```
 
@@ -57,7 +57,7 @@ with open('/tmp/test.wxf', 'wb') as w_file:
 
 Once deserialized by a kernel using `Import["/tmp/test.wxf"]` the output expression is `MyClass["foo", MyClass["bar"]]`.
 
-## `WXFDataConsumer`
+## `DataConsumer`
 
 Data consumer is a simple class that implement both `append` and `extend`, typically a wrapper around a `bytearray`, that the serializer uses to store output binary data.
 
@@ -69,7 +69,7 @@ expr_provider = WXFExprProvider()
 ```
 Create an in memory data comsumer:
 ```
-data_consumer = InMemoryWXFDataConsumer()
+data_consumer = InMemoryDataConsumer()
 ```
 Finally initialize a serializer with both:
 ```

@@ -2,9 +2,9 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wxfserializer.utils import six
+from wolframclient.utils import six
 
-import wxfserializer.wxfexpr as wxfexpr
+import wolframclient.serializers.wxfencoder.wxfexpr as wxfexpr
 
 class NotEncodedException(Exception):
     ''' Exception used during encoding to signal that a given python
