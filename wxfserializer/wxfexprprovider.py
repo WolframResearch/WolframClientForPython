@@ -1,7 +1,7 @@
 """
 """
 import sys
-import wxfexpr
+import wxfserializer.wxfexpr as wxfexpr
 
 class WXFEncoder:
     ''' `WXFEncoder` defines a class of chained generators.

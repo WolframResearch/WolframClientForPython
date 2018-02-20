@@ -1,11 +1,9 @@
 """
 """
-
-import time
-from wxfutils import write_varint
-from wxfexpr import WXFConstants
-from wxfdataconsumer import InMemoryWXFDataConsumer
-from wxfexprprovider import WXFExprProvider
+from wxfserializer.wxfutils import write_varint
+from wxfserializer.wxfexpr import WXFConstants
+from wxfserializer.wxfdataconsumer import InMemoryWXFDataConsumer
+from wxfserializer.wxfexprprovider import WXFExprProvider
 
 class SerializationContext:
     """ keeping track of the depth and the expected length of non-atomic elements. """
@@ -108,67 +106,3 @@ class WXFExprSerializer:
                 raise Exception("Missing array data.")
         else:
             raise TypeError
-
-
-import numpy
-from wxfexprprovidernumpy import WXFExprProviderNumPy
-
-
-def basicListOfString(lenght=1e5):
-    pyExpr = ['abcdefgh' for i in range(lenght)]
-    start = time.perf_counter()
-    expr_provider = WXFExprProvider()
-    data_consumer = InMemoryWXFDataConsumer()
-    serializer = WXFExprSerializer(expr_provider, data_consumer)
-    serializer.serialize(pyExpr)
-    stop = time.perf_counter()
-    print('serialization of list of string took: ', stop - start)
-    # print(data_consumer.data())
-    with open('/tmp/pytest.wxf', 'wb') as output:
-        output.write(data_consumer.data())
-    print('iterator test end')
-
-def basicNumPyArray(length=1e7):
-    print('start iterator test')
-    start = time.perf_counter()
-    arr = numpy.empty(int(length), 'int16')
-    arr.fill(int(5))
-    expr_provider = WXFExprProviderNumPy()
-    data_consumer = InMemoryWXFDataConsumer()
-    serializer = WXFExprSerializer(expr_provider, data_consumer)
-    serializer.serialize(arr)
-    stop = time.perf_counter()
-    with open('/tmp/numpytest.wxf', 'wb') as output:
-        output.write(data_consumer.data())
-    print('serialization of numpy array took: ', stop - start)
-
-def mixNumPyAndBasicTypes():
-    start = time.perf_counter()
-    arr = numpy.empty(int(1e1), 'int16')
-    arr.fill(-1)
-    pyexpr = ["foo", 1, -512, arr]
-    expr_provider = WXFExprProviderNumPy()
-    data_consumer = InMemoryWXFDataConsumer()
-    serializer = WXFExprSerializer(expr_provider, data_consumer)
-    serializer.serialize(pyexpr)
-    stop = time.perf_counter()
-    with open('/tmp/numpytest2.wxf', 'wb') as output:
-        output.write(data_consumer.data())
-    print('serialization of mixed numpy array took: ', stop - start)
-
-
-def main():
-    start = time.perf_counter()
-    arr = numpy.empty(int(1e1), 'int16')
-    arr.fill(-1)
-    pyexpr = [1, ["foo"], [[]], [ [], 1, []], '']
-    expr_provider = WXFExprProviderNumPy()
-    data_consumer = InMemoryWXFDataConsumer()
-    serializer = WXFExprSerializer(expr_provider, data_consumer)
-    serializer.serialize(pyexpr)
-    stop = time.perf_counter()
-    with open('/tmp/test.wxf', 'wb') as output:
-        output.write(data_consumer.data())
-    print('serialization of mixed numpy array took: ', stop - start)
-
-main()

@@ -1,7 +1,7 @@
 import numpy
-from wxfexprprovider import WXFExprProvider, DefaultWXFEncoder, WXFEncoder
-from wxfexpr import ArrayTypes
-import wxfexpr
+from wxfserializer.wxfexprprovider import WXFExprProvider, DefaultWXFEncoder, WXFEncoder
+from wxfserializer.wxfexpr import ArrayTypes
+import wxfserializer.wxfexpr as wxfexpr
 
 class WXFExprProviderNumPy(WXFExprProvider):
 

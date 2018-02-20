@@ -1,4 +1,4 @@
-import wxfutils
+import wxfserializer.wxfutils as wxfutils
 
 __all__ = [
     'WXFExprFunction',
