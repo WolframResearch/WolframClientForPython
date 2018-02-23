@@ -1,10 +1,12 @@
 import wxfserializer.wxfutils as wxfutils
+from wxfserializer.utils import six
 
 __all__ = [
     'WXFExprFunction',
     'WXFExprInteger',
     'WXFExprString',
     'WXFExprSymbol',
+    'WXFExprBinaryString',
     'WXFConstants'
 ]
 
@@ -75,6 +77,8 @@ class WXFExprInteger(_WXFExpr):
     __slots__ = 'value', 'intSize'
 
     def __init__(self, value):
+        if not isinstance(value, six.integer_types):
+            raise TypeError('WXFExprInteger must be initialize with an integer value.')
         if value < wxfutils.INT8_MAX and value >= wxfutils.INT8_MIN:
             super(WXFExprInteger, self).__init__(WXFConstants.Integer8)
             self.intSize = 1
@@ -90,14 +94,24 @@ class WXFExprInteger(_WXFExpr):
 
         self.value = value
 
+class WXFExprReal(_WXFExpr):
+    __slots__ = 'value'
+
+    def __init__(self, value):
+        if not isinstance(value, float):
+            raise TypeError('WXFExprReal must be initialized with a float.')
+        super(WXFExprReal, self).__init__(WXFConstants.Read64)
+        self.value = value
 
 class _WXFExprStringLike(_WXFExpr):
 
     __slots__ = 'length', 'value'
 
     def __init__(self, wxfType, value):
+        if not isinstance(value, six.text_type):
+            raise TypeError(
+                self.__class__.__name__, 'must be initialize with a string.')
         super(_WXFExprStringLike, self).__init__(wxfType)
-        # TODO: ensure value is a string ?
         self.value = value.encode('utf-8')
         self.length = len(self.value)
 
@@ -111,35 +125,64 @@ class WXFExprString(_WXFExprStringLike):
     def __init__(self, value):
         super(WXFExprString, self).__init__(WXFConstants.String, value)
 
+
+class WXFExprBigInteger(_WXFExprStringLike):
+    def __init__(self, value):
+        super(WXFExprBigInteger, self).__init__(WXFConstants.BigInteger, value)
+
+class WXFExprBigReal(_WXFExprStringLike):
+    def __init__(self, value):
+        super(WXFExprBigReal, self).__init__(WXFConstants.BigReal, value)
+
 class WXFExprBinaryString(_WXFExpr):
     __slots__ = 'data'
     def __init__(self, data):
-        super(WXFExprBinaryString, self).__init__(WXFConstants.BinaryString)
-        if isinstance(data, bytearray):
+        if isinstance(data, six.binary_type):
             self.data = data
         else:
-            raise TypeError('WXFExprBinaryString must be initialized with a bytearray.')
+            raise TypeError(
+                'WXFExprBinaryString must be initialized with a bytearray.')
+        super(WXFExprBinaryString, self).__init__(WXFConstants.BinaryString)
+        
 
 class _WXFExprArray(_WXFExpr):
-    __slots__ = 'rank', 'dimensions', 'value_type', 'data'
+    __slots__ = 'dimensions', 'value_type', 'data'
 
-    def __init__(self, wxfType, rank, dimensions, value_type, data = None):
+    def __init__(self, wxfType, dimensions, value_type, data = None):
         super(_WXFExprArray, self).__init__(wxfType)
-        self.rank = rank
-        if rank != len(dimensions):
-            raise Exception('Inconsistent rank {} and dimensions length {}', rank, len(dimensions))
+        if not (isinstance(dimensions, tuple) or isinstance(dimensions, list)) or len(dimensions) == 0:
+            raise TypeError('Dimensions must be a non-empty list.')
+        for dim in dimensions:
+            if dim <= 0 or not isinstance(dim, six.integer_types):
+                raise Exception('Dimensions must be positive integers.')
         self.dimensions = dimensions
         self.value_type = value_type
         self.data = data
     
 class WXFExprPackedArray(_WXFExprArray):
-    def __init__(self, rank, dimensions, value_type, data=None):
+    def __init__(self, dimensions, value_type, data=None):
         if value_type not in ValidPackedArrayTypes:
             raise Exception('Invalid packed array value type ({}).', value_type)
-        super(WXFExprPackedArray, self).__init__(WXFConstants.PackedArray, rank, dimensions, value_type, data)
+        super(WXFExprPackedArray, self).__init__(WXFConstants.PackedArray, dimensions, value_type, data)
 
 
 class WXFExprRawArray(_WXFExprArray):
-    def __init__(self, rank, dimensions, value_type, data=None):
-        super(WXFExprRawArray, self).__init__(WXFConstants.RawArray, rank, dimensions, value_type, data)
+    def __init__(self, dimensions, value_type, data=None):
+        super(WXFExprRawArray, self).__init__(WXFConstants.RawArray, dimensions, value_type, data)
 
+class WXFExprAssociation(_WXFExpr):
+    __slot__ = 'length'
+    def __init__(self, length):
+        if not isinstance(length, six.integer_types) or length < 0:
+            raise TypeError('WXFExprAssociation must be instanciated with a length.')
+        super(WXFExprAssociation, self).__init__(WXFConstants.Association)
+        self.length = length
+    
+class WXFExprRule(_WXFExpr):
+    def __init__(self):
+        super(WXFExprRule, self).__init__(WXFConstants.Rule)
+
+class WXFExprRuleDelayed(_WXFExpr):
+    def __init__(self):
+        super(WXFExprRuleDelayed,
+                self).__init__(WXFConstants.RuleDelayed)
