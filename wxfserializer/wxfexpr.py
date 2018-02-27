@@ -32,20 +32,24 @@ class WXFConstants:
 
 
 class ArrayTypes:
-        Integer8 = 0x00
-        Integer16 = 0x01
-        Integer32 = 0x02
-        Integer64 = 0x03
-        UnsignedInteger8 = 0x10
-        UnsignedInteger16 = 0x11
-        UnsignedInteger32 = 0x12
-        UnsignedInteger64 = 0x13
-        Real32 = 0x22
-        Real64 = 0x23
-        ComplexReal32 = 0x33
-        ComplexReal64 = 0x34
+    ''' The list of all array value type tokens. '''
+    Integer8 = 0x00
+    Integer16 = 0x01
+    Integer32 = 0x02
+    Integer64 = 0x03
+    UnsignedInteger8 = 0x10
+    UnsignedInteger16 = 0x11
+    UnsignedInteger32 = 0x12
+    UnsignedInteger64 = 0x13
+    Real32 = 0x22
+    Real64 = 0x23
+    ComplexReal32 = 0x33
+    ComplexReal64 = 0x34
 
-ValidPackedArrayTypes = set([
+
+''' A set of all valid value type tokens for PackedArray.
+There is no restriction for RawArray value types. '''
+VALID_PACKED_ARRAY_TYPES = set([
     ArrayTypes.Integer8,
     ArrayTypes.Integer16,
     ArrayTypes.Integer32,
@@ -58,7 +62,6 @@ ValidPackedArrayTypes = set([
 
 
 class _WXFExpr():
-
     __slots__ = 'wxfType'
 
     def __init__(self, wxfType):
@@ -66,6 +69,10 @@ class _WXFExpr():
 
 
 class WXFExprFunction(_WXFExpr):
+    ''' Functions have a length representing the number of parts (including zero).
+    Each function has a head which is itself a expr, usually a `WXFExprSymbol` which
+    is not accounted in the length.
+    '''
     __slots__ = 'length'
 
     def __init__(self, length):
@@ -73,7 +80,11 @@ class WXFExprFunction(_WXFExpr):
         self.length = length
 
 class WXFExprInteger(_WXFExpr):
-
+    ''' Integers have various length, from one byte up to eigth and are signed
+    values. Values above 2^63-1 are represented with `WXFExprBigInteger`.
+    Internally WXF uses the two's complement representation of integer values.
+    The endianness is system independant and is always little-endian.
+    '''
     __slots__ = 'value', 'intSize'
 
     def __init__(self, value):
@@ -95,6 +106,8 @@ class WXFExprInteger(_WXFExpr):
         self.value = value
 
 class WXFExprReal(_WXFExpr):
+    ''' Represent a floating point value. Internally WXF represents the value with
+    double float-point value in the IEEE 754 standard. '''
     __slots__ = 'value'
 
     def __init__(self, value):
@@ -117,24 +130,33 @@ class _WXFExprStringLike(_WXFExpr):
 
 
 class WXFExprSymbol(_WXFExprStringLike):
+    ''' A symbol represented by a string name. The name is always utf8 encoded.'''
     def __init__(self, value):
         super(WXFExprSymbol, self).__init__(WXFConstants.Symbol, value)
 
 
 class WXFExprString(_WXFExprStringLike):
+    ''' A string of unicode character. The string is always utf8 encoded.'''
     def __init__(self, value):
         super(WXFExprString, self).__init__(WXFConstants.String, value)
 
 
 class WXFExprBigInteger(_WXFExprStringLike):
+    ''' A string of digits representing a big integer'''
     def __init__(self, value):
         super(WXFExprBigInteger, self).__init__(WXFConstants.BigInteger, value)
 
 class WXFExprBigReal(_WXFExprStringLike):
+    ''' A string representation of a real value with arbitrary precision. The
+    string format matches the one of the `InputForm` string representation of 
+    the real in the Wolfram Language.
+    '''
     def __init__(self, value):
         super(WXFExprBigReal, self).__init__(WXFConstants.BigReal, value)
 
 class WXFExprBinaryString(_WXFExpr):
+    '''A string of arbitrary bytes. Contrary to `WXFExprString` no encoding is
+    required.'''
     __slots__ = 'data'
     def __init__(self, data):
         if isinstance(data, six.binary_type):
@@ -146,6 +168,10 @@ class WXFExprBinaryString(_WXFExpr):
         
 
 class _WXFExprArray(_WXFExpr):
+    '''Arrays are multidimensional tables of machine-precision numeric values.
+    The `dimensions` is a list of strictly positive integers representing the
+    array shape. The data contains the flatten binary representation of the 
+    values.'''
     __slots__ = 'dimensions', 'value_type', 'data'
 
     def __init__(self, wxfType, dimensions, value_type, data = None):
@@ -160,17 +186,25 @@ class _WXFExprArray(_WXFExpr):
         self.data = data
     
 class WXFExprPackedArray(_WXFExprArray):
+    ''' Packed array is a type of array that only supports a subset of all the
+    possible type of values: signed integers, reals, complexes. See `VALID_PACKED_ARRAY_TYPES`.'''
     def __init__(self, dimensions, value_type, data=None):
-        if value_type not in ValidPackedArrayTypes:
+        if value_type not in VALID_PACKED_ARRAY_TYPES:
             raise Exception('Invalid packed array value type ({}).', value_type)
         super(WXFExprPackedArray, self).__init__(WXFConstants.PackedArray, dimensions, value_type, data)
 
 
 class WXFExprRawArray(_WXFExprArray):
+    ''' Raw array is an array that supports many type of values: 
+    signed and unsigned integers, reals, complexes. See `ArrayTypes`.'''
     def __init__(self, dimensions, value_type, data=None):
         super(WXFExprRawArray, self).__init__(WXFConstants.RawArray, dimensions, value_type, data)
 
 class WXFExprAssociation(_WXFExpr):
+    ''' Association is a key value store similar to `dict`. `WXFExprAssociation`
+    requires a length, the number of entries. Only `WXFExprRule` and `WXFExprRuleDelayed`
+    are valid entry types in an association.
+    '''
     __slot__ = 'length'
     def __init__(self, length):
         if not isinstance(length, six.integer_types) or length < 0:
@@ -179,10 +213,15 @@ class WXFExprAssociation(_WXFExpr):
         self.length = length
     
 class WXFExprRule(_WXFExpr):
+    ''' Represent a rule in an association. Rule have two parts but no head.
+    Rules that are not part of an association (e.g list of rules) must be encoded
+    as a function with head `'Rule'`.
+    '''
     def __init__(self):
         super(WXFExprRule, self).__init__(WXFConstants.Rule)
 
 class WXFExprRuleDelayed(_WXFExpr):
+    ''' Represent a rule delayed in an association. See `WXFExprRule`'''
     def __init__(self):
         super(WXFExprRuleDelayed,
                 self).__init__(WXFConstants.RuleDelayed)

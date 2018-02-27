@@ -8,7 +8,16 @@ __all__ = [
     'SerializationContext'
     ]
 class SerializationContext:
-    """ keeping track of the depth and the expected length of non-atomic elements. """
+    """ Keeps track of various parameter associated to an expression being serialized. 
+    The finalized expression has a tree structure; it is serialized depth first. During
+    the serialization process of an expression involving many non-atomic elements (e.g List),
+    we end up having incomplete parts at various level.
+
+    For each level of the expression tree we have to remember the expected length, the number
+    of elements already inserted, and whether or not the node is an association. The first two
+    parameters prevent inconsistencies in the number of elements and the declared length, the
+    last one avoid incorrect use of `WXFExprRule(Delayed)` tokens.
+    """
    
     __slots__ = '_depth', '_expected_length_stack', '_current_index_stack', '_in_assoc_stack'
 
@@ -79,13 +88,19 @@ class SerializationContext:
     def isInAssoc(self):
         return self._in_assoc_stack[self._depth]
 
-    def __repr__(self):
+    def __str__(self):
         return 'SerializationContext(depth={}, element={}/{})'.format(self._depth, self._current_index_stack[self._depth], self._expected_length_stack[self._depth])
     
 
+WXF_VERSION = '8'
+WXF_HEADER_SEPARATOR = ':'
+
 class WXFExprSerializer:
     """ Pulls instances of `WXFExpr` from an `WXFExprProvider`, serializes them into wxf bytes and appends the data to
-    a `WXFDataConsumer`. Ensures the serialization state is consistent by updating a `SerializationContext`.
+    a `WXFDataConsumer`. Ensures the output data is a valid WXF encoded expression, and raises an exception otherwise.
+
+    See `tutorial/WXFFormatDescription` from Mathematica documentation or visit http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html 
+    for an in depth description of the format.
     """
     __slots__ = '_expr_provider', '_data_consumer', '_context'
 
@@ -99,12 +114,19 @@ class WXFExprSerializer:
         return self._context
 
     def serialize(self, pyExpr):
+        '''
+        Serialize the python expression given as parameter.
+        '''
+        self._data_consumer.append(WXF_VERSION).append(WXF_HEADER_SEPARATOR)
         for wxfExpr in self._expr_provider.pythonToWXFExpr(pyExpr):
             self._to_wxf_bytes(wxfExpr)
         if not self._context.isValidFinalState():
             raise Exception('Inconsistent state: truncated expr.')
         
     def _to_wxf_bytes(self, wxfExpr):
+        '''
+        Contains all the rules defining the WXF format. Turn instances of `WXFExpr` into wxf bytes.
+        '''
         self._data_consumer.append(wxfExpr.wxfType)
         if wxfExpr.wxfType == WXFConstants.String or wxfExpr.wxfType == WXFConstants.Symbol:
             self._context.addPart()

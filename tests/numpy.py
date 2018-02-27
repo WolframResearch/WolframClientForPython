@@ -1,12 +1,11 @@
 import unittest
 import numpy
 
-from wxfserializer.wxfexprprovidernumpy import WXFExprProviderNumPy
+from wxfserializer.wxfnumpyencoder import NumPyWXFEncoder
+from wxfserializer.wxfencoder import WXFEncoder
 from wxfserializer.wxfexprprovider import WXFExprProvider
 from wxfserializer.wxfdataconsumer import WXFDataConsumer, InMemoryWXFDataConsumer
 from wxfserializer.serializer import WXFExprSerializer
-
-
 
 class TestNumpySerialization(unittest.TestCase):
     @staticmethod
@@ -24,19 +23,20 @@ class TestNumpySerialization(unittest.TestCase):
 
     @staticmethod
     def init(pa, ra):
-        expr_provider = WXFExprProviderNumPy(packed_array_support=pa, rawarray_support=ra)
+        expr_provider = WXFExprProvider(
+            NumPyWXFEncoder(packed_array_support=pa, rawarray_support=ra))
         data_consumer = InMemoryWXFDataConsumer()
         serializer = WXFExprSerializer(expr_provider, data_consumer)
         return (serializer, data_consumer)
 
     def test_dimensions(self):
-        provider = WXFExprProviderNumPy()
+        provider = WXFExprProvider(NumPyWXFEncoder())
         arr = numpy.ndarray([2,1,3])
         wxfExpr = next(provider.pythonToWXFExpr(arr))
         self.assertEqual(wxfExpr.dimensions, (2, 1, 3) )
 
     def test_zero_dimension(self):
-        provider = WXFExprProviderNumPy()
+        provider = WXFExprProvider(NumPyWXFEncoder())
         arr = numpy.ndarray([2, 0, 3])
         with self.assertRaises(Exception) as err:
             next(provider.pythonToWXFExpr(arr))

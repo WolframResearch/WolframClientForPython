@@ -1,18 +1,8 @@
-import numpy
-from wxfserializer.wxfexprprovider import WXFExprProvider, DefaultWXFEncoder, WXFEncoder
+from wxfserializer.wxfencoder import WXFEncoder, DefaultWXFEncoder
 from wxfserializer.wxfexpr import ArrayTypes
 import wxfserializer.wxfexpr as wxfexpr
 
-class WXFExprProviderNumPy(WXFExprProvider):
-    def __init__(self, fallback_encoder=None, default=None, packed_array_support = True, rawarray_support=False):
-        if fallback_encoder is None:
-            super(WXFExprProviderNumPy, self).__init__(
-                encoder=NumPyWXFEncoder(DefaultWXFEncoder(), packed_array_support, rawarray_support),
-                default=default)
-        else:
-            super(WXFExprProviderNumPy, self).__init__(
-                encoder=NumPyWXFEncoder(fallback_encoder, packed_array_support, rawarray_support),
-                default=default)
+import numpy
 
 class NumPyWXFEncoder(WXFEncoder):
     '''
@@ -33,8 +23,8 @@ class NumPyWXFEncoder(WXFEncoder):
 
     __slots__ = 'packed_array_support', 'rawarray_support'
 
-    def __init__(self, encoder, packed_array_support=True, rawarray_support=False):
-        super(NumPyWXFEncoder, self).__init__(encoder)
+    def __init__(self, fallback_encoder=DefaultWXFEncoder(), packed_array_support=True, rawarray_support=False):
+        super(NumPyWXFEncoder, self).__init__(fallback_encoder)
         if not packed_array_support and not rawarray_support:
             raise Exception(
                 'At least one of the two parameters packed_array_support or rawarray_support must be True.')
@@ -112,3 +102,6 @@ class NumPyWXFEncoder(WXFEncoder):
             yield array_class(pythonExpr.shape, value_type, data.tobytes())
         else:
             yield from super(NumPyWXFEncoder, self).fallback(pythonExpr)
+
+    def test(self):
+        pass
