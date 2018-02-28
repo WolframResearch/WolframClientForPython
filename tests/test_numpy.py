@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import unittest
 import numpy
 
@@ -77,18 +78,3 @@ class TestNumpySerialization(unittest.TestCase):
         s.serialize(arr)
         self.assertEqual(
             d.data(), b'\x38\x3a\xc2\x10\x02\x01\x02\x00\x80')
-    
-    # def test_isupper(self):
-    #     self.assertTrue('FOO'.isupper())
-    #     self.assertFalse('Foo'.isupper())
-
-    # def test_split(self):
-    #     s = 'hello world'
-    #     self.assertEqual(s.split(), ['hello', 'world'])
-    #     # check that s.split fails when the separator is not a string
-    #     with self.assertRaises(TypeError):
-    #         s.split(2)
-
-
-if __name__ == '__main__':
-    unittest.main()

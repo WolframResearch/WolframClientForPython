@@ -1,6 +1,7 @@
 from wxfserializer.wxfencoder import DefaultWXFEncoder
 
-class WXFExprProvider:
+
+class WXFExprProvider(object):
     '''
     Expression provider pull instances of WXFExpr from a given WXFEncoder `encoder`
     (nb: encoders can be chained). If none is provided the default class `DefaultWXFEncoder` 
@@ -26,4 +27,5 @@ class WXFExprProvider:
             self.encoder.default = default
 
     def pythonToWXFExpr(self, pythonExpr):
-       yield from self.encoder.encode(pythonExpr)
+       for wxf_expr in self.encoder.encode(pythonExpr):
+           yield wxf_expr

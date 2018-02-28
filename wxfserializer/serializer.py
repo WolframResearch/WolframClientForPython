@@ -1,4 +1,3 @@
-from wxfserializer.wxfutils import write_varint
 from wxfserializer.wxfexpr import WXFConstants
 from wxfserializer.wxfdataconsumer import InMemoryWXFDataConsumer
 from wxfserializer.wxfexprprovider import WXFExprProvider
@@ -7,7 +6,28 @@ __all__ = [
     'WXFExprSerializer',
     'SerializationContext'
     ]
-class SerializationContext:
+
+
+def write_varint(int_value, data_consumer):
+    """Serialize `int_value` into varint bytes and append them to 
+    `data_consumer`, return the number of bytes written.
+    """
+    if int_value < 0:
+        raise TypeError('Negative values cannot be encoded as varint.')
+    count = 0
+    while True:
+        count+=1
+        next = int_value & 0x7f
+        int_value >>= 7
+        if int_value:
+            data_consumer.append(next | 0x80)
+        else:
+            data_consumer.append(next)
+            break
+    
+    return count
+
+class SerializationContext(object):
     """ Keeps track of various parameter associated to an expression being serialized. 
     The finalized expression has a tree structure; it is serialized depth first. During
     the serialization process of an expression involving many non-atomic elements (e.g List),
@@ -90,12 +110,11 @@ class SerializationContext:
 
     def __str__(self):
         return 'SerializationContext(depth={}, element={}/{})'.format(self._depth, self._current_index_stack[self._depth], self._expected_length_stack[self._depth])
-    
 
-WXF_VERSION = '8'
-WXF_HEADER_SEPARATOR = ':'
+WXF_VERSION = ord('8')
+WXF_HEADER_SEPARATOR = ord(':')
 
-class WXFExprSerializer:
+class WXFExprSerializer(object):
     """ Pulls instances of `WXFExpr` from an `WXFExprProvider`, serializes them into wxf bytes and appends the data to
     a `WXFDataConsumer`. Ensures the output data is a valid WXF encoded expression, and raises an exception otherwise.
 
@@ -134,9 +153,10 @@ class WXFExprSerializer:
             self._data_consumer.extend(wxfExpr.value)
         elif wxfExpr.wxfType == WXFConstants.Integer8 or wxfExpr.wxfType == WXFConstants.Integer16 or wxfExpr.wxfType == WXFConstants.Integer32 or wxfExpr.wxfType == WXFConstants.Integer64:
             self._context.addPart()
-            self._data_consumer.extend(
-                wxfExpr.value.to_bytes(wxfExpr.intSize, byteorder='little', signed=True)
-            )
+            self._data_consumer.extend(wxfExpr.to_bytes())
+        elif wxfExpr.wxfType == WXFConstants.Real64:
+            self._context.addPart()
+            self._data_consumer.extend(wxfExpr.to_bytes())
         elif wxfExpr.wxfType == WXFConstants.Function:
             # Function has a head which account for one part element contrary to association
             self._context.stepInNewExpr(wxfExpr.length + 1)
@@ -161,4 +181,4 @@ class WXFExprSerializer:
             else:
                 raise Exception("Missing array data.")
         else:
-            raise TypeError
+            raise TypeError('Unknown expression type.')

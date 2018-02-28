@@ -1,4 +1,6 @@
-class WXFDataConsumer:
+
+
+class WXFDataConsumer(object):
     '''
     Abstract class defining the functions used by `WXFExprSerializer` to write wxf bytes.
     '''
@@ -18,6 +20,7 @@ class InMemoryWXFDataConsumer(WXFDataConsumer):
     def append(self, b):
         self._bytearray.append(b)
         return self
+
     def extend(self, data):
         self._bytearray.extend(data)
         return self

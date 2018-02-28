@@ -1,5 +1,6 @@
-import wxfserializer.wxfutils as wxfutils
+from wxfserializer.utils import wxfutils
 from wxfserializer.utils import six
+import struct
 
 __all__ = [
     'WXFExprFunction',
@@ -21,7 +22,7 @@ class WXFConstants:
     Integer16 = ord('j')
     Integer32 = ord('i')
     Integer64 = ord('L')
-    Read64 = ord('r')
+    Real64 = ord('r')
     BigInteger = ord('I')
     BigReal = ord('R')
     PackedArray = 0xC1
@@ -61,7 +62,7 @@ VALID_PACKED_ARRAY_TYPES = set([
 )
 
 
-class _WXFExpr():
+class _WXFExpr(object):
     __slots__ = 'wxfType'
 
     def __init__(self, wxfType):
@@ -85,25 +86,55 @@ class WXFExprInteger(_WXFExpr):
     Internally WXF uses the two's complement representation of integer values.
     The endianness is system independant and is always little-endian.
     '''
-    __slots__ = 'value', 'intSize'
+    __slots__ = 'value', 'int_size'
 
     def __init__(self, value):
         if not isinstance(value, six.integer_types):
             raise TypeError('WXFExprInteger must be initialize with an integer value.')
         if value < wxfutils.INT8_MAX and value >= wxfutils.INT8_MIN:
             super(WXFExprInteger, self).__init__(WXFConstants.Integer8)
-            self.intSize = 1
+            self.int_size = 1
         elif value < wxfutils.INT16_MAX and value >= wxfutils.INT16_MIN:
             super(WXFExprInteger, self).__init__(WXFConstants.Integer16)
-            self.intSize = 2
+            self.int_size = 2
         elif value < wxfutils.INT32_MAX and value >= wxfutils.INT32_MIN:
             super(WXFExprInteger, self).__init__(WXFConstants.Integer32)
-            self.intSize = 4
+            self.int_size = 4
         elif value < wxfutils.INT64_MAX and value >= wxfutils.INT64_MIN:
             super(WXFExprInteger, self).__init__(WXFConstants.Integer64)
-            self.intSize = 8
+            self.int_size = 8
 
         self.value = value
+
+    StructInt8LE = struct.Struct('<b')
+    StructInt16LE = struct.Struct('<h')
+    StructInt32LE = struct.Struct('<i')
+    StructInt64LE = struct.Struct('<q')
+
+    def to_bytes(self):
+        ''' Encode the integer into bytes and return them in a `buffer`.
+        
+        Note that the buffer is an bytearray in python 2.7 and an array in 3.x.
+        This method is only useful to hide the Python 2.7 implementation.
+        It is proxying int.to_bytes for version 3.4 and above.
+        '''
+        #build in convertion to binary form
+        if six.PY3:
+            return self.value.to_bytes(self.int_size, byteorder='little', signed=True)
+        #manual convertion
+        else:
+            buffer = bytearray(8)
+            if self.int_size == 1:
+                WXFExprInteger.StructInt8LE.pack_into(buffer, 0, self.value)
+            elif self.int_size == 2:
+                WXFExprInteger.StructInt16LE.pack_into(buffer, 0, self.value)
+            elif self.int_size == 4:
+                WXFExprInteger.StructInt32LE.pack_into(buffer, 0, self.value)
+            else:
+                WXFExprInteger.StructInt64LE.pack_into(buffer, 0, self.value)
+
+            return buffer[:self.int_size]
+
 
 class WXFExprReal(_WXFExpr):
     ''' Represent a floating point value. Internally WXF represents the value with
@@ -113,21 +144,35 @@ class WXFExprReal(_WXFExpr):
     def __init__(self, value):
         if not isinstance(value, float):
             raise TypeError('WXFExprReal must be initialized with a float.')
-        super(WXFExprReal, self).__init__(WXFConstants.Read64)
+        super(WXFExprReal, self).__init__(WXFConstants.Real64)
         self.value = value
+    
+    StructDouble = struct.Struct('d')
+
+    def to_bytes(self):
+        buffer = bytearray(8)
+        WXFExprReal.StructDouble.pack_into(buffer, 0, self.value)
+        return buffer
 
 class _WXFExprStringLike(_WXFExpr):
-
+    ''' Parent class of all string based expressions. 
+    
+    Store a given string value as a utf-8 encoded binary string.
+    '''
     __slots__ = 'length', 'value'
 
-    def __init__(self, wxfType, value):
-        if not isinstance(value, six.text_type):
-            raise TypeError(
-                self.__class__.__name__, 'must be initialize with a string.')
-        super(_WXFExprStringLike, self).__init__(wxfType)
-        self.value = value.encode('utf-8')
-        self.length = len(self.value)
+    def __init__(self, wxfType, value, allow_binary = False):
+        ''' Initialize using a given string `value`.
 
+        If `allow_binary` is set to false, also accept binary types: `bytes` (py3) and `str` (py2)
+        '''
+        if isinstance(value, six.string_types) or allow_binary and isinstance(value, six.binary_type):
+            super(_WXFExprStringLike, self).__init__(wxfType)
+            self.value = value.encode('utf-8')
+            self.length = len(self.value)
+        else:
+            raise TypeError(self.__class__.__name__ +
+                            " must be initialize with a string. Was '" + value.__class__.__name__ + "'.")
 
 class WXFExprSymbol(_WXFExprStringLike):
     ''' A symbol represented by a string name. The name is always utf8 encoded.'''

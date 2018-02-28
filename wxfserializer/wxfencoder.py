@@ -1,6 +1,7 @@
 import wxfserializer.wxfexpr as wxfexpr
+from wxfserializer.utils import six
 
-class WXFEncoder:
+class WXFEncoder(object):
     ''' `WXFEncoder` defines a class of chained generators that eventually encode
     a given python object into instance(s) of `WXFExpr`. During initalization it is
     possible to define a fallback encoder to which it's possible to delegate using 
@@ -16,7 +17,9 @@ class WXFEncoder:
         self._root_encoder = self
 
     def encode(self, pythonExpr):
-        yield from self._root_encoder.to_wxf(pythonExpr)
+        for wxf_expr in self._root_encoder.to_wxf(pythonExpr):
+            yield wxf_expr
+
     '''
     Function to implement in sub-classes.
     '''
@@ -41,7 +44,8 @@ class WXFEncoder:
 
     def fallback(self, pythonExpr):
         if self._fallback_encoder is not None:
-            yield from self._fallback_encoder.to_wxf(pythonExpr)
+            for wxf_expr in self._fallback_encoder.to_wxf(pythonExpr):
+                yield wxf_expr
         else:
             raise TypeError('Not supported python type')
 
@@ -58,21 +62,24 @@ class DefaultWXFEncoder(WXFEncoder):
     '''
 
     def to_wxf(self, pythonExpr):
-        if isinstance(pythonExpr, str):
+        if isinstance(pythonExpr, six.string_types):
             yield wxfexpr.WXFExprString(pythonExpr)
-        elif isinstance(pythonExpr, int):
+        elif isinstance(pythonExpr, six.integer_types):
             yield wxfexpr.WXFExprInteger(pythonExpr)
         elif isinstance(pythonExpr, list):
             yield wxfexpr.WXFExprFunction(len(pythonExpr))
             yield wxfexpr.WXFExprSymbol('List')
             for pyArg in iter(pythonExpr):
-                yield from self.encode(pyArg)
+                for wxf_expr in self.encode(pyArg):
+                    yield wxf_expr
         elif isinstance(pythonExpr, dict):
             yield wxfexpr.WXFExprAssociation(len(pythonExpr))
             for key, value in pythonExpr.items():
                 yield wxfexpr.WXFExprRule()
-                yield from self.encode(key)
-                yield from self.encode(value)
+                for wxf_expr in self.encode(key):
+                    yield wxf_expr
+                for wxf_expr in self.encode(value):
+                    yield wxf_expr
         elif pythonExpr is True:
             yield wxfexpr.WXFExprSymbol('True')
         elif pythonExpr is False:
@@ -87,4 +94,5 @@ class DefaultWXFEncoder(WXFEncoder):
             yield wxfexpr.WXFExprReal(pythonExpr.real)
             yield wxfexpr.WXFExprReal(pythonExpr.imag)
         else:
-            yield from self.fallback(pythonExpr)
+            for wxf_expr in self.fallback(pythonExpr):
+                    yield wxf_expr

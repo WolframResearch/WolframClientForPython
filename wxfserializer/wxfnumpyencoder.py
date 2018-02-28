@@ -1,6 +1,6 @@
 from wxfserializer.wxfencoder import WXFEncoder, DefaultWXFEncoder
-from wxfserializer.wxfexpr import ArrayTypes
 import wxfserializer.wxfexpr as wxfexpr
+from wxfserializer.wxfexpr import ArrayTypes
 
 import numpy
 
@@ -85,23 +85,21 @@ class NumPyWXFEncoder(WXFEncoder):
                     TypeError('Cannot represent data of type uint64 as signed int64')
             elif pythonExpr.dtype == numpy.float32:
                 value_type = ArrayTypes.Real32
-                data = pythonExpr.data
+                data = pythonExpr
             elif pythonExpr.dtype == numpy.float64:
                 value_type = ArrayTypes.Real64
-                data = pythonExpr.data
+                data = pythonExpr
             elif pythonExpr.dtype == numpy.complex64:
                 value_type = ArrayTypes.ComplexReal32
-                data = pythonExpr.data
+                data = pythonExpr
             elif pythonExpr.dtype == numpy.complex128:
                 value_type = ArrayTypes.ComplexReal64
-                data = pythonExpr.data
+                data = pythonExpr
             else:
                 raise Exception(
                     'NumPy serialization not implemented for ', repr(pythonExpr.dtype))
 
             yield array_class(pythonExpr.shape, value_type, data.tobytes())
         else:
-            yield from super(NumPyWXFEncoder, self).fallback(pythonExpr)
-
-    def test(self):
-        pass
+            for wxf_expr in super(NumPyWXFEncoder, self).fallback(pythonExpr):
+                yield wxf_expr
