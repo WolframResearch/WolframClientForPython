@@ -181,7 +181,12 @@ class WXFExprSymbol(_WXFExprStringLike):
 
 
 class WXFExprString(_WXFExprStringLike):
-    ''' A string of unicode character. The string is always utf8 encoded.'''
+    ''' A string of unicode character. The string is always utf8 encoded.
+    
+    Notabene: Python 3 does not allow utf8 encoding of the surrogate range 
+    from `0xD800` to `0xDFFF`. Python 2 and the Wolfram Language on the other
+    hand handle those characters as any other unicode code points.
+    '''
     def __init__(self, value):
         super(WXFExprString, self).__init__(WXFConstants.String, value)
 
@@ -204,11 +209,11 @@ class WXFExprBinaryString(_WXFExpr):
     required.'''
     __slots__ = 'data'
     def __init__(self, data):
-        if isinstance(data, six.binary_type):
+        if isinstance(data, six.binary_type) or isinstance(data, bytearray):
             self.data = data
         else:
             raise TypeError(
-                'WXFExprBinaryString must be initialized with a bytearray.')
+                'WXFExprBinaryString must be initialized with binary data: bytes in Python 3, str in Python 2.7 or bytearray.')
         super(WXFExprBinaryString, self).__init__(WXFConstants.BinaryString)
         
 
