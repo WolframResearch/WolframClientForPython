@@ -244,5 +244,11 @@ class MixingAll(SerializeTest):
             ba = bytearray(r_file.read())
         self.serialize_compare(all_char, ba)        
 
-    def test_all_types(self):
-        pass
+    def test_default(self):
+        expr_provider = WXFExprProvider(default=list)
+        data_consumer = InMemoryWXFDataConsumer()
+        serializer = WXFExprSerializer(expr_provider, data_consumer)
+        serializer.serialize(range(1, 4))
+        wxf = b'\x38\x3a\x66\x03\x73\x04\x4c\x69\x73\x74\x43\x01\x43\x02\x43\x03'
+        self.assertSequenceEqual(data_consumer.data(),wxf)
+        

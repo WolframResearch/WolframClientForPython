@@ -10,19 +10,56 @@ This is the central class that iterate on an expression provider and produces by
 
 ## `WXFExprProvider`
 
-A generator of instances of `WXFExpr*` classes (i.e: sub-classes of the internal class `_WXFExpr`) that we will call just `WXFExpr` for convenience purpose. This class relies on an encoder to produce `WXFExpr` and supports a `default` function applied when no encoding was found for a given python expression. Default is typically `str`.
+A generator of instances of `WXFExpr*` classes (i.e: sub-classes of the internal class `_WXFExpr`) that we will call just `WXFExpr` for convenience purpose. This class relies on encoder(s) to generate `WXFExpr`, one provider can have more than one encoder, each dealing with a subset of classes. It also supports a `default` function applied when no encoding was found for a given python expression, typically `str`.
 
 ## `WXFEncoder`
 
-This class is a generator of `WXFExpr` which can also be chained. Define transformation rules from a python expression to a (list of) `WXFExpr`. During initialization of the encoder it is possible to provide a fallback encoder. If no rule matches a given expression it is possible to delegate to the fallback encoder using `self.fallback(python_expr)`. If no encoder can deal with a given expression a `TypeError` is eventually raised.
+This class is a generator of `WXFExpr` which can also be chained. It defines transformation rules from a python expression to a (stream of) `WXFExpr`. If no rule matches a given expression it should return without yielding to signal that the object should be passed to the next encoder. If no encoder can deal with a given expression a `TypeError` is eventually raised.
 
-The default encoder is `DefaultWXFEncoder` and is fairly restricted on purpose. For example it does not support iterator. It only deals with native type that maps directly to a given `WXFExpr` (basically JSON) and for which there shouldn't be any conflict with what the user wants. As such, is should always be used as the inner most fallback encoder.
+The default encoder is `DefaultWXFEncoder` and support a fairly limited number of type, on purpose. For example it does not support iterators. It only deals with native types that maps directly to a given `WXFExpr` (basically JSON) and for which there shouldn't be any conflict in most use cases. As such, is should always be used as the first encoder.
 
-On example of the extension mechanism is provided in `NumPyWXFEncoder` which add support for numpy `array` and `ndarray`. Both are encoded as `PackedArray` and eventually `RawArray`.
+One example of the extension mechanism is provided in `NumPyWXFEncoder` which add support for numpy `array` and `ndarray`. Both are encoded as `PackedArray` and eventually `RawArray`.
+
+### Extending encoding
+
+Here is an example of a user defined encoder `MyClassEncoder` dealing with a custom class `MyClass`. The class is a wrapper around a tuple, and the encoder is encoding instances as a Wolfram Language function `MyClass[values]`.
+
+```
+class MyClass(object):
+    def __init__(self, *values):
+        self.values = values
+
+class MyClassEncoder(WXFEncoder):
+    def encode(self, o):
+        if isinstance(o, MyClass):
+            yield WXFExprFunction(len(o.values))
+            yield WXFExprSymbol('Global`%s' % o.__class__.__name__)
+            for sub in o.values:
+                for wxfexpr in self.serialize(sub):
+                    yield wxfexpr
+```
+
+Initialize the serializer with the new encoder:
+```
+expr_provider = WXFExprProvider()
+expr_provider.add_encoder(MyClassEncoder())
+data_consumer = InMemoryWXFDataConsumer()
+serializer = WXFExprSerializer(expr_provider, data_consumer)
+```
+
+Serialize an expression an write the bytes to a file `/tmp/test.wxf`:
+```
+py_expr = MyClass('foo', MyClass('bar'))
+serializer.serialize(py_expr)
+with open('/tmp/test.wxf', 'wb') as w_file:
+    w_file.write(data_consumer.data())
+```
+
+Once deserialized by a kernel using `Import["/tmp/test.wxf"]` the output expression is `MyClass["foo", MyClass["bar"]]`.
 
 ## `WXFDataConsumer`
 
-Data consumer is a simple class that implement both `append` and `extend`, typically a wrapper around a `bytearray`, that the serializer use to store output binary data.
+Data consumer is a simple class that implement both `append` and `extend`, typically a wrapper around a `bytearray`, that the serializer uses to store output binary data.
 
 ## Example:
 

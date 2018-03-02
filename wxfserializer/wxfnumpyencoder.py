@@ -1,4 +1,4 @@
-from wxfserializer.wxfencoder import WXFEncoder, DefaultWXFEncoder
+from wxfserializer.wxfencoder import WXFEncoder
 import wxfserializer.wxfexpr as wxfexpr
 from wxfserializer.wxfexpr import ArrayTypes
 
@@ -23,15 +23,14 @@ class NumPyWXFEncoder(WXFEncoder):
 
     __slots__ = 'packed_array_support', 'rawarray_support'
 
-    def __init__(self, fallback_encoder=DefaultWXFEncoder(), packed_array_support=True, rawarray_support=False):
-        super(NumPyWXFEncoder, self).__init__(fallback_encoder)
+    def __init__(self, packed_array_support=True, rawarray_support=False):
         if not packed_array_support and not rawarray_support:
             raise Exception(
                 'At least one of the two parameters packed_array_support or rawarray_support must be True.')
         self.packed_array_support = packed_array_support
         self.rawarray_support = rawarray_support
 
-    def to_wxf(self, pythonExpr):
+    def encode(self, pythonExpr):
         if isinstance(pythonExpr, numpy.ndarray):
             if self.packed_array_support:
                 array_class = wxfexpr.WXFExprPackedArray
@@ -100,6 +99,3 @@ class NumPyWXFEncoder(WXFEncoder):
                     'NumPy serialization not implemented for ', repr(pythonExpr.dtype))
 
             yield array_class(pythonExpr.shape, value_type, data.tobytes())
-        else:
-            for wxf_expr in super(NumPyWXFEncoder, self).fallback(pythonExpr):
-                yield wxf_expr

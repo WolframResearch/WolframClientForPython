@@ -7,6 +7,9 @@ __all__ = [
     'SerializationContext'
     ]
 
+class WXFSerializerException(Exception):
+    pass
+
 
 def write_varint(int_value, data_consumer):
     """Serialize `int_value` into varint bytes and append them to 
@@ -53,7 +56,8 @@ class SerializationContext(object):
     
     def _checkInsert(self):
         if self._depth >= 0 and self._current_index_stack[self._depth] >= self._expected_length_stack[self._depth]:
-            raise Exception('Out of bound.')
+            raise IndexError('Out of bound, number of parts is greater than declared length %d.' %
+                             self._expected_length_stack[self._depth])
 
     def _stepOutFinalizedExpr(self):
         while self._depth >= 0 and self._current_index_stack[self._depth] == self._expected_length_stack[self._depth]:
@@ -64,7 +68,7 @@ class SerializationContext(object):
         self._checkInsert()
         self._current_index_stack[self._depth] += 1
         # This is the best place to output the context. Otherwise index values can be confusing.
-        # print(repr(self))
+        # print(self)
         self._stepOutFinalizedExpr()
 
     @staticmethod
@@ -78,7 +82,7 @@ class SerializationContext(object):
         elif len(array) > index:
             array[index] = value
         else:
-            raise IndexError('Index:', index, 'is greater than array length:', len(array))
+            raise IndexError(f'Index {index} is greater than array length: {len(array)}')
 
     def stepInNewExpr(self, length, is_assoc = False):
         # increment the index
@@ -137,10 +141,10 @@ class WXFExprSerializer(object):
         Serialize the python expression given as parameter.
         '''
         self._data_consumer.append(WXF_VERSION).append(WXF_HEADER_SEPARATOR)
-        for wxfExpr in self._expr_provider.pythonToWXFExpr(pyExpr):
+        for wxfExpr in self._expr_provider.provide_wxfexpr(pyExpr):
             self._to_wxf_bytes(wxfExpr)
         if not self._context.isValidFinalState():
-            raise Exception('Inconsistent state: truncated expr.')
+            raise WXFSerializerException('Inconsistent state: truncated expr.')
         
     def _to_wxf_bytes(self, wxfExpr):
         '''
@@ -167,7 +171,7 @@ class WXFExprSerializer(object):
         elif wxfExpr.wxfType == WXFConstants.Rule or wxfExpr.wxfType == WXFConstants.RuleDelayed:
             # make sure those special tokens are correctly used inside an association.
             if not self.context.isInAssoc():
-                raise Exception('WXF Rule and RuleDelayed must be part of an Association. Use a Function with head Symbol "Rule(Delayed)" outside associations.')
+                raise WXFSerializerException('WXF Rule and RuleDelayed must be part of an Association. Use a Function with head Symbol "Rule(Delayed)" outside associations.')
             # rule always has two parts.
             self._context.stepInNewExpr(2)
         elif wxfExpr.wxfType == WXFConstants.PackedArray or wxfExpr.wxfType == WXFConstants.RawArray:
@@ -179,6 +183,6 @@ class WXFExprSerializer(object):
             if wxfExpr.data is not None:
                 self._data_consumer.extend(wxfExpr.data)
             else:
-                raise Exception("Missing array data.")
+                raise WXFSerializerException("Missing array data.")
         else:
-            raise TypeError('Unknown expression type.')
+            raise TypeError('Unknown wxf expression type.')

@@ -1,67 +1,82 @@
 import wxfserializer.wxfexpr as wxfexpr
 from wxfserializer.utils import six
 
+
+class NotEncodedException(Exception):
+    ''' Exception used during encoding to signal that a given python
+    object has been ignored by a `WXFEncoder`.
+    '''
+    pass
+
 class WXFEncoder(object):
-    ''' `WXFEncoder` defines a class of chained generators that eventually encode
-    a given python object into instance(s) of `WXFExpr`. During initalization it is
-    possible to define a fallback encoder to which it's possible to delegate using 
-    `self.fallback(python_expr)`.
+    ''' Encode a given python object into a stream of `WXFExpr`.
+
+    This class is meant to be subclassed in order to add support for
+    new classes. The encoder does not have to do anything since more 
+    than one can be attached to a given `WXFExprProvider`. The library 
+    provides a default encoder that should cover basic needs, more or 
+    less json types, and that should be useful in any case.
+
+    To implement a new encoder one needs to sub-class `WFXEncoder` and 
+    implements method `encode`. Encode is a generator function that 
+    takes a given python object and yield `WXFExpr`. If it returns before 
+    yielding anything a `NotEncodedException`is raised to signal that
+    the encoder is not supporting the given object, and that the encoding 
+    must be delegating to the next encoder (if any).
+
+    Sometimes it is useful to start a new serialization using the provider, 
+    re-entrant call, especially when dealing with non-atomic `WXFExpr` such
+    as Function or Association. To do so one must call `serialize` on the
+    target object and yield the results (yield from in PY3).
     '''
-    __slots__ = '_fallback_encoder', '_root_encoder', '_default'
+    __slots__ = '_provider'
+    def __init__(self):
+        self._provider = None
+    
+    def encode(self, o):
+        ''' The method to implement in sub-classes.'''
+        raise NotImplementedError
 
-    def __init__(self, fallback_encoder=None):
-        self._fallback_encoder = fallback_encoder
-        if fallback_encoder is not None:
-            fallback_encoder._root_encoder = self
-        # root until it is used as a fallback encoder.
-        self._root_encoder = self
+    def serialize(self, o):
+        ''' Re-entrant method used to serialize part of a python object.
+        
+        Example: when serializing a custom class `foo[{'k1'->1,'k2'->2}]`, the user 
+        defined encoder for class foo could encode it as a function
+        with head 'foo' and a dict:
+        >>> yield WXFFunction(3)
+        >>> yield WXFSymbol('foo')
+        >>> yield from self.serialize({'k1'->1,'k2'->2})
+        
+        Using a re-entrant call (line 3) allows the dictionnary to be encoded as a new expr;
+        assuming `WXFDefaultEncoder` is registered in the provider, the dict will
+        get encoded as an association.
 
-    def encode(self, pythonExpr):
-        for wxf_expr in self._root_encoder.to_wxf(pythonExpr):
-            yield wxf_expr
+        It also enables transformation mechanism, say apply list to all iterable object and
+        pass the result to the provider.
+        '''
+        for sub in self._provider.provide_wxfexpr(o):
+            yield sub
 
-    '''
-    Function to implement in sub-classes.
-    '''
-    def to_wxf(self, pythonExpr):
-        raise TypeError('Object of type %s is not WXF serializable' %
-                        pythonExpr.__class__.__name__)
-
-    @property
-    def default(self):
-        return self._root_encoder.default
-
-    @default.setter
-    def default(self, default):
-        if callable(default):
-            self._root_encoder.default = default
-        else:
-            raise TypeError('Expecting default property must be callable.')
-
-    @default.deleter
-    def default(self):
-        del(self._root_encoder.default)
-
-    def fallback(self, pythonExpr):
-        if self._fallback_encoder is not None:
-            for wxf_expr in self._fallback_encoder.to_wxf(pythonExpr):
-                yield wxf_expr
-        else:
-            raise TypeError('Not supported python type')
+    def _encode(self, o):
+        ''' Called by the provider.'''
+        value = None
+        for value in self.encode(o):
+            yield value
+        if value is None:
+            raise NotEncodedException
 
 
 class DefaultWXFEncoder(WXFEncoder):
     '''
     The most straight forward serialization of python expressions to their
-    Wolfram Language equivalent. This class is meant to represent basically JSON like
-    objects, and is intended to be used as a fallback provider in extended 
-    provider implementation. As such it should only deal with obvious convertion,
-    e.g: `int` to `Integer`. 
+    Wolfram Language equivalent. 
     
-    Iterator are not supported but can easily be added in a sub-class.
+    This class is meant to represent basically JSON like
+    objects, and is intended to be used in all providers. As such it should only deal
+    with obvious convertion, e.g: `int` to `Integer`, but iterator are not supported.
+    They can be added easily though.
     '''
-
-    def to_wxf(self, pythonExpr):
+    def encode(self, pythonExpr):
         if isinstance(pythonExpr, six.string_types):
             yield wxfexpr.WXFExprString(pythonExpr)
         elif isinstance(pythonExpr, six.integer_types):
@@ -70,15 +85,15 @@ class DefaultWXFEncoder(WXFEncoder):
             yield wxfexpr.WXFExprFunction(len(pythonExpr))
             yield wxfexpr.WXFExprSymbol('List')
             for pyArg in iter(pythonExpr):
-                for wxf_expr in self.encode(pyArg):
+                for wxf_expr in self.serialize(pyArg):
                     yield wxf_expr
         elif isinstance(pythonExpr, dict):
             yield wxfexpr.WXFExprAssociation(len(pythonExpr))
             for key, value in pythonExpr.items():
                 yield wxfexpr.WXFExprRule()
-                for wxf_expr in self.encode(key):
+                for wxf_expr in self.serialize(key):
                     yield wxf_expr
-                for wxf_expr in self.encode(value):
+                for wxf_expr in self.serialize(value):
                     yield wxf_expr
         elif pythonExpr is True:
             yield wxfexpr.WXFExprSymbol('True')
@@ -93,6 +108,3 @@ class DefaultWXFEncoder(WXFEncoder):
             yield wxfexpr.WXFExprSymbol('Complex')
             yield wxfexpr.WXFExprReal(pythonExpr.real)
             yield wxfexpr.WXFExprReal(pythonExpr.imag)
-        else:
-            for wxf_expr in self.fallback(pythonExpr):
-                    yield wxf_expr
