@@ -82,7 +82,7 @@ class SerializationContext(object):
         elif len(array) > index:
             array[index] = value
         else:
-            raise IndexError(f'Index {index} is greater than array length: {len(array)}')
+            raise IndexError('Index {} is greater than array length: {}'.format(index, len(array)))
 
     def stepInNewExpr(self, length, is_assoc = False):
         # increment the index

@@ -25,7 +25,6 @@ class MyClass2(MyClass):
 class MyClassEncoder(WXFEncoder):
     def encode(self, o):
         if isinstance(o, MyClass):
-            print(len(o.values))
             yield WXFExprFunction(len(o.values))
             yield WXFExprSymbol('Global`%s' % o.__class__.__name__)
             for sub in o.values:
