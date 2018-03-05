@@ -1,8 +1,12 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import absolute_import, print_function, unicode_literals
+
 from wxfserializer.wxfencoder import WXFEncoder
-import wxfserializer.wxfexpr as wxfexpr
 from wxfserializer.wxfexpr import ArrayTypes
 
 import numpy
+import wxfserializer.wxfexpr as wxfexpr
 
 class NumPyWXFEncoder(WXFEncoder):
     '''
@@ -10,7 +14,7 @@ class NumPyWXFEncoder(WXFEncoder):
     By default only packed arrays are generated. Unsigned integer data are cast to a type that
     can fit the maximum value.
 
-    It's possible to add support for raw arrays only for unsigned data, in which case both 
+    It's possible to add support for raw arrays only for unsigned data, in which case both
     `packed_array_support` and `rawarray_support` must be true.
 
     >>> NumPyWXFEncoder(packed_array_support=True, rawarray_support=True)
@@ -18,7 +22,7 @@ class NumPyWXFEncoder(WXFEncoder):
     Finally it's possible to only output raw arrays with:
 
     >>> NumPyWXFEncoder(packed_array_support=False, rawarray_support=True)
-    
+
     '''
 
     __slots__ = 'packed_array_support', 'rawarray_support'

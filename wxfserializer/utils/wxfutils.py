@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import absolute_import, print_function, unicode_literals
+
 from wxfserializer.utils import six
 
 INT8_MAX = 1 << 7
@@ -8,7 +12,6 @@ INT32_MAX = 1 << 31
 INT32_MIN = -(1 << 31)
 INT64_MAX = 1 << 63
 INT64_MIN = -(1 << 63)
-
 
 def force_text(s, encoding='utf-8', errors='strict'):
     """

@@ -1,5 +1,9 @@
-from wxfserializer.utils import wxfutils
-from wxfserializer.utils import six
+# -*- coding: utf-8 -*-
+
+from __future__ import absolute_import, print_function, unicode_literals
+
+from wxfserializer.utils import six, wxfutils
+
 import struct
 
 __all__ = [
@@ -10,7 +14,6 @@ __all__ = [
     'WXFExprBinaryString',
     'WXFConstants'
 ]
-
 
 class WXFConstants:
     """ The list of all the WXF tokens. """
@@ -31,7 +34,6 @@ class WXFConstants:
     Rule = ord('-')
     RuleDelayed = ord(':')
 
-
 class ArrayTypes:
     ''' The list of all array value type tokens. '''
     Integer8 = 0x00
@@ -47,7 +49,6 @@ class ArrayTypes:
     ComplexReal32 = 0x33
     ComplexReal64 = 0x34
 
-
 ''' A set of all valid value type tokens for PackedArray.
 There is no restriction for RawArray value types. '''
 VALID_PACKED_ARRAY_TYPES = set([
@@ -61,13 +62,11 @@ VALID_PACKED_ARRAY_TYPES = set([
     ArrayTypes.ComplexReal64]
 )
 
-
 class _WXFExpr(object):
     __slots__ = 'wxfType'
 
     def __init__(self, wxfType):
         self.wxfType = wxfType
-
 
 class WXFExprFunction(_WXFExpr):
     ''' Functions have a length representing the number of parts (including zero).
@@ -113,7 +112,7 @@ class WXFExprInteger(_WXFExpr):
 
     def to_bytes(self):
         ''' Encode the integer into bytes and return them in a `buffer`.
-        
+
         Note that the buffer is an bytearray in python 2.7 and an array in 3.x.
         This method is only useful to hide the Python 2.7 implementation.
         It is proxying int.to_bytes for version 3.4 and above.
@@ -135,7 +134,6 @@ class WXFExprInteger(_WXFExpr):
 
             return buffer[:self.int_size]
 
-
 class WXFExprReal(_WXFExpr):
     ''' Represent a floating point value. Internally WXF represents the value with
     double float-point value in the IEEE 754 standard. '''
@@ -146,7 +144,7 @@ class WXFExprReal(_WXFExpr):
             raise TypeError('WXFExprReal must be initialized with a float.')
         super(WXFExprReal, self).__init__(WXFConstants.Real64)
         self.value = value
-    
+
     StructDouble = struct.Struct('d')
 
     def to_bytes(self):
@@ -155,8 +153,8 @@ class WXFExprReal(_WXFExpr):
         return buffer
 
 class _WXFExprStringLike(_WXFExpr):
-    ''' Parent class of all string based expressions. 
-    
+    ''' Parent class of all string based expressions.
+
     Store a given string value as a utf-8 encoded binary string.
     '''
     __slots__ = 'length', 'value'
@@ -179,17 +177,15 @@ class WXFExprSymbol(_WXFExprStringLike):
     def __init__(self, value):
         super(WXFExprSymbol, self).__init__(WXFConstants.Symbol, value)
 
-
 class WXFExprString(_WXFExprStringLike):
     ''' A string of unicode character. The string is always utf8 encoded.
-    
-    Notabene: Python 3 does not allow utf8 encoding of the surrogate range 
+
+    Notabene: Python 3 does not allow utf8 encoding of the surrogate range
     from `0xD800` to `0xDFFF`. Python 2 and the Wolfram Language on the other
     hand handle those characters as any other unicode code points.
     '''
     def __init__(self, value):
         super(WXFExprString, self).__init__(WXFConstants.String, value)
-
 
 class WXFExprBigInteger(_WXFExprStringLike):
     ''' A string of digits representing a big integer'''
@@ -198,7 +194,7 @@ class WXFExprBigInteger(_WXFExprStringLike):
 
 class WXFExprBigReal(_WXFExprStringLike):
     ''' A string representation of a real value with arbitrary precision. The
-    string format matches the one of the `InputForm` string representation of 
+    string format matches the one of the `InputForm` string representation of
     the real in the Wolfram Language.
     '''
     def __init__(self, value):
@@ -215,12 +211,11 @@ class WXFExprBinaryString(_WXFExpr):
             raise TypeError(
                 'WXFExprBinaryString must be initialized with binary data: bytes in Python 3, str in Python 2.7 or bytearray.')
         super(WXFExprBinaryString, self).__init__(WXFConstants.BinaryString)
-        
 
 class _WXFExprArray(_WXFExpr):
     '''Arrays are multidimensional tables of machine-precision numeric values.
     The `dimensions` is a list of strictly positive integers representing the
-    array shape. The data contains the flatten binary representation of the 
+    array shape. The data contains the flatten binary representation of the
     values.'''
     __slots__ = 'dimensions', 'value_type', 'data'
 
@@ -234,7 +229,7 @@ class _WXFExprArray(_WXFExpr):
         self.dimensions = dimensions
         self.value_type = value_type
         self.data = data
-    
+
 class WXFExprPackedArray(_WXFExprArray):
     ''' Packed array is a type of array that only supports a subset of all the
     possible type of values: signed integers, reals, complexes. See `VALID_PACKED_ARRAY_TYPES`.'''
@@ -243,9 +238,8 @@ class WXFExprPackedArray(_WXFExprArray):
             raise Exception('Invalid packed array value type ({}).', value_type)
         super(WXFExprPackedArray, self).__init__(WXFConstants.PackedArray, dimensions, value_type, data)
 
-
 class WXFExprRawArray(_WXFExprArray):
-    ''' Raw array is an array that supports many type of values: 
+    ''' Raw array is an array that supports many type of values:
     signed and unsigned integers, reals, complexes. See `ArrayTypes`.'''
     def __init__(self, dimensions, value_type, data=None):
         super(WXFExprRawArray, self).__init__(WXFConstants.RawArray, dimensions, value_type, data)
@@ -261,7 +255,7 @@ class WXFExprAssociation(_WXFExpr):
             raise TypeError('WXFExprAssociation must be instanciated with a length.')
         super(WXFExprAssociation, self).__init__(WXFConstants.Association)
         self.length = length
-    
+
 class WXFExprRule(_WXFExpr):
     ''' Represent a rule in an association. Rule have two parts but no head.
     Rules that are not part of an association (e.g list of rules) must be encoded

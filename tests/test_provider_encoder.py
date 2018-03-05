@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-import unittest
 
-from wxfserializer.utils import six
-from wxfserializer.wxfencoder import WXFEncoder, DefaultWXFEncoder
-from wxfserializer.wxfexprprovider import WXFExprProvider
-from wxfserializer.wxfdataconsumer import InMemoryWXFDataConsumer
+from __future__ import absolute_import, print_function, unicode_literals
+
 from wxfserializer.serializer import WXFExprSerializer
+from wxfserializer.wxfdataconsumer import InMemoryWXFDataConsumer
+from wxfserializer.wxfencoder import WXFEncoder
 from wxfserializer.wxfexpr import WXFExprFunction, WXFExprSymbol
-from tests.test_wxf_serialization import init
+from wxfserializer.wxfexprprovider import WXFExprProvider
 
+import unittest
 
 class MyClass(object):
     def __init__(self, *values):
@@ -31,7 +31,6 @@ class MyClassEncoder(WXFEncoder):
                 for wxfexpr in self.serialize(sub):
                     yield wxfexpr
 
-
 class TestEncoder(unittest.TestCase):
     def test_custom_encoder(self):
         ''' test re-entrant calls '''
@@ -46,5 +45,3 @@ class TestEncoder(unittest.TestCase):
         serializer.serialize(o)
         with open('/tmp/test.wxf', 'wb') as w_file:
             w_file.write(data_consumer.data())
-        
-
