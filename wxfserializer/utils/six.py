@@ -27,8 +27,6 @@ import types
 
 """Utilities for writing code that runs on Python 2 and 3"""
 
-
-
 __author__ = "Benjamin Peterson <benjamin@python.org>"
 __version__ = "1.11.0"
 
