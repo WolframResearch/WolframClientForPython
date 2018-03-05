@@ -42,8 +42,8 @@ class WXFExprProvider(object):
 
     def provide_wxfexpr(self, o):
         ''' Main function, a generator of wxf expr.'''
-        for wxf_expr in self._iter(o):
-            yield wxf_expr
+        for wxfexpr in self._iter(o):
+            yield wxfexpr
 
     def _iter(self, o, use_default=True):
         ''' Try to encode a given expr using encoders, if none was able to

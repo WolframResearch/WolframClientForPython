@@ -54,25 +54,25 @@ class SerializationContext(object):
         # root is not an assoc.
         self._in_assoc_stack = [False]
     
-    def _checkInsert(self):
+    def _check_insert(self):
         if self._depth >= 0 and self._current_index_stack[self._depth] >= self._expected_length_stack[self._depth]:
             raise IndexError('Out of bound, number of parts is greater than declared length %d.' %
                              self._expected_length_stack[self._depth])
 
-    def _stepOutFinalizedExpr(self):
+    def _step_out_finalized_expr(self):
         while self._depth >= 0 and self._current_index_stack[self._depth] == self._expected_length_stack[self._depth]:
             self._depth -= 1
 
 
-    def addPart(self):
-        self._checkInsert()
+    def add_part(self):
+        self._check_insert()
         self._current_index_stack[self._depth] += 1
         # This is the best place to output the context. Otherwise index values can be confusing.
         # print(self)
-        self._stepOutFinalizedExpr()
+        self._step_out_finalized_expr()
 
     @staticmethod
-    def _setAtIndexOrAppend(array, index, value):
+    def _set_at_index_or_append(array, index, value):
         '''Set the element of an `array` at a given index if it exists,
         append it to the array otherwise. The `index` must be at most the
         length of the array.
@@ -84,15 +84,15 @@ class SerializationContext(object):
         else:
             raise IndexError('Index {} is greater than array length: {}'.format(index, len(array)))
 
-    def stepInNewExpr(self, length, is_assoc = False):
+    def step_in_new_expr(self, length, is_assoc = False):
         # increment the index
-        self.addPart()
+        self.add_part()
         # go down one level in the expr tree, into the new expr.
         self._depth += 1
         # set or append element at index self._depth
-        SerializationContext._setAtIndexOrAppend(self._expected_length_stack, self._depth, length)
-        SerializationContext._setAtIndexOrAppend(self._current_index_stack, self._depth, 0)
-        SerializationContext._setAtIndexOrAppend(self._in_assoc_stack, self._depth, is_assoc)
+        SerializationContext._set_at_index_or_append(self._expected_length_stack, self._depth, length)
+        SerializationContext._set_at_index_or_append(self._current_index_stack, self._depth, 0)
+        SerializationContext._set_at_index_or_append(self._in_assoc_stack, self._depth, is_assoc)
 
         if len(self._expected_length_stack) <= self._depth:
             self._expected_length_stack.append(length)
@@ -104,12 +104,12 @@ class SerializationContext(object):
         else:
             self._current_index_stack[self._depth] = 0
         
-        self._stepOutFinalizedExpr()
+        self._step_out_finalized_expr()
 
-    def isValidFinalState(self):
+    def is_valid_final_state(self):
         return self._depth == -1
 
-    def isInAssoc(self):
+    def is_in_assoc(self):
         return self._in_assoc_stack[self._depth]
 
     def __str__(self):
@@ -141,47 +141,47 @@ class WXFExprSerializer(object):
         Serialize the python expression given as parameter.
         '''
         self._data_consumer.append(WXF_VERSION).append(WXF_HEADER_SEPARATOR)
-        for wxfExpr in self._expr_provider.provide_wxfexpr(pyExpr):
-            self._to_wxf_bytes(wxfExpr)
-        if not self._context.isValidFinalState():
+        for wxfexpr in self._expr_provider.provide_wxfexpr(pyExpr):
+            self._to_wxf_bytes(wxfexpr)
+        if not self._context.is_valid_final_state():
             raise WXFSerializerException('Inconsistent state: truncated expr.')
         
-    def _to_wxf_bytes(self, wxfExpr):
+    def _to_wxf_bytes(self, wxfexpr):
         '''
         Contains all the rules defining the WXF format. Turn instances of `WXFExpr` into wxf bytes.
         '''
-        self._data_consumer.append(wxfExpr.wxfType)
-        if wxfExpr.wxfType == WXFConstants.String or wxfExpr.wxfType == WXFConstants.Symbol:
-            self._context.addPart()
-            write_varint(wxfExpr.length, self._data_consumer)
-            self._data_consumer.extend(wxfExpr.value)
-        elif wxfExpr.wxfType == WXFConstants.Integer8 or wxfExpr.wxfType == WXFConstants.Integer16 or wxfExpr.wxfType == WXFConstants.Integer32 or wxfExpr.wxfType == WXFConstants.Integer64:
-            self._context.addPart()
-            self._data_consumer.extend(wxfExpr.to_bytes())
-        elif wxfExpr.wxfType == WXFConstants.Real64:
-            self._context.addPart()
-            self._data_consumer.extend(wxfExpr.to_bytes())
-        elif wxfExpr.wxfType == WXFConstants.Function:
+        self._data_consumer.append(wxfexpr.wxfType)
+        if wxfexpr.wxfType == WXFConstants.String or wxfexpr.wxfType == WXFConstants.Symbol:
+            self._context.add_part()
+            write_varint(wxfexpr.length, self._data_consumer)
+            self._data_consumer.extend(wxfexpr.value)
+        elif wxfexpr.wxfType == WXFConstants.Integer8 or wxfexpr.wxfType == WXFConstants.Integer16 or wxfexpr.wxfType == WXFConstants.Integer32 or wxfexpr.wxfType == WXFConstants.Integer64:
+            self._context.add_part()
+            self._data_consumer.extend(wxfexpr.to_bytes())
+        elif wxfexpr.wxfType == WXFConstants.Real64:
+            self._context.add_part()
+            self._data_consumer.extend(wxfexpr.to_bytes())
+        elif wxfexpr.wxfType == WXFConstants.Function:
             # Function has a head which account for one part element contrary to association
-            self._context.stepInNewExpr(wxfExpr.length + 1)
-            write_varint(wxfExpr.length, self._data_consumer)
-        elif wxfExpr.wxfType == WXFConstants.Association:
-            self._context.stepInNewExpr(wxfExpr.length, is_assoc=True)
-            write_varint(wxfExpr.length, self._data_consumer)
-        elif wxfExpr.wxfType == WXFConstants.Rule or wxfExpr.wxfType == WXFConstants.RuleDelayed:
+            self._context.step_in_new_expr(wxfexpr.length + 1)
+            write_varint(wxfexpr.length, self._data_consumer)
+        elif wxfexpr.wxfType == WXFConstants.Association:
+            self._context.step_in_new_expr(wxfexpr.length, is_assoc=True)
+            write_varint(wxfexpr.length, self._data_consumer)
+        elif wxfexpr.wxfType == WXFConstants.Rule or wxfexpr.wxfType == WXFConstants.RuleDelayed:
             # make sure those special tokens are correctly used inside an association.
-            if not self.context.isInAssoc():
+            if not self.context.is_in_assoc():
                 raise WXFSerializerException('WXF Rule and RuleDelayed must be part of an Association. Use a Function with head Symbol "Rule(Delayed)" outside associations.')
             # rule always has two parts.
-            self._context.stepInNewExpr(2)
-        elif wxfExpr.wxfType == WXFConstants.PackedArray or wxfExpr.wxfType == WXFConstants.RawArray:
-            self._context.addPart()
-            self._data_consumer.append(wxfExpr.value_type)
-            write_varint(len(wxfExpr.dimensions), self._data_consumer)
-            for dim in wxfExpr.dimensions:
+            self._context.step_in_new_expr(2)
+        elif wxfexpr.wxfType == WXFConstants.PackedArray or wxfexpr.wxfType == WXFConstants.RawArray:
+            self._context.add_part()
+            self._data_consumer.append(wxfexpr.value_type)
+            write_varint(len(wxfexpr.dimensions), self._data_consumer)
+            for dim in wxfexpr.dimensions:
                 write_varint(dim, self._data_consumer)
-            if wxfExpr.data is not None:
-                self._data_consumer.extend(wxfExpr.data)
+            if wxfexpr.data is not None:
+                self._data_consumer.extend(wxfexpr.data)
             else:
                 raise WXFSerializerException("Missing array data.")
         else:

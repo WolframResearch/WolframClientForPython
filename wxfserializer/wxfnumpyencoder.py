@@ -30,72 +30,72 @@ class NumPyWXFEncoder(WXFEncoder):
         self.packed_array_support = packed_array_support
         self.rawarray_support = rawarray_support
 
-    def encode(self, pythonExpr):
-        if isinstance(pythonExpr, numpy.ndarray):
+    def encode(self, python_expr):
+        if isinstance(python_expr, numpy.ndarray):
             if self.packed_array_support:
                 array_class = wxfexpr.WXFExprPackedArray
             else:
                 array_class = wxfexpr.WXFExprRawArray
 
-            if pythonExpr.dtype == numpy.int8:
+            if python_expr.dtype == numpy.int8:
                 value_type = ArrayTypes.Integer8
-                data = pythonExpr.astype('<i1')
-            elif pythonExpr.dtype == numpy.int16:
-                data = pythonExpr.astype('<i2')
+                data = python_expr.astype('<i1')
+            elif python_expr.dtype == numpy.int16:
+                data = python_expr.astype('<i2')
                 value_type = ArrayTypes.Integer16
-            elif pythonExpr.dtype == numpy.int32:
-                data = pythonExpr.astype('<i4')
+            elif python_expr.dtype == numpy.int32:
+                data = python_expr.astype('<i4')
                 value_type = ArrayTypes.Integer32
-            elif pythonExpr.dtype == numpy.int64:
-                data = pythonExpr.astype('<i8')
+            elif python_expr.dtype == numpy.int64:
+                data = python_expr.astype('<i8')
                 value_type = ArrayTypes.Integer64
-            elif pythonExpr.dtype == numpy.uint8:
+            elif python_expr.dtype == numpy.uint8:
                 if self.rawarray_support:
                     value_type = ArrayTypes.UnsignedInteger8
-                    data = pythonExpr.astype('<u1')
+                    data = python_expr.astype('<u1')
                     array_class = wxfexpr.WXFExprRawArray
                 else :
                     value_type = ArrayTypes.Integer16
-                    data = pythonExpr.astype('<i2')
-            elif pythonExpr.dtype == numpy.uint16:
+                    data = python_expr.astype('<i2')
+            elif python_expr.dtype == numpy.uint16:
                 if self.rawarray_support:
                     value_type = ArrayTypes.UnsignedInteger16
-                    data = pythonExpr.astype('<u2')
+                    data = python_expr.astype('<u2')
                     array_class = wxfexpr.WXFExprRawArray
                 else:
                     value_type = ArrayTypes.Integer32
-                    data = pythonExpr.astype('<i4')
-            elif pythonExpr.dtype == numpy.uint32:
+                    data = python_expr.astype('<i4')
+            elif python_expr.dtype == numpy.uint32:
                 if self.rawarray_support:
                     value_type = ArrayTypes.UnsignedInteger32
-                    data = pythonExpr.astype('<u4')
+                    data = python_expr.astype('<u4')
                     array_class = wxfexpr.WXFExprRawArray
                 else:
                     value_type = ArrayTypes.Integer64
-                    data = pythonExpr.astype('<i8')
+                    data = python_expr.astype('<i8')
             # no one to one mapping to signed values, even if most of the time 
             # the values would fit
-            elif pythonExpr.dtype == numpy.uint64:
+            elif python_expr.dtype == numpy.uint64:
                 if self.rawarray_support:
                     value_type = ArrayTypes.UnsignedInteger64
-                    data = pythonExpr.astype('<u8')
+                    data = python_expr.astype('<u8')
                     array_class = wxfexpr.WXFExprRawArray
                 else:
                     TypeError('Cannot represent data of type uint64 as signed int64')
-            elif pythonExpr.dtype == numpy.float32:
+            elif python_expr.dtype == numpy.float32:
                 value_type = ArrayTypes.Real32
-                data = pythonExpr
-            elif pythonExpr.dtype == numpy.float64:
+                data = python_expr
+            elif python_expr.dtype == numpy.float64:
                 value_type = ArrayTypes.Real64
-                data = pythonExpr
-            elif pythonExpr.dtype == numpy.complex64:
+                data = python_expr
+            elif python_expr.dtype == numpy.complex64:
                 value_type = ArrayTypes.ComplexReal32
-                data = pythonExpr
-            elif pythonExpr.dtype == numpy.complex128:
+                data = python_expr
+            elif python_expr.dtype == numpy.complex128:
                 value_type = ArrayTypes.ComplexReal64
-                data = pythonExpr
+                data = python_expr
             else:
                 raise Exception(
-                    'NumPy serialization not implemented for ', repr(pythonExpr.dtype))
+                    'NumPy serialization not implemented for ', repr(python_expr.dtype))
 
-            yield array_class(pythonExpr.shape, value_type, data.tobytes())
+            yield array_class(python_expr.shape, value_type, data.tobytes())
