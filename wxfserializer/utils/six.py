@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import absolute_import, print_function, unicode_literals
+
+import sys
+import types
+
 # Copyright (c) 2010-2017 Benjamin Peterson
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,14 +27,10 @@
 
 """Utilities for writing code that runs on Python 2 and 3"""
 
-from __future__ import absolute_import
 
-import sys
-import types
 
 __author__ = "Benjamin Peterson <benjamin@python.org>"
 __version__ = "1.11.0"
-
 
 # Useful for very coarse version differentiation.
 PY2 = sys.version_info[0] == 2

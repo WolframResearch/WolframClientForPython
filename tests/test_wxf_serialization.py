@@ -1,22 +1,22 @@
 # -*- coding: utf-8 -*-
-import unittest
 
+from __future__ import absolute_import, print_function, unicode_literals
+
+from wxfserializer.serializer import write_varint, WXFExprSerializer
 from wxfserializer.utils import six
+from wxfserializer.wxfdataconsumer import InMemoryWXFDataConsumer
+from wxfserializer.wxfencoder import DefaultWXFEncoder
+from wxfserializer.wxfexpr import WXFExprBinaryString, WXFExprInteger, WXFExprReal, WXFExprString
+from wxfserializer.wxfexprprovider import WXFExprProvider
 
 import os
-
-from wxfserializer.wxfexpr import WXFExprString, WXFExprInteger, WXFExprReal, WXFExprBinaryString
-from wxfserializer.wxfencoder import DefaultWXFEncoder
-from wxfserializer.wxfexprprovider import WXFExprProvider
-from wxfserializer.wxfdataconsumer import InMemoryWXFDataConsumer
-from wxfserializer.serializer import WXFExprSerializer, write_varint
+import unittest
 
 def init():
     expr_provider = WXFExprProvider()
     data_consumer = InMemoryWXFDataConsumer()
     serializer = WXFExprSerializer(expr_provider, data_consumer)
     return (serializer, data_consumer)
-
 
 class SerializeTest(unittest.TestCase):
     def serialize_compare(self, pythonExpr, expected_wxf):
@@ -28,13 +28,12 @@ class SerializeTest(unittest.TestCase):
         current_file_dir = os.path.dirname(__file__)
         return os.path.join(current_file_dir, 'data', file_name)
 
-
 class TestVarint(unittest.TestCase):
     def test_zero(self):
         buffer = bytearray()
         write_varint(0, buffer)
         self.assertSequenceEqual(buffer, bytearray([0x00]))
-    
+
     def test_one_byte(self):
         buffer = bytearray()
         write_varint(127, buffer)
@@ -56,7 +55,7 @@ class TestVarint(unittest.TestCase):
         write_varint((1 << (7 * 2)), buffer)
         self.assertSequenceEqual(
             buffer, bytearray([0x80, 0x80, 0x01]))
-        
+
         buffer = bytearray()
         write_varint((1 << (7 * 3)) - 1, buffer)
         self.assertSequenceEqual(
@@ -72,7 +71,6 @@ class TestVarint(unittest.TestCase):
         write_varint((1 << (7 * 9)) - 1, buffer)
         self.assertSequenceEqual(
             buffer, bytearray([0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F]))
-
 
 class TestWXFString(SerializeTest):
     def testBasicString(self):
@@ -137,7 +135,6 @@ class TestWXFString(SerializeTest):
             else:
                 with self.assertRaises(UnicodeEncodeError):
                     self.serialize_compare(chr(val), wxf)
-        
 
 class TestWXFInteger(unittest.TestCase):
     ''' Mostly useful for Python 2.7. Otherwise we test int.to_bytes.
@@ -177,7 +174,6 @@ class TestWXFReal(SerializeTest):
         value = 1.2345
         wxf = b'\x38\x3a\x72\x8d\x97\x6e\x12\x83\xc0\xf3\x3f'
         self.serialize_compare(value, wxf)
-    
 
     def test_real0(self):
         value = 0.
@@ -193,7 +189,6 @@ class TestWXFReal(SerializeTest):
         value = 1.23456789e100
         wxf = b'\x38\x3a\x72\x17\x3f\x94\xe8\xd8\x93\xb6\x54'
         self.serialize_compare(value, wxf)
-
 
 class TestLists(SerializeTest):
     def test_simple_list(self):
@@ -215,7 +210,7 @@ class TestAssociation(SerializeTest):
         value = {1:2}
         wxf = b'\x38\x3a\x41\x01\x2d\x43\x01\x43\x02'
         self.serialize_compare(value, wxf)
-    
+
     def test_empty_dic(self):
         wxf = b'\x38\x3a\x41\x00'
         self.serialize_compare({}, wxf)
@@ -242,7 +237,7 @@ class MixingAll(SerializeTest):
 
         with open(self.path_to_file_in_data_dir('allchars.wxf'), 'rb') as r_file:
             ba = bytearray(r_file.read())
-        self.serialize_compare(all_char, ba)        
+        self.serialize_compare(all_char, ba)
 
     def test_default(self):
         expr_provider = WXFExprProvider(default=list)
@@ -251,4 +246,3 @@ class MixingAll(SerializeTest):
         serializer.serialize(range(1, 4))
         wxf = b'\x38\x3a\x66\x03\x73\x04\x4c\x69\x73\x74\x43\x01\x43\x02\x43\x03'
         self.assertSequenceEqual(data_consumer.data(),wxf)
-        

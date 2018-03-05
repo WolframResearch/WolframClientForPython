@@ -1,8 +1,12 @@
-from wxfserializer.wxfexpr import WXFConstants
+# -*- coding: utf-8 -*-
+
+from __future__ import absolute_import, print_function, unicode_literals
+
 from wxfserializer.wxfdataconsumer import InMemoryWXFDataConsumer
+from wxfserializer.wxfexpr import WXFConstants
 from wxfserializer.wxfexprprovider import WXFExprProvider
 
-__all__ = [ 
+__all__ = [
     'WXFExprSerializer',
     'SerializationContext'
     ]
@@ -10,9 +14,8 @@ __all__ = [
 class WXFSerializerException(Exception):
     pass
 
-
 def write_varint(int_value, data_consumer):
-    """Serialize `int_value` into varint bytes and append them to 
+    """Serialize `int_value` into varint bytes and append them to
     `data_consumer`, return the number of bytes written.
     """
     if int_value < 0:
@@ -27,11 +30,11 @@ def write_varint(int_value, data_consumer):
         else:
             data_consumer.append(next)
             break
-    
+
     return count
 
 class SerializationContext(object):
-    """ Keeps track of various parameter associated to an expression being serialized. 
+    """ Keeps track of various parameter associated to an expression being serialized.
     The finalized expression has a tree structure; it is serialized depth first. During
     the serialization process of an expression involving many non-atomic elements (e.g List),
     we end up having incomplete parts at various level.
@@ -41,7 +44,7 @@ class SerializationContext(object):
     parameters prevent inconsistencies in the number of elements and the declared length, the
     last one avoid incorrect use of `WXFExprRule(Delayed)` tokens.
     """
-   
+
     __slots__ = '_depth', '_expected_length_stack', '_current_index_stack', '_in_assoc_stack'
 
     def __init__(self):
@@ -122,7 +125,7 @@ class WXFExprSerializer(object):
     """ Pulls instances of `WXFExpr` from an `WXFExprProvider`, serializes them into wxf bytes and appends the data to
     a `WXFDataConsumer`. Ensures the output data is a valid WXF encoded expression, and raises an exception otherwise.
 
-    See `tutorial/WXFFormatDescription` from Mathematica documentation or visit http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html 
+    See `tutorial/WXFFormatDescription` from Mathematica documentation or visit http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html
     for an in depth description of the format.
     """
     __slots__ = '_expr_provider', '_data_consumer', '_context'
@@ -131,7 +134,7 @@ class WXFExprSerializer(object):
         self._expr_provider = expr_provider
         self._data_consumer = data_consumer
         self._context = SerializationContext()
-    
+
     @property
     def context(self):
         return self._context

@@ -1,10 +1,15 @@
-import time
-import numpy
-from wxfserializer.wxfnumpyencoder import NumPyWXFEncoder
-from wxfserializer.wxfexprprovider import WXFExprProvider
-from wxfserializer.wxfdataconsumer import WXFDataConsumer, InMemoryWXFDataConsumer
+# -*- coding: utf-8 -*-
+
+from __future__ import absolute_import, print_function, unicode_literals
+
 from wxfserializer.serializer import WXFExprSerializer
 from wxfserializer.utils import six
+from wxfserializer.wxfdataconsumer import InMemoryWXFDataConsumer, WXFDataConsumer
+from wxfserializer.wxfexprprovider import WXFExprProvider
+from wxfserializer.wxfnumpyencoder import NumPyWXFEncoder
+
+import numpy
+import time
 
 def basicListOfString(lenght=10000):
     pyExpr = ['abcdefgh' for i in range(lenght)]
@@ -19,7 +24,6 @@ def basicListOfString(lenght=10000):
     with open('/tmp/pytest.wxf', 'wb') as output:
         output.write(data_consumer.data())
 
-
 def basicListOfInteger(lenght=10000):
     pyExpr = list(range(lenght))
     start = time.perf_counter()
@@ -29,7 +33,6 @@ def basicListOfInteger(lenght=10000):
     serializer.serialize(pyExpr)
     stop = time.perf_counter()
     print('serialization of list of int took: ', stop - start)
-
 
 def basicNumPyArray(length=1e7):
     start = time.perf_counter()
@@ -43,7 +46,6 @@ def basicNumPyArray(length=1e7):
     with open('/tmp/numpytest.wxf', 'wb') as output:
         output.write(data_consumer.data())
     print('serialization of numpy array took: ', stop - start)
-
 
 def mixNumPyAndBasicTypes():
     start = time.perf_counter()

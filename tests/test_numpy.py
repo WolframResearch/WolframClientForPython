@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
-import unittest
-import numpy
 
-from wxfserializer.wxfnumpyencoder import NumPyWXFEncoder
-from wxfserializer.wxfencoder import WXFEncoder, DefaultWXFEncoder
-from wxfserializer.wxfexprprovider import WXFExprProvider
-from wxfserializer.wxfdataconsumer import WXFDataConsumer, InMemoryWXFDataConsumer
+from __future__ import absolute_import, print_function, unicode_literals
+
 from wxfserializer.serializer import WXFExprSerializer
+from wxfserializer.wxfdataconsumer import InMemoryWXFDataConsumer, WXFDataConsumer
+from wxfserializer.wxfencoder import DefaultWXFEncoder, WXFEncoder
+from wxfserializer.wxfexprprovider import WXFExprProvider
+from wxfserializer.wxfnumpyencoder import NumPyWXFEncoder
+
+import numpy
+import unittest
 
 class TestNumpySerialization(unittest.TestCase):
     @staticmethod
@@ -20,7 +23,6 @@ class TestNumpySerialization(unittest.TestCase):
     @staticmethod
     def initOnlyRA():
         return TestNumpySerialization.init(False, True)
-
 
     @staticmethod
     def init(pa, ra):

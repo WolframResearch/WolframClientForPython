@@ -1,5 +1,8 @@
-from wxfserializer.wxfencoder import WXFEncoder, DefaultWXFEncoder, NotEncodedException
+# -*- coding: utf-8 -*-
 
+from __future__ import absolute_import, print_function, unicode_literals
+
+from wxfserializer.wxfencoder import DefaultWXFEncoder, NotEncodedException, WXFEncoder
 
 class WXFExprProvider(object):
     '''
@@ -8,15 +11,15 @@ class WXFExprProvider(object):
     `WXFExprProvider` can be initialized with an encoder. If none is provided the
     default class `DefaultWXFEncoder` is used to instanciate one. It is possible
     to add extra encoder using `add_encoder`. The order in which encoders are called
-    is the one in which they were added. Note that for performance reasons, it is 
+    is the one in which they were added. Note that for performance reasons, it is
     recommanded to have the default encoder be first, as such one should not initialize
     a provider with an encoder except if the default one is not suited for ones needs.
-    
-    An optional `default` function can be passed to the provider at initialization. It 
-    is used in last resort if no encoder handled the object. It is applied to the 
+
+    An optional `default` function can be passed to the provider at initialization. It
+    is used in last resort if no encoder handled the object. It is applied to the
     object and is expected to transform it to something serializable
     e.g: a string using `default=repr`.
-        
+
     One must carefully design the `default` function to avoid stack overflow.
     '''
     __slots__ = 'encoders', 'default'
@@ -27,9 +30,9 @@ class WXFExprProvider(object):
             self.add_encoder(encoder)
         else:
             self.add_encoder(DefaultWXFEncoder())
-        
+
         self.default = default
-            
+
     def add_encoder(self, *encoders):
         ''' Add a new encoder to be called last if all others failed to encode an object. '''
         for encoder in encoders:
@@ -58,7 +61,7 @@ class WXFExprProvider(object):
             # the expression was not encoded. Moving on to the next encoder.
             except NotEncodedException:
                 pass
-                
+
         if use_default and self.default is not None:
             for sub in self._iter(self.default(o), use_default=False):
                 yield sub
