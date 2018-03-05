@@ -3,8 +3,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wxfserializer.serializer import WXFExprSerializer
-from wxfserializer.wxfdataconsumer import InMemoryWXFDataConsumer, WXFDataConsumer
-from wxfserializer.wxfencoder import DefaultWXFEncoder, WXFEncoder
+from wxfserializer.wxfdataconsumer import InMemoryWXFDataConsumer
+from wxfserializer.wxfencoder import DefaultWXFEncoder
 from wxfserializer.wxfexprprovider import WXFExprProvider
 from wxfserializer.wxfnumpyencoder import NumPyWXFEncoder
 

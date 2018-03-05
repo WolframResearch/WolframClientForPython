@@ -5,8 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wxfserializer.serializer import write_varint, WXFExprSerializer
 from wxfserializer.utils import six
 from wxfserializer.wxfdataconsumer import InMemoryWXFDataConsumer
-from wxfserializer.wxfencoder import DefaultWXFEncoder
-from wxfserializer.wxfexpr import WXFExprBinaryString, WXFExprInteger, WXFExprReal, WXFExprString
+from wxfserializer.wxfexpr import WXFExprBinaryString, WXFExprInteger, WXFExprString
 from wxfserializer.wxfexprprovider import WXFExprProvider
 
 import os

@@ -2,9 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wxfserializer.wxfdataconsumer import InMemoryWXFDataConsumer
 from wxfserializer.wxfexpr import WXFConstants
-from wxfserializer.wxfexprprovider import WXFExprProvider
 
 __all__ = [
     'WXFExprSerializer',
