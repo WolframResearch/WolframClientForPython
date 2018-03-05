@@ -41,8 +41,6 @@ if PY3:
     class_types = type,
     text_type = str
     binary_type = bytes
-
-    MAXSIZE = sys.maxsize
 else:
     string_types = basestring,
     integer_types = (int, long)
