@@ -74,13 +74,13 @@ class TestVarint(unittest.TestCase):
 class TestWXFString(SerializeTest):
     def testBasicString(self):
         value = u"maître & élève"
-        wxfExpr = WXFExprString(value)
-        self.assertEqual(wxfExpr.value, value.encode(encoding='utf-8'))
+        wxfexpr = WXFExprString(value)
+        self.assertEqual(wxfexpr.value, value.encode(encoding='utf-8'))
 
     def testBasicStringOfBytes(self):
         value = u"maître & élève"
-        wxfExpr = WXFExprString(value)
-        self.assertEqual(wxfExpr.value, value.encode(encoding='utf-8'))
+        wxfexpr = WXFExprString(value)
+        self.assertEqual(wxfexpr.value, value.encode(encoding='utf-8'))
 
     def testWrongStringType(self):
         value = 1
@@ -101,8 +101,8 @@ class TestWXFString(SerializeTest):
 
     def testBinaryString(self):
         value = bytearray([1,2,3])
-        wxfExpr = WXFExprBinaryString(value)
-        self.assertSequenceEqual(wxfExpr.data, value)
+        wxfexpr = WXFExprBinaryString(value)
+        self.assertSequenceEqual(wxfexpr.data, value)
 
     def test_unicode(self):
         value = u'élève'
