@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-
+import re
 from wxfserializer.utils import six
 
 INT8_MAX = 1 << 7
@@ -39,3 +39,15 @@ def force_text(s, encoding='utf-8', errors='strict'):
         # SafeText at the end.
         s = s.decode(encoding, errors)
     return s
+
+
+class VersionParser(object):
+    ''' Parse a string version of the form {{major}}.{{minor}}.* to extract the major and minor values '''
+
+    def __init__(self, version):
+        if not re.match(r'\d[.]\d+[.].*', version):
+            raise ValueError("Version string is not valid.")
+        values = version.split('.')
+        self.version = version
+        self.major = int(values[0])
+        self.minor = int(values[1])

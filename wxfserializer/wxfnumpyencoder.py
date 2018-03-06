@@ -4,9 +4,23 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from wxfserializer.wxfencoder import WXFEncoder
 from wxfserializer.wxfexpr import ArrayTypes
+from wxfserializer.utils.wxfutils import VersionParser
 
 import numpy
 import wxfserializer.wxfexpr as wxfexpr
+
+__all__ = [
+    'NumPyWXFEncoder', 
+    'NUMPY_VERSION' 
+]
+
+
+# Numpy 1.9+ support array.tobytes, but previous versions don't and use tostring instead.
+NUMPY_VERSION = VersionParser(numpy.__version__)
+if NUMPY_VERSION.major <= 1 and NUMPY_VERSION.minor < 9:
+    USE_TO_STRING = True
+else:
+    USE_TO_STRING = False
 
 class NumPyWXFEncoder(WXFEncoder):
     '''
@@ -101,5 +115,7 @@ class NumPyWXFEncoder(WXFEncoder):
             else:
                 raise Exception(
                     'NumPy serialization not implemented for ', repr(python_expr.dtype))
-
-            yield array_class(python_expr.shape, value_type, data.tobytes())
+            if USE_TO_STRING:
+                yield array_class(python_expr.shape, value_type, data.tostring())
+            else:
+                yield array_class(python_expr.shape, value_type, data.tobytes())
