@@ -116,10 +116,10 @@ class WXFExprInteger(_WXFExpr):
 
         self.value = value
 
-    StructInt8LE = struct.Struct('<b')
-    StructInt16LE = struct.Struct('<h')
-    StructInt32LE = struct.Struct('<i')
-    StructInt64LE = struct.Struct('<q')
+    StructInt8LE  = struct.Struct(b'<b')
+    StructInt16LE = struct.Struct(b'<h')
+    StructInt32LE = struct.Struct(b'<i')
+    StructInt64LE = struct.Struct(b'<q')
 
     def to_bytes(self):
         ''' Encode the integer into bytes and return them in a `buffer`.
@@ -162,7 +162,7 @@ class WXFExprReal(_WXFExpr):
         super(WXFExprReal, self).__init__(WXFConstants.Real64)
         self.value = value
 
-    StructDouble = struct.Struct('d')
+    StructDouble = struct.Struct(b'd')
 
     def to_bytes(self):
         buffer = bytearray(8)
