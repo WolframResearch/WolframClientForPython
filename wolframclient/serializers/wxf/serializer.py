@@ -2,11 +2,11 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wxfserializer.wxfexpr import WXFConstants
-
 __all__ = [
     'WXFExprSerializer',
-    'SerializationContext'
+    'SerializationContext',
+    'write_varint',
+    'WXFSerializerException'
     ]
 
 class WXFSerializerException(Exception):
@@ -143,47 +143,6 @@ class WXFExprSerializer(object):
         '''
         self._data_consumer.append(WXF_VERSION).append(WXF_HEADER_SEPARATOR)
         for wxfexpr in self._expr_provider.provide_wxfexpr(pyExpr):
-            self._to_wxf_bytes(wxfexpr)
+            wxfexpr._serialize_to_wxf(self._data_consumer, self._context)
         if not self._context.is_valid_final_state():
             raise WXFSerializerException('Inconsistent state: truncated expr.')
-        
-    def _to_wxf_bytes(self, wxfexpr):
-        '''
-        Contains all the rules defining the WXF format. Turn instances of `WXFExpr` into wxf bytes.
-        '''
-        self._data_consumer.append(wxfexpr.wxfType)
-        if wxfexpr.wxfType == WXFConstants.String or wxfexpr.wxfType == WXFConstants.Symbol:
-            self._context.add_part()
-            write_varint(wxfexpr.length, self._data_consumer)
-            self._data_consumer.extend(wxfexpr.value)
-        elif wxfexpr.wxfType == WXFConstants.Integer8 or wxfexpr.wxfType == WXFConstants.Integer16 or wxfexpr.wxfType == WXFConstants.Integer32 or wxfexpr.wxfType == WXFConstants.Integer64:
-            self._context.add_part()
-            self._data_consumer.extend(wxfexpr.to_bytes())
-        elif wxfexpr.wxfType == WXFConstants.Real64:
-            self._context.add_part()
-            self._data_consumer.extend(wxfexpr.to_bytes())
-        elif wxfexpr.wxfType == WXFConstants.Function:
-            # Function has a head which account for one part element contrary to association
-            self._context.step_in_new_expr(wxfexpr.length + 1)
-            write_varint(wxfexpr.length, self._data_consumer)
-        elif wxfexpr.wxfType == WXFConstants.Association:
-            self._context.step_in_new_expr(wxfexpr.length, is_assoc=True)
-            write_varint(wxfexpr.length, self._data_consumer)
-        elif wxfexpr.wxfType == WXFConstants.Rule or wxfexpr.wxfType == WXFConstants.RuleDelayed:
-            # make sure those special tokens are correctly used inside an association.
-            if not self.context.is_in_assoc():
-                raise WXFSerializerException('WXF Rule and RuleDelayed must be part of an Association. Use a Function with head Symbol "Rule(Delayed)" outside associations.')
-            # rule always has two parts.
-            self._context.step_in_new_expr(2)
-        elif wxfexpr.wxfType == WXFConstants.PackedArray or wxfexpr.wxfType == WXFConstants.RawArray:
-            self._context.add_part()
-            self._data_consumer.append(wxfexpr.value_type)
-            write_varint(len(wxfexpr.dimensions), self._data_consumer)
-            for dim in wxfexpr.dimensions:
-                write_varint(dim, self._data_consumer)
-            if wxfexpr.data is not None:
-                self._data_consumer.extend(wxfexpr.data)
-            else:
-                raise WXFSerializerException("Missing array data.")
-        else:
-            raise TypeError('Unknown wxf expression type.')
