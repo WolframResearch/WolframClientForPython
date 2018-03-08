@@ -61,12 +61,15 @@ class WXFEncoder(object):
         for sub in self._provider.provide_wxfexpr(o):
             yield sub
 
+    
+    NOT_PROVIDER = object()
+
     def _encode(self, o):
         ''' Called by the provider.'''
-        value = None
+        value = WXFEncoder.NOT_PROVIDER
         for value in self.encode(o):
             yield value
-        if value is None:
+        if value is WXFEncoder.NOT_PROVIDER:
             raise NotEncodedException
 
 class DefaultWXFEncoder(WXFEncoder):
