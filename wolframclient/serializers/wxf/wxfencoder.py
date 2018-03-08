@@ -61,7 +61,6 @@ class WXFEncoder(object):
         for sub in self._provider.provide_wxfexpr(o):
             yield sub
 
-    
     NOT_PROVIDER = object()
 
     def _encode(self, o):

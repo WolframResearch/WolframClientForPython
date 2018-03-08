@@ -2,18 +2,17 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from wxfserializer.utils.wxfutils import VersionParser
 from wxfserializer.wxfencoder import WXFEncoder
 from wxfserializer.wxfexpr import ArrayTypes
-from wxfserializer.utils.wxfutils import VersionParser
 
 import numpy
 import wxfserializer.wxfexpr as wxfexpr
 
 __all__ = [
-    'NumPyWXFEncoder', 
-    'NUMPY_VERSION' 
+    'NumPyWXFEncoder',
+    'NUMPY_VERSION'
 ]
-
 
 # Numpy 1.9+ support array.tobytes, but previous versions don't and use tostring instead.
 NUMPY_VERSION = VersionParser(numpy.__version__)
@@ -91,7 +90,7 @@ class NumPyWXFEncoder(WXFEncoder):
                 else:
                     value_type = ArrayTypes.Integer64
                     data = python_expr.astype('<i8')
-            # no one to one mapping to signed values, even if most of the time 
+            # no one to one mapping to signed values, even if most of the time
             # the values would fit
             elif python_expr.dtype == numpy.uint64:
                 if self.rawarray_support:

@@ -2,8 +2,9 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wxfserializer.utils import six, wxfutils
 from wxfserializer.serializer import write_varint, WXFSerializerException
+from wxfserializer.utils import six, wxfutils
+
 import struct
 
 __all__ = [
@@ -61,7 +62,7 @@ VALID_PACKED_ARRAY_TYPES = set([
     ArrayTypes.ComplexReal32,
     ArrayTypes.ComplexReal64]
 )
-    
+
 class _WXFExpr(object):
     __slots__ = 'wxfType'
 
@@ -88,7 +89,6 @@ class WXFExprFunction(_WXFExpr):
         # Function has a head which account for one part element contrary to association
         context.step_in_new_expr(self.length + 1)
         write_varint(self.length, data_consumer)
-
 
 class WXFExprInteger(_WXFExpr):
     ''' Integers have various length, from one byte up to eigth and are signed
@@ -150,7 +150,6 @@ class WXFExprInteger(_WXFExpr):
         context.add_part()
         data_consumer.extend(self.to_bytes())
 
-
 class WXFExprReal(_WXFExpr):
     ''' Represent a floating point value. Internally WXF represents the value with
     double float-point value in the IEEE 754 standard. '''
@@ -200,7 +199,6 @@ class _WXFExprStringLike(_WXFExpr):
         write_varint(self.length, data_consumer)
         data_consumer.extend(self.value)
 
-
 class WXFExprSymbol(_WXFExprStringLike):
     ''' A symbol represented by a string name. The name is always utf8 encoded.'''
     def __init__(self, value):
@@ -240,13 +238,12 @@ class WXFExprBinaryString(_WXFExpr):
             raise TypeError(
                 'WXFExprBinaryString must be initialized with binary data: bytes in Python 3, str in Python 2.7 or bytearray.')
         super(WXFExprBinaryString, self).__init__(WXFConstants.BinaryString)
-    
+
     def _serialize_to_wxf(self, data_consumer, context):
         data_consumer.append(self.wxfType)
         context.add_part()
         write_varint(len(self.data), data_consumer)
         data_consumer.extend(self.data)
-
 
 class _WXFExprArray(_WXFExpr):
     '''Arrays are multidimensional tables of machine-precision numeric values.
@@ -276,7 +273,7 @@ class _WXFExprArray(_WXFExpr):
         if self.data is not None:
             data_consumer.extend(self.data)
         else:
-            raise WXFSerializerException("Missing array data.")    
+            raise WXFSerializerException("Missing array data.")
 
 class WXFExprPackedArray(_WXFExprArray):
     ''' Packed array is a type of array that only supports a subset of all the
@@ -303,12 +300,11 @@ class WXFExprAssociation(_WXFExpr):
             raise TypeError('WXFExprAssociation must be instanciated with a length.')
         super(WXFExprAssociation, self).__init__(WXFConstants.Association)
         self.length = length
-    
+
     def _serialize_to_wxf(self, data_consumer, context):
         data_consumer.append(self.wxfType)
         context.step_in_new_expr(self.length, is_assoc=True)
         write_varint(self.length, data_consumer)
-
 
 class _WXFExprRule(_WXFExpr):
     def __init__(self, wxf_type):
@@ -321,7 +317,6 @@ class _WXFExprRule(_WXFExpr):
             raise WXFSerializerException('WXF Rule and RuleDelayed must be part of an Association. Use a Function with head Symbol "Rule(Delayed)" outside associations.')
         # rule always has two parts.
         context.step_in_new_expr(2)
-    
 
 class WXFExprRule(_WXFExprRule):
     ''' Represent a rule in an association. Rule have two parts but no head.
@@ -330,7 +325,6 @@ class WXFExprRule(_WXFExprRule):
     '''
     def __init__(self):
         super(WXFExprRule, self).__init__(WXFConstants.Rule)
-
 
 class WXFExprRuleDelayed(_WXFExprRule):
     ''' Represent a rule delayed in an association. See `WXFExprRule`'''

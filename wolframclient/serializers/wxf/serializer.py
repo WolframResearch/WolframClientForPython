@@ -54,7 +54,7 @@ class SerializationContext(object):
         self._current_index_stack = [0]
         # root is not an assoc.
         self._in_assoc_stack = [False]
-    
+
     def _check_insert(self):
         if self._depth >= 0 and self._current_index_stack[self._depth] >= self._expected_length_stack[self._depth]:
             raise IndexError('Out of bound, number of parts is greater than declared length %d.' %
@@ -63,7 +63,6 @@ class SerializationContext(object):
     def _step_out_finalized_expr(self):
         while self._depth >= 0 and self._current_index_stack[self._depth] == self._expected_length_stack[self._depth]:
             self._depth -= 1
-
 
     def add_part(self):
         self._check_insert()
@@ -104,7 +103,7 @@ class SerializationContext(object):
             self._current_index_stack.append(0)
         else:
             self._current_index_stack[self._depth] = 0
-        
+
         self._step_out_finalized_expr()
 
     def is_valid_final_state(self):
