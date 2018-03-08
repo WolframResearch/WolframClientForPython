@@ -2,15 +2,21 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wxfserializer.serializer import WXFExprSerializer
-from wxfserializer.wxfdataconsumer import InMemoryWXFDataConsumer
-from wxfserializer.wxfencoder import DefaultWXFEncoder
-from wxfserializer.wxfexprprovider import WXFExprProvider
-from wxfserializer.wxfnumpyencoder import NumPyWXFEncoder
+try:
+    import numpy
+    from wxfserializer.serializer import WXFExprSerializer
+    from wxfserializer.wxfdataconsumer import InMemoryWXFDataConsumer
+    from wxfserializer.wxfencoder import DefaultWXFEncoder
+    from wxfserializer.wxfexprprovider import WXFExprProvider
+    from wxfserializer.wxfnumpyencoder import NumPyWXFEncoder
+    NUMPY = True
+except ImportError:
+    NUMPY = False
+    pass
 
-import numpy
 import unittest
 
+@unittest.skipIf(not NUMPY, 'NumPy not found. Skipping numpy tests.')
 class TestNumpySerialization(unittest.TestCase):
     @staticmethod
     def initDefault():

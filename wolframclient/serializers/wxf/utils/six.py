@@ -34,7 +34,7 @@ __version__ = "1.11.0"
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
 PY34 = sys.version_info[0:2] >= (3, 4)
-
+JYTHON = sys.platform.startswith('java')
 if PY3:
     string_types = str,
     integer_types = int,

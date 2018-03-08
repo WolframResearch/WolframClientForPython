@@ -118,6 +118,7 @@ class TestWXFString(SerializeTest):
         wxf = b'\x38\x3a\x53\x03\xef\xbf\xbf'
         self.serialize_compare(value, wxf)
 
+    @unittest.skipIf(six.JYTHON, "Different surrogate handling in Jython.")
     def test_high_surrogates(self):
         values = [0xD800, 0xDB7F, 0xDC00, 0xDFFF]
         wxf_outs = [
@@ -138,6 +139,7 @@ class TestWXFString(SerializeTest):
 class TestWXFInteger(unittest.TestCase):
     ''' Mostly useful for Python 2.7. Otherwise we test int.to_bytes.
     '''
+    @unittest.skipIf(six.JYTHON, None)
     def test_int8(self):
         values = [0, 1, 127, -1, -128]
         res = [0, 1, 127, 255, 128]
@@ -145,6 +147,7 @@ class TestWXFInteger(unittest.TestCase):
             wxf_expr = WXFExprInteger(values[i])
             self.assertEqual(wxf_expr.to_bytes()[0], res[i])
 
+    @unittest.skipIf(six.JYTHON, None)
     def test_int16(self):
         values = [-(1 << 15), (1 << 15) - 1]
         res = [(0x00, 0x80), (0xFF, 0x7F)]
@@ -152,6 +155,7 @@ class TestWXFInteger(unittest.TestCase):
             wxf_expr = WXFExprInteger(values[i])
             self.assertSequenceEqual(wxf_expr.to_bytes(), res[i])
 
+    @unittest.skipIf(six.JYTHON, None)
     def test_int32(self):
         values = [-(1 << 31), (1 << 31) - 1]
         res = [(0x00, 0x00, 0x00, 0x80),
@@ -160,6 +164,7 @@ class TestWXFInteger(unittest.TestCase):
             wxf_expr = WXFExprInteger(values[i])
             self.assertSequenceEqual(wxf_expr.to_bytes(), res[i])
 
+    @unittest.skipIf(six.JYTHON, None)
     def test_int64(self):
         values = [-(1 << 63), (1 << 63) - 1]
         res = [(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80),
@@ -204,6 +209,8 @@ class TestLists(SerializeTest):
         wxf = b'\x38\x3a\x66\x04\x73\x04\x4c\x69\x73\x74\x66\x00\x73\x04\x4c\x69\x73\x74\x66\x01\x73\x04\x4c\x69\x73\x74\x66\x00\x73\x04\x4c\x69\x73\x74\x66\x02\x73\x04\x4c\x69\x73\x74\x43\x01\x66\x00\x73\x04\x4c\x69\x73\x74\x66\x00\x73\x04\x4c\x69\x73\x74'
         self.serialize_compare(value, wxf)
 
+# Note: Dict must be used with care as the key ordering is not guaranted.
+# One way to make reproducible tests is to use at most one key.
 class TestAssociation(SerializeTest):
     def test_simple_dic(self):
         value = {1:2}
@@ -215,8 +222,8 @@ class TestAssociation(SerializeTest):
         self.serialize_compare({}, wxf)
 
     def test_empty_dics(self):
-        value = {'k' : {1:2, 3:4}, 'e':{}}
-        wxf = b'\x38\x3a\x41\x02\x2d\x53\x01\x6b\x41\x02\x2d\x43\x01\x43\x02\x2d\x43\x03\x43\x04\x2d\x53\x01\x65\x41\x00'
+        value = {'k' : {1:{}}}
+        wxf = b'\x38\x3a\x41\x01\x2d\x53\x01\x6b\x41\x01\x2d\x43\x01\x41\x00'
         self.serialize_compare(value, wxf)
 
 class MixingAll(SerializeTest):

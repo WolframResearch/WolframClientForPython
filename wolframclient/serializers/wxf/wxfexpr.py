@@ -7,6 +7,9 @@ from wxfserializer.utils import six, wxfutils
 
 import struct
 
+if six.JYTHON:
+    import jarray
+
 __all__ = [
     'WXFExprFunction',
     'WXFExprInteger',
@@ -121,6 +124,16 @@ class WXFExprInteger(_WXFExpr):
     StructInt32LE = struct.Struct(b'<i')
     StructInt64LE = struct.Struct(b'<q')
 
+    def _pack(self, buffer):
+        if self.int_size == 1:
+            WXFExprInteger.StructInt8LE.pack_into(buffer, 0, self.value)
+        elif self.int_size == 2:
+            WXFExprInteger.StructInt16LE.pack_into(buffer, 0, self.value)
+        elif self.int_size == 4:
+            WXFExprInteger.StructInt32LE.pack_into(buffer, 0, self.value)
+        else:
+            WXFExprInteger.StructInt64LE.pack_into(buffer, 0, self.value)
+
     def to_bytes(self):
         ''' Encode the integer into bytes and return them in a `buffer`.
 
@@ -133,17 +146,14 @@ class WXFExprInteger(_WXFExpr):
             return self.value.to_bytes(self.int_size, byteorder='little', signed=True)
         #manual convertion
         else:
-            buffer = bytearray(8)
-            if self.int_size == 1:
-                WXFExprInteger.StructInt8LE.pack_into(buffer, 0, self.value)
-            elif self.int_size == 2:
-                WXFExprInteger.StructInt16LE.pack_into(buffer, 0, self.value)
-            elif self.int_size == 4:
-                WXFExprInteger.StructInt32LE.pack_into(buffer, 0, self.value)
+            if six.JYTHON:
+                buffer = jarray.zeros(8, 'c')
+                self._pack(buffer)
+                return buffer[:self.int_size].tostring()
             else:
-                WXFExprInteger.StructInt64LE.pack_into(buffer, 0, self.value)
-
-            return buffer[:self.int_size]
+                buffer = bytearray(8)
+                self._pack(buffer)
+                return buffer[:self.int_size]
 
     def _serialize_to_wxf(self, data_consumer, context):
         data_consumer.append(self.wxfType)
@@ -161,11 +171,18 @@ class WXFExprReal(_WXFExpr):
         super(WXFExprReal, self).__init__(WXFConstants.Real64)
         self.value = value
 
-    StructDouble = struct.Struct(b'd')
+    StructDouble = struct.Struct(b'<d')
 
     def to_bytes(self):
-        buffer = bytearray(8)
-        WXFExprReal.StructDouble.pack_into(buffer, 0, self.value)
+        if six.JYTHON:
+            import jarray
+            buffer = jarray.zeros(8, 'c')
+            WXFExprReal.StructDouble.pack_into(buffer, 0, self.value)
+            buffer.tostring()
+        else:
+            buffer = bytearray(8)
+            WXFExprReal.StructDouble.pack_into(buffer, 0, self.value)
+        
         return buffer
 
     def _serialize_to_wxf(self, data_consumer, context):
