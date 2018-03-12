@@ -134,26 +134,27 @@ class WXFExprInteger(_WXFExpr):
         else:
             WXFExprInteger.StructInt64LE.pack_into(buffer, 0, self.value)
 
-    def to_bytes(self):
-        ''' Encode the integer into bytes and return them in a `buffer`.
 
-        Note that the buffer is an bytearray in python 2.7 and an array in 3.x.
-        This method is only useful to hide the Python 2.7 implementation.
-        It is proxying int.to_bytes for version 3.4 and above.
-        '''
-        #build in convertion to binary form
-        if six.PY3:
+    ''' Encode the integer into bytes and return them in a `buffer`.
+
+    Note that the buffer is an bytearray in python 2.7 and an array in 3.x.
+    This method is only useful to hide the Python 2.7 implementation.
+    It is proxying int.to_bytes for version 3.4 and above.
+    '''
+
+    if six.JYTHON:
+        def to_bytes(self):
+            buffer = jarray.zeros(8, 'c')
+            self._pack(buffer)
+            return buffer[:self.int_size].tostring() 
+    elif six.PY2:
+        def to_bytes(self):
+            buffer = bytearray(8)
+            self._pack(buffer)
+            return buffer[:self.int_size]
+    else:
+        def to_bytes(self):
             return self.value.to_bytes(self.int_size, byteorder='little', signed=True)
-        #manual convertion
-        else:
-            if six.JYTHON:
-                buffer = jarray.zeros(8, 'c')
-                self._pack(buffer)
-                return buffer[:self.int_size].tostring()
-            else:
-                buffer = bytearray(8)
-                self._pack(buffer)
-                return buffer[:self.int_size]
 
     def _serialize_to_wxf(self, data_consumer, context):
         data_consumer.append(self.wxfType)
