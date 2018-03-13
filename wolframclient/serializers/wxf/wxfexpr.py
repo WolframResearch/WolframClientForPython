@@ -55,7 +55,7 @@ class ArrayTypes:
 
 ''' A set of all valid value type tokens for PackedArray.
 There is no restriction for RawArray value types. '''
-VALID_PACKED_ARRAY_TYPES = set([
+VALID_PACKED_ARRAY_TYPES = frozenset([
     ArrayTypes.Integer8,
     ArrayTypes.Integer16,
     ArrayTypes.Integer32,
