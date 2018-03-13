@@ -174,17 +174,17 @@ class WXFExprReal(_WXFExpr):
 
     StructDouble = struct.Struct(b'<d')
 
-    def to_bytes(self):
-        if six.JYTHON:
-            import jarray
+    if six.JYTHON:
+        def to_bytes(self):
             buffer = jarray.zeros(8, 'c')
             WXFExprReal.StructDouble.pack_into(buffer, 0, self.value)
             buffer.tostring()
-        else:
+            return buffer
+    else:
+        def to_bytes(self):
             buffer = bytearray(8)
             WXFExprReal.StructDouble.pack_into(buffer, 0, self.value)
-        
-        return buffer
+            return buffer
 
     def _serialize_to_wxf(self, data_consumer, context):
         data_consumer.append(self.wxfType)
