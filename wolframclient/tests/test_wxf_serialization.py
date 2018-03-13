@@ -209,11 +209,14 @@ class TestLists(SerializeTest):
         wxf = b'\x38\x3a\x66\x04\x73\x04\x4c\x69\x73\x74\x66\x00\x73\x04\x4c\x69\x73\x74\x66\x01\x73\x04\x4c\x69\x73\x74\x66\x00\x73\x04\x4c\x69\x73\x74\x66\x02\x73\x04\x4c\x69\x73\x74\x43\x01\x66\x00\x73\x04\x4c\x69\x73\x74\x66\x00\x73\x04\x4c\x69\x73\x74'
         self.serialize_compare(value, wxf)
 
+
+from collections import OrderedDict
 # Note: Dict must be used with care as the key ordering is not guaranted.
 # One way to make reproducible tests is to use at most one key.
 class TestAssociation(SerializeTest):
+
     def test_simple_dic(self):
-        value = {1:2}
+        value = {1: 2}
         wxf = b'\x38\x3a\x41\x01\x2d\x43\x01\x43\x02'
         self.serialize_compare(value, wxf)
 
@@ -222,8 +225,10 @@ class TestAssociation(SerializeTest):
         self.serialize_compare({}, wxf)
 
     def test_empty_dics(self):
-        value = {'k' : {1:{}}}
-        wxf = b'\x38\x3a\x41\x01\x2d\x53\x01\x6b\x41\x01\x2d\x43\x01\x41\x00'
+        value = OrderedDict()
+        value['k'] = {1: {}}
+        value['k2'] = {}
+        wxf = b'\x38\x3a\x41\x02\x2d\x53\x01\x6b\x41\x01\x2d\x43\x01\x41\x00\x2d\x53\x02\x6b\x32\x41\x00'
         self.serialize_compare(value, wxf)
 
 class MixingAll(SerializeTest):
