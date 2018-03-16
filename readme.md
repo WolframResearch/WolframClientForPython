@@ -73,7 +73,7 @@ To preserve order with association use collections.OrderedDict
 '<|0 -> "a", 1 -> "b", 2 -> "c", 3 -> "d"|>'
 ```
 
-Any class that has an __iter__ method is converted to a WL List, including generators.
+Any class that has an `__iter__` method is converted to a WL List, including generators.
 Generators should be used to serialize big data without running out of memory.
 
 ```
