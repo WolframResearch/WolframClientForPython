@@ -142,7 +142,7 @@ this module provide a simple way to write expressions complex WL expressions in 
 '{Now, PrimeQ[1], Interpreter["String"]["foo"]}'
 ```
 
-### Custom Objects
+### Custom serialization
 
 in order to provide a custom serialization for an object you can subclass WLSerializable
 
