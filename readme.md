@@ -150,8 +150,10 @@ from wolframclient.serializers.serializable import WLSerializable
 from wolframclient.language.expression import wl
 
 class MyStuff(WLSerializable):
+
     def __init__(self, *stuff):
         self.stuff = stuff
+
     def to_wl(self):
         return wl.RandomThings(*self.stuff)
 ```
@@ -169,6 +171,7 @@ export also supports a normalization function that allows you to redefine how ex
 from wolframclient.language.expression import wl
 
 class MyStuff(object):
+
     def __init__(self, *stuff):
         self.stuff = stuff
 
