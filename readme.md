@@ -1,6 +1,6 @@
 # Python serialization to WL / WXF
 
-This library is intended to provide a way to serialize python expression to WL / WXF string of bytes. The library was designed to be extensible so that any arbitrary Python object can be serialized with the addition of custom encoder(s). The code was tested with two interpreters: Python 2.7, Python 3.6.4 on MacOS and JYTHON 2.7.
+This library is intended to provide a way to serialize python expression to WL / WXF string of bytes. The library was designed to be extensible so that any arbitrary Python object can be serialized with the addition of custom encoder(s). The code was tested with three interpreters: Python 2.7, Python 3.6.4 and JYTHON.
 
 # API
 
