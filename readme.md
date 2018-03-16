@@ -27,6 +27,33 @@ export can write to any object that implements a write method, like file or Byte
 <open file 'file.wl', mode 'wb' at 0x10a4f01e0>
 ```
 
+## Export Formats
+
+### WL
+
+By default export serializes using InputForm
+
+```
+>>> export([1, 2, 3], format = "wl")
+'{1, 2, 3}'
+```
+
+### WXF
+
+WXF is an efficient format to rappresents expressions in WL
+
+```
+>>> export([1, 2, 3], format = "wxf")
+'8:f\x03s\x04ListC\x01C\x02C\x03'
+```
+
+The format allows compression using zlib, the compression is disabled by default:
+
+```
+>>> export([1, 2, 3], format = "wxf", compress = True)
+'8C:x\x9cKc.f\xf1\xc9,.qftfrf\x06\x00\x1b\xf8\x03L'
+```
+
 ## Data normalization
 
 ### Core data serialization
@@ -152,31 +179,4 @@ then you can pass the normalizer to export in order to perform a custom recursiv
 ```
 >>> export(MyStuff(1, 2, MyStuff([2, 3])), normalizer = normalizer)
 'RandomThings["o", "o", RandomThings[{"o", "o"}]]'
-```
-
-## Export Formats
-
-### WL
-
-By default export serializes using InputForm
-
-```
->>> export([1, 2, 3], format = "wl")
-'{1, 2, 3}'
-```
-
-### WXF
-
-WXF is an efficient format to rappresents expressions in WL
-
-```
->>> export([1, 2, 3], format = "wxf")
-'8:f\x03s\x04ListC\x01C\x02C\x03'
-```
-
-The format allows compression using zlib, the compression is disabled by default:
-
-```
->>> export([1, 2, 3], format = "wxf", compress = True)
-'8C:x\x9cKc.f\xf1\xc9,.qftfrf\x06\x00\x1b\xf8\x03L'
 ```
