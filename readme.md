@@ -92,7 +92,8 @@ datetime, time and date are supported, by using $TimeZone.
 >>> import datetime
 >>> now = datetime.datetime.now()
 >>> export([now.time(), now.date(), now])
-'{TimeObject[{16, 1, 19.993822}, TimeZone -> $TimeZone], DateObject[{2018, 3, 16}], DateObject[{2018, 3, 16, 16, 1, 19.993822}, "Instant", "Gregorian", $TimeZone]}'```
+'{TimeObject[{16, 1, 19.993822}, TimeZone -> $TimeZone], DateObject[{2018, 3, 16}], DateObject[{2018, 3, 16, 16, 1, 19.993822}, "Instant", "Gregorian", $TimeZone]}'
+```
 
 datetime and time with timezone are supported as well:
 
