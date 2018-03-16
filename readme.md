@@ -151,20 +151,20 @@ in order to provide a custom serialization for an object you can subclass WLSeri
 from wolframclient.serializers.serializable import WLSerializable
 from wolframclient.language.expression import wl
 
-class MyStuff(WLSerializable):
+class MyThings(WLSerializable):
 
-    def __init__(self, *stuff):
-        self.stuff = stuff
+    def __init__(self, *things):
+        self.things = things
 
     def to_wl(self):
-        return wl.RandomThings(*self.stuff)
+        return wl.PersonalThings(*self.things)
 ```
 
 after that export will be able to serialize the expression recursivly:
 
 ```
->>> export(MyStuff(1, 2, MyStuff(2, 3)))
-'RandomThings[1, 2, RandomThings[2, 3]]'
+>>> export(MyThings(1, 2, MyThings(2, 3)))
+'PersonalThings[1, 2, PersonalThings[2, 3]]'
 ```
 
 export also supports a normalization function that allows you to redefine how existing types should be serialized.
