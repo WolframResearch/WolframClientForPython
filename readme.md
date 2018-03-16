@@ -172,22 +172,22 @@ export also supports a normalization function that allows you to redefine how ex
 ```
 from wolframclient.language.expression import wl
 
-class MyStuff(object):
+class MyThings(object):
 
-    def __init__(self, *stuff):
-        self.stuff = stuff
+    def __init__(self, *things):
+        self.things = things
 
 def normalizer(o):
     if isinstance(o, int):
         return 'o'
-    if isinstance(o, MyStuff):
-        return wl.RandomThings(*o.stuff)
+    if isinstance(o, MyThings):
+        return wl.PeronalThings(*o.things)
     return o
 ```
 
 then you can pass the normalizer to export in order to perform a custom recursive normalization:
 
 ```
->>> export(MyStuff(1, 2, MyStuff([2, 3])), normalizer = normalizer)
-'RandomThings["o", "o", RandomThings[{"o", "o"}]]'
+>>> export(MyThings(1, 2, MyThings([2, 3])), normalizer = normalizer)
+'PeronalThings["o", "o", PeronalThings[{"o", "o"}]]'
 ```
