@@ -135,6 +135,7 @@ datetime and time with timezone are supported as well:
 this module provide a simple way to write expressions complex WL expressions in python:
 
 ```
+>>> from wolframclient.language.expression import wl
 >>> export([wl.Now, wl.PrimeQ(1), wl.Interpreter("String")("foo")])
 '{Now, PrimeQ[1], Interpreter["String"]["foo"]}'
 ```
