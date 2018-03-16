@@ -68,6 +68,7 @@ Built-in data structures are all supported:
 To preserve order with association use collections.OrderedDict
 
 ```
+>>> from collections import OrderedDict
 >>> export(OrderedDict(enumerate("abcd")))
 '<|0 -> "a", 1 -> "b", 2 -> "c", 3 -> "d"|>'
 ```
