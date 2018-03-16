@@ -181,7 +181,7 @@ def normalizer(o):
     if isinstance(o, int):
         return 'o'
     if isinstance(o, MyThings):
-        return wl.PeronalThings(*o.things)
+        return wl.PersonalThings(*o.things)
     return o
 ```
 
@@ -189,5 +189,5 @@ then you can pass the normalizer to export in order to perform a custom recursiv
 
 ```
 >>> export(MyThings(1, 2, MyThings([2, 3])), normalizer = normalizer)
-'PeronalThings["o", "o", PeronalThings[{"o", "o"}]]'
+'PersonalThings["o", "o", PersonalThings[{"o", "o"}]]'
 ```
