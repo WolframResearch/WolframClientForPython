@@ -4,12 +4,13 @@ This library is intended to provide a way to serialize python expression to WL /
 
 # API
 
-The main entry point to export python objects is the export function:
+This module provide an high level abstraction to rappresent and serialize arbtriary WL expressions:
 
 ```
 >>> from wolframclient.serializers import export
->>> export([1, 2, 3])
-'{1, 2, 3}'
+>>> from wolframclient.language.expression import wl
+>>> export([1, 2, 3, wl.Now, wl.Interpreter("String")("some text")])
+'{1, 2, 3, Now, Interpreter["String"]["some text"]}'
 ```
 
 If a string is provided as second argument then export will dump directly to a file.
