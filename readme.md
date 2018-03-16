@@ -4,7 +4,7 @@ This library is intended to provide a way to serialize python expression to WL /
 
 # API
 
-This module provide an high level abstraction to rappresent and serialize arbtriary WL expressions:
+This module provides an high level abstraction to rappresent and serialize arbtriary WL expressions:
 
 ```
 >>> from wolframclient.serializers import export
