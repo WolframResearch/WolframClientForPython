@@ -146,6 +146,8 @@ in order to provide a custom serialization for an object you can subclass WLSeri
 
 ```
 from wolframclient.serializers.serializable import WLSerializable
+from wolframclient.language.expression import wl
+
 class MyStuff(WLSerializable):
     def __init__(self, *stuff):
         self.stuff = stuff
@@ -163,6 +165,8 @@ after that export will be able to serialize the expression recursivly:
 export also supports a normalization function that allows you to redefine how existing types should be serialized.
 
 ```
+from wolframclient.language.expression import wl
+
 class MyStuff(object):
     def __init__(self, *stuff):
         self.stuff = stuff
