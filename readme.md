@@ -12,13 +12,14 @@ The main entry point to export python objects is the export function:
 '{1, 2, 3}'
 ```
 
-If a string is provided as second argument then export will dump directly to a file
+If a string is provided as second argument then export will dump directly to a file.
+export will take care of opening and closing the file for you.
 ```
 >>> export([1, 2, 3], 'file.wl')
 'file.wl'
 ```
 
-export can write to any object that implements a write method, like file or BytesIO or StringIO.
+export can also write to any object that implements a `write` method, like file or BytesIO or StringIO.
 
 ```
 >>> with open('file.wl', 'wb') as f:
