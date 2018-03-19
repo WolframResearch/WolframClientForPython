@@ -7,7 +7,7 @@ from wolframclient.serializers.serializable import WLSerializable
 from wolframclient.utils.decorators import to_dict
 from wolframclient.utils.encoding import safe_force_text
 
-class WolframLanguageExceptionBase(WLSerializable):
+class WolframLanguageExceptionBase(WLSerializable, object):
 
     def __init__(self):
         raise NotImplementedError
