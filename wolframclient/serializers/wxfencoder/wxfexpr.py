@@ -255,7 +255,7 @@ class WXFExprBinaryString(_WXFExpr):
     required.'''
     __slots__ = 'data'
     def __init__(self, data):
-        if isinstance(data, six.binary_type) or isinstance(data, bytearray):
+        if isinstance(data, (six.binary_type, bytearray)):
             self.data = data
         else:
             raise TypeError(
@@ -277,7 +277,7 @@ class _WXFExprArray(_WXFExpr):
 
     def __init__(self, wxf_type, dimensions, value_type, data = None):
         super(_WXFExprArray, self).__init__(wxf_type)
-        if not (isinstance(dimensions, tuple) or isinstance(dimensions, list)) or len(dimensions) == 0:
+        if not isinstance(dimensions, (list, tuple)) or len(dimensions) == 0:
             raise TypeError('Dimensions must be a non-empty list.')
         for dim in dimensions:
             if dim <= 0 or not isinstance(dim, six.integer_types):
