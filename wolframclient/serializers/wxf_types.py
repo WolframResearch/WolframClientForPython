@@ -28,7 +28,7 @@ def WLFloat(number):
     yield wxfexpr.WXFExprReal(number)
 
 def WLDecimal(number):
-    yield wxfexpr.WXFExprReal(number)
+    yield wxfexpr.WXFExprBigReal('{0:f}'.format(number))
 
 def WLRational(number):
     return WLFunction(
