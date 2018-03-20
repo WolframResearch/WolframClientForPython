@@ -43,8 +43,6 @@ class WolframLanguageExceptionBase(WLSerializable, Exception):
 
         if template:
             yield "MessageTemplate",   template
-
-        if parameters:
             yield "MessageParameters", parameters
 
         if self.show_traceback() and self.tb:
