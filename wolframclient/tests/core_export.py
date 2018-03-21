@@ -9,7 +9,6 @@ from wolframclient.tests.utils.base import TestCase as BaseTestCase
 from wolframclient.utils import six
 from wolframclient.utils.functional import identity
 
-
 import os
 import tempfile
 
