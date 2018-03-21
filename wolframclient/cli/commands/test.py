@@ -16,14 +16,14 @@ class Command(SimpleCommand):
     class_name = 'TestCase'
 
     if six.JYTHON:
-        dependencies = (
+        dependencies = [
             ("pytz",  None),
-        )
+        ]
     else:
-        dependencies = (
+        dependencies = [
             ("pytz",  None),
             ("numpy", None),
-        )
+        ]
 
     @property
     def available_test_cases(self):
