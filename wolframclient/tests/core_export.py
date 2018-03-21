@@ -17,7 +17,7 @@ class TestCase(BaseTestCase):
 
     def test_export(self):
 
-        #checking that export is to return bytes if no second argument is provided
+        #checking that export is able to return bytes if no second argument is provided
 
         self.assertEqual(export(2),     b'2')
         self.assertEqual(export("foo"), b'"foo"')
