@@ -9,14 +9,14 @@ from wolframclient.serializers import export
 
 import sys
 
-def safe_wl_execute(function, args = (), opts = {}, export_opts = {}):
+def safe_wl_execute(function, args = (), opts = {}, export_opts = {}, exception_class = WolframLanguageExceptionFromPython):
     try:
         return export(function(*args, **opts), **export_opts)
     except WolframLanguageExceptionBase as e:
         e.set_traceback(*sys.exc_info())
         return export(e, **export_opts)
     except Exception as e:
-        return export(WolframLanguageExceptionFromPython(e, exec_info = sys.exc_info()), **export_opts)
+        return export(exception_class(e, exec_info = sys.exc_info()), **export_opts)
 
 def to_wl(**export_opts):
     def outer(function):
