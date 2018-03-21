@@ -18,8 +18,8 @@ NOW = datetime.datetime(
 def test_datetime(tzinfo = None):
     return new_datetime(NOW, NOW, tzinfo = tzinfo)
 
-def test_date():
-    return new_date(NOW)
+def test_date(tzinfo = None):
+    return test_datetime(tzinfo).date()
 
 def test_time(tzinfo = None):
-    return new_time(NOW, tzinfo = tzinfo)
+    return test_datetime(tzinfo).time()
