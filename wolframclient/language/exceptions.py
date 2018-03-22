@@ -7,19 +7,29 @@ from wolframclient.serializers.serializable import WLSerializable
 from wolframclient.utils.decorators import to_dict
 from wolframclient.utils.encoding import safe_force_text
 
-class WolframLanguageExceptionBase(WLSerializable, Exception):
+class WolframLanguageException(WLSerializable, Exception):
 
-    def __init__(self):
-        raise NotImplementedError
+    def __init__(self, payload, exec_info = None):
+
+        self.payload = payload
+
+        if exec_info:
+            self.set_traceback(*exec_info)
+        else:
+            self.set_traceback(None, None, None)
 
     def failure_tag(self):
-        raise NotImplementedError
+        return "PythonError"
 
     def failure_template(self):
-        raise NotImplementedError
+        return safe_force_text(self.payload)
 
     def failure_parameters(self):
         return {}
+
+    def failure_code(self):
+        if isinstance(self.payload, Exception):
+            return self.payload.__class__.__name__
 
     def set_traceback(self, exc_type, exc_value, tb):
         self.exc_type, self.exc_value, self.tb = exc_type, exc_value, tb
@@ -39,7 +49,7 @@ class WolframLanguageExceptionBase(WLSerializable, Exception):
     @to_dict
     def failure_meta(self):
 
-        template, parameters = self.failure_template(), self.failure_parameters()
+        template, parameters, code = self.failure_template(), self.failure_parameters(), self.failure_code()
 
         if template:
             yield "MessageTemplate",   template
@@ -51,25 +61,5 @@ class WolframLanguageExceptionBase(WLSerializable, Exception):
 
             yield "Traceback", serialize_traceback(self.exc_type, self.exc_value, self.tb)
 
-class WolframLanguageExceptionFromPython(WolframLanguageExceptionBase):
-
-    def __init__(self, exception, exec_info = None, show_traceback = True, failure_tag = None):
-
-        self.exception = exception
-
-        self._show_traceback   = show_traceback
-        self._failure_tag      = failure_tag
-
-        if exec_info:
-            self.set_traceback(*exec_info)
-        else:
-            self.set_traceback(None, None, None)
-
-    def show_traceback(self):
-        return bool(self._show_traceback)
-
-    def failure_tag(self):
-        return safe_force_text(self._failure_tag or self.exception.__class__.__name__)
-
-    def failure_template(self):
-        return safe_force_text(self.exception)
+        if code:
+            yield "FailureCode", code
