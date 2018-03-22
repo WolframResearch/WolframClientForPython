@@ -20,7 +20,7 @@ def safe_wl_execute(function, args = (), opts = {}, export_opts = {}, exception_
         if isinstance(e, WolframLanguageException):
             try:
                 e.set_traceback(*sys.exc_info())
-                return export(e, **export_opts)  
+                return export(e, **export_opts)
             except Exception as e:
                 pass
 

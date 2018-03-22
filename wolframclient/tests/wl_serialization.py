@@ -3,13 +3,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.language.expression import system, wl
-from wolframclient.serializers import available_formats, export
-from wolframclient.settings import settings
+from wolframclient.serializers import export
 from wolframclient.tests.utils.base import TestCase as BaseTestCase
 from wolframclient.tests.utils.static import test_date, test_datetime, test_time
-from wolframclient.utils import six
 from wolframclient.utils.datastructures import Association
-from wolframclient.utils.functional import identity
 
 import decimal
 

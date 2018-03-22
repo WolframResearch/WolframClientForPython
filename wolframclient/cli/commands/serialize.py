@@ -3,7 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.cli.utils import SimpleCommand
-from wolframclient.serializers import export, available_formats, DEFAULT_FORMAT
+from wolframclient.serializers import available_formats, DEFAULT_FORMAT, export
 from wolframclient.utils.encoding import force_text
 
 import decimal
@@ -12,9 +12,9 @@ class Command(SimpleCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--format', 
-            dest = 'format', 
-            choices=tuple(available_formats.keys()), 
+            '--format',
+            dest = 'format',
+            choices=tuple(available_formats.keys()),
             default = DEFAULT_FORMAT
         )
 

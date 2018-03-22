@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.utils.date import new_date, new_datetime, new_time
+from wolframclient.utils.date import new_datetime
 
 import datetime
 
