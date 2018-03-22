@@ -9,8 +9,6 @@ import decimal
 import sys
 import types
 
-DEBUG = False
-
 #stripped version of SIX
 
 PY2 = sys.version_info[0] == 2

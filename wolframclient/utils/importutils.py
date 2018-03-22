@@ -59,9 +59,6 @@ class API(object):
         self.__dict__['imports'] = {}
 
     def __getattr__(self, value):
-        if settings.DEBUG:
-            return self.__dict__['importer'](self.__dict__['mapping'][value])
-
         key = self.__dict__['mapping'][value]
         try:
             return self.__dict__['imports'][key]

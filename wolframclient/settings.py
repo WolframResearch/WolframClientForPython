@@ -7,6 +7,5 @@ from wolframclient.utils.datastructures import Settings
 NOT_PROVIDED = object()
 
 settings = Settings(
-    DEBUG                      = False,
     NORMALIZATION_FUNCTION     = None,
 )
