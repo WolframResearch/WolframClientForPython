@@ -1,0 +1,29 @@
+<project name='WolframClientForPython' basedir='..'>
+
+	<property name='component' value='${ant.project.name}' />
+	<property name='system_id' value='### Must be set by Jenkins ###' />
+
+	<property name='app.name' value='${component}' />
+	<property name='language' value='### Must be set by Jenkins ###' />
+
+	<property environment='env' />
+	<import file='${env.RE_ANTLIBRARY_HOME}/ant-lib.xml' />
+
+	<!--
+		Component build (platform-independent)
+	-->
+	<target name='Component.WolframClientForPython.execute' extensionOf='Component.execute'>
+
+		<!-- Copy wolframclient directoy -->
+		<copy todir='${files_directory}/${component}'>
+			<fileset dir='${basedir}/${component}/wolframclient' />
+		</copy>
+
+		<!-- Copy python scripts in base directory -->
+		<copy todir='${files_directory}/${component}'>
+			<fileset dir='${basedir}/${component}/*.py' />
+		</copy>
+
+	</target>
+
+</project>
