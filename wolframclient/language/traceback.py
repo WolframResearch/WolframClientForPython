@@ -39,7 +39,10 @@ def _serialize_frames(filename, function, pre_context, post_context, context_lin
             wl.Row([
                 wl.Button(
                     wl.Style(filename, wl.RGBColor(0.25, 0.48, 1), wl.Small, FontFamily = "Courier"),
-                    wl.SystemOpen(filename),
+                    wl.If(
+                        wl.FileExistsQ(filename),
+                        wl.SystemOpen(filename)
+                    ),
                     Appearance = "Frameless"
                 ),
                 ' in ',
