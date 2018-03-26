@@ -7,23 +7,24 @@ from wolframclient.utils import six
 from wolframclient.utils.decorators import to_tuple
 from wolframclient.utils.encoding import force_text, safe_force_text
 from wolframclient.utils.functional import iterate
+from wolframclient.utils.datastructures import Settings
 
 import re
 
-def serialize_traceback(exc_type, exc_value, tb):
+def serialize_traceback(exc_type, exc_value, tb, **opts):
     return wl.OpenerView([
         wl.Row([exc_type.__name__, " ", safe_force_text(exc_value)]),
         wl.Style(
-            wl.Column(_serialize_traceback(exc_type, exc_value, tb)),
+            wl.Column(_serialize_traceback(exc_type, exc_value, tb, **opts)),
             FontFamily = "Courier"
         )
         ],
         True
     )
 
-def _serialize_traceback(exc_type, exc_value, tb):
+def _serialize_traceback(exc_type, exc_value, tb, **opts):
 
-    frames = _get_traceback_frames(tb, exc_value)
+    frames = _get_traceback_frames(tb, exc_value, **opts)
 
     for i, frame in enumerate(frames):
         for sub in _serialize_frames(is_opened = i + 1 > len(frames) - 2, **frame):
@@ -58,7 +59,7 @@ def _serialize_frames(filename, function, pre_context, post_context, context_lin
                     Background = [[wl.GrayLevel(0.95), wl.GrayLevel(1)]],
                     Frame = wl.LightGray
                 ),
-                wl.OpenerView([
+                vars and wl.OpenerView([
                     "Local variables",
                     wl.Grid(
                         iterate(
@@ -72,14 +73,14 @@ def _serialize_frames(filename, function, pre_context, post_context, context_lin
                         Alignment = wl.Left,
                         Frame = wl.LightGray
                     )
-                ])
+                ]) or "No local variables"
             ])
         ],
         is_opened
     )
 
 @to_tuple
-def _get_traceback_frames(traceback, exc_value):
+def _get_traceback_frames(traceback, exc_value, compiled_code = [], context_lines = 7):
     def explicit_or_implicit_cause(exc_value):
         explicit = getattr(exc_value, '__cause__', None)
         implicit = getattr(exc_value, '__context__', None)
@@ -110,9 +111,20 @@ def _get_traceback_frames(traceback, exc_value):
             lineno = tb.tb_lineno - 1
             loader = tb.tb_frame.f_globals.get('__loader__')
             module_name = tb.tb_frame.f_globals.get('__name__') or ''
+
+            if not loader and tb.tb_frame.f_code in compiled_code:
+
+                #compiled code is a dictionary of compiled code -> original code
+                #the next code is using duck typing, so i'm creating a duck that can return source code.
+
+                loader = Settings(
+                    get_source = lambda module, code = compiled_code[tb.tb_frame.f_code]: code
+                )
+
             pre_context_lineno, pre_context, context_line, post_context = _get_lines_from_file(
-                filename, lineno, 7, loader, module_name,
+                filename, lineno, context_lines, loader, module_name,
             )
+
             if pre_context_lineno is None:
                 pre_context_lineno = lineno
                 pre_context = []
@@ -144,6 +156,7 @@ def _get_lines_from_file(filename, lineno, context_lines, loader=None, module_na
     Return (pre_context_lineno, pre_context, context_line, post_context).
     """
     source = None
+
     if loader is not None and hasattr(loader, "get_source"):
         try:
             source = loader.get_source(module_name)
@@ -151,12 +164,15 @@ def _get_lines_from_file(filename, lineno, context_lines, loader=None, module_na
             pass
         if source is not None:
             source = source.splitlines()
+
+
     if source is None:
         try:
             with open(filename, 'rb') as fp:
                 source = fp.read().splitlines()
         except (OSError, IOError):
             pass
+
     if source is None:
         return None, [], None, []
 

@@ -59,7 +59,12 @@ class WolframLanguageException(WLSerializable, Exception):
 
             from wolframclient.language.traceback import serialize_traceback
 
-            yield "Traceback", serialize_traceback(self.exc_type, self.exc_value, self.tb)
+            yield "Traceback", serialize_traceback(
+                self.exc_type, 
+                self.exc_value, 
+                self.tb,
+                compiled_code = getattr(self.payload, '_compiled_code')
+            )
 
         if code:
             yield "FailureCode", code
