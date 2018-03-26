@@ -63,7 +63,6 @@ class WolframLanguageException(WLSerializable, Exception):
                 self.exc_type,
                 self.exc_value,
                 self.tb,
-                compiled_code = getattr(self.payload, '_compiled_code')
             )
 
         if code:

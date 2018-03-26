@@ -80,7 +80,7 @@ def _serialize_frames(filename, function, pre_context, post_context, context_lin
     )
 
 @to_tuple
-def _get_traceback_frames(traceback, exc_value, compiled_code = [], context_lines = 7):
+def _get_traceback_frames(traceback, exc_value, context_lines = 7, ignore_vars = ('__builtins__', '__loader__')):
     def explicit_or_implicit_cause(exc_value):
         explicit = getattr(exc_value, '__cause__', None)
         implicit = getattr(exc_value, '__context__', None)
@@ -112,15 +112,6 @@ def _get_traceback_frames(traceback, exc_value, compiled_code = [], context_line
             loader = tb.tb_frame.f_globals.get('__loader__')
             module_name = tb.tb_frame.f_globals.get('__name__') or ''
 
-            if not loader and tb.tb_frame.f_code in compiled_code:
-
-                #compiled code is a dictionary of compiled code -> original code
-                #the next code is using duck typing, so i'm creating a duck that can return source code.
-
-                loader = Settings(
-                    get_source = lambda module, code = compiled_code[tb.tb_frame.f_code]: code
-                )
-
             pre_context_lineno, pre_context, context_line, post_context = _get_lines_from_file(
                 filename, lineno, context_lines, loader, module_name,
             )
@@ -135,7 +126,11 @@ def _get_traceback_frames(traceback, exc_value, compiled_code = [], context_line
                 'filename': filename,
                 'function': function,
                 'lineno': lineno + 1,
-                'vars': tb.tb_frame.f_locals.items(),
+                'vars': [
+                    (k, v)
+                    for k, v in tb.tb_frame.f_locals.items()
+                    if not k in ignore_vars
+                ],
                 'pre_context': pre_context,
                 'context_line': context_line,
                 'post_context': post_context,
