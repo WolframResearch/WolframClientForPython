@@ -4,7 +4,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from importlib import import_module
 
-from wolframclient.settings import settings
 from wolframclient.utils import six
 
 import os

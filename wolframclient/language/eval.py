@@ -2,10 +2,9 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import ast
+from wolframclient.utils.decorators import to_dict, to_tuple
 
-from wolframclient.utils.decorators import to_tuple
-from wolframclient.utils.decorators import to_dict
+import ast
 
 @to_dict
 def string_to_compiled_code(string):
