@@ -10,6 +10,9 @@ from wolframclient.serializers import export
 import sys
 
 def safe_wl_execute(function, args = (), opts = {}, export_opts = {}, exception_class = WolframLanguageException):
+
+    __traceback_hidden_variables__ = True
+
     try:
         return export(function(*args, **opts), **export_opts)
     except Exception as e:

@@ -34,6 +34,9 @@ def _serialize_variables(variables):
 
     hidden = variables.get('__traceback_hidden_variables__', ())
 
+    if hidden is True:
+        return wl.Sequence()
+
     if variables:
         return wl.OpenerView([
             "Local variables",
