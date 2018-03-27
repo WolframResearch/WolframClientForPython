@@ -32,6 +32,8 @@ def _serialize_traceback(exc_type, exc_value, tb, **opts):
 
 def _serialize_variables(variables):
 
+    hidden = variables.get('__traceback_hidden_variables__', ())
+
     if variables:
         return wl.OpenerView([
             "Local variables",
@@ -41,6 +43,7 @@ def _serialize_variables(variables):
                     (
                         (safe_force_text(key), safe_force_text(value))
                         for key, value in variables.items()
+                        if not key in hidden
                     ),
                 ),
                 Background = [None, [wl.LightGray]],
