@@ -55,6 +55,9 @@ class WolframLanguageException(WLSerializable, Exception):
             yield "MessageTemplate",   template
             yield "MessageParameters", parameters
 
+        if code:
+            yield "FailureCode", code
+
         if self.show_traceback() and self.tb:
 
             from wolframclient.language.traceback import serialize_traceback
@@ -64,6 +67,3 @@ class WolframLanguageException(WLSerializable, Exception):
                 self.exc_value,
                 self.tb,
             )
-
-        if code:
-            yield "FailureCode", code
