@@ -37,6 +37,9 @@ def _serialize_variables(variables):
     if hidden is True:
         return wl.Sequence()
 
+    if not isinstance(hidden, (tuple, list)):
+        hidden = ()
+
     if variables:
         return wl.OpenerView([
             "Local variables",
