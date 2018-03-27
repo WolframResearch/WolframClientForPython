@@ -65,20 +65,25 @@ def _paginate(i, line):
 
 def _serialize_frames(filename, function, pre_context, post_context, context_line, variables, lineno, pre_context_lineno, is_opened = False, **opts):
 
+    if filename:
+        description = wl.Row([
+            wl.Button(
+                wl.Style(filename, wl.RGBColor(0.25, 0.48, 1), wl.Small, FontFamily = "Courier"),
+                wl.If(
+                    wl.FileExistsQ(filename),
+                    wl.SystemOpen(filename)
+                ),
+                Appearance = "Frameless"
+            ),
+            ' in ',
+            function
+        ])
+    else:
+        description = function
+
     yield wl.OpenerView(
         [
-            wl.Row([
-                wl.Button(
-                    wl.Style(filename, wl.RGBColor(0.25, 0.48, 1), wl.Small, FontFamily = "Courier"),
-                    wl.If(
-                        wl.FileExistsQ(filename),
-                        wl.SystemOpen(filename)
-                    ),
-                    Appearance = "Frameless"
-                ),
-                ' in ',
-                function
-            ]),
+            description,
             wl.Column([
                 wl.Column(
                     iterate(
