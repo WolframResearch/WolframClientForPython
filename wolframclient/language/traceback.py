@@ -30,10 +30,31 @@ def _serialize_traceback(exc_type, exc_value, tb, **opts):
         for sub in _serialize_frames(is_opened = i + 1 > len(frames) - 2, **frame):
             yield sub
 
+def _serialize_variables(variables):
+
+    if variables:
+        return wl.OpenerView([
+            "Local variables",
+            wl.Grid(
+                iterate(
+                    (("Key", "Value"), ),
+                    (
+                        (safe_force_text(key), safe_force_text(value))
+                        for key, value in variables.items()
+                    ),
+                ),
+                Background = [None, [wl.LightGray]],
+                Alignment = wl.Left,
+                Frame = wl.LightGray
+            )
+        ])
+
+    return "No local variables"
+
 def _paginate(i, line):
     return '%s.  %s' % (force_text(i).rjust(4), line)
 
-def _serialize_frames(filename, function, pre_context, post_context, context_line, vars, lineno, pre_context_lineno, is_opened = False, **opts):
+def _serialize_frames(filename, function, pre_context, post_context, context_line, variables, lineno, pre_context_lineno, is_opened = False, **opts):
 
     yield wl.OpenerView(
         [
@@ -59,28 +80,14 @@ def _serialize_frames(filename, function, pre_context, post_context, context_lin
                     Background = [[wl.GrayLevel(0.95), wl.GrayLevel(1)]],
                     Frame = wl.LightGray
                 ),
-                vars and wl.OpenerView([
-                    "Local variables",
-                    wl.Grid(
-                        iterate(
-                            (("Key", "Value"), ),
-                            (
-                                (safe_force_text(key), safe_force_text(value))
-                                for key, value in vars
-                            ),
-                        ),
-                        Background = [None, [wl.LightGray]],
-                        Alignment = wl.Left,
-                        Frame = wl.LightGray
-                    )
-                ]) or "No local variables"
+                _serialize_variables(variables)
             ])
         ],
         is_opened
     )
 
 @to_tuple
-def _get_traceback_frames(traceback, exc_value, context_lines = 7, ignore_vars = ('__builtins__', '__loader__')):
+def _get_traceback_frames(traceback, exc_value, context_lines = 7):
     def explicit_or_implicit_cause(exc_value):
         explicit = getattr(exc_value, '__cause__', None)
         implicit = getattr(exc_value, '__context__', None)
@@ -126,11 +133,7 @@ def _get_traceback_frames(traceback, exc_value, context_lines = 7, ignore_vars =
                 'filename': filename,
                 'function': function,
                 'lineno': lineno + 1,
-                'vars': [
-                    (k, v)
-                    for k, v in tb.tb_frame.f_locals.items()
-                    if not k in ignore_vars
-                ],
+                'variables': tb.tb_frame.f_locals,
                 'pre_context': pre_context,
                 'context_line': context_line,
                 'post_context': post_context,
