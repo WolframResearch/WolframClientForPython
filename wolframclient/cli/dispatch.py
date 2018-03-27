@@ -12,11 +12,16 @@ class DispatchCommand(SimpleCommand):
     modules = ['wolframclient.cli.commands']
     class_name = 'Command'
 
+    default_command = None
+
     def subcommands(self):
         return discover_with_convention(self.modules, self.class_name)
 
     def handle(self, attr = None):
         all_commands = self.subcommands()
+
+        if attr is None and self.default_command:
+            attr = self.default_command
 
         if attr in all_commands:
             return import_string(all_commands[attr])(self.subcommand_args(), name = all_commands[attr]).main()
