@@ -15,6 +15,7 @@ from wolframclient.utils.importutils import safe_import_string
 import datetime
 import decimal
 import fractions
+import inspect
 import math
 import re
 
@@ -211,7 +212,7 @@ class FormatSerializer(object):
 
     @dispatch.default()
     def default_normalizer(self, o):
-        if hasattr(o, '__iter__'):
+        if not inspect.isclass(o) and hasattr(o, '__iter__'):
             return self.types.WLList(
                 self.normalize(value)
                 for value in o
