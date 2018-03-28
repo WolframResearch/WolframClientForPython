@@ -53,7 +53,7 @@ def safe_wl_execute(function, args = (), opts = {}, export_opts = {}, exception_
                     "PythonFailure", {
                         "MessageTemplate": safe_force_text(e),
                         "MessageParameters": {},
-                        "FailureCode": e.__class__.__name__,
+                        "FailureCode": safe_force_text(e.__class__.__name__),
                         "Traceback": traceback.format_exc()
                     }
                 ),
