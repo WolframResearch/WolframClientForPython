@@ -5,9 +5,12 @@ from __future__ import absolute_import, print_function, unicode_literals
 from functools import wraps
 
 from wolframclient.language.exceptions import WolframLanguageException
+from wolframclient.language.expression import wl
 from wolframclient.serializers import export
+from wolframclient.utils.encoding import safe_force_text
 
 import sys
+import traceback
 
 def safe_wl_execute(function, args = (), opts = {}, export_opts = {}, exception_class = WolframLanguageException):
 
@@ -27,12 +30,35 @@ def safe_wl_execute(function, args = (), opts = {}, export_opts = {}, exception_
             except Exception as e:
                 pass
 
-        if exception_class is WolframLanguageException:
-            return export(WolframLanguageException(e, exec_info = sys.exc_info()), **export_opts)
         try:
-            return export(exception_class(e, exec_info = sys.exc_info()), **export_opts)
+            if exception_class is WolframLanguageException:
+                return export(WolframLanguageException(e, exec_info = sys.exc_info()), **export_opts)
+
+            #a custom error class might fail, if this is happening then we can try to use the built in one
+            try:
+                return export(exception_class(e, exec_info = sys.exc_info()), **export_opts)
+            except Exception as e:
+                return export(WolframLanguageException(e, exec_info = sys.exc_info()), **export_opts)
+
         except Exception as e:
-            return export(WolframLanguageException(e, exec_info = sys.exc_info()), **export_opts)
+
+            #this is the last resort.
+            #everything went wrong, including the code that was supposed to return a traceback, or the custom normalizer is doing something it should not.
+            #this should never happen.
+
+            export_opts.pop('normalizer', None)
+
+            return export(
+                wl.Failure(
+                    "PythonFailure", {
+                        "MessageTemplate": safe_force_text(e),
+                        "MessageParameters": {},
+                        "FailureCode": e.__class__.__name__,
+                        "Traceback": traceback.format_exc()
+                    }
+                ),
+                **export_opts
+            )
 
 def to_wl(**export_opts):
     def outer(function):
