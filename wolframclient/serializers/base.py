@@ -137,16 +137,11 @@ class FormatSerializer(object):
             self.types.WLSymbol(o.fully_qualified_symbol())
         )
 
-    @dispatch.multi(bytearray)
+    @dispatch.multi((bytearray, six.binary_type))
     def default_normalizer(self, o):
-        return self.types.WLByteArray(o)
+        return self.types.WLBytes(o)
 
-    if six.PY3:
-        @dispatch.multi(bytes)
-        def default_normalizer(self, o):
-            return self.types.WLByteArray(o)
-
-    @dispatch.multi(six.string_types)
+    @dispatch.multi(six.text_type)
     def default_normalizer(self, o):
         return self.types.WLString(o)
 

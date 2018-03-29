@@ -6,6 +6,7 @@ from itertools import chain
 
 from wolframclient.serializers.escape import py_encode_basestring as to_string
 from wolframclient.utils.encoding import force_bytes
+from wolframclient.utils.encoding import force_text
 
 def yield_with_separators(iterable, separator = b', ', first = None, last = None):
     if first:
@@ -62,11 +63,7 @@ def WLString(string):
     return to_string(string)
 
 def WLBytes(bytes):
-    return WLFunction(
-        WLSymbol('ByteArray'), (
-            WLString(base64.b64encode(bytes).decode('utf-8')),
-        )
-    )
+    return to_string(bytes)
 
 def WLRule(lhs, rhs):
     return yield_with_separators(
