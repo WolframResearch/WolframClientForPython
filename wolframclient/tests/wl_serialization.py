@@ -73,6 +73,11 @@ class TestCase(BaseTestCase):
             b'System`CurriedExpression[1, 2, 3][4, 5, 6]'
         )
 
+        self.compare(
+            system.Expression(1, a = 2),
+            b'System`Expression[1, Rule[a, 2]]'
+        )
+
     def test_dates(self):
 
         self.compare(

@@ -12,7 +12,7 @@ import re
 
 def serialize_traceback(exc_type, exc_value, tb, **opts):
     return wl.OpenerView([
-        wl.Row([exc_type.__name__, " ", safe_force_text(exc_value)]),
+        wl.Row([safe_force_text(exc_type.__name__), " ", safe_force_text(exc_value)]),
         wl.Style(
             wl.Column(_serialize_traceback(exc_type, exc_value, tb, **opts)),
             FontFamily = "Courier"
@@ -143,8 +143,8 @@ def _get_traceback_frames(traceback, exc_value, context_lines = 7):
                 post_context = []
 
             yield {
-                'filename': filename,
-                'function': function,
+                'filename': filename and force_text(filename) or None,
+                'function': function and force_text(function) or None,
                 'lineno': lineno + 1,
                 'variables': tb.tb_frame.f_locals,
                 'pre_context': pre_context,

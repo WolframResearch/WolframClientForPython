@@ -7,7 +7,7 @@ from functools import wraps
 from wolframclient.language.exceptions import WolframLanguageException
 from wolframclient.language.expression import wl
 from wolframclient.serializers import export
-from wolframclient.utils.encoding import safe_force_text
+from wolframclient.utils.encoding import force_text, safe_force_text
 
 import sys
 import traceback
@@ -54,7 +54,7 @@ def safe_wl_execute(function, args = (), opts = {}, export_opts = {}, exception_
                         "MessageTemplate": safe_force_text(e),
                         "MessageParameters": {},
                         "FailureCode": safe_force_text(e.__class__.__name__),
-                        "Traceback": traceback.format_exc()
+                        "Traceback": force_text(traceback.format_exc())
                     }
                 ),
                 **export_opts

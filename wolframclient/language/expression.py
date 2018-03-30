@@ -2,6 +2,8 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from itertools import chain
+
 from wolframclient.utils import six
 from wolframclient.utils.encoding import force_text
 
@@ -51,7 +53,7 @@ class WLFunction(WLExpressionMeta):
         self.head = head
 
         if opts:
-            self.args = tuple(chain(args, (wl.Rule(k, v) for k, v in opts.items())))
+            self.args = tuple(chain(args, (wl.Rule(WLSymbol(k), v) for k, v in opts.items())))
         else:
             self.args = args
 
@@ -69,7 +71,7 @@ class ExpressionFactory(object):
     def __getattr__(self, attr):
         if self.context:
             return WLSymbol('%s`%s' % (self.context, attr))
-        return WLSymbol(attr)
+        return WLSymbol(force_text(attr))
 
 wl     = ExpressionFactory()
 system = ExpressionFactory('System')

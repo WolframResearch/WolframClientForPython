@@ -29,7 +29,7 @@ class WolframLanguageException(WLSerializable, Exception):
 
     def failure_code(self):
         if isinstance(self.payload, Exception):
-            return self.payload.__class__.__name__
+            return safe_force_text(self.payload.__class__.__name__)
 
     def set_traceback(self, exc_type, exc_value, tb):
         self.exc_type, self.exc_value, self.tb = exc_type, exc_value, tb
