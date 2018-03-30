@@ -31,7 +31,7 @@ class WXFConstants:
     Function = b'f'
     Symbol = b's'
     String = b'S'
-    BinaryString = b'b'
+    BinaryString = b'B'
     Integer8 = b'C'
     Integer16 = b'j'
     Integer32 = b'i'
