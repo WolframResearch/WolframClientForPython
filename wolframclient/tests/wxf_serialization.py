@@ -169,6 +169,12 @@ class TestCase(SerializeTest):
             wxf_expr = WXFExprInteger(values[i])
             self.assertSequenceEqual(wxf_expr.to_bytes(), res[i])
 
+    @unittest.skipIf(six.JYTHON, None)
+    def test_bigint_as_int(self):
+        value = 10**20
+        with self.assertRaises(ValueError):
+            WXFExprInteger(value)
+
     ### REAL TESTS
 
     def test_real(self):

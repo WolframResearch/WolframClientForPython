@@ -123,6 +123,8 @@ class WXFExprInteger(_WXFExpr):
         elif value < wxfutils.INT64_MAX and value >= wxfutils.INT64_MIN:
             super(WXFExprInteger, self).__init__(WXFConstants.Integer64)
             self.int_size = 8
+        else:
+            raise ValueError('Value %i is not a machine-sized integer.' % value)
 
         self.value = value
 
