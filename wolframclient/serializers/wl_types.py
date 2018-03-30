@@ -4,9 +4,11 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from itertools import chain
 
-from wolframclient.serializers.escape import py_encode_basestring as to_string
+from wolframclient.serializers.escape import py_encode_text
 from wolframclient.utils.encoding import force_bytes
 from wolframclient.utils.encoding import force_text
+
+import base64
 
 def yield_with_separators(iterable, separator = b', ', first = None, last = None):
     if first:
@@ -60,10 +62,14 @@ def WLComplex(number):
 #text / bytes
 
 def WLString(string):
-    return to_string(string)
+    return py_encode_text(string)
 
 def WLBytes(bytes):
-    return to_string(bytes)
+    return WLFunction(
+        WLSymbol('ByteArray'), (
+            ('"', base64.b64encode(bytes), '"'),
+        )
+    )
 
 def WLRule(lhs, rhs):
     return yield_with_separators(

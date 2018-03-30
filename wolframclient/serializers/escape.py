@@ -24,7 +24,7 @@ for i in range(0x20):
 def replace(match):
     return ESCAPE_DCT[match.group(0)]
 
-def py_encode_basestring(s):
+def py_encode_text(s):
     yield b'"'
     yield force_bytes(ESCAPE.sub(replace, s))
     yield b'"'
