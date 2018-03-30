@@ -5,6 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.tests.utils.base import TestCase as BaseTestCase
 from wolframclient.utils.dispatch import ClassDispatch, Dispatch
 from wolframclient.utils.functional import partition, riffle
+from wolframclient.utils import six
 
 import math
 
@@ -50,7 +51,7 @@ class TestCase(BaseTestCase):
         def normalizer(o):
             return o * 2
 
-        @dispatcher.multi(unicode)
+        @dispatcher.multi(six.text_type)
         def normalizer(o):
             return 'Hello %s' % o
 
@@ -93,7 +94,7 @@ class TestCase(BaseTestCase):
             def normalizer(self, o):
                 return o
 
-            @dispatcher.multi(unicode)
+            @dispatcher.multi(six.text_type)
             def normalizer(self, o):
                 return 'Hello %s' % o
 
