@@ -7,6 +7,7 @@ from wolframclient.serializers import export
 from wolframclient.tests.utils.base import TestCase as BaseTestCase
 from wolframclient.tests.utils.static import test_date, test_datetime, test_time
 from wolframclient.utils.datastructures import Association
+from wolframclient.utils import six
 
 import decimal
 
@@ -19,10 +20,17 @@ class TestCase(BaseTestCase):
         return export(data, format = format, **opts)
 
     def compare(self, data, output = None, **opts):
-        self.assertEqual(
-            self.dumps(data, **opts),
-            output
-        )
+
+        if isinstance(output, six.string_types):
+            self.assertEqual(
+                self.dumps(data, **opts),
+                output
+            )
+        else:
+            self.assertEqual(
+                self.dumps(data, **opts),
+                self.dumps(output, **opts),
+            )
 
     def test_serialization(self):
 
@@ -37,26 +45,6 @@ class TestCase(BaseTestCase):
         self.compare(
             test_date(),
             b'DateObject[{2000, 1, 1}]'
-        )
-        self.compare(
-            test_datetime(),
-            b'DateObject[{2000, 1, 1, 11, 15, 20.000000}, "Instant", "Gregorian", $TimeZone]'
-        )
-        self.compare(
-            test_datetime(tzinfo = 1),
-            b'DateObject[{2000, 1, 1, 11, 15, 20.000000}, "Instant", "Gregorian", 1.000000]'
-        )
-        self.compare(
-            test_datetime(tzinfo = "Europe/Rome"),
-            b'DateObject[{2000, 1, 1, 11, 15, 20.000000}, "Instant", "Gregorian", "Europe/Rome"]'
-        )
-        self.compare(
-            test_time(),
-            b'TimeObject[{11, 15, 20.000000}, TimeZone -> $TimeZone]'
-        )
-        self.compare(
-            test_time(tzinfo = "UTC"),
-            b'TimeObject[{11, 15, 20.000000}, TimeZone -> "UTC"]'
         )
 
         self.compare(
@@ -83,6 +71,25 @@ class TestCase(BaseTestCase):
         self.compare(
             system.CurriedExpression(1, 2, 3)(4, 5, 6),
             b'System`CurriedExpression[1, 2, 3][4, 5, 6]'
+        )
+
+    def test_dates(self):
+
+        self.compare(
+            test_datetime(),
+            b'DateObject[{2000, 1, 1, 11, 15, 20.000000}, "Instant", "Gregorian", $TimeZone]'
+        )
+        self.compare(
+            test_datetime(tzinfo = 1),
+            b'DateObject[{2000, 1, 1, 11, 15, 20.000000}, "Instant", "Gregorian", 1.000000]'
+        )
+        self.compare(
+            test_datetime(tzinfo = "Europe/Rome"),
+            b'DateObject[{2000, 1, 1, 11, 15, 20.000000}, "Instant", "Gregorian", "Europe/Rome"]'
+        )
+        self.compare(
+            test_time(),
+            b'TimeObject[{11, 15, 20.000000}, TimeZone -> $TimeZone]'
         )
 
     def test_encoding(self):
