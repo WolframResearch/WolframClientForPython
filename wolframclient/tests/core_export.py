@@ -74,7 +74,7 @@ class TestCase(BaseTestCase):
 
         for export_format in available_formats:
 
-            with self.assertRaises(Exception) as context:
+            with self.assertRaises(NotImplementedError) as context:
                 export(
                     expr,
                     normalizer = identity,

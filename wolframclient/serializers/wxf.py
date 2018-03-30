@@ -10,8 +10,8 @@ class WXFSerializer(FormatSerializer):
 
     types = wxf_types
 
-    def __init__(self, normalizer = None, compress = False, enforce = False):
-        super(WXFSerializer, self).__init__(normalizer = normalizer)
+    def __init__(self, normalizer = None, compress = False, enforce = False, **opts):
+        super(WXFSerializer, self).__init__(normalizer = normalizer, **opts)
         self.compress = compress
         self.enforce  = enforce
 

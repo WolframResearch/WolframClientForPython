@@ -9,8 +9,8 @@ class WLSerializer(FormatSerializer):
 
     types = wl_types
 
-    def __init__(self, normalizer = None, indent = None):
-        super(WLSerializer, self).__init__(normalizer = normalizer)
+    def __init__(self, normalizer = None, indent = None, **opts):
+        super(WLSerializer, self).__init__(normalizer = normalizer, **opts)
         self.indent = indent
 
     def dump(self, data, stream):

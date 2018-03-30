@@ -24,8 +24,10 @@ class FormatSerializer(object):
 
     types = None
 
-    def __init__(self, normalizer = None):
+    def __init__(self, normalizer = None, last_normalizer = None):
         self.normalize  = self.chain_normalizers(normalizer)
+
+        self._last_normalizer = last_normalizer
 
     def dump(self, data, stream):
         raise NotImplementedError
@@ -53,6 +55,11 @@ class FormatSerializer(object):
                 self.default_normalizer
             )
         ))
+
+    def last_normalizer(self, o):
+        if self._last_normalizer:
+            return self.normalize(self._last_normalizer(o))
+        raise NotImplementedError('Cannot serialize object of class %s' % o.__class__)
 
     def _normalize_tzinfo(self, date, name_match = re.compile('^[A-Za-z]+(/[A-Za-z]+)?$')):
 
@@ -202,4 +209,4 @@ class FormatSerializer(object):
                 self.normalize(value)
                 for value in o
             )
-        raise NotImplementedError('Cannot serialize object of class %s' % o.__class__)
+        return self.last_normalizer(o)

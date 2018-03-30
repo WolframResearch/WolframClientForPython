@@ -6,7 +6,7 @@ from functools import wraps
 
 from wolframclient.language.exceptions import WolframLanguageException
 from wolframclient.language.expression import wl
-from wolframclient.serializers import export
+from wolframclient.serializers import export, DEFAULT_FORMAT
 from wolframclient.utils.encoding import force_text, safe_force_text
 
 import sys
@@ -46,8 +46,6 @@ def safe_wl_execute(function, args = (), opts = {}, export_opts = {}, exception_
             #everything went wrong, including the code that was supposed to return a traceback, or the custom normalizer is doing something it should not.
             #this should never happen.
 
-            export_opts.pop('normalizer', None)
-
             return export(
                 wl.Failure(
                     "PythonFailure", {
@@ -57,7 +55,7 @@ def safe_wl_execute(function, args = (), opts = {}, export_opts = {}, exception_
                         "Traceback": force_text(traceback.format_exc())
                     }
                 ),
-                **export_opts
+                format = export_opts.get('format', DEFAULT_FORMAT)
             )
 
 def to_wl(**export_opts):
