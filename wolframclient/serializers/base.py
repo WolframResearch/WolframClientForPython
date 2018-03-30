@@ -6,7 +6,6 @@ from functools import reduce
 
 from wolframclient.language.expression import Expression
 from wolframclient.serializers.serializable import WLSerializable
-from wolframclient.settings import settings
 from wolframclient.utils import six
 from wolframclient.utils.dispatch import ClassDispatch
 from wolframclient.utils.functional import composition, first, iterate, last
@@ -50,7 +49,7 @@ class FormatSerializer(object):
         return composition(*map(
             safe_import_string,
             iterate(
-                func or settings.NORMALIZATION_FUNCTION or (),
+                func or (),
                 self.default_normalizer
             )
         ))

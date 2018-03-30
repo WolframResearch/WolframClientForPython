@@ -4,7 +4,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.language.expression import wl
 from wolframclient.serializers import available_formats, export
-from wolframclient.settings import settings
 from wolframclient.tests.utils.base import TestCase as BaseTestCase
 from wolframclient.utils import six
 from wolframclient.utils.functional import identity
@@ -58,8 +57,6 @@ class TestCase(BaseTestCase):
 
     def test_serialization_custom(self):
 
-        original = settings.NORMALIZATION_FUNCTION
-
         class MyStuff(object):
 
             def __init__(self, *stuff):
@@ -76,8 +73,6 @@ class TestCase(BaseTestCase):
         normalized = ["o", "o", "a", {"o": "a"}, wl.RandomThings("o", "o", wl.RandomThings("o", "a"))]
 
         for export_format in available_formats:
-
-            settings.NORMALIZATION_FUNCTION = original
 
             with self.assertRaises(Exception) as context:
                 export(
@@ -98,26 +93,3 @@ class TestCase(BaseTestCase):
                     format = export_format
                 ),
             )
-
-            settings.NORMALIZATION_FUNCTION = normalizer
-
-            with self.assertRaises(Exception) as context:
-                export(
-                    expr,
-                    normalizer = identity,
-                    format = export_format
-                )
-
-            self.assertEqual(
-                export(
-                    expr,
-                    format = export_format
-                ),
-                export(
-                    normalized,
-                    normalizer = identity,
-                    format = export_format
-                ),
-            )
-
-        settings.NORMALIZATION_FUNCTION = original
