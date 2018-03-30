@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from functools import reduce
 
-from wolframclient.language.expression import Expression
+from wolframclient.language.expression import WLSymbol, WLFunction
 from wolframclient.serializers.serializable import WLSerializable
 from wolframclient.utils import six
 from wolframclient.utils.dispatch import ClassDispatch
@@ -116,24 +116,15 @@ class FormatSerializer(object):
             )
         )
 
-    @dispatch.multi(Expression)
+    @dispatch.multi(WLSymbol)
     def default_normalizer(self, o):
-        return reduce(
-            lambda head, args: self.types.WLFunction(
-                head,
-                tuple(
-                    iterate(
-                        (self.normalize(arg) for arg in first(args)),
-                        (self.types.WLRule(
-                            self.types.WLSymbol(o.fully_qualified_symbol(key)),
-                            self.normalize(value)
-                            ) for key, value in last(args).items()
-                        ),
-                    )
-                )
-            ),
-            o.args,
-            self.types.WLSymbol(o.fully_qualified_symbol())
+        return self.types.WLSymbol(o.name)
+
+    @dispatch.multi(WLFunction)
+    def default_normalizer(self, o):
+        return self.types.WLFunction(
+            self.normalize(o.head), 
+            tuple(self.normalize(arg) for arg in o.args)
         )
 
     @dispatch.multi((bytearray, six.binary_type))
