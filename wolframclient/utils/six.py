@@ -11,9 +11,8 @@ import types
 
 #stripped version of SIX
 
-PY2  = sys.version_info[0] == 2
-PY3  = sys.version_info[0] == 3
-PY34 = sys.version_info[0:2] <= (3, 4)
+PY2 = sys.version_info[0] == 2
+PY3 = sys.version_info[0] == 3
 
 JYTHON = sys.platform.startswith('java')
 
