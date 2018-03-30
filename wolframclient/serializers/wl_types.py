@@ -6,7 +6,6 @@ from itertools import chain
 
 from wolframclient.serializers.escape import py_encode_text
 from wolframclient.utils.encoding import force_bytes
-from wolframclient.utils.encoding import force_text
 
 import base64
 

@@ -218,7 +218,7 @@ class _WXFExprStringLike(_WXFExpr):
         else:
             raise TypeError(self.__class__.__name__ +
                             " must be initialize with a string. Was '" + value.__class__.__name__ + "'.")
-        
+
         self.length = len(self.value)
 
     def _serialize_to_wxf(self, stream, context):
