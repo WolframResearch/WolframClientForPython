@@ -208,13 +208,16 @@ class _WXFExprStringLike(_WXFExpr):
 
         If `allow_binary` is set to false, also accept binary types: `bytes` (py3) and `str` (py2)
         '''
-        if isinstance(value, six.string_types) or allow_binary and isinstance(value, six.binary_type):
-            super(_WXFExprStringLike, self).__init__(wxf_type)
+        super(_WXFExprStringLike, self).__init__(wxf_type)
+        if isinstance(value, six.string_types):
             self.value = value.encode('utf-8')
-            self.length = len(self.value)
+        elif allow_binary and isinstance(value, six.binary_type):
+            self.value = value
         else:
             raise TypeError(self.__class__.__name__ +
                             " must be initialize with a string. Was '" + value.__class__.__name__ + "'.")
+        
+        self.length = len(self.value)
 
     def _serialize_to_wxf(self, stream, context):
         stream.write(self.wxf_type)

@@ -77,11 +77,6 @@ class TestCase(SerializeTest):
         wxfexpr = WXFExprString(value)
         self.assertEqual(wxfexpr.value, value.encode(encoding='utf-8'))
 
-    def testBasicStringOfBytes(self):
-        value = u"maître & élève"
-        wxfexpr = WXFExprString(value)
-        self.assertEqual(wxfexpr.value, value.encode(encoding='utf-8'))
-
     def testWrongStringType(self):
         value = 1
         with self.assertRaises(TypeError):
@@ -100,7 +95,7 @@ class TestCase(SerializeTest):
             WXFExprString(value)
 
     def testBinaryString(self):
-        value = bytearray([1,2,3])
+        value = bytearray([0,128,255])
         wxfexpr = WXFExprBinaryString(value)
         self.assertSequenceEqual(wxfexpr.data, value)
 
