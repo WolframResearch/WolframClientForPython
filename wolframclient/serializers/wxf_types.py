@@ -22,7 +22,12 @@ def WLFunction(head, args):
 #numeric
 
 def WLInteger(number):
-    yield wxfexpr.WXFExprInteger(number)
+    try:
+        yield wxfexpr.WXFExprInteger(number)
+    except ValueError:
+        #WXFExprInteger is raising a ValueError if the integer is not in the appropriate bounds.
+        #that check needs to be done in case, it's better to do it only once. 
+        yield wxfexpr.WXFExprBigInteger('%i' % number)
 
 def WLFloat(number):
     yield wxfexpr.WXFExprReal(number)
