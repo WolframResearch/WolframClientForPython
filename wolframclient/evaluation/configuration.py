@@ -3,30 +3,37 @@ from __future__ import absolute_import, print_function, unicode_literals
 from configparser import SafeConfigParser, NoSectionError, NoOptionError
 from wolframclient.evaluation.cloud.exceptions import ConfigurationException, ConfigurationWarning
 from warnings import warn
+import logging
 
-__all__ = ['Configuration',
-           'WolframPublicCloudParameters',
-           'WolframPublicCloudConfig'
+logger = logging.getLogger(__name__)
+
+__all__ = ['Configuration', 'user_credential_configuration', 'server_configuration',
+           'WolframPublicCloudParameters', 'WolframPublicCloudConfig'
            ]
 
 class Configuration(object):
-    api_section = 'API'
-    authentication_section = 'Authentication'
+    def __init__(self, sections, optional_sections={}, optional_keys={}):
+        self.log_values = True
+        self.sections = {}
+        for section, params in sections.items():
+            self.sections[section] = frozenset(params)
+        self.optional_sections = frozenset(optional_sections)
+        for section in self.optional_sections:
+            if section not in sections.keys():
+                raise ConfigurationException(
+                    'Optional section %s not declared as section.' % section)
+        self.optional_keys = {}
+        for section, params in optional_keys.items():
+            if section not in self.sections:
+                raise ConfigurationException('Section %s not declared as a section cannot have optional keys.' % section)
+            if section in self.optional_sections:
+                raise ConfigurationWarning("Section %s is optional, it's parameters are de facto optional." % section)
+            declared_params = self.sections.get(section)
+            for param in params:
+                if param not in declared_params:
+                    raise ConfigurationException('Optional parameter {} not declared for section {}.'.format(param, section))
+            self.optional_keys[section] = frozenset(params)
 
-    sections = {
-        api_section: ['api_endpoint'],
-        authentication_section: [
-            'request_token_endpoint',
-            'access_token_endpoint',
-            'consumer_key',
-            'consumer_secret',
-            'xauth_consumer_key',
-            'xauth_consumer_secret']
-    }
-
-    optional_keys = frozenset(['xauth_consumer_key', 'xauth_consumer_secret'])
-
-    def __init__(self):
         self._parser = None
 
     def _set_parser(self, parser):
@@ -34,8 +41,11 @@ class Configuration(object):
         self._parser = parser
         self._read_keys()
 
+    def get_optional_keys_of_section(self, section):
+        return self.optional_keys.get(section, frozenset())
+
     def _check_mandatory_sections(self, parser):
-        for section in (Configuration.authentication_section, Configuration.api_section):
+        for section in self.sections:
             if not parser.has_section(section):
                 raise ConfigurationException(
                     'Server configuration must contain section: %s' % section)
@@ -44,21 +54,26 @@ class Configuration(object):
         parser = SafeConfigParser()
         parser.read(filenames)
         self._set_parser(parser)
+        return self
 
     def read_file(self, file):
         parser = SafeConfigParser()
         parser.read_file(file)
         self._set_parser(parser)
+        return self
 
     def read_dict(self, dictionary):
         parser = SafeConfigParser()
         parser.read_dict(dictionary)
         self._set_parser(parser)
+        return self
 
     def _read_keys(self):
-        for section, keys in Configuration.sections.items():
+        for section, keys in self.sections.items():
+            logger.debug('[%s]', section)
+            section_optional_params = self.get_optional_keys_of_section(section)
             for key in keys:
-                if key in Configuration.optional_keys:
+                if section in self.optional_sections or key in section_optional_params:
                     value = self._parser.get(section, key, fallback=None)
                     if value is not None and value == "":
                         value = None
@@ -68,15 +83,49 @@ class Configuration(object):
                         self.warn_if_empty_option(key, value)
                     except NoOptionError as e:
                         raise ConfigurationException(
-                            'Server configuration must contain option value: %s' % e.option)
-
-                self.__setattr__(key, value)
+                            'Expecting configuration to contain option value: %s' % e.option)
+                name = '{}_{}'.format(section.lower(), key.lower())
+                if self.log_values:
+                    logger.debug('\t%s=%s', name, value)
+                else:
+                    logger.debug('\t%s= *not logged*', name)
+                self.__setattr__(name, value)
 
     def warn_if_empty_option(self, key, option):
         if option == "":
             warn('Option %s found but is empty.' %
                  key, category=ConfigurationWarning)
 
+
+def user_credential_configuration():
+    config = Configuration(
+        {'User': ['user_id', 'password']}
+    )
+    config.log_values = False
+    return config
+
+
+def sak_configuration():
+    config = Configuration(
+        {'SAK': ['consumer_key', 'consumer_secret']}
+    )
+    config.log_values = False
+    return config
+
+def server_configuration():
+    return Configuration(
+        {
+            'API': ['api_endpoint'],
+            'Authentication': [
+                'request_token_endpoint',
+                'access_token_endpoint',
+                'xauth_consumer_key',
+                'xauth_consumer_secret']
+        }, 
+        optional_keys={
+            'Authentication': ['xauth_consumer_key', 'xauth_consumer_secret']
+        }
+    )
 
 # PRD
 WolframPublicCloudParameters = {
@@ -92,6 +141,5 @@ WolframPublicCloudParameters = {
         'xauth_consumer_secret' : 'tbd'
     }
 }
-WolframPublicCloudConfig = Configuration()
-WolframPublicCloudConfig.read_dict(WolframPublicCloudParameters)
+WolframPublicCloudConfig = server_configuration().read_dict(WolframPublicCloudParameters)
 

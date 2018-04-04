@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-
+import logging
 from wolframclient.evaluation.cloud.exceptions import AuthenticationException, XAuthNotConfigured
 from wolframclient.evaluation.cloud.oauth import OAuth
 from wolframclient.evaluation.cloud.inputoutput import WolframAPIResponse, WolframAPI
@@ -7,6 +7,7 @@ import requests
 
 __all__ = ['CloudContext']
 
+logger = logging.getLogger(__name__)
 class CloudContext(object):
     __slots__ = 'server', 'oauth', 'consumer', 'consumer_secret', 'user', 'password'
     def __init__(self, server, authentication=None):
@@ -19,24 +20,23 @@ class CloudContext(object):
             self.consumer = None
             self.consumer_secret = None
 
-    def anonymous_authentication(self, authentication=None):
+    def sak_authentication(self, authentication=None):
         if authentication is not None:
             self.consumer = authentication.consumer_key
             self.consumer_secret = authentication.consumer_secret
         else:
             if self.consumer is None or self.consumer_secret is None:
                 raise AuthenticationException('Authentication is missing.')
-
         self.oauth = OAuth(self.consumer, self.consumer_secret)
         self.oauth.auth()
         
-    def user_authentication(self, user, password):
+    def user_authentication(self, user_credentials):
         if not self.server.is_xauth():
             raise XAuthNotConfigured
         self.oauth = OAuth(self.server.xauth_consumer_key, self.server.xauth_consumer_secret)
-        self.user = user
-        self.password = password
-        self.oauth.xauth(user, password)
+        self.user = user_credentials.user
+        self.password = user_credentials.password
+        self.oauth.xauth(user_credentials.user, user_credentials.password)
 
     def check_auth(self):
         if self.oauth is None:
@@ -54,6 +54,9 @@ class CloudContext(object):
 
     def public_api(self, url, *input_types, result_type=None):
         return WolframAPI(url, result_type=result_type, public=True)
+
+    def private_api(self, url, *input_types, result_type=None):
+        return WolframAPI(url, result_type=result_type, public=False)
 
     def user_api(self, username, api_id, *input_types, result_type=None, public=False):
         '''Build a WolframAPI instance from a user name and an API id.

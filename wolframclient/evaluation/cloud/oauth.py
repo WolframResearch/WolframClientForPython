@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 import os
+import logging
 try: # PY3
     from urlparse import urlparse, parse_qs, urlencode
 except ImportError: # PY2
@@ -10,8 +11,9 @@ import requests
 from oauthlib import oauth1 as oauth
 
 from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
-from wolframclient.evaluation.cloud.exceptions import RequestException, AuthenticationException, XAuthNotConfigured
+from wolframclient.evaluation.cloud.exceptions import RequestException, AuthenticationException, XAuthNotConfigured, ConfigurationException
 
+logger = logging.getLogger(__name__)
 
 # WOLFRAM_CERT_URL = "http://wolframca.wolfram.com/WolframCA3.crt"
 # WOLFRAM_CERT_FILE = os.path.abspath(os.path.join(
@@ -23,7 +25,7 @@ from wolframclient.evaluation.cloud.exceptions import RequestException, Authenti
 
 
 
-class AnonymousCredentials(object):
+class SecuredAuthenticationKey(object):
     __slots__ = 'consumer_key', 'consumer_secret'
 
     def __init__(self, consumer_key, consumer_secret):
@@ -32,18 +34,33 @@ class AnonymousCredentials(object):
 
     @staticmethod
     def from_config(config):
-        return AnonymousCredentials(config.consumer_key, config.consumer_secret)
+        return SecuredAuthenticationKey(config.sak_consumer_key, config.sak_consumer_secret)
+
+class UserCredentials(object):
+    __slots__ = 'user', 'password'
+
+    def __init__(self, user, password):
+        self.user = user
+        self.password = password
+
+    @staticmethod
+    def from_config(config):
+        if hasattr(config, 'user_user_id') and hasattr(config, 'user_password'):
+            return UserCredentials(config.user_user_id, config.user_password)
+        else:
+            raise ConfigurationException('User credentials missing in configuration.')
 
 class OAuth(object):
-    __slots__ = 'consumer_key', 'consumer_secret', 'signature_method',  '_oauth_token', '_oauth_token_secret', '_content_type', '_client', 'server_context'
+    __slots__ = 'consumer_key', 'consumer_secret', 'signature_method',  '_oauth_token', '_oauth_token_secret', '_base_header', '_client', 'server_context'
     DEFAULT_CONTENT_TYPE = {
-        'Content-Type': 'application/x-www-form-urlencoded'}
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'WolframClientForPython/1.0'}
 
     def __init__(self, consumer_key, consumer_secret, signature_method="HMAC-SHA1", server_context=WolframPublicCloudServer):
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
         self.signature_method = signature_method
-        self._content_type = OAuth.DEFAULT_CONTENT_TYPE
+        self._base_header = OAuth.DEFAULT_CONTENT_TYPE
         self._client = None
         self._oauth_token = None
         self._oauth_token_secret = None
@@ -51,7 +68,7 @@ class OAuth(object):
     
     def _check_response(self, response):
         # TODO: deal with error code with more precision.
-        print('Code:',response.status_code, '\nBody:', response.text)
+        logger.debug('[Auth] Code: %i\nBody: %s', response.status_code, response.text)
         if response.status_code != 200:
             raise AuthenticationException(response)
 
@@ -69,8 +86,13 @@ class OAuth(object):
             uri,
             method,
             body=urlencode(body),
-            headers=self._content_type
+            headers=self._base_header
         )
+        from requests import Request
+        r=Request(method, uri,headers=headers, data=body)
+        prep=r.prepare()
+        logging.debug(prep.headers)
+        logging.debug(prep.body)
         return requests.request(method, uri, headers=headers,data=body)
         
 
@@ -80,6 +102,7 @@ class OAuth(object):
             token.get('oauth_token_secret')[0])
 
     def xauth(self, user, password):
+        logger.debug('xauth authentication of user %s', user)
         if not self.server_context.is_xauth():
             raise XAuthNotConfigured
         #todo use xauth server key/secret
@@ -90,7 +113,7 @@ class OAuth(object):
         params["x_auth_mode"] = "client_auth"
 
         uri, headers, body = client.sign(
-            self.server_context.access_token_endpoint, 'POST', headers=self._content_type, body=params)
+            self.server_context.access_token_endpoint, 'POST', headers=self._base_header, body=params)
 
         response = requests.post(uri, headers=headers, data=body)
         self._check_response(response)
@@ -98,6 +121,8 @@ class OAuth(object):
         self._update_client()
 
     def set_oauth_request_token(self):
+        logger.debug('Fetching oauth request token from: %s',
+                      self.server_context.request_token_endpoint)
         token_client = oauth.Client(self.consumer_key, client_secret=self.consumer_secret)
         uri, headers, body = token_client.sign(
             self.server_context.request_token_endpoint, "POST")
@@ -106,6 +131,8 @@ class OAuth(object):
         self._oauth_token , self._oauth_token_secret = self._parse_oauth_response(response)
 
     def set_oauth_access_token(self):
+        logger.debug('Fetching oauth access token from %s',
+                      self.server_context.access_token_endpoint)
         access_client = oauth.Client(self.consumer_key,
                                      client_secret=self.consumer_secret,
                                      resource_owner_key=self._oauth_token,

@@ -24,11 +24,11 @@ class Server(object):
 
     @staticmethod
     def from_config(config):
-        return Server(config.api_endpoint, 
-            config.request_token_endpoint,
-            config.access_token_endpoint,
-            xauth_consumer_key=config.xauth_consumer_key,
-            xauth_consumer_secret=config.xauth_consumer_secret)
+        return Server(config.api_api_endpoint, 
+                      config.authentication_request_token_endpoint,
+                      config.authentication_access_token_endpoint,
+                      xauth_consumer_key=config.authentication_xauth_consumer_key,
+                      xauth_consumer_secret=config.authentication_xauth_consumer_secret)
 
 
 WolframPublicCloudServer = Server.from_config(WolframPublicCloudConfig)

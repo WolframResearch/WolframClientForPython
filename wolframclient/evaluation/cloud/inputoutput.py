@@ -9,7 +9,9 @@ from wolframclient.evaluation.cloud.exceptions import EncoderException, DecoderE
 # from WolframClientForPython.wolframclient.utils import six
 
 import json
+import logging
 
+logger = logging.getLogger(__name__)
 
 class WolframAPI(object):
     '''Public API don't need authentication step. '''
@@ -24,7 +26,7 @@ class WolframAPI(object):
     def __str__(self):
         return '<WolframAPI:url=%s, public=%s>' % (self.url, self.public)
 class WolframAPIResponse(object):
-    __slots__ = 'api', 'response', 'success', 'output', 'json', '_fields', 'content_type'
+    __slots__ = 'api', 'response', 'success', 'output', 'failure', 'json', '_fields_in_error', 'content_type'
 
     def __init__(self, api, response):
         self.api = api
@@ -32,6 +34,7 @@ class WolframAPIResponse(object):
         self.content_type = response.headers.get('Content-Type', None)
         if response.status_code == 200:
             self.success = True
+            self.failure = None
             if self.api.result_type is not None:
                 self.output = self.api.result_type.output(response.content)
             else:
@@ -40,41 +43,35 @@ class WolframAPIResponse(object):
             self.success = False
             # ignoring content-type. Must be JSON. Make sure it's robust enough.
             self.json = response.json()
+            self.failure = self.json.get('Failure', None)
             fields = self.json.get('Fields', None)
             if fields is not None:
-                self._fields = set(fields.keys())
+                self._fields_in_error = set(fields.keys())
 
+            logging.warn('Wolfram API error response: %s', self.failure)
+        elif response.status_code == 404:
+            self.success = False
+            # ignoring content-type. Must be JSON. Make sure it's robust enough.
+            self.json = None
+            self.failure = "The resource %s can't not be found." % self.api.url
+            logging.warn('Wolfram API error response: %s', self.failure)
         else:
             # TODO improve error handling.
             self.success = False
-
-    def failure(self):
-        if self.success:
-            return None
-        elif self.json is not None:
-            return self.json.get('Failure', None)
-        else:
-            return {'status': self.response.status_code, 'msg': self.response.text}
-
-    def fields(self):
-        if self.success or self.json is None:
-            return None
-        fields = self.json.get('Fields', None)
-        if fields is None:
-            self._fields = set()
-            return self._fields
-        else:
-            self._fields = set(fields.keys())
-            return self._fields
+            self.json = None
+            self.failure = self.response.text
 
     def iter_error(self):
-        for field, err in self.json.get('Fields', {}).items():
-            failure = err.get('Failure', None)
-            if failure is not None:
-                yield (field, failure)
+        if self.success or self.json is None:
+            raise StopIteration
+        else:
+            for field, err in self.json.get('Fields', {}).items():
+                failure = err.get('Failure', None)
+                if failure is not None:
+                    yield (field, failure)
 
     def fields_in_error(self, field):
-       return list(self.iter_error())
+        return list(self.iter_error())
 
     def __str__(self):
         return '<WolframAPIResponse:success=%s>' % self.success
@@ -173,7 +170,7 @@ class FormatDecoder(object):
 
     def decode(self, data):
         try:
-            self._decode(data)
+            return self._decode(data)
         except Exception as e:
             raise DecoderException(
                 'Failed to decode data', e)
