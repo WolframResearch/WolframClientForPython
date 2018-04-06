@@ -14,7 +14,9 @@ class AuthenticationException(RequestException):
 XAuthNotConfigured = AuthenticationException(
     'XAuth is not configured. Missing xauth consumer key and/or secret.')
 
-
+class InputException(ValueError):
+    ''' Error in input parameters'''
+    pass
 class EncoderException(Exception):
     ''' Error while encoding data.'''
     def __init__(self, msg, cause=None):

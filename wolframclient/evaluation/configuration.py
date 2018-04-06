@@ -51,18 +51,28 @@ class Configuration(object):
                     'Server configuration must contain section: %s' % section)
 
     def read(self, filenames):
+        if logger.level <= logging.DEBUG:
+            from wolframclient.utils.functional import riffle
+            if isinstance(filenames, list):
+                out_filenames = "".join(riffle(filenames, ', '))
+                logger.debug('Configuration read from files: %s', out_filenames)
+            else:
+                logger.debug('Configuration read from %s', filenames)
         parser = SafeConfigParser()
         parser.read(filenames)
         self._set_parser(parser)
         return self
 
     def read_file(self, file):
+        if logger.level <= logging.DEBUG:
+            logger.debug('Configuration read from %s', file.name)
         parser = SafeConfigParser()
         parser.read_file(file)
         self._set_parser(parser)
         return self
 
     def read_dict(self, dictionary):
+        logger.debug('Configuration read from dictionary.')
         parser = SafeConfigParser()
         parser.read_dict(dictionary)
         self._set_parser(parser)

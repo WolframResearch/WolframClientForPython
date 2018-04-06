@@ -3,9 +3,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import os
 import logging
-try: # PY3
+try: # PY2
     from urlparse import urlparse, parse_qs, urlencode
-except ImportError: # PY2
+except ImportError: # PY3
     from urllib.parse import urlparse, parse_qs, urlencode
 import requests
 from oauthlib import oauth1 as oauth
@@ -27,18 +27,22 @@ logger = logging.getLogger(__name__)
 
 class SecuredAuthenticationKey(object):
     __slots__ = 'consumer_key', 'consumer_secret'
-
+    is_xauth = False
     def __init__(self, consumer_key, consumer_secret):
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
 
     @staticmethod
     def from_config(config):
-        return SecuredAuthenticationKey(config.sak_consumer_key, config.sak_consumer_secret)
+        if hasattr(config, 'sak_consumer_key') and hasattr(config, 'sak_consumer_secret'):
+            return SecuredAuthenticationKey(config.sak_consumer_key, config.sak_consumer_secret)
+        else:
+            raise ConfigurationException(
+                'Consumer key and secret missing from configuration.')
 
 class UserCredentials(object):
     __slots__ = 'user', 'password'
-
+    is_xauth = True
     def __init__(self, user, password):
         self.user = user
         self.password = password
@@ -48,10 +52,10 @@ class UserCredentials(object):
         if hasattr(config, 'user_user_id') and hasattr(config, 'user_password'):
             return UserCredentials(config.user_user_id, config.user_password)
         else:
-            raise ConfigurationException('User credentials missing in configuration.')
+            raise ConfigurationException('User credentials missing from configuration.')
 
-class OAuth(object):
-    __slots__ = 'consumer_key', 'consumer_secret', 'signature_method',  '_oauth_token', '_oauth_token_secret', '_base_header', '_client', 'server_context'
+class OAuthSession(object):
+    __slots__ = 'consumer_key', 'consumer_secret', 'signature_method',  '_oauth_token', '_oauth_token_secret', '_base_header', '_client', 'server_context', '_session'
     DEFAULT_CONTENT_TYPE = {
         'Content-Type': 'application/x-www-form-urlencoded',
         'User-Agent': 'WolframClientForPython/1.0'}
@@ -60,8 +64,9 @@ class OAuth(object):
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
         self.signature_method = signature_method
-        self._base_header = OAuth.DEFAULT_CONTENT_TYPE
+        self._base_header = OAuthSession.DEFAULT_CONTENT_TYPE
         self._client = None
+        self._session = None
         self._oauth_token = None
         self._oauth_token_secret = None
         self.server_context = server_context
@@ -78,7 +83,7 @@ class OAuth(object):
                                     resource_owner_key=self._oauth_token,
                                     resource_owner_secret=self._oauth_token_secret)
 
-    # TODO add headers, query params
+    # TODO add headers? Add a session and prepared requests?
     def signed_request(self, uri, body={}, method='POST'):
         if self._client is None:
             raise AuthenticationException('Not authenticated.')
@@ -88,13 +93,11 @@ class OAuth(object):
             body=urlencode(body),
             headers=self._base_header
         )
-        from requests import Request
-        r=Request(method, uri,headers=headers, data=body)
-        prep=r.prepare()
-        logging.debug(prep.headers)
-        logging.debug(prep.body)
-        return requests.request(method, uri, headers=headers,data=body)
-        
+        return requests.request(method, uri, headers=headers, data=body)        
+
+    @property
+    def authorized(self):
+        return self._client is not None and bool(self._client.client_secret) and bool(self._client.resource_owner_key) and bool(self._client.resource_owner_secret)
 
     def _parse_oauth_response(self, response):
         token = parse_qs(response.text)
