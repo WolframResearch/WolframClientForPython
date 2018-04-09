@@ -44,7 +44,7 @@ class WLSerializer(FormatSerializer):
     def serialize_string(self, string):
         return py_encode_text(string)
 
-    def serialize_bytes(self, obj):
+    def serialize_bytes(self, bytes):
         return self.serialize_function(
             self.serialize_symbol('ByteArray'), (
                 ('"', base64.b64encode(bytes), '"'),
