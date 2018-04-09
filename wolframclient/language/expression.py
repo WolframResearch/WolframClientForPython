@@ -8,7 +8,7 @@ from wolframclient.utils import six
 from wolframclient.utils.encoding import force_text
 
 class WLExpressionMeta(object):
-    
+
     def __bool__(self):
         return True
 

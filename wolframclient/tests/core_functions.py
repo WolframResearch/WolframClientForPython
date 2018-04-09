@@ -3,9 +3,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.tests.utils.base import TestCase as BaseTestCase
+from wolframclient.utils import six
 from wolframclient.utils.dispatch import ClassDispatch, Dispatch
 from wolframclient.utils.functional import partition, riffle
-from wolframclient.utils import six
 
 import math
 

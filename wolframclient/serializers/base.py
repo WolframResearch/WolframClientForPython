@@ -2,16 +2,14 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from functools import reduce
-
-from wolframclient.language.expression import WLSymbol, WLFunction
+from wolframclient.language.expression import WLFunction, WLSymbol
 from wolframclient.serializers.serializable import WLSerializable
 from wolframclient.utils import six
 from wolframclient.utils.dispatch import ClassDispatch
-from wolframclient.utils.functional import composition, first, iterate, last
-from wolframclient.utils.importutils import safe_import_string
 from wolframclient.utils.encoding import force_text
-import inspect
+from wolframclient.utils.functional import composition, first, iterate
+from wolframclient.utils.importutils import safe_import_string
+
 import datetime
 import decimal
 import fractions
@@ -125,7 +123,7 @@ class FormatSerializer(object):
     @dispatch.multi(WLFunction)
     def default_normalizer(self, o):
         return self.serialize_function(
-            self.normalize(o.head), 
+            self.normalize(o.head),
             tuple(self.normalize(arg) for arg in o.args)
         )
 

@@ -2,12 +2,12 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.serializers.base import FormatSerializer
-
 from itertools import chain
 
+from wolframclient.serializers.base import FormatSerializer
 from wolframclient.serializers.escape import py_encode_text
 from wolframclient.utils.encoding import force_bytes
+
 import base64
 
 def yield_with_separators(iterable, separator = b', ', first = None, last = None):
@@ -31,7 +31,6 @@ class WLSerializer(FormatSerializer):
         for payload in self.normalize(data):
             stream.write(payload)
         return stream
-
 
     def serialize_function(self, head, args):
         return chain(

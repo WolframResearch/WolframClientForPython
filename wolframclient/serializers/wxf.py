@@ -2,10 +2,10 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from itertools import chain
+
 from wolframclient.serializers.base import FormatSerializer
 from wolframclient.serializers.wxfencoder.serializer import WXFExprSerializer
-
-from itertools import chain
 
 import wolframclient.serializers.wxfencoder.wxfexpr as wxfexpr
 
@@ -46,7 +46,7 @@ class WXFSerializer(FormatSerializer):
             yield wxfexpr.WXFExprInteger(number)
         except ValueError:
             #WXFExprInteger is raising a ValueError if the integer is not in the appropriate bounds.
-            #that check needs to be done in case, it's better to do it only once. 
+            #that check needs to be done in case, it's better to do it only once.
             yield wxfexpr.WXFExprBigInteger('%i' % number)
 
     def serialize_float(self, number):
