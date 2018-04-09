@@ -10,7 +10,8 @@ from wolframclient.utils import six
 from wolframclient.utils.dispatch import ClassDispatch
 from wolframclient.utils.functional import composition, first, iterate, last
 from wolframclient.utils.importutils import safe_import_string
-
+from wolframclient.utils.encoding import force_text
+import inspect
 import datetime
 import decimal
 import fractions
@@ -274,5 +275,38 @@ class FormatSerializer(object):
             self.serialize_symbol('RuleDelayed'), (
                 lhs,
                 rhs
+            )
+        )
+
+    def _serialize_external_object(self, o):
+
+        yield "Type",       "PythonFunction"
+        yield "Name",       force_text(o.__name__)
+        yield "BuiltIn",    inspect.isbuiltin(o),
+
+        is_module = inspect.ismodule(o)
+
+        yield "IsModule", is_module
+
+        if not is_module:
+            module = inspect.getmodule(o)
+            if module:
+                yield "Module", force_text(module.__name__)
+
+        yield "IsClass",    inspect.isclass(o),
+        yield "IsFunction", inspect.isfunction(o),
+        yield "IsMethod",   inspect.ismethod(o),
+        yield "Callable",   callable(o)
+
+        if callable(o):
+            yield "Arguments", first(inspect.getargspec(o))
+
+    def serialize_external_object(self, obj):
+        return self.serialize_function(
+            self.serialize_symbol('ExternalObject'), (
+                self.serialize_mapping(
+                    (self.normalize(key), self.normalize(value))
+                    for key, value in self._serialize_external_object(obj)
+                ),
             )
         )

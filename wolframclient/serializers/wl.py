@@ -8,7 +8,6 @@ from itertools import chain
 
 from wolframclient.serializers.escape import py_encode_text
 from wolframclient.utils.encoding import force_bytes
-
 import base64
 
 def yield_with_separators(iterable, separator = b', ', first = None, last = None):
