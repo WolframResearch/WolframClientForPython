@@ -7,8 +7,8 @@ from wolframclient.utils.importutils import API
 DEFAULT_FORMAT = 'wl'
 
 available_formats = API(
-    wl = 'wolframclient.serializers.wl.WLSerializer',
-    wxf = 'wolframclient.serializers.wxf.WXFSerializer',
+    wl    = 'wolframclient.serializers.wl.WLSerializer',
+    wxf   = 'wolframclient.serializers.wxf.WXFSerializer',
 )
 
 def export(data, stream = None, format = 'wl', **options):

@@ -24,10 +24,9 @@ class FormatSerializer(object):
 
     types = None
 
-    def __init__(self, normalizer = None, last_normalizer = None):
-        self.normalize  = self.chain_normalizers(normalizer)
-
-        self._last_normalizer = last_normalizer
+    def __init__(self, normalizer = None, allow_external_objects = False):
+        self.normalize = self.chain_normalizers(normalizer)
+        self.allow_external_objects = allow_external_objects
 
     def dump(self, data, stream):
         raise NotImplementedError
@@ -56,68 +55,63 @@ class FormatSerializer(object):
             )
         ))
 
-    def last_normalizer(self, o):
-        if self._last_normalizer:
-            return self.normalize(self._last_normalizer(o))
-        raise NotImplementedError('Cannot serialize object of class %s' % o.__class__)
-
     def _normalize_tzinfo(self, date, name_match = re.compile('^[A-Za-z]+(/[A-Za-z]+)?$')):
 
         if date.tzinfo is None:
-            return self.types.WLSymbol("$TimeZone")
+            return self.serialize_symbol("$TimeZone")
 
         name = date.tzinfo.tzname(None)
 
         if name and name_match.match(name):
-            return self.types.WLString(name)
+            return self.serialize_string(name)
 
-        return self.types.WLFloat(date.utcoffset().total_seconds() / 3600)
+        return self.serialize_float(date.utcoffset().total_seconds() / 3600)
 
     @dispatch.multi((bool, six.none_type))
     def default_normalizer(self, o):
-        return self.types.WLSymbol('%s' % o)
+        return self.serialize_symbol('%s' % o)
 
     @dispatch.multi(datetime.datetime)
     def default_normalizer(self, o):
-        return self.types.WLFunction(
-            self.types.WLSymbol("DateObject"), (
-                self.types.WLList((
-                    self.types.WLInteger(o.year),
-                    self.types.WLInteger(o.month),
-                    self.types.WLInteger(o.day),
-                    self.types.WLInteger(o.hour),
-                    self.types.WLInteger(o.minute),
-                    self.types.WLFloat(o.second + o.microsecond / 1000000.)
+        return self.serialize_function(
+            self.serialize_symbol("DateObject"), (
+                self.serialize_iterable((
+                    self.serialize_integer(o.year),
+                    self.serialize_integer(o.month),
+                    self.serialize_integer(o.day),
+                    self.serialize_integer(o.hour),
+                    self.serialize_integer(o.minute),
+                    self.serialize_float(o.second + o.microsecond / 1000000.)
                 )),
-                self.types.WLString("Instant"),
-                self.types.WLString("Gregorian"),
+                self.serialize_string("Instant"),
+                self.serialize_string("Gregorian"),
                 self._normalize_tzinfo(o)
             )
         )
 
     @dispatch.multi(datetime.date)
     def default_normalizer(self, o):
-        return self.types.WLFunction(
-            self.types.WLSymbol("DateObject"), (
-                self.types.WLList((
-                    self.types.WLInteger(o.year),
-                    self.types.WLInteger(o.month),
-                    self.types.WLInteger(o.day),
+        return self.serialize_function(
+            self.serialize_symbol("DateObject"), (
+                self.serialize_iterable((
+                    self.serialize_integer(o.year),
+                    self.serialize_integer(o.month),
+                    self.serialize_integer(o.day),
                 )),
             )
         )
 
     @dispatch.multi(datetime.time)
     def default_normalizer(self, o):
-        return self.types.WLFunction(
-            self.types.WLSymbol("TimeObject"), (
-                self.types.WLList((
-                    self.types.WLInteger(o.hour),
-                    self.types.WLInteger(o.minute),
-                    self.types.WLFloat(o.second + o.microsecond / 1000000.)
+        return self.serialize_function(
+            self.serialize_symbol("TimeObject"), (
+                self.serialize_iterable((
+                    self.serialize_integer(o.hour),
+                    self.serialize_integer(o.minute),
+                    self.serialize_float(o.second + o.microsecond / 1000000.)
                 )),
-                self.types.WLRule(
-                    self.types.WLSymbol("TimeZone"),
+                self.serialize_rule(
+                    self.serialize_symbol("TimeZone"),
                     self._normalize_tzinfo(o)
                 )
             )
@@ -125,75 +119,75 @@ class FormatSerializer(object):
 
     @dispatch.multi(WLSymbol)
     def default_normalizer(self, o):
-        return self.types.WLSymbol(o.name)
+        return self.serialize_symbol(o.name)
 
     @dispatch.multi(WLFunction)
     def default_normalizer(self, o):
-        return self.types.WLFunction(
+        return self.serialize_function(
             self.normalize(o.head), 
             tuple(self.normalize(arg) for arg in o.args)
         )
 
     @dispatch.multi((bytearray, six.binary_type))
     def default_normalizer(self, o):
-        return self.types.WLBytes(o)
+        return self.serialize_bytes(o)
 
     @dispatch.multi(six.text_type)
     def default_normalizer(self, o):
-        return self.types.WLString(o)
+        return self.serialize_string(o)
 
     @dispatch.multi(dict)
     def default_normalizer(self, o):
-        return self.types.WLAssociation(
+        return self.serialize_mapping(
             (self.normalize(key), self.normalize(value))
             for key, value in o.items()
         )
 
     @dispatch.multi(six.integer_types)
     def default_normalizer(self, o):
-        return self.types.WLInteger(o)
+        return self.serialize_integer(o)
 
     @dispatch.multi(decimal.Decimal)
     def default_normalizer(self, o):
 
         if o.is_infinite():
-            return self.types.WLFunction(
-                self.types.WLSymbol(b"DirectedInfinity"), (
-                    self.types.WLInteger(o < 0 and -1 or 1),
+            return self.serialize_function(
+                self.serialize_symbol(b"DirectedInfinity"), (
+                    self.serialize_integer(o < 0 and -1 or 1),
                 )
             )
 
         if o.is_nan():
-            return self.types.WLSymbol(b"Indeterminate")
+            return self.serialize_symbol(b"Indeterminate")
 
-        return self.types.WLDecimal(o)
+        return self.serialize_decimal(o)
 
     @dispatch.multi(float)
     def default_normalizer(self, o):
 
         if math.isinf(o):
-            return self.types.WLFunction(
-                self.types.WLSymbol(b"DirectedInfinity"), (
-                    self.types.WLInteger(o < 0 and -1 or 1),
+            return self.serialize_function(
+                self.serialize_symbol(b"DirectedInfinity"), (
+                    self.serialize_integer(o < 0 and -1 or 1),
                 )
             )
 
         if math.isnan(o):
-            return self.types.WLSymbol(b"Indeterminate")
+            return self.serialize_symbol(b"Indeterminate")
 
-        return self.types.WLFloat(o)
+        return self.serialize_float(o)
 
     @dispatch.multi(fractions.Fraction)
     def default_normalizer(self, o):
-        return self.types.WLRational(o)
+        return self.serialize_fraction(o)
 
     @dispatch.multi(complex)
     def default_normalizer(self, o):
-        return self.types.WLComplex(o)
+        return self.serialize_complex(o)
 
     @dispatch.multi(six.iterable_types)
     def default_normalizer(self, o):
-        return self.types.WLList(
+        return self.serialize_iterable(
             self.normalize(value)
             for value in o
         )
@@ -205,8 +199,80 @@ class FormatSerializer(object):
     @dispatch.default()
     def default_normalizer(self, o):
         if not inspect.isclass(o) and hasattr(o, '__iter__'):
-            return self.types.WLList(
+            return self.serialize_iterable(
                 self.normalize(value)
                 for value in o
             )
-        return self.last_normalizer(o)
+        if self.allow_external_objects:
+            return self.serialize_external_object(o)
+
+        raise NotImplementedError('Cannot serialize object of class %s' % o.__class__)
+
+    #implementation of several methods
+
+    def serialize_function(self, head, args):
+        raise NotImplementedError
+
+    def serialize_symbol(self, symbol):
+        raise NotImplementedError
+
+    def serialize_string(self, obj):
+        raise NotImplementedError
+
+    def serialize_bytes(self, obj):
+        raise NotImplementedError
+
+    def serialize_float(self, obj):
+        raise NotImplementedError
+
+    def serialize_decimal(self, obj):
+        raise NotImplementedError
+
+    def serialize_integer(self, obj):
+        raise NotImplementedError
+
+    def serialize_iterable(self, iterable):
+        return self.serialize_function(
+            self.serialize_symbol('List'),
+            iterable
+        )
+
+    def serialize_mapping(self, mappable):
+        return self.serialize_function(
+            self.serialize_symbol('Association'), (
+                self.serialize_rule(key, value)
+                for key, value in mappable
+            )
+        )
+
+    def serialize_fraction(self, o):
+        return self.serialize_function(
+            self.serialize_symbol('Rational'), (
+                self.serialize_integer(o.numerator),
+                self.serialize_integer(o.denominator)
+            )
+        )
+
+    def serialize_complex(self, o):
+        return self.serialize_function(
+            self.serialize_symbol('Complex'), (
+                self.serialize_float(o.real),
+                self.serialize_float(o.imag),
+            )
+        )
+
+    def serialize_rule(self, lhs, rhs):
+        return self.serialize_function(
+            self.serialize_symbol('Rule'), (
+                lhs,
+                rhs
+            )
+        )
+
+    def serialize_rule_delayed(self, lhs, rhs):
+        return self.serialize_function(
+            self.serialize_symbol('RuleDelayed'), (
+                lhs,
+                rhs
+            )
+        )
