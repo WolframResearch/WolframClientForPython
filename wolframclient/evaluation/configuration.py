@@ -12,6 +12,28 @@ __all__ = ['Configuration', 'user_credential_configuration', 'server_configurati
            ]
 
 class Configuration(object):
+    ''' A structured representation of a configuration file.
+
+    This class represents a configuration file structured in sections.
+    Each sections can have pairs of key-value. The configuration is initialized
+    with a scheme: a dictionary associating string keys, the section names, to list of
+    parameter names as strings.
+    The configuration is then populated using one of the `read` methods.
+    Some sections can be optional in which case no error is raise if missing from the
+    source. Similarly some parameters can be optional in a mandatory section.
+    This class allows a fine tune of which values from a given data source are relevant
+    for the purpose of a given configuration.
+    
+    Once populated, the configuration has new attributes named using:
+    `{section}_{parameter}` section and parameter in lower case.
+
+    Examples of predefined schemes can be found at the end of this module, they define 
+    server configuration (`server_configuration`), user credentials
+    (`user_credential_configuration`), and secured key (`sak_configuration`).
+
+    The value `WolframPublicCloudConfig` contains the populated configuration of the
+    Wolfram public cloud.
+    '''
     def __init__(self, sections, optional_sections={}, optional_keys={}):
         self.log_values = True
         self.sections = {}
@@ -51,6 +73,7 @@ class Configuration(object):
                     'Server configuration must contain section: %s' % section)
 
     def read(self, filenames):
+        ''' Populate the configuration with values gathered from a list of files defined by they filenames'''
         if logger.level <= logging.DEBUG:
             from wolframclient.utils.functional import riffle
             if isinstance(filenames, list):
@@ -64,6 +87,7 @@ class Configuration(object):
         return self
 
     def read_file(self, file):
+        ''' Populate the configuration with values gathered from a file-like object'''
         if logger.level <= logging.DEBUG:
             logger.debug('Configuration read from %s', file.name)
         parser = ConfigParser()
@@ -72,6 +96,7 @@ class Configuration(object):
         return self
 
     def read_dict(self, dictionary):
+        ''' Populate the configuration with values gathered from a `dict`'''
         logger.debug('Configuration read from dictionary.')
         parser = ConfigParser()
         parser.read_dict(dictionary)
@@ -108,6 +133,7 @@ class Configuration(object):
 
 
 def user_credential_configuration():
+    ''' Return an initialized instance of `Configuration` specifying user credentials '''
     config = Configuration(
         {'User': ['id', 'password']}
     )
@@ -116,6 +142,7 @@ def user_credential_configuration():
 
 
 def sak_configuration():
+    ''' Return an initialized instance of `Configuration` specifying a secured authenticated key '''
     config = Configuration(
         {'SAK': ['consumer_key', 'consumer_secret']}
     )
@@ -123,6 +150,7 @@ def sak_configuration():
     return config
 
 def server_configuration():
+    ''' Return an initialized instance of `Configuration` specifying a server. '''
     return Configuration(
         {
             'API': ['api_endpoint'],

@@ -8,7 +8,15 @@ __all__ = [
     ]
 
 class Server(object):
+    ''' Represents the cloud server.
+    
+    Contains the authentication endpoints informations, the API endpoint aka. the 
+    cloud base (`$CloudBase` in the Wolfram Language), and eventually the xauth 
+    consumer key and secret.
 
+    For conveniency this class exposes static methods to build instances from
+    a `Configuration` or from a file path.
+    '''
     __slots__ = 'cloudbase', 'request_token_endpoint', 'access_token_endpoint', 'xauth_consumer_key', 'xauth_consumer_secret'
 
     def __init__(self, cloudbase, request_token_endpoint, access_token_endpoint,
@@ -24,6 +32,7 @@ class Server(object):
 
     @staticmethod
     def from_config(config):
+        ''' Build a server instance from a `Configuration`.'''
         return Server(config.api_api_endpoint, 
                       config.authentication_request_token_endpoint,
                       config.authentication_access_token_endpoint,
@@ -32,7 +41,14 @@ class Server(object):
 
     @staticmethod
     def from_file(filepath):
+        ''' Build a server instance from a file path.'''
         return Server.from_config(server_configuration().read(filepath))
+    
+    @staticmethod
+    def default():
+        ''' A new Server instance representing the Wolfram public Cloud.'''
+        return Server.from_config(WolframPublicCloudConfig)
 
 
-WolframPublicCloudServer = Server.from_config(WolframPublicCloudConfig)
+# A built-in instance representing the Wolfram public Cloud.
+WolframPublicCloudServer = Server.default()

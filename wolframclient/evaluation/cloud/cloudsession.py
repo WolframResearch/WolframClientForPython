@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import logging
 from wolframclient.evaluation.cloud.exceptions import AuthenticationException, XAuthNotConfigured, InputException, OutputException
 from wolframclient.evaluation.cloud.oauth import OAuthSession
-from wolframclient.evaluation.cloud.inputoutput import WolframAPIBuilder, WolframAPI
+from wolframclient.evaluation.cloud.inputoutput import WolframAPIBuilder
 from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 from wolframclient.utils.encoding import force_text
 import requests
@@ -11,6 +11,22 @@ __all__ = ['CloudSession']
 
 logger = logging.getLogger(__name__)
 class CloudSession(object):
+    ''' Represents a session to a given cloud enabling simple API call.
+    
+    This is the central class of the cloud evaluation package. It is 
+    initialized with a server instance representing a given cloud. The
+    `default` static method can be used to initialize a session to the Wolfram
+    public cloud.
+
+    Most of the time it is necessary to authenticate with the server before issuing
+    requests. `CloudSession` supports two forms of authentication:
+    - 2-legged oauth using a secured authentication key.
+    - xauth using the user ID and password.
+
+    Calling an API is done throught the method `call` which will return an instance of
+    a `WolframAPIResponse`. It is strongly advised to re-use a session to make multiple 
+    calls.
+    '''
     __slots__ = 'server', 'oauth', 'consumer', 'consumer_secret', 'user', 'password', 'is_xauth'
     def __init__(self, server):
         self.server = server
@@ -23,13 +39,17 @@ class CloudSession(object):
 
     @staticmethod
     def default():
+        ''' returns a cloud session targetting the Wolfram public Cloud.'''
         return CloudSession(WolframPublicCloudServer)
 
-    def authenticate(self, credential):
-        if credential.is_xauth:
-            self.user_authentication(credential)
+    def authenticate(self, credentials):
+        '''Authenticate with the server using the credentials. 
+        
+        This method supports both oauth and xauth methods. '''
+        if credentials.is_xauth:
+            self.user_authentication(credentials)
         else:
-            self.sak_authentication(credential)
+            self.sak_authentication(credentials)
         return self
 
     def sak_authentication(self, sak_credential):
@@ -50,17 +70,9 @@ class CloudSession(object):
                            self.server.xauth_consumer_secret)
         self.oauth.xauth(user_credentials.user, user_credentials.password)
         
-
-    def _auth(self):
-        if self.is_xauth is None:
-            raise AuthenticationException('Credentials not set.')
-        elif self.is_xauth:
-            self.oauth.xauth(self.user, self.password)
-        else:
-            self.oauth.auth()
-
     @property
     def authorized(self):
+        ''' Returns a reasonnably accurate state of the authentication status. '''
         if self.is_xauth is None or self.oauth is None:
             return False
         else:
@@ -91,6 +103,18 @@ class CloudSession(object):
 
 
     def call(self, url, input_parameters={}, input_encoders={}, decoder=force_text):
+        ''' Call a given API specified by its `url`, using the provided input parameters
+        
+        The input parameters are provider as a dictionary with string keys being the name
+        of the parameters associated to their value. The input encoder(s) can be specified
+        as a callable in which case it is applied to all inputs, or as a dictionary, with keys
+        being the parameter names, for a finer control of the encoding. Finally it is possible
+        to specify a decoder, which is applied when the request was successful, to the raw binary 
+        response of the API. 
+        
+        Note: By default a decoder is specified and ensure the response is of type string. To
+        get raw bytes just replace it with `None`.
+        '''
         encoded_inputs = self._encoded_inputs(input_parameters, input_encoders)
         if self.authorized:
             logger.debug('Authenticated call to api %s', url)
@@ -101,15 +125,17 @@ class CloudSession(object):
         return WolframAPIBuilder.build(request, decoder)
 
 class APIUtil(object):
+    ''' A utility class that provides some static function to help construct API urls.'''
     @staticmethod
-    def user_api_url(username, api_id, 
-        server=WolframPublicCloudServer,
-        input_encoders=None, 
-        decoder=force_text):
+    def user_api_url(username, api_id, server=WolframPublicCloudServer):
         '''Build an API URL from a user name and an API id.
         
-        user name is generally $UserName. API id can be a uuid or a name,
-        in the form of a relative path. e.g: myapi/foo/bar
+        user name is generally the Wolfram Language symbol `$UserName`. 
+        API id can be a uuid or a name, in the form of a relative path. 
+        e.g: myapi/foo/bar
+
+        The server parameter, by default the Wolfram public Cloud is used
+        to provide the base url. See `Server.cloudbase`.
         '''
         return URLBuilder(server.cloudbase).extend('objects', username, api_id).get()
 

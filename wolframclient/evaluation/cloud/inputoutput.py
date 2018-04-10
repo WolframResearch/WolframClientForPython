@@ -8,24 +8,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class WolframAPI(object):
-    '''Public API don't need authentication step. '''
-    __slots__ = 'url', 'input_types', 'result_type', 'public'
-
-    def __init__(self, url, input_types={}, result_type=None, public=False):
-        self.url = url
-        if not isinstance(input_types, dict):
-            raise InputException("Input types must be a dictionary.")
-        else:
-            for key in input_types.keys():
-                if not isinstance(key, string_types):
-                    raise InputException("Input types keys must be strings.")
-        self.input_types = input_types
-        self.result_type = result_type
-        self.public = public
-
-    def __str__(self):
-        return '<WolframAPI:url=%s, public=%s>' % (self.url, self.public)
 class WolframAPIResponse(object):
     __slots__ = 'response', 'decoder', 'success', 'output', 'failure', 'json', '_fields_in_error', 'content_type', 'exception'
 

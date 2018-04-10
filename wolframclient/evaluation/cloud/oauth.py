@@ -17,17 +17,15 @@ from wolframclient.evaluation.cloud.exceptions import RequestException, Authenti
 
 logger = logging.getLogger(__name__)
 
-# WOLFRAM_CERT_URL = "http://wolframca.wolfram.com/WolframCA3.crt"
-# WOLFRAM_CERT_FILE = os.path.abspath(os.path.join(
-#     os.path.dirname(__file__), '..', '..', "WolframCA3.crt"))
-# print('certificat: ', WOLFRAM_CERT_FILE)
-# import warnings
-# from urllib3.exceptions import InsecureRequestWarning
-# warnings.filterwarnings("ignore", category=InsecureRequestWarning)
-
-
-
 class SecuredAuthenticationKey(object):
+    ''' Represents a Secured Authentication Key generated using the Wolfram Language
+    function `GenerateSecuredAuthenticationKey[]`
+    
+    It is used as an input when authenticating a cloud session. This class provides
+    static builder methods:
+    - from a file path with `from_file`
+    - from an instance of `Configuration` with `from_config`
+    '''
     __slots__ = 'consumer_key', 'consumer_secret'
     is_xauth = False
     def __init__(self, consumer_key, consumer_secret):
@@ -36,6 +34,11 @@ class SecuredAuthenticationKey(object):
 
     @staticmethod
     def from_config(config):
+        ''' Build a new instance of `SecuredAuthenticationKey` from a given configuration.
+
+        A convenient way to get an appropriate configuration instance is to use
+        from `wolframclient.evaluation.configuration.sak_configuration()`
+        '''
         if hasattr(config, 'sak_consumer_key') and hasattr(config, 'sak_consumer_secret'):
             return SecuredAuthenticationKey(config.sak_consumer_key, config.sak_consumer_secret)
         else:
@@ -44,11 +47,19 @@ class SecuredAuthenticationKey(object):
 
     @staticmethod
     def from_file(filepath):
+        ''' Build a new instance of `SecuredAuthenticationKey` from a given configuration file'''
         return SecuredAuthenticationKey.from_config(
             sak_configuration().read(filepath)
         )
 
 class UserCredentials(object):
+    ''' Represents user credentials used to login to a cloud.
+    
+    It is used as an input when authenticating a cloud session. This class provides 
+    static builder methods:
+    - from a file path with `from_file`
+    - from an instance of `Configuration` with `from_config`
+    '''
     __slots__ = 'user', 'password'
     is_xauth = True
     def __init__(self, user, password):
@@ -57,6 +68,11 @@ class UserCredentials(object):
 
     @staticmethod
     def from_config(config):
+        ''' Build a new instance of `UserCredentials` from a given configuration.
+
+        A convenient way to get an appropriate configuration instance is to use
+        from `wolframclient.evaluation.configuration.user_credential_configuration()`
+        '''
         if hasattr(config, 'user_id') and hasattr(config, 'user_password'):
             return UserCredentials(config.user_id, config.user_password)
         else:
@@ -64,11 +80,16 @@ class UserCredentials(object):
 
     @staticmethod
     def from_file(filepath):
+        ''' Build a new instance of `UserCredentials` from a given configuration file'''
         return UserCredentials.from_config(
             user_credential_configuration().read(filepath)
         )
 
 class OAuthSession(object):
+    ''' A wrapper around the OAuth client taking care of fetching the various oauth tokens.
+
+    This class is used by the cloud session. It is not meant to be used out of this scope.
+    '''
     __slots__ = 'consumer_key', 'consumer_secret', 'signature_method',  '_oauth_token', '_oauth_token_secret', '_base_header', '_client', 'server_context', '_session'
     DEFAULT_CONTENT_TYPE = {
         'Content-Type': 'application/x-www-form-urlencoded',
