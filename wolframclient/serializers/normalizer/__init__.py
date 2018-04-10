@@ -48,12 +48,19 @@ class DispatchUpdater(object):
 
 updater = DispatchUpdater(dispatch)
 updater.register_modules(
+
+    #builtin libraries
     sys           = 'wolframclient.serializers.normalizer.builtin.update_dispatch',
     decimal       = 'wolframclient.serializers.normalizer.decimal.update_dispatch',
     datetime      = 'wolframclient.serializers.normalizer.datetime.update_dispatch',
     fractions     = 'wolframclient.serializers.normalizer.fractions.update_dispatch',
+
+    #wolfram language support
     wolframclient = 'wolframclient.serializers.normalizer.wolfram.update_dispatch',
-    #numpy     = 'wolframclient.serializers.normalizer.numpy.update_dispatch',
+
+    #third party libraries
+    numpy         = 'wolframclient.serializers.normalizer.numpy.update_dispatch',
+    PIL           = 'wolframclient.serializers.normalizer.pil.update_dispatch',
 )
 
 class Normalizer(object):
