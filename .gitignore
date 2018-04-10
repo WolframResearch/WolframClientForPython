@@ -1,3 +1,6 @@
 __pycache__
 *.pyc
 *$py.class
+/build
+/dist
+/Wolfram_Client_for_Python.egg-info
