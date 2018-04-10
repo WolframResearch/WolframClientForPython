@@ -230,7 +230,7 @@ class _WXFExprStringLike(_WXFExpr):
 class WXFExprSymbol(_WXFExprStringLike):
     ''' A symbol represented by a string name. The name is always utf8 encoded.'''
     def __init__(self, value):
-        super(WXFExprSymbol, self).__init__(WXFConstants.Symbol, value)
+        super(WXFExprSymbol, self).__init__(WXFConstants.Symbol, value, allow_binary = True)
 
 class WXFExprString(_WXFExprStringLike):
     ''' A string of unicode character. The string is always utf8 encoded.
