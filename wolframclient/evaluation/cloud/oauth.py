@@ -11,6 +11,7 @@ import requests
 from oauthlib import oauth1 as oauth
 
 from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
+from wolframclient.evaluation.configuration import user_credential_configuration, sak_configuration
 from wolframclient.evaluation.cloud.exceptions import RequestException, AuthenticationException, XAuthNotConfigured, ConfigurationException
 
 logger = logging.getLogger(__name__)
@@ -40,6 +41,12 @@ class SecuredAuthenticationKey(object):
             raise ConfigurationException(
                 'Consumer key and secret missing from configuration.')
 
+    @staticmethod
+    def from_file(filepath):
+        return SecuredAuthenticationKey.from_config(
+            sak_configuration().read(filepath)
+        )
+
 class UserCredentials(object):
     __slots__ = 'user', 'password'
     is_xauth = True
@@ -49,10 +56,16 @@ class UserCredentials(object):
 
     @staticmethod
     def from_config(config):
-        if hasattr(config, 'user_user_id') and hasattr(config, 'user_password'):
-            return UserCredentials(config.user_user_id, config.user_password)
+        if hasattr(config, 'user_id') and hasattr(config, 'user_password'):
+            return UserCredentials(config.user_id, config.user_password)
         else:
             raise ConfigurationException('User credentials missing from configuration.')
+
+    @staticmethod
+    def from_file(filepath):
+        return UserCredentials.from_config(
+            user_credential_configuration().read(filepath)
+        )
 
 class OAuthSession(object):
     __slots__ = 'consumer_key', 'consumer_secret', 'signature_method',  '_oauth_token', '_oauth_token_secret', '_base_header', '_client', 'server_context', '_session'

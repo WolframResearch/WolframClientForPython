@@ -15,7 +15,12 @@ XAuthNotConfigured = AuthenticationException(
     'XAuth is not configured. Missing xauth consumer key and/or secret.')
 
 class InputException(ValueError):
-    ''' Error in input parameters'''
+    ''' Error in input parameters or encoding'''
+    pass
+
+
+class OutputException(ValueError):
+    ''' Error in output parameters or decoding'''
     pass
 class EncoderException(Exception):
     ''' Error while encoding data.'''

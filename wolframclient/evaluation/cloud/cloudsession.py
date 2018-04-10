@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import logging
-from wolframclient.evaluation.cloud.exceptions import AuthenticationException, XAuthNotConfigured, InputException
+from wolframclient.evaluation.cloud.exceptions import AuthenticationException, XAuthNotConfigured, InputException, OutputException
 from wolframclient.evaluation.cloud.oauth import OAuthSession
-from wolframclient.evaluation.cloud.inputoutput import WolframAPIResponse, WolframAPI
+from wolframclient.evaluation.cloud.inputoutput import WolframAPIBuilder, WolframAPI
 from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 from wolframclient.utils.encoding import force_text
 import requests
@@ -30,6 +30,7 @@ class CloudSession(object):
             self.user_authentication(credential)
         else:
             self.sak_authentication(credential)
+        return self
 
     def sak_authentication(self, sak_credential):
         self.consumer = sak_credential.consumer_key
@@ -66,28 +67,30 @@ class CloudSession(object):
             return bool(self.oauth._client.client_secret) and bool(self.oauth._client.resource_owner_key) and bool(self.oauth._client.resource_owner_secret)
 
     def _encoded_inputs(self, inputs, encoders):
-        if encoders is None:
-            return inputs
+        if isinstance(encoders, dict):
+            if len(encoders) == 0:
+                return inputs
+            inputs_encoded = {}
+            for input_name, input_value in inputs.items():
+                if input_name in encoders:
+                    encoder = encoders[input_name]
+                    if callable(encoder):
+                        inputs_encoded[input_name] = encoder(input_value)
+                    else:
+                        raise OutputException('Input encoder of %s is not callable.' % input_name)
+                else:
+                    inputs_encoded[input_name] = input_value
+                return inputs_encoded
         elif callable(encoders):
             inputs_encoded = {}
             for name, value in inputs.items():
                 inputs_encoded[name] = encoders(value)
             return inputs_encoded
-        elif isinstance(encoders, dict):
-            if len(inputs) == 0:
-                return {}
-            inputs_encoded = {}
-            for input_name, input_value in inputs.items():
-                if input_name in encoders:
-                    inputs_encoded[input_name] = encoders[input_name][input_value]
-                else:
-                    inputs_encoded[input_name] = input_value
-                return inputs_encoded
         else:
             raise InputException("Invalid input encoders. Expecting None, a callable object or a dictionary.")
 
 
-    def call(self, url, session, input_parameters={}, input_encoders={}, decoder=None):
+    def call(self, url, input_parameters={}, input_encoders={}, decoder=force_text):
         encoded_inputs = self._encoded_inputs(input_parameters, input_encoders)
         if self.authorized:
             logger.debug('Authenticated call to api %s', url)
@@ -95,8 +98,7 @@ class CloudSession(object):
         else:
             logger.debug('Anonymous call to api %s', url)
             request = requests.post(url, data=encoded_inputs)
-        return WolframAPIResponse(request, decoder=decoder)
-
+        return WolframAPIBuilder.build(request, decoder)
 
 class APIUtil(object):
     @staticmethod

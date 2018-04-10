@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-from configparser import SafeConfigParser, NoSectionError, NoOptionError
+from configparser import ConfigParser, NoSectionError, NoOptionError
 from wolframclient.evaluation.cloud.exceptions import ConfigurationException, ConfigurationWarning
 from warnings import warn
 import logging
@@ -58,7 +58,7 @@ class Configuration(object):
                 logger.debug('Configuration read from files: %s', out_filenames)
             else:
                 logger.debug('Configuration read from %s', filenames)
-        parser = SafeConfigParser()
+        parser = ConfigParser()
         parser.read(filenames)
         self._set_parser(parser)
         return self
@@ -66,14 +66,14 @@ class Configuration(object):
     def read_file(self, file):
         if logger.level <= logging.DEBUG:
             logger.debug('Configuration read from %s', file.name)
-        parser = SafeConfigParser()
+        parser = ConfigParser()
         parser.read_file(file)
         self._set_parser(parser)
         return self
 
     def read_dict(self, dictionary):
         logger.debug('Configuration read from dictionary.')
-        parser = SafeConfigParser()
+        parser = ConfigParser()
         parser.read_dict(dictionary)
         self._set_parser(parser)
         return self
@@ -109,7 +109,7 @@ class Configuration(object):
 
 def user_credential_configuration():
     config = Configuration(
-        {'User': ['user_id', 'password']}
+        {'User': ['id', 'password']}
     )
     config.log_values = False
     return config

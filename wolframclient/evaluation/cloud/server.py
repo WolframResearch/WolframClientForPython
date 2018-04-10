@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.evaluation.configuration import WolframPublicCloudConfig
+from wolframclient.evaluation.configuration import WolframPublicCloudConfig, server_configuration
 
 __all__ = [
     'Server', 
@@ -29,6 +29,10 @@ class Server(object):
                       config.authentication_access_token_endpoint,
                       xauth_consumer_key=config.authentication_xauth_consumer_key,
                       xauth_consumer_secret=config.authentication_xauth_consumer_secret)
+
+    @staticmethod
+    def from_file(filepath):
+        return Server.from_config(server_configuration().read(filepath))
 
 
 WolframPublicCloudServer = Server.from_config(WolframPublicCloudConfig)
