@@ -250,7 +250,7 @@ class FormatSerializer(object):
 
     def serialize_rule(self, lhs, rhs):
         return self.serialize_function(
-            self.serialize_symbol('Rule'), (
+            self.serialize_symbol(b'Rule'), (
                 lhs,
                 rhs
             )
@@ -258,7 +258,7 @@ class FormatSerializer(object):
 
     def serialize_rule_delayed(self, lhs, rhs):
         return self.serialize_function(
-            self.serialize_symbol('RuleDelayed'), (
+            self.serialize_symbol(b'RuleDelayed'), (
                 lhs,
                 rhs
             )
@@ -268,7 +268,7 @@ class FormatSerializer(object):
     def serialize_tzinfo(self, date, name_match = re.compile('^[A-Za-z]+(/[A-Za-z]+)?$')):
 
         if date.tzinfo is None:
-            return self.serialize_symbol("$TimeZone")
+            return self.serialize_symbol(b"$TimeZone")
 
         name = date.tzinfo.tzname(None)
 
@@ -302,7 +302,7 @@ class FormatSerializer(object):
 
     def serialize_external_object(self, obj):
         return self.serialize_function(
-            self.serialize_symbol('ExternalObject'), (
+            self.serialize_symbol(b'ExternalObject'), (
                 self.serialize_mapping(
                     (self.normalize(key), self.normalize(value))
                     for key, value in self._serialize_external_object(obj)
