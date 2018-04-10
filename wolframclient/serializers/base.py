@@ -54,18 +54,6 @@ class FormatSerializer(object):
             )
         ))
 
-    def _normalize_tzinfo(self, date, name_match = re.compile('^[A-Za-z]+(/[A-Za-z]+)?$')):
-
-        if date.tzinfo is None:
-            return self.serialize_symbol("$TimeZone")
-
-        name = date.tzinfo.tzname(None)
-
-        if name and name_match.match(name):
-            return self.serialize_string(name)
-
-        return self.serialize_float(date.utcoffset().total_seconds() / 3600)
-
     @dispatch.multi((bool, six.none_type))
     def default_normalizer(self, o):
         return self.serialize_symbol('%s' % o)
@@ -73,7 +61,7 @@ class FormatSerializer(object):
     @dispatch.multi(datetime.datetime)
     def default_normalizer(self, o):
         return self.serialize_function(
-            self.serialize_symbol("DateObject"), (
+            self.serialize_symbol(b"DateObject"), (
                 self.serialize_iterable((
                     self.serialize_integer(o.year),
                     self.serialize_integer(o.month),
@@ -84,14 +72,14 @@ class FormatSerializer(object):
                 )),
                 self.serialize_string("Instant"),
                 self.serialize_string("Gregorian"),
-                self._normalize_tzinfo(o)
+                self.serialize_tzinfo(o)
             )
         )
 
     @dispatch.multi(datetime.date)
     def default_normalizer(self, o):
         return self.serialize_function(
-            self.serialize_symbol("DateObject"), (
+            self.serialize_symbol(b"DateObject"), (
                 self.serialize_iterable((
                     self.serialize_integer(o.year),
                     self.serialize_integer(o.month),
@@ -103,15 +91,15 @@ class FormatSerializer(object):
     @dispatch.multi(datetime.time)
     def default_normalizer(self, o):
         return self.serialize_function(
-            self.serialize_symbol("TimeObject"), (
+            self.serialize_symbol(b"TimeObject"), (
                 self.serialize_iterable((
                     self.serialize_integer(o.hour),
                     self.serialize_integer(o.minute),
                     self.serialize_float(o.second + o.microsecond / 1000000.)
                 )),
                 self.serialize_rule(
-                    self.serialize_symbol("TimeZone"),
-                    self._normalize_tzinfo(o)
+                    self.serialize_symbol(b"TimeZone"),
+                    self.serialize_tzinfo(o)
                 )
             )
         )
@@ -232,13 +220,13 @@ class FormatSerializer(object):
 
     def serialize_iterable(self, iterable):
         return self.serialize_function(
-            self.serialize_symbol('List'),
+            self.serialize_symbol(b'List'),
             iterable
         )
 
     def serialize_mapping(self, mappable):
         return self.serialize_function(
-            self.serialize_symbol('Association'), (
+            self.serialize_symbol(b'Association'), (
                 self.serialize_rule(key, value)
                 for key, value in mappable
             )
@@ -246,7 +234,7 @@ class FormatSerializer(object):
 
     def serialize_fraction(self, o):
         return self.serialize_function(
-            self.serialize_symbol('Rational'), (
+            self.serialize_symbol(b'Rational'), (
                 self.serialize_integer(o.numerator),
                 self.serialize_integer(o.denominator)
             )
@@ -254,7 +242,7 @@ class FormatSerializer(object):
 
     def serialize_complex(self, o):
         return self.serialize_function(
-            self.serialize_symbol('Complex'), (
+            self.serialize_symbol(b'Complex'), (
                 self.serialize_float(o.real),
                 self.serialize_float(o.imag),
             )
@@ -275,6 +263,19 @@ class FormatSerializer(object):
                 rhs
             )
         )
+
+
+    def serialize_tzinfo(self, date, name_match = re.compile('^[A-Za-z]+(/[A-Za-z]+)?$')):
+
+        if date.tzinfo is None:
+            return self.serialize_symbol("$TimeZone")
+
+        name = date.tzinfo.tzname(None)
+
+        if name and name_match.match(name):
+            return self.serialize_string(name)
+
+        return self.serialize_float(date.utcoffset().total_seconds() / 3600)
 
     def _serialize_external_object(self, o):
 
