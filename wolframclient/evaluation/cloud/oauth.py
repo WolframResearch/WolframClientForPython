@@ -4,7 +4,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 import os
 import logging
 try: # PY2
-    from urlparse import urlparse, parse_qs, urlencode
+    from urlparse import urlparse, parse_qs
+    from urllib import urlencode
 except ImportError: # PY3
     from urllib.parse import urlparse, parse_qs, urlencode
 import requests
