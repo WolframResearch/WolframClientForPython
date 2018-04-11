@@ -7,10 +7,10 @@ from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 from wolframclient.utils.encoding import force_text
 import requests
 
-__all__ = ['CloudSession']
+__all__ = ['WolframCloudSession']
 
 logger = logging.getLogger(__name__)
-class CloudSession(object):
+class WolframCloudSession(object):
     ''' Represents a session to a given cloud enabling simple API call.
     
     This is the central class of the cloud evaluation package. It is 
@@ -19,7 +19,7 @@ class CloudSession(object):
     public cloud.
 
     Most of the time it is necessary to authenticate with the server before issuing
-    requests. `CloudSession` supports two forms of authentication:
+    requests. `WolframCloudSession` supports two forms of authentication:
     - 2-legged oauth using a secured authentication key.
     - xauth using the user ID and password.
 
@@ -40,7 +40,7 @@ class CloudSession(object):
     @staticmethod
     def default():
         ''' returns a cloud session targetting the Wolfram public Cloud.'''
-        return CloudSession(WolframPublicCloudServer)
+        return WolframCloudSession(WolframPublicCloudServer)
 
     def authenticate(self, credentials):
         '''Authenticate with the server using the credentials. 

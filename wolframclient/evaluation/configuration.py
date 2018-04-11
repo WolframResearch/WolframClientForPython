@@ -1,7 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-from configparser import ConfigParser, NoSectionError, NoOptionError
+try:
+    from configparser import ConfigParser, NoSectionError, NoOptionError
+except ImportError:
+    from ConfigParser import ConfigParser, NoSectionError, NoOptionError
 from wolframclient.evaluation.cloud.exceptions import ConfigurationException, ConfigurationWarning
+from wolframclient.utils.six import PY2, PY3
 from warnings import warn
 import logging
 
@@ -91,25 +95,57 @@ class Configuration(object):
         if logger.level <= logging.DEBUG:
             logger.debug('Configuration read from %s', file.name)
         parser = ConfigParser()
-        parser.read_file(file)
+        if PY2:
+            parser.readfp(file)
+        elif PY3:
+            parser.read_file(file)
+        else:
+            raise RuntimeError('Unknown python interpreter version.')
         self._set_parser(parser)
         return self
-
+    
+    if PY2:
+        # port read_dict to py2. Not 
+        def _parser_read_dict(self, parser, dictionary):
+            from ConfigParser import DuplicateSectionError
+            elements_added = set()
+            for section, keys in dictionary.items():
+                section = str(section)
+                try:
+                    parser.add_section(section)
+                except (DuplicateSectionError, ValueError):
+                    if section in elements_added:
+                        raise
+                elements_added.add(section)
+                for key, value in keys.items():
+                    key = parser.optionxform(str(key))
+                    if value is not None:
+                        value = str(value)
+                    if (section, key) in elements_added:
+                        raise ValueError(section, key)
+                    elements_added.add((section, key))
+                    parser.set(section, key, value)
+    
     def read_dict(self, dictionary):
         ''' Populate the configuration with values gathered from a `dict`'''
         logger.debug('Configuration read from dictionary.')
         parser = ConfigParser()
-        parser.read_dict(dictionary)
+        if PY2:
+            self._parser_read_dict(parser, dictionary)
+        elif PY3:
+            parser.read_dict(dictionary)
+        else:
+            raise RuntimeError('Unknown python interpreter version.')
         self._set_parser(parser)
         return self
-
+    
     def _read_keys(self):
         for section, keys in self.sections.items():
             logger.debug('[%s]', section)
             section_optional_params = self.get_optional_keys_of_section(section)
             for key in keys:
                 if section in self.optional_sections or key in section_optional_params:
-                    value = self._parser.get(section, key, fallback=None)
+                    value = self._parser.get(section, key)
                     if value is not None and value == "":
                         value = None
                 else:

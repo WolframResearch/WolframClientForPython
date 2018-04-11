@@ -1,15 +1,15 @@
 # Cloud Evaluation
 
-This sub-module provides tools to query api functions deployed on a Wolfram Cloud. The core component is the `CloudSession` class, which once initialized, provide a simple way to make calls to APIs.
+This sub-module provides tools to query api functions deployed on a Wolfram Cloud. The core component is the `WolframCloudSession` class, which once initialized, provide a simple way to make calls to APIs.
 
 # Making a API call
 
 Here is a minimalist example demoing how to call a public API sitting on the Wolfram public Cloud:
 ``` Python
-from wolframclient.evaluation.cloud.cloudsession import CloudSession
+from wolframclient.evaluation.cloud.cloudsession import WolframCloudSession
 
 # start a session target the wolfram public cloud
-session = CloudSession.default()
+session = WolframCloudSession.default()
 # call the API
 api_call = session.call('https://www.wolframcloud.com/objects/userXXX/public/foo/bar')
 # fetch the output based on the success status:
@@ -21,12 +21,12 @@ else:
 
 ## Cloud session
 
-A cloud session, the python class `CloudSession`, represents a persistent session to a target Wolfram Cloud. The session is eventually authenticated using OAuth. A cloud session can be used to call more than one API.
+A cloud session, the python class `WolframCloudSession`, represents a persistent session to a target Wolfram Cloud. The session is eventually authenticated using OAuth. A cloud session can be used to call more than one API.
 The `default` method provide a convenient way to initialize a cloud session targeting the Wolfram public cloud, but sometimes you may want to use a different server, and initialize your session with it:
 ```Python
 from wolframclient.evaluation.cloud.server import Server
 server = Server(...)
-session = CloudSession(server)
+session = WolframCloudSession(server)
 ```
 
 ### Server
@@ -77,7 +77,7 @@ secured_key = SecuredAuthenticationKey.from_file('/private/etc/my_app_sak.cfg')
 At this point we have seen how to build a session, eventually to a specific server, and how to store private information into classes. We now have all the pieces to build an authenticated session:
 ```Python
 from wolframclient.evaluation.cloud.oauth import UserCredentials
-from wolframclient.evaluation.cloud.cloudsession import CloudSession
+from wolframclient.evaluation.cloud.cloudsession import WolframCloudSession
 
 user_cred = UserCredentials.from_file('/private/etc/my_cloud_credentials.cfg')
 session = Session.default()
@@ -93,8 +93,8 @@ In the previous section we built a cloud session, that we now are going to use t
 The most simple call targets an API without input parameters. The function `call` most of the time does not raise exception, it has a boolean `success` that instead indicates whether or not the call succeeded.
 
 ```Python
-from wolframclient.evaluation.cloud.cloudsession import CloudSession
-session = CloudSession.default()
+from wolframclient.evaluation.cloud.cloudsession import WolframCloudSession
+session = WolframCloudSession.default()
 response = session.call('https://www.wolframcloud.com/objects/dorianb/api/public/test_noparam')
 # check the response status:
 if response.success:

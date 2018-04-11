@@ -1,6 +1,7 @@
 from setuptools import setup, find_packages
 
 dependencies = [
+    'pip',
     'numpy',
     'pytz',
     'requests', 

@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import unittest
 
-from wolframclient.evaluation.cloud.cloudsession import URLBuilder, CloudSession, APIUtil
+from wolframclient.evaluation.cloud.cloudsession import URLBuilder, WolframCloudSession, APIUtil
 from wolframclient.evaluation.cloud.oauth import SecuredAuthenticationKey, UserCredentials
 from wolframclient.evaluation.configuration import sak_configuration, user_credential_configuration
 from wolframclient.utils.six import string_types
@@ -32,7 +32,7 @@ class TestSession(unittest.TestCase):
     def authenticated_session():
         '''Cached session'''
         if TestSession.session is None:
-            session = CloudSession.default()
+            session = WolframCloudSession.default()
             session.authenticate(TestSession.sak_credentials())
             TestSession.session = session
         return TestSession.session
@@ -50,7 +50,7 @@ class TestSession(unittest.TestCase):
         self.assertIsInstance(cred.consumer_secret, string_types)
 
     def test_section_not_authorized(self):
-        session = CloudSession.default()
+        session = WolframCloudSession.default()
         self.assertEqual(session.authorized, False)
         self.assertEqual(session.is_xauth, None)
         
@@ -62,7 +62,7 @@ class TestSession(unittest.TestCase):
     def test_section_authorized_xauth(self):
         user_config = user_credential_configuration().read(self.user_config_file)
         user_cred = UserCredentials.from_config(user_config)
-        session = CloudSession.default().authenticate(user_cred)
+        session = WolframCloudSession.default().authenticate(user_cred)
         self.assertEqual(session.authorized, True)
         self.assertEqual(session.is_xauth, True)
         
@@ -85,7 +85,7 @@ class TestSession(unittest.TestCase):
 
     def test_public_api_call(self):
         url = self.api_url("api/public/jsonrange")
-        session = CloudSession.default()
+        session = WolframCloudSession.default()
         self.assertFalse(session.authorized)
         response = session.call(url, 
             input_parameters={'i': 5},
