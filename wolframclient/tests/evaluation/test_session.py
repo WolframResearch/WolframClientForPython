@@ -78,7 +78,7 @@ class TestSession(unittest.TestCase):
 
     def test_section_api_call_one_param_wrong(self):
         url = self.api_url('api/private/stringreverse')
-        response = self.session.call(url)
+        response = self.session.call(url, decoder=force_text)
         self.assertFalse(response.success)
         field, _ = response.fields_in_error()[0]
         self.assertEqual(field, 'str')

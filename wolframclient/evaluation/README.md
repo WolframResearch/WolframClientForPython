@@ -90,9 +90,90 @@ The session parameter `session.authorized` indicates the current status of the s
 
 In the previous section we built a cloud session, that we now are going to use to make signed request to APIs.
 
-### Basic API call
+The most simple call targets an API without input parameters. The function `call` most of the time does not raise exception, it has a boolean `success` that instead indicates whether or not the call succeeded.
 
-The most simple call targets a API without input parameters.
+```Python
+from wolframclient.evaluation.cloud.cloudsession import CloudSession
+session = CloudSession.default()
+response = session.call('https://www.wolframcloud.com/objects/dorianb/api/public/test_noparam')
+# check the response status:
+if response.success:
+    print(response.output)
+else:
+    print(response.failure)
+```
+
+### Input parameters
+
+Calling an API using named parameter is done through the named argument `input_parameters` which accepts a dictionary with string keys and arbitrary values. Suppose the following API was deployed to a Wolfram Cloud:
+```
+APIFunction[
+    {"i" -> "Integer"}, 
+    Range[#i] &
+]
+```
+It is them possible to call it with:
+```Python
+response = session.call('api url', input_parameters = {'i' : 5})
+```
+
+### Output decoder
+
+By default the result of an API call is returned as bytes. When a decoder is provided, it is applied to the response. Typical decoders include:
+- `wolframclient.utils.encoding.force_text` to get back a string.
+- `json.loads` to parse a json result.
+
+Here is a demo of an API that applies `MinMax` to a list of numerical values, and return the result as a JSON string:
+```
+APIFunction[
+    {"list" -> RepeatingElement["Number"]}, 
+    MinMax[#list] &, 
+    "JSON"
+]
+```
+Calling this API from Python, and retrieving the result as a Python list is straight forward and only requires to specify a decoder:
+```Python
+import json
+
+response = session.call('https://www.wolframcloud.com/objects/dorianb/api/public/minmax',
+    {'list' : [0, 5, -1, 3.4]},
+    decoder=json.loads
+    )
+if response.success:
+    print(response.output)
+else:
+    print(response.failure)
+```
+
+### Input encoders
+
+Finally it is possible to encode the input before they are passed to the API. The `input_encoders` argument accepts two types of value:
+- a callable to apply to each input parameter.
+```Python
+session.call('api url', 
+    {'a': A, 'b' : B},
+    input_encoders = json.dumps
+)
+# is equivalent to 
+session.call('api url', 
+    {
+        'a': json.dumps(A), 
+        'b' : json.dumps(B)
+    })
+```
+- a dictionary associating a parameter name to an encoder, for a finer control.
+```Python
+session.call('api url', 
+    {'a': A, 'b' : B},
+    input_encoders = {'a':encoder1, 'b':encoder2}
+)
+# is equivalent to 
+session.call('api url', 
+    {
+        'a': encoder1(A), 
+        'b' : encoder2(B)
+    })
+```
 
 ### Configuration
 
