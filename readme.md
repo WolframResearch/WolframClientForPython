@@ -1,3 +1,12 @@
+# Wolfram Client Library
+
+## Build
+
+It is not mandatory but recommended to install the library on your machine. This is done by evaluating from the root of the library: 
+```
+    $ python setup.py install
+```
+
 # Python serialization to WL / WXF
 
 This library is intended to provide a way to serialize python expression to WL / WXF string of bytes. The library was designed to be extensible so that any arbitrary Python object can be serialized with the addition of custom encoder(s). The code was tested with three interpreters: Python 2.7, Python 3.6.4 and JYTHON.
@@ -191,3 +200,7 @@ then you can pass the normalizer to export in order to perform a custom recursiv
 >>> export(MyThings(1, 2, MyThings([2, 3])), normalizer = normalizer)
 'PersonalThings["o", "o", PersonalThings[{"o", "o"}]]'
 ```
+
+# Evaluate Wolfram Language from Python
+
+See [`evaluation.md`](./evaluation.md).
