@@ -54,10 +54,23 @@ class FormatSerializer(Normalizer):
         raise NotImplementedError
 
     def serialize_ndarray(self, ndarray, wl_type):
+
         return self.serialize_function(
-            self.serialize_symbol(b'RawArray'), (
-                self.serialize_string(wl_type),
-                self.normalize(ndarray.tolist())
+            self.serialize_symbol('ArrayReshape'), (
+                self.serialize_function(
+                    self.serialize_symbol(b'RawArray'), (
+                        self.serialize_string(wl_type),
+                        self.serialize_function(
+                            self.serialize_symbol('ImportByteArray'), (
+                                self.serialize_bytes(ndarray.flatten().tobytes()),
+                                self.serialize_string(wl_type),
+                            )
+                        )
+                    )
+                ),
+                self.serialize_iterable(
+                    map(self.serialize_int, ndarray.shape)
+                )
             )
         )
 
