@@ -2,8 +2,6 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import re
-
 INT8_MAX = 1 << 7
 INT8_MIN = -(1 << 7)
 INT16_MAX = 1 << 15
