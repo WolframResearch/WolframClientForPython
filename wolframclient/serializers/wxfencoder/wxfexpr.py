@@ -19,7 +19,7 @@ __all__ = [
     'WXFExprString',
     'WXFExprSymbol',
     'WXFExprBinaryString',
-    'WXFConstants'
+    'WXF_CONSTANTS'
 ]
 
 if six.PY3:
@@ -30,7 +30,7 @@ else:
         return chr(value)
 
 #The list of all the WXF tokens.
-WXFConstants = Settings(
+WXF_CONSTANTS = Settings(
     Function     = b'f',
     Symbol       = b's',
     String       = b'S',
@@ -50,7 +50,7 @@ WXFConstants = Settings(
 )
 
 #The list of all array value type tokens.
-ArrayTypes = Settings(
+ARRAY_TYPES = Settings(
     Integer8          = _bytes(0x00),
     Integer16         = _bytes(0x01),
     Integer32         = _bytes(0x02),
@@ -69,14 +69,14 @@ ArrayTypes = Settings(
 ''' A set of all valid value type tokens for PackedArray.
 There is no restriction for RawArray value types. '''
 VALID_PACKED_ARRAY_TYPES = frozenset((
-    ArrayTypes.Integer8,
-    ArrayTypes.Integer16,
-    ArrayTypes.Integer32,
-    ArrayTypes.Integer64,
-    ArrayTypes.Real32,
-    ArrayTypes.Real64,
-    ArrayTypes.ComplexReal32,
-    ArrayTypes.ComplexReal64,
+    ARRAY_TYPES.Integer8,
+    ARRAY_TYPES.Integer16,
+    ARRAY_TYPES.Integer32,
+    ARRAY_TYPES.Integer64,
+    ARRAY_TYPES.Real32,
+    ARRAY_TYPES.Real64,
+    ARRAY_TYPES.ComplexReal32,
+    ARRAY_TYPES.ComplexReal64,
 ))
 
 class _WXFExpr(object):
@@ -97,7 +97,7 @@ class WXFExprFunction(_WXFExpr):
     __slots__ = 'length'
 
     def __init__(self, length):
-        super(WXFExprFunction, self).__init__(WXFConstants.Function)
+        super(WXFExprFunction, self).__init__(WXF_CONSTANTS.Function)
         self.length = length
 
     def _serialize_to_wxf(self, stream, context):
@@ -118,16 +118,16 @@ class WXFExprInteger(_WXFExpr):
         if not isinstance(value, six.integer_types):
             raise TypeError('WXFExprInteger must be initialize with an integer value.')
         if value < wxfutils.INT8_MAX and value >= wxfutils.INT8_MIN:
-            super(WXFExprInteger, self).__init__(WXFConstants.Integer8)
+            super(WXFExprInteger, self).__init__(WXF_CONSTANTS.Integer8)
             self.int_size = 1
         elif value < wxfutils.INT16_MAX and value >= wxfutils.INT16_MIN:
-            super(WXFExprInteger, self).__init__(WXFConstants.Integer16)
+            super(WXFExprInteger, self).__init__(WXF_CONSTANTS.Integer16)
             self.int_size = 2
         elif value < wxfutils.INT32_MAX and value >= wxfutils.INT32_MIN:
-            super(WXFExprInteger, self).__init__(WXFConstants.Integer32)
+            super(WXFExprInteger, self).__init__(WXF_CONSTANTS.Integer32)
             self.int_size = 4
         elif value < wxfutils.INT64_MAX and value >= wxfutils.INT64_MIN:
-            super(WXFExprInteger, self).__init__(WXFConstants.Integer64)
+            super(WXFExprInteger, self).__init__(WXF_CONSTANTS.Integer64)
             self.int_size = 8
         else:
             raise ValueError('Value %i is not a machine-sized integer.' % value)
@@ -183,7 +183,7 @@ class WXFExprReal(_WXFExpr):
     def __init__(self, value):
         if not isinstance(value, float):
             raise TypeError('WXFExprReal must be initialized with a float.')
-        super(WXFExprReal, self).__init__(WXFConstants.Real64)
+        super(WXFExprReal, self).__init__(WXF_CONSTANTS.Real64)
         self.value = value
 
     StructDouble = struct.Struct(b'<d')
@@ -236,7 +236,7 @@ class _WXFExprStringLike(_WXFExpr):
 class WXFExprSymbol(_WXFExprStringLike):
     ''' A symbol represented by a string name. The name is always utf8 encoded.'''
     def __init__(self, value):
-        super(WXFExprSymbol, self).__init__(WXFConstants.Symbol, value, allow_binary = True)
+        super(WXFExprSymbol, self).__init__(WXF_CONSTANTS.Symbol, value, allow_binary = True)
 
 class WXFExprString(_WXFExprStringLike):
     ''' A string of unicode character. The string is always utf8 encoded.
@@ -246,12 +246,12 @@ class WXFExprString(_WXFExprStringLike):
     hand handle those characters as any other unicode code points.
     '''
     def __init__(self, value):
-        super(WXFExprString, self).__init__(WXFConstants.String, value)
+        super(WXFExprString, self).__init__(WXF_CONSTANTS.String, value)
 
 class WXFExprBigInteger(_WXFExprStringLike):
     ''' A string of digits representing a big integer'''
     def __init__(self, value):
-        super(WXFExprBigInteger, self).__init__(WXFConstants.BigInteger, value)
+        super(WXFExprBigInteger, self).__init__(WXF_CONSTANTS.BigInteger, value)
 
 class WXFExprBigReal(_WXFExprStringLike):
     ''' A string representation of a real value with arbitrary precision. The
@@ -259,7 +259,7 @@ class WXFExprBigReal(_WXFExprStringLike):
     the real in the Wolfram Language.
     '''
     def __init__(self, value):
-        super(WXFExprBigReal, self).__init__(WXFConstants.BigReal, value)
+        super(WXFExprBigReal, self).__init__(WXF_CONSTANTS.BigReal, value)
 
 class WXFExprBinaryString(_WXFExpr):
     '''A string of arbitrary bytes. Contrary to `WXFExprString` no encoding is
@@ -271,7 +271,7 @@ class WXFExprBinaryString(_WXFExpr):
         else:
             raise TypeError(
                 'WXFExprBinaryString must be initialized with binary data: bytes in Python 3, str in Python 2.7 or bytearray.')
-        super(WXFExprBinaryString, self).__init__(WXFConstants.BinaryString)
+        super(WXFExprBinaryString, self).__init__(WXF_CONSTANTS.BinaryString)
 
     def _serialize_to_wxf(self, stream, context):
         stream.write(self.wxf_type)
@@ -315,13 +315,13 @@ class WXFExprPackedArray(_WXFExprArray):
     def __init__(self, dimensions, value_type, data=None):
         if value_type not in VALID_PACKED_ARRAY_TYPES:
             raise Exception('Invalid packed array value type ({}).', value_type)
-        super(WXFExprPackedArray, self).__init__(WXFConstants.PackedArray, dimensions, value_type, data)
+        super(WXFExprPackedArray, self).__init__(WXF_CONSTANTS.PackedArray, dimensions, value_type, data)
 
 class WXFExprRawArray(_WXFExprArray):
     ''' Raw array is an array that supports many type of values:
-    signed and unsigned integers, reals, complexes. See `ArrayTypes`.'''
+    signed and unsigned integers, reals, complexes. See `ARRAY_TYPES`.'''
     def __init__(self, dimensions, value_type, data=None):
-        super(WXFExprRawArray, self).__init__(WXFConstants.RawArray, dimensions, value_type, data)
+        super(WXFExprRawArray, self).__init__(WXF_CONSTANTS.RawArray, dimensions, value_type, data)
 
 class WXFExprAssociation(_WXFExpr):
     ''' Association is a key value store similar to `dict`. `WXFExprAssociation`
@@ -332,7 +332,7 @@ class WXFExprAssociation(_WXFExpr):
     def __init__(self, length):
         if not isinstance(length, six.integer_types) or length < 0:
             raise TypeError('WXFExprAssociation must be instanciated with a length.')
-        super(WXFExprAssociation, self).__init__(WXFConstants.Association)
+        super(WXFExprAssociation, self).__init__(WXF_CONSTANTS.Association)
         self.length = length
 
     def _serialize_to_wxf(self, stream, context):
@@ -358,10 +358,10 @@ class WXFExprRule(_WXFExprRule):
     as a function with head `'Rule'`.
     '''
     def __init__(self):
-        super(WXFExprRule, self).__init__(WXFConstants.Rule)
+        super(WXFExprRule, self).__init__(WXF_CONSTANTS.Rule)
 
 class WXFExprRuleDelayed(_WXFExprRule):
     ''' Represent a rule delayed in an association. See `WXFExprRule`'''
     def __init__(self):
         super(WXFExprRuleDelayed,
-                self).__init__(WXFConstants.RuleDelayed)
+                self).__init__(WXF_CONSTANTS.RuleDelayed)
