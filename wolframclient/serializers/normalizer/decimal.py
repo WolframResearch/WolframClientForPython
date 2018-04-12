@@ -12,7 +12,7 @@ def update_dispatch(dispatch):
         if o.is_infinite():
             return self.serialize_function(
                 self.serialize_symbol(b"DirectedInfinity"), (
-                    self.serialize_integer(o < 0 and -1 or 1),
+                    self.serialize_int(o < 0 and -1 or 1),
                 )
             )
 

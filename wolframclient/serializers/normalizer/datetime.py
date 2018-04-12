@@ -11,11 +11,11 @@ def update_dispatch(dispatch):
         return self.serialize_function(
             self.serialize_symbol(b"DateObject"), (
                 self.serialize_iterable((
-                    self.serialize_integer(o.year),
-                    self.serialize_integer(o.month),
-                    self.serialize_integer(o.day),
-                    self.serialize_integer(o.hour),
-                    self.serialize_integer(o.minute),
+                    self.serialize_int(o.year),
+                    self.serialize_int(o.month),
+                    self.serialize_int(o.day),
+                    self.serialize_int(o.hour),
+                    self.serialize_int(o.minute),
                     self.serialize_float(o.second + o.microsecond / 1000000.)
                 )),
                 self.serialize_string("Instant"),
@@ -29,9 +29,9 @@ def update_dispatch(dispatch):
         return self.serialize_function(
             self.serialize_symbol(b"DateObject"), (
                 self.serialize_iterable((
-                    self.serialize_integer(o.year),
-                    self.serialize_integer(o.month),
-                    self.serialize_integer(o.day),
+                    self.serialize_int(o.year),
+                    self.serialize_int(o.month),
+                    self.serialize_int(o.day),
                 )),
             )
         )
@@ -41,8 +41,8 @@ def update_dispatch(dispatch):
         return self.serialize_function(
             self.serialize_symbol(b"TimeObject"), (
                 self.serialize_iterable((
-                    self.serialize_integer(o.hour),
-                    self.serialize_integer(o.minute),
+                    self.serialize_int(o.hour),
+                    self.serialize_int(o.minute),
                     self.serialize_float(o.second + o.microsecond / 1000000.)
                 )),
                 self.serialize_rule(

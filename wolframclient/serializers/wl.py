@@ -57,7 +57,7 @@ class WLSerializer(FormatSerializer):
     def serialize_float(self, number):
         yield ('{0:f}'.format(number)).encode('utf-8')
 
-    def serialize_integer(self, number):
+    def serialize_int(self, number):
         yield ('%i' % number).encode('utf-8')
 
     def serialize_rule(self, lhs, rhs):

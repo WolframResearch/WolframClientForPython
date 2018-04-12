@@ -29,7 +29,7 @@ def update_dispatch(dispatch):
 
     @dispatch.multi(six.integer_types)
     def normalizer(self, o):
-        return self.serialize_integer(o)
+        return self.serialize_int(o)
 
     @dispatch.multi(float)
     def normalizer(self, o):
@@ -37,7 +37,7 @@ def update_dispatch(dispatch):
         if math.isinf(o):
             return self.serialize_function(
                 self.serialize_symbol(b"DirectedInfinity"), (
-                    self.serialize_integer(o < 0 and -1 or 1),
+                    self.serialize_int(o < 0 and -1 or 1),
                 )
             )
 
