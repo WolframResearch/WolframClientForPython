@@ -75,16 +75,10 @@ class WXFSerializer(FormatSerializer):
             )
         )
 
-    def serialize_ndarray(self, ndarray, wl_type):
-
-        if hasattr(ndarray, 'tobytes'):
-            #Numpy 1.9+ support array.tobytes, but previous versions don't and use tostring instead.
-            data = ndarray.tobytes()
-        else:
-            data = ndarray.tostring()
+    def serialize_ndarray(self, data, shape, wl_type):
 
         yield wxfexpr.WXFExprRawArray(
-            ndarray.shape,
+            shape,
             ARRAY_TYPES[wl_type],
             data
         )

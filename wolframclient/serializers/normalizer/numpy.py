@@ -38,7 +38,14 @@ def update_dispatch(dispatch):
 
         data = handler(o)
 
-        return self.serialize_ndarray(
+        if hasattr(o, 'tobytes'):
+            #Numpy 1.9+ support array.tobytes, but previous versions don't and use tostring instead.
+            data = o.tobytes()
+        else:
+            data = o.tostring()
+
+        return self.serialize_raw_array(
             data,
+            o.shape,
             wl_type
         )
