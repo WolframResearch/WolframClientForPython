@@ -289,7 +289,7 @@ class _WXFExprArray(_WXFExpr):
         if not isinstance(dimensions, (list, tuple)) or len(dimensions) == 0:
             raise TypeError('Dimensions must be a non-empty list.')
 
-        if not all(not isinstance(dim, six.integer_types) or dim <= 0 for dim in dimensions):
+        if not all(isinstance(dim, six.integer_types) and dim > 0 for dim in dimensions):
             raise ValueError('Dimensions must be positive integers.')
 
         self.dimensions = dimensions
