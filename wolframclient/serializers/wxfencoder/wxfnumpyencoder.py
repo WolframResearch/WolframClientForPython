@@ -3,23 +3,16 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.serializers.wxfencoder.wxfencoder import WXFEncoder
-from wolframclient.serializers.wxfencoder.wxfexpr import ArrayTypes
-from wolframclient.serializers.wxfencoder.wxfutils import VersionParser
+from wolframclient.serializers.wxfencoder import wxfexpr
+
+from wolframclient.serializers.normalizer.numpy import NUMPY_VERSION
 
 import numpy
-import wolframclient.serializers.wxfencoder.wxfexpr as wxfexpr
 
 __all__ = [
     'NumPyWXFEncoder',
     'NUMPY_VERSION'
 ]
-
-# Numpy 1.9+ support array.tobytes, but previous versions don't and use tostring instead.
-NUMPY_VERSION = VersionParser(numpy.__version__)
-if NUMPY_VERSION.major <= 1 and NUMPY_VERSION.minor < 9:
-    USE_TO_STRING = True
-else:
-    USE_TO_STRING = False
 
 class NumPyWXFEncoder(WXFEncoder):
     '''
@@ -55,66 +48,68 @@ class NumPyWXFEncoder(WXFEncoder):
                 array_class = wxfexpr.WXFExprRawArray
 
             if python_expr.dtype == numpy.int8:
-                value_type = ArrayTypes.Integer8
+                value_type = wxfexpr.ArrayTypes.Integer8
                 data = python_expr.astype('<i1')
             elif python_expr.dtype == numpy.int16:
                 data = python_expr.astype('<i2')
-                value_type = ArrayTypes.Integer16
+                value_type = wxfexpr.ArrayTypes.Integer16
             elif python_expr.dtype == numpy.int32:
                 data = python_expr.astype('<i4')
-                value_type = ArrayTypes.Integer32
+                value_type = wxfexpr.ArrayTypes.Integer32
             elif python_expr.dtype == numpy.int64:
                 data = python_expr.astype('<i8')
-                value_type = ArrayTypes.Integer64
+                value_type = wxfexpr.ArrayTypes.Integer64
             elif python_expr.dtype == numpy.uint8:
                 if self.rawarray_support:
-                    value_type = ArrayTypes.UnsignedInteger8
+                    value_type = wxfexpr.ArrayTypes.UnsignedInteger8
                     data = python_expr.astype('<u1')
                     array_class = wxfexpr.WXFExprRawArray
                 else :
-                    value_type = ArrayTypes.Integer16
+                    value_type = wxfexpr.ArrayTypes.Integer16
                     data = python_expr.astype('<i2')
             elif python_expr.dtype == numpy.uint16:
                 if self.rawarray_support:
-                    value_type = ArrayTypes.UnsignedInteger16
+                    value_type = wxfexpr.ArrayTypes.UnsignedInteger16
                     data = python_expr.astype('<u2')
                     array_class = wxfexpr.WXFExprRawArray
                 else:
-                    value_type = ArrayTypes.Integer32
+                    value_type = wxfexpr.ArrayTypes.Integer32
                     data = python_expr.astype('<i4')
             elif python_expr.dtype == numpy.uint32:
                 if self.rawarray_support:
-                    value_type = ArrayTypes.UnsignedInteger32
+                    value_type = wxfexpr.ArrayTypes.UnsignedInteger32
                     data = python_expr.astype('<u4')
                     array_class = wxfexpr.WXFExprRawArray
                 else:
-                    value_type = ArrayTypes.Integer64
+                    value_type = wxfexpr.ArrayTypes.Integer64
                     data = python_expr.astype('<i8')
             # no one to one mapping to signed values, even if most of the time
             # the values would fit
             elif python_expr.dtype == numpy.uint64:
                 if self.rawarray_support:
-                    value_type = ArrayTypes.UnsignedInteger64
+                    value_type = wxfexpr.ArrayTypes.UnsignedInteger64
                     data = python_expr.astype('<u8')
                     array_class = wxfexpr.WXFExprRawArray
                 else:
                     TypeError('Cannot represent data of type uint64 as signed int64')
             elif python_expr.dtype == numpy.float32:
-                value_type = ArrayTypes.Real32
+                value_type = wxfexpr.ArrayTypes.Real32
                 data = python_expr
             elif python_expr.dtype == numpy.float64:
-                value_type = ArrayTypes.Real64
+                value_type = wxfexpr.ArrayTypes.Real64
                 data = python_expr
             elif python_expr.dtype == numpy.complex64:
-                value_type = ArrayTypes.ComplexReal32
+                value_type = wxfexpr.ArrayTypes.ComplexReal32
                 data = python_expr
             elif python_expr.dtype == numpy.complex128:
-                value_type = ArrayTypes.ComplexReal64
+                value_type = wxfexpr.ArrayTypes.ComplexReal64
                 data = python_expr
             else:
                 raise Exception(
                     'NumPy serialization not implemented for ', repr(python_expr.dtype))
-            if USE_TO_STRING:
-                yield array_class(python_expr.shape, value_type, data.tostring())
-            else:
+
+            if hasattr(data, 'tobytes'):
+                #Numpy 1.9+ support array.tobytes, but previous versions don't and use tostring instead.
                 yield array_class(python_expr.shape, value_type, data.tobytes())
+            else:
+                yield array_class(python_expr.shape, value_type, data.tostring())
