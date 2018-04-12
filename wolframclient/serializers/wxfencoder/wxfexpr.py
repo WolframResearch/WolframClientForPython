@@ -5,7 +5,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.serializers.wxfencoder import wxfutils
 from wolframclient.serializers.wxfencoder.serializer import write_varint, WXFSerializerException
 from wolframclient.utils import six
-
 from wolframclient.utils.datastructures import Settings
 
 import struct
@@ -64,7 +63,6 @@ ARRAY_TYPES = Settings(
     ComplexReal32     = _bytes(0x33),
     ComplexReal64     = _bytes(0x34),
 )
-
 
 ''' A set of all valid value type tokens for PackedArray.
 There is no restriction for RawArray value types. '''
@@ -290,9 +288,10 @@ class _WXFExprArray(_WXFExpr):
         super(_WXFExprArray, self).__init__(wxf_type)
         if not isinstance(dimensions, (list, tuple)) or len(dimensions) == 0:
             raise TypeError('Dimensions must be a non-empty list.')
-        for dim in dimensions:
-            if dim <= 0 or not isinstance(dim, six.integer_types):
-                raise ValueError('Dimensions must be positive integers.')
+
+        if not all(not isinstance(dim, six.integer_types) or dim <= 0 for dim in dimensions):
+            raise ValueError('Dimensions must be positive integers.')
+
         self.dimensions = dimensions
         self.value_type = value_type
         self.data = data
