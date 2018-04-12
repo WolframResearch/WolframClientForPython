@@ -4,6 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from collections import OrderedDict
 
+from wolframclient.serializers import export
 from wolframclient.serializers.wxfencoder.serializer import write_varint, WXFExprSerializer
 from wolframclient.serializers.wxfencoder.wxfexpr import WXFExprBinaryString, WXFExprInteger, WXFExprString
 from wolframclient.serializers.wxfencoder.wxfexprprovider import WXFExprProvider
@@ -266,8 +267,6 @@ class TestCase(SerializeTest):
         self.assertSequenceEqual(stream.getvalue(),wxf)
 
     def test_export(self):
-
-        from wolframclient.serializers import export
 
         for value in (
             1,
