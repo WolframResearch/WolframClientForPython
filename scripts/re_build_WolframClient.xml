@@ -15,14 +15,71 @@
 	<target name='Component.WolframClientForPython.execute' extensionOf='Component.execute'>
 
 		<!-- Copy wolframclient directoy -->
-		<copy todir='${files_directory}/${component}'>
-			<fileset dir='${basedir}/${component}/wolframclient' />
+		<copy todir='${files_directory}/${component}/wolframclient'>
+			<fileset dir='${basedir}/wolframclient' />
 		</copy>
 
-		<!-- Copy python scripts in base directory -->
+		<!-- Copy PacletInfo file -->
+		<copy todir='${files_directory}/${component}'
+				file='${basedir}/PacletInfo.m' />
+		
+		<!-- Copy python script(s) in base directory -->
 		<copy todir='${files_directory}/${component}'>
-			<fileset dir='${basedir}/${component}/*.py' />
+			<fileset dir='${basedir}'>
+				<include name="*.py"/>
+			</fileset>
 		</copy>
+
+	</target>
+	
+		<!--
+		Paclet
+	-->
+
+	<target name='Paclet.WolframClientForPython.init.custom' extensionOf='Paclet.init.custom'>
+
+		<!--
+			Prevent Paclet.clean from deleting files_directory,
+			since CopyAndUnarchiveArtifact just put all the paclet
+			files in there....
+		-->
+
+	<property name='keep.files_directory' value='true' />
+
+	</target>
+
+	<target name='Paclet.WolframClientForPython.prebuild' extensionOf='Paclet.prebuild'>
+
+		<local name='v' />
+		<property name='v' value='${version_major}.${version_minor}.${env.BUILD_NUMBER}' />
+		<echo>Paclet Version == "${v}"</echo>
+
+		<replaceregexp file='${files_directory}/${component}/PacletInfo.m' byline='true'>
+			<regexp pattern='^\s+Version\s+.*$' />
+			<substitution expression='Version -&gt; &quot;${v}&quot;,' />
+		</replaceregexp>
+
+	</target>
+
+	<target name='Paclet.WolframClientForPython.execute' extensionOf='Paclet.execute'>
+		<mathematica exe="${mathExe}" fresh="true" quit="true"><![CDATA[
+
+			Print["$Version: ", $Version];
+			Print["$InstallationDirectory: ", $InstallationDirectory];
+
+			Unset[$MessagePrePrint];
+			Needs["PacletManager`"];
+
+			src = FileNameJoin[{AntProperty["files_directory"], "WolframClientForPython"}];
+			dest = FileNameJoin[AntProperty["output_directory"]];
+			PackPaclet[src, dest];
+
+			SetDirectory[dest]
+			If [TrueQ[FileExistsQ[FileNames["*WolframClientForPython*.paclet"][[1]]]],
+				Print[FileNames["WolframClientForPython*.paclet"][[1]] " ... OK"],
+				AntFail["Paclet not produced" ]];
+
+		]]></mathematica>
 
 	</target>
 
