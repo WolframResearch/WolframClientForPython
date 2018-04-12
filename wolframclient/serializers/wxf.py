@@ -6,6 +6,7 @@ from itertools import chain
 
 from wolframclient.serializers.base import FormatSerializer
 from wolframclient.serializers.wxfencoder.serializer import WXFExprSerializer
+from wolframclient.serializers.wxfencoder.wxfexpr import ARRAY_TYPES
 
 import wolframclient.serializers.wxfencoder.wxfexpr as wxfexpr
 
@@ -41,7 +42,7 @@ class WXFSerializer(FormatSerializer):
         )
 
     #numeric
-    def serialize_integer(self, number):
+    def serialize_int(self, number):
         try:
             yield wxfexpr.WXFExprInteger(number)
         except ValueError:
@@ -72,4 +73,18 @@ class WXFSerializer(FormatSerializer):
                 chain((wxfexpr.WXFExprRule(), ), key, value)
                 for key, value in keyvalue
             )
+        )
+
+    def serialize_ndarray(self, ndarray, wl_type):
+
+        if hasattr(ndarray, 'tobytes'):
+            #Numpy 1.9+ support array.tobytes, but previous versions don't and use tostring instead.
+            data = ndarray.tobytes()
+        else:
+            data = ndarray.tostring()
+
+        yield wxfexpr.WXFExprRawArray(
+            ndarray.shape,
+            ARRAY_TYPES[wl_type],
+            data
         )
