@@ -2,7 +2,6 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.serializers.normalizer.numpy import NUMPY_VERSION
 from wolframclient.serializers.wxfencoder.wxfencoder import WXFEncoder
 from wolframclient.serializers.wxfencoder.wxfexpr import ARRAY_TYPES, WXFExprPackedArray, WXFExprRawArray
 
@@ -10,7 +9,6 @@ import numpy
 
 __all__ = [
     'NumPyWXFEncoder',
-    'NUMPY_VERSION'
 ]
 
 class NumPyWXFEncoder(WXFEncoder):
