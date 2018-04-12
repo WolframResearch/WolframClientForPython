@@ -13,4 +13,10 @@ def update_dispatch(dispatch):
     def normalizer(self, im):
         stream = six.BytesIO()
         im.save(stream, format = 'png')
-        return wl.ImportByteArray(stream.getvalue(), 'PNG')
+
+        return self.serialize_function(
+            self.serialize_symbol(b'ImportByteArray'), (
+                self.serialize_bytes(stream.getvalue()),
+                self.serialize_string('PNG')
+            )
+        )
