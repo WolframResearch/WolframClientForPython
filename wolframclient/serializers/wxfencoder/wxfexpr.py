@@ -6,6 +6,8 @@ from wolframclient.serializers.wxfencoder import wxfutils
 from wolframclient.serializers.wxfencoder.serializer import write_varint, WXFSerializerException
 from wolframclient.utils import six
 
+from wolframclient.utils.datastructures import Settings
+
 import struct
 
 if six.JYTHON:
@@ -26,43 +28,47 @@ if six.PY3:
 else:
     def _bytes(value):
         return chr(value)
-class WXFConstants:
-    """ The list of all the WXF tokens. """
-    Function = b'f'
-    Symbol = b's'
-    String = b'S'
-    BinaryString = b'B'
-    Integer8 = b'C'
-    Integer16 = b'j'
-    Integer32 = b'i'
-    Integer64 = b'L'
-    Real64 = b'r'
-    BigInteger = b'I'
-    BigReal = b'R'
-    PackedArray = _bytes(0xC1)
-    RawArray = _bytes(0xC2)
-    Association = b'A'
-    Rule = b'-'
-    RuleDelayed = b':'
 
-class ArrayTypes:
-    ''' The list of all array value type tokens. '''
-    Integer8 = _bytes(0x00)
-    Integer16 = _bytes(0x01)
-    Integer32 = _bytes(0x02)
-    Integer64 = _bytes(0x03)
-    UnsignedInteger8 = _bytes(0x10)
-    UnsignedInteger16 = _bytes(0x11)
-    UnsignedInteger32 = _bytes(0x12)
-    UnsignedInteger64 = _bytes(0x13)
-    Real32 = _bytes(0x22)
-    Real64 = _bytes(0x23)
-    ComplexReal32 = _bytes(0x33)
-    ComplexReal64 = _bytes(0x34)
+#The list of all the WXF tokens.
+WXFConstants = Settings(
+    Function     = b'f',
+    Symbol       = b's',
+    String       = b'S',
+    BinaryString = b'B',
+    Integer8     = b'C',
+    Integer16    = b'j',
+    Integer32    = b'i',
+    Integer64    = b'L',
+    Real64       = b'r',
+    BigInteger   = b'I',
+    BigReal      = b'R',
+    PackedArray  = _bytes(0xC1),
+    RawArray     = _bytes(0xC2),
+    Association  = b'A',
+    Rule         = b'-',
+    RuleDelayed  = b':',
+)
+
+#The list of all array value type tokens.
+ArrayTypes = Settings(
+    Integer8          = _bytes(0x00),
+    Integer16         = _bytes(0x01),
+    Integer32         = _bytes(0x02),
+    Integer64         = _bytes(0x03),
+    UnsignedInteger8  = _bytes(0x10),
+    UnsignedInteger16 = _bytes(0x11),
+    UnsignedInteger32 = _bytes(0x12),
+    UnsignedInteger64 = _bytes(0x13),
+    Real32            = _bytes(0x22),
+    Real64            = _bytes(0x23),
+    ComplexReal32     = _bytes(0x33),
+    ComplexReal64     = _bytes(0x34),
+)
+
 
 ''' A set of all valid value type tokens for PackedArray.
 There is no restriction for RawArray value types. '''
-VALID_PACKED_ARRAY_TYPES = frozenset([
+VALID_PACKED_ARRAY_TYPES = frozenset((
     ArrayTypes.Integer8,
     ArrayTypes.Integer16,
     ArrayTypes.Integer32,
@@ -70,8 +76,8 @@ VALID_PACKED_ARRAY_TYPES = frozenset([
     ArrayTypes.Real32,
     ArrayTypes.Real64,
     ArrayTypes.ComplexReal32,
-    ArrayTypes.ComplexReal64]
-)
+    ArrayTypes.ComplexReal64,
+))
 
 class _WXFExpr(object):
     __slots__ = 'wxf_type'
