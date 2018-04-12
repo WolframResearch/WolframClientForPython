@@ -48,19 +48,6 @@
 
 	</target>
 
-	<target name='Paclet.WolframClientForPython.prebuild' extensionOf='Paclet.prebuild'>
-
-		<local name='v' />
-		<property name='v' value='${version_major}.${version_minor}.${env.BUILD_NUMBER}' />
-		<echo>Paclet Version == "${v}"</echo>
-
-		<replaceregexp file='${files_directory}/${component}/PacletInfo.m' byline='true'>
-			<regexp pattern='^\s+Version\s+.*$' />
-			<substitution expression='Version -&gt; &quot;${v}&quot;,' />
-		</replaceregexp>
-
-	</target>
-
 	<target name='Paclet.WolframClientForPython.execute' extensionOf='Paclet.execute'>
 		<mathematica exe="${mathExe}" fresh="true" quit="true"><![CDATA[
 
