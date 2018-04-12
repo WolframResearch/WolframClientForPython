@@ -37,9 +37,9 @@ def update_dispatch(dispatch):
 
         if hasattr(data, 'tobytes'):
             #Numpy 1.9+ support array.tobytes, but previous versions don't and use tostring instead.
-            yield array_class(python_expr.shape, value_type, data.tobytes())
+            data = data.tobytes()
         else:
-            yield array_class(python_expr.shape, value_type, data.tostring())
+            data = data.tostring()
 
         return self.serialize_raw_array(
             data,
