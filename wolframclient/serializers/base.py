@@ -50,8 +50,16 @@ class FormatSerializer(Normalizer):
     def serialize_decimal(self, obj):
         raise NotImplementedError
 
-    def serialize_integer(self, obj):
+    def serialize_int(self, obj):
         raise NotImplementedError
+
+    def serialize_ndarray(self, ndarray, wl_type):
+        return self.serialize_function(
+            self.serialize_symbol(b'RawArray'), (
+                self.serialize_string(wl_type),
+                self.normalize(ndarray.tolist())
+            )
+        )
 
     def serialize_iterable(self, iterable):
         return self.serialize_function(
@@ -70,8 +78,8 @@ class FormatSerializer(Normalizer):
     def serialize_fraction(self, o):
         return self.serialize_function(
             self.serialize_symbol(b'Rational'), (
-                self.serialize_integer(o.numerator),
-                self.serialize_integer(o.denominator)
+                self.serialize_int(o.numerator),
+                self.serialize_int(o.denominator)
             )
         )
 
