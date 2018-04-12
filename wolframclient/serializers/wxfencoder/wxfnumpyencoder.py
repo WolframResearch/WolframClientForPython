@@ -105,8 +105,9 @@ class NumPyWXFEncoder(WXFEncoder):
                 value_type = wxfexpr.ArrayTypes.ComplexReal64
                 data = python_expr
             else:
-                raise Exception(
-                    'NumPy serialization not implemented for ', repr(python_expr.dtype))
+                raise NotImplementedError(
+                    'NumPy serialization not implemented for %s' % repr(python_expr.dtype)
+                )
 
             if hasattr(data, 'tobytes'):
                 #Numpy 1.9+ support array.tobytes, but previous versions don't and use tostring instead.
