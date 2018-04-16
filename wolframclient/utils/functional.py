@@ -8,6 +8,15 @@ from itertools import islice
 
 from wolframclient.utils import six
 
+import types
+
+def force_tuple(obj):
+    if isinstance(obj, tuple):
+        return obj
+    if isinstance(obj, (list, set, frozenset, types.GeneratorType)):
+        return tuple(obj)
+    return obj,
+
 def first(iterable, default = None):
     try:
         return next(iter(iterable))

@@ -6,19 +6,12 @@ from collections import defaultdict
 
 from itertools import product
 
-import types
+from wolframclient.utils.functional import force_tuple
 
 #code borrowed by Guido in person.
 #https://www.artima.com/weblogs/viewpost.jsp?thread=101605
 
 UNDEFINED = object()
-
-def to_tuple(obj):
-    if isinstance(obj, tuple):
-        return obj
-    if isinstance(obj, (list, set, frozenset, types.GeneratorType)):
-        return tuple(obj)
-    return obj,
 
 class Dispatch(object):
 
@@ -49,7 +42,7 @@ class Dispatch(object):
 
             key = (self.get_key(function), len(types))
 
-            for expanded in product(*map(to_tuple, types)):
+            for expanded in product(*map(force_tuple, types)):
                 if expanded in self.dispatchmap[key]:
                     raise TypeError("duplicate registration %s" % (expanded, ))
 
