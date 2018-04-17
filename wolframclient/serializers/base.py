@@ -153,7 +153,11 @@ class FormatSerializer(Normalizer):
         yield "Callable",   callable(o)
 
         if callable(o):
-            yield "Arguments", first(inspect.getargspec(o))
+            try:
+                yield "Arguments", first(inspect.getargspec(o))
+            except TypeError:
+                #this function can fail with TypeError unsupported callable
+                pass
 
     def serialize_external_object(self, obj):
         return self.serialize_function(
