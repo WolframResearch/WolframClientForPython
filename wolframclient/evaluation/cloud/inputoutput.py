@@ -49,9 +49,10 @@ class WolframAPIResponse(object):
 
 
 class WolframAPIResponse200(WolframAPIResponse):
-    def __init__(self, request, decoder=None):
-        super(WolframAPIResponse200, self).__init__(request, decoder)
+    def __init__(self, response, decoder=None):
+        super(WolframAPIResponse200, self).__init__(response, decoder)
 
+    
     def _build(self):
         self.success = True
         self.failure = None
@@ -67,8 +68,8 @@ class WolframAPIResponse200(WolframAPIResponse):
             self.output = self.response.content
 
 class WolframAPIResponseRedirect(WolframAPIResponse):
-    def __init__(self, request, decoder=None):
-        super(WolframAPIResponseRedirect, self).__init__(request, decoder)
+    def __init__(self, response, decoder=None):
+        super(WolframAPIResponseRedirect, self).__init__(response, decoder)
         self.location = None
     
     def _build(self):
@@ -82,8 +83,8 @@ class WolframAPIResponseRedirect(WolframAPIResponse):
 
 
 class WolframAPIResponse301(WolframAPIResponseRedirect):
-    def __init__(self, request, decoder=None):
-        super(WolframAPIResponse301, self).__init__(request, decoder)
+    def __init__(self, response, decoder=None):
+        super(WolframAPIResponse301, self).__init__(response, decoder)
 
     def _specific_failure(self):
         ''' should not happen since we follow redirection '''
@@ -91,8 +92,8 @@ class WolframAPIResponse301(WolframAPIResponseRedirect):
             self.location)
 
 class WolframAPIResponse302(WolframAPIResponseRedirect):
-    def __init__(self, request, decoder=None):
-        super(WolframAPIResponse302, self).__init__(request, decoder)
+    def __init__(self, response, decoder=None):
+        super(WolframAPIResponse302, self).__init__(response, decoder)
 
     def _specific_failure(self):
         # hack because the server is not returning 403. cf. CLOUD-12946
@@ -103,8 +104,8 @@ class WolframAPIResponse302(WolframAPIResponseRedirect):
 
 
 class WolframAPIResponse400(WolframAPIResponse):
-    def __init__(self, request, decoder=None):
-        super(WolframAPIResponse400, self).__init__(request, decoder)
+    def __init__(self, response, decoder=None):
+        super(WolframAPIResponse400, self).__init__(response, decoder)
 
     def _build(self):
         self.success = False
@@ -117,9 +118,19 @@ class WolframAPIResponse400(WolframAPIResponse):
         logger.warning('Wolfram API error response: %s', self.failure)
 
 
+class WolframAPIResponse401(WolframAPIResponse):
+    def __init__(self, response, decoder=None):
+        super(WolframAPIResponse401, self).__init__(response, decoder)
+
+    def _build(self):
+        self.success = False
+        # ignoring content-type. Must be JSON. Make sure it's robust enough.
+        self.failure = self.response.text
+        logger.warning('Authentication missing or failed. Server response: %s', self.failure)
+
 class WolframAPIResponse404(WolframAPIResponse):
-    def __init__(self, request, decoder=None):
-        super(WolframAPIResponse404, self).__init__(request, decoder)
+    def __init__(self, response, decoder=None):
+        super(WolframAPIResponse404, self).__init__(response, decoder)
 
     def _build(self):
         self.success = False
@@ -128,8 +139,8 @@ class WolframAPIResponse404(WolframAPIResponse):
 
 
 class WolframAPIResponseGeneric(WolframAPIResponse):
-    def __init__(self, request, decoder=None):
-        super(WolframAPIResponseGeneric, self).__init__(request, decoder)
+    def __init__(self, response, decoder=None):
+        super(WolframAPIResponseGeneric, self).__init__(response, decoder)
 
     def _build(self):
         self.success = False
@@ -137,25 +148,26 @@ class WolframAPIResponseGeneric(WolframAPIResponse):
 
 
 class WolframAPIResponse500(WolframAPIResponseGeneric):
-    def __init__(self, request, decoder=None):
-        super(WolframAPIResponse500, self).__init__(request, decoder)
+    def __init__(self, response, decoder=None):
+        super(WolframAPIResponse500, self).__init__(response, decoder)
         logger.fatal('Internal server error occurred.')
 
 
-class WolframAPIBuilder(object):
+class WolframAPIResponseBuilder(object):
     ''' Map error code to handler building the appropriate WolframAPIResponse'''
     response_mapper = {
         200: WolframAPIResponse200,
         301: WolframAPIResponse301,
         302: WolframAPIResponse302,
         400: WolframAPIResponse400,
+        401: WolframAPIResponse401,
         404: WolframAPIResponse404,
         500: WolframAPIResponse500
     }
 
     @staticmethod
-    def build(request, decoder=None):
-        return WolframAPIBuilder.response_mapper.get(request.status_code, WolframAPIResponseGeneric)(request, decoder=decoder)
+    def build(response, decoder=None):
+        return WolframAPIResponseBuilder.response_mapper.get(response.status_code, WolframAPIResponseGeneric)(response, decoder=decoder)
 
     @staticmethod
     def map(status_code, response_class):
@@ -165,7 +177,7 @@ class WolframAPIBuilder(object):
             logger.warning('Invalid status code: %s', status_code)
             raise ValueError('HTTP status code must be string.',)
         logger.debug('Mapping http response status %i to function %s', status_code, response_class.__name__)
-        WolframAPIBuilder.response_mapper[status_code] = response_class
+        WolframAPIResponseBuilder.response_mapper[status_code] = response_class
 
     def __init__(self):
         raise NotImplementedError("Cannot initialize. Use static 'method' build.")

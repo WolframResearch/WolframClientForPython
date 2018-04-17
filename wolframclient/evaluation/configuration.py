@@ -23,8 +23,9 @@ class Configuration(object):
     with a scheme: a dictionary associating string keys, the section names, to list of
     parameter names as strings.
     The configuration is then populated using one of the `read` methods.
-    Some sections can be optional in which case no error is raise if missing from the
-    source. Similarly some parameters can be optional in a mandatory section.
+    
+    Some sections can be optional in which case no error is risen if they are missing 
+    in the source. Similarly some parameters can be optional in a mandatory section.
     This class allows a fine tune of which values from a given data source are relevant
     for the purpose of a given configuration.
     
@@ -72,7 +73,7 @@ class Configuration(object):
 
     def _check_mandatory_sections(self, parser):
         for section in self.sections:
-            if not parser.has_section(section):
+            if section not in self.optional_sections and not parser.has_section(section):
                 raise ConfigurationException(
                     'Server configuration must contain section: %s' % section)
 
@@ -145,8 +146,13 @@ class Configuration(object):
             section_optional_params = self.get_optional_keys_of_section(section)
             for key in keys:
                 if section in self.optional_sections or key in section_optional_params:
-                    value = self._parser.get(section, key)
-                    if value is not None and value == "":
+                    # try / except NoSectionError is the only way to get an option and
+                    # not fail if not found. Python2 implement does not have fallback option. 
+                    try:
+                        value = self._parser.get(section, key)
+                        if value is not None and value == "":
+                            value = None
+                    except NoSectionError:
                         value = None
                 else:
                     try:
@@ -194,8 +200,10 @@ def server_configuration():
                 'request_token_endpoint',
                 'access_token_endpoint',
                 'xauth_consumer_key',
-                'xauth_consumer_secret']
+                'xauth_consumer_secret'],
+            'Security': ['ssl_certificate']
         }, 
+        optional_sections=['Security'],
         optional_keys={
             'Authentication': ['xauth_consumer_key', 'xauth_consumer_secret']
         }

@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import unittest
 
-from wolframclient.evaluation.cloud.cloudsession import URLBuilder, WolframCloudSession, APIUtil
+from wolframclient.evaluation.cloud.cloudsession import URLBuilder, WolframCloudSession
 from wolframclient.evaluation.cloud.oauth import SecuredAuthenticationKey, UserCredentials
 from wolframclient.evaluation.configuration import sak_configuration, user_credential_configuration
 from wolframclient.utils.six import string_types
@@ -41,9 +41,6 @@ class TestSession(unittest.TestCase):
     def setUpClass(cls):
         cls.session = cls.authenticated_session()
 
-    def api_url(self, name):
-        return APIUtil.user_api_url(self.api_owner, name)
-
     def test_sak_credentials(self):
         cred = self.sak_credentials()
         self.assertIsInstance(cred.consumer_key, string_types)
@@ -67,35 +64,38 @@ class TestSession(unittest.TestCase):
         self.assertEqual(session.is_xauth, True)
         
     def test_section_api_call_no_param(self):
-        url = self.api_url('api/private/requesterid')
-        response = self.session.call(url, decoder=force_text)
+        url = 'api/private/requesterid'
+        response = self.session.call(
+            (self.api_owner, url), decoder=force_text)
         self.assertIn(self.api_owner, response.output)
 
     def test_section_api_call_one_param(self):
-        url = self.api_url('api/private/stringreverse')
-        response = self.session.call(url, input_parameters={'str': 'abcde'}, decoder=force_text)
+        url = 'api/private/stringreverse'
+        response = self.session.call(
+            (self.api_owner, url), 
+            input_parameters={'str': 'abcde'}, decoder=force_text)
         self.assertEqual('"edcba"', response.output)
 
     def test_section_api_call_one_param_wrong(self):
-        url = self.api_url('api/private/stringreverse')
-        response = self.session.call(url, decoder=force_text)
+        url = 'api/private/stringreverse'
+        response = self.session.call((self.api_owner, url), decoder=force_text)
         self.assertFalse(response.success)
         field, _ = response.fields_in_error()[0]
         self.assertEqual(field, 'str')
 
     def test_public_api_call(self):
-        url = self.api_url("api/public/jsonrange")
+        url = "api/public/jsonrange"
         session = WolframCloudSession.default()
         self.assertFalse(session.authorized)
-        response = session.call(url, 
+        response = session.call((self.api_owner, url),
             input_parameters={'i': 5},
             decoder=json_loads)
         self.assertEqual(response.output, list(range(1, 6)))
                                 
     def test_section_api_call_two_param(self):
-        url = self.api_url('api/private/range/formated/json')
+        api = (self.api_owner, 'api/private/range/formated/json')
         v_min, v_max, step = (1, 10, 2)
-        response = self.session.call(url,
+        response = self.session.call(api,
             input_parameters={
                 'min': v_min,
                 'max': v_max,
@@ -108,9 +108,9 @@ class TestSession(unittest.TestCase):
         self.assertListEqual(expected, response.output)
 
     def test_section_wl_error(self):
-        url = self.api_url("api/private/range/wlerror")
+        api = (self.api_owner, "api/private/range/wlerror")
         i = 1
-        response = self.session.call(url,
+        response = self.session.call(api,
             input_parameters={
                 'i' : i
             },

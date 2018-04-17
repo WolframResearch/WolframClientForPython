@@ -103,6 +103,11 @@ else:
     print(response.failure)
 ```
 
+It's often more convenient to define the API using a tuple made of the user name and the API path. The precedent call is rewritten as:
+```Python
+session.call(('dorianb', 'api/public/test_noparam'))
+```
+
 ### Input parameters
 
 Calling an API using named parameter is done through the named argument `input_parameters` which accepts a dictionary with string keys and arbitrary values. Suppose the following API was deployed to a Wolfram Cloud:

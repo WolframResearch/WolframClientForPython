@@ -1,10 +1,15 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import logging
-from wolframclient.evaluation.cloud.exceptions import AuthenticationException, XAuthNotConfigured, InputException, OutputException
+from wolframclient.evaluation.cloud.exceptions import RequestException, AuthenticationException, XAuthNotConfigured, InputException, OutputException
 from wolframclient.evaluation.cloud.oauth import OAuthSession
-from wolframclient.evaluation.cloud.inputoutput import WolframAPIBuilder
+from wolframclient.evaluation.cloud.inputoutput import WolframAPIResponseBuilder
 from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 from wolframclient.utils.encoding import force_text
+from wolframclient.utils.six import string_types
+from json import loads as json_loads
+from wolframclient.language.expression import WLExpressionMeta
+from wolframclient.serializers import export
+
 import requests
 
 __all__ = ['WolframCloudSession']
@@ -27,9 +32,10 @@ class WolframCloudSession(object):
     a `WolframAPIResponse`. It is strongly advised to re-use a session to make multiple 
     calls.
     '''
-    __slots__ = 'server', 'oauth', 'consumer', 'consumer_secret', 'user', 'password', 'is_xauth'
+    __slots__ = 'server', 'oauth', 'consumer', 'consumer_secret', 'user', 'password', 'is_xauth', 'evaluation_api_url'
     def __init__(self, server):
         self.server = server
+        self.evaluation_api_url = self._evaluation_api_url()
         self.oauth = None
         self.consumer = None
         self.consumer_secret = None
@@ -56,7 +62,7 @@ class WolframCloudSession(object):
         self.consumer = sak_credential.consumer_key
         self.consumer_secret = sak_credential.consumer_secret
         self.is_xauth = False
-        self.oauth = OAuthSession(self.consumer, self.consumer_secret)
+        self.oauth = OAuthSession(self.server, self.consumer, self.consumer_secret)
         self.oauth.auth()
 
     
@@ -66,7 +72,7 @@ class WolframCloudSession(object):
         self.user = user_credentials.user
         self.password = user_credentials.password
         self.is_xauth = True
-        self.oauth = OAuthSession(self.server.xauth_consumer_key,
+        self.oauth = OAuthSession(self.server, self.server.xauth_consumer_key,
                            self.server.xauth_consumer_secret)
         self.oauth.xauth(user_credentials.user, user_credentials.password)
         
@@ -101,10 +107,23 @@ class WolframCloudSession(object):
         else:
             raise InputException("Invalid input encoders. Expecting None, a callable object or a dictionary.")
 
+    def _post_request(self, url, headers={}, body={}):
+        ''' Do a POST request, signing the content only if authentication has been successful. '''
+        if self.authorized:
+            logger.debug('Authenticated call to api %s', url)
+            return self.oauth.signed_request(url, headers=headers, body=body)
+        else:
+            logger.debug('Anonymous call to api %s', url)
+            return requests.post(
+                url, headers=headers, data=body, verify=self.server.verify)
 
-    def call(self, url, input_parameters={}, input_encoders={}, decoder=force_text):
-        ''' Call a given API specified by its `url`, using the provided input parameters
+    def call(self, api, input_parameters={}, input_encoders={}, decoder=force_text):
+        ''' Call a given API, using the provided input parameters.
         
+        `api` can be a string url or a tuple (`username`, `api name`). User name is 
+        generally the Wolfram Language symbol `$UserName`. API id can be a uuid or a 
+        name, in the form of a relative path. e.g: myapi/foo/bar
+
         The input parameters are provider as a dictionary with string keys being the name
         of the parameters associated to their value. The input encoder(s) can be specified
         as a callable in which case it is applied to all inputs, or as a dictionary, with keys
@@ -115,33 +134,50 @@ class WolframCloudSession(object):
         Note: By default a decoder is specified and ensure the response is of type string. To
         get raw bytes just replace it with `None`.
         '''
+        url = self._user_api_url(api)
         encoded_inputs = self._encoded_inputs(input_parameters, input_encoders)
-        if self.authorized:
-            logger.debug('Authenticated call to api %s', url)
-            request = self.oauth.signed_request(url, body=encoded_inputs)
+        response = self._post_request(url, body=encoded_inputs)
+
+        return WolframAPIResponseBuilder.build(response, decoder)
+
+    def _user_api_url(self, api):
+        '''Build an API URL from a user name and an API id. '''
+        if isinstance(api, tuple) or isinstance(api, list):
+            if len(api) == 2:
+                return URLBuilder(self.server.cloudbase).extend(
+                    'objects', api[0], api[1]).get()
+            else:
+                raise ValueError(
+                    'Target api specified as a tuple must have two elements: the user name, the API name.')
+        elif isinstance(api, string_types):
+            return api
         else:
-            logger.debug('Anonymous call to api %s', url)
-            request = requests.post(url, data=encoded_inputs)
-        return WolframAPIBuilder.build(request, decoder)
+            raise ValueError('Invalid api type. Expecting string or tuple.')
 
-class APIUtil(object):
-    ''' A utility class that provides some static function to help construct API urls.'''
-    @staticmethod
-    def user_api_url(username, api_id, server=WolframPublicCloudServer):
-        '''Build an API URL from a user name and an API id.
-        
-        user name is generally the Wolfram Language symbol `$UserName`. 
-        API id can be a uuid or a name, in the form of a relative path. 
-        e.g: myapi/foo/bar
+    def _evaluation_api_url(self):
+        return URLBuilder(self.server.cloudbase).extend('evaluations').get()
 
-        The server parameter, by default the Wolfram public Cloud is used
-        to provide the base url. See `Server.cloudbase`.
-        '''
-        return URLBuilder(server.cloudbase).extend('objects', username, api_id).get()
+    def evaluate(self, expr, decoder=None):
+        # if string assuming it's inputform
+        if isinstance(expr, string_types):
+            input_form = expr
+        else: # if not serialize it first
+            input_form = export(expr)
 
-    def buildin_api(self, name):
-        '''Returns a build-in Wolfram API. '''
-        raise NotImplementedError('Not supported yet.')
+        response = self._post_request(self.evaluation_api_url, 
+            headers={'_responseform': 'json'}, 
+            body=input_form)
+        # TODO parse json
+        evaluated_resp = WolframAPIResponseBuilder.build(
+            response, decoder=decoder)
+        if evaluated_resp.success:
+            return evaluated_resp.output
+        else:
+            raise RequestException(evaluated_resp.failure)
+
+    def __str__(self):
+        return '<WolframCloudSession:base={}, authorized={}>'.format(self.server.cloudbase, self.authorized)
+
 
 class URLBuilder(object):
     ''' Very basic mutable string builder that only ensures consistent slashes.'''
