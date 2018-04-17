@@ -157,11 +157,6 @@ class OAuthSession(object):
             headers=req_headers,
             realm=self.server.cloudbase  # TODO should we have realm?
         )
-        logger.debug('uri: %s', uri)
-        logger.debug('headers: %s', req_headers)
-        logger.debug('body: %s', body)
-        # prep = requests.Request(method, uri, headers=req_headers, data=body).prepare()
-
         return requests.request(method, uri, headers=req_headers, data=body, verify=self.server.verify)
 
     @property
