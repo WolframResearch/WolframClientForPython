@@ -75,7 +75,7 @@ class WXFSerializer(FormatSerializer):
             )
         )
 
-    def serialize_ndarray(self, data, shape, wl_type):
+    def serialize_raw_array(self, data, shape, wl_type):
 
         yield wxfexpr.WXFExprRawArray(
             shape,
