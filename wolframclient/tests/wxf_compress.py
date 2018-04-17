@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals, with_statement
 
-from wolframclient.serializers.streaming import ZipCompressedWriter
+from wolframclient.serializers.wxfencoder.streaming import ZipCompressedWriter
 from wolframclient.tests.utils.base import TestCase as BaseTestCase
 from wolframclient.utils import six
 
