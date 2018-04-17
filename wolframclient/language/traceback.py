@@ -129,7 +129,7 @@ def _get_traceback_frames(traceback, exc_value, context_lines = 7):
             filename = tb.tb_frame.f_code.co_filename
             function = tb.tb_frame.f_code.co_name
             lineno = tb.tb_lineno - 1
-            loader = tb.tb_frame.f_globals.get('__loader__')
+            loader = tb.tb_frame.f_locals.get('__loader__') or tb.tb_frame.f_globals.get('__loader__')
             module_name = tb.tb_frame.f_globals.get('__name__') or ''
 
             pre_context_lineno, pre_context, context_line, post_context = _get_lines_from_file(
