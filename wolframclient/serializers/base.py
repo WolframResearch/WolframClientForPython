@@ -150,7 +150,7 @@ class FormatSerializer(Normalizer):
         yield "IsClass",    inspect.isclass(o),
         yield "IsFunction", inspect.isfunction(o),
         yield "IsMethod",   inspect.ismethod(o),
-        yield "Callable",   callable(o)
+        yield "IsCallable", callable(o)
 
         if callable(o):
             try:
