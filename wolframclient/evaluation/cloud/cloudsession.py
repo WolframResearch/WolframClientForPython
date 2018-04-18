@@ -159,6 +159,11 @@ class WolframCloudSession(object):
         return URLBuilder(self.server.cloudbase).extend('evaluations?_responseform=json').get()
 
     def evaluate(self, expr, decoder=None):
+        ''' Send `expr` to the cloud for evaluation.
+        
+        `expr` can either be a string or a Python object serializable by
+        `wolframclient.serializers.export`
+        '''
         # if string assuming it's inputform
         if isinstance(expr, string_types):
             input_form = expr

@@ -11,6 +11,10 @@ class AuthenticationException(RequestException):
     ''' Error in authentication request.'''
     pass
 
+class EvaluationException(RequestException):
+    ''' Error while calling /evaluations API.'''
+    pass
+
 XAuthNotConfigured = AuthenticationException(
     'XAuth is not configured. Missing xauth consumer key and/or secret.')
 

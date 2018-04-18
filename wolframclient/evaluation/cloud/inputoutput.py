@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.evaluation.cloud.exceptions import EncoderException, DecoderException, InputException
+from wolframclient.evaluation.cloud.exceptions import EvaluationException, EncoderException, DecoderException, InputException
 from wolframclient.utils.six import string_types, integer_types
 from wolframclient.utils.encoding import force_text
 import json
@@ -202,11 +202,8 @@ class WolframEvaluationResponse(object):
                 self.expr = None
                 self.failure = 'Failed to decode JSON response from server'
         else:
-            self.request_error = True
-            self.json = None
-            self.success = False
-            self.expr = None
-            self.failure = response.text
+            logger.fatal('Server invalid response %i: %s', response.status_code, response.text)
+            raise EvaluationException(response)
 
     def __str__(self):
         if self.success:
