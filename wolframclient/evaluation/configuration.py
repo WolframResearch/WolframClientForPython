@@ -79,7 +79,7 @@ class Configuration(object):
 
     def read(self, filenames):
         ''' Populate the configuration with values gathered from a list of files defined by they filenames'''
-        if logger.level <= logging.DEBUG:
+        if logger.isEnabledFor(logging.DEBUG):
             from wolframclient.utils.functional import riffle
             if isinstance(filenames, list):
                 out_filenames = "".join(riffle(filenames, ', '))
@@ -93,8 +93,7 @@ class Configuration(object):
 
     def read_file(self, file):
         ''' Populate the configuration with values gathered from a file-like object'''
-        if logger.level <= logging.DEBUG:
-            logger.debug('Configuration read from %s', file.name)
+        logger.debug('Configuration read from %s', file.name)
         parser = ConfigParser()
         if PY2:
             parser.readfp(file)

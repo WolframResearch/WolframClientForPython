@@ -11,6 +11,7 @@ except ImportError: # PY2
     
 import requests
 from oauthlib import oauth1 as oauth
+from oauthlib.common import quote
 
 from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 from wolframclient.evaluation.configuration import user_credential_configuration, sak_configuration
@@ -137,27 +138,47 @@ class OAuthSession(object):
     def signed_request(self, uri, headers={}, body={}, method='POST'):
         if self._client is None:
             raise AuthenticationException('Not authenticated.')
-        req_headers = headers
-        req_headers['User-Agent'] = 'WolframClientForPython/1.0'
+        
+        req_headers={}
+        for k,v in headers.items():
+            req_headers[k] = v
         if isinstance(body, dict):
             # url encode the body
             encoded_body = urlencode(body)
-            req_headers['Content-Type'] = 'application/x-www-form-urlencoded'
-        elif isinstance(body, string_types) or isinstance(body, binary_type):
-            encoded_body = body
+            sign_body = True
             if 'Content-Type' not in req_headers:
+                logger.info('Content type not provided by user. Setting it to "application/x-www-form-urlencoded".')
+                req_headers['Content-Type'] = 'application/x-www-form-urlencoded'
+        elif isinstance(body, string_types) or isinstance(body, binary_type):
+            # application/octet-stream for binary data?
+            if 'Content-Type' not in req_headers:
+                logger.info('Content type not provided by user. Setting it to "text/plain".')
                 req_headers['Content-Type'] = 'text/plain'
+                sign_body = False
+            elif 'application/x-www-form-urlencoded' == req_headers['Content-Type']:
+                encoded_body = body
+                sign_body = True
+            else:
+                sign_body = False
         else:
             raise ValueError('Headers must be dict or string type.')
         
-        uri, req_headers, body = self._client.sign(
+        uri, req_headers, signed_body = self._client.sign(
             uri,
             method,
-            body=encoded_body,
+            body= encoded_body if sign_body else None,
             headers=req_headers,
             realm=self.server.cloudbase  # TODO should we have realm?
         )
-        return requests.request(method, uri, headers=req_headers, data=body, verify=self.server.verify)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('Signed uri: %s', uri)
+            logger.debug('Signed header: %s', req_headers)
+            logger.debug('Signed body: %s', sign_body)
+
+        return requests.request(method, uri, 
+            headers=req_headers, 
+            data=signed_body if sign_body else body, 
+            verify=self.server.verify)
 
     @property
     def authorized(self):

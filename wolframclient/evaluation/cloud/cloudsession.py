@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import logging
 from wolframclient.evaluation.cloud.exceptions import RequestException, AuthenticationException, XAuthNotConfigured, InputException, OutputException
 from wolframclient.evaluation.cloud.oauth import OAuthSession
-from wolframclient.evaluation.cloud.inputoutput import WolframAPIResponseBuilder
+from wolframclient.evaluation.cloud.inputoutput import WolframAPIResponseBuilder, WolframEvaluationResponse
 from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.six import string_types
@@ -109,6 +109,7 @@ class WolframCloudSession(object):
 
     def _post_request(self, url, headers={}, body={}):
         ''' Do a POST request, signing the content only if authentication has been successful. '''
+        headers['User-Agent'] = 'WolframClientForPython/1.0'
         if self.authorized:
             logger.debug('Authenticated call to api %s', url)
             return self.oauth.signed_request(url, headers=headers, body=body)
@@ -155,7 +156,7 @@ class WolframCloudSession(object):
             raise ValueError('Invalid api type. Expecting string or tuple.')
 
     def _evaluation_api_url(self):
-        return URLBuilder(self.server.cloudbase).extend('evaluations').get()
+        return URLBuilder(self.server.cloudbase).extend('evaluations?_responseform=json').get()
 
     def evaluate(self, expr, decoder=None):
         # if string assuming it's inputform
@@ -164,16 +165,10 @@ class WolframCloudSession(object):
         else: # if not serialize it first
             input_form = export(expr)
 
-        response = self._post_request(self.evaluation_api_url, 
-            headers={'_responseform': 'json'}, 
+        response = self._post_request(
+            self.evaluation_api_url, 
             body=input_form)
-        # TODO parse json
-        evaluated_resp = WolframAPIResponseBuilder.build(
-            response, decoder=decoder)
-        if evaluated_resp.success:
-            return evaluated_resp.output
-        else:
-            raise RequestException(evaluated_resp.failure)
+        return WolframEvaluationResponse(response)
 
     def __str__(self):
         return '<WolframCloudSession:base={}, authorized={}>'.format(self.server.cloudbase, self.authorized)

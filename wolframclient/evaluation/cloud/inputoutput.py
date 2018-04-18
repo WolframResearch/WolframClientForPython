@@ -183,18 +183,39 @@ class WolframAPIResponseBuilder(object):
         raise NotImplementedError("Cannot initialize. Use static 'method' build.")
 
 
-class WolframAPIValue(object):
-    def __init__(self, encoding_format, data_type=None):
-        if not WolframAPIValue._is_valid_format(encoding_format):
-            raise ValueError('Invalid encoding format %s' % encoding_format)
-        
-        self.data_type = data_type
-        self.encoding_format = encoding_format
+class WolframEvaluationResponse(object):
+    __slots__ = 'response', 'json', 'success', 'request_error', 'failure', 'expr'
+    def __init__(self, response):
+        self.response = response
+        if response.status_code == 200:
+            self.request_error = False
+            try:
+                self.json = response.json()
+                self.success = self.json['Success']
+                self.expr = self.json['Result']
+                if not self.success:
+                    self.failure = self.json['FailureType']
+            except json.decoder.JSONDecodeError as e:
+                logger.fatal('Server returned invalid JSON: %s', e)
+                self.json = None
+                self.success = False
+                self.expr = None
+                self.failure = 'Failed to decode JSON response from server'
+        else:
+            self.request_error = True
+            self.json = None
+            self.success = False
+            self.expr = None
+            self.failure = response.text
 
-    @staticmethod
-    def _is_valid_format(encoding_format):
-        return True
-    
+    def __str__(self):
+        if self.success:
+            return 'WolframEvaluationResponse<success={}, expr={}>'.format(self.success, self.expr)
+        elif not self.request_error:
+            return 'WolframEvaluationResponse<success={}, expr={}>'.format(self.success, self.expr)
+        else:
+            return 'WolframEvaluationResponse<request error {}>'.format(self.response.status_code)
+
 
 class FormatEncoder(object):
     def __init__(self):
@@ -263,92 +284,3 @@ class BinaryDecoder(FormatDecoder):
         return data
 
 
-IMPORT_FORMATS = {'wl': WLEncoder(), 'json': JSONEncoder()}
-
-
-class WolframAPIInput(WolframAPIValue):
-    def __init__(self, encoding_format='wl', data_type=None):
-        super(WolframAPIInput, self).__init__(encoding_format, data_type)
-        self.encoder = IMPORT_FORMATS.get(encoding_format, None)
-
-    @staticmethod
-    def _is_valid_format(encoding_format):
-        return encoding_format in IMPORT_FORMATS
-
-    def input(self, parameter_name, data):
-        return self.encoder.encode(parameter_name, data)
-
-
-#TODO 'wxf', 'image', 'file'?
-OUTPUT_FORMATS = {
-    'wl': WLDecoder(), 
-    'json': JSONDecoder(),
-    'binary': BinaryDecoder()
-    }
-
-class WolframAPIOutput(WolframAPIValue):
-
-    def __init__(self, encoding_format='wl', data_type=None):
-        super(WolframAPIOutput, self).__init__(encoding_format, data_type)
-        self.decoder = OUTPUT_FORMATS.get(encoding_format, None)
-        if self.decoder is None:
-            # TODO
-            raise NotImplementedError('TODO %s' % encoding_format)
-
-    def output(self, data):
-        return self.decoder.decode(data)
-
-    # TODO: probably data_type is not required so this could build a singleton and
-    # return it.
-    @staticmethod
-    def json(data_type=None):
-        return WolframAPIOutput('json', data_type)
-
-    @staticmethod
-    def default(data_type=None):
-        return WolframAPIOutput.json()
-
-    @staticmethod
-    def _is_valid_format(encoding_format):
-        return encoding_format in OUTPUT_FORMATS
-
-
-# StringType = object()
-# IntegerType = object()
-# NumericType = object()
-
-
-# class TypeValidator(object):
-#     @staticmethod
-#     def is_valid(data_type, data):
-#         validator = ValidatorMapping.get(data_type, None)
-#         if validator == None:
-#             raise ValueError('Unknown data type.')
-
-#         return validator.is_valid(data)
-
-#     def _validate(self, data):
-#         raise NotImplementedError()
-    
-
-# class _StringValidator(TypeValidator):
-#     def _validate(self, data):
-#         return isinstance(data, six.string_types)
-
-
-# class _NumericValidator(TypeValidator):
-#     # could be more accurate. Decimal, Complex
-#     def _validate(self, data):
-#         return isinstance(data, six.integer_types) or isinstance(data, float) or isinstance(data, complex)
-
-
-# class _IntegerValidator(TypeValidator):
-#     def _validate(self, data):
-#         return isinstance(data, six.integer_types)
-
-
-# ValidatorMapping = {
-#     StringType: _StringValidator(), 
-#     IntegerType: _IntegerValidator(),
-#     NumericType: _NumericValidator()
-# }
