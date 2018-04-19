@@ -215,10 +215,10 @@ class _WXFExprStringLike(_WXFExpr):
         If `allow_binary` is set to false, also accept binary types: `bytes` (py3) and `str` (py2)
         '''
         super(_WXFExprStringLike, self).__init__(wxf_type)
-        if isinstance(value, six.string_types):
-            self.value = value.encode('utf-8')
-        elif allow_binary and isinstance(value, six.binary_type):
+        if allow_binary and isinstance(value, six.binary_type):
             self.value = value
+        elif isinstance(value, six.text_type):
+            self.value = value.encode('utf-8')            
         else:
             raise TypeError(self.__class__.__name__ +
                             " must be initialize with a string. Was '" + value.__class__.__name__ + "'.")
@@ -249,7 +249,7 @@ class WXFExprString(_WXFExprStringLike):
 class WXFExprBigInteger(_WXFExprStringLike):
     ''' A string of digits representing a big integer'''
     def __init__(self, value):
-        super(WXFExprBigInteger, self).__init__(WXF_CONSTANTS.BigInteger, value)
+        super(WXFExprBigInteger, self).__init__(WXF_CONSTANTS.BigInteger, value, allow_binary = True)
 
 class WXFExprBigReal(_WXFExprStringLike):
     ''' A string representation of a real value with arbitrary precision. The
@@ -257,7 +257,7 @@ class WXFExprBigReal(_WXFExprStringLike):
     the real in the Wolfram Language.
     '''
     def __init__(self, value):
-        super(WXFExprBigReal, self).__init__(WXF_CONSTANTS.BigReal, value)
+        super(WXFExprBigReal, self).__init__(WXF_CONSTANTS.BigReal, value, allow_binary = True)
 
 class WXFExprBinaryString(_WXFExpr):
     '''A string of arbitrary bytes. Contrary to `WXFExprString` no encoding is
