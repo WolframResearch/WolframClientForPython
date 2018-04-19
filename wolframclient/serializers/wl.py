@@ -47,12 +47,12 @@ class WLSerializer(FormatSerializer):
     def serialize_bytes(self, bytes):
         return self.serialize_function(
             self.serialize_symbol('ByteArray'), (
-                ('"', base64.b64encode(bytes), '"'),
+                (b'"', base64.b64encode(bytes), b'"'),
             )
         )
 
     def serialize_decimal(self, number):
-        yield py_encode_decimal(number)
+        yield py_encode_decimal(number).encode('utf-8')
 
     def serialize_float(self, number):
         yield ('{0:f}'.format(number)).encode('utf-8')
