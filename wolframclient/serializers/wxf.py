@@ -7,6 +7,7 @@ from itertools import chain
 from wolframclient.serializers.base import FormatSerializer
 from wolframclient.serializers.wxfencoder.serializer import WXFExprSerializer
 from wolframclient.serializers.wxfencoder.wxfexpr import ARRAY_TYPES
+from wolframclient.serializers.utils import py_encode_decimal
 
 import wolframclient.serializers.wxfencoder.wxfexpr as wxfexpr
 
@@ -54,7 +55,7 @@ class WXFSerializer(FormatSerializer):
         yield wxfexpr.WXFExprReal(number)
 
     def serialize_decimal(self, number):
-        yield wxfexpr.WXFExprBigReal('{0:f}'.format(number))
+        yield wxfexpr.WXFExprBigReal(py_encode_decimal(number))
 
     #text / bytes
 

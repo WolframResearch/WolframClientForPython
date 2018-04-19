@@ -5,7 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from itertools import chain
 
 from wolframclient.serializers.base import FormatSerializer
-from wolframclient.serializers.escape import py_encode_text
+from wolframclient.serializers.utils import py_encode_text, py_encode_decimal
 from wolframclient.utils.encoding import force_bytes
 
 import base64
@@ -52,7 +52,7 @@ class WLSerializer(FormatSerializer):
         )
 
     def serialize_decimal(self, number):
-        yield ('{0:f}'.format(number)).encode('utf-8')
+        yield py_encode_decimal(number)
 
     def serialize_float(self, number):
         yield ('{0:f}'.format(number)).encode('utf-8')

@@ -3,6 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.utils.encoding import force_bytes
+from wolframclient.utils import six
 
 import re
 
@@ -28,3 +29,7 @@ def py_encode_text(s):
     yield b'"'
     yield force_bytes(ESCAPE.sub(replace, s))
     yield b'"'
+
+def py_encode_decimal(number):
+    t = number.as_tuple()
+    return '%s`%i' % (number, max(len(t.digits), t.exponent * -1 + 1))
