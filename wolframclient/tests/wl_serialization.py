@@ -10,6 +10,7 @@ from wolframclient.utils import six
 from wolframclient.utils.datastructures import Association
 
 import decimal
+import fractions
 
 #you can run those tests by doing
 #> python wolfram.py test wolfram.tests.serialization
@@ -104,7 +105,7 @@ class TestCase(BaseTestCase):
         self.compare("a\\", b'"a\\\\"')
 
     def test_numeric(self):
-        
+
         self.compare(decimal.Decimal(10**20),          b'100000000000000000000`21')
         self.compare(decimal.Decimal('100'),           b'100`3')
         self.compare(decimal.Decimal('100.00'),        b'100.00`5')
@@ -114,6 +115,7 @@ class TestCase(BaseTestCase):
         self.compare(decimal.Decimal('0.0000000000'),  b'0.0000000000`1')
         self.compare(decimal.Decimal('0.0000000010'),  b'0.0000000010`2')
 
+        self.compare(fractions.Fraction(1, 2),         wl.Rational(1, 2))
 
         self.compare(float('0.150000'),          b'0.150000')
 
