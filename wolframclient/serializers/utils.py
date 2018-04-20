@@ -31,4 +31,4 @@ def py_encode_text(s):
     yield b'"'
 
 def py_encode_decimal(number):
-    return '%s`%i' % (number, len(number.as_tuple().digits))
+    return '{0:f}`{1:d}'.format(number, len(number.as_tuple().digits))
