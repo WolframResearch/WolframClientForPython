@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.evaluation.configuration import WolframPublicCloudConfig, server_configuration
 from wolframclient.utils.six import string_types
+
 __all__ = [
     'Server', 
     'WolframPublicCloudServer'
@@ -40,26 +40,11 @@ class Server(object):
         else:
             raise ValueError('Invalid certificate. Must be a string type or None.')
 
-    @staticmethod
-    def from_config(config):
-        ''' Build a server instance from a `Configuration`.'''
-        return Server(config.api_api_endpoint, 
-                      config.authentication_request_token_endpoint,
-                      config.authentication_access_token_endpoint,
-                      xauth_consumer_key=config.authentication_xauth_consumer_key,
-                      xauth_consumer_secret=config.authentication_xauth_consumer_secret,
-                      certificate=config.security_ssl_certificate)
-
-    @staticmethod
-    def from_file(filepath):
-        ''' Build a server instance from a file path.'''
-        return Server.from_config(server_configuration().read(filepath))
-    
-    @staticmethod
-    def default():
-        ''' A new Server instance representing the Wolfram public Cloud.'''
-        return Server.from_config(WolframPublicCloudConfig)
-
-
 # A built-in instance representing the Wolfram public Cloud.
-WolframPublicCloudServer = Server.default()
+WolframPublicCloudServer = Server(
+    'https://www.wolframcloud.com',
+    'https://account.wolfram.com/auth/request-token',
+    'https://account.wolfram.com/auth/access-token',
+    xauth_consumer_key='tbd',
+    xauth_consumer_secret='tbd'
+)

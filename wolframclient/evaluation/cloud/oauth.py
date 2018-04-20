@@ -14,8 +14,7 @@ from oauthlib import oauth1 as oauth
 from oauthlib.common import quote
 
 from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
-from wolframclient.evaluation.configuration import user_credential_configuration, sak_configuration
-from wolframclient.evaluation.cloud.exceptions import RequestException, AuthenticationException, XAuthNotConfigured, ConfigurationException
+from wolframclient.evaluation.cloud.exceptions import RequestException, AuthenticationException, XAuthNotConfigured
 from wolframclient.utils.six import string_types, binary_type
 
 logger = logging.getLogger(__name__)
@@ -24,10 +23,7 @@ class SecuredAuthenticationKey(object):
     ''' Represents a Secured Authentication Key generated using the Wolfram Language
     function `GenerateSecuredAuthenticationKey[]`
     
-    It is used as an input when authenticating a cloud session. This class provides
-    static builder methods:
-    - from a file path with `from_file`
-    - from an instance of `Configuration` with `from_config`
+    It is used as an input when authenticating a cloud session.
     '''
     __slots__ = 'consumer_key', 'consumer_secret'
     is_xauth = False
@@ -35,33 +31,10 @@ class SecuredAuthenticationKey(object):
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
 
-    @staticmethod
-    def from_config(config):
-        ''' Build a new instance of `SecuredAuthenticationKey` from a given configuration.
-
-        A convenient way to get an appropriate configuration instance is to use
-        from `wolframclient.evaluation.configuration.sak_configuration()`
-        '''
-        if hasattr(config, 'sak_consumer_key') and hasattr(config, 'sak_consumer_secret'):
-            return SecuredAuthenticationKey(config.sak_consumer_key, config.sak_consumer_secret)
-        else:
-            raise ConfigurationException(
-                'Consumer key and secret missing from configuration.')
-
-    @staticmethod
-    def from_file(filepath):
-        ''' Build a new instance of `SecuredAuthenticationKey` from a given configuration file'''
-        return SecuredAuthenticationKey.from_config(
-            sak_configuration().read(filepath)
-        )
-
 class UserCredentials(object):
     ''' Represents user credentials used to login to a cloud.
     
-    It is used as an input when authenticating a cloud session. This class provides 
-    static builder methods:
-    - from a file path with `from_file`
-    - from an instance of `Configuration` with `from_config`
+    It is used as an input when authenticating a cloud session.
     '''
     __slots__ = 'user', 'password'
     is_xauth = True
@@ -69,24 +42,6 @@ class UserCredentials(object):
         self.user = user
         self.password = password
 
-    @staticmethod
-    def from_config(config):
-        ''' Build a new instance of `UserCredentials` from a given configuration.
-
-        A convenient way to get an appropriate configuration instance is to use
-        from `wolframclient.evaluation.configuration.user_credential_configuration()`
-        '''
-        if hasattr(config, 'user_id') and hasattr(config, 'user_password'):
-            return UserCredentials(config.user_id, config.user_password)
-        else:
-            raise ConfigurationException('User credentials missing from configuration.')
-
-    @staticmethod
-    def from_file(filepath):
-        ''' Build a new instance of `UserCredentials` from a given configuration file'''
-        return UserCredentials.from_config(
-            user_credential_configuration().read(filepath)
-        )
 
 class OAuthSession(object):
     ''' A wrapper around the OAuth client taking care of fetching the various oauth tokens.
@@ -109,11 +64,18 @@ class OAuthSession(object):
         self.server = server
     
     def _check_response(self, response):
-        # TODO: deal with error code with more precision.
-        logger.debug('[Auth] Code: %i\nBody: %s', response.status_code, response.text)
-        if response.status_code != 200:
-            raise AuthenticationException(response)
-
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('[Auth] Code: %i\nBody: %s', response.status_code, response.text)
+        if response.status_code == 200:
+            return
+        if response.status_code == 400:
+            try:
+                as_json = response.json()
+                msg = as_json.get('message', None)
+            except:
+                pass
+        raise AuthenticationException(response, msg)
+ 
     def _update_client(self):
         self._client = oauth.Client(self.consumer_key,
                                     client_secret=self.consumer_secret,
@@ -161,7 +123,8 @@ class OAuthSession(object):
             else:
                 sign_body = False
         else:
-            raise ValueError('Headers must be dict or string type.')
+            logger.fatal('Invalid body: %s', body)
+            raise ValueError('Body must be dict or string type.')
         
         uri, req_headers, signed_body = self._client.sign(
             uri,
@@ -190,7 +153,7 @@ class OAuthSession(object):
             token = json_loads(response.text)
             return token['oauth_token'], token['oauth_token_secret']
         elif not OAuthSession._is_textplain_content(response):
-            logging.warning('Unexpected content type in oauth response. Parsing as query string.')
+            logger.warning('Unexpected content type in oauth response. Parsing as query string.')
             
         token = parse_qs(response.text)
         return (token.get('oauth_token')[0],

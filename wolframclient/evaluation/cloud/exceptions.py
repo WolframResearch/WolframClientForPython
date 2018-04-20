@@ -4,8 +4,9 @@ class RequestException(Exception):
     ''' Error in HTTP request.'''
     __slots__ = 'response'
 
-    def __init__(self, response):
+    def __init__(self, response, msg=None):
         self.response = response
+        self.msg = msg
 
 class AuthenticationException(RequestException):
     ''' Error in authentication request.'''
@@ -37,14 +38,4 @@ class DecoderException(Exception):
     def __init__(self, msg, cause=None):
         super(DecoderException, self).__init__(msg)
         self.cause = cause
-
-
-class ConfigurationException(Exception):
-    ''' Configuration error. '''
-    pass
-
-class ConfigurationWarning(Warning):
-    ''' Configuration warning, happening when something is likely to be wrong. '''
-    pass
-
 

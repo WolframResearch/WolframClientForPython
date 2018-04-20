@@ -1,8 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.evaluation.cloud.exceptions import EvaluationException, EncoderException, DecoderException, InputException
-from wolframclient.utils.six import string_types, integer_types
-from wolframclient.utils.encoding import force_text
+from wolframclient.evaluation.cloud.exceptions import EvaluationException
+from wolframclient.utils.six import integer_types
 import json
 import logging
 
@@ -184,9 +183,9 @@ class WolframAPIResponseBuilder(object):
 
 
 class WolframEvaluationResponse(object):
-    __slots__ = 'response', 'json', 'success', 'request_error', 'failure', 'expr'
+    __slots__ = 'http_response', 'json', 'success', 'request_error', 'failure', 'expr'
     def __init__(self, response):
-        self.response = response
+        self.http_response = response
         if response.status_code == 200:
             self.request_error = False
             try:
@@ -211,73 +210,4 @@ class WolframEvaluationResponse(object):
         elif not self.request_error:
             return 'WolframEvaluationResponse<success={}, expr={}>'.format(self.success, self.expr)
         else:
-            return 'WolframEvaluationResponse<request error {}>'.format(self.response.status_code)
-
-
-class FormatEncoder(object):
-    def __init__(self):
-        raise NotImplementedError()
-
-    def encode(self, parameter_name, data):
-        try:
-            return self._encode(parameter_name, data)
-        except Exception as e:
-            raise EncoderException('Failed to encode parameter %s' % parameter_name, e)
-
-    def _encode(self, parameter_name, data):
-        raise NotImplementedError()
-
-    @staticmethod
-    def from_format(self, encoding_format):
-        if(encoding_format == 'wl'):
-            return WLEncoder()
-        if(encoding_format == 'json'):
-            return JSONEncoder()
-        else:
-            # TODO
-            return NotImplementedError('TODO')
-
-class FormatDecoder(object):
-    def __init__(self):
-        pass
-
-    def decode(self, data):
-        try:
-            return self._decode(data)
-        except Exception as e:
-            raise DecoderException(
-                'Failed to decode data', e)
-
-    def _decode(self, data):
-        raise NotImplementedError()
-
-
-class JSONEncoder(FormatEncoder):
-    def __init__(self):
-        pass
-    def _encode(self, parameter_name, data):
-        return (parameter_name + '__json', json.dumps(data))
-
-
-class JSONDecoder(FormatDecoder):
-    def _decode(self, json_string):
-        return json.loads(json_string)
-
-
-class WLEncoder(FormatEncoder):
-    def __init__(self):
-        pass
-
-    def _encode(self, parameter_name, data):
-        # TODO is it really what we want? if Data is Expr class we need serialization
-        return (parameter_name, data)
-
-class WLDecoder(FormatDecoder):
-    def _decode(self, wl_content):
-        return force_text(wl_content)
-
-class BinaryDecoder(FormatDecoder):
-    def _decode(self, data):
-        return data
-
-
+            return 'WolframEvaluationResponse<request error {}>'.format(self.http_response.status_code)
