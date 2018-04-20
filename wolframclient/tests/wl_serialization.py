@@ -21,7 +21,7 @@ class TestCase(BaseTestCase):
 
     def compare(self, data, output = None, **opts):
 
-        if isinstance(output, six.string_types):
+        if isinstance(output, six.binary_type):
             self.assertEqual(
                 self.dumps(data, **opts),
                 output
