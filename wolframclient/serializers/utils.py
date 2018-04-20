@@ -35,6 +35,6 @@ def py_encode_decimal(number, zero_digits = (0,)):
     t = number.as_tuple()
 
     if t.digits == zero_digits:
-        return '0``{1:d}'.format(1-t.exponent)
+        return '0``{0:d}'.format(1-t.exponent)
 
     return '{0:f}`{1:d}'.format(number, len(t.digits))
