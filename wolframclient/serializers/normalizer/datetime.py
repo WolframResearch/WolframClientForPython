@@ -47,7 +47,7 @@ def update_dispatch(dispatch):
                 )),
                 self.serialize_rule(
                     self.serialize_symbol(b"TimeZone"),
-                    self.serialize_tzinfo(o)
+                    self.serialize_tzinfo(o, name_match = None)
                 )
             )
         )
