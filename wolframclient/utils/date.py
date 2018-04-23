@@ -23,35 +23,29 @@ def new_date(date):
     )
 
 def new_time(time, tzinfo = None):
-
-    return localize(
-            datetime.time(
-            hour        = time.hour,
-            minute      = time.minute,
-            second      = time.second,
-            microsecond = time.microsecond,
-        ),
-        tzinfo = tzinfo
+    return datetime.time(
+        hour        = time.hour,
+        minute      = time.minute,
+        second      = time.second,
+        microsecond = time.microsecond,
+        tzinfo      = to_timezone(tzinfo)
     )
 
 def new_datetime(date, time = None, tzinfo = None):
-    return localize(
-        datetime.datetime(
-            year        = date.year,
-            month       = date.month,
-            day         = date.day,
-            hour        = time and time.hour   or 0,
-            minute      = time and time.minute or 0,
-            second      = time and time.second or 0,
-            microsecond = time and time.microsecond or 0,
-        ),
-        tzinfo = tzinfo
+
+    copy = datetime.datetime(
+        year        = date.year,
+        month       = date.month,
+        day         = date.day,
+        hour        = time and time.hour   or 0,
+        minute      = time and time.minute or 0,
+        second      = time and time.second or 0,
+        microsecond = time and time.microsecond or 0,
     )
 
-def localize(date, tzinfo = None):
     if tzinfo is not None:
-        return to_timezone(tzinfo).localize(date)
-    return date
+        return to_timezone(tzinfo).localize(copy)
+    return copy
 
 def to_timezone(value):
     if isinstance(value, (six.integer_types, float, decimal.Decimal)):
