@@ -125,12 +125,12 @@ class FormatSerializer(Normalizer):
         if date.tzinfo is None:
             return self.serialize_symbol(b"$TimeZone")
 
-        name = date.tzinfo.tzname(None)
+        if name_match:
+            name = date.tzinfo.tzname(None)
+            if name and name_match.match(name):
+                return self.serialize_string(name)
 
-        if name and name_match.match(name):
-            return self.serialize_string(name)
-
-        return self.serialize_float(date.utcoffset().total_seconds() / 3600)
+        return self.serialize_float(date.tzinfo.utcoffset(date).total_seconds() / 3600)
 
     def _serialize_external_object(self, o):
 
