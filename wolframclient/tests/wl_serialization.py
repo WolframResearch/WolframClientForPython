@@ -2,15 +2,33 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from wolframclient.utils.importutils import API
 from wolframclient.language.expression import system, wl
 from wolframclient.serializers import export
 from wolframclient.tests.utils.base import TestCase as BaseTestCase
-from wolframclient.tests.utils.static import test_date, test_datetime, test_time
 from wolframclient.utils import six
 from wolframclient.utils.datastructures import Association
 
+import datetime
 import decimal
 import fractions
+
+pytz = API(
+    FixedOffset = 'pytz.FixedOffset',
+    timezone    = 'pytz.timezone',
+    utc         = 'pytz.utc',
+    UnknownTimeZoneError = 'pytz.UnknownTimeZoneError'
+)
+
+def test_datetime():
+    return datetime.datetime(
+        year   = 2000,
+        month  = 1,
+        day    = 1,
+        hour   = 11,
+        minute = 15,
+        second = 20
+    )
 
 #you can run those tests by doing
 #> python wolfram.py test wolfram.tests.serialization
@@ -42,10 +60,6 @@ class TestCase(BaseTestCase):
         self.compare(
             Association((('a', 2), ('c', False), ('b', True))),
             b'<|"a" -> 2, "c" -> False, "b" -> True|>'
-        )
-        self.compare(
-            test_date(),
-            b'DateObject[{2000, 1, 1}]'
         )
 
         self.compare(
@@ -79,23 +93,37 @@ class TestCase(BaseTestCase):
             b'System`Expression[1, Rule[a, 2]]'
         )
 
-    def test_dates(self):
+    def test_datetime(self):
 
         self.compare(
             test_datetime(),
             b'DateObject[{2000, 1, 1, 11, 15, 20.000000}, "Instant", "Gregorian", $TimeZone]'
         )
         self.compare(
-            test_datetime(tzinfo = 1),
+            pytz.FixedOffset(60).localize(test_datetime()),
             b'DateObject[{2000, 1, 1, 11, 15, 20.000000}, "Instant", "Gregorian", 1.000000]'
         )
         self.compare(
-            test_datetime(tzinfo = "Europe/Rome"),
+            pytz.timezone("Europe/Rome").localize(test_datetime()),
             b'DateObject[{2000, 1, 1, 11, 15, 20.000000}, "Instant", "Gregorian", "Europe/Rome"]'
         )
+
+    def test_date(self):
+
         self.compare(
-            test_time(),
+            test_datetime().date(),
+            b'DateObject[{2000, 1, 1}]'
+        )
+
+    def test_time(self):
+
+        self.compare(
+            test_datetime().time(),
             b'TimeObject[{11, 15, 20.000000}, TimeZone -> $TimeZone]'
+        )
+        self.compare(
+            pytz.timezone("Europe/Rome").localize(test_datetime()).timetz(),
+            b'TimeObject[{11, 15, 20.000000}, TimeZone -> 1.000000]'
         )
 
     def test_encoding(self):
