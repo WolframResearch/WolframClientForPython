@@ -64,15 +64,15 @@ Built-in data structures are all supported:
 
 ```
 >>> export({"list": [1, 2, 3], "set": set([1, 2, 2, 4]), "frozenset": frozenset([1, 2, 2, 4]), "dict": dict(a = 2)})
-'<|"dict" -> <|"a" -> 2|>, "set" -> {1, 2, 4}, "list" -> {1, 2, 3}, "frozenset" -> {1, 2, 4}|>'
+'<|"list" :> {1, 2, 3}, "set" :> {1, 2, 4}, "frozenset" :> {1, 2, 4}, "dict" :> <|"a" :> 2|>|>'
 ```
 
 To preserve order with association use collections.OrderedDict
 
 ```
 >>> from collections import OrderedDict
->>> export(OrderedDict(enumerate("abcd")))
-'<|0 -> "a", 1 -> "b", 2 -> "c", 3 -> "d"|>'
+>>> export(OrderedDict([(0, 'a'), (1, 'b'), (2, 'c'), (3, 'd')]))
+'<|0 :> "a", 1 :> "b", 2 :> "c", 3 :> "d"|>'
 ```
 
 Any class that has an `__iter__` method is converted to a WL List, including generators.
@@ -97,14 +97,14 @@ float, decimal, integers and complex are supported:
 
 ```
 >>> export({'int': 1, 'float':2.3, 'decimal': decimal.Decimal(1), 'complex': complex(3, 4)})
-'<|"int" -> 1, "float" -> 2.300000, "decimal" -> 1, "complex" -> (3.000000 + I*4.000000)|>'
+'<|"int" :> 1, "float" :> 2.300000, "decimal" :> 1, "complex" :> (3.000000 + I*4.000000)|>'
 ```
 
 Infinity and NaN are converted to DirectedInfinity[...] and Indeterminate:
 
 ```
 >>> export({'+inf': float('inf'), '-inf': - float('inf'), 'nan': float('NaN')})
-'<|"+inf" -> DirectedInfinity[1], "-inf" -> DirectedInfinity[-1], "nan" -> Indeterminate|>'
+'<|"+inf" :> DirectedInfinity[1], "-inf" :> DirectedInfinity[-1], "nan" :> Indeterminate|>'
 ```
 
 fractions are serialized using Rational
