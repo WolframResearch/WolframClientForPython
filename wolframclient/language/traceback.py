@@ -39,17 +39,19 @@ def _serialize_variables(variables):
     if not isinstance(hidden, (tuple, list)):
         hidden = ()
 
+    variables = tuple(
+        (safe_force_text(key), safe_force_text(value))
+        for key, value in variables.items()
+        if not key in hidden
+    )
+
     if variables:
         return wl.OpenerView([
             "Local variables",
             wl.Grid(
                 iterate(
                     (("Key", "Value"), ),
-                    (
-                        (safe_force_text(key), safe_force_text(value))
-                        for key, value in variables.items()
-                        if not key in hidden
-                    ),
+                    variables,
                 ),
                 Background = [None, [wl.LightGray]],
                 Alignment = wl.Left,
