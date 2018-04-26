@@ -2,12 +2,12 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.utils.importutils import API
 from wolframclient.language.expression import system, wl
 from wolframclient.serializers import export
 from wolframclient.tests.utils.base import TestCase as BaseTestCase
 from wolframclient.utils import six
 from wolframclient.utils.datastructures import Association
+from wolframclient.utils.importutils import API
 
 import datetime
 import decimal
@@ -59,7 +59,12 @@ class TestCase(BaseTestCase):
         )
         self.compare(
             Association((('a', 2), ('c', False), ('b', True))),
-            b'<|"a" -> 2, "c" -> False, "b" -> True|>'
+            b'<|"a" :> 2, "c" :> False, "b" :> True|>'
+        )
+
+        self.compare(
+            dict(a = 2),
+            b'<|"a" :> 2|>'
         )
 
         self.compare(
@@ -140,7 +145,7 @@ class TestCase(BaseTestCase):
         self.compare(decimal.Decimal('0.010'),         b'0.010`2')
         self.compare(decimal.Decimal('0.1534'),        b'0.1534`4')
         self.compare(decimal.Decimal('0.0000000010'),  b'0.0000000010`2')
-        
+
         self.compare(decimal.Decimal('0'),             b'0``1')
         self.compare(decimal.Decimal('0.0'),           b'0``2')
         self.compare(decimal.Decimal('0.0000000000'),  b'0``11')
