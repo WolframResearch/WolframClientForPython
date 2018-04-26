@@ -97,7 +97,7 @@ float, decimal, integers and complex are supported:
 
 ```
 >>> export({'int': 1, 'float':2.3, 'decimal': decimal.Decimal(1), 'complex': complex(3, 4)})
-'<|"int" :> 1, "float" :> 2.300000, "decimal" :> 1, "complex" :> (3.000000 + I*4.000000)|>'
+'<|"int" :> 1, "float" :> 2.300000, "decimal" :> 1, "complex" :> Complex[3.000000, 4.000000]|>'
 ```
 
 Infinity and NaN are converted to DirectedInfinity[...] and Indeterminate:
