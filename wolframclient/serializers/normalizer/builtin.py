@@ -3,8 +3,21 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.utils import six
+from wolframclient.utils.encoding import force_text
+from wolframclient.utils.functional import identity
 
 import math
+
+if six.PY2:
+    #in py2 if you construct use dict(a=2) then "a" is binary
+    #since using bytes as keys is a legit operation we are only fixing py2 here
+
+    def safe_key(key):
+        if isinstance(key, six.binary_type):
+            return force_text(key)
+        return key
+else:
+    safe_key = identity
 
 def update_dispatch(dispatch):
 
@@ -23,7 +36,7 @@ def update_dispatch(dispatch):
     @dispatch.multi(dict)
     def normalizer(self, o):
         return self.serialize_mapping(
-            (self.normalize(key), self.normalize(value))
+            (self.normalize(safe_key(key)), self.normalize(value))
             for key, value in o.items()
         )
 
