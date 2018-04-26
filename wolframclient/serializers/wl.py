@@ -5,7 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from itertools import chain
 
 from wolframclient.serializers.base import FormatSerializer
-from wolframclient.serializers.utils import py_encode_text, py_encode_decimal
+from wolframclient.serializers.utils import py_encode_decimal, py_encode_text
 from wolframclient.utils.encoding import force_bytes
 
 import base64
@@ -74,7 +74,7 @@ class WLSerializer(FormatSerializer):
 
     def serialize_mapping(self, mapping):
         return yield_with_separators((
-                self.serialize_rule(key, value)
+                self.serialize_rule_delayed(key, value)
                 for key, value in mapping
             ),
             first = b'<|',

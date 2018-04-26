@@ -83,7 +83,7 @@ class FormatSerializer(Normalizer):
     def serialize_mapping(self, mappable):
         return self.serialize_function(
             self.serialize_symbol(b'Association'), (
-                self.serialize_rule(key, value)
+                self.serialize_rule_delayed(key, value)
                 for key, value in mappable
             )
         )

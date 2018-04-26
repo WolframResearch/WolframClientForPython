@@ -5,9 +5,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 from itertools import chain
 
 from wolframclient.serializers.base import FormatSerializer
+from wolframclient.serializers.utils import py_encode_decimal
 from wolframclient.serializers.wxfencoder.serializer import WXFExprSerializer
 from wolframclient.serializers.wxfencoder.wxfexpr import ARRAY_TYPES
-from wolframclient.serializers.utils import py_encode_decimal
 
 import wolframclient.serializers.wxfencoder.wxfexpr as wxfexpr
 
@@ -71,7 +71,7 @@ class WXFSerializer(FormatSerializer):
         return chain(
             (wxfexpr.WXFExprAssociation(len(keyvalue)), ),
             chain.from_iterable(
-                chain((wxfexpr.WXFExprRule(), ), key, value)
+                chain((wxfexpr.WXFExprRuleDelayed(), ), key, value)
                 for key, value in keyvalue
             )
         )
