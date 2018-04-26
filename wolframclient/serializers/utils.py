@@ -3,7 +3,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.utils.encoding import force_bytes
-from wolframclient.utils import six
 
 import re
 

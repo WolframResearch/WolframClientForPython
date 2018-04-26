@@ -218,7 +218,7 @@ class _WXFExprStringLike(_WXFExpr):
         if allow_binary and isinstance(value, six.binary_type):
             self.value = value
         elif isinstance(value, six.text_type):
-            self.value = value.encode('utf-8')            
+            self.value = value.encode('utf-8')
         else:
             raise TypeError(self.__class__.__name__ +
                             " must be initialize with a string. Was '" + value.__class__.__name__ + "'.")
