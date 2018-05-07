@@ -9,6 +9,10 @@ from wolframclient.utils.encoding import force_text
 
 class WLExpressionMeta(object):
 
+    if six.PY2:
+        def __nonzero__(self):
+            return True
+
     def __bool__(self):
         return True
 
