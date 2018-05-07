@@ -37,7 +37,10 @@ class WolframLanguageException(WLSerializable, Exception):
     def to_wl(self, **opts):
         return wl.Failure(
             self.failure_tag(),
-            self.failure_meta()
+            wl.Association(*(
+                wl.RuleDelayed(key, value)
+                for key, value in self.failure_meta().items()
+            ))
         )
 
     def show_traceback(self):
