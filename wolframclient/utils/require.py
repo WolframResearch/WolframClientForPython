@@ -3,13 +3,16 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from functools import wraps
-
-import pip
+try:
+    from pip import get_installed_distributions, main as pip_main
+except ImportError:
+    from pip._internal import get_installed_distributions, main as pip_main
+    
 
 def installed_modules():
     return {
         i.key: i.version
-        for i in pip.get_installed_distributions()
+        for i in get_installed_distributions()
     }
 
 def missing_requirements(*modules):
@@ -29,14 +32,17 @@ def require_module(*modules):
     commands = list(missing_requirements(*modules))
 
     if commands:
-        from pip.locations import virtualenv_no_global
+        try:
+            from pip.locations import virtualenv_no_global
+        except ImportError:
+            from pip._internal.locations import virtualenv_no_global
 
         print("Update in progress: pip install %s --user" % " ".join(commands))
 
         if virtualenv_no_global():
-            pip.main(["install"] + commands)
+            pip_main(["install"] + commands)
         else:
-            pip.main(["install", "--user"] + commands)
+            pip_main(["install", "--user"] + commands)
 
 def require(*modules):
     def outer(func):
