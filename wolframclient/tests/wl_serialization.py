@@ -2,6 +2,8 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from collections import OrderedDict
+
 from wolframclient.language.expression import system, wl
 from wolframclient.serializers import export
 from wolframclient.tests.utils.base import TestCase as BaseTestCase
@@ -57,9 +59,19 @@ class TestCase(BaseTestCase):
             [1, 2, 3],
             b'{1, 2, 3}'
         )
+
+        #instances of dict are converted using RuleDelayed
+
+        self.compare(
+            OrderedDict((('a', 2), ('c', False), ('b', True))),
+            b'<|"a" :> 2, "c" :> False, "b" :> True|>'
+        )
+
+        #instances of Association are converted using Rule, in WXF they use WXFFunction
+
         self.compare(
             Association((('a', 2), ('c', False), ('b', True))),
-            b'<|"a" :> 2, "c" :> False, "b" :> True|>'
+            b'<|"a" -> 2, "c" -> False, "b" -> True|>'
         )
 
         self.compare(
