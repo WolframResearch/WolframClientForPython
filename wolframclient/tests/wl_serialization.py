@@ -63,15 +63,15 @@ class TestCase(BaseTestCase):
         #instances of dict are converted using RuleDelayed
 
         self.compare(
-            OrderedDict((('a', 2), ('c', False), ('b', True))),
-            b'<|"a" :> 2, "c" :> False, "b" :> True|>'
+            OrderedDict(enumerate([2, True, False])),
+            b'<|0 :> 2, 1 :> True, 2 :> False|>'
         )
 
         #instances of Association are converted using Rule, in WXF they use WXFFunction
 
         self.compare(
-            Association((('a', 2), ('c', False), ('b', True))),
-            b'<|"a" -> 2, "c" -> False, "b" -> True|>'
+            Association(enumerate("abc")),
+            b'<|0 -> "a", 1 -> "b", 2 -> "c"|>'
         )
 
         self.compare(
