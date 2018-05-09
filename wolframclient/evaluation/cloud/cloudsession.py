@@ -2,16 +2,16 @@ from __future__ import absolute_import, print_function, unicode_literals
 import logging
 from wolframclient.evaluation.cloud.exceptions import RequestException, AuthenticationException, XAuthNotConfigured, InputException, OutputException
 from wolframclient.evaluation.cloud.oauth import OAuthSession
+from requests import post
 from requests.structures import CaseInsensitiveDict
 from wolframclient.evaluation.cloud.inputoutput import WolframAPIResponseBuilder, WolframEvaluationResponse
 from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.six import string_types
-from json import loads as json_loads, dumps as json_dumps
-from wolframclient.language.expression import WLExpressionMeta
-from wolframclient.serializers import export
 
-import requests
+from json import loads as json_loads, dumps as json_dumps
+from wolframclient.language.expression import wl, WLExpressionMeta
+from wolframclient.serializers import export
 
 __all__ = ['WolframCloudSession']
 
@@ -53,7 +53,7 @@ class WolframCloudSession(object):
         This method supports both oauth and xauth methods. It is not necessary
         to call it, since the session will try to authenticate when the first 
         request is issued. '''
-        logger.debug('Authenticating to the server.')
+        logger.info('Authenticating to the server.')
         if self.authentication is None:
             raise AuthenticationException('Missing authentication.')
         if self.authentication.is_xauth:
@@ -117,11 +117,11 @@ class WolframCloudSession(object):
         ''' Do a POST request, signing the content only if authentication has been successful. '''
         headers['User-Agent'] = 'WolframClientForPython/1.0'
         if self.authorized:
-            logger.debug('Authenticated call to api %s', url)
+            logger.info('Authenticated call to api %s', url)
             return self.oauth.signed_request(url, headers=headers, body=body)
         else:
-            logger.debug('Anonymous call to api %s', url)
-            return requests.post(
+            logger.info('Anonymous call to api %s', url)
+            return post(
                 url, headers=headers, data=body, verify=self.server.verify)
 
     def call(self, api, input_parameters={}, input_format='wl', **kargv):
@@ -144,7 +144,8 @@ class WolframCloudSession(object):
         url = self._user_api_url(api)
         encoded_inputs = encode_api_inputs(
             input_parameters, input_format=input_format, **kargv)
-        logger.debug('Encoded input %s', encoded_inputs)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('Encoded input %s', encoded_inputs)
         response = self._post(url, body=encoded_inputs)
 
         return WolframAPIResponseBuilder.build(response)
@@ -164,26 +165,43 @@ class WolframCloudSession(object):
 
     def _evaluation_api_url(self):
         return url_join(self.server.cloudbase, 'evaluations?_responseform=json')
+        # TODO tmp otherwise every call fails
+        # return url_join(self.server.cloudbase, 'evaluations')
+
+    def _call_evaluation_api(self, data):
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('Sending expression to cloud server for evaluation: %s', data)
+        response = self._post(
+            self.evaluation_api_url,
+            body=data)
+        return WolframEvaluationResponse(response)
+        
+
+    def evaluate_string(self, expr):
+        ''' Send the string InputForm of an `expr` to the cloud for evaluation. '''
+        return self._call_evaluation_api(expr)
 
     def evaluate(self, expr):
         ''' Send `expr` to the cloud for evaluation.
         
-        `expr` can either be a string or a Python object serializable by
-        `wolframclient.serializers.export`
+        `expr` must be a Python object serializable by `wolframclient.serializers.export`
         '''
-        # if string assuming it's inputform
-        if isinstance(expr, string_types):
-            input_form = expr
-        else: # if not serialize it first
-            input_form = export(expr)
+        return self._call_evaluation_api(export(expr))
+        
 
-        response = self._post(
-            self.evaluation_api_url, 
-            body=input_form)
-        return WolframEvaluationResponse(response)
+    def cloud_function(self, func):
+        return CloudFunction(self, func)
 
     def __str__(self):
         return '<WolframCloudSession:base={}, authorized={}>'.format(self.server.cloudbase, self.authorized)
+
+class CloudFunction(object):
+    def __init__(self, session, func):
+        self.session = session
+        self.func = func
+
+    def __call__(self, *args):
+        return self.session.evaluate(wl.Construct(self.func, *args))
 
 
 def _encode_inputs_as_wxf(inputs, **kargs):
