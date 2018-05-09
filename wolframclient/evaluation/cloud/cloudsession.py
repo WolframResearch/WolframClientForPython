@@ -204,28 +204,28 @@ class CloudFunction(object):
         return self.session.evaluate(wl.Construct(self.func, *args))
 
 
-def _encode_inputs_as_wxf(inputs, **kargs):
+def _encode_inputs_as_wxf(inputs, **kwargs):
     encoded_inputs = {}
     for name, value in inputs.items():
         name = name + '__wxf'
-        encoded_inputs[name] = export(value, format='wxf', **kargs)
+        encoded_inputs[name] = export(value, format='wxf', **kwargs)
     return encoded_inputs
 
-def _encode_inputs_as_json(inputs, **kargs):
+def _encode_inputs_as_json(inputs, **kwargs):
     encoded_inputs = {}
     for name, value in inputs.items():
         name = name + '__json'
-        encoded_inputs[name] = json_dumps(value, **kargs)
+        encoded_inputs[name] = json_dumps(value, **kwargs)
     return encoded_inputs
 
-def _encode_inputs_as_wl(inputs, **kargs):
+def _encode_inputs_as_wl(inputs, **kwargs):
     encoded_inputs={}
     for name, value in inputs.items():
         # avoid double encoding of strings '\"string\"'.
         if isinstance(value, string_types):
             encoded_inputs[name] = value
         else:
-            encoded_inputs[name] = export(value, format='wl', **kargs)
+            encoded_inputs[name] = export(value, format='wl', **kwargs)
     return encoded_inputs
 
 
@@ -235,7 +235,7 @@ SUPPORTED_ENCODING_FORMATS = CaseInsensitiveDict(data={
     'wl'    : _encode_inputs_as_wl
     })
 
-def encode_api_inputs(inputs, input_format='wl', **kargs):
+def encode_api_inputs(inputs, input_format='wl', **kwargs):
     if len(inputs) == 0:
         return {}
     encoder = SUPPORTED_ENCODING_FORMATS.get(input_format)
@@ -243,7 +243,7 @@ def encode_api_inputs(inputs, input_format='wl', **kargs):
         raise ValueError('Invalid encoding format %s. Choices are: %s' % (
             input_format, ', '.join(SUPPORTED_ENCODING_FORMATS.keys())))
 
-    return encoder(inputs, **kargs)
+    return encoder(inputs, **kwargs)
 
 
 def url_join(*fragments):
