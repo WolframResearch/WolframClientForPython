@@ -4,12 +4,14 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from collections import OrderedDict
 
+from wolframclient.language.expression import wl
 from wolframclient.serializers import export
 from wolframclient.serializers.wxfencoder.serializer import write_varint, WXFExprSerializer
 from wolframclient.serializers.wxfencoder.wxfexpr import WXFExprBinaryString, WXFExprInteger, WXFExprString
 from wolframclient.serializers.wxfencoder.wxfexprprovider import WXFExprProvider
 from wolframclient.tests.utils.base import TestCase as BaseTestCase
 from wolframclient.utils import six
+from wolframclient.utils.datastructures import Association
 
 import os
 import unittest
@@ -216,25 +218,27 @@ class TestCase(SerializeTest):
 
     ### ASSOCIATION TESTS
 
-    def test_simple_dic(self):
-        value = {1: 2}
-        wxf = b'\x38\x3a\x41\x01\x2d\x43\x01\x43\x02'
+    def test_simple_dict(self):
+
+        # Note: Dict must be used with care as the key ordering is not guaranted.
+        # One way to make reproducible tests is to use at most one key.
+
+        value = {1:2}
+        wxf = b'\x38\x3a\x41\x01\x3a\x43\x01\x43\x02'
         self.serialize_compare(value, wxf)
 
-    def test_empty_dic(self):
+    def test_empty_dict(self):
         wxf = b'\x38\x3a\x41\x00'
         self.serialize_compare({}, wxf)
 
-    def test_empty_dics(self):
-        value = OrderedDict()
-        value['k'] = {1: {}}
-        value['k2'] = {}
-        wxf = b'\x38\x3a\x41\x02\x2d\x53\x01\x6b\x41\x01\x2d\x43\x01\x41\x00\x2d\x53\x02\x6b\x32\x41\x00'
+    def test_empty_dicts(self):
+        value = OrderedDict(enumerate('abc'))
+        wxf = b'\x38\x3a\x41\x03\x3a\x43\x00\x53\x01\x61\x3a\x43\x01\x53\x01\x62\x3a\x43\x02\x53\x01\x63'
         self.serialize_compare(value, wxf)
 
     def test_no_enforcing_valid(self):
-        value = {'k': {1: {}}}
-        wxf = b'\x38\x3a\x41\x01\x2d\x53\x01\x6b\x41\x01\x2d\x43\x01\x41\x00'
+        value = OrderedDict(enumerate('abc'))
+        wxf = b'\x38\x3a\x41\x03\x3a\x43\x00\x53\x01\x61\x3a\x43\x01\x53\x01\x62\x3a\x43\x02\x53\x01\x63'
         self.serialize_compare(value, wxf, enforce=False)
 
     ### MIXED TESTS
@@ -273,13 +277,18 @@ class TestCase(SerializeTest):
             2,
             "aaaa",
             2.0,
-            {1:2},
+            {1: 2},
             [1, 2, 3]
             ):
             self.serialize_compare(
                 value,
                 export(value, format = 'wxf')
             )
+
+        self.assertEqual(
+            export(Association(enumerate('abc')), format = 'wxf'),
+            export(wl.Association(*(wl.Rule(i, v) for i, v in enumerate('abc'))), format = 'wxf'),
+        )
 
     def test_small_compression(self):
         wxf = b'\x38\x3a\x43\x01'
