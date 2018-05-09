@@ -88,6 +88,14 @@ class FormatSerializer(Normalizer):
             )
         )
 
+    def serialize_association(self, mappable):
+        return self.serialize_function(
+            self.serialize_symbol(b'Association'), (
+                self.serialize_rule(key, value)
+                for key, value in mappable
+            )
+        )
+
     def serialize_fraction(self, o):
         return self.serialize_function(
             self.serialize_symbol(b'Rational'), (

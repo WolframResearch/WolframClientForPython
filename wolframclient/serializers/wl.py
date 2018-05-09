@@ -81,6 +81,15 @@ class WLSerializer(FormatSerializer):
             last  = b'|>'
         )
 
+    def serialize_association(self, mapping):
+        return yield_with_separators((
+                self.serialize_rule(key, value)
+                for key, value in mapping
+            ),
+            first = b'<|',
+            last  = b'|>'
+        )
+
     def serialize_iterable(self, iterable):
         return yield_with_separators(
             iterable,
