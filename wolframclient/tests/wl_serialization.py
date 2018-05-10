@@ -9,18 +9,11 @@ from wolframclient.serializers import export
 from wolframclient.tests.utils.base import TestCase as BaseTestCase
 from wolframclient.utils import six
 from wolframclient.utils.datastructures import Association
-from wolframclient.utils.importutils import API
+from wolframclient.utils.api import pytz 
 
 import datetime
 import decimal
 import fractions
-
-pytz = API(
-    FixedOffset = 'pytz.FixedOffset',
-    timezone    = 'pytz.timezone',
-    utc         = 'pytz.utc',
-    UnknownTimeZoneError = 'pytz.UnknownTimeZoneError'
-)
 
 def test_datetime():
     return datetime.datetime(
