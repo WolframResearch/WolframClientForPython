@@ -19,7 +19,7 @@ else:
         for f in os.listdir(folder):
             yield os.path.isdir(os.path.join(folder, f)), f
 
-def _discover(module, folder = None, walk = False):
+def _discover(module, folder = None, walk = True):
     folder = folder or module_path(module)
     for is_folder, filename in _scan(folder):
         if not is_folder:
@@ -33,7 +33,7 @@ def _discover(module, folder = None, walk = False):
                 yield args
 
 @to_dict
-def discover_with_convention(modules, import_name, walk = False):
+def discover_with_convention(modules, import_name, walk = True):
     for module in modules:
         for module, filename in _discover(module, walk = walk):
             basename, ext = os.path.splitext(filename)
