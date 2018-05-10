@@ -30,7 +30,11 @@ class Command(SimpleCommand):
         try:
             return self._test_cases
         except AttributeError:
-            self._test_cases = discover_with_convention(self.modules, self.class_name)
+            self._test_cases = discover_with_convention(
+                self.modules, 
+                self.class_name, 
+                walk = True
+            )
             return self._test_cases
 
     def add_arguments(self, parser):
