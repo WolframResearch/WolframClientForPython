@@ -113,7 +113,7 @@ class WolframCloudSession(object):
     #     else:
     #         raise InputException("Invalid input encoders. Expecting None, a callable object or a dictionary.")
 
-    def _post(self, url, headers={}, body={}):
+    def _post(self, url, headers={}, body={}, params={}):
         ''' Do a POST request, signing the content only if authentication has been successful. '''
         headers['User-Agent'] = 'WolframClientForPython/1.0'
         if self.authorized:
@@ -122,9 +122,9 @@ class WolframCloudSession(object):
         else:
             logger.info('Anonymous call to api %s', url)
             return post(
-                url, headers=headers, data=body, verify=self.server.verify)
+                url, params=params, headers=headers, data=body, verify=self.server.verify)
 
-    def call(self, api, input_parameters={}, input_format='wl', **kargv):
+    def call(self, api, input_parameters={}, input_format='wl', permissions_key=None, **kargv):
         ''' Call a given API, using the provided input parameters.
         
         `api` can be a string url or a tuple (`username`, `api name`). User name is 
@@ -137,6 +137,9 @@ class WolframCloudSession(object):
         being the parameter names, for a finer control of the encoding. Finally it is possible
         to specify a decoder, which is applied when the request was successful, to the raw binary 
         response of the API. 
+
+        It's possible to specify a PermissionsKey passed to the server along side the query to
+        get access to a given resource.
         
         Note: By default a decoder is specified and ensure the response is of type string. To
         get raw bytes just replace it with `None`.
@@ -146,7 +149,9 @@ class WolframCloudSession(object):
             input_parameters, input_format=input_format, **kargv)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Encoded input %s', encoded_inputs)
-        response = self._post(url, body=encoded_inputs)
+        
+        params = {'_key': permissions_key} if permissions_key is not None else {}
+        response = self._post(url, body=encoded_inputs, params=params)
 
         return WolframAPIResponseBuilder.build(response)
 
