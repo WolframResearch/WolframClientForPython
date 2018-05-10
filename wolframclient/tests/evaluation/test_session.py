@@ -1,17 +1,15 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import unittest
-try:
+from wolframclient.utils.six import string_types, JYTHON
+
+if not JYTHON:
     import requests
     from wolframclient.evaluation.cloud.cloudsession import WolframCloudSession, url_join
     from wolframclient.evaluation.cloud.oauth import SecuredAuthenticationKey, UserCredentials
     from wolframclient.utils.six import string_types
     from wolframclient.utils.encoding import force_text
     from json import loads as json_loads, load as json_load
-    jython = False
-except ImportError as e:
-    jython = True
-
 
 import logging
 logging.basicConfig(filename='/tmp/python_testsuites.log',
@@ -21,7 +19,7 @@ logging.basicConfig(filename='/tmp/python_testsuites.log',
 logger = logging.getLogger(__name__)
 
 
-@unittest.skipIf(jython, "Not supported in Jython.")
+@unittest.skipIf(JYTHON, "Not supported in Jython.")
 class TestSession(unittest.TestCase):
     #TODO modify those before testing.
     user_config_file = '/private/etc/user_credentials.json'
@@ -42,7 +40,7 @@ class TestSession(unittest.TestCase):
         cls.session = WolframCloudSession(authentication=cls.sak)
 
 
-@unittest.skipIf(jython, "Not supported in Jython.")
+@unittest.skipIf(JYTHON, "Not supported in Jython.")
 class TestAPI(TestSession):
     def test_section_not_authorized(self):
         session = WolframCloudSession()
@@ -113,7 +111,7 @@ class TestAPI(TestSession):
         self.assertEqual(response.response.status_code, 500)
 
 
-@unittest.skipIf(jython, "Not supported in Jython.")
+@unittest.skipIf(JYTHON, "Not supported in Jython.")
 class TestURLJoin(unittest.TestCase):
     def test_append_no_base(self):
         url = url_join('http://wolfram.com', 'foo')
