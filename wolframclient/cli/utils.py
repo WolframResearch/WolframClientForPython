@@ -11,6 +11,8 @@ import sys
 
 if hasattr(os, 'scandir'):
     #python2 do not support scan which is way faster
+    #the function was introduced in py3.5, so it's better to just check if the function is there using hasattr.
+    
     def _scan(folder):
         for f in os.scandir(folder):
             yield f.is_dir(), f.name
