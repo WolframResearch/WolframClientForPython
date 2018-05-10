@@ -8,6 +8,9 @@ from wolframclient.utils.importutils import module_path
 import argparse
 import os
 import sys
+import logging
+
+logger = logging.getLogger(__name__)
 
 if hasattr(os, 'scandir'):
     #python2 do not support scan which is way faster
@@ -37,10 +40,15 @@ def _discover(module, folder = None, walk = True):
 @to_dict
 def discover_with_convention(modules, import_name, walk = True):
     for module in modules:
-        for module, filename in _discover(module, walk = walk):
+        logger.info('Discovering files from: %s', module)
+        for filename in os.listdir(module_path(module)):
             basename, ext = os.path.splitext(filename)
             if ext == '.py' and not basename == '__init__':
+                logger.info('\t✓ %s', filename)
+                logger.debug('\t yielding (%s, %s.%s.%s)', basename, module, basename, import_name)
                 yield basename, '%s.%s.%s' % (module, basename, import_name)
+            else:
+                logger.debug('\tx %s', filename)
 
 class SimpleCommand(object):
 

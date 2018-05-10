@@ -37,4 +37,12 @@ CloudDeploy[APIFunction[
   Range[#i] &,
   "JSON"],
  co
- ]
+ ];
+
+co = CloudObject["api/private/dimensions"];
+CloudDeploy[APIFunction[
+  {"data" -> "RawJSON"},
+  Dimensions[#data] &,
+  "JSON"],
+ co
+ ];
