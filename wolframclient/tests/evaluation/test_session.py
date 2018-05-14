@@ -5,7 +5,7 @@ from wolframclient.utils.six import string_types, JYTHON
 
 if not JYTHON:
     import requests
-    from wolframclient.evaluation.cloud.cloudsession import WolframCloudSession, url_join
+    from wolframclient.evaluation.cloud.cloudsession import WolframCloudSession, url_join, encode_api_inputs
     from wolframclient.evaluation.cloud.oauth import SecuredAuthenticationKey, UserCredentials
     from wolframclient.utils.six import string_types
     from wolframclient.utils.encoding import force_text
@@ -144,3 +144,23 @@ class TestURLJoin(unittest.TestCase):
     def test_extend_some_empty_slashes(self):
         url = url_join('http://wolfram.com/', 'foo/', '', '/baz')
         self.assertEqual(url, 'http://wolfram.com/foo/baz')
+
+
+@unittest.skipIf(JYTHON, "Not supported in Jython.")
+class TestEncodeAPIInput(unittest.TestCase):
+    def test_encode_wl(self):
+        encoded = encode_api_inputs(
+            {'param1': {'k': [1, 2]}, 'param2': 'foo'})
+        self.assertEquals(
+            encoded, {'param1': b'<|"k" -> {1, 2}|>', 'param2': 'foo'})
+    
+    def test_json_dict(self):
+        encoded=encode_api_inputs({'param1' : {'k' : [1,2]}, 'param2' : 'foo'}, input_format='json')
+        self.assertEquals(
+            encoded, {'param1__json': '{"k": [1, 2]}', 'param2__json': '"foo"'})
+
+    def test_wxf_dict(self):
+        encoded = encode_api_inputs(
+            {'param1': {'k': [1, 2]}, 'param2': 'foo'}, input_format='wxf')
+        self.assertEquals(
+            encoded, {'param1__wxf': b'8:A\x01-S\x01kf\x02s\x04ListC\x01C\x02', 'param2__wxf': b'8:S\x03foo'})
