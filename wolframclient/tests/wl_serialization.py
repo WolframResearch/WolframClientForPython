@@ -173,3 +173,21 @@ class TestCase(BaseTestCase):
             ):
             self.compare(special, result)
             self.compare(decimal.Decimal(special), result)
+
+    def test_hashing(self):
+
+        #testing that expressions class is hashable
+
+        self.compare(
+            Association([
+                [wl.a, wl.a(2)],
+                [wl.a, wl.a(3)],
+                [wl.a(2), wl.a(2)],
+                [wl.a(2), wl.a(3)],
+            ]),
+            b'<|a -> a[3], a[2] -> a[3]|>'
+        )
+
+        self.assertEqual(wl.a == wl.a, True)
+        self.assertEqual(wl.a(2) == wl.a(2), True)
+        self.assertEqual(wl.a(2, wl.b) == wl.a(2, wl.b), True)

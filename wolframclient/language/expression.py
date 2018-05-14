@@ -37,7 +37,7 @@ class WLSymbol(WLExpressionMeta):
             ))
 
     def __hash__(self):
-        return hash((self.__class__, self.name))
+        return hash((self.__class__.__name__, self.name))
 
     def __len__(self):
         return 0 #consistent with Length(x)
@@ -63,6 +63,12 @@ class WLFunction(WLExpressionMeta):
             self.args = tuple(chain(args, (wl.Rule(WLSymbol(k), v) for k, v in opts.items())))
         else:
             self.args = args
+
+    def __hash__(self):
+        return hash((self.head, self.args))
+
+    def __eq__(self, other):
+        return isinstance(other, WLFunction) and self.head == other.head and self.args == other.args
 
     def __len__(self):
         return len(self.args)
