@@ -1,6 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import unittest
+from wolframclient.tests.utils.base import TestCase as BaseTestCase
 from wolframclient.utils.six import string_types, JYTHON
 
 if not JYTHON:
@@ -20,14 +21,14 @@ logger = logging.getLogger(__name__)
 
 
 @unittest.skipIf(JYTHON, "Not supported in Jython.")
-class TestSession(unittest.TestCase):
+class TestCase(BaseTestCase):
     #TODO modify those before testing.
     user_config_file = '/private/etc/user_credentials.json'
     api_owner = 'dorianb'
 
     @classmethod
     def setUpClass(cls):
-        with open(TestSession.user_config_file, 'r') as fp:
+        with open(TestCase.user_config_file, 'r') as fp:
             cls.json_user_config = json_load(fp)
         cls.sak = SecuredAuthenticationKey(
             cls.json_user_config['SAK']['consumer_key'],
@@ -39,9 +40,6 @@ class TestSession(unittest.TestCase):
         )
         cls.session = WolframCloudSession(authentication=cls.sak)
 
-
-@unittest.skipIf(JYTHON, "Not supported in Jython.")
-class TestAPI(TestSession):
     def test_section_not_authorized(self):
         session = WolframCloudSession()
         self.assertEqual(session.authorized, False)
@@ -110,9 +108,8 @@ class TestAPI(TestSession):
         self.assertFalse(response.success)
         self.assertEqual(response.response.status_code, 500)
 
+    # url_join
 
-@unittest.skipIf(JYTHON, "Not supported in Jython.")
-class TestURLJoin(unittest.TestCase):
     def test_append_no_base(self):
         url = url_join('http://wolfram.com', 'foo')
         self.assertEqual(url, 'http://wolfram.com/foo')
@@ -145,21 +142,23 @@ class TestURLJoin(unittest.TestCase):
         url = url_join('http://wolfram.com/', 'foo/', '', '/baz')
         self.assertEqual(url, 'http://wolfram.com/foo/baz')
 
+    # encode input parameters
 
-@unittest.skipIf(JYTHON, "Not supported in Jython.")
-class TestEncodeAPIInput(unittest.TestCase):
     def test_encode_wl(self):
         encoded = encode_api_inputs(
             {'param1': {'k': [1, 2]}, 'param2': 'foo'})
         self.assertEquals(
             encoded, {'param1': b'<|"k" -> {1, 2}|>', 'param2': 'foo'})
-    
-    def test_json_dict(self):
+
+    def test_encode_empty_dict(self):
+        self.assertEqual(encode_api_inputs({}, input_format='json'), {})
+
+    def test_encode_json_dict(self):
         encoded=encode_api_inputs({'param1' : {'k' : [1,2]}, 'param2' : 'foo'}, input_format='json')
         self.assertEquals(
             encoded, {'param1__json': '{"k": [1, 2]}', 'param2__json': '"foo"'})
 
-    def test_wxf_dict(self):
+    def test_encode_wxf_dict(self):
         encoded = encode_api_inputs(
             {'param1': {'k': [1, 2]}, 'param2': 'foo'}, input_format='wxf')
         self.assertEquals(
