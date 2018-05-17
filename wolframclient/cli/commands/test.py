@@ -31,8 +31,8 @@ class Command(SimpleCommand):
             return self._test_cases
         except AttributeError:
             self._test_cases = discover_with_convention(
-                self.modules, 
-                self.class_name, 
+                self.modules,
+                self.class_name,
                 walk = True
             )
             return self._test_cases

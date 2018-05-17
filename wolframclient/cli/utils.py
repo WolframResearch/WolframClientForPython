@@ -12,7 +12,7 @@ import sys
 if hasattr(os, 'scandir'):
     #python2 do not support scan which is way faster
     #the function was introduced in py3.5, so it's better to just check if the function is there using hasattr.
-    
+
     def _scan(folder):
         for f in os.scandir(folder):
             yield f.is_dir(), f.name
@@ -28,7 +28,7 @@ def _discover(module, folder = None, walk = True):
             yield module, filename
         elif walk and not filename == '__pycache__':
             for args in _discover(
-                '%s.%s' % (module, filename), 
+                '%s.%s' % (module, filename),
                 folder = os.path.join(folder, filename),
                 walk = walk
                 ):

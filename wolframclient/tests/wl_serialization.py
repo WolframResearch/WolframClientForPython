@@ -8,8 +8,8 @@ from wolframclient.language.expression import system, wl
 from wolframclient.serializers import export
 from wolframclient.tests.utils.base import TestCase as BaseTestCase
 from wolframclient.utils import six
+from wolframclient.utils.api import pytz
 from wolframclient.utils.datastructures import Association
-from wolframclient.utils.api import pytz 
 
 import datetime
 import decimal

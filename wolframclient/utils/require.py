@@ -3,11 +3,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from functools import wraps
+
 try:
     from pip import get_installed_distributions, main as pip_main
 except ImportError:
     from pip._internal import get_installed_distributions, main as pip_main
-    
 
 def installed_modules():
     return {
