@@ -2,19 +2,15 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from wolframclient.evaluation.cloud.cloudsession import encode_api_inputs, url_join, WolframCloudSession
+from wolframclient.evaluation.cloud.oauth import SecuredAuthenticationKey, UserCredentials
 from wolframclient.tests.utils.base import TestCase as BaseTestCase
-from wolframclient.utils.six import JYTHON
+from wolframclient.utils import six
+from wolframclient.utils.api import json
+from wolframclient.utils.encoding import force_text
 
 import logging
 import unittest
-
-if not JYTHON:
-    import requests
-    from wolframclient.evaluation.cloud.cloudsession import WolframCloudSession, url_join, encode_api_inputs
-    from wolframclient.evaluation.cloud.oauth import SecuredAuthenticationKey, UserCredentials
-    from wolframclient.utils.six import string_types
-    from wolframclient.utils.encoding import force_text
-    from json import loads as json_loads, load as json_load
 
 logging.basicConfig(filename='/tmp/python_testsuites.log',
                     filemode='a',
@@ -22,7 +18,7 @@ logging.basicConfig(filename='/tmp/python_testsuites.log',
                     level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
-@unittest.skipIf(JYTHON, "Not supported in Jython.")
+@unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 class TestCase(BaseTestCase):
     #TODO modify those before testing.
     user_config_file = '/private/etc/user_credentials.json'
@@ -31,7 +27,7 @@ class TestCase(BaseTestCase):
     @classmethod
     def setUpClass(cls):
         with open(TestCase.user_config_file, 'r') as fp:
-            cls.json_user_config = json_load(fp)
+            cls.json_user_config = json.load(fp)
         cls.sak = SecuredAuthenticationKey(
             cls.json_user_config['SAK']['consumer_key'],
             cls.json_user_config['SAK']['consumer_secret']
@@ -84,7 +80,7 @@ class TestCase(BaseTestCase):
         response = session.call((self.api_owner, url),
             input_parameters={'i': 5})
         self.assertTrue(response.success)
-        self.assertEqual(json_loads(response.output), list(range(1, 6)))
+        self.assertEqual(json.loads(response.output), list(range(1, 6)))
 
     def test_section_api_call_two_param(self):
         api = (self.api_owner, 'api/private/range/formated/json')
@@ -98,7 +94,7 @@ class TestCase(BaseTestCase):
         if not response.success:
             logger.warning(response.failure)
         expected = list(range(v_min, v_max, step))
-        self.assertListEqual(expected, json_loads(response.output))
+        self.assertListEqual(expected, json.loads(response.output))
 
     def test_section_wl_error(self):
         api = (self.api_owner, "api/private/range/wlerror")

@@ -2,18 +2,14 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from json import dumps as json_dumps, loads as json_loads
-
-from requests import post
-from requests.structures import CaseInsensitiveDict
-
 from wolframclient.evaluation.cloud.exceptions import AuthenticationException, XAuthNotConfigured
 from wolframclient.evaluation.cloud.inputoutput import WolframAPIResponseBuilder, WolframEvaluationResponse
 from wolframclient.evaluation.cloud.oauth import OAuthSession
 from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 from wolframclient.language.expression import wl
 from wolframclient.serializers import export
-from wolframclient.utils.six import string_types
+from wolframclient.utils import six
+from wolframclient.utils.api import json, requests
 
 import logging
 
@@ -129,7 +125,7 @@ class WolframCloudSession(object):
             return self.oauth.signed_request(url, headers=headers, body=body)
         else:
             logger.info('Anonymous call to api %s', url)
-            return post(
+            return requests.post(
                 url, params=params, headers=headers, data=body, verify=self.server.verify)
 
     def call(self, api, input_parameters={}, input_format='wl', permissions_key=None, **kargv):
@@ -171,7 +167,7 @@ class WolframCloudSession(object):
             else:
                 raise ValueError(
                     'Target api specified as a tuple must have two elements: the user name, the API name.')
-        elif isinstance(api, string_types):
+        elif isinstance(api, six.string_types):
             return api
         else:
             raise ValueError(
@@ -227,29 +223,30 @@ def _encode_inputs_as_json(inputs, **kwargs):
     encoded_inputs = {}
     for name, value in inputs.items():
         name = name + '__json'
-        encoded_inputs[name] = json_dumps(value, **kwargs)
+        encoded_inputs[name] = json.dumps(value, **kwargs)
     return encoded_inputs
 
 def _encode_inputs_as_wl(inputs, **kwargs):
     encoded_inputs = {}
     for name, value in inputs.items():
         # avoid double encoding of strings '\"string\"'.
-        if isinstance(value, string_types):
+        if isinstance(value, six.string_types):
             encoded_inputs[name] = value
         else:
             encoded_inputs[name] = export(value, format='wl', **kwargs)
     return encoded_inputs
 
-SUPPORTED_ENCODING_FORMATS = CaseInsensitiveDict(data={
+SUPPORTED_ENCODING_FORMATS = {
     'json': _encode_inputs_as_json,
-    'wxf': _encode_inputs_as_wxf,
-    'wl': _encode_inputs_as_wl
-})
+    'wxf':  _encode_inputs_as_wxf,
+    'wl':   _encode_inputs_as_wl
+}
 
 def encode_api_inputs(inputs, input_format='wl', **kwargs):
     if len(inputs) == 0:
         return {}
-    encoder = SUPPORTED_ENCODING_FORMATS.get(input_format)
+
+    encoder = SUPPORTED_ENCODING_FORMATS.get(input_format, None)
     if encoder is None:
         raise ValueError('Invalid encoding format %s. Choices are: %s' % (
             input_format, ', '.join(SUPPORTED_ENCODING_FORMATS.keys())))

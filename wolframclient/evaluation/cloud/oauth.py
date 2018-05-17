@@ -2,13 +2,11 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from oauthlib import oauth1 as oauth
-
 from wolframclient.evaluation.cloud.exceptions import AuthenticationException, XAuthNotConfigured
-from wolframclient.utils.six import binary_type, string_types
+from wolframclient.utils import six
+from wolframclient.utils.api import json, requests, oauth
 
 import logging
-import requests
 
 try: # PY3
     from urllib.parse import urlparse, parse_qs, urlencode, quote_plus
@@ -51,10 +49,10 @@ class OAuthSession(object):
         'Content-Type': 'application/x-www-form-urlencoded',
         'User-Agent': 'WolframClientForPython/1.0'}
 
-    def __init__(self, server, consumer_key, consumer_secret, signature_method=oauth.SIGNATURE_HMAC):
+    def __init__(self, server, consumer_key, consumer_secret, signature_method=None):
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
-        self.signature_method = signature_method
+        self.signature_method = signature_method or oauth.SIGNATURE_HMAC
         self._client = None
         self._session = None
         self._oauth_token = None
@@ -109,7 +107,7 @@ class OAuthSession(object):
             if 'Content-Type' not in req_headers:
                 logger.info('Content type not provided by user. Setting it to "application/x-www-form-urlencoded".')
                 req_headers['Content-Type'] = 'application/x-www-form-urlencoded'
-        elif isinstance(body, string_types) or isinstance(body, binary_type):
+        elif isinstance(body, six.string_types) or isinstance(body, six.binary_type):
             # application/octet-stream for binary data?
             if 'Content-Type' not in req_headers:
                 logger.info('Content type not provided by user. Setting it to "text/plain".')
@@ -147,8 +145,8 @@ class OAuthSession(object):
 
     def _parse_oauth_response(self, response):
         if OAuthSession._is_json_content(response):
-            from json import loads as json_loads
-            token = json_loads(response.text)
+
+            token = json.loads(response.text)
             return token['oauth_token'], token['oauth_token_secret']
         elif not OAuthSession._is_textplain_content(response):
             logger.warning('Unexpected content type in oauth response. Parsing as query string.')

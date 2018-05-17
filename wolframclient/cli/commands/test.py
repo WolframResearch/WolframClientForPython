@@ -23,6 +23,7 @@ class Command(SimpleCommand):
         dependencies = [
             ("pytz",  None),
             ("numpy", None),
+            ("requests", None)
         ]
 
     @property

@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.utils.six import string_types
+from wolframclient.utils import six
 
 __all__ = [
     'Server',
@@ -37,7 +37,7 @@ class Server(object):
     def verify(self):
         if self.certificate is None:
             return True
-        elif isinstance(self.certificate, string_types):
+        elif isinstance(self.certificate, six.string_types):
             return self.certificate
         else:
             raise ValueError('Invalid certificate. Must be a string type or None.')

@@ -3,7 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.evaluation.cloud.exceptions import EvaluationException
-from wolframclient.utils.six import integer_types
+from wolframclient.utils import six
 
 import json
 import logging
@@ -167,7 +167,7 @@ class WolframAPIResponseBuilder(object):
     def map(status_code, response_class):
         if not isinstance(response_class, WolframAPIResponse):
             raise ValueError('Response class must subclass WolframAPIResponse')
-        if not isinstance(status_code, integer_types):
+        if not isinstance(status_code, six.integer_types):
             logger.warning('Invalid status code: %s', status_code)
             raise ValueError('HTTP status code must be string.',)
         logger.debug('Mapping http response status %i to function %s', status_code, response_class.__name__)
