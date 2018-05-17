@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.language.expression import wl
 from wolframclient.serializers.serializable import WLSerializable
-from wolframclient.utils.datastructures import Association
+from wolframclient.utils.decorators import to_dict
 from wolframclient.utils.encoding import safe_force_text
 
 class WolframLanguageException(WLSerializable, Exception):
@@ -37,14 +37,16 @@ class WolframLanguageException(WLSerializable, Exception):
     def to_wl(self, **opts):
         return wl.Failure(
             self.failure_tag(),
-            #the failure code can contain code that needs evaluation
-            #we need to use Association to prevent WXF from constructing an association
-            Association(self.failure_meta())
+            wl.Association(*(
+                wl.RuleDelayed(key, value)
+                for key, value in self.failure_meta().items()
+            ))
         )
 
     def show_traceback(self):
         return True
 
+    @to_dict
     def failure_meta(self):
 
         template, parameters, code = self.failure_template(), self.failure_parameters(), self.failure_code()
