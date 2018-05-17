@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.evaluation.cloud.exceptions import EvaluationException
 from wolframclient.utils.six import integer_types
+
 import json
 import logging
 
@@ -20,7 +23,7 @@ class WolframAPIResponse(object):
 
     def _build(self):
         raise NotImplementedError
-   
+
     def iter_error(self):
         if self.success or self.json is None:
             raise StopIteration
@@ -29,7 +32,7 @@ class WolframAPIResponse(object):
                 failure = err.get('Failure', None)
                 if failure is not None:
                     yield (field, failure)
-    
+
     def iter_full_error_report(self):
         if self.success or self.json is None:
             raise StopIteration
@@ -46,12 +49,10 @@ class WolframAPIResponse(object):
     def __str__(self):
         return '<WolframAPIResponse:success=%s>' % self.success
 
-
 class WolframAPIResponse200(WolframAPIResponse):
     def __init__(self, response, decoder=None):
         super(WolframAPIResponse200, self).__init__(response, decoder)
 
-    
     def _build(self):
         self.success = True
         self.failure = None
@@ -70,7 +71,7 @@ class WolframAPIResponseRedirect(WolframAPIResponse):
     def __init__(self, response, decoder=None):
         super(WolframAPIResponseRedirect, self).__init__(response, decoder)
         self.location = None
-    
+
     def _build(self):
         self.location = self.response.headers.get('location', None)
         logger.warning('Redirected to %s.', self.location)
@@ -79,7 +80,6 @@ class WolframAPIResponseRedirect(WolframAPIResponse):
 
     def _specific_failure(self):
         raise NotImplementedError
-
 
 class WolframAPIResponse301(WolframAPIResponseRedirect):
     def __init__(self, response, decoder=None):
@@ -101,7 +101,6 @@ class WolframAPIResponse302(WolframAPIResponseRedirect):
         else:
             self.failure = 'Resource moved to new location {}'.format(self.location)
 
-
 class WolframAPIResponse400(WolframAPIResponse):
     def __init__(self, response, decoder=None):
         super(WolframAPIResponse400, self).__init__(response, decoder)
@@ -115,7 +114,6 @@ class WolframAPIResponse400(WolframAPIResponse):
         if fields is not None:
             self._fields_in_error = set(fields.keys())
         logger.warning('Wolfram API error response: %s', self.failure)
-
 
 class WolframAPIResponse401(WolframAPIResponse):
     def __init__(self, response, decoder=None):
@@ -136,7 +134,6 @@ class WolframAPIResponse404(WolframAPIResponse):
         self.failure = "The resource %s can't not be found." % self.response.url
         logger.warning('Wolfram API error response: %s', self.failure)
 
-
 class WolframAPIResponseGeneric(WolframAPIResponse):
     def __init__(self, response, decoder=None):
         super(WolframAPIResponseGeneric, self).__init__(response, decoder)
@@ -145,12 +142,10 @@ class WolframAPIResponseGeneric(WolframAPIResponse):
         self.success = False
         self.failure = self.response.text
 
-
 class WolframAPIResponse500(WolframAPIResponseGeneric):
     def __init__(self, response, decoder=None):
         super(WolframAPIResponse500, self).__init__(response, decoder)
         logger.fatal('Internal server error occurred.')
-
 
 class WolframAPIResponseBuilder(object):
     ''' Map error code to handler building the appropriate WolframAPIResponse'''
@@ -180,7 +175,6 @@ class WolframAPIResponseBuilder(object):
 
     def __init__(self):
         raise NotImplementedError("Cannot initialize. Use static 'method' build.")
-
 
 class WolframEvaluationResponse(object):
     __slots__ = 'http_response', 'json', 'success', 'request_error', 'failure', 'expr'

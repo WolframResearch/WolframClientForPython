@@ -1,17 +1,19 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.utils.six import string_types
 
 __all__ = [
-    'Server', 
+    'Server',
     'WolframPublicCloudServer'
     ]
 
 class Server(object):
     ''' Represents the cloud server.
-    
-    Contains the authentication endpoints informations, the API endpoint aka. the 
-    cloud base (`$CloudBase` in the Wolfram Language), and eventually the xauth 
+
+    Contains the authentication endpoints informations, the API endpoint aka. the
+    cloud base (`$CloudBase` in the Wolfram Language), and eventually the xauth
     consumer key and secret.
 
     For conveniency this class exposes static methods to build instances from

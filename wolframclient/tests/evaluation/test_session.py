@@ -1,8 +1,12 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import absolute_import, print_function, unicode_literals
 
-import unittest
 from wolframclient.tests.utils.base import TestCase as BaseTestCase
-from wolframclient.utils.six import string_types, JYTHON
+from wolframclient.utils.six import JYTHON
+
+import logging
+import unittest
 
 if not JYTHON:
     import requests
@@ -12,13 +16,11 @@ if not JYTHON:
     from wolframclient.utils.encoding import force_text
     from json import loads as json_loads, load as json_load
 
-import logging
 logging.basicConfig(filename='/tmp/python_testsuites.log',
                     filemode='a',
                     format='%(asctime)s, %(name)s %(levelname)s %(message)s',
                     level=logging.WARNING)
 logger = logging.getLogger(__name__)
-
 
 @unittest.skipIf(JYTHON, "Not supported in Jython.")
 class TestCase(BaseTestCase):
@@ -44,7 +46,7 @@ class TestCase(BaseTestCase):
         session = WolframCloudSession()
         self.assertEqual(session.authorized, False)
         self.assertEqual(session.is_xauth, None)
-        
+
     def test_section_authorized_oauth(self):
         session = WolframCloudSession(authentication=self.sak)
         self.assertEqual(session.authorized, True)
@@ -54,7 +56,7 @@ class TestCase(BaseTestCase):
         session = WolframCloudSession(self.user_cred)
         self.assertEqual(session.authorized, True)
         self.assertEqual(session.is_xauth, True)
-        
+
     def test_section_api_call_no_param(self):
         url = 'api/private/requesterid'
         response = self.session.call(
@@ -64,7 +66,7 @@ class TestCase(BaseTestCase):
     def test_section_api_call_one_param(self):
         url = 'api/private/stringreverse'
         response = self.session.call(
-            (self.api_owner, url), 
+            (self.api_owner, url),
             input_parameters={'str': 'abcde'})
         self.assertEqual('"edcba"', force_text(response.output))
 
@@ -83,7 +85,7 @@ class TestCase(BaseTestCase):
             input_parameters={'i': 5})
         self.assertTrue(response.success)
         self.assertEqual(json_loads(response.output), list(range(1, 6)))
-                                
+
     def test_section_api_call_two_param(self):
         api = (self.api_owner, 'api/private/range/formated/json')
         v_min, v_max, step = (1, 10, 2)
@@ -117,7 +119,7 @@ class TestCase(BaseTestCase):
     def test_simple_append(self):
         url = url_join('http://wolfram.com', 'foo')
         self.assertEqual(url, 'http://wolfram.com/foo')
-        
+
     def test_simple_append_end_slash(self):
         url = url_join('http://wolfram.com/', 'foo')
         self.assertEqual(url, 'http://wolfram.com/foo')

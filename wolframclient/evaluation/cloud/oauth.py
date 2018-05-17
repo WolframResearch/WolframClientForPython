@@ -1,28 +1,27 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-import os
+
+from oauthlib import oauth1 as oauth
+
+from wolframclient.evaluation.cloud.exceptions import AuthenticationException, XAuthNotConfigured
+from wolframclient.utils.six import binary_type, string_types
+
 import logging
+import requests
+
 try: # PY3
     from urllib.parse import urlparse, parse_qs, urlencode, quote_plus
 except ImportError: # PY2
     from urlparse import urlparse, parse_qs
     from urllib import urlencode, quote_plus
-    
-import requests
-from oauthlib import oauth1 as oauth
-from oauthlib.common import quote
-
-from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
-from wolframclient.evaluation.cloud.exceptions import RequestException, AuthenticationException, XAuthNotConfigured
-from wolframclient.utils.six import string_types, binary_type
 
 logger = logging.getLogger(__name__)
 
 class SecuredAuthenticationKey(object):
     ''' Represents a Secured Authentication Key generated using the Wolfram Language
     function `GenerateSecuredAuthenticationKey[]`
-    
+
     It is used as an input when authenticating a cloud session.
     '''
     __slots__ = 'consumer_key', 'consumer_secret'
@@ -33,7 +32,7 @@ class SecuredAuthenticationKey(object):
 
 class UserCredentials(object):
     ''' Represents user credentials used to login to a cloud.
-    
+
     It is used as an input when authenticating a cloud session.
     '''
     __slots__ = 'user', 'password'
@@ -41,7 +40,6 @@ class UserCredentials(object):
     def __init__(self, user, password):
         self.user = user
         self.password = password
-
 
 class OAuthSession(object):
     ''' A wrapper around the OAuth client taking care of fetching the various oauth tokens.
@@ -62,7 +60,7 @@ class OAuthSession(object):
         self._oauth_token = None
         self._oauth_token_secret = None
         self.server = server
-    
+
     def _check_response(self, response):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('[Auth] Code: %i\nBody: %s', response.status_code, response.text)
@@ -75,7 +73,7 @@ class OAuthSession(object):
             except:
                 pass
         raise AuthenticationException(response, msg)
- 
+
     def _update_client(self):
         self._client = oauth.Client(self.consumer_key,
                                     client_secret=self.consumer_secret,
@@ -91,7 +89,7 @@ class OAuthSession(object):
     @staticmethod
     def _is_json_content(request):
         return OAuthSession._has_content_type(request, 'application/json')
-    
+
     @staticmethod
     def _is_textplain_content(request):
         return OAuthSession._has_content_type(request, 'text/plain')
@@ -100,7 +98,7 @@ class OAuthSession(object):
     def signed_request(self, uri, headers={}, body={}, method='POST'):
         if self._client is None:
             raise AuthenticationException('Not authenticated.')
-        
+
         req_headers={}
         for k,v in headers.items():
             req_headers[k] = v
@@ -125,7 +123,7 @@ class OAuthSession(object):
         else:
             logger.fatal('Invalid body: %s', body)
             raise ValueError('Body must be dict or string type.')
-        
+
         uri, req_headers, signed_body = self._client.sign(
             uri,
             method,
@@ -138,9 +136,9 @@ class OAuthSession(object):
             logger.debug('Signed header: %s', req_headers)
             logger.debug('Signed body: %s', sign_body)
 
-        return requests.request(method, uri, 
-            headers=req_headers, 
-            data=signed_body if sign_body else body, 
+        return requests.request(method, uri,
+            headers=req_headers,
+            data=signed_body if sign_body else body,
             verify=self.server.verify)
 
     @property
@@ -154,7 +152,7 @@ class OAuthSession(object):
             return token['oauth_token'], token['oauth_token_secret']
         elif not OAuthSession._is_textplain_content(response):
             logger.warning('Unexpected content type in oauth response. Parsing as query string.')
-            
+
         token = parse_qs(response.text)
         return (token.get('oauth_token')[0],
             token.get('oauth_token_secret')[0])
@@ -170,9 +168,9 @@ class OAuthSession(object):
         params["x_auth_username"] = user
         params["x_auth_password"] = password
         params["x_auth_mode"] = "client_auth"
-        
+
         logging.disable(logging.DEBUG)
-        
+
         uri, headers, body = client.sign(
             self.server.access_token_endpoint, 'POST', headers=OAuthSession.DEFAULT_CONTENT_TYPE, body=params)
 
@@ -187,7 +185,7 @@ class OAuthSession(object):
     def set_oauth_request_token(self):
         logger.debug('Fetching oauth request token from: %s',
                       self.server.request_token_endpoint)
-        
+
         logging.disable(logging.DEBUG)
 
         token_client = oauth.Client(self.consumer_key, client_secret=self.consumer_secret)
@@ -219,4 +217,3 @@ class OAuthSession(object):
          self.set_oauth_request_token()
          self.set_oauth_access_token()
          self._update_client()
-

@@ -1,28 +1,30 @@
-from __future__ import absolute_import, print_function, unicode_literals
-import logging
+# -*- coding: utf-8 -*-
 
-from wolframclient.evaluation.cloud.exceptions import AuthenticationException, XAuthNotConfigured
-from wolframclient.evaluation.cloud.oauth import OAuthSession
+from __future__ import absolute_import, print_function, unicode_literals
+
+from json import dumps as json_dumps, loads as json_loads
+
 from requests import post
 from requests.structures import CaseInsensitiveDict
+
+from wolframclient.evaluation.cloud.exceptions import AuthenticationException, XAuthNotConfigured
 from wolframclient.evaluation.cloud.inputoutput import WolframAPIResponseBuilder, WolframEvaluationResponse
+from wolframclient.evaluation.cloud.oauth import OAuthSession
 from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
-from wolframclient.utils.encoding import force_text
+from wolframclient.language.expression import wl
+from wolframclient.serializers import export
 from wolframclient.utils.six import string_types
 
-from json import loads as json_loads, dumps as json_dumps
-from wolframclient.language.expression import wl, WLExpressionMeta
-from wolframclient.serializers import export
+import logging
 
 __all__ = ['WolframCloudSession']
 
 logger = logging.getLogger(__name__)
 
-
 class WolframCloudSession(object):
     ''' Represents a session to a given cloud enabling simple API call.
 
-    This is the central class of the cloud evaluation package. It is 
+    This is the central class of the cloud evaluation package. It is
     initialized with a server instance representing a given cloud. The
     `default` static method can be used to initialize a session to the Wolfram
     public cloud.
@@ -33,7 +35,7 @@ class WolframCloudSession(object):
     - xauth using the user ID and password.
 
     Calling an API is done throught the method `call` which will return an instance of
-    a `WolframAPIResponse`. It is strongly advised to re-use a session to make multiple 
+    a `WolframAPIResponse`. It is strongly advised to re-use a session to make multiple
     calls.
     '''
     __slots__ = 'server', 'oauth', 'consumer', 'consumer_secret', 'user', 'password', 'is_xauth', 'evaluation_api_url', 'authentication'
@@ -51,10 +53,10 @@ class WolframCloudSession(object):
         self.is_xauth = None
 
     def authenticate(self):
-        '''Authenticate with the server using the credentials. 
+        '''Authenticate with the server using the credentials.
 
         This method supports both oauth and xauth methods. It is not necessary
-        to call it, since the session will try to authenticate when the first 
+        to call it, since the session will try to authenticate when the first
         request is issued. '''
         logger.info('Authenticating to the server.')
         if self.authentication is None:
@@ -119,7 +121,7 @@ class WolframCloudSession(object):
     #         raise InputException("Invalid input encoders. Expecting None, a callable object or a dictionary.")
 
     def _post(self, url, headers={}, body={}, params={}):
-        ''' Do a POST request, signing the content only if authentication has 
+        ''' Do a POST request, signing the content only if authentication has
         been successful. '''
         headers['User-Agent'] = 'WolframClientForPython/1.0'
         if self.authorized:
@@ -134,7 +136,7 @@ class WolframCloudSession(object):
         ''' Call a given API, using the provided input parameters.
 
         `api` can be a string url or a tuple (`username`, `api name`). User name is
-        generally the Wolfram Language symbol `$UserName`. API id can be a uuid or a 
+        generally the Wolfram Language symbol `$UserName`. API id can be a uuid or a
         name, in the form of a relative path. e.g: myapi/foo/bar
 
         The input parameters are provider as a dictionary with string keys being the name
@@ -142,7 +144,7 @@ class WolframCloudSession(object):
         as a callable in which case it is applied to all inputs, or as a dictionary, with keys
         being the parameter names, for a finer control of the encoding. Finally it is possible
         to specify a decoder, which is applied when the request was successful, to the raw binary
-        response of the API. 
+        response of the API.
 
         It's possible to specify a PermissionsKey passed to the server along side the query to
         get access to a given resource.
@@ -206,7 +208,6 @@ class WolframCloudSession(object):
     def __str__(self):
         return '<WolframCloudSession:base={}, authorized={}>'.format(self.server.cloudbase, self.authorized)
 
-
 class CloudFunction(object):
     def __init__(self, session, func):
         self.session = session
@@ -215,7 +216,6 @@ class CloudFunction(object):
     def __call__(self, *args):
         return self.session.evaluate(wl.Construct(self.func, *args))
 
-
 def _encode_inputs_as_wxf(inputs, **kwargs):
     encoded_inputs = {}
     for name, value in inputs.items():
@@ -223,14 +223,12 @@ def _encode_inputs_as_wxf(inputs, **kwargs):
         encoded_inputs[name] = export(value, format='wxf', **kwargs)
     return encoded_inputs
 
-
 def _encode_inputs_as_json(inputs, **kwargs):
     encoded_inputs = {}
     for name, value in inputs.items():
         name = name + '__json'
         encoded_inputs[name] = json_dumps(value, **kwargs)
     return encoded_inputs
-
 
 def _encode_inputs_as_wl(inputs, **kwargs):
     encoded_inputs = {}
@@ -242,13 +240,11 @@ def _encode_inputs_as_wl(inputs, **kwargs):
             encoded_inputs[name] = export(value, format='wl', **kwargs)
     return encoded_inputs
 
-
 SUPPORTED_ENCODING_FORMATS = CaseInsensitiveDict(data={
     'json': _encode_inputs_as_json,
     'wxf': _encode_inputs_as_wxf,
     'wl': _encode_inputs_as_wl
 })
-
 
 def encode_api_inputs(inputs, input_format='wl', **kwargs):
     if len(inputs) == 0:
@@ -259,7 +255,6 @@ def encode_api_inputs(inputs, input_format='wl', **kwargs):
             input_format, ', '.join(SUPPORTED_ENCODING_FORMATS.keys())))
 
     return encoder(inputs, **kwargs)
-
 
 def url_join(*fragments):
     ''' Join fragments of a URL, dealing with slashes.'''
