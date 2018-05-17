@@ -21,9 +21,10 @@ class Command(SimpleCommand):
         ]
     else:
         dependencies = [
-            ("pytz",  None),
-            ("numpy", None),
-            ("requests", None)
+            ("pytz",     None),
+            ("numpy",    None),
+            ("requests", None),
+            ("oauthlib", None),
         ]
 
     @property
