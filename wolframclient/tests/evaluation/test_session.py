@@ -21,6 +21,20 @@ logger = logging.getLogger(__name__)
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 class TestCase(BaseTestCase):
     #TODO modify those before testing.
+    ''' Example json file for `user_credentials.json`:
+    ```json
+    {
+        "User" : {
+            "id" : "email@wolfram.com",
+            "password" : "password"
+        },
+        "SAK" : {
+            "consumer_key" : "xxxx",
+            "consumer_secret" : "yyyy"
+        }
+    }
+    ```
+    '''
     user_config_file = '/private/etc/user_credentials.json'
     api_owner = 'dorianb'
 
@@ -145,19 +159,19 @@ class TestCase(BaseTestCase):
     def test_encode_wl(self):
         encoded = encode_api_inputs(
             {'param1': {'k': [1, 2]}, 'param2': 'foo'})
-        self.assertEquals(
-            encoded, {'param1': b'<|"k" -> {1, 2}|>', 'param2': 'foo'})
+        self.assertEqual(
+            encoded, {'param1': b'<|"k" :> {1, 2}|>', 'param2': 'foo'})
 
     def test_encode_empty_dict(self):
         self.assertEqual(encode_api_inputs({}, input_format='json'), {})
 
     def test_encode_json_dict(self):
-        encoded=encode_api_inputs({'param1' : {'k' : [1,2]}, 'param2' : 'foo'}, input_format='json')
-        self.assertEquals(
+        encoded = encode_api_inputs({'param1' : {'k' : [1,2]}, 'param2' : 'foo'}, input_format='json')
+        self.assertEqual(
             encoded, {'param1__json': '{"k": [1, 2]}', 'param2__json': '"foo"'})
 
     def test_encode_wxf_dict(self):
         encoded = encode_api_inputs(
             {'param1': {'k': [1, 2]}, 'param2': 'foo'}, input_format='wxf')
-        self.assertEquals(
-            encoded, {'param1__wxf': b'8:A\x01-S\x01kf\x02s\x04ListC\x01C\x02', 'param2__wxf': b'8:S\x03foo'})
+        self.assertEqual(
+            encoded, {'param1__wxf': b'8:A\x01:S\x01kf\x02s\x04ListC\x01C\x02', 'param2__wxf': b'8:S\x03foo'})
