@@ -5,7 +5,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.evaluation.cloud.exceptions import EvaluationException
 from wolframclient.utils import six
 
-import json
 import logging
 
 logger = logging.getLogger(__name__)
