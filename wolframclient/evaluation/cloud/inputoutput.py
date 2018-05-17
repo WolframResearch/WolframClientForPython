@@ -45,8 +45,8 @@ class WolframAPIResponse(object):
     def error_report(self):
         return list(self.iter_full_error_report())
 
-    def __str__(self):
-        return '<WolframAPIResponse:success=%s>' % self.success
+    def __repr__(self):
+        return '<%s:success=%s>' % (self.__class__.__name__, self.success)
 
 class WolframAPIResponse200(WolframAPIResponse):
     def __init__(self, response, decoder=None):
@@ -197,10 +197,10 @@ class WolframEvaluationResponse(object):
             logger.fatal('Server invalid response %i: %s', response.status_code, response.text)
             raise EvaluationException(response)
 
-    def __str__(self):
+    def __repr__(self):
         if self.success:
-            return 'WolframEvaluationResponse<success={}, expr={}>'.format(self.success, self.expr)
+            return '{}<success={}, expr={}>'.format(self.__class__.__name__, self.success, self.expr)
         elif not self.request_error:
-            return 'WolframEvaluationResponse<success={}, expr={}>'.format(self.success, self.expr)
+            return '{}<success={}, expr={}>'.format(self.__class__.__name__, self.success, self.expr)
         else:
-            return 'WolframEvaluationResponse<request error {}>'.format(self.http_response.status_code)
+            return '{}<request error {}>'.format(self.__class__.__name__, self.http_response.status_code)

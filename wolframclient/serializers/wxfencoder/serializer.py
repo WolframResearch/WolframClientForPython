@@ -154,8 +154,8 @@ class SerializationContext(_Context):
     def is_rule_valid(self):
         return self._in_assoc_stack[self._depth]
 
-    def __str__(self):
-        return 'SerializationContext(depth={}, element={}/{})'.format(self._depth, self._current_index_stack[self._depth], self._expected_length_stack[self._depth])
+    def __repr__(self):
+        return '{}(depth={}, element={}/{})'.format(self.__class__.__name__, self._depth, self._current_index_stack[self._depth], self._expected_length_stack[self._depth])
 
 WXF_VERSION = b'8'
 WXF_HEADER_SEPARATOR = b':'

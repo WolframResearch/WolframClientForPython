@@ -201,8 +201,8 @@ class WolframCloudSession(object):
     def cloud_function(self, func):
         return CloudFunction(self, func)
 
-    def __str__(self):
-        return '<WolframCloudSession:base={}, authorized={}>'.format(self.server.cloudbase, self.authorized)
+    def __repr__(self):
+        return '<{}:base={}, authorized={}>'.format(self.__class__.__name__, self.server.cloudbase, self.authorized)
 
 class CloudFunction(object):
     def __init__(self, session, func):
