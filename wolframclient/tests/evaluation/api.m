@@ -1,4 +1,8 @@
-(* ::Package:: *)
+(* 
+	This file contains the list of APIs used in the test suite.
+	It should be used to deploy them on a given account to avoid
+	false negative testing results.
+ *)
 
 If[Not@$CloudConnected,
 	Return[$Failed]
