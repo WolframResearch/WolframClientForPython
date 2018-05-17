@@ -9,9 +9,9 @@ from wolframclient.serializers import export
 from wolframclient.serializers.wxfencoder.serializer import write_varint, WXFExprSerializer
 from wolframclient.serializers.wxfencoder.wxfexpr import WXFExprBinaryString, WXFExprInteger, WXFExprString
 from wolframclient.serializers.wxfencoder.wxfexprprovider import WXFExprProvider
-from wolframclient.tests.utils.base import TestCase as BaseTestCase
 from wolframclient.utils import six
 from wolframclient.utils.datastructures import Association
+from wolframclient.utils.tests import TestCase as BaseTestCase
 
 import os
 import unittest

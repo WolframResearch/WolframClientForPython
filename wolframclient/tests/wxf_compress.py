@@ -3,8 +3,8 @@
 from __future__ import absolute_import, print_function, unicode_literals, with_statement
 
 from wolframclient.serializers.wxfencoder.streaming import ZipCompressedWriter
-from wolframclient.tests.utils.base import TestCase as BaseTestCase
 from wolframclient.utils import six
+from wolframclient.utils.tests import TestCase as BaseTestCase
 
 import random
 import zlib

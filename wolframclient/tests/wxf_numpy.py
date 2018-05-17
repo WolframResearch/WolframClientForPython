@@ -5,8 +5,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.serializers.wxfencoder.serializer import WXFExprSerializer
 from wolframclient.serializers.wxfencoder.wxfencoder import DefaultWXFEncoder
 from wolframclient.serializers.wxfencoder.wxfexprprovider import WXFExprProvider
-from wolframclient.tests.utils.base import TestCase as BaseTestCase
 from wolframclient.utils import six
+from wolframclient.utils.tests import TestCase as BaseTestCase
 
 import unittest
 

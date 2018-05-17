@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.evaluation.cloud.exceptions import AuthenticationException, XAuthNotConfigured
 from wolframclient.utils import six
-from wolframclient.utils.api import json, requests, oauth
+from wolframclient.utils.api import json, oauth, requests
 
 import logging
 

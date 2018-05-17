@@ -6,8 +6,8 @@ from wolframclient.serializers.wxfencoder.serializer import WXFExprSerializer
 from wolframclient.serializers.wxfencoder.wxfencoder import WXFEncoder
 from wolframclient.serializers.wxfencoder.wxfexpr import WXFExprFunction, WXFExprSymbol
 from wolframclient.serializers.wxfencoder.wxfexprprovider import WXFExprProvider
-from wolframclient.tests.utils.base import TestCase as BaseTestCase
 from wolframclient.utils import six
+from wolframclient.utils.tests import TestCase as BaseTestCase
 
 class MyClass(object):
     def __init__(self, *values):

@@ -4,10 +4,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.evaluation.cloud.cloudsession import encode_api_inputs, url_join, WolframCloudSession
 from wolframclient.evaluation.cloud.oauth import SecuredAuthenticationKey, UserCredentials
-from wolframclient.tests.utils.base import TestCase as BaseTestCase
 from wolframclient.utils import six
 from wolframclient.utils.api import json
 from wolframclient.utils.encoding import force_text
+from wolframclient.utils.tests import TestCase as BaseTestCase
 
 import logging
 import unittest
