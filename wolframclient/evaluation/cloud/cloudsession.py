@@ -1,6 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import logging
-from wolframclient.evaluation.cloud.exceptions import RequestException, AuthenticationException, XAuthNotConfigured, InputException, OutputException
+
+from wolframclient.evaluation.cloud.exceptions import AuthenticationException, XAuthNotConfigured
 from wolframclient.evaluation.cloud.oauth import OAuthSession
 from requests import post
 from requests.structures import CaseInsensitiveDict
@@ -16,9 +17,11 @@ from wolframclient.serializers import export
 __all__ = ['WolframCloudSession']
 
 logger = logging.getLogger(__name__)
+
+
 class WolframCloudSession(object):
     ''' Represents a session to a given cloud enabling simple API call.
-    
+
     This is the central class of the cloud evaluation package. It is 
     initialized with a server instance representing a given cloud. The
     `default` static method can be used to initialize a session to the Wolfram
@@ -49,7 +52,7 @@ class WolframCloudSession(object):
 
     def authenticate(self):
         '''Authenticate with the server using the credentials. 
-        
+
         This method supports both oauth and xauth methods. It is not necessary
         to call it, since the session will try to authenticate when the first 
         request is issued. '''
@@ -65,10 +68,10 @@ class WolframCloudSession(object):
         self.consumer = self.authentication.consumer_key
         self.consumer_secret = self.authentication.consumer_secret
         self.is_xauth = False
-        self.oauth = OAuthSession(self.server, self.consumer, self.consumer_secret)
+        self.oauth = OAuthSession(
+            self.server, self.consumer, self.consumer_secret)
         self.oauth.auth()
 
-    
     def user_authentication(self):
         if not self.server.is_xauth():
             raise XAuthNotConfigured
@@ -76,10 +79,10 @@ class WolframCloudSession(object):
         self.password = self.authentication.password
         self.is_xauth = True
         self.oauth = OAuthSession(self.server, self.server.xauth_consumer_key,
-                           self.server.xauth_consumer_secret)
+                                  self.server.xauth_consumer_secret)
         self.oauth.xauth(self.authentication.user,
                          self.authentication.password)
-        
+
     @property
     def authorized(self):
         ''' Returns a reasonnably accurate state of the authentication status. '''
@@ -88,7 +91,9 @@ class WolframCloudSession(object):
         if self.is_xauth is None or self.oauth is None:
             return False
         else:
-            return bool(self.oauth._client.client_secret) and bool(self.oauth._client.resource_owner_key) and bool(self.oauth._client.resource_owner_secret)
+            return (bool(self.oauth._client.client_secret) and
+                    bool(self.oauth._client.resource_owner_key) and
+                    bool(self.oauth._client.resource_owner_secret))
 
     # def _encoded_inputs(self, inputs, encoders):
     #     if isinstance(encoders, dict):
@@ -114,7 +119,8 @@ class WolframCloudSession(object):
     #         raise InputException("Invalid input encoders. Expecting None, a callable object or a dictionary.")
 
     def _post(self, url, headers={}, body={}, params={}):
-        ''' Do a POST request, signing the content only if authentication has been successful. '''
+        ''' Do a POST request, signing the content only if authentication has 
+        been successful. '''
         headers['User-Agent'] = 'WolframClientForPython/1.0'
         if self.authorized:
             logger.info('Authenticated call to api %s', url)
@@ -126,8 +132,8 @@ class WolframCloudSession(object):
 
     def call(self, api, input_parameters={}, input_format='wl', permissions_key=None, **kargv):
         ''' Call a given API, using the provided input parameters.
-        
-        `api` can be a string url or a tuple (`username`, `api name`). User name is 
+
+        `api` can be a string url or a tuple (`username`, `api name`). User name is
         generally the Wolfram Language symbol `$UserName`. API id can be a uuid or a 
         name, in the form of a relative path. e.g: myapi/foo/bar
 
@@ -135,12 +141,12 @@ class WolframCloudSession(object):
         of the parameters associated to their value. The input encoder(s) can be specified
         as a callable in which case it is applied to all inputs, or as a dictionary, with keys
         being the parameter names, for a finer control of the encoding. Finally it is possible
-        to specify a decoder, which is applied when the request was successful, to the raw binary 
+        to specify a decoder, which is applied when the request was successful, to the raw binary
         response of the API. 
 
         It's possible to specify a PermissionsKey passed to the server along side the query to
         get access to a given resource.
-        
+
         Note: By default a decoder is specified and ensure the response is of type string. To
         get raw bytes just replace it with `None`.
         '''
@@ -149,7 +155,7 @@ class WolframCloudSession(object):
             input_parameters, input_format=input_format, **kargv)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Encoded input %s', encoded_inputs)
-        
+
         params = {'_key': permissions_key} if permissions_key is not None else {}
         response = self._post(url, body=encoded_inputs, params=params)
 
@@ -166,7 +172,8 @@ class WolframCloudSession(object):
         elif isinstance(api, string_types):
             return api
         else:
-            raise ValueError('Invalid API description. Expecting string or tuple.')
+            raise ValueError(
+                'Invalid API description. Expecting string or tuple.')
 
     def _evaluation_api_url(self):
         return url_join(self.server.cloudbase, 'evaluations?_responseform=json')
@@ -175,12 +182,12 @@ class WolframCloudSession(object):
 
     def _call_evaluation_api(self, data):
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('Sending expression to cloud server for evaluation: %s', data)
+            logger.debug(
+                'Sending expression to cloud server for evaluation: %s', data)
         response = self._post(
             self.evaluation_api_url,
             body=data)
         return WolframEvaluationResponse(response)
-        
 
     def evaluate_string(self, expr):
         ''' Send the string InputForm of an `expr` to the cloud for evaluation. '''
@@ -188,17 +195,17 @@ class WolframCloudSession(object):
 
     def evaluate(self, expr):
         ''' Send `expr` to the cloud for evaluation.
-        
+
         `expr` must be a Python object serializable by `wolframclient.serializers.export`
         '''
         return self._call_evaluation_api(export(expr))
-        
 
     def cloud_function(self, func):
         return CloudFunction(self, func)
 
     def __str__(self):
         return '<WolframCloudSession:base={}, authorized={}>'.format(self.server.cloudbase, self.authorized)
+
 
 class CloudFunction(object):
     def __init__(self, session, func):
@@ -216,6 +223,7 @@ def _encode_inputs_as_wxf(inputs, **kwargs):
         encoded_inputs[name] = export(value, format='wxf', **kwargs)
     return encoded_inputs
 
+
 def _encode_inputs_as_json(inputs, **kwargs):
     encoded_inputs = {}
     for name, value in inputs.items():
@@ -223,8 +231,9 @@ def _encode_inputs_as_json(inputs, **kwargs):
         encoded_inputs[name] = json_dumps(value, **kwargs)
     return encoded_inputs
 
+
 def _encode_inputs_as_wl(inputs, **kwargs):
-    encoded_inputs={}
+    encoded_inputs = {}
     for name, value in inputs.items():
         # avoid double encoding of strings '\"string\"'.
         if isinstance(value, string_types):
@@ -235,10 +244,11 @@ def _encode_inputs_as_wl(inputs, **kwargs):
 
 
 SUPPORTED_ENCODING_FORMATS = CaseInsensitiveDict(data={
-    'json'  : _encode_inputs_as_json,
-    'wxf'   : _encode_inputs_as_wxf, 
-    'wl'    : _encode_inputs_as_wl
-    })
+    'json': _encode_inputs_as_json,
+    'wxf': _encode_inputs_as_wxf,
+    'wl': _encode_inputs_as_wl
+})
+
 
 def encode_api_inputs(inputs, input_format='wl', **kwargs):
     if len(inputs) == 0:
