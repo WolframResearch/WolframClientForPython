@@ -45,7 +45,7 @@ export can also write to any object that implements a `write` method, like file 
 By default export serializes using InputForm
 
 ```
->>> export([1, 2, 3], format = "wl")
+>>> export([1, 2, 3], target_format = "wl")
 '{1, 2, 3}'
 ```
 
@@ -54,14 +54,14 @@ By default export serializes using InputForm
 WXF is an efficient format to rappresents expressions in WL
 
 ```
->>> export([1, 2, 3], format = "wxf")
+>>> export([1, 2, 3], target_format = "wxf")
 '8:f\x03s\x04ListC\x01C\x02C\x03'
 ```
 
 The format allows compression using zlib, the compression is disabled by default:
 
 ```
->>> export([1, 2, 3], format = "wxf", compress = True)
+>>> export([1, 2, 3], target_format = "wxf", compress = True)
 '8C:x\x9cKc.f\xf1\xc9,.qftfrf\x06\x00\x1b\xf8\x03L'
 ```
 

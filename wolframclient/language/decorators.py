@@ -55,7 +55,7 @@ def safe_wl_execute(function, args = (), opts = {}, export_opts = {}, exception_
                         "Traceback": force_text(traceback.format_exc())
                     }
                 ),
-                format = export_opts.get('format', DEFAULT_FORMAT)
+                target_format = export_opts.get('target_format', DEFAULT_FORMAT)
             )
 
 def to_wl(**export_opts):

@@ -26,11 +26,11 @@ class TestCase(BaseTestCase):
 
             for export_format in available_formats:
 
-                expected = export(test, format = export_format)
+                expected = export(test, target_format = export_format)
 
                 #checking that export is able to write to a path if a string is provided
 
-                export(test, path, format = export_format)
+                export(test, path, target_format = export_format)
 
                 with open(path,'rb') as stream:
                     self.assertEqual(stream.read(), expected)
@@ -39,7 +39,7 @@ class TestCase(BaseTestCase):
 
                 stream = six.BytesIO()
 
-                export(test, stream, format = export_format)
+                export(test, stream, target_format = export_format)
 
                 stream.seek(0)
 
@@ -48,7 +48,7 @@ class TestCase(BaseTestCase):
                 #checking that export is able to write to a filelike object
 
                 with open(path,'wb') as stream:
-                    export(test, stream, format = export_format)
+                    export(test, stream, target_format = export_format)
 
                 with open(path,'rb') as stream:
                     self.assertEqual(stream.read(), expected)
@@ -78,18 +78,18 @@ class TestCase(BaseTestCase):
                 export(
                     expr,
                     normalizer = identity,
-                    format = export_format
+                    target_format = export_format
                 )
 
             self.assertEqual(
                 export(
                     expr,
                     normalizer = normalizer,
-                    format = export_format
+                    target_format = export_format
                 ),
                 export(
                     normalized,
                     normalizer = identity,
-                    format = export_format
+                    target_format = export_format
                 ),
             )

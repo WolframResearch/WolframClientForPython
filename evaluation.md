@@ -120,7 +120,7 @@ The input parameters are encoded using either `json.dumps` or `wolframclient.ser
 ```Python
 session.call(url, 
     {'a': A, 'b' : B},
-    input_format = 'json'
+    target_format = 'json'
 )
 ```
 Is equivalent to:

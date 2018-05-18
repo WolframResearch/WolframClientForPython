@@ -105,7 +105,7 @@ class WolframCloudSession(object):
             return requests.post(
                 url, params=params, headers=headers, data=body, verify=self.server.verify)
 
-    def call(self, api, input_parameters={}, input_format='wl', permissions_key=None, **kargv):
+    def call(self, api, input_parameters={}, target_format='wl', permissions_key=None, **kargv):
         ''' Call a given API, using the provided input parameters.
 
         `api` can be a string url or a tuple (`username`, `api name`). User name is
@@ -127,7 +127,7 @@ class WolframCloudSession(object):
         '''
         url = self._user_api_url(api)
         encoded_inputs = encode_api_inputs(
-            input_parameters, input_format=input_format, **kargv)
+            input_parameters, target_format=target_format, **kargv)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Encoded input %s', encoded_inputs)
 
@@ -193,7 +193,7 @@ def _encode_inputs_as_wxf(inputs, **kwargs):
     encoded_inputs = {}
     for name, value in inputs.items():
         name = name + '__wxf'
-        encoded_inputs[name] = export(value, format='wxf', **kwargs)
+        encoded_inputs[name] = export(value, target_format='wxf', **kwargs)
     return encoded_inputs
 
 def _encode_inputs_as_json(inputs, **kwargs):
@@ -210,7 +210,7 @@ def _encode_inputs_as_wl(inputs, **kwargs):
         if isinstance(value, six.string_types):
             encoded_inputs[name] = value
         else:
-            encoded_inputs[name] = export(value, format='wl', **kwargs)
+            encoded_inputs[name] = export(value, target_format='wl', **kwargs)
     return encoded_inputs
 
 SUPPORTED_ENCODING_FORMATS = {
@@ -219,14 +219,14 @@ SUPPORTED_ENCODING_FORMATS = {
     'wl':   _encode_inputs_as_wl
 }
 
-def encode_api_inputs(inputs, input_format='wl', **kwargs):
+def encode_api_inputs(inputs, target_format='wl', **kwargs):
     if len(inputs) == 0:
         return {}
 
-    encoder = SUPPORTED_ENCODING_FORMATS.get(input_format, None)
+    encoder = SUPPORTED_ENCODING_FORMATS.get(target_format, None)
     if encoder is None:
         raise ValueError('Invalid encoding format %s. Choices are: %s' % (
-            input_format, ', '.join(SUPPORTED_ENCODING_FORMATS.keys())))
+            target_format, ', '.join(SUPPORTED_ENCODING_FORMATS.keys())))
 
     return encoder(inputs, **kwargs)
 

@@ -66,7 +66,7 @@ class Command(SimpleCommand):
                 self.formatted_time(
                     expr,
                     stream = os.path.join(path, 'benchmark-test-%s.%s' % (force_text(complexity).zfill(7), export_format)),
-                    format = export_format,
+                    target_format = export_format,
                     **opts
                 )
                 for complexity, expr in benchmarks

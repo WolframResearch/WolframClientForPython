@@ -163,15 +163,15 @@ class TestCase(BaseTestCase):
             encoded, {'param1': b'<|"k" :> {1, 2}|>', 'param2': 'foo'})
 
     def test_encode_empty_dict(self):
-        self.assertEqual(encode_api_inputs({}, input_format='json'), {})
+        self.assertEqual(encode_api_inputs({}, target_format='json'), {})
 
     def test_encode_json_dict(self):
-        encoded = encode_api_inputs({'param1' : {'k' : [1,2]}, 'param2' : 'foo'}, input_format='json')
+        encoded = encode_api_inputs({'param1' : {'k' : [1,2]}, 'param2' : 'foo'}, target_format='json')
         self.assertEqual(
             encoded, {'param1__json': '{"k": [1, 2]}', 'param2__json': '"foo"'})
 
     def test_encode_wxf_dict(self):
         encoded = encode_api_inputs(
-            {'param1': {'k': [1, 2]}, 'param2': 'foo'}, input_format='wxf')
+            {'param1': {'k': [1, 2]}, 'param2': 'foo'}, target_format='wxf')
         self.assertEqual(
             encoded, {'param1__wxf': b'8:A\x01:S\x01kf\x02s\x04ListC\x01C\x02', 'param2__wxf': b'8:S\x03foo'})

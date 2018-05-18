@@ -282,12 +282,12 @@ class TestCase(SerializeTest):
             ):
             self.serialize_compare(
                 value,
-                export(value, format = 'wxf')
+                export(value, target_format = 'wxf')
             )
 
         self.assertEqual(
-            export(Association(enumerate('abc')), format = 'wxf'),
-            export(wl.Association(*(wl.Rule(i, v) for i, v in enumerate('abc'))), format = 'wxf'),
+            export(Association(enumerate('abc')), target_format = 'wxf'),
+            export(wl.Association(*(wl.Rule(i, v) for i, v in enumerate('abc'))), target_format = 'wxf'),
         )
 
     def test_small_compression(self):

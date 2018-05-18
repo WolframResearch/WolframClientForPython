@@ -30,8 +30,8 @@ def test_datetime():
 
 class TestCase(BaseTestCase):
 
-    def dumps(self, data, format = 'wl', **opts):
-        return export(data, format = format, **opts)
+    def dumps(self, data, target_format = 'wl', **opts):
+        return export(data, target_format = target_format, **opts)
 
     def compare(self, data, output = None, **opts):
 
