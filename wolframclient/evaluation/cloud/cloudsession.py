@@ -93,29 +93,6 @@ class WolframCloudSession(object):
                     bool(self.oauth._client.resource_owner_key) and
                     bool(self.oauth._client.resource_owner_secret))
 
-    # def _encoded_inputs(self, inputs, encoders):
-    #     if isinstance(encoders, dict):
-    #         if len(encoders) == 0:
-    #             return inputs
-    #         inputs_encoded = {}
-    #         for input_name, input_value in inputs.items():
-    #             if input_name in encoders:
-    #                 encoder = encoders[input_name]
-    #                 if callable(encoder):
-    #                     inputs_encoded[input_name] = encoder(input_value)
-    #                 else:
-    #                     raise OutputException('Input encoder of %s is not callable.' % input_name)
-    #             else:
-    #                 inputs_encoded[input_name] = input_value
-    #             return inputs_encoded
-    #     elif callable(encoders):
-    #         inputs_encoded = {}
-    #         for name, value in inputs.items():
-    #             inputs_encoded[name] = encoders(value)
-    #         return inputs_encoded
-    #     else:
-    #         raise InputException("Invalid input encoders. Expecting None, a callable object or a dictionary.")
-
     def _post(self, url, headers={}, body={}, params={}):
         ''' Do a POST request, signing the content only if authentication has
         been successful. '''
