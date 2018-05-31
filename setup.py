@@ -15,17 +15,17 @@ dependencies = [
     'pip',
     'numpy',
     'pytz',
-    'requests', 
+    'requests',
     'oauthlib'
 ]
 
 packages = find_packages(exclude=('wolframclient.tests*',))
 
 author_emails = [
-    'riccardod@wolfram.com',
+    'contact@wolfram.com',
     'dorianb@wolfram.com',
-    'contact@wolfram.com'
-].sort()
+    'riccardod@wolfram.com'
+]
 
 setup(
     name='Wolfram Client for Python',
