@@ -1,19 +1,14 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import logging
-import os.path as path
-from os.path import expandvars, expanduser, dirname
+from math import floor
+from os.path import expandvars, expanduser, dirname, join as path_join
 from subprocess import Popen, PIPE
 from threading import Thread, Event
-from time import sleep
 from wolframclient.utils.six import string_types, binary_type, integer_types
 from wolframclient.serializers import export
 from wolframclient.language.expression import wl
 from wolframclient.utils.encoding import force_text
-import zmq
-import json
-import time
-from math import floor
-from time import perf_counter
+from wolframclient.utils.api import zmq, time
 
 logger = logging.getLogger(__name__)
 
@@ -81,7 +76,7 @@ class WolframKernelSession(object):
 
         self.kernel = kernel
         if initfile is None:
-            self.initfile = path.join(dirname(__file__), 'initkernel.m')
+            self.initfile = path_join(dirname(__file__), 'initkernel.m')
         else:
             self.initfile = initfile
         logger.debug('Initializing kernel using script: %s', self.initfile)
@@ -123,6 +118,7 @@ class WolframKernelSession(object):
         self._clean()
 
     def _clean(self):
+        logger.debug('Cleanning up kernel session.')
         # Exception handling here
         if self.in_socket is not None:
             self.in_socket.close()
@@ -247,16 +243,16 @@ class Socket(object):
         if timeout < 0:
             raise ValueError('Timeout must be a positive number.')
         retry = 0
-        start = perf_counter()
+        start = time.perf_counter()
         max_retry = floor(timeout / Socket.RETRY_SLEEP_TIME)
-        while perf_counter() - start < timeout:
+        while time.perf_counter() - start < timeout:
             try:
                 return self.zmq_socket.recv(flags=zmq.NOBLOCK)
             except zmq.Again:
                 retry += 1
                 time.sleep(Socket.RETRY_SLEEP_TIME)
         raise SocketException('Read timed out. Failed to read any message from socket %s after %.1f seconds and %i retries.'
-                              % (self.uri, perf_counter() - start, retry))
+                              % (self.uri, time.perf_counter() - start, retry))
 
     def close(self):
         self.zmq_socket.close()

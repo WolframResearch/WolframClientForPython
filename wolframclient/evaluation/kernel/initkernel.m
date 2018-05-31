@@ -1,9 +1,3 @@
-(* ::Package:: *)
-
-(*PDA@EE; PDA@ZMQ;
-G@ZMQ;*)
-
-
 (* Not useful since we apparently never receive multipart messages,
 no matter the total size (tested with 80MB) *)
 
