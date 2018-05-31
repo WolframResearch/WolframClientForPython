@@ -29,3 +29,19 @@ oauth = API(
     SIGNATURE_HMAC = 'oauthlib.oauth1.SIGNATURE_HMAC',
     SIGNATURE_TYPE_AUTH_HEADER = 'oauthlib.oauth1.SIGNATURE_TYPE_AUTH_HEADER',
 )
+
+pip = API(
+    main = (
+        'pip.main',
+        'pip._internal.main'
+    ),
+    get_installed_distributions = (
+        'pip.get_installed_distributions',
+        'pip.utils.get_installed_distributions',
+        'pip._internal.utils.misc.get_installed_distributions',
+    ),
+    virtualenv_no_global = (
+        'pip.locations.virtualenv_no_global',
+        'pip._internal.locations.virtualenv_no_global',
+    )
+)

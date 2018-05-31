@@ -44,6 +44,13 @@ def import_string(dotted_path):
         raise ImportError('Module "%s" does not define a "%s" attribute/class' % (module_path, class_name))
 
 def safe_import_string(f):
+    if isinstance(f, (list, tuple)):
+        for path in f:
+            try:
+                return import_string(path)
+            except ImportError:
+                pass
+        raise ImportError('Cannot import %s' % (f, ))
     if isinstance(f, six.string_types):
         return import_string(f)
     return f
