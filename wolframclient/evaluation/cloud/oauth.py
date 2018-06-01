@@ -1,20 +1,17 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import absolute_import, print_function
 
-from wolframclient.evaluation.cloud.exceptions import AuthenticationException, XAuthNotConfigured
+from wolframclient.exception import AuthenticationException
 from wolframclient.utils import six
-from wolframclient.utils.api import json, oauth, requests
-
+from wolframclient.utils.api import json, oauth, requests, urllib
 import logging
 
-try: # PY3
-    from urllib.parse import urlparse, parse_qs, urlencode, quote_plus
-except ImportError: # PY2
-    from urlparse import urlparse, parse_qs
-    from urllib import urlencode, quote_plus
-
 logger = logging.getLogger(__name__)
+
+
+__all__ = ['SecuredAuthenticationKey', 'UserCredentials']
+
 
 class SecuredAuthenticationKey(object):
     ''' Represents a Secured Authentication Key generated using the Wolfram Language
@@ -102,7 +99,7 @@ class OAuthSession(object):
             req_headers[k] = v
         if isinstance(body, dict):
             # url encode the body
-            encoded_body = urlencode(body)
+            encoded_body = urllib.urlencode(body)
             sign_body = True
             if 'Content-Type' not in req_headers:
                 logger.info('Content type not provided by user. Setting it to "application/x-www-form-urlencoded".')
@@ -151,14 +148,14 @@ class OAuthSession(object):
         elif not OAuthSession._is_textplain_content(response):
             logger.warning('Unexpected content type in oauth response. Parsing as query string.')
 
-        token = parse_qs(response.text)
+        token = urllib.parse_qs(response.text)
         return (token.get('oauth_token')[0],
             token.get('oauth_token_secret')[0])
 
     def xauth(self, user, password):
         logger.debug('xauth authentication of user %s', user)
         if not self.server.is_xauth():
-            raise XAuthNotConfigured
+            raise AuthenticationException('XAuth is not configured. Missing consumer key and/or secret.')
         #todo use xauth server key/secret
         client = oauth.Client(
             self.consumer_key, self.consumer_secret)

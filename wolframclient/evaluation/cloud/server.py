@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import absolute_import, print_function
 
 from wolframclient.utils import six
 
-__all__ = [
-    'Server',
-    'WolframPublicCloudServer'
-    ]
+__all__ = ['Server']
+
 
 class Server(object):
     ''' Represents the cloud server.

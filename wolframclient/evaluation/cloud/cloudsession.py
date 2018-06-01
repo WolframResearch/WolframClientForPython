@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import, print_function
 
-from __future__ import absolute_import, print_function, unicode_literals
-
-from wolframclient.evaluation.cloud.exceptions import AuthenticationException, XAuthNotConfigured
+from wolframclient.exception import AuthenticationException
 from wolframclient.evaluation.cloud.inputoutput import WolframAPIResponseBuilder, WolframEvaluationResponse
 from wolframclient.evaluation.cloud.oauth import OAuthSession
 from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
@@ -13,9 +12,10 @@ from wolframclient.utils.api import json, requests
 
 import logging
 
+logger = logging.getLogger(__name__)
+
 __all__ = ['WolframCloudSession']
 
-logger = logging.getLogger(__name__)
 
 class WolframCloudSession(object):
     ''' Represents a session to a given cloud enabling simple API call.
@@ -72,7 +72,7 @@ class WolframCloudSession(object):
 
     def user_authentication(self):
         if not self.server.is_xauth():
-            raise XAuthNotConfigured
+            raise AuthenticationException('XAuth is not configured. Missing consumer key and/or secret.')
         self.user = self.authentication.user
         self.password = self.authentication.password
         self.is_xauth = True

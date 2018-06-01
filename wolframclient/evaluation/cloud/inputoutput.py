@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import absolute_import, print_function
 
-from wolframclient.evaluation.cloud.exceptions import EvaluationException
+from wolframclient.exception import EvaluationException
 from wolframclient.utils import six
 
 import logging
-
 logger = logging.getLogger(__name__)
+
+__all__ = []
+
 
 class WolframAPIResponse(object):
     __slots__ = 'response', 'decoder', 'success', 'output', 'failure', 'json', '_fields_in_error', 'content_type', 'exception'
