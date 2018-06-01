@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import absolute_import, print_function
 import logging
 from math import floor
 from os.path import expandvars, expanduser, dirname, join as path_join
@@ -11,6 +11,9 @@ from wolframclient.utils.encoding import force_text
 from wolframclient.utils.api import zmq, time
 
 logger = logging.getLogger(__name__)
+
+
+__all__ = ['WolframLanguageSession']
 
 
 class KernelError(Exception):
@@ -68,13 +71,17 @@ class KernelLogger(Thread):
                 logger.fatal('Failed to close ZMQ logging socket.')
 
 
-class WolframKernelSession(object):
+class WolframLanguageSession(object):
     def __init__(self, kernel, initfile=None, log_kernel=True,
                  in_socket=None, out_socket=None, logger_socket=None):
-        if not isinstance(kernel, WolframKernel):
-            raise ValueError('Expecting a WolframScript instance.')
+        if isinstance(kernel, string_types):
+            self.kernel = WolframKernel(kernel)
+        elif isinstance(kernel, WolframKernel):
+            self.kernel = kernel
+        else:
+            raise ValueError(
+                'Invalid kernel value. Expecting a filepath as a string or an instance of WolframKernel.')
 
-        self.kernel = kernel
         if initfile is None:
             self.initfile = path_join(dirname(__file__), 'initkernel.m')
         else:
@@ -158,7 +165,7 @@ class WolframKernelSession(object):
             # First message must be "OK", acknowledging everything is up and running 
             # on the kernel side.
             response = self.out_socket._read_timeout()
-            if response == WolframKernelSession.KERNEL_OK:
+            if response == WolframLanguageSession.KERNEL_OK:
                 logger.info('Kernel is ready.')
             else:
                 # this will probably fails on remote kernels (broken pipe?)
@@ -175,21 +182,24 @@ class WolframKernelSession(object):
     def started(self):
         return self.kernel_proc is not None
 
-    def evaluate(self, expr):
+    def evaluate(self, expr, **kwargs):
         logger.debug('new evaluation on: %s', self)
         if not self.started:
             raise KernelError('Kernel is not started.')
-        if isinstance(expr, binary_type):
+        
+        if isinstance(expr, string_types):
+            self.in_socket.zmq_socket.send_string(expr)
+        elif isinstance(expr, binary_type):
             self.in_socket.zmq_socket.send(expr)
         else:
-            self.in_socket.zmq_session.send(export(expr))
+            self.in_socket.zmq_session.send(export(expr, **kwargs))
         # read the message as bytes.
         msgstr = self.out_socket.zmq_socket.recv()
         self.evaluation_count += 1
         return msgstr
 
     def __repr__(self):
-        return '<WolframKernelSession: in:%s, out:%s>' % (self.in_socket.uri, self.out_socket.uri)
+        return '<WolframLanguageSession: in:%s, out:%s>' % (self.in_socket.uri, self.out_socket.uri)
 
 
 def _non_blocking_pipe_readline(pipe):
@@ -261,13 +271,6 @@ class Socket(object):
         return '<Socket: host=%s, port=%s>' % (self.host, self.port)
 
 
-def socket_uri(host='127.0.0.1', port=None):
-    if port is None:
-        return 'tcp://%s' + host
-    else:
-        return 'tcp://%s:%s' % (host, port)
-
-
 class WolframKernel(object):
     def __init__(self, path, host='127.0.0.1'):
         self.path = expandvars(expanduser(path))
@@ -277,11 +280,11 @@ class WolframKernel(object):
         return '<WolframKernel %s on %s>' % (self.host, self.path)
 
 
-def evaluate(kernel, expr, target_format='wl', **kargs):
+def evaluate(kernel, expr, **kargs):
     ''' One shot evaluation using a local kernel.
     '''
     if not isinstance(kernel, WolframKernel):
         raise ValueError('Expecting a WolframKernel instance.')
-    with WolframKernelSession(kernel, log_kernel=False) as session:
+    with WolframLanguageSession(kernel, log_kernel=False) as session:
         result = session.evaluate(expr)
     return result
