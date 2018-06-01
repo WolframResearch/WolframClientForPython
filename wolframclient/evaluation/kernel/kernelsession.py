@@ -4,9 +4,8 @@ from math import floor
 from os.path import expandvars, expanduser, dirname, join as path_join
 from subprocess import Popen, PIPE
 from threading import Thread, Event
+from wolframclient import export, wl
 from wolframclient.utils.six import string_types, binary_type, integer_types
-from wolframclient.serializers import export
-from wolframclient.language.expression import wl
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.api import zmq, time
 
