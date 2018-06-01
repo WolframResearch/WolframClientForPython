@@ -45,3 +45,39 @@ pip = API(
         'pip._internal.locations.virtualenv_no_global',
     )
 )
+
+zmq = API(
+    Context = 'zmq.Context',
+    PUSH    = 'zmq.PUSH',
+    PULL    = 'zmq.PULL',
+    PAIR    = 'zmq.PAIR',
+    NOBLOCK = 'zmq.NOBLOCK',
+    Again   = 'zmq.Again'
+)
+
+time = API(
+    perf_counter = (
+        'time.perf_counter',
+        'time.time'
+    ),
+    sleep = 'time.sleep'
+)
+
+urllib = API(
+    urlparse = (
+        'urllib.parse.urlparse',
+        'urlparse.urlparse'
+    ),
+    parse_qs = (
+        'urllib.parse.parse_qs',
+        'urlparse.urlparse.parse_qs',
+    ),
+    urlencode = (
+        'urllib.parse.urlencode',
+        'urllib.urlencode'
+    ),
+    quote_plus = (
+        'urllib.parse.quote_plus',
+        'urllib.quote_plus'
+    )
+)
