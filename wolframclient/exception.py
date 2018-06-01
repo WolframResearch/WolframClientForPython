@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function
 
+from wolframclient.language.exceptions import WolframLanguageException
 
 class RequestException(Exception):
     ''' Error in HTTP request.'''
@@ -22,4 +23,5 @@ class EvaluationException(RequestException):
 
 __all__ = ['RequestException',
            'AuthenticationException', 
-           'EvaluationException']
+           'EvaluationException',
+           'WolframLanguageException']

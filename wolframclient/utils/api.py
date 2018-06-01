@@ -70,7 +70,7 @@ urllib = API(
     ),
     parse_qs = (
         'urllib.parse.parse_qs',
-        'urlparse.urlparse.parse_qs',
+        'urlparse.parse_qs',
     ),
     urlencode = (
         'urllib.parse.urlencode',

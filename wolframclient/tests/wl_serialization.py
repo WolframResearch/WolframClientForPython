@@ -146,16 +146,16 @@ class TestCase(BaseTestCase):
 
         prec = decimal.getcontext().prec
 
-        self.compare(decimal.Decimal(10**20),          b'100000000000000000000``%s' % prec)
-        self.compare(decimal.Decimal('100'),           b'100``%s' % prec)
-        self.compare(decimal.Decimal('100.00'),        b'100.00``%s' % prec)
-        self.compare(decimal.Decimal('0.010'),         b'0.010``%s' % prec)
-        self.compare(decimal.Decimal('0.1534'),        b'0.1534``%s' % prec)
-        self.compare(decimal.Decimal('0.0000000010'),  b'0.0000000010``%s' % prec)
+        self.compare(decimal.Decimal(10**20),          b'100000000000000000000``%i' % prec)
+        self.compare(decimal.Decimal('100'),           b'100``%i' % prec)
+        self.compare(decimal.Decimal('100.00'),        b'100.00``%i' % prec)
+        self.compare(decimal.Decimal('0.010'),         b'0.010``%i' % prec)
+        self.compare(decimal.Decimal('0.1534'),        b'0.1534``%i' % prec)
+        self.compare(decimal.Decimal('0.0000000010'),  b'0.0000000010``%i' % prec)
 
-        self.compare(decimal.Decimal('0'),             b'0``%s' % prec)
-        self.compare(decimal.Decimal('0.0'),           b'0.0``%s' % prec)
-        self.compare(decimal.Decimal('0.0000000000'),  b'0.0000000000``%s' % prec)
+        self.compare(decimal.Decimal('0'),             b'0``%i' % prec)
+        self.compare(decimal.Decimal('0.0'),           b'0.0``%i' % prec)
+        self.compare(decimal.Decimal('0.0000000000'),  b'0.0000000000``%i' % prec)
 
         self.compare(fractions.Fraction(1, 2),         wl.Rational(1, 2))
 

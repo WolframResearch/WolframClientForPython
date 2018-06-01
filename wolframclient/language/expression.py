@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import absolute_import, print_function
 
 from itertools import chain
 
 from wolframclient.utils import six
 from wolframclient.utils.encoding import force_text
+
 
 class WLExpressionMeta(object):
 
@@ -88,3 +89,5 @@ class ExpressionFactory(object):
 
 wl     = ExpressionFactory()
 system = ExpressionFactory('System')
+
+__all__ = ['wl', 'system']
