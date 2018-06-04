@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
+from wolframclient.language.expression import wl, system
 
-from wolframclient.language import expression
-
-__all__ = expression.__all__
-
-from wolframclient.language.expression import *
+__all__ = ['wl', 'system']
