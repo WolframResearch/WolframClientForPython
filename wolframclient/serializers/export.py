@@ -13,7 +13,7 @@ available_formats = API(
     wxf='wolframclient.serializers.wxf.WXFSerializer',
 )
 
-def export(data, stream=None, target_format='wl', **options):
+def export(data, stream=None, target_format=DEFAULT_FORMAT, **options):
     if not target_format in available_formats:
         raise ValueError('Invalid export format %s. Choices are: %s' % (
             target_format,
