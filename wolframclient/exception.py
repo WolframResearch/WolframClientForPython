@@ -1,4 +1,6 @@
-from __future__ import absolute_import, print_function
+# -*- coding: utf-8 -*-
+
+from __future__ import absolute_import, print_function, unicode_literals
 
 class RequestException(Exception):
     ''' Error in HTTP request.'''
@@ -8,17 +10,14 @@ class RequestException(Exception):
         self.response = response
         self.msg = msg
 
-
 class AuthenticationException(RequestException):
     ''' Error in authentication request.'''
     pass
-
 
 class EvaluationException(RequestException):
     ''' Error while evaluating an expression.'''
     pass
 
-
 __all__ = ['RequestException',
-           'AuthenticationException', 
+           'AuthenticationException',
            'EvaluationException']

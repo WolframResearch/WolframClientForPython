@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, print_function, unicode_literals
+
 from wolframclient.utils.importutils import API
 
 __all__ = ['export']
@@ -11,7 +12,6 @@ available_formats = API(
     wl='wolframclient.serializers.wl.WLSerializer',
     wxf='wolframclient.serializers.wxf.WXFSerializer',
 )
-
 
 def export(data, stream=None, target_format='wl', **options):
     if not target_format in available_formats:

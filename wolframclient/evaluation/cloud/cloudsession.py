@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function
 
-from wolframclient.exception import AuthenticationException
+from __future__ import absolute_import, print_function, unicode_literals
+
 from wolframclient.evaluation.cloud.inputoutput import WolframAPIResponseBuilder, WolframEvaluationResponse
 from wolframclient.evaluation.cloud.oauth import OAuthSession
 from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
+from wolframclient.exception import AuthenticationException
 from wolframclient.language.expression import wl
 from wolframclient.serializers import export
 from wolframclient.utils import six
@@ -15,7 +16,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 __all__ = ['WolframCloudSession']
-
 
 class WolframCloudSession(object):
     ''' Represents a session to a given cloud enabling simple API call.

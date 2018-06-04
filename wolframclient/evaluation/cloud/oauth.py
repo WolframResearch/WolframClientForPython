@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.exception import AuthenticationException
 from wolframclient.utils import six
 from wolframclient.utils.api import json, oauth, requests, urllib
+
 import logging
 
 logger = logging.getLogger(__name__)
 
-
 __all__ = ['SecuredAuthenticationKey', 'UserCredentials']
-
 
 class SecuredAuthenticationKey(object):
     ''' Represents a Secured Authentication Key generated using the Wolfram Language

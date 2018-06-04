@@ -1,4 +1,9 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import absolute_import, print_function, unicode_literals
+
 import sys
+
 try:
     from setuptools import setup, find_packages
 except ImportError:
@@ -10,7 +15,7 @@ Make sure you have pip and setuptools installed and upgraded and try again:
     $ python setup.py install
 
 """)
-    
+
 dependencies = [
     'pip',
     'numpy',
