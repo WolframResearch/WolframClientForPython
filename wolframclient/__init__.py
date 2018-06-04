@@ -2,8 +2,8 @@
 from wolframclient import evaluation, exception, language, serializers
 
 
-from wolframclient.exception import (AuthenticationException, EvaluationException, RequestException,
-                                     WolframLanguageException)
+from wolframclient.exception import AuthenticationException, EvaluationException, RequestException
+from wolframclient.language.exceptions import WolframLanguageException
 
 from wolframclient.language.expression import wl, system
 from wolframclient.evaluation.cloud.cloudsession import WolframCloudSession
