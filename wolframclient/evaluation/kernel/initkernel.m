@@ -15,20 +15,33 @@ no matter the total size (tested with 80MB) *)
 	ByteArrayJoin = Join
 ];
  *)
+
+Needs["GeneralUtilities`"]
+
+Begin["ClientLibrary`"]
+
+debug;
+info;
+warn;
+error;
+
+
+Begin["`Private`"]
+
 $DEBUG=1;
 $INFO=2;
 $WARN=3;
 $ERROR=4;
 
-debug[msg__String] := log[msg, $DEBUG];
-info[msg__String] := log[msg, $INFO];
-warn[msg__String] := log[msg, $WARN];
-error[msg__String] := log[msg, $ERROR];
+ClientLibrary`debug[msg__String] := log[msg, $DEBUG];
+ClientLibrary`info[msg__String] := log[msg, $INFO];
+ClientLibrary`warn[msg__String] := log[msg, $WARN];
+ClientLibrary`error[msg__String] := log[msg, $ERROR];
 
 log[msg_String, level_Integer:$INFO] := If[$LoggerSocket=!=None, 
-	WriteString[
+	BinaryWrite[
 		$LoggerSocket, 
-		Developer`WriteRawJSONString[<|"msg"->msg, "level"->level|>]
+		Developer`WriteRawJSONString[<|"msg"->msg, "level"->level|>, "ToByteString"->True]
 	],
 	Print[msg]
 ];
@@ -36,7 +49,7 @@ log[msg__String, level_Integer:$INFO] := log[StringJoin[{msg}], level];
 log[msg__String, False, level_Integer:$INFO] := Map[log[#, level]&, {msg}];
 
 
-$MaxLoggedStringLength = 256;
+$MaxLoggedStringLength = 1014;
 short[string_String] /; StringLength[string] >= $MaxLoggedStringLength := StringTake[string, $MaxLoggedStringLength];
 short[string_String] := string;
 
@@ -45,12 +58,21 @@ timed[expr_] := timed[Unevaluated[expr], short[ToString[Unevaluated[expr], Input
 timed[expr_, label_String] := Block[
 	{timer, eval},
 	{timer, eval} = AbsoluteTiming[expr];
-	info[label, " took: ", ToString[timer, InputForm], "seconds"];
+	ClientLibrary`info[label, " took: ", readableTiming[timer]];
 	eval
 ];
 
+readableTiming[timing_] := Which[
+	timing < 10*^-3,
+	ToString[N[timing/10.*^-6]] <> "µs",
+	timing < 1,
+	ToString[N[timing/10.*^-3]] <> "ms",
+	True,
+	ToString[N[timing]] <> "s"
+];
+
 evaluate[data_String] := ToExpression[data];
-evaluate[data_ByteArray] := ToExpression[ByteArrayToString[data]];
+evaluate[data_ByteArray] := evaluate[ByteArrayToString[data]];
 
 serialize[expr_] := ToString[expr, InputForm];
 
@@ -64,7 +86,7 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String, logsocket_Strin
 	If[FailureQ[$LoggerSocket],
 		Print["Failed to connect to logging socket: ", logsocket]
 		,
-		info["Connected to logging socket: ", logsocket];
+		ClientLibrary`info["Connected to logging socket: ", logsocket];
 		SlaveKernelPrivateStart[inputsocket, outputsocket]
 	]
 );
@@ -93,13 +115,16 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 				];
 			]
 			,
-			error[GeneralUtilities`FailureString[#]] &
+			Block[{err = GeneralUtilities`FailureString[#]},
+				ClientLibrary`error[] &
+				WriteString[$OutputSocket, "$Failed"]
+			] &
 		]&
 		,
 		HandlerFunctionsKeys->{"DataByteArray"}
 	];
 	If[TrueQ@FailureQ[listener], 
-		error["Failed to listen to input socket ", inputsocket];
+		ClientLibrary`error["Failed to listen to input socket ", inputsocket];
 		Quit[]
 	];
 	WriteString[
@@ -107,3 +132,6 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 		"OK"
 	];
 ];
+
+End[];
+End[];

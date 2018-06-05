@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.exception import EvaluationException
 from wolframclient.utils import six
-
+from wolframclient.utils.api import json
 import logging
 
 logger = logging.getLogger(__name__)
@@ -49,6 +49,7 @@ class WolframAPIResponse(object):
 
     def __repr__(self):
         return '<%s:success=%s>' % (self.__class__.__name__, self.success)
+
 
 class WolframAPIResponse200(WolframAPIResponse):
     def __init__(self, response, decoder=None):
@@ -112,9 +113,11 @@ class WolframAPIResponse400(WolframAPIResponse):
         self.json = self.response.json()
         self.failure = self.json.get('Failure', None)
         fields = self.json.get('Fields', None)
+        logger.warning('Wolfram API error response: %s', self.failure)
         if fields is not None:
             self._fields_in_error = set(fields.keys())
-        logger.warning('Wolfram API error response: %s', self.failure)
+            logger.warning('Fields in error: %s', self._fields_in_error)
+        
 
 class WolframAPIResponse401(WolframAPIResponse):
     def __init__(self, response, decoder=None):
@@ -177,8 +180,11 @@ class WolframAPIResponseBuilder(object):
     def __init__(self):
         raise NotImplementedError("Cannot initialize. Use static 'method' build.")
 
+
 class WolframEvaluationResponse(object):
+
     __slots__ = 'http_response', 'json', 'success', 'request_error', 'failure', 'expr'
+
     def __init__(self, response):
         self.http_response = response
         if response.status_code == 200:
@@ -188,8 +194,10 @@ class WolframEvaluationResponse(object):
                 self.success = self.json['Success']
                 self.expr = self.json['Result']
                 if not self.success:
+                    logger.warn('Evaluation failed: %s',
+                                '\n\t'.join(self.json.get('MessagesText', 'Missing field "MessagesText" in response.')))
                     self.failure = self.json['FailureType']
-            except json.decoder.JSONDecodeError as e:
+            except json.JSONDecodeError as e:
                 logger.fatal('Server returned invalid JSON: %s', e)
                 self.json = None
                 self.success = False

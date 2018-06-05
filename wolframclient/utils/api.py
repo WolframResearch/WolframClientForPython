@@ -12,10 +12,11 @@ pytz = API(
 )
 
 json = API(
-    dumps = 'json.dumps',
-    dump  = 'json.dump',
-    loads = 'json.loads',
-    load  = 'json.load',
+    dumps           = 'json.dumps',
+    dump            = 'json.dump',
+    loads           = 'json.loads',
+    load            = 'json.load',
+    JSONDecodeError = 'json.decoder.JSONDecodeError'
 )
 
 requests = API(
@@ -62,22 +63,6 @@ time = API(
     ),
     sleep = 'time.sleep'
 )
-zmq = API(
-    Context = 'zmq.Context',
-    PUSH    = 'zmq.PUSH',
-    PULL    = 'zmq.PULL',
-    PAIR    = 'zmq.PAIR',
-    NOBLOCK = 'zmq.NOBLOCK',
-    Again   = 'zmq.Again'
-)
-
-time = API(
-    perf_counter = (
-        'time.perf_counter',
-        'time.time'
-    ),
-    sleep = 'time.sleep'
-)
 
 urllib = API(
     urlparse = (
@@ -98,6 +83,7 @@ urllib = API(
     )
 )
 
-PIL = API(
-    Image = 'PIL.Image'
-)
+atexit = API(
+    register = 'atexit.register',
+    unregister = ('atexit.unregister',)
+) 

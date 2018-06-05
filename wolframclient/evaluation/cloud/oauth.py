@@ -10,7 +10,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__all__ = ['SecuredAuthenticationKey', 'UserCredentials']
+
+__all__ = ['SecuredAuthenticationKey', 'UserIDPassword']
 
 class SecuredAuthenticationKey(object):
     ''' Represents a Secured Authentication Key generated using the Wolfram Language
@@ -24,7 +25,7 @@ class SecuredAuthenticationKey(object):
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
 
-class UserCredentials(object):
+class UserIDPassword(object):
     ''' Represents user credentials used to login to a cloud.
 
     It is used as an input when authenticating a cloud session.
