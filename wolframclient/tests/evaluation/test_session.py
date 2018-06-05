@@ -2,16 +2,19 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.evaluation import SecuredAuthenticationKey, UserCredentials, WolframCloudSession
-from wolframclient.evaluation.cloud.cloudsession import encode_api_inputs, url_join
 from wolframclient.utils import six
 from wolframclient.utils.api import json
 from wolframclient.utils.encoding import force_text
+if not six.JYTHON:
+    from wolframclient.evaluation.cloud.cloudsession import encode_api_inputs, url_join
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
 import logging
 import os
 import unittest
+from wolframclient.language import wl
+from wolframclient.serializers import export
+from wolframclient.evaluation import SecuredAuthenticationKey, UserCredentials, WolframCloudSession, Server
 
 logging.basicConfig(filename='/tmp/python_testsuites.log',
                     filemode='a',
@@ -47,7 +50,7 @@ class TestCaseSettings(BaseTestCase):
             cls.json_user_config['SAK']['consumer_key'],
             cls.json_user_config['SAK']['consumer_secret']
             )
-        cls.user_cred = UserCredentials(
+        cls.user_cred = wolframclient.UserIDPassword(
             cls.json_user_config['User']['id'],
             cls.json_user_config['User']['password']
         )
