@@ -3,12 +3,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.evaluation.cloud.cloudsession import WolframCloudSession
-from wolframclient.evaluation.cloud.oauth import SecuredAuthenticationKey, UserCredentials
-from wolframclient.evaluation.cloud.server import Server
+from wolframclient.evaluation.cloud.oauth import SecuredAuthenticationKey, UserIDPassword
 
 __all__ = [
-    'Server',
-    'WolframCloudSession',
-    'SecuredAuthenticationKey',
-    'UserCredentials'
+    'Server', 
+    'WolframCloudSession', 
+    'SecuredAuthenticationKey', 
+    'UserIDPassword'
     ]

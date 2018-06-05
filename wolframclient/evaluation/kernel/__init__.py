@@ -4,4 +4,4 @@ from wolframclient.evaluation.kernel import kernelsession
 
 __all__ = kernelsession.__all__
 
-from wolframclient.evaluation.kernel.kernelsession import *
+from wolframclient.evaluation.kernel.kernelsession import WolframLanguageSession, WolframKernel

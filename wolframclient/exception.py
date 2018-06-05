@@ -22,4 +22,5 @@ class EvaluationException(RequestException):
 
 __all__ = ['RequestException',
            'AuthenticationException',
-           'EvaluationException']
+           'EvaluationException',
+           'WolframKernelException']
