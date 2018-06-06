@@ -13,7 +13,14 @@ available_formats = API(
     wxf='wolframclient.serializers.wxf.WXFSerializer',
 )
 
+
 def export(data, stream=None, target_format=DEFAULT_FORMAT, **options):
+    ''' Serialize input `data` to a target format.
+
+    An output stream can be provided, in which case the output bytes are
+    written to it.
+    Input `data` must be serializable, i.e extends `WLSerializable`.
+    '''
     if not target_format in available_formats:
         raise ValueError('Invalid export format %s. Choices are: %s' % (
             target_format,

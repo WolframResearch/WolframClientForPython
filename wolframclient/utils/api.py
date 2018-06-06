@@ -81,3 +81,7 @@ urllib = API(
         'urllib.quote_plus'
     )
 )
+
+PIL = API(
+    Image = 'PIL.Image'
+)
