@@ -77,7 +77,24 @@ class WLFunction(WLExpressionMeta):
         return '%s[<< %s >>]' % (repr(self.head), len(self))
 
 class ExpressionFactory(object):
+    ''' Instances of ExpressionFactory are callable and provide a convenient
+    way to build objects representing arbitrary Wolfram Language expressions.
 
+
+    `ExpressionFactory` is conveniently instanciated at startup as
+    :class:`wolframclient.wl`, without any context specified, and as
+    :class:`wolframclient.system` with ``System``` context.
+
+    Example::
+
+        import wolframclient.wl
+        # Now
+        wl.Now
+        # Quantity[3, "Hours"]
+        wl.Quanity(3, "Hours")
+        # Select[PrimeQ, {1,2,3,4}]
+        wl.Select(wl.PrimeQ, [1, 2, 3, 4])
+    '''
     def __init__(self, context = None):
         self.context = context
 
@@ -85,6 +102,7 @@ class ExpressionFactory(object):
         if self.context:
             return WLSymbol('%s`%s' % (self.context, attr))
         return WLSymbol(force_text(attr))
+
 
 wl     = ExpressionFactory()
 system = ExpressionFactory('System')
