@@ -69,6 +69,24 @@ class KernelLogger(Thread):
 
 
 class WolframLanguageSession(object):
+    ''' A session to a Wolfram Kernel enabling evaluation of Wolfram
+    Language expressions.
+
+    Communicates with a given kernel using ZMQ sockets:
+
+    * one `PUSH` socket receiving expressions to evaluate,
+    * one `PULL` socket to read evaluation results.
+
+    Kernel logging is enabled by default and is done through a third socket
+    (PULL). The kernel associated to a given session provides the following
+    logging functions:
+
+    * ``ClientLibrary`debug`` corresponding to :py:meth:`logging.Logger.debug`
+    * ``ClientLibrary`info`` corresponding to :py:meth:`logging.Logger.info`
+    * ``ClientLibrary`warn`` corresponding to :py:meth:`logging.Logger.warn`
+    * ``ClientLibrary`error`` corresponding to :py:meth:`logging.Logger.error`
+
+    '''
     def __init__(self, kernel, initfile=None, log_kernel=True,
                  in_socket=None, out_socket=None, logger_socket=None):
         if isinstance(kernel, string_types):
@@ -188,7 +206,6 @@ class WolframLanguageSession(object):
             logger.fatal(e)
             self.terminate()
             raise e
-        
 
     @property
     def started(self):
@@ -198,7 +215,7 @@ class WolframLanguageSession(object):
         logger.debug('new evaluation on: %s', self)
         if not self.started:
             raise WolframKernelException('Kernel is not started.')
-        
+
         if isinstance(expr, string_types):
             self.in_socket.zmq_socket.send_string(expr)
         elif isinstance(expr, binary_type):
@@ -283,19 +300,14 @@ class Socket(object):
 
 
 class WolframKernel(object):
+    ''' Represents a Wolfram Kernel executable.
+
+    The kernel may live on a distant machine in which case the host
+    address must be specified.
+    '''
     def __init__(self, path, host='127.0.0.1'):
         self.path = expandvars(expanduser(path))
         self.host = host
 
     def __repr__(self):
         return '<WolframKernel %s on %s>' % (self.host, self.path)
-
-
-def evaluate(kernel, expr, **kargs):
-    ''' One shot evaluation using a local kernel.
-    '''
-    if not isinstance(kernel, WolframKernel):
-        raise ValueError('Expecting a WolframKernel instance.')
-    with WolframLanguageSession(kernel, log_kernel=False) as session:
-        result = session.evaluate(expr)
-    return result
