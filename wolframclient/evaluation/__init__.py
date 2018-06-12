@@ -2,7 +2,6 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.evaluation import cloud
 from wolframclient.evaluation.cloud import SecuredAuthenticationKey, Server, UserCredentials, WolframCloudSession
 
 __all__ = [

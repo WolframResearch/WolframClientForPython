@@ -10,7 +10,9 @@ from wolframclient.utils.tests import TestCase as BaseTestCase
 
 import logging
 import unittest
-import wolframclient
+from wolframclient.language import wl
+from wolframclient.serializers import export
+from wolframclient.evaluation import SecuredAuthenticationKey, UserCredentials, WolframCloudSession, Server
 
 logging.basicConfig(filename='/tmp/python_testsuites.log',
                     filemode='a',
@@ -42,28 +44,28 @@ class TestCase(BaseTestCase):
     def setUpClass(cls):
         with open(TestCase.user_config_file, 'r') as fp:
             cls.json_user_config = json.load(fp)
-        cls.sak = wolframclient.SecuredAuthenticationKey(
+        cls.sak = SecuredAuthenticationKey(
             cls.json_user_config['SAK']['consumer_key'],
             cls.json_user_config['SAK']['consumer_secret']
             )
-        cls.user_cred = wolframclient.UserCredentials(
+        cls.user_cred = UserCredentials(
             cls.json_user_config['User']['id'],
             cls.json_user_config['User']['password']
         )
-        cls.session = wolframclient.WolframCloudSession(authentication=cls.sak)
+        cls.session = WolframCloudSession(authentication=cls.sak)
 
     def test_section_not_authorized(self):
-        session = wolframclient.WolframCloudSession()
+        session = WolframCloudSession()
         self.assertEqual(session.authorized, False)
         self.assertEqual(session.is_xauth, None)
 
     def test_section_authorized_oauth(self):
-        session = wolframclient.WolframCloudSession(authentication=self.sak)
+        session = WolframCloudSession(authentication=self.sak)
         self.assertEqual(session.authorized, True)
         self.assertEqual(session.is_xauth, False)
 
     def test_section_authorized_xauth(self):
-        session = wolframclient.WolframCloudSession(self.user_cred)
+        session = WolframCloudSession(self.user_cred)
         self.assertEqual(session.authorized, True)
         self.assertEqual(session.is_xauth, True)
 
@@ -89,7 +91,7 @@ class TestCase(BaseTestCase):
 
     def test_public_api_call(self):
         url = "api/public/jsonrange"
-        session = wolframclient.WolframCloudSession()
+        session = WolframCloudSession()
         self.assertFalse(session.authorized)
         response = session.call((self.api_owner, url),
             input_parameters={'i': 5})
