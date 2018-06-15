@@ -17,17 +17,17 @@ Make sure you have pip and setuptools installed and upgraded and try again:
 """)
 
 setup(
-    name='Wolfram Client for Python',
-    version='1.0',
-    description='A python library to call Wolfram API.',
-    author='Wolfram Research',
-    author_email=[
+    name = 'Wolfram Client for Python',
+    version = '1.0',
+    description = 'A python library to call Wolfram API and serialize expressions.',
+    author = 'Wolfram Research',
+    author_email = [
         'contact@wolfram.com',
         'dorianb@wolfram.com',
         'riccardod@wolfram.com'
     ],
-    packages=find_packages(exclude=['wolframclient.tests*']),
-    install_requires=[
+    packages = find_packages(exclude = ['wolframclient.tests*']),
+    install_requires = [
         'pip',
         'numpy',
         'pytz',
