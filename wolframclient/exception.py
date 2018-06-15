@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
+
 from wolframclient.language.exceptions import WolframLanguageException
 
-
-class RequestException(Exception):
+class RequestException(WolframLanguageException):
     ''' Error in HTTP request.'''
     __slots__ = 'response'
 
