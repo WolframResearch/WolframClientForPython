@@ -10,6 +10,7 @@ from wolframclient.utils.encoding import force_text
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
 import logging
+import os
 import unittest
 
 logging.basicConfig(filename='/tmp/python_testsuites.log',
@@ -18,8 +19,8 @@ logging.basicConfig(filename='/tmp/python_testsuites.log',
                     level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
-@unittest.skipIf(six.JYTHON, "Not supported in Jython.")
-class TestCase(BaseTestCase):
+
+class TestCaseSettings(BaseTestCase):
     #TODO modify those before testing.
     ''' Example json file for `user_credentials.json`:
     ```json
@@ -36,7 +37,7 @@ class TestCase(BaseTestCase):
     ```
     '''
     user_config_file = '/private/etc/user_credentials.json'
-    api_owner = 'dorianb'
+    api_owner        = 'dorianb'
 
     @classmethod
     def setUpClass(cls):
@@ -51,6 +52,10 @@ class TestCase(BaseTestCase):
             cls.json_user_config['User']['password']
         )
         cls.session = WolframCloudSession(authentication=cls.sak)
+
+@unittest.skipIf(six.JYTHON, "Not supported in Jython.")
+@unittest.skipIf(not os.path.exists(TestCaseSettings.user_config_file), "Need to configure credentials")
+class TestCase(TestCaseSettings):
 
     def test_section_not_authorized(self):
         session = WolframCloudSession()
