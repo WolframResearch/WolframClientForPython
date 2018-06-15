@@ -16,28 +16,22 @@ Make sure you have pip and setuptools installed and upgraded and try again:
 
 """)
 
-dependencies = [
-    'pip',
-    'numpy',
-    'pytz',
-    'requests',
-    'oauthlib'
-]
-
-packages = find_packages(exclude=('wolframclient.tests*',))
-
-author_emails = [
-    'contact@wolfram.com',
-    'dorianb@wolfram.com',
-    'riccardod@wolfram.com'
-]
-
 setup(
     name='Wolfram Client for Python',
     version='1.0',
     description='A python library to call Wolfram API.',
     author='Wolfram Research',
-    author_email=author_emails,
-    packages=packages,
-    install_requires=dependencies,
+    author_email=[
+        'contact@wolfram.com',
+        'dorianb@wolfram.com',
+        'riccardod@wolfram.com'
+    ],
+    packages=find_packages(exclude=['wolframclient.tests*']),
+    install_requires=[
+        'pip',
+        'numpy',
+        'pytz',
+        'requests',
+        'oauthlib'
+    ],
 )
