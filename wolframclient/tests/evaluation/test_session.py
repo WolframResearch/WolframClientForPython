@@ -37,7 +37,6 @@ class TestCaseSettings(BaseTestCase):
     ```
     '''
     user_config_file = '/private/etc/user_credentials.json'
-    api_owner        = 'dorianb'
 
     @classmethod
     def setUpClass(cls):
@@ -51,6 +50,8 @@ class TestCaseSettings(BaseTestCase):
             cls.json_user_config['User']['id'],
             cls.json_user_config['User']['password']
         )
+        cls.api_owner = cls.json_user_config.get('ApiOwner', 'dorianb')
+
         cls.session = WolframCloudSession(authentication=cls.sak)
 
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
@@ -74,8 +75,7 @@ class TestCase(TestCaseSettings):
 
     def test_section_api_call_no_param(self):
         url = 'api/private/requesterid'
-        response = self.session.call(
-            (self.api_owner, url))
+        response = self.session.call((self.api_owner, url))
         self.assertIn(self.api_owner, force_text(response.output))
 
     def test_section_api_call_one_param(self):
