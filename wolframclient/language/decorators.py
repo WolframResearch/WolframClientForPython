@@ -6,7 +6,7 @@ from functools import wraps
 
 from wolframclient.language.exceptions import WolframLanguageException
 from wolframclient.language.expression import wl
-from wolframclient.serializers.export import DEFAULT_FORMAT, export
+from wolframclient.serializers import DEFAULT_FORMAT, export
 from wolframclient.utils.encoding import force_text, safe_force_text
 
 import sys
