@@ -32,7 +32,8 @@ class TestCaseSettings(BaseTestCase):
         "SAK" : {
             "consumer_key" : "xxxx",
             "consumer_secret" : "yyyy"
-        }
+        },
+        "ApiOwner" : "userID"
     }
     ```
     '''
