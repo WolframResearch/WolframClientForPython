@@ -4,12 +4,16 @@ from math import floor
 from os.path import expandvars, expanduser, dirname, join as path_join
 from subprocess import Popen, PIPE
 from threading import Thread, Event
+from wolframclient.utils.six import string_types, binary_type, integer_types, PY3, JYTHON
+if PY3:
+    from concurrent.futures import ThreadPoolExecutor
 from wolframclient.serializers.export import export
 from wolframclient.language.expression import wl
 from wolframclient.exception import WolframKernelException
-from wolframclient.utils.six import string_types, binary_type, integer_types
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.api import zmq, time
+if not JYTHON:
+    from wolframclient.evaluation.evaluationresult import WolframEvaluationResult
 
 logger = logging.getLogger(__name__)
 
@@ -72,6 +76,17 @@ class WolframLanguageSession(object):
     ''' A session to a Wolfram Kernel enabling evaluation of Wolfram
     Language expressions.
 
+    Example
+    -----------
+
+    Start a new session and send a expression for evaluation::
+
+        from  wolframclient.evaluation import WolframKernel, WolframLanguageSession
+
+        kernel = WolframKernel('/Applications/Mathematica.app/Contents/MacOS/WolframKernel')
+        with WolframLanguageSession(kernel) as session:
+            session.evaluate('Range[3]')
+
     Communicates with a given kernel using ZMQ sockets:
 
     * one `PUSH` socket receiving expressions to evaluate,
@@ -87,9 +102,11 @@ class WolframLanguageSession(object):
     * ``ClientLibrary`error`` corresponding to :py:meth:`logging.Logger.error`
 
     '''
-    def __init__(self, kernel, initfile=None, log_kernel=True,
+    def __init__(self, kernel=None, initfile=None, log_kernel=True,
                  in_socket=None, out_socket=None, logger_socket=None):
-        if isinstance(kernel, string_types):
+        if kernel is None:
+            self.kernel = WolframKernel()
+        elif isinstance(kernel, string_types):
             self.kernel = WolframKernel(kernel)
         elif isinstance(kernel, WolframKernel):
             self.kernel = kernel
@@ -135,6 +152,7 @@ class WolframLanguageSession(object):
         self.log = log_kernel
         self.kernel_logger = None
         self.evaluation_count = 0
+        self.thread_pool_exec = None
 
     def __enter__(self):
         self.start()
@@ -146,6 +164,16 @@ class WolframLanguageSession(object):
     def terminate(self):
         logger.debug('Cleanning up kernel session.')
         # Exception handling here
+        if self.kernel_proc is not None:
+            try:
+                self.in_socket.zmq_socket.send_string('Quit[]')
+                self.kernel_proc.stdout.close()
+                self.kernel_proc.stdin.close()
+                self.kernel_proc.terminate()
+                self.kernel_proc.wait(timeout=3)
+            except:
+                logger.warning('Failed to cleanly stop the kernel process. Killing it.')
+                self.kernel_proc.kill()
         if self.in_socket is not None:
             self.in_socket.close()
         if self.out_socket is not None:
@@ -153,8 +181,8 @@ class WolframLanguageSession(object):
         if self.kernel_logger is not None:
             self.kernel_logger.stopped.set()
             self.kernel_logger.join()
-        if self.kernel_proc is not None:
-            self.kernel_proc.terminate()
+        if self.thread_pool_exec is not None:
+            self.thread_pool_exec.shutdown(wait=True)
 
     KERNEL_OK = b'OK'
 
@@ -179,9 +207,13 @@ class WolframLanguageSession(object):
             logger.debug('Kernel called using command: %s.' % ' '.join(cmd))
 
         try:
-            self.kernel_proc = Popen(cmd, stdout=PIPE)
+            # from asyncio import create_subprocess_exec
+            # (self.kernel_proc, _) = await create_subprocess_exec(*cmd, stdout=PIPE)
+
+            self.kernel_proc = Popen(cmd, stdout=PIPE, stdin=PIPE)
             if logger.isEnabledFor(logging.INFO):
                 logger.info('Kernel process started with PID: %s' % self.kernel_proc.pid)
+                # logger.info('Kernel process started with PID: %s' % self.kernel_proc.get_pid())
                 t_start = time.perf_counter()
             # First message must be "OK", acknowledging everything is up and running 
             # on the kernel side.
@@ -193,6 +225,7 @@ class WolframLanguageSession(object):
             else:
                 # this will probably fails on remote kernels (broken pipe?)
                 for line in _non_blocking_pipe_readline(self.kernel_proc.stdout):
+                # for line in _non_blocking_pipe_readline(self.kernel_proc.get_pipe_transport(1)):
                     last = force_text(line.rstrip())
                     logger.warn(last)
                 raise WolframKernelException(
@@ -225,7 +258,14 @@ class WolframLanguageSession(object):
         # read the message as bytes.
         msgstr = self.out_socket.zmq_socket.recv()
         self.evaluation_count += 1
-        return msgstr
+        return WolframEvaluationResult(expr=msgstr)
+
+    if PY3:
+        def evaluate_async(self, expr, **kwargs):
+            if self.thread_pool_exec is None:
+                self.thread_pool_exec = ThreadPoolExecutor(max_workers=1)
+
+            return self.thread_pool_exec.submit(self.evaluate, expr, **kwargs)
 
     def __repr__(self):
         return '<WolframLanguageSession: in:%s, out:%s>' % (self.in_socket.uri, self.out_socket.uri)
@@ -305,9 +345,15 @@ class WolframKernel(object):
     The kernel may live on a distant machine in which case the host
     address must be specified.
     '''
-    def __init__(self, path, host='127.0.0.1'):
-        self.path = expandvars(expanduser(path))
+    def __init__(self, path=None, host='127.0.0.1'):
+        if path is None:
+            self.path = self._sensible_path()
+        else:
+            self.path = expandvars(expanduser(path))
         self.host = host
+
+    def _sensible_path(self):
+        return '/Applications/Mathematica.app/Contents/MacOS/WolframKernel'
 
     def __repr__(self):
         return '<WolframKernel %s on %s>' % (self.host, self.path)

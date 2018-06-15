@@ -70,10 +70,10 @@ from wolframclient import WolframCloudSession
 session = WolframCloudSession()
 ```
 
-## Server
+## WolframServer
 
 Sometimes you may want to use a different server, and initialize your session with it.
-Server specifications requires to specify:
+WolframServer specifications requires to specify:
 - the cloud base, the URL base used to build API URL. This value corresponds to the Wolfram Language symbol `$CloudBase`. E.g: `'https://www.wolframcloud.com'`
 - the request token end point. The URL from which request tokens are fetch when authenticating using OAuth. E.g: `'https://account.wolfram.com/auth/request-token'`
 - the access token end point. The URL from which request tokens are exchanged for an access token. E.g: `'https://account.wolfram.com/auth/access-token'`
@@ -81,8 +81,8 @@ Server specifications requires to specify:
 - a certificate _(optional)_, as a filename. E.g: `'/etc/ssl/certs/wolfram-ca.crt'`
 
 ```Python
-from wolframclient import Server
-server = Server(
+from wolframclient import WolframServer
+server = WolframServer(
     'https://www.wolframcloud.com',
     'https://account.wolfram.com/auth/request-token',
     'https://account.wolfram.com/auth/access-token')
@@ -90,11 +90,11 @@ server = Server(
 session = WolframCloudSession(server)
 ```
 
-Server parameters is rarely something one would store in the code, but rather in a configuration file.
+WolframServer parameters is rarely something one would store in the code, but rather in a configuration file.
 
 ## Authentication classes
 
-By default user deployed API have restricted access. In such cases it's necessary to authenticate and sign requests. Similarly to the `Server` class, the library provides two classes to represent an authenticated consumer:
+By default user deployed API have restricted access. In such cases it's necessary to authenticate and sign requests. Similarly to the `WolframServer` class, the library provides two classes to represent an authenticated consumer:
 - `wolframclient.UserIDPassword` authenticates the user with its user ID and password, using _xauth_.
 - `wolframclient.SecuredAuthenticatedKey` (aka. SAK) authenticates a consumer with a token and secret. SAK are generated in the Wolfram Language using `GenerateSecuredAuthenticationKey`.
 

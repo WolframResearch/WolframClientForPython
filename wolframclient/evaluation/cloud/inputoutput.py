@@ -5,6 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.exception import EvaluationException
 from wolframclient.utils import six
 from wolframclient.utils.api import json
+from wolframclient.evaluation.evaluationresult import WolframEvaluationResult
 import logging
 
 logger = logging.getLogger(__name__)
@@ -181,9 +182,9 @@ class WolframAPIResponseBuilder(object):
         raise NotImplementedError("Cannot initialize. Use static 'method' build.")
 
 
-class WolframEvaluationResponse(object):
+class WolframEvaluationResponse(WolframEvaluationResult):
 
-    __slots__ = 'http_response', 'json', 'success', 'request_error', 'failure', 'expr'
+    __slots__ = 'http_response', 'json', 'request_error'
 
     def __init__(self, response):
         self.http_response = response

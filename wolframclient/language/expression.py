@@ -82,12 +82,12 @@ class ExpressionFactory(object):
 
 
     `ExpressionFactory` is conveniently instanciated at startup as
-    :class:`wolframclient.wl`, without any context specified, and as
-    :class:`wolframclient.system` with ``System``` context.
+    :class:`wolframclient.language.wl`, without any context specified, and as
+    :class:`wolframclient.language.system` with ``System``` context.
 
     Example::
 
-        import wolframclient.wl
+        import wolframclient.language.wl
         # Now
         wl.Now
         # Quantity[3, "Hours"]

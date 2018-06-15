@@ -12,7 +12,8 @@ from wolframclient.serializers.wxfencoder.wxfexpr import ARRAY_TYPES
 import wolframclient.serializers.wxfencoder.wxfexpr as wxfexpr
 
 class WXFSerializer(FormatSerializer):
-
+    ''' TODO
+    '''
     def __init__(self, normalizer = None, compress = False, enforce = False, **opts):
         super(WXFSerializer, self).__init__(normalizer = normalizer, **opts)
         self.compress = compress

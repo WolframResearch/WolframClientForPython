@@ -2,19 +2,18 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import logging
+import unittest
+
 from wolframclient.utils import six
 from wolframclient.utils.api import json
 from wolframclient.utils.encoding import force_text
-if not six.JYTHON:
-    from wolframclient.evaluation.cloud.cloudsession import encode_api_inputs, url_join
 from wolframclient.utils.tests import TestCase as BaseTestCase
-
-import logging
-import os
-import unittest
 from wolframclient.language import wl
 from wolframclient.serializers import export
-from wolframclient.evaluation import SecuredAuthenticationKey, UserCredentials, WolframCloudSession, Server
+if not six.JYTHON:
+    from wolframclient.evaluation import SecuredAuthenticationKey, UserIDPassword, WolframCloudSession
+    from wolframclient.evaluation.cloud.cloudsession import encode_api_inputs, url_join
 
 logging.basicConfig(filename='/tmp/python_testsuites.log',
                     filemode='a',
@@ -50,13 +49,17 @@ class TestCaseSettings(BaseTestCase):
             cls.json_user_config['SAK']['consumer_key'],
             cls.json_user_config['SAK']['consumer_secret']
             )
-        cls.user_cred = wolframclient.UserIDPassword(
+        cls.user_cred = UserIDPassword(
             cls.json_user_config['User']['id'],
             cls.json_user_config['User']['password']
         )
         cls.api_owner = cls.json_user_config.get('ApiOwner', 'dorianb')
 
         cls.session = WolframCloudSession(authentication=cls.sak)
+
+    def tearDown(self):
+        if self.session is not None:
+            self.session.terminate()
 
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 @unittest.skipIf(not os.path.exists(TestCaseSettings.user_config_file), "Need to configure credentials")

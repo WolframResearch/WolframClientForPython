@@ -9,6 +9,8 @@ from wolframclient.exception import AuthenticationException
 from wolframclient.language.expression import wl
 from wolframclient.serializers import export
 from wolframclient.utils import six
+if six.PY3:
+    from concurrent.futures import ThreadPoolExecutor
 from wolframclient.utils.api import json, requests
 
 import logging
@@ -16,6 +18,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 __all__ = ['WolframCloudSession']
+
 
 class WolframCloudSession(object):
     ''' Represents a session to a given cloud enabling simple API call.
@@ -34,7 +37,7 @@ class WolframCloudSession(object):
     a `WolframAPIResponse`. It is strongly advised to re-use a session to make multiple
     calls.
     '''
-    __slots__ = 'server', 'oauth', 'consumer', 'consumer_secret', 'user', 'password', 'is_xauth', 'evaluation_api_url', 'authentication'
+    __slots__ = 'server', 'oauth', 'consumer', 'consumer_secret', 'user', 'password', 'is_xauth', 'evaluation_api_url', 'authentication', 'thread_pool_exec'
 
     def __init__(self, authentication=None, server=WolframPublicCloudServer):
         self.server = server
@@ -47,6 +50,17 @@ class WolframCloudSession(object):
         self.user = None
         self.password = None
         self.is_xauth = None
+        self.thread_pool_exec = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.terminate()
+
+    def terminate(self):
+        if self.thread_pool_exec is not None:
+            self.thread_pool_exec.shutdown(wait=True)
 
     def authenticate(self):
         '''Authenticate with the server using the credentials.
@@ -105,7 +119,7 @@ class WolframCloudSession(object):
             return requests.post(
                 url, params=params, headers=headers, data=body, verify=self.server.verify)
 
-    def call(self, api, input_parameters={}, target_format='wl', permissions_key=None, **kargv):
+    def call(self, api, input_parameters={}, target_format='wl', permissions_key=None, **kwargv):
         ''' Call a given API, using the provided input parameters.
 
         `api` can be a string url or a tuple (`username`, `api name`). User name is
@@ -127,7 +141,7 @@ class WolframCloudSession(object):
         '''
         url = self._user_api_url(api)
         encoded_inputs = encode_api_inputs(
-            input_parameters, target_format=target_format, **kargv)
+            input_parameters, target_format=target_format, **kwargv)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Encoded input %s', encoded_inputs)
 
@@ -159,6 +173,8 @@ class WolframCloudSession(object):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(
                 'Sending expression to cloud server for evaluation: %s', data)
+        if not isinstance(data, six.string_types) and not isinstance(data, six.binary_type):
+            raise ValueError('Expecting string input, unicode or binary.')
         response = self._post(
             self.evaluation_api_url,
             body=data)
@@ -174,20 +190,70 @@ class WolframCloudSession(object):
         `expr` must be a Python object serializable by `wolframclient.serializers.export`
         '''
         return self._call_evaluation_api(export(expr))
+    
+    if six.PY3:
+        def _thread_pool_exec(self):
+            if self.thread_pool_exec is None:
+                self.thread_pool_exec = ThreadPoolExecutor()
+            return self.thread_pool_exec
 
-    def cloud_function(self, func):
-        return CloudFunction(self, func)
+        def call_async(self, api, input_parameters={}, target_format='wl', permissions_key=None, **kwargv):
+            ''' Call a given API asynchronously. Returns a
+            :class:`concurrent.futures.Future` object.
+
+            See :func:`WolframCloudSession.call`.
+            '''
+            return self._thread_pool_exec().submit(
+                self.call, api, input_parameters, target_format, permissions_key, **kwargv)
+
+        def _evaluate_async(self, data):
+            return self._thread_pool_exec().submit(self._call_evaluation_api, data)
+
+        def evaluate_async(self, expr):
+            ''' Send `expr` to the cloud for asynchronous evaluation. Returns a
+            :class:`concurrent.futures.Future` object.
+
+            `expr` must be a Python object serializable by `wolframclient.serializers.export`
+            '''
+            return self._evaluate_async(export(expr))
+
+        def evaluate_string_async(self, expr):
+            ''' Send the string InputForm of an `expr` to the cloud for asynchronous evaluation.
+            Returns a :class:`concurrent.futures.Future` object.
+            '''
+            return self._evaluate_async(expr)
+
+        def cloud_function(self, func, asynchronous=False):
+            return CloudFunction(self, func, asynchronous=asynchronous)
+    # Not python3, no asynchronous evaluation.
+    else: 
+        def cloud_function(self, func):
+            return CloudFunction(self, func)
 
     def __repr__(self):
         return '<{}:base={}, authorized={}>'.format(self.__class__.__name__, self.server.cloudbase, self.authorized)
 
+
 class CloudFunction(object):
-    def __init__(self, session, func):
-        self.session = session
-        self.func = func
+    if six.PY3:
+        def __init__(self, session, func, asynchronous=False):
+            self.session = session
+            self.func = func
+            if not six.PY3 and asynchronous:
+                raise Warning('Asynchronous')
+            if asynchronous:
+                self.evaluation_func = WolframCloudSession.evaluate
+            else:
+                self.evaluation_func = WolframCloudSession.evaluate_async
+    else:
+        def __init__(self, session, func):
+            self.session = session
+            self.func = func
+            self.evaluation_func = WolframCloudSession.evaluate_async
 
     def __call__(self, *args):
-        return self.session.evaluate(wl.Construct(self.func, *args))
+        return self.evaluation_func(wl.Construct(self.func, *args))
+
 
 def _encode_inputs_as_wxf(inputs, **kwargs):
     encoded_inputs = {}
@@ -196,12 +262,14 @@ def _encode_inputs_as_wxf(inputs, **kwargs):
         encoded_inputs[name] = export(value, target_format='wxf', **kwargs)
     return encoded_inputs
 
+
 def _encode_inputs_as_json(inputs, **kwargs):
     encoded_inputs = {}
     for name, value in inputs.items():
         name = name + '__json'
         encoded_inputs[name] = json.dumps(value, **kwargs)
     return encoded_inputs
+
 
 def _encode_inputs_as_wl(inputs, **kwargs):
     encoded_inputs = {}

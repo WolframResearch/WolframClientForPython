@@ -4,9 +4,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.utils import six
 
-__all__ = ['Server']
+__all__ = ['WolframServer']
 
-class Server(object):
+class WolframServer(object):
     ''' Represents the cloud server.
 
     Contains the authentication endpoints informations, the API endpoint aka. the
@@ -40,7 +40,7 @@ class Server(object):
             raise ValueError('Invalid certificate. Must be a string type or None.')
 
 # A built-in instance representing the Wolfram public Cloud.
-WolframPublicCloudServer = Server(
+WolframPublicCloudServer = WolframServer(
     'https://www.wolframcloud.com',
     'https://account.wolfram.com/auth/request-token',
     'https://account.wolfram.com/auth/access-token',

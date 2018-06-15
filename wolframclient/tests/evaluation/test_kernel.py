@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-
-import wolframclient
-from wolframclient.utils.tests import TestCase as BaseTestCase
-from wolframclient.utils import six
-
 import logging
 import unittest
+from wolframclient.language import wl
+from wolframclient.utils.tests import TestCase as BaseTestCase
+from wolframclient.utils import six
+if not six.JYTHON:
+    from wolframclient.evaluation import WolframLanguageSession
+
 
 logging.basicConfig(filename='/tmp/python_testsuites.log',
                     filemode='a',
@@ -18,9 +19,11 @@ logger = logging.getLogger(__name__)
 
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 class TestCase(BaseTestCase):
+
     KERNEL_PATH = '/Applications/Mathematica.app/Contents/MacOS/WolframKernel'
+
     def setUp(self):
-        self.session = wolframclient.WolframLanguageSession(TestCase.KERNEL_PATH)
+        self.session = WolframLanguageSession(TestCase.KERNEL_PATH, log_kernel=False)
         self.session.start()
 
     def tearDown(self):
@@ -29,23 +32,30 @@ class TestCase(BaseTestCase):
 
     def test_evaluate_basic_inputform(self):
         res = self.session.evaluate('1+1')
-        self.assertEqual(res, b'2')
+        self.assertEqual(res.result(), b'2')
 
     def test_evaluate_basic_wl(self):
-        res = self.session.evaluate(wolframclient.wl.Plus(1, 2))
-        self.assertEqual(res, b'3')
+        res = self.session.evaluate(wl.Plus(1, 2))
+        self.assertEqual(res.result(), b'3')
 
     def test_evaluate_variable_updates(self):
-        with wolframclient.WolframLanguageSession(TestCase.KERNEL_PATH) as new_session:
-            new_session.evaluate('x=1')
-            new_session.evaluate('x++')
-            res = new_session.evaluate('x+=10')
-            self.assertEqual(res, b'12')
+        self.session.evaluate('ClearAll[x]; x=1')
+        self.session.evaluate('x++')
+        res = self.session.evaluate('x+=10')
+        self.assertEqual(res.result(), b'12')
 
     def test_evaluate_variable_context(self):
-        with wolframclient.WolframLanguageSession(TestCase.KERNEL_PATH) as new_session:
-            new_session.evaluate('x[] := foo')
-            res = new_session.evaluate('Context[x]')
-            self.assertEqual(res, b'"Global`"')
-            res = new_session.evaluate('Context[info]')
-            self.assertEqual(res, b'"Global`"')
+        self.session.evaluate('ClearAll[x]; x[] := foo')
+        res = self.session.evaluate('Context[x]')
+        self.assertEqual(res.result(), b'"Global`"')
+        res = self.session.evaluate('Context[info]')
+        self.assertEqual(res.result(), b'"Global`"')
+
+    @unittest.skipIf(six.PY2, "No async call on Python2.")
+    def test_evaluate_async(self):
+        future1 = self.session.evaluate_async('3+4')
+        future2 = self.session.evaluate_async('10+1')
+        future3 = self.session.evaluate_async('100+1')
+        self.assertEqual(future1.result().result(), b'7')
+        self.assertEqual(future2.result().result(), b'11')
+        self.assertEqual(future3.result().result(), b'101')
