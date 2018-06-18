@@ -187,7 +187,7 @@ class WolframCloudSession(object):
     def evaluate(self, expr):
         ''' Send `expr` to the cloud for evaluation.
 
-        `expr` must be a Python object serializable by `wolframclient.serializers.export`
+        `expr` must be a Python object serializable by :func:`<export> wolframclient.serializers.export`
         '''
         return self._call_evaluation_api(export(expr))
     
@@ -213,7 +213,7 @@ class WolframCloudSession(object):
             ''' Send `expr` to the cloud for asynchronous evaluation. Returns a
             :class:`concurrent.futures.Future` object.
 
-            `expr` must be a Python object serializable by `wolframclient.serializers.export`
+            `expr` must be a Python object serializable by :func:`<export> wolframclient.serializers.export`
             '''
             return self._evaluate_async(export(expr))
 

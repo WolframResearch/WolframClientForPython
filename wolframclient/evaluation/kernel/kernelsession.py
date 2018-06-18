@@ -7,7 +7,7 @@ from threading import Thread, Event
 from wolframclient.utils.six import string_types, binary_type, integer_types, PY3, JYTHON
 if PY3:
     from concurrent.futures import ThreadPoolExecutor
-from wolframclient.serializers.export import export
+from wolframclient.serializers import export
 from wolframclient.language.expression import wl
 from wolframclient.exception import WolframKernelException
 from wolframclient.utils.encoding import force_text

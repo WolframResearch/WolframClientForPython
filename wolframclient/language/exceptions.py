@@ -8,7 +8,11 @@ from wolframclient.utils.decorators import to_dict
 from wolframclient.utils.encoding import safe_force_text
 
 class WolframLanguageException(WLSerializable, Exception):
+    ''' The most generic exception raised by the wolframclient library.
 
+    This class is :class:`WLSerializable <wolframclient.serializers.serializable.WLSerializable>`,
+    and will automatically serialize to a failure box when evaluated in a Wolfram Desktop.
+    '''
     def __init__(self, payload, exec_info = None):
 
         self.payload = payload
