@@ -1,3 +1,5 @@
+(* ::Package:: *)
+
 (* Not useful since we apparently never receive multipart messages,
 no matter the total size (tested with 80MB) *)
 
@@ -18,7 +20,7 @@ no matter the total size (tested with 80MB) *)
 
 Needs["GeneralUtilities`"]
 
-Begin["ClientLibrary`"]
+Begin["ClientLibrary`"];
 
 debug;
 info;
@@ -26,7 +28,7 @@ warn;
 error;
 
 
-Begin["`Private`"]
+Begin["`Private`"];
 
 $DEBUG=1;
 $INFO=2;
@@ -64,7 +66,7 @@ timed[expr_, label_String] := Block[
 
 readableTiming[timing_] := Which[
 	timing < 10*^-3,
-	ToString[N[timing/10.*^-6]] <> "µs",
+	ToString[N[timing/10.*^-6]] <> "\[Micro]s",
 	timing < 1,
 	ToString[N[timing/10.*^-3]] <> "ms",
 	True,
