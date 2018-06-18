@@ -166,7 +166,7 @@ class WolframLanguageSession(object):
         # Exception handling here
         if self.kernel_proc is not None:
             try:
-                self.in_socket.zmq_socket.send_string('Quit[]')
+                self.in_socket.zmq_socket.send_string('Quit[]', flags=zmq.NOBLOCK)
                 self.kernel_proc.stdout.close()
                 self.kernel_proc.stdin.close()
                 self.kernel_proc.terminate()
@@ -175,16 +175,28 @@ class WolframLanguageSession(object):
                 logger.warning('Failed to cleanly stop the kernel process. Killing it.')
                 self.kernel_proc.kill()
         if self.in_socket is not None:
-            self.in_socket.close()
+            try:
+                self.in_socket.close()
+            except Exception as e:
+                logger.fatal(e)
         if self.out_socket is not None:
-            self.out_socket.close()
+            try:
+                self.out_socket.close()
+            except Exception as e:
+                logger.fatal(e)
         if self.kernel_logger is not None:
-            self.kernel_logger.stopped.set()
-            self.kernel_logger.join()
+            try:
+                self.kernel_logger.stopped.set()
+                self.kernel_logger.join()
+            except Exception as e:
+                logger.fatal(e)
         if self.thread_pool_exec is not None:
-            self.thread_pool_exec.shutdown(wait=True)
+            try:
+                self.thread_pool_exec.shutdown(wait=True)
+            except Exception as e:
+                logger.fatal(e)
 
-    KERNEL_OK = b'OK'
+    _KERNEL_OK = b'OK'
 
     def start(self):
         # start the evaluation zmq sockets
@@ -209,36 +221,32 @@ class WolframLanguageSession(object):
         try:
             # from asyncio import create_subprocess_exec
             # (self.kernel_proc, _) = await create_subprocess_exec(*cmd, stdout=PIPE)
-
             self.kernel_proc = Popen(cmd, stdout=PIPE, stdin=PIPE)
             if logger.isEnabledFor(logging.INFO):
                 logger.info('Kernel process started with PID: %s' % self.kernel_proc.pid)
                 # logger.info('Kernel process started with PID: %s' % self.kernel_proc.get_pid())
                 t_start = time.perf_counter()
-            # First message must be "OK", acknowledging everything is up and running 
-            # on the kernel side.
-            response = self.out_socket._read_timeout(timeout=20)
-            if response == WolframLanguageSession.KERNEL_OK:
-                if logger.isEnabledFor(logging.INFO):
-                    logger.info(
-                        'Kernel is ready. Startup took %.2f seconds.', time.perf_counter() - t_start)
-            else:
-                # this will probably fails on remote kernels (broken pipe?)
-                for line in _non_blocking_pipe_readline(self.kernel_proc.stdout):
-                # for line in _non_blocking_pipe_readline(self.kernel_proc.get_pipe_transport(1)):
-                    last = force_text(line.rstrip())
-                    logger.warn(last)
-                raise WolframKernelException(
-                    'Failed to establish communication with the kernel. See log for more information.')
-        except SocketException as se:
-            logger.fatal(se)
-            self.terminate()
-            raise WolframKernelException(
-                'Failed to communication with the kernel. Could not read from ZMQ socket.')
         except Exception as e:
             logger.fatal(e)
             self.terminate()
             raise e
+        try:
+            # First message must be "OK", acknowledging everything is up and running 
+            # on the kernel side.
+            response = self.out_socket._read_timeout(timeout=20)
+        except SocketException as se:
+            logger.fatal(se)
+            self._dump_pipe_to_log(self.kernel_proc.stdout)
+            self.terminate()
+            raise WolframKernelException('Failed to communication with the kernel. Could not read from ZMQ socket.')
+        if response == WolframLanguageSession._KERNEL_OK:
+            if logger.isEnabledFor(logging.INFO):
+                logger.info(
+                    'Kernel is ready. Startup took %.2f seconds.', time.perf_counter() - t_start)
+            else:
+                self._dump_pipe_to_log(self.kernel_proc.stdout)
+                self.terminate()
+                raise WolframKernelException('Kernel failed to start properly.')
 
     @property
     def started(self):
@@ -267,6 +275,13 @@ class WolframLanguageSession(object):
 
             return self.thread_pool_exec.submit(self.evaluate, expr, **kwargs)
 
+    def _dump_pipe_to_log(self, pipe):
+        # this will probably fails on remote kernels (broken pipe?)
+        for line in _non_blocking_pipe_readline(pipe):
+            last = force_text(line.rstrip())
+            logger.warn(last)
+                
+                
     def __repr__(self):
         return '<WolframLanguageSession: in:%s, out:%s>' % (self.in_socket.uri, self.out_socket.uri)
 
