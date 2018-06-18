@@ -164,7 +164,7 @@ class WXFExprSerializer(object):
     """ Pulls instances of `WXFExpr` from an `WXFExprProvider`, serializes them into wxf bytes and write the data to
     a stream. Ensures the output data is a valid WXF encoded expression, and raises an exception otherwise.
 
-    See `tutorial/WXFFormatDescription` from Mathematica documentation or visit http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html
+    See `tutorial/WXFFormatDescription` from Wolfram documentation or visit http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html
     for an in depth description of the format.
     """
     __slots__ = '_expr_provider', '_writer', '_context', '_compress', '_enforce'

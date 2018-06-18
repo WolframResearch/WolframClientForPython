@@ -83,7 +83,7 @@ class WolframLanguageSession(object):
 
         from  wolframclient.evaluation import WolframKernel, WolframLanguageSession
 
-        kernel = WolframKernel('/Applications/Mathematica.app/Contents/MacOS/WolframKernel')
+        kernel = WolframKernel('/Applications/Wolfram\ Desktop.app/Contents/MacOS/WolframKernel')
         with WolframLanguageSession(kernel) as session:
             session.evaluate('Range[3]')
 
@@ -353,7 +353,7 @@ class WolframKernel(object):
         self.host = host
 
     def _sensible_path(self):
-        return '/Applications/Mathematica.app/Contents/MacOS/WolframKernel'
+        return '/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel'
 
     def __repr__(self):
         return '<WolframKernel %s on %s>' % (self.host, self.path)

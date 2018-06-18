@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 class TestCase(BaseTestCase):
 
-    KERNEL_PATH = '/Applications/Mathematica.app/Contents/MacOS/WolframKernel'
+    KERNEL_PATH = '/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel'
 
     def setUp(self):
         self.session = WolframLanguageSession(TestCase.KERNEL_PATH, log_kernel=False)
