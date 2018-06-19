@@ -195,7 +195,7 @@ class WolframEvaluationResponse(WolframEvaluationResult):
                 self.success = self.json['Success']
                 self.expr = self.json['Result']
                 if not self.success:
-                    logger.warn('Evaluation failed: %s',
+                    logger.warning('Evaluation failed: %s',
                                 '\n\t'.join(self.json.get('MessagesText', 'Missing field "MessagesText" in response.')))
                     self.failure = self.json['FailureType']
             except json.JSONDecodeError as e:

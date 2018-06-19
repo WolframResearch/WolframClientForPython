@@ -24,6 +24,8 @@ class TestCase(BaseTestCase):
 
     def setUp(self):
         self.session = WolframLanguageSession(TestCase.KERNEL_PATH, log_kernel=False)
+        self.session.set_parameter('STARTUP_READ_TIMEOUT', 2)
+        self.session.set_parameter('TERMINATE_READ_TIMEOUT', 1)
         self.session.start()
 
     def tearDown(self):

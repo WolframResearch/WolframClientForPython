@@ -11,7 +11,7 @@ __all__ = ['WolframCall', 'WolframAPICall']
 
 
 class WolframCall(object):
-    ''' Primary interface to evaluate Wolfram Language code.
+    """Primary interface to evaluate Wolfram Language code.
 
     The wolfram call can be evaluated on various targets.
     * a kernel, when `input` is an instance of
@@ -37,7 +37,8 @@ class WolframCall(object):
         ...
         b'2'
 
-    '''
+    """
+    
     def __init__(self, target, input):
         self.target = target
         self.input = input
@@ -64,9 +65,9 @@ class WolframCall(object):
                              input.__class__.__name__)
 
         return self.target.evaluate(self.input).result()
-    if PY3:
-        def perform_async(self):
-            return self.target.evaluate_async(self.input)
+
+    def perform_async(self):
+        return self.target.evaluate_async(self.input)
 
 
 class WolframAPICall(object):

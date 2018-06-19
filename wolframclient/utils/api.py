@@ -19,6 +19,10 @@ json = API(
     JSONDecodeError = 'json.decoder.JSONDecodeError'
 )
 
+futures = API(
+    ThreadPoolExecutor='concurrent.futures.ThreadPoolExecutor'
+)
+
 requests = API(
     get     = 'requests.get',
     post    = 'requests.post',

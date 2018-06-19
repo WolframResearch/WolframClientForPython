@@ -57,16 +57,14 @@ class OAuthSession(object):
         self.server = server
 
     def _check_response(self, response):
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('[Auth] Code: %i\nBody: %s', response.status_code, response.text)
         if response.status_code == 200:
             return
-        if response.status_code == 400:
-            try:
-                as_json = response.json()
-                msg = as_json.get('message', None)
-            except:
-                pass
+        try:
+            as_json = response.json()
+            msg = as_json.get('message', None)
+        # msg is None if response is not JSON, but it's fine.
+        except:
+            pass
         raise AuthenticationException(response, msg)
 
     def _update_client(self):
@@ -129,7 +127,7 @@ class OAuthSession(object):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Signed uri: %s', uri)
             logger.debug('Signed header: %s', req_headers)
-            logger.debug('Signed body: %s', sign_body)
+            logger.debug('Is body signed: %s', sign_body)
 
         return requests.request(method, uri,
             headers=req_headers,

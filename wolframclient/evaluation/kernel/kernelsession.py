@@ -5,8 +5,7 @@ from os.path import expandvars, expanduser, dirname, join as path_join
 from subprocess import Popen, PIPE
 from threading import Thread, Event
 from wolframclient.utils.six import string_types, binary_type, integer_types, PY3, JYTHON
-if PY3:
-    from concurrent.futures import ThreadPoolExecutor
+from wolframclient.utils.api import futures
 from wolframclient.serializers import export
 from wolframclient.language.expression import wl
 from wolframclient.exception import WolframKernelException
@@ -64,7 +63,7 @@ class KernelLogger(Thread):
         finally:
             logger.info('Terminating kernel logger thread.')
             if msg_after_quit == KernelLogger.MAX_MESSAGE_BEFORE_QUIT:
-                logger.warn('The maximum number of messages to log after a session finishes has been reached. \
+                logger.warning('The maximum number of messages to log after a session finishes has been reached. \
                 Some messages may have been discarded.')
             try:
                 self.socket.close()
@@ -83,7 +82,7 @@ class WolframLanguageSession(object):
 
         from  wolframclient.evaluation import WolframKernel, WolframLanguageSession
 
-        kernel = WolframKernel('/Applications/Wolfram\ Desktop.app/Contents/MacOS/WolframKernel')
+        kernel = WolframKernel('/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel')
         with WolframLanguageSession(kernel) as session:
             session.evaluate('Range[3]')
 
@@ -98,7 +97,7 @@ class WolframLanguageSession(object):
 
     * ``ClientLibrary`debug`` corresponding to :py:meth:`logging.Logger.debug`
     * ``ClientLibrary`info`` corresponding to :py:meth:`logging.Logger.info`
-    * ``ClientLibrary`warn`` corresponding to :py:meth:`logging.Logger.warn`
+    * ``ClientLibrary`warn`` corresponding to :py:meth:`logging.Logger.warning`
     * ``ClientLibrary`error`` corresponding to :py:meth:`logging.Logger.error`
 
     '''
@@ -153,6 +152,36 @@ class WolframLanguageSession(object):
         self.kernel_logger = None
         self.evaluation_count = 0
         self.thread_pool_exec = None
+        self.parameters = {}
+
+    _DEFAULT_PARAMETERS = {
+        'STARTUP_READ_TIMEOUT': 20,
+        'STARTUP_RETRY_SLEEP_TIME': 0.001,
+        'TERMINATE_READ_TIMEOUT': 3,
+    }
+
+    def get_parameter(self, parameter_name):
+        try:
+            return self.parameters.get(parameter_name, self._DEFAULT_PARAMETERS.get(parameter_name))
+        except KeyError:
+            raise KeyError('%s has no such parameter %s' %
+                           (self.__class__.__name__, parameter_name))
+
+    def set_parameter(self, parameter_name, parameter_value):
+        ''' Set a new value for a given parameter. This change only
+        apply for a given session.
+        
+        Session parameters are:
+        * 'STARTUP_READ_TIMEOUT': time to wait, in seconds, after the kernel start-up was requested. 
+        Default is 20 seconds,
+        * 'STARTUP_RETRY_SLEEP_TIME': time to sleep, in seconds, before checking that the initilazed kernel has responded. 
+        Default is 1 ms.
+        'TERMINATE_READ_TIMEOUT': time to wait, in seconds, after the ``Quit[]`` command was sent to the kernel.
+        The kernel is killed after this duration. Default is 3 seconds.
+        '''
+        if parameter_name not in self._DEFAULT_PARAMETERS:
+            raise KeyError('%s is not a valid parameter name.' % parameter_name)
+        self.parameters[parameter_name] = parameter_value
 
     def __enter__(self):
         self.start()
@@ -170,7 +199,7 @@ class WolframLanguageSession(object):
                 self.kernel_proc.stdout.close()
                 self.kernel_proc.stdin.close()
                 self.kernel_proc.terminate()
-                self.kernel_proc.wait(timeout=3)
+                self.kernel_proc.wait(timeout=self.get_parameter('TERMINATE_READ_TIMEOUT'))
             except:
                 logger.warning('Failed to cleanly stop the kernel process. Killing it.')
                 self.kernel_proc.kill()
@@ -233,20 +262,22 @@ class WolframLanguageSession(object):
         try:
             # First message must be "OK", acknowledging everything is up and running 
             # on the kernel side.
-            response = self.out_socket._read_timeout(timeout=20)
+            response = self.out_socket._read_timeout(
+                timeout=self.get_parameter('STARTUP_READ_TIMEOUT'), 
+                retry_sleep_time=self.get_parameter('STARTUP_RETRY_SLEEP_TIME'))
+            if response == WolframLanguageSession._KERNEL_OK:
+                if logger.isEnabledFor(logging.INFO):
+                    logger.info(
+                        'Kernel is ready. Startup took %.2f seconds.', time.perf_counter() - t_start)
+                else:
+                    self._dump_pipe_to_log(self.kernel_proc.stdout)
+                    self.terminate()
+                    raise WolframKernelException('Kernel failed to start properly.')
         except SocketException as se:
             logger.fatal(se)
             self._dump_pipe_to_log(self.kernel_proc.stdout)
             self.terminate()
             raise WolframKernelException('Failed to communication with the kernel. Could not read from ZMQ socket.')
-        if response == WolframLanguageSession._KERNEL_OK:
-            if logger.isEnabledFor(logging.INFO):
-                logger.info(
-                    'Kernel is ready. Startup took %.2f seconds.', time.perf_counter() - t_start)
-            else:
-                self._dump_pipe_to_log(self.kernel_proc.stdout)
-                self.terminate()
-                raise WolframKernelException('Kernel failed to start properly.')
 
     @property
     def started(self):
@@ -268,20 +299,25 @@ class WolframLanguageSession(object):
         self.evaluation_count += 1
         return WolframEvaluationResult(expr=msgstr)
 
-    if PY3:
-        def evaluate_async(self, expr, **kwargs):
+    def evaluate_async(self, expr, **kwargs):
+        try:
             if self.thread_pool_exec is None:
-                self.thread_pool_exec = ThreadPoolExecutor(max_workers=1)
-
+                self.thread_pool_exec = futures.ThreadPoolExecutor(max_workers=1)
             return self.thread_pool_exec.submit(self.evaluate, expr, **kwargs)
+        except ImportError:
+            logger.fatal('Module concurrent.futures is missing.')
+            raise NotImplementedError('Asynchronous evaluation is not available on this Python interpreter.')
+
 
     def _dump_pipe_to_log(self, pipe):
         # this will probably fails on remote kernels (broken pipe?)
-        for line in _non_blocking_pipe_readline(pipe):
-            last = force_text(line.rstrip())
-            logger.warn(last)
-                
-                
+        try:
+            for line in _non_blocking_pipe_readline(pipe):
+                last = force_text(line.rstrip())
+                logger.warning(last)
+        except Exception as e:
+            logger.warn('Exception occured while reading pipe: %s', e)
+
     def __repr__(self):
         return '<WolframLanguageSession: in:%s, out:%s>' % (self.in_socket.uri, self.out_socket.uri)
 
@@ -329,9 +365,7 @@ class Socket(object):
         self.bound = True
         return self.zmq_socket
 
-    RETRY_SLEEP_TIME = 0.01
-
-    def _read_timeout(self, timeout=2.):
+    def _read_timeout(self, timeout=2., retry_sleep_time=0.001):
         if not self.bound:
             raise SocketException('ZMQ socket not bound.')
         if timeout < 0:
@@ -343,7 +377,7 @@ class Socket(object):
                 return self.zmq_socket.recv(flags=zmq.NOBLOCK)
             except zmq.Again:
                 retry += 1
-                time.sleep(Socket.RETRY_SLEEP_TIME)
+                time.sleep(retry_sleep_time)
         raise SocketException('Read time out. Failed to read any message from socket %s after %.1f seconds and %i retries.'
                               % (self.uri, time.perf_counter() - start, retry))
 

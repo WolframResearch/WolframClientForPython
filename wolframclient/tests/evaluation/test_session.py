@@ -4,6 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
 import unittest
+import os
 
 from wolframclient.utils import six
 from wolframclient.utils.api import json

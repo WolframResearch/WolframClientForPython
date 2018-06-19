@@ -15,7 +15,8 @@ logger = logging.getLogger(__name__)
 
 
 # @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
-# class TestCase(BaseTestCase):
+class TestCase(BaseTestCase):
+    pass
 
 #     KERNEL_PATH = '/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel'
 

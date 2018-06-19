@@ -181,54 +181,74 @@ class WolframCloudSession(object):
         return WolframEvaluationResponse(response)
 
     def evaluate_string(self, expr):
-        ''' Send the string InputForm of an `expr` to the cloud for evaluation. '''
+        """Send the string InputForm of an `expr` to the cloud for evaluation."""
         return self._call_evaluation_api(expr)
 
     def evaluate(self, expr):
-        ''' Send `expr` to the cloud for evaluation.
+        """Send `expr` to the cloud for evaluation.
 
         `expr` must be a Python object serializable by :func:`<export> wolframclient.serializers.export`
-        '''
+        """
         return self._call_evaluation_api(export(expr))
     
-    if six.PY3:
-        def _thread_pool_exec(self):
-            if self.thread_pool_exec is None:
+    def _thread_pool_exec(self):
+        if self.thread_pool_exec is None:
+            try:
                 self.thread_pool_exec = ThreadPoolExecutor()
-            return self.thread_pool_exec
+            except ImportError:
+                logger.fatal('Module concurrent.futures is missing.')
+                raise NotImplementedError('Asynchronous evaluation is not available for this Python interpreter.')
+        return self.thread_pool_exec
 
-        def call_async(self, api, input_parameters={}, target_format='wl', permissions_key=None, **kwargv):
-            ''' Call a given API asynchronously. Returns a
-            :class:`concurrent.futures.Future` object.
+    def call_async(self, api, input_parameters={}, target_format='wl', permissions_key=None, **kwargv):
+        """Call a given API asynchronously. Returns a :class:`concurrent.futures.Future` object.
 
-            See :func:`WolframCloudSession.call`.
-            '''
-            return self._thread_pool_exec().submit(
+        This method requires :mod:`concurrent.futures` which was introduced in `Python 3.2`.
+        See :func:`WolframCloudSession.call` for more details about input parameters.
+        """
+        return self._thread_pool_exec().submit(
                 self.call, api, input_parameters, target_format, permissions_key, **kwargv)
 
-        def _evaluate_async(self, data):
-            return self._thread_pool_exec().submit(self._call_evaluation_api, data)
+    def _evaluate_async(self, data):
+        return self._thread_pool_exec().submit(self._call_evaluation_api, data)
 
-        def evaluate_async(self, expr):
-            ''' Send `expr` to the cloud for asynchronous evaluation. Returns a
-            :class:`concurrent.futures.Future` object.
+    def evaluate_async(self, expr):
+        """Send `expr` to the cloud for asynchronous evaluation.
+        
+        Returns a
+        :class:`concurrent.futures.Future` object.
 
-            `expr` must be a Python object serializable by :func:`<export> wolframclient.serializers.export`
-            '''
-            return self._evaluate_async(export(expr))
+        `expr` must be a Python object serializable by :func:`<export> wolframclient.serializers.export`
 
-        def evaluate_string_async(self, expr):
-            ''' Send the string InputForm of an `expr` to the cloud for asynchronous evaluation.
-            Returns a :class:`concurrent.futures.Future` object.
-            '''
-            return self._evaluate_async(expr)
+        .. warning::
+            Asynchronous evaluation is only available for `Python 3.2` and above.
 
-        def cloud_function(self, func, asynchronous=False):
-            return CloudFunction(self, func, asynchronous=asynchronous)
-    # Not python3, no asynchronous evaluation.
-    else: 
-        def cloud_function(self, func):
-            return CloudFunction(self, func)
+        """
+        return self._evaluate_async(export(expr))
+
+    def evaluate_string_async(self, expr):
+        """Send the string InputForm of an `expr` to the cloud for asynchronous evaluation.
+
+        Returns a :class:`concurrent.futures.Future` object.
+
+        .. warning::
+            Asynchronous evaluation is only available for `Python 3.2` and above.
+
+        """
+        return self._evaluate_async(expr)
+
+    def cloud_function(self, func, asynchronous=False):
+        """Return a `callable` cloud function.
+        
+        The object returned can be applied on arguments as any other Python function, and 
+        is evaluated in the cloud as a Wolfram Language expression using the current cloud 
+        session.
+
+        .. warning::
+            Asynchronous evaluation is only available for `Python 3.2` and above.
+
+        """
+        return CloudFunction(self, func, asynchronous=asynchronous)
 
     def __repr__(self):
         return '<{}:base={}, authorized={}>'.format(self.__class__.__name__, self.server.cloudbase, self.authorized)
