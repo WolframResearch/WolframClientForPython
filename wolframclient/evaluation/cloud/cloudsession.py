@@ -9,9 +9,7 @@ from wolframclient.exception import AuthenticationException
 from wolframclient.language.expression import wl
 from wolframclient.serializers import export
 from wolframclient.utils import six
-if six.PY3:
-    from concurrent.futures import ThreadPoolExecutor
-from wolframclient.utils.api import json, requests
+from wolframclient.utils.api import json, requests, futures
 
 import logging
 
@@ -21,7 +19,7 @@ __all__ = ['WolframCloudSession']
 
 
 class WolframCloudSession(object):
-    ''' Represents a session to a given cloud enabling simple API call.
+    """Represents a session to a given cloud enabling simple API call.
 
     This is the central class of the cloud evaluation package. It is
     initialized with a server instance representing a given cloud. The
@@ -36,7 +34,8 @@ class WolframCloudSession(object):
     Calling an API is done throught the method `call` which will return an instance of
     a `WolframAPIResponse`. It is strongly advised to re-use a session to make multiple
     calls.
-    '''
+    """
+    
     __slots__ = 'server', 'oauth', 'consumer', 'consumer_secret', 'user', 'password', 'is_xauth', 'evaluation_api_url', 'authentication', 'thread_pool_exec'
 
     def __init__(self, authentication=None, server=WolframPublicCloudServer):
@@ -194,7 +193,7 @@ class WolframCloudSession(object):
     def _thread_pool_exec(self):
         if self.thread_pool_exec is None:
             try:
-                self.thread_pool_exec = ThreadPoolExecutor()
+                self.thread_pool_exec = futures.ThreadPoolExecutor()
             except ImportError:
                 logger.fatal('Module concurrent.futures is missing.')
                 raise NotImplementedError('Asynchronous evaluation is not available for this Python interpreter.')
@@ -255,20 +254,12 @@ class WolframCloudSession(object):
 
 
 class CloudFunction(object):
-    if six.PY3:
-        def __init__(self, session, func, asynchronous=False):
-            self.session = session
-            self.func = func
-            if not six.PY3 and asynchronous:
-                raise Warning('Asynchronous')
-            if asynchronous:
-                self.evaluation_func = WolframCloudSession.evaluate
-            else:
-                self.evaluation_func = WolframCloudSession.evaluate_async
-    else:
-        def __init__(self, session, func):
-            self.session = session
-            self.func = func
+    def __init__(self, session, func, asynchronous=False):
+        self.session = session
+        self.func = func
+        if asynchronous:
+            self.evaluation_func = WolframCloudSession.evaluate
+        else:
             self.evaluation_func = WolframCloudSession.evaluate_async
 
     def __call__(self, *args):
