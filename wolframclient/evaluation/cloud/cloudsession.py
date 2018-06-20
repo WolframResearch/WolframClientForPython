@@ -205,6 +205,9 @@ class WolframCloudSession(object):
 
         This method requires :mod:`concurrent.futures` which was introduced in `Python 3.2`.
         See :func:`WolframCloudSession.call` for more details about input parameters.
+        
+        .. warning::
+            Asynchronous evaluation is only available for `Python 3.2` and above.
         """
         return self._thread_pool_exec().submit(
                 self.call, api, input_parameters, target_format, permissions_key, **kwargv)
@@ -222,7 +225,6 @@ class WolframCloudSession(object):
 
         .. warning::
             Asynchronous evaluation is only available for `Python 3.2` and above.
-
         """
         return self._evaluate_async(export(expr))
 
@@ -233,7 +235,6 @@ class WolframCloudSession(object):
 
         .. warning::
             Asynchronous evaluation is only available for `Python 3.2` and above.
-
         """
         return self._evaluate_async(expr)
 
@@ -246,7 +247,6 @@ class WolframCloudSession(object):
 
         .. warning::
             Asynchronous evaluation is only available for `Python 3.2` and above.
-
         """
         return CloudFunction(self, func, asynchronous=asynchronous)
 

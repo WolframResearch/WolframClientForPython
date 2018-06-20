@@ -72,11 +72,10 @@ class KernelLogger(Thread):
 
 
 class WolframLanguageSession(object):
-    ''' A session to a Wolfram Kernel enabling evaluation of Wolfram
-    Language expressions.
+    """A session to a Wolfram Kernel enabling evaluation of Wolfram Language expressions.
 
     Example
-    -----------
+    -------
 
     Start a new session and send a expression for evaluation::
 
@@ -100,7 +99,8 @@ class WolframLanguageSession(object):
     * ``ClientLibrary`warn`` corresponding to :py:meth:`logging.Logger.warning`
     * ``ClientLibrary`error`` corresponding to :py:meth:`logging.Logger.error`
 
-    '''
+    """
+
     def __init__(self, kernel=None, initfile=None, log_kernel=True,
                  in_socket=None, out_socket=None, logger_socket=None):
         if kernel is None:
@@ -168,17 +168,15 @@ class WolframLanguageSession(object):
                            (self.__class__.__name__, parameter_name))
 
     def set_parameter(self, parameter_name, parameter_value):
-        ''' Set a new value for a given parameter. This change only
-        apply for a given session.
+        """Set a new value for a given parameter. This change only apply for a given session.
         
         Session parameters are:
-        * 'STARTUP_READ_TIMEOUT': time to wait, in seconds, after the kernel start-up was requested. 
-        Default is 20 seconds,
-        * 'STARTUP_RETRY_SLEEP_TIME': time to sleep, in seconds, before checking that the initilazed kernel has responded. 
-        Default is 1 ms.
-        'TERMINATE_READ_TIMEOUT': time to wait, in seconds, after the ``Quit[]`` command was sent to the kernel.
-        The kernel is killed after this duration. Default is 3 seconds.
-        '''
+
+        * ``'STARTUP_READ_TIMEOUT'``: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.
+        * ``'STARTUP_RETRY_SLEEP_TIME'``: time to sleep, in seconds, before checking that the initilazed kernel has responded. Default is 1 ms.
+        * ``'TERMINATE_READ_TIMEOUT'``: time to wait, in seconds, after the ``Quit[]`` command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.
+
+        """
         if parameter_name not in self._DEFAULT_PARAMETERS:
             raise KeyError('%s is not a valid parameter name.' % parameter_name)
         self.parameters[parameter_name] = parameter_value
@@ -300,6 +298,13 @@ class WolframLanguageSession(object):
         return WolframEvaluationResult(expr=msgstr)
 
     def evaluate_async(self, expr, **kwargs):
+        """Evaluate a given `expr` asynchronously.
+
+        Returns a :class:`concurrent.futures.Future` object.
+
+        .. warning::
+            Asynchronous evaluation is only available for `Python 3.2` and above.
+        """
         try:
             if self.thread_pool_exec is None:
                 self.thread_pool_exec = futures.ThreadPoolExecutor(max_workers=1)

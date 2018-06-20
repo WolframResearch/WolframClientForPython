@@ -53,6 +53,10 @@ class TestCase(BaseTestCase):
         res = self.session.evaluate('Context[info]')
         self.assertEqual(res.result(), b'"Global`"')
 
+    def test_malformed_expr(self):
+        res = self.session.evaluate('Range[5')
+        self.assertTrue(res.result().success)
+
     @unittest.skipIf(six.PY2, "No async call on Python2.")
     def test_evaluate_async(self):
         future1 = self.session.evaluate_async('3+4')
