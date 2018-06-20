@@ -5,6 +5,27 @@ from __future__ import absolute_import, print_function, unicode_literals
 __all__ = ['WLSerializable']
 
 class WLSerializable:
+    """A familly of classes that can be serialized using :func:`export <wolframclient.serializers.export>`.
+    
+    Custom serialization of a class is done by subclassing this class::
 
+        from wolframclient.serializers.serializable import WLSerializable
+        from wolframclient.language.expression import wl
+
+        class MyPythonClass(WLSerializable):
+            def __init__(self, *things):
+                self.things = things
+
+            def to_wl(self):
+                return wl.MyWolframFunction(*self.things)
+
+    :func:`export <wolframclient.serializers.export>` is able to serialize expressions recursively::
+
+        >>> export(MyPythonClass(1, 2, MyPythonClass(2, 3)))
+        'MyWolframFunction[1, 2, MyWolframFunction[2, 3]]'
+
+    """
+    
     def to_wl(self):
+        """Return a serialization of a given python class as a combinasion of WL serializable objects."""
         raise NotImplementedError('class %s must implement a to_wl method' % self.__class__.__name__)

@@ -9,9 +9,7 @@ from wolframclient.serializers import export
 from wolframclient.language.expression import wl
 from wolframclient.exception import WolframKernelException
 from wolframclient.utils.encoding import force_text
-
-if not JYTHON:
-    from wolframclient.evaluation.evaluationresult import WolframEvaluationResult
+from wolframclient.evaluation.evaluationresult import WolframEvaluationResult
 
 logger = logging.getLogger(__name__)
 
@@ -302,9 +300,9 @@ class WolframLanguageSession(object):
         """Send an expression to the kernel for evaluation.
         
         The `expr` must be a string of bytes or unicode, or an instance of Python object 
-        serializable by :func:`<export> wolframclient.serializers.export`.
+        serializable by :func:`export <wolframclient.serializers.export>`.
 
-        `kwargs` are passed to :func:`<export> wolframclient.serializers.export` during
+        `kwargs` are passed to :func:`export <wolframclient.serializers.export>` during
         serialization step of non-string input.
         """
         logger.debug('new evaluation on: %s', self)

@@ -15,12 +15,16 @@ available_formats = API(
 )
 
 def export(data, stream=None, target_format=DEFAULT_FORMAT, **options):
-    ''' Serialize input `data` to a target format.
+    """Serialize input `data` to a target format.
 
-    An output stream can be provided, in which case the output bytes are
-    written to it.
-    Input `data` must be serializable, i.e extends `WLSerializable`.
-    '''
+    An output stream can be provided, in which case the output bytes are written to it.
+    Input `data` must be serializable, i.e extends :class:`WLSerializable <wolframclient.serializers.serializable.WLSerializable>`,
+    or be one of the native Python types supported directly including: :class:`list`, :class:`dict`, etc::
+
+        >>> export(wl.Range(3))
+        'Range[3]'
+
+    """
     if not target_format in available_formats:
         raise ValueError('Invalid export format %s. Choices are: %s' % (
             target_format,
