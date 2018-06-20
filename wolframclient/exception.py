@@ -6,7 +6,8 @@ from wolframclient.language.exceptions import WolframLanguageException
 
 
 class RequestException(WolframLanguageException):
-    ''' Error in HTTP request.'''
+    """Error in HTTP request."""
+    
     __slots__ = 'response'
 
     def __init__(self, response, msg=None):
@@ -15,21 +16,32 @@ class RequestException(WolframLanguageException):
 
 
 class AuthenticationException(RequestException):
-    ''' Error in authentication request.'''
+    """Error in authentication request."""
+
     pass
 
 
 class EvaluationException(RequestException):
-    ''' Error while evaluating an expression.'''
+    """Error while evaluating an expression."""
+
     pass
 
 
 class WolframKernelException(WolframLanguageException):
-    ''' Error while interacting with a Wolfram Kernel.'''
+    """Error while interacting with a Wolfram Kernel."""
+    
     pass
+
+
+class SocketException(WolframLanguageException):
+    """Error while operating on socket."""
+
+    pass
+
 
 __all__ = ['WolframLanguageException',
            'RequestException',
            'AuthenticationException',
            'EvaluationException',
-           'WolframKernelException']
+           'WolframKernelException',
+           'SocketException']

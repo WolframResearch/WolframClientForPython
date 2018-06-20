@@ -1,23 +1,22 @@
 from __future__ import absolute_import, print_function
 import logging
 from math import floor
-from os.path import expandvars, expanduser, dirname, join as path_join
 from subprocess import Popen, PIPE
 from threading import Thread, Event
 from wolframclient.utils.six import string_types, binary_type, integer_types, PY3, JYTHON
-from wolframclient.utils.api import futures
+from wolframclient.utils.api import futures, zmq, time, os
 from wolframclient.serializers import export
 from wolframclient.language.expression import wl
 from wolframclient.exception import WolframKernelException
 from wolframclient.utils.encoding import force_text
-from wolframclient.utils.api import zmq, time
+
 if not JYTHON:
     from wolframclient.evaluation.evaluationresult import WolframEvaluationResult
 
 logger = logging.getLogger(__name__)
 
 
-__all__ = ['WolframLanguageSession', 'WolframKernel']
+__all__ = ['WolframLanguageSession']
 
 
 class KernelLogger(Thread):
@@ -79,9 +78,9 @@ class WolframLanguageSession(object):
 
     Start a new session and send a expression for evaluation::
 
-        from  wolframclient.evaluation import WolframKernel, WolframLanguageSession
+        from  wolframclient.evaluation import WolframLanguageSession
 
-        kernel = WolframKernel('/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel')
+        kernel = '/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel'
         with WolframLanguageSession(kernel) as session:
             session.evaluate('Range[3]')
 
@@ -103,18 +102,17 @@ class WolframLanguageSession(object):
 
     def __init__(self, kernel=None, initfile=None, log_kernel=True,
                  in_socket=None, out_socket=None, logger_socket=None):
-        if kernel is None:
-            self.kernel = WolframKernel()
-        elif isinstance(kernel, string_types):
-            self.kernel = WolframKernel(kernel)
-        elif isinstance(kernel, WolframKernel):
-            self.kernel = kernel
+        if isinstance(kernel, string_types):
+            if not os.isfile(kernel):
+                raise WolframKernelException('Kernel not found at %s.')
+            elif not os.access(kernel, os.X_OK):
+                raise WolframKernelException('Cannot execute kernel %s.')
+            else:
+                self.kernel = kernel
         else:
-            raise ValueError(
-                'Invalid kernel value. Expecting a filepath as a string or an instance of WolframKernel.')
-
+            raise ValueError('Invalid kernel value. Expecting a filepath as a string.')
         if initfile is None:
-            self.initfile = path_join(dirname(__file__), 'initkernel.m')
+            self.initfile = os.path_join(os.dirname(__file__), 'initkernel.m')
         else:
             self.initfile = initfile
         logger.debug('Initializing kernel using script: %s', self.initfile)
@@ -161,6 +159,14 @@ class WolframLanguageSession(object):
     }
 
     def get_parameter(self, parameter_name):
+        """Return the value of a given session parameter.
+
+        Session parameters are:
+
+        * ``'STARTUP_READ_TIMEOUT'``: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.
+        * ``'STARTUP_RETRY_SLEEP_TIME'``: time to sleep, in seconds, before checking that the initilazed kernel has responded. Default is 1 ms.
+        * ``'TERMINATE_READ_TIMEOUT'``: time to wait, in seconds, after the ``Quit[]`` command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.
+        """
         try:
             return self.parameters.get(parameter_name, self._DEFAULT_PARAMETERS.get(parameter_name))
         except KeyError:
@@ -168,28 +174,39 @@ class WolframLanguageSession(object):
                            (self.__class__.__name__, parameter_name))
 
     def set_parameter(self, parameter_name, parameter_value):
-        """Set a new value for a given parameter. This change only apply for a given session.
+        """Set a new value for a given parameter. The new value only applies for this session.
         
         Session parameters are:
 
         * ``'STARTUP_READ_TIMEOUT'``: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.
         * ``'STARTUP_RETRY_SLEEP_TIME'``: time to sleep, in seconds, before checking that the initilazed kernel has responded. Default is 1 ms.
         * ``'TERMINATE_READ_TIMEOUT'``: time to wait, in seconds, after the ``Quit[]`` command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.
-
         """
         if parameter_name not in self._DEFAULT_PARAMETERS:
             raise KeyError('%s is not a valid parameter name.' % parameter_name)
         self.parameters[parameter_name] = parameter_value
 
     def __enter__(self):
+        """Start the session."""
         self.start()
         return self
 
     def __exit__(self, type, value, traceback):
+        """Terminate the kernel process and close sockets."""
         self.terminate()
 
     def terminate(self):
-        logger.debug('Cleanning up kernel session.')
+        """Terminate the kernel process and close sockets.
+        
+        This function must be called when a given session is no more useful 
+        to prevent orfan processes and sockets from being generated.
+        
+        .. note::
+            Licencing restrictions usually apply to Wolfram kernels and may
+            prevent new instances from starting if too many kernels are running
+            simultaneously. Make sure to always terminate sessions to avoid
+            unexpected start-up errors.
+        """
         # Exception handling here
         if self.kernel_proc is not None:
             try:
@@ -199,7 +216,8 @@ class WolframLanguageSession(object):
                 self.kernel_proc.terminate()
                 self.kernel_proc.wait(timeout=self.get_parameter('TERMINATE_READ_TIMEOUT'))
             except:
-                logger.warning('Failed to cleanly stop the kernel process. Killing it.')
+                logger.warning('Failed to cleanly stop the kernel process after %.02f seconds. Killing it.' %
+                               self.get_parameter('TERMINATE_READ_TIMEOUT'))
                 self.kernel_proc.kill()
         if self.in_socket is not None:
             try:
@@ -226,11 +244,12 @@ class WolframLanguageSession(object):
     _KERNEL_OK = b'OK'
 
     def start(self):
+        """Start a new kernel process and open sockets to communicate with it."""
         # start the evaluation zmq sockets
         self.in_socket._bind()
         self.out_socket._bind()
         # start the kernel process
-        cmd = [self.kernel.path, '-noprompt', "-initfile", self.initfile]
+        cmd = [self.kernel, '-noprompt', "-initfile", self.initfile]
         if self.log:
             self.kernel_logger = KernelLogger(socket=self.logger_socket)
             self.kernel_logger.start()
@@ -246,12 +265,9 @@ class WolframLanguageSession(object):
             logger.debug('Kernel called using command: %s.' % ' '.join(cmd))
 
         try:
-            # from asyncio import create_subprocess_exec
-            # (self.kernel_proc, _) = await create_subprocess_exec(*cmd, stdout=PIPE)
             self.kernel_proc = Popen(cmd, stdout=PIPE, stdin=PIPE)
             if logger.isEnabledFor(logging.INFO):
                 logger.info('Kernel process started with PID: %s' % self.kernel_proc.pid)
-                # logger.info('Kernel process started with PID: %s' % self.kernel_proc.get_pid())
                 t_start = time.perf_counter()
         except Exception as e:
             logger.fatal(e)
@@ -279,9 +295,18 @@ class WolframLanguageSession(object):
 
     @property
     def started(self):
+        """Indicate if the current kernel session has started with reasably well accuracy."""
         return self.kernel_proc is not None
 
     def evaluate(self, expr, **kwargs):
+        """Send an expression to the kernel for evaluation.
+        
+        The `expr` must be a string of bytes or unicode, or an instance of Python object 
+        serializable by :func:`<export> wolframclient.serializers.export`.
+
+        `kwargs` are passed to :func:`<export> wolframclient.serializers.export` during
+        serialization step of non-string input.
+        """
         logger.debug('new evaluation on: %s', self)
         if not self.started:
             raise WolframKernelException('Kernel is not started.')
@@ -393,21 +418,21 @@ class Socket(object):
         return '<Socket: host=%s, port=%s>' % (self.host, self.port)
 
 
-class WolframKernel(object):
-    ''' Represents a Wolfram Kernel executable.
+# class WolframKernel(object):
+#     ''' Represents a Wolfram Kernel executable.
 
-    The kernel may live on a distant machine in which case the host
-    address must be specified.
-    '''
-    def __init__(self, path=None, host='127.0.0.1'):
-        if path is None:
-            self.path = self._sensible_path()
-        else:
-            self.path = expandvars(expanduser(path))
-        self.host = host
+#     The kernel may live on a distant machine in which case the host
+#     address must be specified.
+#     '''
+#     def __init__(self, path=None, host='127.0.0.1'):
+#         if path is None:
+#             self.path = self._sensible_path()
+#         else:
+#             self.path = expandvars(expanduser(path))
+#         self.host = host
 
-    def _sensible_path(self):
-        return '/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel'
+#     def _sensible_path(self):
+#         return '/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel'
 
-    def __repr__(self):
-        return '<WolframKernel %s on %s>' % (self.host, self.path)
+#     def __repr__(self):
+#         return '<WolframKernel %s on %s>' % (self.host, self.path)

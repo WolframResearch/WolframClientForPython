@@ -18,6 +18,15 @@ json = API(
     load            = 'json.load',
     JSONDecodeError = 'json.decoder.JSONDecodeError'
 )
+os = API(
+    X_OK        = 'os.X_OK',
+    access      = 'os.access',
+    expandvars  = 'os.path.expandvars',
+    expanduser  = 'os.path.expanduser',
+    dirname     = 'os.path.dirname',
+    path_join   = 'os.path.join',
+    isfile      = 'os.path.isfile'
+)
 
 futures = API(
     ThreadPoolExecutor='concurrent.futures.ThreadPoolExecutor'
