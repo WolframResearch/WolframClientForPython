@@ -10,14 +10,14 @@ class WLSerializable:
     Custom serialization of a class is done by subclassing this class::
 
         from wolframclient.serializers.serializable import WLSerializable
-        from wolframclient.language.expression import wl
+        from wolframclient.language import wl
 
         class MyPythonClass(WLSerializable):
-            def __init__(self, *things):
-                self.things = things
+            def __init__(self, *arguments):
+                self.arguments = arguments
 
             def to_wl(self):
-                return wl.MyWolframFunction(*self.things)
+                return wl.MyWolframFunction(*self.arguments)
 
     :func:`export <wolframclient.serializers.export>` is able to serialize expressions recursively::
 

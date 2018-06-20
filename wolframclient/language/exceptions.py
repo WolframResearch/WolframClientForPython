@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.language.expression import wl
+from wolframclient.language import wl
 from wolframclient.serializers.serializable import WLSerializable
 from wolframclient.utils.decorators import to_dict
 from wolframclient.utils.encoding import safe_force_text

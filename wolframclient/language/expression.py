@@ -20,6 +20,7 @@ class WLExpressionMeta(object):
         return WLFunction(self, *args, **opts)
 
 class WLSymbol(WLExpressionMeta):
+    """Represent a Wolfram Language symbol in Python."""
 
     __slots__ = 'name'
 
@@ -77,24 +78,17 @@ class WLFunction(WLExpressionMeta):
         return '%s[<< %s >>]' % (repr(self.head), len(self))
 
 class ExpressionFactory(object):
-    ''' Instances of ExpressionFactory are callable and provide a convenient
-    way to build objects representing arbitrary Wolfram Language expressions.
+    """Provide a convenient way to build objects representing arbitrary Wolfram Language expressions through the use of attributes.
 
-
-    `ExpressionFactory` is conveniently instanciated at startup as
-    :class:`wolframclient.language.wl`, without any context specified, and as
-    :class:`wolframclient.language.system` with ``System``` context.
+    This class is conveniently instanciated at startup as: :class:`wl <wolframclient.language.wl>` and 
+    :class:`system <wolframclient.language.system>`. It should be instanciated only to represent symbols belonging to a specific context.
 
     Example::
 
-        import wolframclient.language.wl
-        # Now
-        wl.Now
-        # Quantity[3, "Hours"]
-        wl.Quanity(3, "Hours")
-        # Select[PrimeQ, {1,2,3,4}]
-        wl.Select(wl.PrimeQ, [1, 2, 3, 4])
-    '''
+        developer = ExpressionFactory(context='Developer')
+        developer.PackedArrayQ(...)
+
+    """
     def __init__(self, context = None):
         self.context = context
 
@@ -103,8 +97,4 @@ class ExpressionFactory(object):
             return WLSymbol('%s`%s' % (self.context, attr))
         return WLSymbol(force_text(attr))
 
-
-wl     = ExpressionFactory()
-system = ExpressionFactory('System')
-
-__all__ = ['wl', 'system']
+__all__ = ['ExpressionFactory', 'WLSymbol']

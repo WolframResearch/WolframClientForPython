@@ -6,7 +6,7 @@ from wolframclient.evaluation.cloud.inputoutput import WolframAPIResponseBuilder
 from wolframclient.evaluation.cloud.oauth import OAuthSession
 from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 from wolframclient.exception import AuthenticationException
-from wolframclient.language.expression import wl
+from wolframclient.language import wl
 from wolframclient.serializers import export
 from wolframclient.utils import six
 from wolframclient.utils.api import json, requests, futures

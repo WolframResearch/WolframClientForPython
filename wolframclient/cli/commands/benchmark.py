@@ -3,7 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.cli.utils import SimpleCommand
-from wolframclient.language.expression import wl
+from wolframclient.language import wl
 from wolframclient.serializers import export
 from wolframclient.utils.debug import timed
 from wolframclient.utils.decorators import to_tuple

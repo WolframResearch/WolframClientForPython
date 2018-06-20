@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.language.expression import wl
+from wolframclient.language import wl
 from wolframclient.utils import six
 from wolframclient.utils.decorators import to_tuple
 from wolframclient.utils.encoding import force_text, safe_force_text

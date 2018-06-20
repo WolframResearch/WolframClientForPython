@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from collections import OrderedDict
 
-from wolframclient.language.expression import wl
+from wolframclient.language import wl
 from wolframclient.serializers import export
 from wolframclient.serializers.wxfencoder.serializer import write_varint, WXFExprSerializer
 from wolframclient.serializers.wxfencoder.wxfexpr import WXFExprBinaryString, WXFExprInteger, WXFExprString

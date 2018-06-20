@@ -6,7 +6,7 @@ from threading import Thread, Event
 from wolframclient.utils.six import string_types, binary_type, integer_types, PY3, JYTHON
 from wolframclient.utils.api import futures, zmq, time, os
 from wolframclient.serializers import export
-from wolframclient.language.expression import wl
+from wolframclient.language import wl
 from wolframclient.exception import WolframKernelException
 from wolframclient.utils.encoding import force_text
 from wolframclient.evaluation.evaluationresult import WolframEvaluationResult
@@ -293,7 +293,7 @@ class WolframLanguageSession(object):
 
     @property
     def started(self):
-        """Indicate if the current kernel session has started with reasably well accuracy."""
+        """Indicate if the current kernel session has started with reasonable accuracy."""
         return self.kernel_proc is not None
 
     def evaluate(self, expr, **kwargs):
