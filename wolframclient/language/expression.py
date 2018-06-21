@@ -8,6 +8,7 @@ from wolframclient.utils import six
 from wolframclient.utils.encoding import force_text
 
 class WLExpressionMeta(object):
+    """Abstract class to subclass when building representation of Wolfram Language expressions as Python object."""
 
     if six.PY2:
         def __nonzero__(self):
@@ -25,7 +26,6 @@ class WLSymbol(WLExpressionMeta):
     __slots__ = 'name'
 
     def __init__(self, name):
-
         if isinstance(name, six.binary_type):
             self.name = force_text(name)
         elif isinstance(name, six.text_type):

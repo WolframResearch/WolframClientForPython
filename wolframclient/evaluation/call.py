@@ -7,22 +7,19 @@ from wolframclient.exception import WolframKernelException, AuthenticationExcept
 from wolframclient.language.exceptions import wl
 from wolframclient.utils.six import PY3
 
-__all__ = ['WolframCall', 'WolframAPICall']
+__all__ = ['WolframCall']
 
 
 class WolframCall(object):
     """Primary interface to evaluate Wolfram Language code.
 
-    The wolfram call can be evaluated on various targets.
-    * a kernel, when `input` is an instance of
-    :class:`wolframclient.evaluation.WolframLanguageSession`
-    * a wolfram cloud when `input` is an instance of
-    :class:`wolframclient.evaluation.WolframCloudSession`
+    The wolfram call can seamlessly evaluate on various targets:
 
-    The expression to evaluate can have various forms, it can
-    be a string expression, or a instance of
-    :class:`wolframclient.serializers.WLSerializable` in which
-    case it is serialized prior to being evaluated.
+    * a kernel, when initialized with an instance of :class:`WolframLanguageSession<wolframclient.evaluation.WolframLanguageSession>`
+    * a wolfram cloud when initialized with an instance of :class:`WolframCloudSession<wolframclient.evaluation.WolframCloudSession>`
+
+    The expression to evaluate can have various forms, it can be a string expression, or a instance of
+    :class:`wolframclient.serializers.WLSerializable` in which case it is serialized prior to being evaluated.
 
     Examples::
         >>> with WolframLanguageSession() as wl_session:
@@ -37,6 +34,8 @@ class WolframCall(object):
         ...
         b'2'
 
+    When `input` is a file, its content is read and send to the kernel.
+
     """
     
     def __init__(self, target, input):
@@ -44,6 +43,7 @@ class WolframCall(object):
         self.input = input
 
     def perform(self):
+        """Send the input to the specified target for evaluation and return the result."""
         # normalize input.
         if isinstance(self.input, (tuple, list)):
             self.input = wl.Construct(*self.input)
@@ -68,14 +68,3 @@ class WolframCall(object):
 
     def perform_async(self):
         return self.target.evaluate_async(self.input)
-
-
-class WolframAPICall(object):
-    def __init__(self, target, api, input):
-        if not isinstance(target, WolframCloudSession):
-            ValueError('WolframAPICall must be initialized with an WolframCloudSession instance.')
-        self.target = target
-        self.input = input
-
-    def perform(self):
-        self.target.call()

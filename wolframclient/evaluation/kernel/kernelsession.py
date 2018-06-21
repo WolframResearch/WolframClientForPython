@@ -71,24 +71,19 @@ class KernelLogger(Thread):
 class WolframLanguageSession(object):
     """A session to a Wolfram Kernel enabling evaluation of Wolfram Language expressions.
 
-    Example
-    -------
-
-    Start a new session and send a expression for evaluation::
-
-        from  wolframclient.evaluation import WolframLanguageSession
+    Start a new session and send an expression for evaluation::
 
         kernel = '/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel'
         with WolframLanguageSession(kernel) as session:
             session.evaluate('Range[3]')
 
-    Communicates with a given kernel using ZMQ sockets:
+    Communication with a given kernel is based on ZMQ sockets:
 
     * one `PUSH` socket receiving expressions to evaluate,
     * one `PULL` socket to read evaluation results.
 
     Kernel logging is enabled by default and is done through a third socket
-    (PULL). The kernel associated to a given session provides the following
+    (type `PULL`). The kernel associated to a given session provides the following
     logging functions:
 
     * ``ClientLibrary`debug`` corresponding to :py:meth:`logging.Logger.debug`

@@ -26,10 +26,13 @@ def export(data, stream=None, target_format=DEFAULT_FORMAT, **options):
         >>> export(wl.Range(3))
         'Range[3]'
         
-    Specify the target format:
+    Specify the target format to be WXF::
     
         >>> export([1,2,3], target_format='wxf')
         '8:f\x03s\x04ListC\x01C\x02C\x03'
+
+    .. note :: WXF is a binary format for serializing Wolfram Language expression. Consult 
+            the documentation for a full format description: https://reference.wolfram.com/language/tutorial/WXFFormatDescription.html
 
     If a string is provided as second argument, it is interpreted as a file path, and serialized form is 
     written directly to the file. The file is opened and closed automatically::
@@ -46,6 +49,7 @@ def export(data, stream=None, target_format=DEFAULT_FORMAT, **options):
         ...     export([1, 2, 3], f)
         ... 
         <open file 'file.wl', mode 'wb' at 0x10a4f01e0>
+
     """
     if not target_format in available_formats:
         raise ValueError('Invalid export format %s. Choices are: %s' % (

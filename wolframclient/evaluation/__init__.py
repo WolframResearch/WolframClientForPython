@@ -2,10 +2,10 @@
 from __future__ import absolute_import
 from wolframclient.evaluation.cloud import WolframServer, WolframCloudSession, SecuredAuthenticationKey, UserIDPassword
 from wolframclient.evaluation.kernel import WolframLanguageSession
-from wolframclient.evaluation.wolframcall import WolframCall, WolframAPICall
+from wolframclient.evaluation.call import WolframCall
 
 __all__ = [
-    'WolframCall', 'WolframAPICall',
+    'WolframCall',
     'WolframServer',
     'WolframCloudSession',
     'SecuredAuthenticationKey',
