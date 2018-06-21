@@ -77,7 +77,12 @@ VALID_PACKED_ARRAY_TYPES = frozenset((
     ARRAY_TYPES.ComplexReal64,
 ))
 
-class _WXFExpr(object):
+class WXFExpr(object):
+    """Represent a WXF expression.
+    
+    This is an abstract class. Only its children must be used.
+    """
+
     __slots__ = 'wxf_type'
 
     def __init__(self, wxf_type):
@@ -87,11 +92,11 @@ class _WXFExpr(object):
         ''' Write the serialized form of a given WXFExpr. '''
         raise NotImplementedError
 
-class WXFExprFunction(_WXFExpr):
-    ''' Functions have a length representing the number of parts (including zero).
+class WXFExprFunction(WXFExpr):
+    """Functions have a length representing the number of parts (including zero).
     Each function has a head which is itself a expr, usually a `WXFExprSymbol` which
     is not accounted in the length.
-    '''
+    """
     __slots__ = 'length'
 
     def __init__(self, length):
@@ -104,7 +109,7 @@ class WXFExprFunction(_WXFExpr):
         context.step_in_new_expr(self.length + 1)
         write_varint(self.length, stream)
 
-class WXFExprInteger(_WXFExpr):
+class WXFExprInteger(WXFExpr):
     ''' Integers have various length, from one byte up to eigth and are signed
     values. Values above 2^63-1 are represented with `WXFExprBigInteger`.
     Internally WXF uses the two's complement representation of integer values.
@@ -173,7 +178,7 @@ class WXFExprInteger(_WXFExpr):
         context.add_part()
         stream.write(self.to_bytes())
 
-class WXFExprReal(_WXFExpr):
+class WXFExprReal(WXFExpr):
     ''' Represent a floating point value. Internally WXF represents the value with
     double float-point value in the IEEE 754 standard. '''
     __slots__ = 'value'
@@ -202,7 +207,7 @@ class WXFExprReal(_WXFExpr):
         context.add_part()
         stream.write(self.to_bytes())
 
-class _WXFExprStringLike(_WXFExpr):
+class _WXFExprStringLike(WXFExpr):
     ''' Parent class of all string based expressions.
 
     Store a given string value as a utf-8 encoded binary string.
@@ -259,7 +264,7 @@ class WXFExprBigReal(_WXFExprStringLike):
     def __init__(self, value):
         super(WXFExprBigReal, self).__init__(WXF_CONSTANTS.BigReal, value, allow_binary = True)
 
-class WXFExprBinaryString(_WXFExpr):
+class WXFExprBinaryString(WXFExpr):
     '''A string of arbitrary bytes. Contrary to `WXFExprString` no encoding is
     required.'''
     __slots__ = 'data'
@@ -277,7 +282,7 @@ class WXFExprBinaryString(_WXFExpr):
         write_varint(len(self.data), stream)
         stream.write(self.data)
 
-class _WXFExprArray(_WXFExpr):
+class _WXFExprArray(WXFExpr):
     '''Arrays are multidimensional tables of machine-precision numeric values.
     The `dimensions` is a list of strictly positive integers representing the
     array shape. The data contains the flatten binary representation of the
@@ -322,7 +327,7 @@ class WXFExprRawArray(_WXFExprArray):
     def __init__(self, dimensions, value_type, data=None):
         super(WXFExprRawArray, self).__init__(WXF_CONSTANTS.RawArray, dimensions, value_type, data)
 
-class WXFExprAssociation(_WXFExpr):
+class WXFExprAssociation(WXFExpr):
     ''' Association is a key value store similar to `dict`. `WXFExprAssociation`
     requires a length, the number of entries. Only `WXFExprRule` and `WXFExprRuleDelayed`
     are valid entry types in an association.
@@ -339,7 +344,7 @@ class WXFExprAssociation(_WXFExpr):
         context.step_in_new_expr(self.length, is_assoc=True)
         write_varint(self.length, stream)
 
-class _WXFExprRule(_WXFExpr):
+class _WXFExprRule(WXFExpr):
     def __init__(self, wxf_type):
         super(_WXFExprRule, self).__init__(wxf_type)
 

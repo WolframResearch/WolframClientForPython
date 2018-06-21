@@ -19,21 +19,20 @@ __all__ = ['WolframCloudSession']
 
 
 class WolframCloudSession(object):
-    """Represents a session to a given cloud enabling simple API call.
+    """Represent a session to a given cloud enabling simple API call.
 
-    This is the central class of the cloud evaluation package. It is
-    initialized with a server instance representing a given cloud. The
-    `default` static method can be used to initialize a session to the Wolfram
-    public cloud.
+    This is the central class of the cloud evaluation package. It is initialized with a server instance 
+    representing a given cloud. By default a session targets the Wolfram public cloud.
 
-    Most of the time it is necessary to authenticate with the server before issuing
-    requests. `WolframCloudSession` supports two forms of authentication:
-    - 2-legged oauth using a secured authentication key.
-    - xauth using the user ID and password.
+    Most of the time it is necessary to authenticate with the server before issuing requests. Session 
+    supports two forms of authentication:
+    
+    * 2-legged oauth using a secured authentication key.
+    * xauth using the user ID and password.
 
-    Calling an API is done throught the method `call` which will return an instance of
-    a `WolframAPIResponse`. It is strongly advised to re-use a session to make multiple
-    calls.
+    Calling an API is done through the method :func:`call<wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.call>` 
+    which will return an instance of :class:`WolframAPIResponse<wolframclient.evaluation.cloud.inputoutput.WolframAPIResponse>`. 
+    It is strongly advised to re-use a session to make multiple calls to mitigate the cost of initialization.
     """
     
     __slots__ = 'server', 'oauth', 'consumer', 'consumer_secret', 'user', 'password', 'is_xauth', 'evaluation_api_url', 'authentication', 'thread_pool_exec'
@@ -96,7 +95,7 @@ class WolframCloudSession(object):
 
     @property
     def authorized(self):
-        ''' Returns a reasonnably accurate state of the authentication status. '''
+        """Returns a reasonnably accurate state of the authentication status."""
         if self.authentication is not None and self.is_xauth is None:
             self.authenticate()
         if self.is_xauth is None or self.oauth is None:
@@ -107,8 +106,7 @@ class WolframCloudSession(object):
                     bool(self.oauth._client.resource_owner_secret))
 
     def _post(self, url, headers={}, body={}, params={}):
-        ''' Do a POST request, signing the content only if authentication has
-        been successful. '''
+        """Do a POST request, signing the content only if authentication has been successful."""
         headers['User-Agent'] = 'WolframClientForPython/1.0'
         if self.authorized:
             logger.info('Authenticated call to api %s', url)
@@ -119,25 +117,18 @@ class WolframCloudSession(object):
                 url, params=params, headers=headers, data=body, verify=self.server.verify)
 
     def call(self, api, input_parameters={}, target_format='wl', permissions_key=None, **kwargv):
-        ''' Call a given API, using the provided input parameters.
+        """Call a given API, using the provided input parameters.
 
-        `api` can be a string url or a tuple (`username`, `api name`). User name is
-        generally the Wolfram Language symbol `$UserName`. API id can be a uuid or a
+        `api` can be a string url or a :class:`tuple` (`username`, `api name`). User name is
+        generally the Wolfram Language symbol ``$UserName``. API id can be a uuid or a
         name, in the form of a relative path. e.g: myapi/foo/bar
 
-        The input parameters are provider as a dictionary with string keys being the name
-        of the parameters associated to their value. The input encoder(s) can be specified
-        as a callable in which case it is applied to all inputs, or as a dictionary, with keys
-        being the parameter names, for a finer control of the encoding. Finally it is possible
-        to specify a decoder, which is applied when the request was successful, to the raw binary
-        response of the API.
+        The input parameters are provided as a dictionary with string keys being the name
+        of the parameters associated to their value.
 
-        It's possible to specify a PermissionsKey passed to the server along side the query to
+        It's possible to specify a ``PermissionsKey`` passed to the server along side the query to
         get access to a given resource.
-
-        Note: By default a decoder is specified and ensure the response is of type string. To
-        get raw bytes just replace it with `None`.
-        '''
+        """
         url = self._user_api_url(api)
         encoded_inputs = encode_api_inputs(
             input_parameters, target_format=target_format, **kwargv)

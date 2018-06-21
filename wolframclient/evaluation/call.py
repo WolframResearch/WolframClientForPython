@@ -19,9 +19,10 @@ class WolframCall(object):
     * a wolfram cloud when initialized with an instance of :class:`WolframCloudSession<wolframclient.evaluation.WolframCloudSession>`
 
     The expression to evaluate can have various forms, it can be a string expression, or a instance of
-    :class:`wolframclient.serializers.WLSerializable` in which case it is serialized prior to being evaluated.
+    :class:`WLSerializable<wolframclient.serializers.WLSerializable>` in which case it is serialized prior to being evaluated.
 
-    Examples::
+    Examples of the similar evaluations on different targets::
+
         >>> with WolframLanguageSession() as wl_session:
         ...     call = WolframCall(wl_session, '1+1')
         ...     call.perform()
@@ -44,14 +45,29 @@ class WolframCall(object):
 
     def perform(self):
         """Send the input to the specified target for evaluation and return the result."""
-        # normalize input.
-        if isinstance(self.input, (tuple, list)):
-            self.input = wl.Construct(*self.input)
-        else:
-            try:
-                self.input = self.input.read()
-            except AttributeError:
-                pass
+        self._normalize_input()
+        self._ensure_target_ready()
+        return self.target.evaluate(self.input).result()
+
+    def perform_async(self):
+        """Asynchronously send the input to the specified target for evaluation and return a future object.
+        
+        .. warning::
+            Asynchronous evaluation is only available for `Python 3.2` and above.
+
+        """
+        self._normalize_input()
+        self._ensure_target_ready()
+        return self.target.evaluate_async(self.input)
+
+    def _normalize_input(self):
+        # Normalize input. If it's readable, do it.
+        try:
+            self.input = self.input.read()
+        except AttributeError:
+            pass
+    
+    def _ensure_target_ready(self):
         # ensure session is ready to evaluate expressions.
         if isinstance(self.target, WolframLanguageSession):
             if not self.target.started:
@@ -61,10 +77,4 @@ class WolframCall(object):
             if not self.target.authorized:
                 raise AuthenticationException('Cloud session not authorized.')
         else:
-            raise ValueError('Unknow target type %s' %
-                             input.__class__.__name__)
-
-        return self.target.evaluate(self.input).result()
-
-    def perform_async(self):
-        return self.target.evaluate_async(self.input)
+            raise ValueError('Unknow target type %s' % input.__class__.__name__)

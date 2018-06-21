@@ -18,10 +18,10 @@ class WXFEncoder(object):
     since more than one can be attached to a given :class:`WXFExprProvider<wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider>`. 
     The library provides a default encoder that should cover basic needs, more or less json types, and that should be useful in any case.
 
-    To implement a new encoder one needs to sub-class :class:`WXFEncoder<wolframclient.serializers.wxfencoder.WXFEncoder>` 
-    and implements method :func:`encode<:class:`WXFEncoder<wolframclient.serializers.wxfencoder.WXFEncoder.encode>`. Encode is a generator function 
-    that takes a given python object and yield :class:`WXFExpr<wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr>`. If it returns before
-    yielding anything a :class:`NotEncodedException<wolframclient.serializers.wxfencoder.NotEncodedException>`is raised to signal that
+    To implement a new encoder one needs to sub-class :class:`WXFEncoder<wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder>` 
+    and implements method :func:`encode<wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder.encode>`. Encode is a generator function 
+    that takes a given python object and instances of :class:`WXFExpr<wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr>`. If it returns before
+    yielding anything a :class:`NotEncodedException<wolframclient.serializers.wxfencoder.wxfencoder.NotEncodedException>` is raised to signal that
     the encoder is not supporting the given object, and that the encoding must be delegating to the next encoder (if any).
 
     Sometimes it is useful to start a new serialization using the provider, re-entrant call, especially when dealing with non-atomic 
