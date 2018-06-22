@@ -118,7 +118,7 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 			]
 			,
 			Block[{err = GeneralUtilities`FailureString[#]},
-				ClientLibrary`error[] &
+				ClientLibrary`error[err];
 				WriteString[$OutputSocket, "$Failed"]
 			] &
 		]&

@@ -6,6 +6,7 @@ import logging
 import unittest
 import os
 
+from wolframclient.logger.utils import setup_logging_to_file
 from wolframclient.utils import six
 from wolframclient.utils.api import json
 from wolframclient.utils.encoding import force_text
@@ -16,10 +17,7 @@ if not six.JYTHON:
     from wolframclient.evaluation import SecuredAuthenticationKey, UserIDPassword, WolframCloudSession
     from wolframclient.evaluation.cloud.cloudsession import encode_api_inputs, url_join
 
-logging.basicConfig(filename='/tmp/python_testsuites.log',
-                    filemode='a',
-                    format='%(asctime)s, %(name)s %(levelname)s %(message)s',
-                    level=logging.WARNING)
+setup_logging_to_file('/tmp/python_testsuites.log', level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
 
@@ -44,6 +42,10 @@ class TestCaseSettings(BaseTestCase):
 
     @classmethod
     def setUpClass(cls):
+        cls.setupCloudSession()
+
+    @classmethod
+    def setupCloudSession(cls):
         with open(TestCase.user_config_file, 'r') as fp:
             cls.json_user_config = json.load(fp)
         cls.sak = SecuredAuthenticationKey(
@@ -56,55 +58,60 @@ class TestCaseSettings(BaseTestCase):
         )
         cls.api_owner = cls.json_user_config.get('ApiOwner', 'dorianb')
 
-        cls.session = WolframCloudSession(authentication=cls.sak)
+        cls.cloud_session = WolframCloudSession(authentication=cls.sak)
 
-    def tearDown(self):
-        if self.session is not None:
-            self.session.terminate()
+    @classmethod
+    def tearDownClass(cls):
+        cls.tearDownCloudSession()
+
+    @classmethod
+    def tearDownCloudSession(cls):
+        if cls.cloud_session is not None:
+            cls.cloud_session.terminate()
 
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 @unittest.skipIf(not os.path.exists(TestCaseSettings.user_config_file), "Need to configure credentials")
 class TestCase(TestCaseSettings):
 
     def test_section_not_authorized(self):
-        session = WolframCloudSession()
-        self.assertEqual(session.authorized, False)
-        self.assertEqual(session.is_xauth, None)
+        cloud_session = WolframCloudSession()
+        self.assertEqual(cloud_session.authorized, False)
+        self.assertEqual(cloud_session.is_xauth, None)
 
     def test_section_authorized_oauth(self):
-        session = WolframCloudSession(authentication=self.sak)
-        self.assertEqual(session.authorized, True)
-        self.assertEqual(session.is_xauth, False)
+        cloud_session = WolframCloudSession(authentication=self.sak)
+        self.assertEqual(cloud_session.authorized, True)
+        self.assertEqual(cloud_session.is_xauth, False)
 
     def test_section_authorized_xauth(self):
-        session = WolframCloudSession(self.user_cred)
-        self.assertEqual(session.authorized, True)
-        self.assertEqual(session.is_xauth, True)
+        cloud_session = WolframCloudSession(self.user_cred)
+        self.assertEqual(cloud_session.authorized, True)
+        self.assertEqual(cloud_session.is_xauth, True)
 
     def test_section_api_call_no_param(self):
         url = 'api/private/requesterid'
-        response = self.session.call((self.api_owner, url))
+        response = self.cloud_session.call((self.api_owner, url))
         self.assertIn(self.api_owner, force_text(response.output))
 
     def test_section_api_call_one_param(self):
         url = 'api/private/stringreverse'
-        response = self.session.call(
+        response = self.cloud_session.call(
             (self.api_owner, url),
             input_parameters={'str': 'abcde'})
         self.assertEqual('"edcba"', force_text(response.output))
 
     def test_section_api_call_one_param_wrong(self):
         url = 'api/private/stringreverse'
-        response = self.session.call((self.api_owner, url))
+        response = self.cloud_session.call((self.api_owner, url))
         self.assertFalse(response.success)
         field, _ = response.fields_in_error()[0]
         self.assertEqual(field, 'str')
 
     def test_public_api_call(self):
         url = "api/public/jsonrange"
-        session = WolframCloudSession()
-        self.assertFalse(session.authorized)
-        response = session.call((self.api_owner, url),
+        cloud_session = WolframCloudSession()
+        self.assertFalse(cloud_session.authorized)
+        response = cloud_session.call((self.api_owner, url),
             input_parameters={'i': 5})
         self.assertTrue(response.success)
         self.assertEqual(json.loads(response.output), list(range(1, 6)))
@@ -112,7 +119,7 @@ class TestCase(TestCaseSettings):
     def test_section_api_call_two_param(self):
         api = (self.api_owner, 'api/private/range/formated/json')
         v_min, v_max, step = (1, 10, 2)
-        response = self.session.call(api,
+        response = self.cloud_session.call(api,
             input_parameters={
                 'min': v_min,
                 'max': v_max,
@@ -126,7 +133,7 @@ class TestCase(TestCaseSettings):
     def test_section_wl_error(self):
         api = (self.api_owner, "api/private/range/wlerror")
         i = 1
-        response = self.session.call(api,
+        response = self.cloud_session.call(api,
             input_parameters={
                 'i' : i
             })

@@ -3,47 +3,37 @@ from __future__ import absolute_import, print_function, unicode_literals
 import logging
 import unittest
 import json
+from wolframclient.logger.utils import setup_logging_to_file
 from wolframclient.utils.tests import TestCase as BaseTestCase
 from wolframclient.utils import six
 if not six.JYTHON:
-    from wolframclient.evaluation import WolframLanguageSession, SecuredAuthenticationKey, UserIDPassword, WolframCloudSession
-logging.basicConfig(filename='/tmp/python_testsuites.log',
-                    filemode='a',
-                    format='%(asctime)s, %(name)s %(levelname)s %(message)s',
-                    level=logging.INFO)
+    from wolframclient.evaluation import WolframLanguageSession, SecuredAuthenticationKey, UserIDPassword, WolframCloudSession, WolframCall
+from wolframclient.tests.evaluation.test_cloud import TestCaseSettings as SessionTestCase
+from wolframclient.tests.evaluation.test_kernel import TestCaseSettings as KernelTestCase
+setup_logging_to_file('/tmp/python_testsuites.log', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+class TestCase(SessionTestCase, KernelTestCase):
 
-# @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
-class TestCase(BaseTestCase):
-    pass
+    @classmethod
+    def setUpClass(cls):
+        cls.setupCloudSession()
+        cls.setupKernelSession()
 
-#     KERNEL_PATH = '/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel'
+    @classmethod
+    def tearDownClass(cls):
+        cls.tearDownKernelSession()
+        cls.tearDownCloudSession()
 
-#     user_config_file = '/private/etc/user_credentials.json'
-#     api_owner = 'dorianb'
+    def _call_api(self, session):
+        call = WolframCall(session, '1+1').perform()
+        self.assertEqual(call, b'2')
+        call = WolframCall(session, 'Range[3').perform()
+        self.assertEqual(call, b'$Failed')
 
-#     def setUp(self):
-#         self.kernel_session = WolframLanguageSession(TestCase.KERNEL_PATH, log_kernel=False)
-#         self.kernel_session.start()
-#         with open(TestCase.user_config_file, 'r') as fp:
-#             json_user_config = json.load(fp)
-#             self.sak = SecuredAuthenticationKey(
-#                 json_user_config['SAK']['consumer_key'],
-#                 json_user_config['SAK']['consumer_secret']
-#             )
-#             self.user_cred = UserIDPassword(
-#                 json_user_config['User']['id'],
-#                 json_user_config['User']['password']
-#             )
-#         self.cloudsession = WolframCloudSession(authentication=self.sak)
+    def test_call_api_kernel(self):
+        self._call_api(self.kernel_session)
 
-#     def tearDown(self):
-#         if self.kernel_session is not None:
-#             self.kernel_session.terminate()
-#         if self.cloudsession is not None:
-#             self.cloudsession.terminate()
-
-#     def test_call_api(self):
-#         input = '1+1'
-#         call = WolframCall()
+    @unittest.skip('Cloud bug in /evaluations')
+    def test_call_api_cloud(self):
+        self._call_api(self.cloud_session)

@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from collections import OrderedDict
 
-from wolframclient.language.expression import system, wl
+from wolframclient.language import system, wl
 from wolframclient.serializers import export
 from wolframclient.utils import six
 from wolframclient.utils.api import pytz

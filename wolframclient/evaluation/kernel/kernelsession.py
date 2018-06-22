@@ -108,7 +108,7 @@ class WolframLanguageSession(object):
             self.initfile = os.path_join(os.dirname(__file__), 'initkernel.m')
         else:
             self.initfile = initfile
-        logger.debug('Initializing kernel using script: %s', self.initfile)
+        logger.debug('Initializing kernel %s using script: %s' % (self.kernel, self.initfile))
         # Socket to which we push new expressions to evaluate. 
         if in_socket is None:
             self.in_socket = Socket(zmq_type=zmq.PUSH)
@@ -276,15 +276,15 @@ class WolframLanguageSession(object):
                 if logger.isEnabledFor(logging.INFO):
                     logger.info(
                         'Kernel is ready. Startup took %.2f seconds.', time.perf_counter() - t_start)
-                else:
-                    self._dump_pipe_to_log(self.kernel_proc.stdout)
-                    self.terminate()
-                    raise WolframKernelException('Kernel failed to start properly.')
+            else:
+                self._dump_pipe_to_log(self.kernel_proc.stdout)
+                self.terminate()
+                raise WolframKernelException('Kernel %s failed to start properly.' % self.kernel)
         except SocketException as se:
             logger.fatal(se)
             self._dump_pipe_to_log(self.kernel_proc.stdout)
             self.terminate()
-            raise WolframKernelException('Failed to communication with the kernel. Could not read from ZMQ socket.')
+            raise WolframKernelException('Failed to communication with the kernel %s. Could not read from ZMQ socket.' % self.kernel)
 
     @property
     def started(self):
