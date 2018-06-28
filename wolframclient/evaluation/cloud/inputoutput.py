@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.exception import EvaluationException
+from wolframclient.exception import EvaluationException, RequestException
 from wolframclient.utils import six
 from wolframclient.utils.api import json
 from wolframclient.evaluation.evaluationresult import WolframEvaluationResult
@@ -48,6 +48,12 @@ class WolframAPIResponse(object):
     def error_report(self):
         return list(self.iter_full_error_report())
 
+    def result(self):
+        if self.success:
+            return self.output
+        else:
+            self.failure
+
     def __repr__(self):
         return '<%s:success=%s>' % (self.__class__.__name__, self.success)
 
@@ -69,6 +75,13 @@ class WolframAPIResponse200(WolframAPIResponse):
                 self.exception = e
         else:
             self.output = self.response.content
+
+    # def result(self):
+    #     if self.success:
+    #         if self.response.encoding
+    #             pass
+    #     else:
+    #         return self.failure
 
 class WolframAPIResponseRedirect(WolframAPIResponse):
     def __init__(self, response, decoder=None):
@@ -111,7 +124,11 @@ class WolframAPIResponse400(WolframAPIResponse):
     def _build(self):
         self.success = False
         # ignoring content-type. Must be JSON. Make sure it's robust enough.
-        self.json = self.response.json()
+        try:
+            self.json = self.response.json()
+        except json.JSONDecodeError as e:
+            logger.fatal('Failed to parse server response as json:\n%s', self.response.content)
+            raise RequestException(self.response, 'Failed to parse server response as json.')
         self.failure = self.json.get('Failure', None)
         fields = self.json.get('Fields', None)
         logger.warning('Wolfram API error response: %s', self.failure)

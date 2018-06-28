@@ -9,13 +9,14 @@ from wolframclient.exception import AuthenticationException
 from wolframclient.language import wl
 from wolframclient.serializers import export
 from wolframclient.utils import six
-from wolframclient.utils.api import json, requests, futures
+from wolframclient.utils.encoding import force_text
+from wolframclient.utils.api import json, requests, futures, urllib
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-__all__ = ['WolframCloudSession']
+__all__ = ['WolframCloudSession', 'WolframCloudSessionAsync']
 
 
 class WolframCloudSession(object):
@@ -35,7 +36,7 @@ class WolframCloudSession(object):
     It is strongly advised to re-use a session to make multiple calls to mitigate the cost of initialization.
     """
     
-    __slots__ = 'server', 'oauth', 'consumer', 'consumer_secret', 'user', 'password', 'is_xauth', 'evaluation_api_url', 'authentication', 'thread_pool_exec'
+    __slots__ = 'server', 'oauth', 'consumer', 'consumer_secret', 'user', 'password', 'is_xauth', 'evaluation_api_url', 'authentication'
 
     def __init__(self, authentication=None, server=WolframPublicCloudServer):
         self.server = server
@@ -48,17 +49,6 @@ class WolframCloudSession(object):
         self.user = None
         self.password = None
         self.is_xauth = None
-        self.thread_pool_exec = None
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, type, value, traceback):
-        self.terminate()
-
-    def terminate(self):
-        if self.thread_pool_exec is not None:
-            self.thread_pool_exec.shutdown(wait=True)
 
     def authenticate(self):
         '''Authenticate with the server using the credentials.
@@ -105,18 +95,18 @@ class WolframCloudSession(object):
                     bool(self.oauth._client.resource_owner_key) and
                     bool(self.oauth._client.resource_owner_secret))
 
-    def _post(self, url, headers={}, body={}, params={}):
+    def _post(self, url, headers={}, body={}, files={}, params={}):
         """Do a POST request, signing the content only if authentication has been successful."""
         headers['User-Agent'] = 'WolframClientForPython/1.0'
         if self.authorized:
             logger.info('Authenticated call to api %s', url)
-            return self.oauth.signed_request(url, headers=headers, body=body)
+            return self.oauth.signed_request(url, headers=headers, body=body, files=files)
         else:
             logger.info('Anonymous call to api %s', url)
             return requests.post(
-                url, params=params, headers=headers, data=body, verify=self.server.verify)
+                url, params=params, headers=headers, data=body, files=files, verify=self.server.verify)
 
-    def call(self, api, input_parameters={}, target_format='wl', permissions_key=None, **kwargv):
+    def call(self, api, input_parameters={}, files={}, target_format='wl', permissions_key=None, **kwargv):
         """Call a given API, using the provided input parameters.
 
         `api` can be a string url or a :class:`tuple` (`username`, `api name`). User name is
@@ -126,17 +116,35 @@ class WolframCloudSession(object):
         The input parameters are provided as a dictionary with string keys being the name
         of the parameters associated to their value.
 
-        It's possible to specify a ``PermissionsKey`` passed to the server along side the query to
-        get access to a given resource.
+        Files are passed in a dictionary. Value can have multiple forms::
+            
+            {'parameter name': file_pointer}
+        
+        It is possible to explicitly specify a filename and a content type::
+
+            {'parameter name': ('filename', file_pointer, 'content-type')}
+
+        String can also be passed as files::
+            
+            {'parameter name': ('filename', '...string...data...', 'content-type')}
+
+        It's possible to pass a ``PermissionsKey`` to the server along side to the query,
+        and get access to a given resource.
         """
         url = self._user_api_url(api)
+        params = {'_key': permissions_key} if permissions_key is not None else {}
+        is_multipart = isinstance(files, dict) and len(files) > 0
         encoded_inputs = encode_api_inputs(
-            input_parameters, target_format=target_format, **kwargv)
+            input_parameters, target_format=target_format, multipart=is_multipart, **kwargv)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Encoded input %s', encoded_inputs)
-
-        params = {'_key': permissions_key} if permissions_key is not None else {}
-        response = self._post(url, body=encoded_inputs, params=params)
+        # in multipart requests we have to merge input parameters with files.
+        # and use the same format for both.
+        if is_multipart:
+            encoded_inputs.update(files)
+            response = self._post(url, files=encoded_inputs, params=params)
+        else:
+            response = self._post(url, body=encoded_inputs, params=params)
 
         return WolframAPIResponseBuilder.build(response)
 
@@ -180,14 +188,48 @@ class WolframCloudSession(object):
         `expr` must be a Python object serializable by :func:`<export> wolframclient.serializers.export`
         """
         return self._call_evaluation_api(export(expr))
-    
+
+    def cloud_function(self, func):
+        """Return a `callable` cloud function.
+
+        The object returned can be applied on arguments as any other Python function, and
+        is evaluated in the cloud as a Wolfram Language expression using the current cloud
+        session.
+        """
+        return CloudFunction(self, func)
+
+    def __repr__(self):
+        return '<{}:base={}, authorized={}>'.format(self.__class__.__name__, self.server.cloudbase, self.authorized)
+
+
+class WolframCloudSessionAsync(WolframCloudSession):
+    ''' A Wolfram cloud session that call issue asynchronous call.
+
+    Contrary to :class:`WolframCloudSession <wolframclient.evaluation.WolframCloudSession>`, this
+    class must be terminated when no more used.
+    '''
+    def __init__(self, authentication=None, server=WolframPublicCloudServer):
+        super(WolframCloudSessionAsync, self).__init__(authentication, server)
+        self.thread_pool_exec = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.terminate()
+
+    def terminate(self):
+        if self.thread_pool_exec is not None:
+            self.thread_pool_exec.shutdown(wait=True)
+
     def _thread_pool_exec(self):
         if self.thread_pool_exec is None:
             try:
                 self.thread_pool_exec = futures.ThreadPoolExecutor()
             except ImportError:
                 logger.fatal('Module concurrent.futures is missing.')
-                raise NotImplementedError('Asynchronous evaluation is not available for this Python interpreter.')
+                raise NotImplementedError(
+                    'Asynchronous evaluation is not available for this Python interpreter.')
         return self.thread_pool_exec
 
     def call_async(self, api, input_parameters={}, target_format='wl', permissions_key=None, **kwargv):
@@ -240,10 +282,6 @@ class WolframCloudSession(object):
         """
         return CloudFunction(self, func, asynchronous=asynchronous)
 
-    def __repr__(self):
-        return '<{}:base={}, authorized={}>'.format(self.__class__.__name__, self.server.cloudbase, self.authorized)
-
-
 class CloudFunction(object):
     def __init__(self, session, func, asynchronous=False):
         self.session = session
@@ -257,31 +295,42 @@ class CloudFunction(object):
         return self.evaluation_func(wl.Construct(self.func, *args))
 
 
-def _encode_inputs_as_wxf(inputs, **kwargs):
+def _encode_inputs_as_wxf(inputs, multipart, **kwargs):
     encoded_inputs = {}
     for name, value in inputs.items():
-        name = name + '__wxf'
-        encoded_inputs[name] = export(value, target_format='wxf', **kwargs)
+        wxf_name = name + '__wxf'
+        wxf_value = export(value, target_format='wxf', **kwargs)
+        update_parameter_list(encoded_inputs, wxf_name, wxf_value, multipart)
     return encoded_inputs
 
 
-def _encode_inputs_as_json(inputs, **kwargs):
+def _encode_inputs_as_json(inputs, multipart, **kwargs):
     encoded_inputs = {}
     for name, value in inputs.items():
         name = name + '__json'
-        encoded_inputs[name] = json.dumps(value, **kwargs)
+        json_value = json.dumps(value, **kwargs)
+        update_parameter_list(encoded_inputs, name, json_value, multipart)
     return encoded_inputs
 
 
-def _encode_inputs_as_wl(inputs, **kwargs):
+def _encode_inputs_as_wl(inputs, multipart, **kwargs):
     encoded_inputs = {}
     for name, value in inputs.items():
         # avoid double encoding of strings '\"string\"'.
         if isinstance(value, six.string_types):
-            encoded_inputs[name] = value
+            update_parameter_list(encoded_inputs, name, value, multipart)
         else:
-            encoded_inputs[name] = export(value, target_format='wl', **kwargs)
+            exported_value = export(value, target_format='wl', **kwargs)
+            update_parameter_list(encoded_inputs, name, exported_value, multipart)
     return encoded_inputs
+
+def update_parameter_list(parameters, name, value, multipart=False):
+    ''' Update the given :class:`dict<parameters>` with a new inputs using the appropriate form based on `multipart`.
+    '''
+    if multipart:
+        parameters[name] = ('tmp_file_%s' % name, value)
+    else:
+        parameters[name] = value
 
 SUPPORTED_ENCODING_FORMATS = {
     'json': _encode_inputs_as_json,
@@ -289,7 +338,7 @@ SUPPORTED_ENCODING_FORMATS = {
     'wl':   _encode_inputs_as_wl
 }
 
-def encode_api_inputs(inputs, target_format='wl', **kwargs):
+def encode_api_inputs(inputs, target_format='wl', multipart=False, **kwargs):
     if len(inputs) == 0:
         return {}
 
@@ -298,7 +347,7 @@ def encode_api_inputs(inputs, target_format='wl', **kwargs):
         raise ValueError('Invalid encoding format %s. Choices are: %s' % (
             target_format, ', '.join(SUPPORTED_ENCODING_FORMATS.keys())))
 
-    return encoder(inputs, **kwargs)
+    return encoder(inputs, multipart, **kwargs)
 
 def url_join(*fragments):
     ''' Join fragments of a URL, dealing with slashes.'''

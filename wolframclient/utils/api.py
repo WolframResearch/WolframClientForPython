@@ -36,6 +36,8 @@ requests = API(
     get     = 'requests.get',
     post    = 'requests.post',
     request = 'requests.request',
+    Request = 'requests.Request',
+    Session = 'requests.Session'
 )
 
 oauth = API(
@@ -93,6 +95,10 @@ urllib = API(
     quote_plus = (
         'urllib.parse.quote_plus',
         'urllib.quote_plus'
+    ),
+    quote=(
+        'urllib.parse.quote',
+        'urllib.quote'
     )
 )
 

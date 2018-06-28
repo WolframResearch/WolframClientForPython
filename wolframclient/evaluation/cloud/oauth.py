@@ -73,7 +73,8 @@ class OAuthSession(object):
                                     resource_owner_key=self._oauth_token,
                                     resource_owner_secret=self._oauth_token_secret,
                                     signature_type=oauth.SIGNATURE_TYPE_AUTH_HEADER,
-                                    realm=self.server.cloudbase) #TODO should we have realm?
+                                    realm=self.server.cloudbase,  # TODO should we have realm?
+                                    encoding='iso-8859-1')
 
     @staticmethod
     def _has_content_type(request, mimetype):
@@ -88,34 +89,37 @@ class OAuthSession(object):
         return OAuthSession._has_content_type(request, 'text/plain')
 
     # TODO Add a session and prepared requests?
-    def signed_request(self, uri, headers={}, body={}, method='POST'):
+    def signed_request(self, uri, headers={}, body={}, files={}, method='POST'):
         if self._client is None:
             raise AuthenticationException('Not authenticated.')
 
         req_headers={}
         for k,v in headers.items():
             req_headers[k] = v
-        if isinstance(body, dict):
-            # url encode the body
-            encoded_body = urllib.urlencode(body)
-            sign_body = True
-            if 'Content-Type' not in req_headers:
-                logger.info('Content type not provided by user. Setting it to "application/x-www-form-urlencoded".')
-                req_headers['Content-Type'] = 'application/x-www-form-urlencoded'
-        elif isinstance(body, six.string_types) or isinstance(body, six.binary_type):
-            # application/octet-stream for binary data?
-            if 'Content-Type' not in req_headers:
-                logger.info('Content type not provided by user. Setting it to "text/plain".')
-                req_headers['Content-Type'] = 'text/plain'
-                sign_body = False
-            elif 'application/x-www-form-urlencoded' == req_headers['Content-Type']:
-                encoded_body = body
+        sign_body = False
+        #if files is set, it's a multipart request.
+        if isinstance(body, dict) and len(files) == 0:
+            if isinstance(body, dict):
+                # url encode the body
+                encoded_body = urllib.urlencode(body)
                 sign_body = True
+                if 'Content-Type' not in req_headers:
+                    logger.info('Content type not provided by user. Setting it to "application/x-www-form-urlencoded".')
+                    req_headers['Content-Type'] = 'application/x-www-form-urlencoded'
+            elif isinstance(body, six.string_types) or isinstance(body, six.binary_type):
+                # application/octet-stream for binary data?
+                if 'Content-Type' not in req_headers:
+                    logger.info('Content type not provided by user. Setting it to "text/plain".')
+                    req_headers['Content-Type'] = 'text/plain'
+                    sign_body = False
+                elif 'application/x-www-form-urlencoded' == req_headers['Content-Type']:
+                    encoded_body = body
+                    sign_body = True
+                else:
+                    sign_body = False
             else:
-                sign_body = False
-        else:
-            logger.fatal('Invalid body: %s', body)
-            raise ValueError('Body must be dict or string type.')
+                logger.fatal('Invalid body: %s', body)
+                raise ValueError('Body must be dict or string type.')
 
         uri, req_headers, signed_body = self._client.sign(
             uri,
@@ -128,10 +132,21 @@ class OAuthSession(object):
             logger.debug('Signed uri: %s', uri)
             logger.debug('Signed header: %s', req_headers)
             logger.debug('Is body signed: %s', sign_body)
+        
+            # s = requests.Session()
+            # req = requests.Request(method, uri,
+            #                  headers=req_headers,
+            #                  data=signed_body if sign_body else body,
+            #                  files=files,
+            #                  )
+            # prepared = req.prepare()
+            # logger.debug('Prepared request (generated only in debug)\nheaders: %s\nbody: %s', prepared.headers, prepared.body)
+            # return s.send(prepared, verify=self.server.verify)
 
         return requests.request(method, uri,
             headers=req_headers,
             data=signed_body if sign_body else body,
+            files=files,
             verify=self.server.verify)
 
     @property
@@ -139,16 +154,13 @@ class OAuthSession(object):
         return self._client is not None and bool(self._client.client_secret) and bool(self._client.resource_owner_key) and bool(self._client.resource_owner_secret)
 
     def _parse_oauth_response(self, response):
-        if OAuthSession._is_json_content(response):
-
-            token = json.loads(response.text)
+        try:
+            token = response.json()
             return token['oauth_token'], token['oauth_token_secret']
-        elif not OAuthSession._is_textplain_content(response):
-            logger.warning('Unexpected content type in oauth response. Parsing as query string.')
-
-        token = urllib.parse_qs(response.text)
-        return (token.get('oauth_token')[0],
-            token.get('oauth_token_secret')[0])
+        except:
+            logger.warning('Auth response is expected to be json but wasn\'t. Parsing as query string.')
+            token = urllib.parse_qs(response.text)
+            return (token.get('oauth_token')[0], token.get('oauth_token_secret')[0])
 
     def xauth(self, user, password):
         logger.debug('xauth authentication of user %s', user)
@@ -161,7 +173,8 @@ class OAuthSession(object):
         params["x_auth_username"] = user
         params["x_auth_password"] = password
         params["x_auth_mode"] = "client_auth"
-
+        
+        # avoid dumping password in log files.
         logging.disable(logging.DEBUG)
 
         uri, headers, body = client.sign(

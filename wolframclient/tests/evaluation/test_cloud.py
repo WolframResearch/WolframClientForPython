@@ -14,7 +14,7 @@ from wolframclient.utils.tests import TestCase as BaseTestCase
 from wolframclient.language import wl
 from wolframclient.serializers import export
 if not six.JYTHON:
-    from wolframclient.evaluation import SecuredAuthenticationKey, UserIDPassword, WolframCloudSession
+    from wolframclient.evaluation import SecuredAuthenticationKey, UserIDPassword, WolframCloudSession, WolframCloudSessionAsync
     from wolframclient.evaluation.cloud.cloudsession import encode_api_inputs, url_join
 
 setup_logging_to_file('/tmp/python_testsuites.log', level=logging.WARNING)
@@ -59,6 +59,7 @@ class TestCaseSettings(BaseTestCase):
         cls.api_owner = cls.json_user_config.get('ApiOwner', 'dorianb')
 
         cls.cloud_session = WolframCloudSession(authentication=cls.sak)
+        cls.cloud_session_async = WolframCloudSessionAsync(authentication=cls.sak)
 
     @classmethod
     def tearDownClass(cls):
@@ -66,8 +67,13 @@ class TestCaseSettings(BaseTestCase):
 
     @classmethod
     def tearDownCloudSession(cls):
-        if cls.cloud_session is not None:
-            cls.cloud_session.terminate()
+        if cls.cloud_session_async is not None:
+            cls.cloud_session_async.terminate()
+
+    def get_data_path(self, filename):
+        """Return full path of a file in ./data/directory"""
+        current_file_dir = os.path.dirname(__file__)
+        return os.path.join(current_file_dir, '..', 'data', filename)
 
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 @unittest.skipIf(not os.path.exists(TestCaseSettings.user_config_file), "Need to configure credentials")
@@ -139,6 +145,21 @@ class TestCase(TestCaseSettings):
             })
         self.assertFalse(response.success)
         self.assertEqual(response.response.status_code, 500)
+
+    def test_small_image_file(self):
+        api = (self.api_owner, 'api/private/imagedimensions')
+        with open(self.get_data_path('32x2.png'), 'rb') as fp:
+            response = self.cloud_session.call(api, files={'image': fp})
+            self.assertTrue(response.success)
+            self.assertEqual(response.result(), b'{32, 2}')
+    
+    def test_image_file(self):
+        api = (self.api_owner, 'api/private/imagedimensions')
+        with open(self.get_data_path('500x200.png'), 'rb') as fp:
+            response = self.cloud_session.call(api, files={'image': fp})
+            self.assertTrue(response.success)
+            self.assertEqual(response.result(), b'{500, 200}')
+
 
     # url_join
 

@@ -2,13 +2,12 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.evaluation.kernel import WolframLanguageSession
-from wolframclient.evaluation.cloud import WolframCloudSession
+from wolframclient.evaluation.cloud import WolframCloudSession, WolframCloudSessionAsync
 from wolframclient.exception import WolframKernelException, AuthenticationException
 from wolframclient.language.exceptions import wl
-from wolframclient.utils.six import PY3
+from wolframclient.utils.six import PY3, string_types, binary_type
 
 __all__ = ['WolframCall']
-
 
 class WolframCall(object):
     """Primary interface to evaluate Wolfram Language code.
@@ -43,6 +42,27 @@ class WolframCall(object):
         self.target = target
         self.input = input
 
+    def _normalize_input(self):
+        # Normalize input. If it's readable, do it.
+        try:
+            self.input = self.input.read()
+        except AttributeError:
+            pass
+    
+    def _ensure_target_ready(self, is_async=False):
+        # ensure session is ready to evaluate expressions.
+        if isinstance(self.target, WolframLanguageSession):
+            if not self.target.started:
+                raise WolframKernelException(
+                    'Wolfram language session is not started.')
+        elif isinstance(self.target, WolframCloudSession):
+            if is_async and not isinstance(self.target, WolframCloudSessionAsync):
+                raise ValueError('The target does not support asynchronous call.')
+            if not self.target.authorized:
+                raise AuthenticationException('Cloud session not authorized.')
+        else:
+            raise ValueError('Unknow target type %s' % self.input.__class__.__name__)
+
     def perform(self):
         """Send the input to the specified target for evaluation and return the result."""
         self._normalize_input()
@@ -57,24 +77,51 @@ class WolframCall(object):
 
         """
         self._normalize_input()
-        self._ensure_target_ready()
+        self._ensure_target_ready(is_async=True)
         return self.target.evaluate_async(self.input)
-
-    def _normalize_input(self):
-        # Normalize input. If it's readable, do it.
-        try:
-            self.input = self.input.read()
-        except AttributeError:
-            pass
     
-    def _ensure_target_ready(self):
-        # ensure session is ready to evaluate expressions.
-        if isinstance(self.target, WolframLanguageSession):
-            if not self.target.started:
-                raise WolframKernelException(
-                    'Wolfram language session is not started.')
-        elif isinstance(self.target, WolframCloudSession):
-            if not self.target.authorized:
-                raise AuthenticationException('Cloud session not authorized.')
-        else:
-            raise ValueError('Unknow target type %s' % input.__class__.__name__)
+class WolframAPICall(object):
+    """Perform an API call to a given target.
+
+    The API call is actually performed when :func:`perform <wolframclient.evaluation.call.WolframAPICall.perform>`
+    is called.
+
+    Parameters can be added using one of the various functions that this class exposes. They
+    can be of many types including: string, files, WL serializable python objects, binary data with arbitrary
+    content-type (e.g: *image/png*).
+    """
+    
+    def __init__(self, target, api, permission_key=None):
+        self.target = target
+        self.api = api
+        self.parameters = {}
+        self.files = {}
+        self.permission_key = permission_key
+        self.multipart = False
+
+    def add_parameter(self, name, value):
+        self.parameters[name] = value
+        return self
+    
+    def add_file_parameter(self, name, fp):
+        self.files[name] = fp            
+        return self
+
+    def add_binary_parameter(self, name, data, content_type='application/octet-stream'):
+        if not isinstance(data, six.binary_type):
+            raise TypeError('Input data by bytes.')
+        self.files[name] = ('tmp_%s' % name, data, content_type)
+        return self
+
+    def add_image_data_parameter(self, name, image_data, content_type='image/png'):
+        if not isinstance(data, six.binary_type):
+            raise TypeError('Input data must by bytes.')
+        self.files[name] = ('tmp_image_%s' % name, data, content_type)
+        return self
+
+    def perform(self, **kwargs):
+        result = self.target.call(self.api,
+                                  input_parameters=self.parameters,
+                                  files=self.files,
+                                  permissions_key=self.permission_key, **kwargs)
+        return result.result()
