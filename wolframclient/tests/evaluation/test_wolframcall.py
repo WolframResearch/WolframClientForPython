@@ -26,10 +26,10 @@ class TestCase(SessionTestCase, KernelTestCase):
         cls.tearDownCloudSession()
 
     def _call_api(self, session):
-        call = WolframCall(session, '1+1').perform()
-        self.assertEqual(call, b'2')
-        call = WolframCall(session, 'Range[3').perform()
-        self.assertEqual(call, b'$Failed')
+        result = WolframCall(session, '1+1').perform()
+        self.assertEqual(result.get(), b'2')
+        result = WolframCall(session, 'Range[3').perform()
+        self.assertEqual(result.get(), b'$Failed')
 
     def test_call_api_kernel(self):
         self._call_api(self.kernel_session)

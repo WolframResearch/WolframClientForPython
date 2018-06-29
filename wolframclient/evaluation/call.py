@@ -28,10 +28,9 @@ class WolframCall(object):
         ...
         b'2'
 
-        >>> with WolframCloudSession() as cloud_session:
-        ...     call = WolframCall(cloud_session, '1+1')
-        ...     call.perform()
-        ...
+        >>> cloud_session = WolframCloudSession()
+        >>> call = WolframCall(cloud_session, '1+1')
+        >>> call.perform()
         b'2'
 
     When `input` is a file, its content is read and send to the kernel.
@@ -67,7 +66,7 @@ class WolframCall(object):
         """Send the input to the specified target for evaluation and return the result."""
         self._normalize_input()
         self._ensure_target_ready()
-        return self.target.evaluate(self.input).get()
+        return self.target.evaluate(self.input)
 
     def perform_async(self):
         """Asynchronously send the input to the specified target for evaluation and return a future object.
@@ -100,28 +99,42 @@ class WolframAPICall(object):
         self.multipart = False
 
     def add_parameter(self, name, value):
+        """Add a new API input parameter from a serialization python object."""
         self.parameters[name] = value
         return self
     
-    def add_file_parameter(self, name, fp):
-        self.files[name] = fp            
+    def add_file_parameter(self, name, fp, content_type=None):
+        """Add a new API input parameter from a file pointer `fp`"""
+        if content_type is None:
+            self.files[name] = fp
+        else:
+            self.files[name] = ('tmp_%s' % name, fp, content_type)
         return self
 
     def add_binary_parameter(self, name, data, content_type='application/octet-stream'):
+        """Add a new API input parameter as a blob of binary data."""
         if not isinstance(data, six.binary_type):
             raise TypeError('Input data by bytes.')
         self.files[name] = ('tmp_%s' % name, data, content_type)
         return self
 
     def add_image_data_parameter(self, name, image_data, content_type='image/png'):
+        """Add a new API image input parameter from binary data.
+
+        If the data in `image_data` does not represent an image in the `PNG` format, the
+        optional parameter `content_type` must be set accordingly to the appropriate content
+        type.
+        e.g: *image/jpeg*, *image/gif*, etc.
+        """
         if not isinstance(data, six.binary_type):
             raise TypeError('Input data must by bytes.')
         self.files[name] = ('tmp_image_%s' % name, data, content_type)
         return self
 
     def perform(self, **kwargs):
+        """Make the API call, return the result."""
         result = self.target.call(self.api,
                                   input_parameters=self.parameters,
                                   files=self.files,
                                   permissions_key=self.permission_key, **kwargs)
-        return result.get()
+        return result
