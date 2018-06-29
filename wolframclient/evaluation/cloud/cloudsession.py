@@ -31,8 +31,8 @@ class WolframCloudSession(object):
     * 2-legged oauth using a secured authentication key.
     * xauth using the user ID and password.
 
-    Calling an API is done through the method :func:`call<wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.call>` 
-    which will return an instance of :class:`WolframAPIResponse<wolframclient.evaluation.cloud.result.WolframAPIResponse>`. 
+    Calling an API is done through the method :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.call` 
+    which will return an instance of :class:`~wolframclient.evaluation.result.WolframAPIResponse`. 
     It is strongly advised to re-use a session to make multiple calls to mitigate the cost of initialization.
     """
     
@@ -85,7 +85,7 @@ class WolframCloudSession(object):
 
     @property
     def authorized(self):
-        """Returns a reasonnably accurate state of the authentication status."""
+        """Return a reasonnably accurate state of the authentication status."""
         if self.authentication is not None and self.is_xauth is None:
             self.authenticate()
         if self.is_xauth is None or self.oauth is None:
@@ -110,8 +110,8 @@ class WolframCloudSession(object):
         """Call a given API, using the provided input parameters.
 
         `api` can be a string url or a :class:`tuple` (`username`, `api name`). User name is
-        generally the Wolfram Language symbol ``$UserName``. API id can be a uuid or a
-        name, in the form of a relative path. e.g: myapi/foo/bar
+        generally the Wolfram Language symbol ``$UserName``. The API name can be a uuid or a
+        relative path e.g: *myapi/foo/bar*.
 
         The input parameters are provided as a dictionary with string keys being the name
         of the parameters associated to their value.
@@ -205,7 +205,7 @@ class WolframCloudSession(object):
 class WolframCloudSessionAsync(WolframCloudSession):
     ''' A Wolfram cloud session that call issue asynchronous call.
 
-    Contrary to :class:`WolframCloudSession <wolframclient.evaluation.WolframCloudSession>`, this
+    Contrary to :class:`~wolframclient.evaluation.WolframCloudSession`, this
     class must be terminated when no more used.
     '''
     def __init__(self, authentication=None, server=WolframPublicCloudServer):
@@ -325,7 +325,7 @@ def _encode_inputs_as_wl(inputs, multipart, **kwargs):
     return encoded_inputs
 
 def update_parameter_list(parameters, name, value, multipart=False):
-    ''' Update the given :class:`dict<parameters>` with a new inputs using the appropriate form based on `multipart`.
+    ''' Update the given :class:`~parameters` with a new inputs using the appropriate form based on `multipart`.
     '''
     if multipart:
         parameters[name] = ('tmp_file_%s' % name, value)

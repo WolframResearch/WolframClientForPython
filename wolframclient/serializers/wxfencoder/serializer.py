@@ -164,8 +164,8 @@ WXF_HEADER_COMPRESS = b'C'
 class WXFExprSerializer(object):
     """Main serialization class that convert internal object into bytes.
     
-    Pulls instances of :class:`WXFExpr <wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr>` from an 
-    :class:`WXFExprProvider <wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider>`, serializes 
+    Pulls instances of :class:`~wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr` from an 
+    :class:`~wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider`, serializes 
     them into wxf bytes and write the data to a stream. 
     
     This class also ensures the output data is a valid WXF encoded expression, and raises an exception otherwise.

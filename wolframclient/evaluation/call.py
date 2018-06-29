@@ -14,11 +14,11 @@ class WolframCall(object):
 
     The wolfram call can seamlessly evaluate on various targets:
 
-    * a kernel, when initialized with an instance of :class:`WolframLanguageSession<wolframclient.evaluation.WolframLanguageSession>`
-    * a wolfram cloud when initialized with an instance of :class:`WolframCloudSession<wolframclient.evaluation.WolframCloudSession>`
+    * a kernel, when initialized with an instance of :class:`~wolframclient.evaluation.WolframLanguageSession`
+    * a wolfram cloud when initialized with an instance of :class:`~wolframclient.evaluation.WolframCloudSession`
 
     The expression to evaluate can have various forms, it can be a string expression, or a instance of
-    :class:`WLSerializable<wolframclient.serializers.WLSerializable>` in which case it is serialized prior to being evaluated.
+    :class:`~wolframclient.serializers.WLSerializable` in which case it is serialized prior to being evaluated.
 
     Examples of the similar evaluations on different targets::
 
@@ -82,7 +82,7 @@ class WolframCall(object):
 class WolframAPICall(object):
     """Perform an API call to a given target.
 
-    The API call is actually performed when :func:`perform <wolframclient.evaluation.call.WolframAPICall.perform>`
+    The API call is actually performed when :func:`~wolframclient.evaluation.WolframAPICall.perform`
     is called.
 
     Parameters can be added using one of the various functions that this class exposes. They

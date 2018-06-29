@@ -295,9 +295,9 @@ class WolframLanguageSession(object):
         """Send an expression to the kernel for evaluation.
         
         The `expr` must be a string of bytes or unicode, or an instance of Python object 
-        serializable by :func:`export <wolframclient.serializers.export>`.
+        serializable by :func:`~wolframclient.serializers.export`.
 
-        `kwargs` are passed to :func:`export <wolframclient.serializers.export>` during
+        `kwargs` are passed to :func:`~wolframclient.serializers.export` during
         serialization step of non-string input.
         """
         logger.debug('new evaluation on: %s', self)

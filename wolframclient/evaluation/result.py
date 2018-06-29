@@ -17,7 +17,7 @@ __all__ = [
 class WolframResult(object):
     """Most generic result object.
     
-    The actual result is returned via method :func:`get <wolframclient.evaluation.result.WolframResult.get>`.
+    The actual result is returned via method :func:`~wolframclient.evaluation.result.WolframResult.get`.
     If the result is a `success`, the field `result` is returned otherwise `failure` is returned and most
     likely contains an error message.
     """
@@ -247,7 +247,7 @@ class WolframAPIResponse500(WolframAPIResponseGeneric):
 
 class WolframAPIResponseBuilder(object):
     """Map error code to handler building the appropriate 
-    :class:`WolframAPIResponse <wolframclient.evaluation.result.WolframAPIResponse>`
+    :class:`~wolframclient.evaluation.result.WolframAPIResponse`
     """
     response_mapper = {
         200: WolframAPIResponse200,

@@ -80,8 +80,8 @@ class WLFunction(WLExpressionMeta):
 class ExpressionFactory(object):
     """Provide a convenient way to build objects representing arbitrary Wolfram Language expressions through the use of attributes.
 
-    This class is conveniently instanciated at startup as: :class:`wl <wolframclient.language.wl>` and 
-    :class:`system <wolframclient.language.system>`. It should be instanciated only to represent symbols belonging to a specific context.
+    This class is conveniently instanciated at startup as: :class:`~wolframclient.language.wl` and 
+    :class:`~wolframclient.language.system`. It should be instanciated only to represent symbols belonging to a specific context.
 
     Example::
 
@@ -99,9 +99,9 @@ class ExpressionFactory(object):
 
 
 wl = ExpressionFactory()
-"""A factory of :class:`WLSymbol<wolframclient.language.expression.WLSymbol>` instances without any particular context.
+"""A factory of :class:`~wolframclient.language.expression.WLSymbol` instances without any particular context.
 
-This instance of :class:`ExpressionFactory<wolframclient.language.expression.ExpressionFactory>` is conveniently used 
+This instance of :class:`~wolframclient.language.expression.ExpressionFactory` is conveniently used 
 by calling its attributes. The following code represents various Wolfram Language expressions::
 
     # Now
@@ -113,10 +113,10 @@ by calling its attributes. The following code represents various Wolfram Languag
 """
 
 system = ExpressionFactory('System')
-"""A factory of :class:`WLSymbol<wolframclient.language.expression.WLSymbol>` instances having ``System``` context.
+"""A factory of :class:`~wolframclient.language.expression.WLSymbol` instances having ``System``` context.
 
-See :func:`wl<wolframclient.language.expression.ExpressionFactory>` and 
-:class:`ExpressionFactory<wolframclient.language.expression.ExpressionFactory>` for more details."""
+See :func:`~wolframclient.language.expression.ExpressionFactory` and 
+:class:`~wolframclient.language.expression.ExpressionFactory` for more details."""
 
 
 __all__ = ['ExpressionFactory', 'WLSymbol', 'wl', 'system']

@@ -7,25 +7,25 @@ from wolframclient.utils import six
 import wolframclient.serializers.wxfencoder.wxfexpr as wxfexpr
 
 class NotEncodedException(Exception):
-    """Exception used during encoding to signal that a given python object has been ignored by a :class:`WXFEncoder<wolframclient.serializers.wxfencoder.WXFEncoder>`."""
+    """Exception used during encoding to signal that a given python object has been ignored by a :class:`~wolframclient.serializers.wxfencoder.WXFEncoder`."""
 
     pass
 
 class WXFEncoder(object):
-    """Encode a given python object into a stream of :class:`WXFExpr<wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr>`.
+    """Encode a given python object into a stream of :class:`~wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr`.
 
     This class is meant to be subclassed in order to add support for new classes. The encoder does not have to do anything 
-    since more than one can be attached to a given :class:`WXFExprProvider<wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider>`. 
+    since more than one can be attached to a given :class:`~wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider`. 
     The library provides a default encoder that should cover basic needs, more or less json types, and that should be useful in any case.
 
-    To implement a new encoder one needs to sub-class :class:`WXFEncoder<wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder>` 
-    and implements method :func:`encode<wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder.encode>`. Encode is a generator function 
-    that takes a given python object and instances of :class:`WXFExpr<wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr>`. If it returns before
-    yielding anything a :class:`NotEncodedException<wolframclient.serializers.wxfencoder.wxfencoder.NotEncodedException>` is raised to signal that
+    To implement a new encoder one needs to sub-class :class:`~wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder` 
+    and implements method :func:`~wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder.encode`. Encode is a generator function 
+    that takes a given python object and instances of :class:`~wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr`. If it returns before
+    yielding anything a :class:`~wolframclient.serializers.wxfencoder.wxfencoder.NotEncodedException` is raised to signal that
     the encoder is not supporting the given object, and that the encoding must be delegating to the next encoder (if any).
 
     Sometimes it is useful to start a new serialization using the provider, re-entrant call, especially when dealing with non-atomic 
-    :class:`WXFExpr<wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr>`, such as ``Function`` or ``Association``. 
+    :class:`~wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr`, such as ``Function`` or ``Association``. 
     To do so one must call ``self.serialize`` on the target object and yield the results (yield from in PY3).
     """
 
@@ -49,7 +49,7 @@ class WXFEncoder(object):
             yield from self.serialize({'k1'->1,'k2'->2})
 
         Using a re-entrant call (line 3) allows the dictionnary to be encoded as a new expr;
-        assuming :class:`WXFDefaultEncoder<wolframclient.serializers.wxfencoder.WXFDefaultEncoder>` 
+        assuming :class:`~wolframclient.serializers.wxfencoder.WXFDefaultEncoder` 
         is also registered as a provider, the dict will get encoded as an association.
 
         It also enables transformation mechanism, say apply list to all iterable object and

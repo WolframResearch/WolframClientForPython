@@ -20,7 +20,7 @@ def export(data, stream=None, target_format=DEFAULT_FORMAT, **options):
 
     Input `data` can be one of the native Python types supported directly including: 
     :class:`list`, :class:`dict`, etc. Or, a serializable python object, i.e extending 
-    :class:`WLSerializable <wolframclient.serializers.serializable.WLSerializable>`. 
+    :class:`~wolframclient.serializers.serializable.WLSerializable`. 
     The default format is string *InputForm*::
     
         >>> export(wl.Range(3))
