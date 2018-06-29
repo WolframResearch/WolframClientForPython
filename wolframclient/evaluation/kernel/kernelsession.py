@@ -9,7 +9,7 @@ from wolframclient.serializers import export
 from wolframclient.language import wl
 from wolframclient.exception import WolframKernelException
 from wolframclient.utils.encoding import force_text
-from wolframclient.evaluation.evaluationresult import WolframEvaluationResult
+from wolframclient.evaluation.result import WolframResult
 
 logger = logging.getLogger(__name__)
 
@@ -313,7 +313,7 @@ class WolframLanguageSession(object):
         # read the message as bytes.
         msgstr = self.out_socket.zmq_socket.recv()
         self.evaluation_count += 1
-        return WolframEvaluationResult(expr=msgstr)
+        return WolframResult(result=msgstr)
 
     def evaluate_async(self, expr, **kwargs):
         """Evaluate a given `expr` asynchronously.

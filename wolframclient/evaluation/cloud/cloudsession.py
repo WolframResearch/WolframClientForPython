@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.evaluation.cloud.inputoutput import WolframAPIResponseBuilder, WolframEvaluationResponse
+from wolframclient.evaluation.result import WolframAPIResponseBuilder, WolframEvaluationJSONResponse
 from wolframclient.evaluation.cloud.oauth import OAuthSession
 from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 from wolframclient.exception import AuthenticationException
@@ -32,7 +32,7 @@ class WolframCloudSession(object):
     * xauth using the user ID and password.
 
     Calling an API is done through the method :func:`call<wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.call>` 
-    which will return an instance of :class:`WolframAPIResponse<wolframclient.evaluation.cloud.inputoutput.WolframAPIResponse>`. 
+    which will return an instance of :class:`WolframAPIResponse<wolframclient.evaluation.cloud.result.WolframAPIResponse>`. 
     It is strongly advised to re-use a session to make multiple calls to mitigate the cost of initialization.
     """
     
@@ -176,7 +176,7 @@ class WolframCloudSession(object):
         response = self._post(
             self.evaluation_api_url,
             body=data)
-        return WolframEvaluationResponse(response)
+        return WolframEvaluationJSONResponse(response)
 
     def evaluate_string(self, expr):
         """Send the string InputForm of an `expr` to the cloud for evaluation."""

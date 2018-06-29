@@ -97,14 +97,14 @@ class TestCase(TestCaseSettings):
     def test_section_api_call_no_param(self):
         url = 'api/private/requesterid'
         response = self.cloud_session.call((self.api_owner, url))
-        self.assertIn(self.api_owner, force_text(response.output))
+        self.assertIn(self.api_owner, force_text(response.get()))
 
     def test_section_api_call_one_param(self):
         url = 'api/private/stringreverse'
         response = self.cloud_session.call(
             (self.api_owner, url),
             input_parameters={'str': 'abcde'})
-        self.assertEqual('"edcba"', force_text(response.output))
+        self.assertEqual('"edcba"', force_text(response.get()))
 
     def test_section_api_call_one_param_wrong(self):
         url = 'api/private/stringreverse'
@@ -120,7 +120,7 @@ class TestCase(TestCaseSettings):
         response = cloud_session.call((self.api_owner, url),
             input_parameters={'i': 5})
         self.assertTrue(response.success)
-        self.assertEqual(json.loads(response.output), list(range(1, 6)))
+        self.assertEqual(json.loads(response.get()), list(range(1, 6)))
 
     def test_section_api_call_two_param(self):
         api = (self.api_owner, 'api/private/range/formated/json')
@@ -134,7 +134,7 @@ class TestCase(TestCaseSettings):
         if not response.success:
             logger.warning(response.failure)
         expected = list(range(v_min, v_max, step))
-        self.assertListEqual(expected, json.loads(response.output))
+        self.assertListEqual(expected, json.loads(response.get()))
 
     def test_section_wl_error(self):
         api = (self.api_owner, "api/private/range/wlerror")
@@ -151,14 +151,14 @@ class TestCase(TestCaseSettings):
         with open(self.get_data_path('32x2.png'), 'rb') as fp:
             response = self.cloud_session.call(api, files={'image': fp})
             self.assertTrue(response.success)
-            self.assertEqual(response.result(), b'{32, 2}')
+            self.assertEqual(response.get(), b'{32, 2}')
     
     def test_image_file(self):
         api = (self.api_owner, 'api/private/imagedimensions')
         with open(self.get_data_path('500x200.png'), 'rb') as fp:
             response = self.cloud_session.call(api, files={'image': fp})
             self.assertTrue(response.success)
-            self.assertEqual(response.result(), b'{500, 200}')
+            self.assertEqual(response.get(), b'{500, 200}')
 
 
     # url_join

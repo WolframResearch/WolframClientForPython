@@ -67,7 +67,7 @@ class WolframCall(object):
         """Send the input to the specified target for evaluation and return the result."""
         self._normalize_input()
         self._ensure_target_ready()
-        return self.target.evaluate(self.input).result()
+        return self.target.evaluate(self.input).get()
 
     def perform_async(self):
         """Asynchronously send the input to the specified target for evaluation and return a future object.
@@ -124,4 +124,4 @@ class WolframAPICall(object):
                                   input_parameters=self.parameters,
                                   files=self.files,
                                   permissions_key=self.permission_key, **kwargs)
-        return result.result()
+        return result.get()

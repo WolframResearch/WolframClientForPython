@@ -10,5 +10,9 @@ __all__ = [
     'WolframCloudSession', 'WolframCloudSessionAsync',
     'SecuredAuthenticationKey',
     'UserIDPassword',
-    'WolframLanguageSession'
+    'WolframLanguageSession',
+    'WolframResult',
+    'WolframAPIResponseBuilder',
+    'WolframAPIResponse',
+    'WolframEvaluationJSONResponse'
     ]
