@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-from wolframclient.exception import EvaluationException, RequestException
+from wolframclient.exception import EvaluationException, RequestException, WolframLanguageException
 from wolframclient.utils import six
 import logging
 
@@ -30,17 +30,11 @@ class WolframResult(object):
         self.result = result
 
     def get(self):
-        """Return the result based on the success status."""
+        """Return the result or raise an exception based on the success status."""
         if self.success:
             return self.result
         else:
-            return self.failure
-
-    def __str__(self):
-        if self.success:
-            return self.result
-        else:
-            return self.failure
+            raise WolframLanguageException(self.failure)
 
     def __repr__(self):
         if self.success:

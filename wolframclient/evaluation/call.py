@@ -133,8 +133,7 @@ class WolframAPICall(object):
 
     def perform(self, **kwargs):
         """Make the API call, return the result."""
-        result = self.target.call(self.api,
+        return self.target.call(self.api,
                                   input_parameters=self.parameters,
                                   files=self.files,
                                   permissions_key=self.permission_key, **kwargs)
-        return result
