@@ -18,6 +18,12 @@ json = API(
     load            = 'json.load',
     JSONDecodeError = 'json.decoder.JSONDecodeError'
 )
+
+zlib = API(
+    compressobj='zlib.compressobj',
+    decompressobj='zlib.decompressobj'
+)
+
 os = API(
     X_OK        = 'os.X_OK',
     access      = 'os.access',
