@@ -32,7 +32,7 @@ class SerializeTest(BaseTestCase):
 
     def path_to_file_in_data_dir(self, file_name):
         current_file_dir = os.path.dirname(__file__)
-        return os.path.join(current_file_dir, 'data', file_name)
+        return os.path.join(current_file_dir, '..', 'data', file_name)
 
 class TestCase(SerializeTest):
 
