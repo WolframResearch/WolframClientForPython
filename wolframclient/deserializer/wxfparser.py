@@ -1,55 +1,210 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, unicode_literals
-from wolframclient.utils.six import BytesIO, binary_type, string_types
+from wolframclient.utils.six import BytesIO, binary_type, string_types, integer_types
 from wolframclient.serializers.wxfencoder import wxfexpr
 from wolframclient.serializers.wxfencoder.serializer import SerializationContext, WXF_HEADER_COMPRESS, WXF_HEADER_SEPARATOR, WXF_VERSION
+from wolframclient.serializers.wxfencoder.streaming import ZipCompressedReader, ExactSizeReader
 from wolframclient.exception import WolframLanguageException
-
+from wolframclient.language import ExpressionFactory
 class WolframParserException(WolframLanguageException):
     pass
 
-def binary_deserialize(wxf_input, enforce=True):
-    """Deserialize binary data, yield instances of WXFExpr.
+class WXFParser(object):
 
-    `data` can be a string of bytes with the serialized expression, a string of unicodes
-    in which case it is considered as a filename, a object implementing a `read` method.
-    """
-    if enforce:
-        self._context = SerializationContext()
-    else:
-        self._context = NoEnforcingContext()
+    def __init__(self, wxf_input, enforce=True):
+        """WXF parser returning Python object from a WXF encoded byte sequence.
+        
+        `wxf_input` can be a string of bytes with the serialized expression, a string of unicodes
+        in which case it is considered as a filename, a object implementing a `read` method.
+        """
+        if enforce:
+            self.context = SerializationContext()
+        else:
+            self.context = NoEnforcingContext()
+        if isinstance(input, binary_type):
+            self.reader = BytesIO(wxf_input)
+        elif hasattr(wxf_input, 'read'):
+            self.reader = wxf_input
+        else:
+            raise TypeError('Class %s neither implements a read method nor is a binary type.' %
+                            wxf_input.__class__.__name__)
+        version, compress = self.parse_header()
+        if compress == True:
+            self.reader = ZipCompressedReader(self.reader)
+        else:
+            self.reader = ExactSizeReader(self.reader)
 
-    if isinstance(wxf_input, string_types):
-        with open(wxf_input, 'rb') as fp:
-            for o in _deserialize(fp):
-                yield o
-    elif isinstance(input, binary_type):
-        o = _deserialize(BytesIO(wxf_input))
-        for o in _deserialize(fp):
-            yield o
-    elif hasattr(wxf_input, 'read'):
-        o = _deserialize(wxf_input)
-        for o in _deserialize(fp):
-            yield o
-    else:
-        raise TypeError('WXF input must be a string of bytes, a filename as string, a readable object. Got %s.' %
-                        wxf_input.__class__.__name__)
+    def binary_deserialize(self):
+        """Deserialize binary data, return a Python object.
+        """
+        pass
 
+    def deserialize(self):
+        yield self.next_token()
+        while not self.context.is_valid_final_state():
+            yield self.next_token()
+
+    def parse_header(self):
+        compress = False
+        next_byte = self.reader.read(1)
+        if next_byte == WXF_VERSION:
+            version = int(next_byte)
+            next_byte = self.reader.read(1)
+        else:
+            raise WolframParserException(
+                'WXF version %s is not supported.' % version)
+        if next_byte == WXF_HEADER_COMPRESS:
+            compress = True
+            next_byte = self.reader.read(1)
+        if next_byte != WXF_HEADER_SEPARATOR:
+            raise WolframParserException(
+                'Invalid header. Failed to find header separator \':\'.')
+        return (version, compress)
+
+    def parse_array(self, token):
+        # Parsing array rank and dimensions
+        rank = parse_varint(self.reader)
+        if rank == 0:
+            raise WolframParserException('Array rank cannot be zero.')
+        token.dimensions = []
+        for i in range(rank):
+            dim = parse_varint(self.reader)
+            if dim == 0:
+                raise WolframParserException('Array dimensions cannot be zero.')
+            token.dimensions.append(dim)
+        # reading values
+        bytecount = wxfexpr.ARRAY_TYPES_ELEM_SIZE[token.array_type] * token.element_count
+        token.data = self.reader.read(bytecount)
+
+    def next_token(self):
+        next_byte = self.reader.read(1)
+        token = WXFToken(next_byte)
+        if next_byte == wxfexpr.WXF_CONSTANTS.Symbol or next_byte == wxfexpr.WXF_CONSTANTS.String or next_byte == wxfexpr.WXF_CONSTANTS.BigInteger or next_byte == wxfexpr.WXF_CONSTANTS.BigReal:
+            self.context.add_part()
+            token.length = parse_varint(self.reader)
+            if token.length == 0:
+                token.data = ''
+            else:
+                token.data = self.reader.read(token.length).decode('utf8')
+        elif next_byte == wxfexpr.WXF_CONSTANTS.Integer8:
+            self.context.add_part()
+            token.data = wxfexpr.StructInt8LE.unpack(self.reader.read(1))[0]
+        elif next_byte == wxfexpr.WXF_CONSTANTS.Integer64:
+            self.context.add_part()
+            token.data = wxfexpr.StructInt64LE.unpack(self.reader.read(8))[0]
+        elif next_byte == wxfexpr.WXF_CONSTANTS.Integer32:
+            self.context.add_part()
+            token.data = wxfexpr.StructInt32LE.unpack(self.reader.read(4))[0]
+        elif next_byte == wxfexpr.WXF_CONSTANTS.Integer16:
+            self.context.add_part()
+            token.data = wxfexpr.StructInt16LE.unpack(self.reader.read(2))[0]
+        elif next_byte == wxfexpr.WXF_CONSTANTS.Real64:
+            self.context.add_part()
+            token.data = wxfexpr.StructDouble.unpack(self.reader.read(8))[0]
+        elif next_byte == wxfexpr.WXF_CONSTANTS.Function:
+            token.length = parse_varint(self.reader)
+            self.context.step_in_new_expr(token.length)
+        elif next_byte == wxfexpr.WXF_CONSTANTS.Association:
+            token.length = parse_varint(self.reader)
+            self.context.step_in_new_expr(token.length, is_assoc=True)
+        elif next_byte == wxfexpr.WXF_CONSTANTS.Rule or next_byte == wxfexpr.WXF_CONSTANTS.RuleDelayed:
+            if not self.context.is_rule_valid():
+                raise WolframParserException('Rule and RuleDelayed must be parts of an Association.')
+            self.context.step_in_new_expr(2)
+        elif next_byte == wxfexpr.WXF_CONSTANTS.PackedArray:
+            self.context.add_part()
+            token.array_type = self.reader.read(1)
+            if token.array_type not in wxfexpr.VALID_PACKED_ARRAY_TYPES:
+                raise WolframParserException('Invalid PackedArray value type: %s' % token.array_type)
+            self.parse_array(token)
+        elif next_byte == wxfexpr.WXF_CONSTANTS.RawArray:
+            self.context.add_part()
+            token.array_type = self.reader.read(1)
+            if token.array_type not in wxfexpr.ARRAY_TYPES_ELEM_SIZE:
+                raise WolframParserException('Invalid RawArray value type: %s' % token.array_type)
+            self.parse_array(token)
+        elif next_byte == wxfexpr.WXF_CONSTANTS.BinaryString:
+            self.context.add_part()
+            token.length = parse_varint(self.reader)
+            if token.length == 0:
+                token.data = b''
+            else:
+                token.data = self.reader.read(token.length)
+        else:
+            raise WolframParserException('Unexpected token %s' % next_byte)
+
+        return token
+
+
+class WXFToken(object):
+    __slots__ = 'wxf_type', 'array_type', 'length', '_dimensions', '_element_count', 'data'
     
-def _deserialize(reader):
-    version, compress = _parse_header(reader)
-
-def _parse_header(reader):
-    compress = False
-    next_byte = reader.read(1)
-    if next_byte == WXF_VERSION:
-        next_byte = reader.read(1)
-    else:
-        raise WolframParserException('WXF version %s is not supported.' % version)
-    if next_byte == WXF_HEADER_COMPRESS:
-        compress = True
-        next_byte = reader.read(1)
-    if next_byte != WXF_HEADER_SEPARATOR:
-        raise WolframParserException('Invalid header. Failed to find header separator \':\'.')
-    return (version, compress)
+    def __init__(self, wxf_type):
+        self.wxf_type = wxf_type
+        self._dimensions = None
+        self._element_count = None
+        self.data = None
+        self.length = None
     
+    @property
+    def element_count(self):
+        if self._element_count is None and self._dimensions is not None:
+            self._update_element_count()
+        return self._element_count
+    
+    @property
+    def dimensions(self):
+        return self._dimensions
+
+    @dimensions.setter
+    def dimensions(self, value):
+        if not isinstance(value, list):
+            raise TypeError('Dimensions must be a list of positive integers.')
+        self._dimensions = value
+        if self._element_count is not None:
+            self._update_element_count()
+
+    def _update_element_count(self):
+        count = 1
+        for dim in self._dimensions:
+            count = count * dim
+        if not isinstance(count, integer_types) or count <= 0:
+            raise TypeError('Dimensions must be strictly positive integers.')
+        self._element_count = count
+
+    def __str__(self):
+        if self.length is not None:
+            return 'WXFToken<%s, data=%s, len=%i>' % (self.wxf_type, self.data, self.length)
+        else:
+            return 'WXFToken<%s, data=%s>' % (self.wxf_type, self.data)
+    
+
+def parse_varint(reader):
+    """Parse a readable binary buffer for a positive varint encoded integer."""
+    count = 0
+    continuation = True
+    shift = 0
+    length = 0
+    # when we read from stream we get a sequence of bytes. Its length is 1
+    # except if we reached EOF in which case taking index 0 raises IndexError.
+    try:
+        while continuation and count < 8:
+            count = count + 1
+            next_byte = reader.read(1)
+            next_byte = next_byte[0]
+            length |= (next_byte & 0x7F) << shift
+            shift = shift + 7
+            continuation = (next_byte & 0x80) != 0
+
+        if continuation:
+            next_byte = reader.read(1)
+            next_byte = next_byte[0]
+            next_byte &= 0x7F
+            if next_byte == 0:
+                raise WolframParserException('Invalid last varint byte.')
+            length |= next_byte << shift
+
+        return length
+    except IndexError:
+        raise EOFError('EOF reached while parsing varint encoded integer.')
+

@@ -64,6 +64,21 @@ ARRAY_TYPES = Settings(
     ComplexReal64     = _bytes(0x34),
 )
 
+ARRAY_TYPES_ELEM_SIZE = {
+    ARRAY_TYPES.Integer8: 1,
+    ARRAY_TYPES.Integer16: 2,
+    ARRAY_TYPES.Integer32: 4,
+    ARRAY_TYPES.Integer64: 8,
+    ARRAY_TYPES.UnsignedInteger8: 1,
+    ARRAY_TYPES.UnsignedInteger16: 2,
+    ARRAY_TYPES.UnsignedInteger32: 4,
+    ARRAY_TYPES.UnsignedInteger64: 8,
+    ARRAY_TYPES.Real32: 4,
+    ARRAY_TYPES.Real64: 8,
+    ARRAY_TYPES.ComplexReal32: 8,
+    ARRAY_TYPES.ComplexReal64: 16,
+}
+
 ''' A set of all valid value type tokens for PackedArray.
 There is no restriction for RawArray value types. '''
 VALID_PACKED_ARRAY_TYPES = frozenset((
@@ -109,6 +124,13 @@ class WXFExprFunction(WXFExpr):
         context.step_in_new_expr(self.length + 1)
         write_varint(self.length, stream)
 
+
+StructInt8LE = struct.Struct(b'<b')
+StructInt16LE = struct.Struct(b'<h')
+StructInt32LE = struct.Struct(b'<i')
+StructInt64LE = struct.Struct(b'<q')
+StructDouble = struct.Struct(b'<d')
+
 class WXFExprInteger(WXFExpr):
     ''' Integers have various length, from one byte up to eigth and are signed
     values. Values above 2^63-1 are represented with `WXFExprBigInteger`.
@@ -137,20 +159,15 @@ class WXFExprInteger(WXFExpr):
 
         self.value = value
 
-    StructInt8LE  = struct.Struct(b'<b')
-    StructInt16LE = struct.Struct(b'<h')
-    StructInt32LE = struct.Struct(b'<i')
-    StructInt64LE = struct.Struct(b'<q')
-
     def _pack(self, buffer):
         if self.int_size == 1:
-            WXFExprInteger.StructInt8LE.pack_into(buffer, 0, self.value)
+            StructInt8LE.pack_into(buffer, 0, self.value)
         elif self.int_size == 2:
-            WXFExprInteger.StructInt16LE.pack_into(buffer, 0, self.value)
+            StructInt16LE.pack_into(buffer, 0, self.value)
         elif self.int_size == 4:
-            WXFExprInteger.StructInt32LE.pack_into(buffer, 0, self.value)
+            StructInt32LE.pack_into(buffer, 0, self.value)
         else:
-            WXFExprInteger.StructInt64LE.pack_into(buffer, 0, self.value)
+            StructInt64LE.pack_into(buffer, 0, self.value)
 
     ''' Encode the integer into bytes and return them in a `buffer`.
 
@@ -189,17 +206,15 @@ class WXFExprReal(WXFExpr):
         super(WXFExprReal, self).__init__(WXF_CONSTANTS.Real64)
         self.value = value
 
-    StructDouble = struct.Struct(b'<d')
-
     if six.JYTHON:
         def to_bytes(self):
             buffer = jarray.zeros(8, 'c')
-            WXFExprReal.StructDouble.pack_into(buffer, 0, self.value)
+            StructDouble.pack_into(buffer, 0, self.value)
             return buffer.tostring()
     else:
         def to_bytes(self):
             buffer = bytearray(8)
-            WXFExprReal.StructDouble.pack_into(buffer, 0, self.value)
+            StructDouble.pack_into(buffer, 0, self.value)
             return buffer
 
     def _serialize_to_wxf(self, stream, context):

@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals, with_statement
 
-from wolframclient.serializers.wxfencoder.streaming import ZipCompressedWriter, ZipCompressedRead
+from wolframclient.serializers.wxfencoder.streaming import ZipCompressedWriter, ZipCompressedReader
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
 import random
@@ -41,7 +41,7 @@ class TestCase(BaseTestCase):
         num_of_chunk = 20
         chunk_size = total // num_of_chunk
         in_buffer = six.BytesIO(zipped)
-        reader = ZipCompressedRead(in_buffer)
+        reader = ZipCompressedReader(in_buffer)
         buff = six.BytesIO()
         for i in range(num_of_chunk):
             buff.write(reader.read(chunk_size))
@@ -58,7 +58,7 @@ class TestCase(BaseTestCase):
         num_of_chunk = 20
         chunk_size = total // num_of_chunk
         in_buffer = six.BytesIO(zipped)
-        reader = ZipCompressedRead(in_buffer)
+        reader = ZipCompressedReader(in_buffer)
         buff = six.BytesIO()
         for i in range(num_of_chunk):
             buff.write(reader.read(chunk_size, exact_size=True))
@@ -71,6 +71,6 @@ class TestCase(BaseTestCase):
         data = six.binary_type(bytearray(range(100)))
         zipped = zlib.compress(data)
         total = len(zipped)
-        reader = ZipCompressedRead(six.BytesIO(zipped))
+        reader = ZipCompressedReader(six.BytesIO(zipped))
         with self.assertRaises(EOFError):
             reader.read(size=total + 1, exact_size=True)
