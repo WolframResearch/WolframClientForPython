@@ -39,9 +39,14 @@ class SocketException(WolframLanguageException):
     pass
 
 
+class WolframParserException(WolframLanguageException):
+    pass
+
+
 __all__ = ['WolframLanguageException',
            'RequestException',
            'AuthenticationException',
            'EvaluationException',
            'WolframKernelException',
-           'SocketException']
+           'SocketException',
+           'WolframParserException']

@@ -47,9 +47,17 @@ class _Context(object):
         raise NotImplementedError(
             'class %s must implement a add_part method' % self.__class__.__name__)
 
-    def step_in_new_expr(self, length, is_assoc=False):
+    def step_into_new_function(self, length):
         raise NotImplementedError(
-            'class %s must implement a step_in_new_expr method' % self.__class__.__name__)
+            'class %s must implement a step_into_new_function method' % self.__class__.__name__)
+
+    def step_into_new_assoc(self, length):
+        raise NotImplementedError(
+            'class %s must implement a step_into_new_assoc method' % self.__class__.__name__)
+
+    def step_into_new_rule(self):
+        raise NotImplementedError(
+            'class %s must implement a step_into_new_rule method' % self.__class__.__name__)
 
     def is_valid_final_state(self):
         raise NotImplementedError(
@@ -64,7 +72,13 @@ class NoEnforcingContext(_Context):
     def add_part(self):
         pass
 
-    def step_in_new_expr(self, length, is_assoc=False):
+    def step_into_new_function(self, length):
+        pass
+
+    def step_into_new_assoc(self, length):
+        pass
+
+    def step_into_new_rule(self):
         pass
 
     def is_valid_final_state(self):
@@ -126,7 +140,22 @@ class SerializationContext(_Context):
         else:
             raise IndexError('Index {} is greater than array length: {}'.format(index, len(array)))
 
-    def step_in_new_expr(self, length, is_assoc = False):
+    def step_into_new_function(self, length):
+        self.step_into_new_expr(length+1)
+    
+    def step_into_new_assoc(self, length):
+        self.step_into_new_expr(length, is_assoc=True)
+
+    def step_into_new_rule(self):
+        self.step_into_new_expr(2)
+
+    def step_into_new_expr(self, length, is_assoc = False):
+        """ Indicate the beginning of a new expr of a given length.
+
+        Note that the length is the number of WXF elements which includes the head for functions.
+        Association and rules don't have head in WXF so their length value matches the one of the
+        expression in the Wolfram Language.
+        """
         # increment the index
         self.add_part()
         # go down one level in the expr tree, into the new expr.

@@ -121,7 +121,7 @@ class WXFExprFunction(WXFExpr):
     def _serialize_to_wxf(self, stream, context):
         stream.write(self.wxf_type)
         # Function has a head which account for one part element contrary to association
-        context.step_in_new_expr(self.length + 1)
+        context.step_into_new_function(self.length)
         write_varint(self.length, stream)
 
 
@@ -356,7 +356,7 @@ class WXFExprAssociation(WXFExpr):
 
     def _serialize_to_wxf(self, stream, context):
         stream.write(self.wxf_type)
-        context.step_in_new_expr(self.length, is_assoc=True)
+        context.step_into_new_assoc(self.length)
         write_varint(self.length, stream)
 
 class _WXFExprRule(WXFExpr):
@@ -369,7 +369,7 @@ class _WXFExprRule(WXFExpr):
         if not context.is_rule_valid():
             raise WXFSerializerException('WXF Rule and RuleDelayed must be part of an Association. Use a Function with head Symbol "Rule(Delayed)" outside associations.')
         # rule always has two parts.
-        context.step_in_new_expr(2)
+        context.step_into_new_rule()
 
 class WXFExprRule(_WXFExprRule):
     ''' Represent a rule in an association. Rule have two parts but no head.

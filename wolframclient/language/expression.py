@@ -50,7 +50,8 @@ class WLSymbol(WLExpressionMeta):
         return self.name
 
 class WLFunction(WLExpressionMeta):
-
+    """Represent a Wolfram Language function with its head and arguments.
+    """
     #reminder: use slots to reduce memory usage:
     #https://stackoverflow.com/questions/472000/usage-of-slots
     #https://www.codementor.io/satwikkansal/python-practices-for-efficient-code-performance-memory-and-usability-aze6oiq65

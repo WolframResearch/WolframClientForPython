@@ -111,3 +111,6 @@ class DefaultWXFEncoder(WXFEncoder):
             yield wxfexpr.WXFExprSymbol('Complex')
             yield wxfexpr.WXFExprReal(pythonExpr.real)
             yield wxfexpr.WXFExprReal(pythonExpr.imag)
+        elif isinstance(pythonExpr, wxfexpr.WXFExpr):
+            yield pythonExpr
+        

@@ -4,24 +4,36 @@ from wolframclient.utils.six import BytesIO, binary_type, string_types, integer_
 from wolframclient.serializers.wxfencoder import wxfexpr
 from wolframclient.serializers.wxfencoder.serializer import SerializationContext, WXF_HEADER_COMPRESS, WXF_HEADER_SEPARATOR, WXF_VERSION
 from wolframclient.serializers.wxfencoder.streaming import ZipCompressedReader, ExactSizeReader
-from wolframclient.exception import WolframLanguageException
-from wolframclient.language import ExpressionFactory
-class WolframParserException(WolframLanguageException):
-    pass
+from wolframclient.exception import WolframParserException
+from wolframclient.deserializers.wxf.wxfconsumer import WXFConsumerNumpy, WXFConsumer
 
 class WXFParser(object):
+    """Parse a WXF input.
 
-    def __init__(self, wxf_input, enforce=True):
+    This class is initialized with a WXF input, and exposes a generator of 
+    :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken`. 
+    The input `wxf_input` can be a string of bytes with the serialized expression, a string of unicodes
+    in which case it is considered as a filename, a object implementing a `read` method.
+    
+    The generator outputs WXF tokens one by one::
+
+        with open('/tmp/data.wxf', 'rb') as fp:
+            parser = WXFParser(fp)
+            gen = parser.tokens()
+            print(next(gen))
+
+    This low level class is providing intermediary objects to ease the parsing of WXF. Most of
+    the time one should directly use high level interface such as 
+    :func:`~wolframclient.deserializers.wxf.wxfparser.binary_deserialize`.
+
+    The token generator is generally consumed by an instance of 
+    :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer`.
+    """
+    def __init__(self, wxf_input):
         """WXF parser returning Python object from a WXF encoded byte sequence.
-        
-        `wxf_input` can be a string of bytes with the serialized expression, a string of unicodes
-        in which case it is considered as a filename, a object implementing a `read` method.
         """
-        if enforce:
-            self.context = SerializationContext()
-        else:
-            self.context = NoEnforcingContext()
-        if isinstance(input, binary_type):
+        self.context = SerializationContext()
+        if isinstance(wxf_input, binary_type):
             self.reader = BytesIO(wxf_input)
         elif hasattr(wxf_input, 'read'):
             self.reader = wxf_input
@@ -33,13 +45,9 @@ class WXFParser(object):
             self.reader = ZipCompressedReader(self.reader)
         else:
             self.reader = ExactSizeReader(self.reader)
-
-    def binary_deserialize(self):
-        """Deserialize binary data, return a Python object.
-        """
-        pass
-
-    def deserialize(self):
+    
+    def tokens(self):
+        """Generate instances :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` from a WXF input."""
         yield self.next_token()
         while not self.context.is_valid_final_state():
             yield self.next_token()
@@ -103,14 +111,14 @@ class WXFParser(object):
             token.data = wxfexpr.StructDouble.unpack(self.reader.read(8))[0]
         elif next_byte == wxfexpr.WXF_CONSTANTS.Function:
             token.length = parse_varint(self.reader)
-            self.context.step_in_new_expr(token.length)
+            self.context.step_into_new_function(token.length)
         elif next_byte == wxfexpr.WXF_CONSTANTS.Association:
             token.length = parse_varint(self.reader)
-            self.context.step_in_new_expr(token.length, is_assoc=True)
+            self.context.step_into_new_assoc(token.length)
         elif next_byte == wxfexpr.WXF_CONSTANTS.Rule or next_byte == wxfexpr.WXF_CONSTANTS.RuleDelayed:
             if not self.context.is_rule_valid():
                 raise WolframParserException('Rule and RuleDelayed must be parts of an Association.')
-            self.context.step_in_new_expr(2)
+            self.context.step_into_new_rule()
         elif next_byte == wxfexpr.WXF_CONSTANTS.PackedArray:
             self.context.add_part()
             token.array_type = self.reader.read(1)
@@ -137,6 +145,8 @@ class WXFParser(object):
 
 
 class WXFToken(object):
+    """Represent a WXF element, often referred as WXF tokens.
+    """
     __slots__ = 'wxf_type', 'array_type', 'length', '_dimensions', '_element_count', 'data'
     
     def __init__(self, wxf_type):
@@ -191,14 +201,14 @@ def parse_varint(reader):
         while continuation and count < 8:
             count = count + 1
             next_byte = reader.read(1)
-            next_byte = next_byte[0]
+            next_byte = ord(next_byte)
             length |= (next_byte & 0x7F) << shift
             shift = shift + 7
             continuation = (next_byte & 0x80) != 0
 
         if continuation:
             next_byte = reader.read(1)
-            next_byte = next_byte[0]
+            next_byte = ord(next_byte)
             next_byte &= 0x7F
             if next_byte == 0:
                 raise WolframParserException('Invalid last varint byte.')
@@ -208,3 +218,39 @@ def parse_varint(reader):
     except IndexError:
         raise EOFError('EOF reached while parsing varint encoded integer.')
 
+
+def binary_deserialize(wxf_input, consumer=None, **kwargs):
+        """Deserialize binary data, return a Python object.
+        
+        A stream of :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` is generated from the WXF input by a instance
+        of :class:`~wolframclient.deserializers.wxf.wxfparser.WXFParser`.
+
+        The consumer must be an instance of :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer`. If none is 
+        provided :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy` is used.
+
+        Named parameters are passed to the consumer. They can be any valid parameter of
+        :meth:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.next_expression`, namely:
+
+        * `ordered_dict`: map WXF `Association` to :class:`~collections.OrderedDict` in place of a regular :class:`dict`.
+        * `association`: map WXF `Association` to :class:`~wolframclient.utils.datastructures.Association` in place of a regular :class:`dict`.
+
+        """
+        parser = WXFParser(wxf_input)
+        if consumer is None:
+            consumer = WXFConsumerNumpy()
+        else:
+            if not isinstance(consumer, WXFConsumer):
+                raise TypeError('Invalid consumer type.')
+        tokens = parser.tokens()
+        try:
+            o = consumer.next_expression(tokens, **kwargs)
+        except StopIteration:
+            raise WolframParserException(
+                'Input data does not represent a valid expression in WXF format. Expecting more input data.')
+        if not parser.context.is_valid_final_state():
+            raise WolframParserException(
+                'Input data does not represent a valid expression in WXF format. Some expressions are imcomplete.')
+        return o
+
+
+__all__ = ['binary_deserialize', 'WXFParser', 'WXFToken']
