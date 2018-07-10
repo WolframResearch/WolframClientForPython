@@ -13,7 +13,16 @@ from functools import update_wrapper
 __all__ = ['WXFConsumer', 'WXFConsumerNumpy']
 
 class WXFConsumer(object):
+    """Map WXF types to Python object generating functions.
 
+    This class exposes a comprehensive list of methods consuming WXF types.
+    Subclasses can override these members to implement custom parsing logic.
+
+    Once initialized, the entry point is the method 
+    :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.next_expression`
+    that takes a token generator and return a Python object.
+    """
+    
     _mapping = {
         wxfexpr.WXF_CONSTANTS.Function: 'consume_function',
         wxfexpr.WXF_CONSTANTS.Symbol: 'consume_symbol',
