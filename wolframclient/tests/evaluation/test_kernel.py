@@ -68,6 +68,24 @@ class TestCase(TestCaseSettings):
         self.assertFalse(res.success)
         self.assertEqual(res.get(), WLSymbol('$Failed'))
 
+    def test_one_eval_many_msg(self):
+        res = self.kernel_session.evaluate(
+            'ImportString["[1,2", "RawJSON"]')
+        self.assertFalse(res.success)
+        expected_msgs = [
+            'Expecting end of array or a value separator.',
+            "An error occurred near character 'EOF', at line 1:6"]
+        self.assertListEqual(res.messages, expected_msgs)
+
+    def test_many_failures(self):
+        res = self.kernel_session.evaluate('ImportString["[1,2", "RawJSON"]; 1/0')
+        self.assertFalse(res.success)
+        expected_msgs = [
+            'Expecting end of array or a value separator.',
+            "An error occurred near character 'EOF', at line 1:6",
+            'Infinite expression Infinity encountered.']
+        self.assertListEqual(res.messages, expected_msgs)
+
     @unittest.skipIf(six.PY2, "No async call on Python2.")
     def test_evaluate_async(self):
         future1 = self.kernel_session.evaluate_async('3+4')
