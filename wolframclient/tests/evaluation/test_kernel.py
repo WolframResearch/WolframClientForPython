@@ -68,6 +68,20 @@ class TestCase(TestCaseSettings):
         self.assertFalse(res.success)
         self.assertEqual(res.get(), WLSymbol('$Failed'))
 
+    def test_one_msg(self):
+        res = self.kernel_session.evaluate(
+            '1/0')
+        self.assertFalse(res.success)
+        self.assertListEqual(res.messages,
+            ['Infinite expression Infinity encountered.']
+        )
+
+    def test_silenced_msg(self):
+        res = self.kernel_session.evaluate('Off[Power::infy]')
+        res = self.kernel_session.evaluate('1/0')
+        self.assertTrue(res.success)
+        self.assertEqual(res.get(), WLSymbol('ComplexInfinity'))
+
     def test_one_eval_many_msg(self):
         res = self.kernel_session.evaluate(
             'ImportString["[1,2", "RawJSON"]')

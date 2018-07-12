@@ -46,7 +46,12 @@ class WolframResult(object):
 
 
 class WolframKernelEvaluationResult(WolframResult):
-    """A Wolfram result with WXF encoded data."""
+    """A Wolfram result with WXF encoded data.
+    
+    Messages can be issued during a kernel evaluation. Those are 
+    stored as `messages`. If any message was returned by the kernel
+    then the success status is automatically set to `False`.
+    """
     __slots__ = 'messages'
     def __init__(self, result, msgs):
         self.success = len(msgs) == 0
