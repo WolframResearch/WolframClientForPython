@@ -294,7 +294,8 @@ class WolframLanguageSession(object):
         return self.kernel_proc is not None
 
     def evaluate(self, expr, **kwargs):
-        """Send an expression to the kernel for evaluation.
+        """Send an expression to the kernel for evaluation return a 
+        :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.
         
         The `expr` can be:
         

@@ -77,9 +77,12 @@ class TestCase(TestCaseSettings):
         )
 
     def test_silenced_msg(self):
-        res = self.kernel_session.evaluate('Off[Power::infy]')
+        off = self.kernel_session.evaluate('Off[Power::infy]')
+        self.assertTrue(off.success)
         res = self.kernel_session.evaluate('1/0')
         self.assertTrue(res.success)
+        on = self.kernel_session.evaluate('On[Power::infy]')
+        self.assertTrue(on.success)
         self.assertEqual(res.get(), WLSymbol('ComplexInfinity'))
 
     def test_one_eval_many_msg(self):

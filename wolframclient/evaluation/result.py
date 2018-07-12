@@ -13,7 +13,8 @@ __all__ = [
     'WolframResult', 
     'WolframAPIResponseBuilder',
     'WolframAPIResponse',
-    'WolframEvaluationJSONResponse'
+    'WolframEvaluationJSONResponse',
+    'WolframKernelEvaluationResult'
     ]
 
 class WolframResult(object):
@@ -53,6 +54,7 @@ class WolframKernelEvaluationResult(WolframResult):
     then the success status is automatically set to `False`.
     """
     __slots__ = 'messages'
+    
     def __init__(self, result, msgs):
         self.success = len(msgs) == 0
         self.failure = None

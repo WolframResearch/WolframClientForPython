@@ -18,9 +18,33 @@ class WXFConsumer(object):
     This class exposes a comprehensive list of methods consuming WXF types.
     Subclasses can override these members to implement custom parsing logic.
 
-    Once initialized, the entry point is the method 
+    Example: implement a consumer that parses Wolfram Language booleans :wl:`Null`
+     as Python `None`::
+
+        class ExampleConsumer(WXFConsumer):
+            def consume_symbol(self, current_token, tokens, **kwargs):
+                if current_token.data == 'Null':
+                    return None
+                else:
+                    super().consume_symbol(current_token, tokens, **kwargs)
+
+    Test the new consumer::
+
+        >>> wxf = export({'a': 1, 'b': wl.Null}, target_format='wxf')
+        >>> binary_deserialize(wxf, consumer=ExampleConsumer())
+        {'a': 1, 'b': None}
+
+    Compare with default result::
+
+        >>> binary_deserialize(wxf)
+        {'a': 1, 'b': Null}
+
+    Once initialized, the entry point of a consumer is the method 
     :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.next_expression`
-    that takes a token generator and return a Python object.
+    that takes a token generator and return a Python object. This method is particularly 
+    useful when building nested expressions. e.g:
+    :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.consume_function`,
+    :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.consume_association`, etc.
     """
     
     _mapping = {
