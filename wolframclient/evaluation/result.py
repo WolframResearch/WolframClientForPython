@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-from wolframclient.exception import EvaluationException, RequestException, WolframLanguageException
+from wolframclient.exception import EvaluationException, RequestException, WolframLanguageException, WolframParserException
 from wolframclient.utils import six
+from wolframclient.deserializers import binary_deserialize
+from wolframclient.language.expression import WLSymbol
 import logging
 
 logger = logging.getLogger(__name__)
@@ -42,6 +44,26 @@ class WolframResult(object):
         else:
             return '{}<success={}, failure={}>'.format(self.__class__.__name__, self.success, self.failure)
 
+
+class WolframKernelEvaluationResult(WolframResult):
+    """A Wolfram result with WXF encoded data."""
+    __slots__ = 'messages'
+    def __init__(self, result, msgs):
+        self.success = len(msgs) == 0
+        self.failure = None
+        self.messages = msgs
+        self.result = binary_deserialize(result)
+
+    def get(self):
+        """Kernel evaluation never fails even if the evaluated expression is a failure object."""
+        return self.result
+
+    def __repr__(self):
+        if self.success:
+            return '{}<success={}, result={}>'.format(self.__class__.__name__, self.success, self.result)
+        else:
+            # msgs = '\n\t'.join(self.messages)
+            return '{}<success={}, result={}, messages={}>'.format(self.__class__.__name__, self.success, self.result, self.messages)
 
 class WolframEvaluationJSONResponse(WolframResult):
     """Result object associated with cloud kernel evaluation.

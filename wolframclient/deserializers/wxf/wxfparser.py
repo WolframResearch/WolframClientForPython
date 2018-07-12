@@ -60,7 +60,7 @@ class WXFParser(object):
             next_byte = self.reader.read(1)
         else:
             raise WolframParserException(
-                'WXF version %s is not supported.' % version)
+                'Invalid version %s.' % next_byte)
         if next_byte == WXF_HEADER_COMPRESS:
             compress = True
             next_byte = self.reader.read(1)

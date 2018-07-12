@@ -18,7 +18,8 @@ no matter the total size (tested with 80MB) *)
 ];
  *)
 
-Needs["GeneralUtilities`"]
+Needs["GeneralUtilities`"];
+Needs["ZeroMQLink`"];
 
 Begin["ClientLibrary`"];
 
@@ -26,7 +27,6 @@ debug;
 info;
 warn;
 error;
-
 
 Begin["`Private`"];
 
@@ -73,15 +73,47 @@ readableTiming[timing_] := Which[
 	ToString[N[timing]] <> "s"
 ];
 
-evaluate[data_String] := ToExpression[data];
+fmtmsg[msg_String, args___] := TemplateApply[msg, {args}];
+
+fmtmsg[msg_MessageName, args___] := Module[
+	{genmsg = MessageName[General, Last@msg]}, 
+	If[StringQ[genmsg],
+		fmtmsg[genmsg, args],
+		TemplateApply["Undefined message `` with arguments ``", {msg, {args}}]
+	]
+];
+
+fmtmsg[msg_, args___] := TemplateApply["Invalid message `` with arguments ``", {msg, {args}}];
+
+writemsg[Hold[Message[msg_MessageName, args___], _]] := writemsg[fmtmsg[msg, args]];
+
+writemsg[Failure[_, meta_Association]] := writemsg[
+	fmtmsg[
+		meta["MessageTemplate"], 
+		Sequence @@ meta["MessageParameters"]
+	]
+];
+
+writemsg[msg_String] := (
+	ClientLibrary`warn[msg];
+	WriteString[$OutputSocket, msg];
+);
+
+(* evaluate[data_String] := ToExpression[data];
 evaluate[data_ByteArray] := evaluate[ByteArrayToString[data]];
 
-serialize[expr_] := ToString[expr, InputForm];
+serialize[expr_] := ToString[expr, InputForm]; *)
 
+evaluate[data_ByteArray] := BinaryDeserialize[data];
+
+serialize[expr_] := BinarySerialize[expr];
 
 $LoggerSocket=None;
 $OutputSocket=None;
 $InputSocket=None;
+
+$MaxMessagesReturned = 31;
+$NoMessage = ByteArray[{0}];
 
 SlaveKernelPrivateStart[inputsocket_String, outputsocket_String, logsocket_String] := (
 	$LoggerSocket=SocketConnect[logsocket,"ZMQ_Push"];
@@ -92,6 +124,7 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String, logsocket_Strin
 		SlaveKernelPrivateStart[inputsocket, outputsocket]
 	]
 );
+
 
 SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 	{listener},
@@ -107,21 +140,61 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 	];
 	listener = SocketListen[
 		$InputSocket,
-		GeneralUtilities`EvaluateChecked[
-			Block[{data, multi, expr},
+		Block[{data, expr, msgs = Internal`Bag[], msgCount},
+			(* Quiet@Internal`HandlerBlock[
+  				{"Message", Internal`StuffBag[msgs, #] &},
 				data = Lookup[#,"DataByteArray", None];
 				expr = timed[evaluate[data], "Expression evaluation"];
-				WriteString[
-					$OutputSocket,
-					timed[serialize[expr], "Expression serialization"]
+				ClientLibrary`debug["deserialized expr: ", ToString[expr]];
+			]; *)
+
+			(* Note: we can't use the code above that is supposed to catch
+			messages because of tons of General::newsym evaluating to $Off[] are
+			generated. GeneralUtilities function seems to deal correctly with 
+			silenced messages, and at least evicts those weird messages.
+
+			The time to load the paclet at startup is not significant.
+			*)
+
+			GeneralUtilities`WithMessageHandler[
+				data = Lookup[#,"DataByteArray", None];
+				expr = timed[evaluate[data], "Expression evaluation"];
+				ClientLibrary`debug["deserialized expr: ", ToString[expr]];
+				,
+				Internal`StuffBag[msgs, #] &
+			];
+			(* Check how many messages were thrown during evaluation.
+			Cap it with a default value to avoid overflow. *)
+			msgCount = Internal`BagLength[msgs];
+			ClientLibrary`info["Message count: ", ToString[msgCount]];
+			Which[
+				msgCount == 0,
+				WriteString[$OutputSocket, "0"]
+				,
+				msgCount <= $MaxMessagesReturned,
+				WriteString[$OutputSocket, ToString[msgCount]];
+				Scan[
+					writemsg,
+					Internal`BagPart[msgs, All]
+				]
+				,
+				msgCount > $MaxMessagesReturned,
+				WriteString[$OutputSocket, ToString[$MaxMessagesReturned+1]];
+				Scan[
+					writemsg,
+					Internal`BagPart[msgs, ;;$MaxMessagesReturned]
 				];
-			]
-			,
-			Block[{err = GeneralUtilities`FailureString[#]},
-				ClientLibrary`error[err];
-				WriteString[$OutputSocket, "$Failed"]
-			] &
-		]&
+				writemsg[TemplateApply["`` more messages issued during evaluation.", {msgCount-$MaxMessagesReturned}]];
+				,
+				_,
+				ClientLibrary`fatal["Unexpected message count. Ignoring all messages."];
+				WriteString[$OutputSocket, "0"];
+			];
+			ZMQSocketWriteMessage[
+				$OutputSocket,
+				timed[serialize[expr], "Expression serialization"]
+			];
+		] &
 		,
 		HandlerFunctionsKeys->{"DataByteArray"}
 	];
@@ -137,3 +210,6 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 
 End[];
 End[];
+
+
+

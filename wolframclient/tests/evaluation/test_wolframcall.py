@@ -6,6 +6,7 @@ import json
 from wolframclient.logger.utils import setup_logging_to_file
 from wolframclient.utils.tests import TestCase as BaseTestCase
 from wolframclient.utils import six
+from wolframclient.language.expression import WLSymbol
 if not six.JYTHON:
     from wolframclient.evaluation import WolframLanguageSession, SecuredAuthenticationKey, UserIDPassword, WolframCloudSession, WolframCall
 from wolframclient.tests.evaluation.test_cloud import TestCaseSettings as SessionTestCase
@@ -27,9 +28,9 @@ class TestCase(SessionTestCase, KernelTestCase):
 
     def _call_api(self, session):
         result = WolframCall(session, '1+1').perform()
-        self.assertEqual(result.get(), b'2')
+        self.assertEqual(result.get(), 2)
         result = WolframCall(session, 'Range[3').perform()
-        self.assertEqual(result.get(), b'$Failed')
+        self.assertEqual(result.get(), WLSymbol('$Failed'))
 
     def test_call_api_kernel(self):
         self._call_api(self.kernel_session)

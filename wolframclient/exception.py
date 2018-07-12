@@ -40,6 +40,7 @@ class SocketException(WolframLanguageException):
 
 
 class WolframParserException(WolframLanguageException):
+    """Error while deserializing WXF bytes."""
     pass
 
 

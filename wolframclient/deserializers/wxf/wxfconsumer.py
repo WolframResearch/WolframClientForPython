@@ -174,7 +174,7 @@ class WXFConsumerNumpy(WXFConsumer):
         super(WXFConsumerNumpy, self).__init__()
     
     def consume_array(self, current_token, tokens, **kwargs):
-        arr=numpy.fromstring(current_token.data, dtype=WXF_TYPE_TO_DTYPE[current_token.array_type])
+        arr=numpy.fromstring(current_token.data, dtype=WXFConsumerNumpy.WXF_TYPE_TO_DTYPE[current_token.array_type])
         numpy.reshape(arr, tuple(current_token.dimensions))
         return arr
     """Build a numpy array from a PackedArray."""

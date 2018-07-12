@@ -9,7 +9,7 @@ from wolframclient.serializers import export
 from wolframclient.language import wl
 from wolframclient.exception import WolframKernelException
 from wolframclient.utils.encoding import force_text
-from wolframclient.evaluation.result import WolframResult
+from wolframclient.evaluation.result import WolframKernelEvaluationResult
 
 logger = logging.getLogger(__name__)
 
@@ -108,7 +108,8 @@ class WolframLanguageSession(object):
             self.initfile = os.path_join(os.dirname(__file__), 'initkernel.m')
         else:
             self.initfile = initfile
-        logger.debug('Initializing kernel %s using script: %s' % (self.kernel, self.initfile))
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('Initializing kernel %s using script: %s' % (self.kernel, self.initfile))
         # Socket to which we push new expressions to evaluate. 
         if in_socket is None:
             self.in_socket = Socket(zmq_type=zmq.PUSH)
@@ -203,7 +204,8 @@ class WolframLanguageSession(object):
         # Exception handling here
         if self.kernel_proc is not None:
             try:
-                self.in_socket.zmq_socket.send_string('Quit[]', flags=zmq.NOBLOCK)
+                self.in_socket.zmq_socket.send(
+                    b'8:f\x00s\x04Quit', flags=zmq.NOBLOCK)
                 self.kernel_proc.stdout.close()
                 self.kernel_proc.stdin.close()
                 self.kernel_proc.terminate()
@@ -294,26 +296,36 @@ class WolframLanguageSession(object):
     def evaluate(self, expr, **kwargs):
         """Send an expression to the kernel for evaluation.
         
-        The `expr` must be a string of bytes or unicode, or an instance of Python object 
-        serializable by :func:`~wolframclient.serializers.export`.
+        The `expr` can be:
+        
+            * a text string representing the Wolfram Language expression :wl:`InputForm`.
+            * an instance of Python object serializable as WXF by :func:`~wolframclient.serializers.export`.
+            * a binary string of a serialized expression in the WXF format.
 
-        `kwargs` are passed to :func:`~wolframclient.serializers.export` during
-        serialization step of non-string input.
+        `kwargs` are passed to :func:`~wolframclient.serializers.export` during serialization step of 
+        non-string inputs.
         """
-        logger.debug('new evaluation on: %s', self)
         if not self.started:
             raise WolframKernelException('Kernel is not started.')
 
-        if isinstance(expr, string_types):
-            self.in_socket.zmq_socket.send_string(expr)
-        elif isinstance(expr, binary_type):
+        if isinstance(expr, binary_type):
             self.in_socket.zmq_socket.send(expr)
         else:
-            self.in_socket.zmq_socket.send(export(expr, **kwargs))
+            if isinstance(expr, string_types):
+                expr = wl.ToExpression(expr)
+            self.in_socket.zmq_socket.send(export(expr, target_format='wxf', **kwargs))
         # read the message as bytes.
-        msgstr = self.out_socket.zmq_socket.recv()
+        msg_count = self.out_socket.zmq_socket.recv()
+        try:
+            msg_count = int(msg_count)
+        except ValueError:
+            raise WolframKernelException('Unexpected message count returned by Kernel %s' % msg_count)
+        errmsg = []
+        for i in range(msg_count):
+            errmsg.append(force_text(self.out_socket.zmq_socket.recv()))
+        wxf_result = self.out_socket.zmq_socket.recv()
         self.evaluation_count += 1
-        return WolframResult(result=msgstr)
+        return WolframKernelEvaluationResult(wxf_result, errmsg)
 
     def evaluate_async(self, expr, **kwargs):
         """Evaluate a given `expr` asynchronously.
