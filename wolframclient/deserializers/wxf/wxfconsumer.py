@@ -12,7 +12,7 @@ from wolframclient.utils.datastructures import Association
 
 __all__ = ['WXFConsumer', 'WXFConsumerNumpy']
 
-def _validate_rule(self, rule):
+def _validate_rule(rule):
 
     if isinstance(rule, tuple) and len(rule) == 2:
         return rule
