@@ -73,9 +73,6 @@ class WXFConsumer(object):
         wxfexpr.WXF_CONSTANTS.RuleDelayed: 'consume_rule_delayed'
     }
 
-    def __init__(self):
-        pass
-
     def next_expression(self, tokens, **kwargs):
         """Deserialize the next expression starting at the next token yield by `tokens`."""
         token = next(tokens)
@@ -187,9 +184,6 @@ class WXFConsumer(object):
             'Method consume_packed_array is not implemented by %s.' % self.__class__.__name__)
 
 class WXFConsumerNumpy(WXFConsumer):
-    """Deserialize WXF array types as numpy arrays."""
-    def __init__(self):
-        super(WXFConsumerNumpy, self).__init__()
 
     def consume_array(self, current_token, tokens, **kwargs):
         arr=numpy.fromstring(current_token.data, dtype=WXFConsumerNumpy.WXF_TYPE_TO_DTYPE[current_token.array_type])
