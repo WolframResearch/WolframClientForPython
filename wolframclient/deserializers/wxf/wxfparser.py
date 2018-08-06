@@ -30,6 +30,29 @@ class WXFParser(object):
     The token generator is generally consumed by an instance of
     :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer`.
     """
+
+    _mapping = {
+
+        wxfexpr.WXF_CONSTANTS.Symbol:       'token_for_string',
+        wxfexpr.WXF_CONSTANTS.String:       'token_for_string',
+        wxfexpr.WXF_CONSTANTS.BigInteger:   'token_for_string',
+        wxfexpr.WXF_CONSTANTS.BigReal:      'token_for_string',
+
+        wxfexpr.WXF_CONSTANTS.Function:     'token_for_function',
+        wxfexpr.WXF_CONSTANTS.BinaryString: 'token_for_binary_string',
+        wxfexpr.WXF_CONSTANTS.Integer8:     'token_for_integer8',
+        wxfexpr.WXF_CONSTANTS.Integer16:    'token_for_integer16',
+        wxfexpr.WXF_CONSTANTS.Integer32:    'token_for_integer32',
+        wxfexpr.WXF_CONSTANTS.Integer64:    'token_for_integer64',
+        wxfexpr.WXF_CONSTANTS.Real64:       'token_for_real64',
+
+        wxfexpr.WXF_CONSTANTS.PackedArray:  'token_for_packed_array',
+        wxfexpr.WXF_CONSTANTS.RawArray:     'token_for_raw_array',
+        wxfexpr.WXF_CONSTANTS.Association:  'token_for_association',
+        wxfexpr.WXF_CONSTANTS.Rule:         'token_for_rule',
+        wxfexpr.WXF_CONSTANTS.RuleDelayed:  'token_for_rule'
+    }
+
     def __init__(self, wxf_input):
         """WXF parser returning Python object from a WXF encoded byte sequence.
         """
@@ -85,64 +108,92 @@ class WXFParser(object):
         bytecount = wxfexpr.ARRAY_TYPES_ELEM_SIZE[token.array_type] * token.element_count
         token.data = self.reader.read(bytecount)
 
-    def next_token(self):
-        next_byte = self.reader.read(1)
-        token = WXFToken(next_byte)
-        if next_byte == wxfexpr.WXF_CONSTANTS.Symbol or next_byte == wxfexpr.WXF_CONSTANTS.String or next_byte == wxfexpr.WXF_CONSTANTS.BigInteger or next_byte == wxfexpr.WXF_CONSTANTS.BigReal:
-            self.context.add_part()
-            token.length = parse_varint(self.reader)
-            if token.length == 0:
-                token.data = ''
-            else:
-                token.data = self.reader.read(token.length).decode('utf8')
-        elif next_byte == wxfexpr.WXF_CONSTANTS.Integer8:
-            self.context.add_part()
-            token.data = wxfexpr.StructInt8LE.unpack(self.reader.read(1))[0]
-        elif next_byte == wxfexpr.WXF_CONSTANTS.Integer64:
-            self.context.add_part()
-            token.data = wxfexpr.StructInt64LE.unpack(self.reader.read(8))[0]
-        elif next_byte == wxfexpr.WXF_CONSTANTS.Integer32:
-            self.context.add_part()
-            token.data = wxfexpr.StructInt32LE.unpack(self.reader.read(4))[0]
-        elif next_byte == wxfexpr.WXF_CONSTANTS.Integer16:
-            self.context.add_part()
-            token.data = wxfexpr.StructInt16LE.unpack(self.reader.read(2))[0]
-        elif next_byte == wxfexpr.WXF_CONSTANTS.Real64:
-            self.context.add_part()
-            token.data = wxfexpr.StructDouble.unpack(self.reader.read(8))[0]
-        elif next_byte == wxfexpr.WXF_CONSTANTS.Function:
-            token.length = parse_varint(self.reader)
-            self.context.step_into_new_function(token.length)
-        elif next_byte == wxfexpr.WXF_CONSTANTS.Association:
-            token.length = parse_varint(self.reader)
-            self.context.step_into_new_assoc(token.length)
-        elif next_byte == wxfexpr.WXF_CONSTANTS.Rule or next_byte == wxfexpr.WXF_CONSTANTS.RuleDelayed:
-            if not self.context.is_rule_valid():
-                raise WolframParserException('Rule and RuleDelayed must be parts of an Association.')
-            self.context.step_into_new_rule()
-        elif next_byte == wxfexpr.WXF_CONSTANTS.PackedArray:
-            self.context.add_part()
-            token.array_type = self.reader.read(1)
-            if token.array_type not in wxfexpr.VALID_PACKED_ARRAY_TYPES:
-                raise WolframParserException('Invalid PackedArray value type: %s' % token.array_type)
-            self.parse_array(token)
-        elif next_byte == wxfexpr.WXF_CONSTANTS.RawArray:
-            self.context.add_part()
-            token.array_type = self.reader.read(1)
-            if token.array_type not in wxfexpr.ARRAY_TYPES_ELEM_SIZE:
-                raise WolframParserException('Invalid RawArray value type: %s' % token.array_type)
-            self.parse_array(token)
-        elif next_byte == wxfexpr.WXF_CONSTANTS.BinaryString:
-            self.context.add_part()
-            token.length = parse_varint(self.reader)
-            if token.length == 0:
-                token.data = b''
-            else:
-                token.data = self.reader.read(token.length)
+    def token_for_string(self, token):
+
+        self.context.add_part()
+        token.length = parse_varint(self.reader)
+        if token.length == 0:
+            token.data = ''
         else:
-            raise WolframParserException('Unexpected token %s' % next_byte)
+            token.data = self.reader.read(token.length).decode('utf8')
 
         return token
+
+    def token_for_integer8(self, token):
+        self.context.add_part()
+        token.data = wxfexpr.StructInt8LE.unpack(self.reader.read(1))[0]
+        return token
+
+    def token_for_integer16(self, token):
+        self.context.add_part()
+        token.data = wxfexpr.StructInt16LE.unpack(self.reader.read(2))[0]
+        return token
+
+    def token_for_integer32(self, token):
+        self.context.add_part()
+        token.data = wxfexpr.StructInt32LE.unpack(self.reader.read(4))[0]
+        return token
+
+    def token_for_integer64(self, token):
+        self.context.add_part()
+        token.data = wxfexpr.StructInt64LE.unpack(self.reader.read(8))[0]
+        return token
+
+    def token_for_real64(self, token):
+        self.context.add_part()
+        token.data = wxfexpr.StructDouble.unpack(self.reader.read(8))[0]
+        return token
+
+    def token_for_function(self, token):
+        token.length = parse_varint(self.reader)
+        self.context.step_into_new_function(token.length)
+        return token
+
+    def token_for_association(self, token):
+        token.length = parse_varint(self.reader)
+        self.context.step_into_new_assoc(token.length)
+        return token
+
+    def token_for_rule(self, token):
+        if not self.context.is_rule_valid():
+            raise WolframParserException('Rule and RuleDelayed must be parts of an Association.')
+        self.context.step_into_new_rule()
+        return token
+
+    def token_for_packed_array(self, token):
+        self.context.add_part()
+        token.array_type = self.reader.read(1)
+        if token.array_type not in wxfexpr.VALID_PACKED_ARRAY_TYPES:
+            raise WolframParserException('Invalid PackedArray value type: %s' % token.array_type)
+        self.parse_array(token)
+        return token
+
+    def token_for_raw_array(self, token):
+        self.context.add_part()
+        token.array_type = self.reader.read(1)
+        if token.array_type not in wxfexpr.ARRAY_TYPES_ELEM_SIZE:
+            raise WolframParserException('Invalid RawArray value type: %s' % token.array_type)
+        self.parse_array(token)
+        return token
+
+    def token_for_binary_string(self, token):
+        self.context.add_part()
+        token.length = parse_varint(self.reader)
+        if token.length == 0:
+            token.data = b''
+        else:
+            token.data = self.reader.read(token.length)
+        return token
+
+    def next_token(self):
+        next_byte = self.reader.read(1)
+        
+        try:
+            handler = self._mapping[next_byte]
+        except KeyError:
+            raise WolframParserException('Unexpected token %s' % next_byte)
+
+        return getattr(self, handler)(WXFToken(next_byte))
 
 class WXFToken(object):
     """Represent a WXF element, often referred as WXF tokens.
