@@ -1,21 +1,26 @@
-from __future__ import absolute_import, print_function
-import logging
+# -*- coding: utf-8 -*-
+
+from __future__ import absolute_import, print_function, unicode_literals
+
 from math import floor
-from subprocess import Popen, PIPE
-from threading import Thread, Event
-from wolframclient.utils.six import string_types, binary_type, integer_types, PY3, JYTHON
-from wolframclient.utils.api import futures, zmq, time, os
-from wolframclient.serializers import export
-from wolframclient.language import wl
-from wolframclient.exception import WolframKernelException
-from wolframclient.utils.encoding import force_text
+
+from subprocess import PIPE, Popen
+
+from threading import Event, Thread
+
 from wolframclient.evaluation.result import WolframKernelEvaluationResult
+from wolframclient.exception import WolframKernelException
+from wolframclient.language import wl
+from wolframclient.serializers import export
+from wolframclient.utils.api import futures, os, time, zmq
+from wolframclient.utils.encoding import force_text
+from wolframclient.utils.six import binary_type, integer_types, JYTHON, PY3, string_types
+
+import logging
 
 logger = logging.getLogger(__name__)
 
-
 __all__ = ['WolframLanguageSession']
-
 
 class KernelLogger(Thread):
 
@@ -67,7 +72,6 @@ class KernelLogger(Thread):
             except:
                 logger.fatal('Failed to close ZMQ logging socket.')
 
-
 class WolframLanguageSession(object):
     """A session to a Wolfram Kernel enabling evaluation of Wolfram Language expressions.
 
@@ -110,7 +114,7 @@ class WolframLanguageSession(object):
             self.initfile = initfile
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Initializing kernel %s using script: %s' % (self.kernel, self.initfile))
-        # Socket to which we push new expressions to evaluate. 
+        # Socket to which we push new expressions to evaluate.
         if in_socket is None:
             self.in_socket = Socket(zmq_type=zmq.PUSH)
         elif not isinstance(in_socket, Socket):
@@ -169,7 +173,7 @@ class WolframLanguageSession(object):
 
     def set_parameter(self, parameter_name, parameter_value):
         """Set a new value for a given parameter. The new value only applies for this session.
-        
+
         Session parameters are:
 
         * ``'STARTUP_READ_TIMEOUT'``: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.
@@ -191,10 +195,10 @@ class WolframLanguageSession(object):
 
     def terminate(self):
         """Terminate the kernel process and close sockets.
-        
-        This function must be called when a given session is no more useful 
+
+        This function must be called when a given session is no more useful
         to prevent orfan processes and sockets from being generated.
-        
+
         .. note::
             Licencing restrictions usually apply to Wolfram kernels and may
             prevent new instances from starting if too many kernels are running
@@ -269,10 +273,10 @@ class WolframLanguageSession(object):
             self.terminate()
             raise e
         try:
-            # First message must be "OK", acknowledging everything is up and running 
+            # First message must be "OK", acknowledging everything is up and running
             # on the kernel side.
             response = self.out_socket._read_timeout(
-                timeout=self.get_parameter('STARTUP_READ_TIMEOUT'), 
+                timeout=self.get_parameter('STARTUP_READ_TIMEOUT'),
                 retry_sleep_time=self.get_parameter('STARTUP_RETRY_SLEEP_TIME'))
             if response == WolframLanguageSession._KERNEL_OK:
                 if logger.isEnabledFor(logging.INFO):
@@ -294,16 +298,16 @@ class WolframLanguageSession(object):
         return self.kernel_proc is not None
 
     def evaluate(self, expr, **kwargs):
-        """Send an expression to the kernel for evaluation return a 
+        """Send an expression to the kernel for evaluation return a
         :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.
-        
+
         The `expr` can be:
-        
+
             * a text string representing the Wolfram Language expression :wl:`InputForm`.
             * an instance of Python object serializable as WXF by :func:`~wolframclient.serializers.export`.
             * a binary string of a serialized expression in the WXF format.
 
-        `kwargs` are passed to :func:`~wolframclient.serializers.export` during serialization step of 
+        `kwargs` are passed to :func:`~wolframclient.serializers.export` during serialization step of
         non-string inputs.
         """
         if not self.started:
@@ -344,7 +348,6 @@ class WolframLanguageSession(object):
             logger.fatal('Module concurrent.futures is missing.')
             raise NotImplementedError('Asynchronous evaluation is not available on this Python interpreter.')
 
-
     def _dump_pipe_to_log(self, pipe):
         # this will probably fails on remote kernels (broken pipe?)
         try:
@@ -356,7 +359,6 @@ class WolframLanguageSession(object):
 
     def __repr__(self):
         return '<WolframLanguageSession: in:%s, out:%s>' % (self.in_socket.uri, self.out_socket.uri)
-
 
 def _non_blocking_pipe_readline(pipe):
     ''' Read lines from a given `PIPE` in a non-blocking fashing.
@@ -370,10 +372,8 @@ def _non_blocking_pipe_readline(pipe):
     for line in pipe:
         yield line
 
-
 class SocketException(Exception):
     pass
-
 
 class Socket(object):
     def __init__(self, host='127.0.0.1', port=None, zmq_type=zmq.PAIR):
@@ -422,7 +422,6 @@ class Socket(object):
 
     def __repr__(self):
         return '<Socket: host=%s, port=%s>' % (self.host, self.port)
-
 
 # class WolframKernel(object):
 #     ''' Represents a Wolfram Kernel executable.

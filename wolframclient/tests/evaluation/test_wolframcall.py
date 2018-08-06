@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
+
 from __future__ import absolute_import, print_function, unicode_literals
-import logging
-import unittest
-import json
-from wolframclient.logger.utils import setup_logging_to_file
-from wolframclient.utils.tests import TestCase as BaseTestCase
-from wolframclient.utils import six
+
+from wolframclient.evaluation import SecuredAuthenticationKey, UserIDPassword, WolframCall, WolframCloudSession, WolframLanguageSession
 from wolframclient.language.expression import WLSymbol
-if not six.JYTHON:
-    from wolframclient.evaluation import WolframLanguageSession, SecuredAuthenticationKey, UserIDPassword, WolframCloudSession, WolframCall
+from wolframclient.logger.utils import setup_logging_to_file
 from wolframclient.tests.evaluation.test_cloud import TestCaseSettings as SessionTestCase
 from wolframclient.tests.evaluation.test_kernel import TestCaseSettings as KernelTestCase
+from wolframclient.utils import six
+from wolframclient.utils.tests import TestCase as BaseTestCase
+
+import json
+import logging
+import unittest
+
 setup_logging_to_file('/tmp/python_testsuites.log', level=logging.INFO)
 logger = logging.getLogger(__name__)
 

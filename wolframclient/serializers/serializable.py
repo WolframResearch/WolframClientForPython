@@ -6,7 +6,7 @@ __all__ = ['WLSerializable']
 
 class WLSerializable:
     """A familly of classes that can be serialized using :func:`~wolframclient.serializers.export`.
-    
+
     Custom serialization of a class is done by subclassing this class::
 
         from wolframclient.serializers.serializable import WLSerializable
@@ -25,7 +25,7 @@ class WLSerializable:
         'MyWolframFunction[1, 2, MyWolframFunction[2, 3]]'
 
     """
-    
+
     def to_wl(self):
         """Return a serialization of a given python class as a combinasion of WL serializable objects."""
         raise NotImplementedError('class %s must implement a to_wl method' % self.__class__.__name__)

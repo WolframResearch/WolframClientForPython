@@ -2,24 +2,22 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import logging
-import unittest
-import os
-
+from wolframclient.evaluation import SecuredAuthenticationKey, UserIDPassword, WolframCloudSession, WolframCloudSessionAsync
+from wolframclient.evaluation.cloud.cloudsession import encode_api_inputs, url_join
+from wolframclient.language import wl
 from wolframclient.logger.utils import setup_logging_to_file
+from wolframclient.serializers import export
 from wolframclient.utils import six
 from wolframclient.utils.api import json
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.tests import TestCase as BaseTestCase
-from wolframclient.language import wl
-from wolframclient.serializers import export
-if not six.JYTHON:
-    from wolframclient.evaluation import SecuredAuthenticationKey, UserIDPassword, WolframCloudSession, WolframCloudSessionAsync
-    from wolframclient.evaluation.cloud.cloudsession import encode_api_inputs, url_join
+
+import logging
+import os
+import unittest
 
 setup_logging_to_file('/tmp/python_testsuites.log', level=logging.WARNING)
 logger = logging.getLogger(__name__)
-
 
 class TestCaseSettings(BaseTestCase):
     #TODO modify those before testing.
@@ -152,14 +150,13 @@ class TestCase(TestCaseSettings):
             response = self.cloud_session.call(api, files={'image': fp})
             self.assertTrue(response.success)
             self.assertEqual(response.get(), b'{32, 2}')
-    
+
     def test_image_file(self):
         api = (self.api_owner, 'api/private/imagedimensions')
         with open(self.get_data_path('500x200.png'), 'rb') as fp:
             response = self.cloud_session.call(api, files={'image': fp})
             self.assertTrue(response.success)
             self.assertEqual(response.get(), b'{500, 200}')
-
 
     # url_join
 

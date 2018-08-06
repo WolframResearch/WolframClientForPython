@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
+
 from __future__ import absolute_import, print_function, unicode_literals
 
 from collections import OrderedDict
-from wolframclient.utils.datastructures import Association
-from wolframclient.exception import WolframParserException
-from wolframclient.language.expression import WLSymbol, WLFunction
-from wolframclient.utils.api import numpy
-from wolframclient.serializers.wxfencoder import wxfexpr
-from wolframclient.exception import WolframParserException
+
 from functools import update_wrapper
+
+from wolframclient.exception import WolframParserException
+from wolframclient.language.expression import WLFunction, WLSymbol
+from wolframclient.serializers.wxfencoder import wxfexpr
+from wolframclient.utils.api import numpy
+from wolframclient.utils.datastructures import Association
 
 __all__ = ['WXFConsumer', 'WXFConsumerNumpy']
 
@@ -39,14 +41,14 @@ class WXFConsumer(object):
         >>> binary_deserialize(wxf)
         {'a': 1, 'b': Null}
 
-    Once initialized, the entry point of a consumer is the method 
+    Once initialized, the entry point of a consumer is the method
     :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.next_expression`
-    that takes a token generator and return a Python object. This method is particularly 
+    that takes a token generator and return a Python object. This method is particularly
     useful when building nested expressions. e.g:
     :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.consume_function`,
     :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.consume_association`, etc.
     """
-    
+
     _mapping = {
         wxfexpr.WXF_CONSTANTS.Function: 'consume_function',
         wxfexpr.WXF_CONSTANTS.Symbol: 'consume_symbol',
@@ -83,7 +85,7 @@ class WXFConsumer(object):
 
     def consume_function(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *function*.
-        
+
         Return a :class:`list` if the head is symbol `List`, otherwise return a :class:`~wolframclient.language.expression.WLFunction`
         """
         head = next(tokens)
@@ -99,9 +101,9 @@ class WXFConsumer(object):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *association*.
 
         By default, return a :class:`dict` made from the rules.
-        The named option `ordered_dict` can be set to `True` in which case an instance of 
+        The named option `ordered_dict` can be set to `True` in which case an instance of
         :class:`~collections.OrderedDict` is returned.
-        The named option `association` can be set to `True` in which case an instance of 
+        The named option `association` can be set to `True` in which case an instance of
         :class:`~wolframclient.utils.datastrucutres.Association` is returned.
         """
         if kwargs.get('ordered_dict', False):
@@ -142,7 +144,7 @@ class WXFConsumer(object):
     def consume_bigreal(self, current_token, tokens, **kwargs):
         """Parse a WXF big real as a WXF serializable big real.
 
-        There is not such thing as a big real, in Wolfram Language notation, in Python. This 
+        There is not such thing as a big real, in Wolfram Language notation, in Python. This
         wrapper ensures round tripping of big reals without the need of `ToExpression`.
         Introducing `ToExpression` would imply to marshall the big real data to avoid malicious
         code from being introduced in place of an actual real.
@@ -178,25 +180,24 @@ class WXFConsumer(object):
         return current_token.data
 
     def consume_raw_array(self, current_token, tokens, **kwargs):
-        """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *raw array*. 
-        
+        """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *raw array*.
+
         This method must be implemented by subclasses."""
         raise NotImplementedError(
             'Method consume_raw_array is not implemented by %s.' % self.__class__.__name__)
 
     def consume_packed_array(self, current_token, tokens, **kwargs):
-        """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *packed array*. 
-        
+        """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *packed array*.
+
         This method must be implemented by subclasses."""
         raise NotImplementedError(
             'Method consume_packed_array is not implemented by %s.' % self.__class__.__name__)
-
 
 class WXFConsumerNumpy(WXFConsumer):
     """Deserialize WXF array types as numpy arrays."""
     def __init__(self):
         super(WXFConsumerNumpy, self).__init__()
-    
+
     def consume_array(self, current_token, tokens, **kwargs):
         arr=numpy.fromstring(current_token.data, dtype=WXFConsumerNumpy.WXF_TYPE_TO_DTYPE[current_token.array_type])
         numpy.reshape(arr, tuple(current_token.dimensions))

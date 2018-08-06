@@ -1,20 +1,22 @@
 # -*- coding: utf-8 -*-
+
 from __future__ import absolute_import, print_function, unicode_literals
-from wolframclient.utils.six import BytesIO, binary_type, string_types, integer_types
+
+from wolframclient.deserializers.wxf.wxfconsumer import WXFConsumer, WXFConsumerNumpy
+from wolframclient.exception import WolframParserException
 from wolframclient.serializers.wxfencoder import wxfexpr
 from wolframclient.serializers.wxfencoder.serializer import SerializationContext, WXF_HEADER_COMPRESS, WXF_HEADER_SEPARATOR, WXF_VERSION
-from wolframclient.serializers.wxfencoder.streaming import ZipCompressedReader, ExactSizeReader
-from wolframclient.exception import WolframParserException
-from wolframclient.deserializers.wxf.wxfconsumer import WXFConsumerNumpy, WXFConsumer
+from wolframclient.serializers.wxfencoder.streaming import ExactSizeReader, ZipCompressedReader
+from wolframclient.utils.six import binary_type, BytesIO, integer_types, string_types
 
 class WXFParser(object):
     """Parse a WXF input.
 
-    This class is initialized with a WXF input, and exposes a generator of 
-    :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken`. 
+    This class is initialized with a WXF input, and exposes a generator of
+    :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken`.
     The input `wxf_input` can be a string of bytes with the serialized expression, a string of unicodes
     in which case it is considered as a filename, a object implementing a `read` method.
-    
+
     The generator outputs WXF tokens one by one::
 
         with open('/tmp/data.wxf', 'rb') as fp:
@@ -23,10 +25,10 @@ class WXFParser(object):
             print(next(gen))
 
     This low level class is providing intermediary objects to ease the parsing of WXF. Most of
-    the time one should directly use high level interface such as 
+    the time one should directly use high level interface such as
     :func:`~wolframclient.deserializers.wxf.wxfparser.binary_deserialize`.
 
-    The token generator is generally consumed by an instance of 
+    The token generator is generally consumed by an instance of
     :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer`.
     """
     def __init__(self, wxf_input):
@@ -45,7 +47,7 @@ class WXFParser(object):
             self.reader = ZipCompressedReader(self.reader)
         else:
             self.reader = ExactSizeReader(self.reader)
-    
+
     def tokens(self):
         """Generate instances :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` from a WXF input."""
         yield self.next_token()
@@ -143,25 +145,24 @@ class WXFParser(object):
 
         return token
 
-
 class WXFToken(object):
     """Represent a WXF element, often referred as WXF tokens.
     """
     __slots__ = 'wxf_type', 'array_type', 'length', '_dimensions', '_element_count', 'data'
-    
+
     def __init__(self, wxf_type):
         self.wxf_type = wxf_type
         self._dimensions = None
         self._element_count = None
         self.data = None
         self.length = None
-    
+
     @property
     def element_count(self):
         if self._element_count is None and self._dimensions is not None:
             self._update_element_count()
         return self._element_count
-    
+
     @property
     def dimensions(self):
         return self._dimensions
@@ -187,7 +188,6 @@ class WXFToken(object):
             return 'WXFToken<%s, data=%s, len=%i>' % (self.wxf_type, self.data, self.length)
         else:
             return 'WXFToken<%s, data=%s>' % (self.wxf_type, self.data)
-    
 
 def parse_varint(reader):
     """Parse a readable binary buffer for a positive varint encoded integer."""
@@ -217,6 +217,3 @@ def parse_varint(reader):
         return length
     except IndexError:
         raise EOFError('EOF reached while parsing varint encoded integer.')
-
-
-

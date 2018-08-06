@@ -1,22 +1,24 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import absolute_import, print_function, unicode_literals
+
+from wolframclient.deserializers.wxf.wxfconsumer import WXFConsumer, WXFConsumerNumpy
 from wolframclient.deserializers.wxf.wxfparser import WXFParser, WXFToken
-from wolframclient.utils.six import BytesIO, binary_type, string_types, integer_types
+from wolframclient.exception import WolframParserException
 from wolframclient.serializers.wxfencoder import wxfexpr
 from wolframclient.serializers.wxfencoder.serializer import SerializationContext, WXF_HEADER_COMPRESS, WXF_HEADER_SEPARATOR, WXF_VERSION
-from wolframclient.serializers.wxfencoder.streaming import ZipCompressedReader, ExactSizeReader
-from wolframclient.exception import WolframParserException
-from wolframclient.deserializers.wxf.wxfconsumer import WXFConsumerNumpy, WXFConsumer
+from wolframclient.serializers.wxfencoder.streaming import ExactSizeReader, ZipCompressedReader
+from wolframclient.utils.six import binary_type, BytesIO, integer_types, string_types
 
 __all__ = ['binary_deserialize']
 
 def binary_deserialize(wxf_input, consumer=None, **kwargs):
         """Deserialize binary data, return a Python object.
-        
+
         A stream of :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` is generated from the WXF input by a instance
         of :class:`~wolframclient.deserializers.wxf.wxfparser.WXFParser`.
 
-        The consumer must be an instance of :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer`. If none is 
+        The consumer must be an instance of :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer`. If none is
         provided :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy` is used.
 
         Named parameters are passed to the consumer. They can be any valid parameter of
@@ -42,5 +44,3 @@ def binary_deserialize(wxf_input, consumer=None, **kwargs):
             raise WolframParserException(
                 'Input data does not represent a valid expression in WXF format. Some expressions are imcomplete.')
         return o
-
-

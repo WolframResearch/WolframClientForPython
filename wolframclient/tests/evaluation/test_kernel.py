@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
+
+from wolframclient.language import wl
+from wolframclient.language.expression import WLSymbol
+from wolframclient.logger.utils import setup_logging_to_file
+from wolframclient.utils import six
+from wolframclient.utils.tests import TestCase as BaseTestCase
+
 import logging
 import unittest
-from wolframclient.logger.utils import setup_logging_to_file
-from wolframclient.language import wl
-from wolframclient.utils.tests import TestCase as BaseTestCase
-from wolframclient.utils import six
-from wolframclient.language.expression import WLSymbol
+
 if not six.JYTHON:
     from wolframclient.evaluation import WolframLanguageSession
 
-
 setup_logging_to_file('/tmp/python_testsuites.log', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-
 
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 class TestCaseSettings(BaseTestCase):

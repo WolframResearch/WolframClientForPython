@@ -2,8 +2,8 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.language.expression import WLExpressionMeta
 from wolframclient.language import wl
+from wolframclient.language.expression import WLExpressionMeta
 from wolframclient.utils.functional import riffle
 
 import logging

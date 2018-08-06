@@ -94,7 +94,7 @@ VALID_PACKED_ARRAY_TYPES = frozenset((
 
 class WXFExpr(object):
     """Represent a WXF expression.
-    
+
     This is an abstract class. Only its children must be used.
     """
 
@@ -123,7 +123,6 @@ class WXFExprFunction(WXFExpr):
         # Function has a head which account for one part element contrary to association
         context.step_into_new_function(self.length)
         write_varint(self.length, stream)
-
 
 StructInt8LE = struct.Struct(b'<b')
 StructInt16LE = struct.Struct(b'<h')

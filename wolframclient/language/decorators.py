@@ -4,8 +4,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from functools import wraps
 
-from wolframclient.language.exceptions import WolframLanguageException
 from wolframclient.language import wl
+from wolframclient.language.exceptions import WolframLanguageException
 from wolframclient.serializers import DEFAULT_FORMAT, export
 from wolframclient.utils.encoding import force_text, safe_force_text
 

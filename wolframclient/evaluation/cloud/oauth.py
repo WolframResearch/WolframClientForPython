@@ -10,7 +10,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
 __all__ = ['SecuredAuthenticationKey', 'UserIDPassword']
 
 class SecuredAuthenticationKey(object):
@@ -132,7 +131,7 @@ class OAuthSession(object):
             logger.debug('Signed uri: %s', uri)
             logger.debug('Signed header: %s', req_headers)
             logger.debug('Is body signed: %s', sign_body)
-        
+
             # s = requests.Session()
             # req = requests.Request(method, uri,
             #                  headers=req_headers,
@@ -173,7 +172,7 @@ class OAuthSession(object):
         params["x_auth_username"] = user
         params["x_auth_password"] = password
         params["x_auth_mode"] = "client_auth"
-        
+
         # avoid dumping password in log files.
         logging.disable(logging.DEBUG)
 

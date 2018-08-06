@@ -7,8 +7,8 @@ from wolframclient.evaluation.cloud.oauth import SecuredAuthenticationKey, UserI
 from wolframclient.evaluation.cloud.server import WolframServer
 
 __all__ = [
-    'WolframServer', 
+    'WolframServer',
     'WolframCloudSession', 'WolframCloudSessionAsync',
-    'SecuredAuthenticationKey', 
+    'SecuredAuthenticationKey',
     'UserIDPassword'
     ]

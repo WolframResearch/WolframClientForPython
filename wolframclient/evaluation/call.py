@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-from wolframclient.evaluation.kernel import WolframLanguageSession
+
 from wolframclient.evaluation.cloud import WolframCloudSession, WolframCloudSessionAsync
-from wolframclient.exception import WolframKernelException, AuthenticationException
+from wolframclient.evaluation.kernel import WolframLanguageSession
+from wolframclient.exception import AuthenticationException, WolframKernelException
 from wolframclient.language.exceptions import wl
-from wolframclient.utils.six import PY3, string_types, binary_type
+from wolframclient.utils.six import binary_type, PY3, string_types
 
 __all__ = ['WolframCall']
 
@@ -36,7 +37,7 @@ class WolframCall(object):
     When `input` is a file, its content is read and send to the kernel.
 
     """
-    
+
     def __init__(self, target, input):
         self.target = target
         self.input = input
@@ -47,7 +48,7 @@ class WolframCall(object):
             self.input = self.input.read()
         except AttributeError:
             pass
-    
+
     def _ensure_target_ready(self, is_async=False):
         # ensure session is ready to evaluate expressions.
         if isinstance(self.target, WolframLanguageSession):
@@ -70,7 +71,7 @@ class WolframCall(object):
 
     def perform_async(self):
         """Asynchronously send the input to the specified target for evaluation and return a future object.
-        
+
         .. warning::
             Asynchronous evaluation is only available for `Python 3.2` and above.
 
@@ -78,7 +79,7 @@ class WolframCall(object):
         self._normalize_input()
         self._ensure_target_ready(is_async=True)
         return self.target.evaluate_async(self.input)
-    
+
 class WolframAPICall(object):
     """Perform an API call to a given target.
 
@@ -89,7 +90,7 @@ class WolframAPICall(object):
     can be of many types including: string, files, WL serializable python objects, binary data with arbitrary
     content-type (e.g: *image/png*).
     """
-    
+
     def __init__(self, target, api, permission_key=None):
         self.target = target
         self.api = api
@@ -102,7 +103,7 @@ class WolframAPICall(object):
         """Add a new API input parameter from a serialization python object."""
         self.parameters[name] = value
         return self
-    
+
     def add_file_parameter(self, name, fp, content_type=None):
         """Add a new API input parameter from a file pointer `fp`"""
         if content_type is None:

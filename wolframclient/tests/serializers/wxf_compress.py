@@ -2,9 +2,10 @@
 
 from __future__ import absolute_import, print_function, unicode_literals, with_statement
 
-from wolframclient.serializers.wxfencoder.streaming import ZipCompressedWriter, ZipCompressedReader, ExactSizeReader
+from wolframclient.serializers.wxfencoder.streaming import ExactSizeReader, ZipCompressedReader, ZipCompressedWriter
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
+
 import random
 import zlib
 

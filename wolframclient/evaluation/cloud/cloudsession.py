@@ -2,15 +2,15 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.evaluation.result import WolframAPIResponseBuilder, WolframEvaluationJSONResponse
 from wolframclient.evaluation.cloud.oauth import OAuthSession
 from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
+from wolframclient.evaluation.result import WolframAPIResponseBuilder, WolframEvaluationJSONResponse
 from wolframclient.exception import AuthenticationException
 from wolframclient.language import wl
 from wolframclient.serializers import export
 from wolframclient.utils import six
+from wolframclient.utils.api import futures, json, requests, urllib
 from wolframclient.utils.encoding import force_text
-from wolframclient.utils.api import json, requests, futures, urllib
 
 import logging
 
@@ -18,24 +18,23 @@ logger = logging.getLogger(__name__)
 
 __all__ = ['WolframCloudSession', 'WolframCloudSessionAsync']
 
-
 class WolframCloudSession(object):
     """Represent a session to a given cloud enabling simple API call.
 
-    This is the central class of the cloud evaluation package. It is initialized with a server instance 
+    This is the central class of the cloud evaluation package. It is initialized with a server instance
     representing a given cloud. By default a session targets the Wolfram public cloud.
 
-    Most of the time it is necessary to authenticate with the server before issuing requests. Session 
+    Most of the time it is necessary to authenticate with the server before issuing requests. Session
     supports two forms of authentication:
-    
+
     * 2-legged oauth using a secured authentication key.
     * xauth using the user ID and password.
 
-    Calling an API is done through the method :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.call` 
-    which will return an instance of :class:`~wolframclient.evaluation.result.WolframAPIResponse`. 
+    Calling an API is done through the method :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.call`
+    which will return an instance of :class:`~wolframclient.evaluation.result.WolframAPIResponse`.
     It is strongly advised to re-use a session to make multiple calls to mitigate the cost of initialization.
     """
-    
+
     __slots__ = 'server', 'oauth', 'consumer', 'consumer_secret', 'user', 'password', 'is_xauth', 'evaluation_api_url', 'authentication'
 
     def __init__(self, authentication=None, server=WolframPublicCloudServer):
@@ -117,15 +116,15 @@ class WolframCloudSession(object):
         of the parameters associated to their value.
 
         Files are passed in a dictionary. Value can have multiple forms::
-            
+
             {'parameter name': file_pointer}
-        
+
         It is possible to explicitly specify a filename and a content type::
 
             {'parameter name': ('filename', file_pointer, 'content-type')}
 
         String can also be passed as files::
-            
+
             {'parameter name': ('filename', '...string...data...', 'content-type')}
 
         It's possible to pass a ``PermissionsKey`` to the server along side to the query,
@@ -201,7 +200,6 @@ class WolframCloudSession(object):
     def __repr__(self):
         return '<{}:base={}, authorized={}>'.format(self.__class__.__name__, self.server.cloudbase, self.authorized)
 
-
 class WolframCloudSessionAsync(WolframCloudSession):
     ''' A Wolfram cloud session that call issue asynchronous call.
 
@@ -237,7 +235,7 @@ class WolframCloudSessionAsync(WolframCloudSession):
 
         This method requires :mod:`concurrent.futures` which was introduced in `Python 3.2`.
         See :func:`WolframCloudSession.call` for more details about input parameters.
-        
+
         .. warning::
             Asynchronous evaluation is only available for `Python 3.2` and above.
         """
@@ -249,7 +247,7 @@ class WolframCloudSessionAsync(WolframCloudSession):
 
     def evaluate_async(self, expr):
         """Send `expr` to the cloud for asynchronous evaluation.
-        
+
         Returns a
         :class:`concurrent.futures.Future` object.
 
@@ -272,9 +270,9 @@ class WolframCloudSessionAsync(WolframCloudSession):
 
     def cloud_function(self, func, asynchronous=False):
         """Return a `callable` cloud function.
-        
-        The object returned can be applied on arguments as any other Python function, and 
-        is evaluated in the cloud as a Wolfram Language expression using the current cloud 
+
+        The object returned can be applied on arguments as any other Python function, and
+        is evaluated in the cloud as a Wolfram Language expression using the current cloud
         session.
 
         .. warning::
@@ -294,7 +292,6 @@ class CloudFunction(object):
     def __call__(self, *args):
         return self.evaluation_func(wl.Construct(self.func, *args))
 
-
 def _encode_inputs_as_wxf(inputs, multipart, **kwargs):
     encoded_inputs = {}
     for name, value in inputs.items():
@@ -303,7 +300,6 @@ def _encode_inputs_as_wxf(inputs, multipart, **kwargs):
         update_parameter_list(encoded_inputs, wxf_name, wxf_value, multipart)
     return encoded_inputs
 
-
 def _encode_inputs_as_json(inputs, multipart, **kwargs):
     encoded_inputs = {}
     for name, value in inputs.items():
@@ -311,7 +307,6 @@ def _encode_inputs_as_json(inputs, multipart, **kwargs):
         json_value = json.dumps(value, **kwargs)
         update_parameter_list(encoded_inputs, name, json_value, multipart)
     return encoded_inputs
-
 
 def _encode_inputs_as_wl(inputs, multipart, **kwargs):
     encoded_inputs = {}

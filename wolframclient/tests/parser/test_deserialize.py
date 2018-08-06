@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-from wolframclient.utils.tests import TestCase as BaseTestCase
-from wolframclient.deserializers import WXFToken, WXFParser, binary_deserialize
+
+from wolframclient.deserializers import binary_deserialize, WXFParser, WXFToken
 from wolframclient.deserializers.wxf.wxfparser import parse_varint
-from wolframclient.serializers.wxfencoder.serializer import write_varint
 from wolframclient.serializers import export
+from wolframclient.serializers.wxfencoder.serializer import write_varint
 from wolframclient.utils import six
+from wolframclient.utils.tests import TestCase as BaseTestCase
+
 import unittest
+
 class TestCase(BaseTestCase):
     def test_token_dimensions(self):
         token = WXFToken(None)
@@ -16,13 +19,13 @@ class TestCase(BaseTestCase):
 
         token.dimensions = [2, 2, 3]
         self.assertEqual(token.element_count, 12)
-    
+
     def test_token_dimensions_negative(self):
         token = WXFToken(None)
         with self.assertRaises(TypeError):
             token.dimensions = [2, -2, 3]
             token.element_count
-    
+
     def test_token_dimensions_notint(self):
         token = WXFToken(None)
         with self.assertRaises(TypeError):

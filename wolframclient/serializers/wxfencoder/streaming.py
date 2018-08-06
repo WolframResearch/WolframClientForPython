@@ -2,9 +2,9 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.utils.six import BytesIO
-from wolframclient.utils.encoding import force_bytes
 from wolframclient.utils.api import zlib
+from wolframclient.utils.encoding import force_bytes
+from wolframclient.utils.six import BytesIO
 
 class ZipCompressedWriter(object):
 
@@ -37,7 +37,7 @@ class ExactSizeReader(object):
 
     def read(self, size=-1):
         """Read from an underlying readable object.
-        
+
         If size is negative the data is read until EOF.
         If it is 0 then b'' is returned.
         Otherwise the exact amount of bytes is read from the source. More than
@@ -61,7 +61,7 @@ class ExactSizeReader(object):
 
 class ZipCompressedReader(object):
     """A buffer implementation reading zip compressed data from a source buffer and returning uncompressed data.
-    
+
     This class is instanciated from a reader, any object implementing a :meth:`~io.BufferedIOBase.read` method.
     """
 
@@ -77,7 +77,7 @@ class ZipCompressedReader(object):
     def read(self, size=-1):
         """Read from a compressed stream of bytes and return the inflated byte sequence.
 
-        Parameter `size` specifies the amount of bytes to return at most. If `size` is set to -1 
+        Parameter `size` specifies the amount of bytes to return at most. If `size` is set to -1
         then the reader is read until EOF is reached.
         """
         if size is None or size < 0:

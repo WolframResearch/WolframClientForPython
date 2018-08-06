@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import absolute_import, print_function, unicode_literals
+
+from wolframclient.deserializers.wxf import binary_deserialize
 from wolframclient.deserializers.wxf.wxfconsumer import WXFConsumer, WXFConsumerNumpy
 from wolframclient.deserializers.wxf.wxfparser import WXFParser, WXFToken
-from wolframclient.deserializers.wxf import binary_deserialize
 
 __all__ = [
-    'WXFConsumer', 
+    'WXFConsumer',
     'WXFToken',
     'binary_deserialize',
-    'WXFConsumer', 
+    'WXFConsumer',
     'WXFConsumerNumpy'
 ]

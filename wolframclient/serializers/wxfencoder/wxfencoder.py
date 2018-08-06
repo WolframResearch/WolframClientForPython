@@ -14,18 +14,18 @@ class NotEncodedException(Exception):
 class WXFEncoder(object):
     """Encode a given python object into a stream of :class:`~wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr`.
 
-    This class is meant to be subclassed in order to add support for new classes. The encoder does not have to do anything 
-    since more than one can be attached to a given :class:`~wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider`. 
+    This class is meant to be subclassed in order to add support for new classes. The encoder does not have to do anything
+    since more than one can be attached to a given :class:`~wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider`.
     The library provides a default encoder that should cover basic needs, more or less json types, and that should be useful in any case.
 
-    To implement a new encoder one needs to sub-class :class:`~wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder` 
-    and implements method :func:`~wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder.encode`. Encode is a generator function 
+    To implement a new encoder one needs to sub-class :class:`~wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder`
+    and implements method :func:`~wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder.encode`. Encode is a generator function
     that takes a given python object and instances of :class:`~wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr`. If it returns before
     yielding anything a :class:`~wolframclient.serializers.wxfencoder.wxfencoder.NotEncodedException` is raised to signal that
     the encoder is not supporting the given object, and that the encoding must be delegating to the next encoder (if any).
 
-    Sometimes it is useful to start a new serialization using the provider, re-entrant call, especially when dealing with non-atomic 
-    :class:`~wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr`, such as ``Function`` or ``Association``. 
+    Sometimes it is useful to start a new serialization using the provider, re-entrant call, especially when dealing with non-atomic
+    :class:`~wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr`, such as ``Function`` or ``Association``.
     To do so one must call ``self.serialize`` on the target object and yield the results (yield from in PY3).
     """
 
@@ -41,15 +41,15 @@ class WXFEncoder(object):
         """Re-entrant method used to serialize part of a python object.
 
         Example: when serializing a custom class ``foo[{'k1'->1,'k2'->2}]``, the user
-        defined encoder for class foo could encode it as a function with head 'foo' and a dict. 
+        defined encoder for class foo could encode it as a function with head 'foo' and a dict.
         The generator would be something similar to::
-        
+
             yield WXFFunction(3)
             yield WXFSymbol('foo')
             yield from self.serialize({'k1'->1,'k2'->2})
 
         Using a re-entrant call (line 3) allows the dictionnary to be encoded as a new expr;
-        assuming :class:`~wolframclient.serializers.wxfencoder.WXFDefaultEncoder` 
+        assuming :class:`~wolframclient.serializers.wxfencoder.WXFDefaultEncoder`
         is also registered as a provider, the dict will get encoded as an association.
 
         It also enables transformation mechanism, say apply list to all iterable object and
@@ -71,9 +71,9 @@ class WXFEncoder(object):
 class DefaultWXFEncoder(WXFEncoder):
     """The most straight forward serialization of python expressions to their Wolfram Language counterpart.
 
-    This class is meant to represent basically JSON like objects, and is intended to be used in all providers. 
-    As such it should only deal with obvious convertion. 
-    
+    This class is meant to represent basically JSON like objects, and is intended to be used in all providers.
+    As such it should only deal with obvious convertion.
+
     e.g: :class:`int` to Wolfram Language ``Integer``, but iterators are not supported but user defined implementation
     can be added easily.
     """
@@ -113,4 +113,3 @@ class DefaultWXFEncoder(WXFEncoder):
             yield wxfexpr.WXFExprReal(pythonExpr.imag)
         elif isinstance(pythonExpr, wxfexpr.WXFExpr):
             yield pythonExpr
-        

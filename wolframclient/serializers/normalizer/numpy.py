@@ -4,8 +4,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from operator import methodcaller
 
-from wolframclient.utils.functional import identity
 from wolframclient.utils.api import numpy
+from wolframclient.utils.functional import identity
 
 NUMPY_MAPPING = {
     numpy.dtype('int8'):       ('Integer8',          methodcaller('astype', '<i1')),

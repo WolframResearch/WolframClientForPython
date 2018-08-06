@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-from wolframclient.exception import EvaluationException, RequestException, WolframLanguageException, WolframParserException
-from wolframclient.utils import six
+
 from wolframclient.deserializers import binary_deserialize
+from wolframclient.exception import EvaluationException, RequestException, WolframLanguageException, WolframParserException
 from wolframclient.language.expression import WLSymbol
+from wolframclient.utils import six
+
 import logging
 
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    'WolframResult', 
+    'WolframResult',
     'WolframAPIResponseBuilder',
     'WolframAPIResponse',
     'WolframEvaluationJSONResponse',
@@ -19,7 +21,7 @@ __all__ = [
 
 class WolframResult(object):
     """Most generic result object.
-    
+
     The actual result is returned via method :func:`~wolframclient.evaluation.result.WolframResult.get`.
     If the result is a `success`, the field `result` is returned otherwise `failure` is returned and most
     likely contains an error message.
@@ -45,16 +47,15 @@ class WolframResult(object):
         else:
             return '{}<success={}, failure={}>'.format(self.__class__.__name__, self.success, self.failure)
 
-
 class WolframKernelEvaluationResult(WolframResult):
     """A Wolfram result with WXF encoded data.
-    
-    Messages can be issued during a kernel evaluation. Those are 
+
+    Messages can be issued during a kernel evaluation. Those are
     stored as `messages`. If any message was returned by the kernel
     then the success status is automatically set to `False`.
     """
     __slots__ = 'messages'
-    
+
     def __init__(self, result, msgs):
         self.success = len(msgs) == 0
         self.failure = None
@@ -76,7 +77,7 @@ class WolframEvaluationJSONResponse(WolframResult):
     """Result object associated with cloud kernel evaluation.
 
     The response body associated to this type of result must be json encoded.
-    Other fields provide additionnal information. The HTTP response object is 
+    Other fields provide additionnal information. The HTTP response object is
     stored as `http_response` and when HTTP error occured it is stored in `request_error`.
     """
     __slots__ = 'http_response', 'json', 'request_error'
@@ -111,7 +112,6 @@ class WolframEvaluationJSONResponse(WolframResult):
             return '{}<success={}, expression={}>'.format(self.__class__.__name__, self.success, self.result)
         else:
             return '{}<request error {}>'.format(self.__class__.__name__, self.http_response.status_code)
-
 
 class WolframAPIResponse(WolframResult):
     """Generic API response."""
@@ -157,7 +157,6 @@ class WolframAPIResponse(WolframResult):
     def __repr__(self):
         return '<%s:success=%s>' % (self.__class__.__name__, self.success)
 
-
 class WolframAPIResponse200(WolframAPIResponse):
     def __init__(self, response, decoder=None):
         super(WolframAPIResponse200, self).__init__(response, decoder)
@@ -176,7 +175,6 @@ class WolframAPIResponse200(WolframAPIResponse):
         else:
             self.result = self.response.content
 
-
 class WolframAPIResponseRedirect(WolframAPIResponse):
     def __init__(self, response, decoder=None):
         super(WolframAPIResponseRedirect, self).__init__(response, decoder)
@@ -191,7 +189,6 @@ class WolframAPIResponseRedirect(WolframAPIResponse):
     def _specific_failure(self):
         raise NotImplementedError
 
-
 class WolframAPIResponse301(WolframAPIResponseRedirect):
     def __init__(self, response, decoder=None):
         super(WolframAPIResponse301, self).__init__(response, decoder)
@@ -200,7 +197,6 @@ class WolframAPIResponse301(WolframAPIResponseRedirect):
         ''' should not happen since we follow redirection '''
         self.failure = 'Resource permanently moved to new location {}'.format(
             self.location)
-
 
 class WolframAPIResponse302(WolframAPIResponseRedirect):
     def __init__(self, response, decoder=None):
@@ -213,7 +209,6 @@ class WolframAPIResponse302(WolframAPIResponseRedirect):
         else:
             self.failure = 'Resource moved to new location {}'.format(
                 self.location)
-
 
 class WolframAPIResponse400(WolframAPIResponse):
     def __init__(self, response, decoder=None):
@@ -236,7 +231,6 @@ class WolframAPIResponse400(WolframAPIResponse):
             self._fields_in_error = set(fields.keys())
             logger.warning('Fields in error: %s', self._fields_in_error)
 
-
 class WolframAPIResponse401(WolframAPIResponse):
     def __init__(self, response, decoder=None):
         super(WolframAPIResponse401, self).__init__(response, decoder)
@@ -248,7 +242,6 @@ class WolframAPIResponse401(WolframAPIResponse):
         logger.warning(
             'Authentication missing or failed. Server response: %s', self.failure)
 
-
 class WolframAPIResponse404(WolframAPIResponse):
     def __init__(self, response, decoder=None):
         super(WolframAPIResponse404, self).__init__(response, decoder)
@@ -258,7 +251,6 @@ class WolframAPIResponse404(WolframAPIResponse):
         self.failure = "The resource %s can't not be found." % self.response.url
         logger.warning('Wolfram API error response: %s', self.failure)
 
-
 class WolframAPIResponseGeneric(WolframAPIResponse):
     def __init__(self, response, decoder=None):
         super(WolframAPIResponseGeneric, self).__init__(response, decoder)
@@ -267,15 +259,13 @@ class WolframAPIResponseGeneric(WolframAPIResponse):
         self.success = False
         self.failure = self.response.text
 
-
 class WolframAPIResponse500(WolframAPIResponseGeneric):
     def __init__(self, response, decoder=None):
         super(WolframAPIResponse500, self).__init__(response, decoder)
         logger.fatal('Internal server error occurred.')
 
-
 class WolframAPIResponseBuilder(object):
-    """Map error code to handler building the appropriate 
+    """Map error code to handler building the appropriate
     :class:`~wolframclient.evaluation.result.WolframAPIResponse`
     """
     response_mapper = {

@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from wolframclient.evaluation.cloud import WolframServer, WolframCloudSession, WolframCloudSessionAsync, SecuredAuthenticationKey, UserIDPassword
+
+from __future__ import absolute_import, print_function, unicode_literals
+
+from wolframclient.evaluation.call import WolframAPICall, WolframCall
+from wolframclient.evaluation.cloud import SecuredAuthenticationKey, UserIDPassword, WolframCloudSession, WolframCloudSessionAsync, WolframServer
 from wolframclient.evaluation.kernel import WolframLanguageSession
-from wolframclient.evaluation.call import WolframCall, WolframAPICall
-from wolframclient.evaluation.result import WolframResult, WolframAPIResponse, WolframEvaluationJSONResponse, WolframKernelEvaluationResult
+from wolframclient.evaluation.result import WolframAPIResponse, WolframEvaluationJSONResponse, WolframKernelEvaluationResult, WolframResult
 
 __all__ = [
     'WolframCall', 'WolframAPICall',
