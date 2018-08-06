@@ -12,13 +12,6 @@ from wolframclient.utils.datastructures import Association
 
 __all__ = ['WXFConsumer', 'WXFConsumerNumpy']
 
-def _validate_rule(rule):
-
-    if isinstance(rule, tuple) and len(rule) == 2:
-        return rule
-    else:
-        raise WolframParserException('Invalid rule. Rule must be parsed as a tuple of two values.')
-
 class WXFConsumer(object):
     """Map WXF types to Python object generating functions.
 
@@ -107,7 +100,7 @@ class WXFConsumer(object):
         :class:`dict_class` is returned.
         """
         return dict_class(
-            _validate_rule(self.next_expression(tokens, **kwargs))
+            self.next_expression(tokens, **kwargs)
             for i in range(current_token.length)
         )
 
