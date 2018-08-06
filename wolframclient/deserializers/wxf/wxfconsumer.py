@@ -12,6 +12,13 @@ from wolframclient.utils.datastructures import Association
 
 __all__ = ['WXFConsumer', 'WXFConsumerNumpy']
 
+def _validate_rule(self, rule):
+
+    if isinstance(rule, tuple) and len(rule) == 2:
+        return rule
+    else:
+        raise WolframParserException('Invalid rule. Rule must be parsed as a tuple of two values.')
+
 class WXFConsumer(object):
     """Map WXF types to Python object generating functions.
 
@@ -95,29 +102,17 @@ class WXFConsumer(object):
         else:
             return WLFunction(head.data, *args)
 
-    def consume_association(self, current_token, tokens, **kwargs):
+    def consume_association(self, current_token, tokens, dict_class = dict, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *association*.
 
         By default, return a :class:`dict` made from the rules.
-        The named option `ordered_dict` can be set to `True` in which case an instance of
-        :class:`~collections.OrderedDict` is returned.
-        The named option `association` can be set to `True` in which case an instance of
-        :class:`~wolframclient.utils.datastrucutres.Association` is returned.
+        The named option `dict_class` can be set to any type in which case an instance of
+        :class:`dict_class` is returned.
         """
-        if kwargs.get('ordered_dict', False):
-            o = OrderedDict()
-        elif kwargs.get('association', False):
-            o = Association()
-        else:
-            o = {}
-        for i in range(current_token.length):
-            rule = self.next_expression(tokens, **kwargs)
-            if isinstance(rule, tuple) and len(rule) == 2:
-                o[rule[0]] = rule[1]
-            else:
-                raise WolframParserException(
-                    'Invalid rule. Rule must be parsed as a tuple of two values.')
-        return o
+        return dict_class(
+            _validate_rule(self.next_expression(tokens, **kwargs))
+            for i in range(current_token.length)
+        )
 
     def consume_rule(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *rule* as a tuple"""
