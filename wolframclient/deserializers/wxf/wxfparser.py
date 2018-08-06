@@ -2,12 +2,11 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.deserializers.wxf.wxfconsumer import WXFConsumer, WXFConsumerNumpy
 from wolframclient.exception import WolframParserException
 from wolframclient.serializers.wxfencoder import wxfexpr
 from wolframclient.serializers.wxfencoder.serializer import SerializationContext, WXF_HEADER_COMPRESS, WXF_HEADER_SEPARATOR, WXF_VERSION
 from wolframclient.serializers.wxfencoder.streaming import ExactSizeReader, ZipCompressedReader
-from wolframclient.utils.six import binary_type, BytesIO, integer_types, string_types
+from wolframclient.utils.six import binary_type, BytesIO, integer_types
 
 class WXFParser(object):
     """Parse a WXF input.

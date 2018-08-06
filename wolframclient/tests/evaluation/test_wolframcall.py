@@ -2,15 +2,12 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.evaluation import SecuredAuthenticationKey, UserIDPassword, WolframCall, WolframCloudSession, WolframLanguageSession
+from wolframclient.evaluation import WolframCall
 from wolframclient.language.expression import WLSymbol
 from wolframclient.logger.utils import setup_logging_to_file
 from wolframclient.tests.evaluation.test_cloud import TestCaseSettings as SessionTestCase
 from wolframclient.tests.evaluation.test_kernel import TestCaseSettings as KernelTestCase
-from wolframclient.utils import six
-from wolframclient.utils.tests import TestCase as BaseTestCase
 
-import json
 import logging
 import unittest
 

@@ -9,8 +9,7 @@ from wolframclient.exception import AuthenticationException
 from wolframclient.language import wl
 from wolframclient.serializers import export
 from wolframclient.utils import six
-from wolframclient.utils.api import futures, json, requests, urllib
-from wolframclient.utils.encoding import force_text
+from wolframclient.utils.api import futures, json, requests
 
 import logging
 

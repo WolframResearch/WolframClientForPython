@@ -4,8 +4,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from collections import OrderedDict
 
-from functools import update_wrapper
-
 from wolframclient.exception import WolframParserException
 from wolframclient.language.expression import WLFunction, WLSymbol
 from wolframclient.serializers.wxfencoder import wxfexpr

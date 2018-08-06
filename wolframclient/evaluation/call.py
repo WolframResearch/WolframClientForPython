@@ -5,8 +5,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.evaluation.cloud import WolframCloudSession, WolframCloudSessionAsync
 from wolframclient.evaluation.kernel import WolframLanguageSession
 from wolframclient.exception import AuthenticationException, WolframKernelException
-from wolframclient.language.exceptions import wl
-from wolframclient.utils.six import binary_type, PY3, string_types
 
 __all__ = ['WolframCall']
 

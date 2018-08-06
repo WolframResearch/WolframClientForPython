@@ -2,8 +2,6 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from math import floor
-
 from subprocess import PIPE, Popen
 
 from threading import Event, Thread
@@ -14,7 +12,7 @@ from wolframclient.language import wl
 from wolframclient.serializers import export
 from wolframclient.utils.api import futures, os, time, zmq
 from wolframclient.utils.encoding import force_text
-from wolframclient.utils.six import binary_type, integer_types, JYTHON, PY3, string_types
+from wolframclient.utils import six
 
 import logging
 
@@ -99,7 +97,7 @@ class WolframLanguageSession(object):
 
     def __init__(self, kernel=None, initfile=None, log_kernel=True,
                  in_socket=None, out_socket=None, logger_socket=None):
-        if isinstance(kernel, string_types):
+        if isinstance(kernel, six.string_types):
             if not os.isfile(kernel):
                 raise WolframKernelException('Kernel not found at %s.')
             elif not os.access(kernel, os.X_OK):
@@ -313,10 +311,10 @@ class WolframLanguageSession(object):
         if not self.started:
             raise WolframKernelException('Kernel is not started.')
 
-        if isinstance(expr, binary_type):
+        if isinstance(expr, six.binary_type):
             self.in_socket.zmq_socket.send(expr)
         else:
-            if isinstance(expr, string_types):
+            if isinstance(expr, six.string_types):
                 expr = wl.ToExpression(expr)
             self.in_socket.zmq_socket.send(export(expr, target_format='wxf', **kwargs))
         # read the message as bytes.

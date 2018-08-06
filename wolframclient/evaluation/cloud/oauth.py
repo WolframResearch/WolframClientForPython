@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.exception import AuthenticationException
 from wolframclient.utils import six
-from wolframclient.utils.api import json, oauth, requests, urllib
+from wolframclient.utils.api import oauth, requests, urllib
 
 import logging
 

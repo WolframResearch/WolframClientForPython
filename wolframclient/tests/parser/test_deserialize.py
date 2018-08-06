@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.deserializers import binary_deserialize, WXFParser, WXFToken
+from wolframclient.deserializers import binary_deserialize, WXFToken
 from wolframclient.deserializers.wxf.wxfparser import parse_varint
 from wolframclient.serializers import export
 from wolframclient.serializers.wxfencoder.serializer import write_varint
