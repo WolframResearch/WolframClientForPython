@@ -27,12 +27,9 @@ def binary_deserialize(wxf_input, consumer=None, **kwargs):
     parser = WXFParser(wxf_input)
     if consumer is None:
         consumer = WXFConsumerNumpy()
-    else:
-        if not isinstance(consumer, WXFConsumer):
-            raise TypeError('Invalid consumer type.')
-    tokens = parser.tokens()
+
     try:
-        o = consumer.next_expression(tokens, **kwargs)
+        o = consumer.next_expression(parser.tokens(), **kwargs)
     except StopIteration:
         raise WolframParserException(
             'Input data does not represent a valid expression in WXF format. Expecting more input data.')
