@@ -20,7 +20,7 @@ def binary_deserialize(wxf_input, consumer=None, **kwargs):
     Named parameters are passed to the consumer. They can be any valid parameter of
     :meth:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.next_expression`, namely:
 
-    * `dict_class`: map WXF `Association` to :class:`dict_class` in place of a regular :class:`dict`.
+    * `dict_class`: map WXF `Association` to `dict_class` in place of a regular :class:`dict`.
 
     """
     parser = WXFParser(wxf_input)

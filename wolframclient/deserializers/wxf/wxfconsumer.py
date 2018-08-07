@@ -39,9 +39,10 @@ class WXFConsumer(object):
     Once initialized, the entry point of a consumer is the method
     :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.next_expression`
     that takes a token generator and return a Python object. This method is particularly
-    useful when building nested expressions. e.g:
+    useful when building nested expressions, e.g:
     :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.consume_function`,
-    :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.consume_association`, etc.
+    :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.consume_association`, etc,
+    in order to fetch sub-expressions.
     """
 
     _mapping = {
