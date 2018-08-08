@@ -3,7 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.language import wl
-from wolframclient.language.expression import WLSymbol
+from wolframclient.language.expression import WLSymbol, WLFunction
 from wolframclient.logger.utils import setup_logging_to_file
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
@@ -84,7 +84,7 @@ class TestCase(TestCaseSettings):
         self.assertTrue(res.success)
         on = self.kernel_session.evaluate('On[Power::infy]')
         self.assertTrue(on.success)
-        self.assertEqual(res.get(), WLSymbol('ComplexInfinity'))
+        self.assertEqual(res.get(), WLFunction(WLSymbol(b'DirectedInfinity')))
 
     def test_one_eval_many_msg(self):
         res = self.kernel_session.evaluate(
