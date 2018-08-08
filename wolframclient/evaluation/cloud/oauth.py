@@ -97,7 +97,7 @@ class OAuthSession(object):
             req_headers[k] = v
         sign_body = False
         #if files is set, it's a multipart request.
-        if isinstance(body, dict) and len(files) == 0:
+        if len(files) == 0:
             if isinstance(body, dict):
                 # url encode the body
                 encoded_body = urllib.urlencode(body)
@@ -157,7 +157,7 @@ class OAuthSession(object):
             token = response.json()
             return token['oauth_token'], token['oauth_token_secret']
         except:
-            logger.warning('Auth response is expected to be json but wasn\'t. Parsing as query string.')
+            logger.info('Auth response is expected to be json but wasn\'t. Parsing as query string.')
             token = urllib.parse_qs(response.text)
             return (token.get('oauth_token')[0], token.get('oauth_token_secret')[0])
 

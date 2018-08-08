@@ -5,6 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.deserializers import binary_deserialize
 from wolframclient.exception import EvaluationException, RequestException, WolframLanguageException
 from wolframclient.utils import six
+from wolframclient.utils.api import json
 
 import logging
 

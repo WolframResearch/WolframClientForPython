@@ -162,9 +162,7 @@ class WolframCloudSession(object):
 
     def _evaluation_api_url(self):
         return url_join(self.server.cloudbase, 'evaluations?_responseform=json')
-        # TODO tmp otherwise every call fails
-        # return url_join(self.server.cloudbase, 'evaluations')
-
+        
     def _call_evaluation_api(self, data):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(
