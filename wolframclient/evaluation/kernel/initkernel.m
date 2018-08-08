@@ -18,7 +18,6 @@ no matter the total size (tested with 80MB) *)
 ];
  *)
 
-Needs["GeneralUtilities`"];
 Needs["ZeroMQLink`"];
 
 Begin["ClientLibrary`"];
@@ -141,27 +140,16 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 	listener = SocketListen[
 		$InputSocket,
 		Block[{data, expr, msgs = Internal`Bag[], msgCount},
-			(* Quiet@Internal`HandlerBlock[
-  				{"Message", Internal`StuffBag[msgs, #] &},
+				(* Setup a handler for all messages, and keep only those that haven't been
+				silenced.
+				The handler must deal with expressions of the form: 
+					Hold[msg_, True|False]
+				The boolean value indicates the silenced status On/Off. *)
+				Internal`HandlerBlock[
+				{"Message", If[TrueQ[Last[#]],Internal`StuffBag[msgs,#]] &},
 				data = Lookup[#,"DataByteArray", None];
 				expr = timed[evaluate[data], "Expression evaluation"];
 				ClientLibrary`debug["deserialized expr: ", ToString[expr]];
-			]; *)
-
-			(* Note: we can't use the code above that is supposed to catch
-			messages because of tons of General::newsym evaluating to $Off[] are
-			generated. GeneralUtilities function seems to deal correctly with 
-			silenced messages, and at least evicts those weird messages.
-
-			The time to load the paclet at startup is not significant.
-			*)
-
-			GeneralUtilities`WithMessageHandler[
-				data = Lookup[#,"DataByteArray", None];
-				expr = timed[evaluate[data], "Expression evaluation"];
-				ClientLibrary`debug["deserialized expr: ", ToString[expr]];
-				,
-				Internal`StuffBag[msgs, #] &
 			];
 			(* Check how many messages were thrown during evaluation.
 			Cap it with a default value to avoid overflow. *)
