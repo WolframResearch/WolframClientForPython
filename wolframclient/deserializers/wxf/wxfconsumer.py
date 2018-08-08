@@ -80,19 +80,21 @@ class WXFConsumer(object):
             ))
         return getattr(self, func)
 
+    _LIST = WLSymbol('List')
+    
     def consume_function(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *function*.
 
         Return a :class:`list` if the head is symbol `List`, otherwise return a :class:`~wolframclient.language.expression.WLFunction`
         """
-        head = next(tokens)
+        head = self.next_expression(tokens, **kwargs)
         args = []
         for i in range(current_token.length):
             args.append(self.next_expression(tokens, **kwargs))
-        if head.wxf_type == wxfexpr.WXF_CONSTANTS.Symbol and head.data == 'List':
+        if head == self._LIST:
             return args
         else:
-            return WLFunction(head.data, *args)
+            return WLFunction(head, *args)
 
     def consume_association(self, current_token, tokens, dict_class = dict, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *association*.
