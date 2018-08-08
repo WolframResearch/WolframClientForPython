@@ -133,13 +133,14 @@ class WolframLanguageSession(object):
             logger.info('Kernel receive commands to socket: %s', self.in_socket.uri)
             logger.info('Kernel write evaluated expressions to socket: %s', self.out_socket.uri)
 
-        if logger_socket is None:
-            self.logger_socket = Socket(zmq_type=zmq.PULL)
-        elif not isinstance(out_socket, Socket):
-            raise ValueError('Expecting kernel logger socket to be a Socket instance.')
-        else:
-            logger_socket.zmq_type = zmq.PULL
-            self.logger_socket = logger_socket
+        if log_kernel:
+            if logger_socket is None:
+                self.logger_socket = Socket(zmq_type=zmq.PULL)
+            elif not isinstance(out_socket, Socket):
+                raise ValueError('Expecting kernel logger socket to be a Socket instance.')
+            else:
+                logger_socket.zmq_type = zmq.PULL
+                self.logger_socket = logger_socket
 
         self.kernel_proc = None
         self.log = log_kernel
