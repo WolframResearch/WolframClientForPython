@@ -91,9 +91,13 @@ class WolframEvaluationJSONResponse(WolframResult):
                 self.success = self.json['Success']
                 self.result = self.json['Result']
                 if not self.success:
-                    logger.warning('Evaluation failed: %s',
+                    logger.warning('Evaluation failed:\n\t%s',
                                    '\n\t'.join(self.json.get('MessagesText', 'Missing field "MessagesText" in response.')))
-                    self.failure = self.json['FailureType']
+                    failure_type = self.json['FailureType']
+                    if failure_type == 'MessageFailure':
+                        self.failure = self.json['MessagesText']
+                    else:
+                        self.failure = failure_type
             except json.JSONDecodeError as e:
                 logger.fatal('Server returned invalid JSON: %s', e)
                 self.json = None
@@ -104,6 +108,13 @@ class WolframEvaluationJSONResponse(WolframResult):
             logger.fatal('Server invalid response %i: %s',
                          response.status_code, response.text)
             raise EvaluationException(response)
+
+    def get(self):
+        """Return the result or raise an exception based on the success status."""
+        if self.success:
+            return self.result
+        else:
+            raise WolframLanguageException('Evaluation failed and issued %d messages.' % len(self.failure))
 
     def __repr__(self):
         if self.success:
