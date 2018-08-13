@@ -17,9 +17,10 @@ if not six.JYTHON:
 setup_logging_to_file('/tmp/python_testsuites.log', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 class TestCaseSettings(BaseTestCase):
-    KERNEL_PATH = '/Applications/Wolfram Desktop 2.app/Contents/MacOS/WolframKernel'
+    KERNEL_PATH = '/Applications/Wolfram Desktop12.app/Contents/MacOS/WolframKernel'
 
     @classmethod
     def setUpClass(cls):
@@ -37,8 +38,8 @@ class TestCaseSettings(BaseTestCase):
     @classmethod
     def setupKernelSession(cls):
         cls.kernel_session = WolframLanguageSession(
-            cls.KERNEL_PATH, log_kernel=False)
-        cls.kernel_session.set_parameter('STARTUP_READ_TIMEOUT', 2)
+            cls.KERNEL_PATH, kernel_loglevel=logging.INFO)
+        cls.kernel_session.set_parameter('STARTUP_READ_TIMEOUT', 5)
         cls.kernel_session.set_parameter('TERMINATE_READ_TIMEOUT', 3)
         cls.kernel_session.start()
 
@@ -107,8 +108,9 @@ class TestCase(TestCaseSettings):
     @unittest.skipIf(six.PY2, "No async call on Python2.")
     def test_evaluate_async(self):
         future1 = self.kernel_session.evaluate_async('3+4')
+        result1 = future1.result(timeout=3)
+        self.assertEqual(result1.get(), 7)
         future2 = self.kernel_session.evaluate_async('10+1')
+        self.assertEqual(future2.result(timeout=1).get(), 11)
         future3 = self.kernel_session.evaluate_async('100+1')
-        self.assertEqual(future1.result().get(), 7)
-        self.assertEqual(future2.result().get(), 11)
-        self.assertEqual(future3.result().get(), 101)
+        self.assertEqual(future3.result(timeout=1).get(), 101)

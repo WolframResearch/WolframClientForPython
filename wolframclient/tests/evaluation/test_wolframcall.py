@@ -7,12 +7,13 @@ from wolframclient.language.expression import WLSymbol
 from wolframclient.logger.utils import setup_logging_to_file
 from wolframclient.tests.evaluation.test_cloud import TestCaseSettings as SessionTestCase
 from wolframclient.tests.evaluation.test_kernel import TestCaseSettings as KernelTestCase
-
+from wolframclient.utils import six
 import logging
 import unittest
 
 setup_logging_to_file('/tmp/python_testsuites.log', level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 class TestCase(SessionTestCase, KernelTestCase):
 
@@ -26,15 +27,21 @@ class TestCase(SessionTestCase, KernelTestCase):
         cls.tearDownKernelSession()
         cls.tearDownCloudSession()
 
-    def _call_api(self, session):
-        result = WolframCall(session, '1+1').perform()
+    @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
+    def test_call_api_kernel(self):
+        result = WolframCall(self.kernel_session, '1+1').perform()
         self.assertEqual(result.get(), 2)
-        result = WolframCall(session, 'Range[3').perform()
+
+    @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
+    def test_call_api_kernel_fail(self):
+        result = WolframCall(self.kernel_session, 'Range[3').perform()
         self.assertEqual(result.get(), WLSymbol('$Failed'))
 
-    def test_call_api_kernel(self):
-        self._call_api(self.kernel_session)
-
-    @unittest.skip('Cloud bug in /evaluations')
     def test_call_api_cloud(self):
-        self._call_api(self.cloud_session)
+        result = WolframCall(self.cloud_session, '1+1').perform()
+        self.assertEqual(result.get(), '2')
+
+    def test_call_api_cloud_fail(self):
+        result = WolframCall(self.cloud_session, 'Range[3').perform()
+        self.assertFalse(result.success)
+        self.assertEqual(result.result, 'Null')
