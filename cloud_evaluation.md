@@ -10,7 +10,7 @@ A one-shot evaluation on the Wolfram public cloud only requires to authenticate,
 from wolframclient import UserIDPassword, WolframCloudSession
 userID = UserIDPassword('Wolfram ID', 'password')
 session = WolframCloudSession(authentication=userID)
-session.evaluate_string('Range[3]')
+session.evaluate('Range[3]')
 ```
 
 ## Cloud functions

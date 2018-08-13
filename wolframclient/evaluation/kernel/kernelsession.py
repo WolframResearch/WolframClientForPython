@@ -31,7 +31,7 @@ class KernelLogger(Thread):
 
     MAX_MESSAGE_BEFORE_QUIT = 32
 
-    def __init__(self, socket):
+    def __init__(self, socket, level=logging.WARN):
         if not isinstance(socket, Socket):
             raise ValueError('Expecting a Socket.')
         self.socket = socket
@@ -39,6 +39,7 @@ class KernelLogger(Thread):
         logger.info('Initializing Kernel logger on socket ' + self.socket.uri)
         super(KernelLogger, self).__init__(name='wolframkernel-logger-%s:%s' % (self.socket.host, self.socket.port))
         self.logger = logging.getLogger('WolframKernel-%s:%s' % (self.socket.host, self.socket.port))
+        self.logger.setLevel(level)
         self.stopped = Event()
 
     def run(self):
@@ -95,8 +96,8 @@ class WolframLanguageSession(object):
 
     """
 
-    def __init__(self, kernel=None, initfile=None, log_kernel=True,
-                 in_socket=None, out_socket=None, logger_socket=None):
+    def __init__(self, kernel=None, initfile=None,
+                 in_socket=None, out_socket=None, kernel_loglevel=logging.NOTSET, logger_socket=None):
         if isinstance(kernel, six.string_types):
             if not os.isfile(kernel):
                 raise WolframKernelException('Kernel not found at %s.')
@@ -133,17 +134,18 @@ class WolframLanguageSession(object):
             logger.info('Kernel receive commands to socket: %s', self.in_socket.uri)
             logger.info('Kernel write evaluated expressions to socket: %s', self.out_socket.uri)
 
-        if log_kernel:
+        if kernel_loglevel != logging.NOTSET:
             if logger_socket is None:
                 self.logger_socket = Socket(zmq_type=zmq.PULL)
-            elif not isinstance(out_socket, Socket):
-                raise ValueError('Expecting kernel logger socket to be a Socket instance.')
-            else:
+            elif isinstance(out_socket, Socket):
                 logger_socket.zmq_type = zmq.PULL
                 self.logger_socket = logger_socket
+            else:
+                raise ValueError(
+                    'Expecting kernel logger socket to be a Socket instance.')
 
         self.kernel_proc = None
-        self.log = log_kernel
+        self.loglevel = kernel_loglevel
         self.kernel_logger = None
         self.evaluation_count = 0
         self.thread_pool_exec = None
@@ -248,8 +250,9 @@ class WolframLanguageSession(object):
         self.out_socket._bind()
         # start the kernel process
         cmd = [self.kernel, '-noprompt', "-initfile", self.initfile]
-        if self.log:
-            self.kernel_logger = KernelLogger(socket=self.logger_socket)
+        if self.loglevel is not None:
+            self.kernel_logger = KernelLogger(
+                socket=self.logger_socket, level=self.loglevel)
             self.kernel_logger.start()
             cmd.append('-run')
             cmd.append('ClientLibrary`Private`SlaveKernelPrivateStart["%s", "%s", "%s"];'
@@ -348,28 +351,33 @@ class WolframLanguageSession(object):
             raise NotImplementedError('Asynchronous evaluation is not available on this Python interpreter.')
 
     def _dump_pipe_to_log(self, pipe):
-        # this will probably fails on remote kernels (broken pipe?)
-        try:
-            for line in _non_blocking_pipe_readline(pipe):
-                last = force_text(line.rstrip())
-                logger.warning(last)
-        except Exception as e:
-            logger.warn('Exception occured while reading pipe: %s', e)
+        pass
+
+    # def _dump_pipe_to_log(self, pipe):
+    #     # this will probably fails on remote kernels (broken pipe?)
+    #     try:
+    #         for line in _non_blocking_pipe_readline(pipe):
+    #             last = force_text(line.rstrip())
+    #             logger.warning(last)
+    #     except Exception as e:
+    #         logger.warn('Exception occured while reading pipe: %s', e)
 
     def __repr__(self):
         return '<WolframLanguageSession: in:%s, out:%s>' % (self.in_socket.uri, self.out_socket.uri)
 
-def _non_blocking_pipe_readline(pipe):
-    ''' Read lines from a given `PIPE` in a non-blocking fashing.
+# def _non_blocking_pipe_readline(pipe):
+#     ''' Read lines from a given `PIPE` in a non-blocking fashion.
 
-    Modifies the internal flags of the given pipe to do so.
-    '''
-    import fcntl
-    from os import O_NONBLOCK
-    flags = fcntl.fcntl(pipe, fcntl.F_GETFL)
-    fcntl.fcntl(pipe, fcntl.F_SETFL, flags | O_NONBLOCK)
-    for line in pipe:
-        yield line
+#     Modifies the internal flags of the given pipe to do so. 
+#     TODO DOES NOT WORK ON WINDOWS
+#     May cause crashes
+#     '''
+#     import fcntl
+#     from os import O_NONBLOCK
+#     flags = fcntl.fcntl(pipe, fcntl.F_GETFL)
+#     fcntl.fcntl(pipe, fcntl.F_SETFL, flags | O_NONBLOCK)
+#     for line in pipe:
+#         yield line
 
 class SocketException(Exception):
     pass

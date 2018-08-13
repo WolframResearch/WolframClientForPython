@@ -174,17 +174,20 @@ class WolframCloudSession(object):
             body=data)
         return WolframEvaluationJSONResponse(response)
 
-    def evaluate_string(self, expr):
-        """Send the string InputForm of an `expr` to the cloud for evaluation."""
-        return self._call_evaluation_api(expr)
+    def _normalize_input(self, expr):
+        if isinstance(expr, six.string_types) or isinstance(expr, six.binary_type):
+            return expr
+        else:
+            return export(expr)
 
     def evaluate(self, expr):
         """Send `expr` to the cloud for evaluation.
 
-        `expr` must be a Python object serializable by :func:`<export> wolframclient.serializers.export`
+        `expr` can be a Python object serializable by :func:`<export> wolframclient.serializers.export`,
+        or a the string InputForm of an expression to evaluate.
         """
-        return self._call_evaluation_api(export(expr))
-
+        return self._call_evaluation_api(self._normalize_input(expr))
+        
     def cloud_function(self, func):
         """Return a `callable` cloud function.
 
@@ -237,10 +240,7 @@ class WolframCloudSessionAsync(WolframCloudSession):
             Asynchronous evaluation is only available for `Python 3.2` and above.
         """
         return self._thread_pool_exec().submit(
-                self.call, api, input_parameters, target_format, permissions_key, **kwargv)
-
-    def _evaluate_async(self, data):
-        return self._thread_pool_exec().submit(self._call_evaluation_api, data)
+            self.call, api, input_parameters=input_parameters, target_format=target_format, permissions_key=permissions_key, **kwargv)
 
     def evaluate_async(self, expr):
         """Send `expr` to the cloud for asynchronous evaluation.
@@ -248,22 +248,16 @@ class WolframCloudSessionAsync(WolframCloudSession):
         Returns a
         :class:`concurrent.futures.Future` object.
 
-        `expr` must be a Python object serializable by :func:`<export> wolframclient.serializers.export`
+        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export`,
+        or a the string InputForm of an expression to evaluate.
 
         .. warning::
             Asynchronous evaluation is only available for `Python 3.2` and above.
         """
-        return self._evaluate_async(export(expr))
-
-    def evaluate_string_async(self, expr):
-        """Send the string InputForm of an `expr` to the cloud for asynchronous evaluation.
-
-        Returns a :class:`concurrent.futures.Future` object.
-
-        .. warning::
-            Asynchronous evaluation is only available for `Python 3.2` and above.
-        """
-        return self._evaluate_async(expr)
+        return self._thread_pool_exec().submit(
+            self._call_evaluation_api, 
+            self._normalize_input(expr)
+            )
 
     def cloud_function(self, func, asynchronous=False):
         """Return a `callable` cloud function.
