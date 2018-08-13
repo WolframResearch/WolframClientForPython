@@ -3,21 +3,6 @@
 (* Not useful since we apparently never receive multipart messages,
 no matter the total size (tested with 80MB) *)
 
-(* If[$VersionNumber < 12,
-	ByteArrayJoin[ba1_ByteArray,ba2_ByteArray,rest___ByteArray]:=
-		baJoin[ByteArrayToString[ba1, "ISOLatin1"], ba2,rest];
-		
-	baJoin[buffer:__String, ba_ByteArray, rest__ByteArray]:=
-		baJoin[buffer, ByteArrayToString[ba, "ISOLatin1"], rest];
-
-	baJoin[buffer:__String, ba_ByteArray]:= StringToByteArray[
-		StringJoin[{buffer, ByteArrayToString[ba, "ISOLatin1"]}],
-		"ISOLatin1"]
-	,
-	ByteArrayJoin = Join
-];
- *)
-
 Needs["ZeroMQLink`"];
 
 Begin["ClientLibrary`"];
@@ -28,6 +13,12 @@ warn;
 error;
 
 Begin["`Private`"];
+
+SocketWriteFunc = If[
+	$VersionNumber < 12,
+	Write,
+	ZMQSocketWriteMessage
+];
 
 $DEBUG=1;
 $INFO=2;
@@ -177,10 +168,12 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 				ClientLibrary`fatal["Unexpected message count. Ignoring all messages."];
 				WriteString[$OutputSocket, "0"];
 			];
-			ZMQSocketWriteMessage[
+			ClientLibrary`debug["Writing to output socket: ", ToString[$OutputSocket]];
+			SocketWriteFunc[
 				$OutputSocket,
 				timed[serialize[expr], "Expression serialization"]
 			];
+			ClientLibrary`debug["End of evaluation."]
 		] &
 		,
 		HandlerFunctionsKeys->{"DataByteArray"}
