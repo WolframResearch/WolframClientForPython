@@ -130,22 +130,21 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 	$InputSocket = SocketConnect[inputsocket, "ZMQ_Pull"];
 	$OutputSocket = SocketConnect[outputsocket, "ZMQ_Push"];
 	If[TrueQ@FailureQ[$OutputSocket],
-		Print["Failed to connect to output socket ", outputsocket]
+		Print["Failed to connect to output socket ", outputsocket];
 		Quit[]
 	];
 	If[TrueQ@FailureQ[$InputSocket],
-		Print["Failed to connect to input socket ", inputsocket]
+		Print["Failed to connect to input socket ", inputsocket];
 		Quit[]
 	];
 	listener = SocketListen[
 		$InputSocket,
-		Block[{data, expr, msgs = Internal`Bag[], msgCount},
-				(* Setup a handler for all messages, and keep only those that haven't been
-				silenced.
-				The handler must deal with expressions of the form: 
-					Hold[msg_, True|False]
-				The boolean value indicates the silenced status On/Off. *)
-				Internal`HandlerBlock[
+		Block[{data, expr=$Failed, msgs = Internal`Bag[], msgCount},
+			(* Setup a handler for all messages, and keep only those that haven't been silenced.
+			The handler must deal with expressions of the form: 
+				Hold[msg_, True|False]
+			The boolean value indicates the silenced status On/Off. *)
+			Internal`HandlerBlock[
 				{"Message", If[TrueQ[Last[#]],Internal`StuffBag[msgs,#]] &},
 				data = Lookup[#,"DataByteArray", None];
 				expr = timed[evaluate[data], "Expression evaluation"];
