@@ -3,7 +3,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.evaluation.cloud import WolframCloudSession, WolframCloudSessionAsync
-from wolframclient.evaluation.kernel import WolframLanguageSession
+from wolframclient.utils import six
+if not six.JYTHON:
+    from wolframclient.evaluation.kernel import WolframLanguageSession
 from wolframclient.exception import AuthenticationException, WolframKernelException
 
 __all__ = ['WolframCall']
@@ -47,15 +49,13 @@ class WolframCall(object):
         except AttributeError:
             pass
 
-    def _ensure_target_ready(self, is_async=False):
+    def _ensure_target_ready(self):
         # ensure session is ready to evaluate expressions.
         if isinstance(self.target, WolframLanguageSession):
             if not self.target.started:
                 raise WolframKernelException(
                     'Wolfram language session is not started.')
         elif isinstance(self.target, WolframCloudSession):
-            if is_async and not isinstance(self.target, WolframCloudSessionAsync):
-                raise ValueError('The target does not support asynchronous call.')
             if not self.target.authorized:
                 raise AuthenticationException('Cloud session not authorized.')
         else:
@@ -75,7 +75,7 @@ class WolframCall(object):
 
         """
         self._normalize_input()
-        self._ensure_target_ready(is_async=True)
+        self._ensure_target_ready()
         return self.target.evaluate_async(self.input)
 
 class WolframAPICall(object):
