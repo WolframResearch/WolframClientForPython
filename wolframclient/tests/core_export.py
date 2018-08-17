@@ -20,7 +20,9 @@ class TestCase(BaseTestCase):
         self.assertEqual(export(2),     b'2')
         self.assertEqual(export("foo"), b'"foo"')
 
-        _, path = tempfile.mkstemp()
+        fd, path = tempfile.mkstemp()
+        # close the file descriptor but keep the path. Prevent error on Windows.
+        os.close(fd)
 
         for test in ["foo", wl.Symbol, {"a": [1, 2, 3], 2:2}]:
 
