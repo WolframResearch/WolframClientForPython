@@ -4,7 +4,7 @@
 // local configuration.
 {
     "kernel" : "/path/to/WolframKernel",
-    "cloud_credential" : {
+    "cloud_credentials" : {
         "User": {
             "id": "$WolframID",
             "password": "my password"

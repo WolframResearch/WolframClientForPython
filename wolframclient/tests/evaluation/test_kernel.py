@@ -72,8 +72,7 @@ class TestCase(TestCaseSettings):
         self.assertEqual(res.get(), WLSymbol('$Failed'))
 
     def test_one_msg(self):
-        res = self.kernel_session.evaluate(
-            '1/0')
+        res = self.kernel_session.evaluate('1/0')
         self.assertFalse(res.success)
         self.assertListEqual(res.messages,
             ['Infinite expression Infinity encountered.']
