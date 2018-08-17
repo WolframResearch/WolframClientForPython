@@ -16,7 +16,7 @@ Begin["`Private`"];
 
 SocketWriteFunc = If[
 	$VersionNumber < 12,
-	Write,
+	BinaryWrite,
 	ZMQSocketWriteMessage
 ];
 
