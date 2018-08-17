@@ -100,9 +100,9 @@ class WolframLanguageSession(object):
                  in_socket=None, out_socket=None, kernel_loglevel=logging.NOTSET, logger_socket=None):
         if isinstance(kernel, six.string_types):
             if not os.isfile(kernel):
-                raise WolframKernelException('Kernel not found at %s.')
+                raise WolframKernelException('Kernel not found at %s.' % kernel)
             elif not os.access(kernel, os.X_OK):
-                raise WolframKernelException('Cannot execute kernel %s.')
+                raise WolframKernelException('Cannot execute kernel %s.' % kernel)
             else:
                 self.kernel = kernel
         else:
