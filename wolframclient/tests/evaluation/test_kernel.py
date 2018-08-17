@@ -7,6 +7,7 @@ from wolframclient.language.expression import WLSymbol, WLFunction
 from wolframclient.logger.utils import setup_logging_to_file
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
+from wolframclient.tests import json_config
 
 import logging
 import unittest
@@ -14,13 +15,13 @@ import unittest
 if not six.JYTHON:
     from wolframclient.evaluation import WolframLanguageSession
 
-setup_logging_to_file('/tmp/python_testsuites.log', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
-
+@unittest.skipIf(json_config is None, "Could not find configuration file wolframclient/tests/local_config.json")
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 class TestCaseSettings(BaseTestCase):
-    KERNEL_PATH = '/Applications/Wolfram Desktop12.app/Contents/MacOS/WolframKernel'
+    KERNEL_PATH = json_config['kernel']
 
     @classmethod
     def setUpClass(cls):

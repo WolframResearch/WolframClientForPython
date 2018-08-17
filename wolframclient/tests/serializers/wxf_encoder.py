@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-
+import os
 from wolframclient.serializers.wxfencoder.serializer import WXFExprSerializer
 from wolframclient.serializers.wxfencoder.wxfencoder import WXFEncoder
 from wolframclient.serializers.wxfencoder.wxfexpr import WXFExprFunction, WXFExprSymbol
 from wolframclient.serializers.wxfencoder.wxfexprprovider import WXFExprProvider
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
-
+from wolframclient.tests import create_dir_if_missing, dir_test_data
 class MyClass(object):
     def __init__(self, *values):
         self.values = values
@@ -42,5 +42,9 @@ class TestCase(BaseTestCase):
         myclass = MyClass1(1, 2, [myclass2, myclass1])
         o = ['foo', [1, {'k1': myclass, 'k2': False}]]
         serializer.serialize(o)
-        with open('/tmp/test.wxf', 'wb') as w_file:
+
+        data_dir = dir_test_data()
+        filepath = os.path.join(data_dir, 'test.wxf')
+        with open(filepath, 'wb') as w_file:
             w_file.write(stream.getvalue())
+        os.remove(filepath)

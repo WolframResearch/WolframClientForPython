@@ -9,50 +9,33 @@ from wolframclient.utils import six
 from wolframclient.utils.api import json
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.tests import TestCase as BaseTestCase
-
+from wolframclient.tests import json_config
 import logging
 import os
 import unittest
 
-setup_logging_to_file('/tmp/python_testsuites.log', level=logging.WARNING)
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
+
+@unittest.skipIf(json_config is None, "Could not find configuration file wolframclient/tests/local_config.json")
 class TestCaseSettings(BaseTestCase):
-    #TODO modify those before testing.
-    ''' Example json file for `user_credentials.json`:
-    ```json
-    {
-        "User" : {
-            "id" : "email@wolfram.com",
-            "password" : "password"
-        },
-        "SAK" : {
-            "consumer_key" : "xxxx",
-            "consumer_secret" : "yyyy"
-        },
-        "ApiOwner" : "userID"
-    }
-    ```
-    '''
-    user_config_file = '/private/etc/user_credentials.json'
-
     @classmethod
     def setUpClass(cls):
         cls.setupCloudSession()
 
     @classmethod
     def setupCloudSession(cls):
-        with open(TestCase.user_config_file, 'r') as fp:
-            cls.json_user_config = json.load(fp)
+        cloud_config = json_config['cloud_credentials']
         cls.sak = SecuredAuthenticationKey(
-            cls.json_user_config['SAK']['consumer_key'],
-            cls.json_user_config['SAK']['consumer_secret']
+            cloud_config['SAK']['consumer_key'],
+            cloud_config['SAK']['consumer_secret']
             )
         cls.user_cred = UserIDPassword(
-            cls.json_user_config['User']['id'],
-            cls.json_user_config['User']['password']
+            cloud_config['User']['id'],
+            cloud_config['User']['password']
         )
-        cls.api_owner = cls.json_user_config.get('ApiOwner', 'dorianb')
+        cls.api_owner = cloud_config.get('ApiOwner', 'dorianb')
 
         cls.cloud_session = WolframCloudSession(authentication=cls.sak)
         cls.cloud_session_async = WolframCloudSessionAsync(authentication=cls.sak)
@@ -72,7 +55,6 @@ class TestCaseSettings(BaseTestCase):
         return os.path.join(current_file_dir, '..', 'data', filename)
 
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
-@unittest.skipIf(not os.path.exists(TestCaseSettings.user_config_file), "Need to configure credentials")
 class TestCase(TestCaseSettings):
 
     def test_section_not_authorized(self):

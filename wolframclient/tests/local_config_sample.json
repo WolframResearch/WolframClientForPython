@@ -1,0 +1,18 @@
+// this json file is used by the test suite to connect to the Wolfram 
+// public cloud and to evaluate expressions to a local kernel.
+// It has to be renamed to local_config.json and edited with correct
+// local configuration.
+{
+    "kernel" : "/path/to/WolframKernel",
+    "cloud_credential" : {
+        "User": {
+            "id": "$WolframID",
+            "password": "my password"
+        },
+        "SAK": {
+            "consumer_key": "consumer key",
+            "consumer_secret": "consumer secret"
+        },
+        "ApiOwner": "$UserName"
+    }
+}

@@ -4,3 +4,4 @@ __pycache__
 /build
 /dist
 /Wolfram_Client_for_Python.egg-info
+wolframclient/tests/local_config.json

@@ -4,11 +4,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.evaluation.cloud import WolframCloudSession, WolframCloudSessionAsync
 from wolframclient.utils import six
-if not six.JYTHON:
-    from wolframclient.evaluation.kernel import WolframLanguageSession
+from wolframclient.evaluation.kernel import WolframLanguageSession
 from wolframclient.exception import AuthenticationException, WolframKernelException
 
-__all__ = ['WolframCall']
+__all__ = ['WolframCall', 'WolframAPICall']
 
 class WolframCall(object):
     """Primary interface to evaluate Wolfram Language code.

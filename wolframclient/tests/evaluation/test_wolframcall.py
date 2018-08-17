@@ -2,19 +2,21 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.evaluation import WolframCall
+from wolframclient.utils import six
+if not six.JYTHON:
+    from wolframclient.evaluation import WolframCall
 from wolframclient.language.expression import WLSymbol
 from wolframclient.logger.utils import setup_logging_to_file
 from wolframclient.tests.evaluation.test_cloud import TestCaseSettings as SessionTestCase
 from wolframclient.tests.evaluation.test_kernel import TestCaseSettings as KernelTestCase
-from wolframclient.utils import six
 import logging
 import unittest
 
-setup_logging_to_file('/tmp/python_testsuites.log', level=logging.INFO)
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
+@unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 class TestCase(SessionTestCase, KernelTestCase):
 
     @classmethod
