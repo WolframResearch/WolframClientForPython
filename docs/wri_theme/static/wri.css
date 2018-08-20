@@ -1,0 +1,224 @@
+/* Default theme css */
+@import url("default.css");
+
+div.viewcode-block:target {
+    background-color: #e8e5d8;
+    border-top: 1px solid #d2cdba;
+    border-bottom: 1px solid #d2cdba;
+}
+
+li.nav-item.nav-item-0 {
+    color: #cacaca;
+}
+
+div.related a {
+    color: #cacaca;
+    font-size: .9em;
+}
+
+li.right {
+    color: gray;
+}
+div.body {
+    min-height: 600px;
+}
+
+body {
+    background-color: #424242;
+}
+
+div.related {
+    background-color: #424242;
+}
+
+div.sphinxsidebar input {
+    border: 1px solid #5d5d5d;
+}
+
+div.sphinxsidebar a {
+    color: #f9c155;
+}
+
+div.sphinxsidebar h3, div.sphinxsidebar h4 {
+    font-family: 'Source Sans Pro',Arial, sans-serif;
+    color: #bfbfbf;
+    text-transform: uppercase;
+    font-size: .9em;
+    padding-top: 10px;
+}
+div.sphinxsidebar h3 a {
+    color: #bfbfbf;
+}
+
+ul ul ul ul li, ul ul ul li {
+    margin-top: 0px;
+}
+
+ul ul li {
+    margin-top: 10px;
+}
+
+a.headerlink {
+    color: #b9b9b9;
+}
+a.headerlink:hover {
+    background-color: #ffffff;
+    color: #6b6b6b;
+}
+
+div.section ul.simple li {
+    padding-bottom: 5px;
+}
+
+div.document {
+    background: #ffffff repeat-y url('https://www.wolframcloud.com/objects/dvs/images/graybg.png');
+}
+
+.highlight {
+    background: #eeffcc;
+    margin: auto auto 20px 15px;
+}
+
+pre {
+    padding: 9px 13px;
+    background-color: #faf8f1;
+    color: #333333;
+    border: 1px solid #dad4b9;
+    border-left: 1px solid #dad4b9;
+    border-right: 1px solid #dad4b9;
+    line-height: 1.35em;
+}
+
+body {
+    font-family: "Source Sans Pro","Arial",sans-serif;
+}
+
+div.body h1, div.body h2, div.body h3, div.body h4, div.body h5, div.body h6 {
+    font-family: "Source Sans Pro","Arial",sans-serif;
+}
+
+div.body h1 {
+    font-size: 2.5rem;
+    font-weight: normal;
+    background: none;
+    color: #383838;
+    border-bottom: none;
+    margin: 0px -20px 10px 15px;
+    padding: 45px 0 3px 0px;
+    border-top: 1px solid #ccc;
+    letter-spacing: -.02rem;
+}
+
+div.body h2 {
+    font-size:2rem;
+    font-weight: normal;
+    background:none;
+    color: #383838;
+    border-bottom: none;
+    margin: 49px -20px 10px 15px;
+    padding: 10px 0 3px 0px;
+    border-top: 1px solid #ccc;
+}
+
+div.body h3 {
+    font-size:1.5rem;
+    font-weight: normal;
+    background:none;
+    color: #2c6aa2;
+    border: none;
+    margin: 20px -20px 10px 15px;
+    padding: 10px 0 3px 0px;
+}
+
+div.body h4 {
+    font-size:1.1rem;
+    font-weight: bold;
+    background:none;
+    color: #333;
+    border: none;
+    margin: 10px -20px -4px 15px;
+    padding: 10px 0 3px 0px;
+}
+
+body code {
+    font-size: .9em;
+    font-family: "Source Code Pro", Consolas,Inconsolta,monospace;
+}
+pre, xmp, plaintext, listing {
+    display: block;
+    font-family: "Source Code Pro", Consolas,Inconsolta,monospace;
+    white-space: pre;
+    margin: 1em 0px;
+}
+
+pre {
+    font-family: "Source Code Pro", Consolas,Inconsolta,monospace;
+    font-size: .8rem;
+    font-weight: 600;
+}
+
+div.body p, div.body dd, div.body li, div.body blockquote {
+    margin-left: 15px;
+}
+
+div.note {
+    background-color: #fff0b6;
+    border: 1px solid #f3d58e;
+    margin: auto auto 20px 15px;
+    font-size: .9rem;
+    padding: 9px 14px;
+}
+
+div.body p.admonition-title {
+    display: inline;
+    padding: 0px;
+    margin: 0px;
+}
+
+div.admonition p.admonition-title + p {
+    display: inline;
+    padding: 0px;
+    margin: 0px;
+}
+
+div.admonition ul, div.admonition ol {
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+code.descclassname {
+    background-color: transparent;
+    font-weight: 700;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-left: 27px;
+}
+code.descname {
+    background-color: transparent;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+dl {
+    margin-top: 25px;
+}
+
+dt {
+    color: green;
+}
+
+div.body p, div.body dd, div.body li, div.body blockquote {
+    color: #555;
+}
+
+div.sphinxsidebarwrapper {
+    padding: 10px 5px 0 5px;
+}
+
+img.logo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
