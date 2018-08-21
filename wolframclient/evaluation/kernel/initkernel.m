@@ -24,21 +24,35 @@ $DEBUG=1;
 $INFO=2;
 $WARN=3;
 $ERROR=4;
+$NOTSET=Infinity;
+
+$LogLevel = $DEBUG;
 
 ClientLibrary`debug[msg__String] := log[msg, $DEBUG];
 ClientLibrary`info[msg__String] := log[msg, $INFO];
 ClientLibrary`warn[msg__String] := log[msg, $WARN];
 ClientLibrary`error[msg__String] := log[msg, $ERROR];
 
-log[msg_String, level_Integer:$INFO] := If[$LoggerSocket=!=None, 
+ClientLibrary`SetDebugLogLevel[] := setLogLevel[$DEBUG];
+ClientLibrary`SetInfoLogLevel[] := setLogLevel[$INFO];
+ClientLibrary`SetWarnLogLevel[] := setLogLevel[$WARN];
+ClientLibrary`SetErrorLogLevel[] := setLogLevel[$ERROR];
+ClientLibrary`DisableKernelLogging[] := setLogLevel[$NOTSET];
+
+setLogLevel[level_Integer] /; $DEBUG <= level <= $ERROR || level == Infinity := 
+	($LogLevel = level);
+
+log[msg_String, level_Integer:$INFO] /; level>=$LogLevel := If[$LoggerSocket=!=None, 
 	BinaryWrite[
 		$LoggerSocket, 
 		Developer`WriteRawJSONString[<|"msg"->msg, "level"->level|>, "ToByteString"->True]
 	],
 	Print[msg]
 ];
-log[msg__String, level_Integer:$INFO] := log[StringJoin[{msg}], level];
-log[msg__String, False, level_Integer:$INFO] := Map[log[#, level]&, {msg}];
+log[msg__String, level_Integer:$INFO] /; level>=$LogLevel := 
+	log[StringJoin[{msg}], level];
+log[msg__String, False, level_Integer:$INFO] /; level>=$LogLevel := 
+	Map[log[#, level]&, {msg}];
 
 
 $MaxLoggedStringLength = 1014;
@@ -128,8 +142,10 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 		Print["Failed to connect to input socket ", inputsocket];
 		Quit[]
 	];
+	If[$LoggerSocket==None, ClientLibrary`DisableKernelLogging[]];
 	listener = SocketListen[
 		$InputSocket,
+	
 		Block[{data, expr=$Failed, msgs = Internal`Bag[], msgCount},
 			(* Setup a handler for all messages, and keep only those that haven't been silenced.
 			The handler must deal with expressions of the form: 

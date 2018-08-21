@@ -143,6 +143,8 @@ class WolframLanguageSession(object):
             else:
                 raise ValueError(
                     'Expecting kernel logger socket to be a Socket instance.')
+        else:
+            self.logger_socket = None
 
         self.kernel_proc = None
         self.loglevel = kernel_loglevel
@@ -250,7 +252,7 @@ class WolframLanguageSession(object):
         self.out_socket._bind()
         # start the kernel process
         cmd = [self.kernel, '-noprompt', "-initfile", self.initfile]
-        if self.loglevel is not None:
+        if self.loglevel != logging.NOTSET:
             self.kernel_logger = KernelLogger(
                 socket=self.logger_socket, level=self.loglevel)
             self.kernel_logger.start()
