@@ -1,8 +1,10 @@
 #!/bin/sh
 
 # clean up
-[[ -r ./api ]] && rm -r ./api
-make clean
+if [[ "$1" == "-all" ]]; then
+    [[ -r ./api ]] && rm -r ./api
+    make clean
+fi
 # static analysis
 sphinx-apidoc -o api ../wolframclient ../wolframclient/tests*
 # build html
