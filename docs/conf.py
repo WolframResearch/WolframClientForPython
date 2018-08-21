@@ -16,7 +16,7 @@
 import sys
 import os
 sys.path.insert(0, os.path.abspath('..'))
-
+sys.path.insert(0, os.path.abspath('roles'))
 
 # -- Project information -----------------------------------------------------
 
@@ -47,7 +47,8 @@ extensions = [
     'sphinx.ext.imgmath',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
-    'sphinx.ext.intersphinx'
+    'sphinx.ext.intersphinx',
+    'roles'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -86,10 +87,11 @@ pygments_style = 'sphinx'
 html_theme = 'wri_theme'
 html_theme_path = ['.']
 
-rst_prolog="""
-.. role:: wl
-   :class: wl
-"""
+# rst_prolog="""
+# .. role:: wl
+#    :class: wl
+# """
+
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.

@@ -1,3 +1,3 @@
-_*
 .vscode
-api/*
+api/
+_build/

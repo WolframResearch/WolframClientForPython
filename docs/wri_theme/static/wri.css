@@ -79,6 +79,15 @@ div.document {
     margin: auto auto 20px 15px;
 }
 
+.highlight-wl > .highlight > pre {
+    font-family: "Source Code Pro", Courier, monospace;
+}
+
+.wl {
+    font-family: "Source Code Pro", Courier, monospace;
+    background-color: #ecf0f3;
+}
+
 pre {
     padding: 9px 13px;
     background-color: #faf8f1;
