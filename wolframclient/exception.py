@@ -13,6 +13,14 @@ class RequestException(WolframLanguageException):
         self.response = response
         self.msg = msg
 
+    def __str__(self):
+        if self.response is not None and hasattr(self.response, 'status'):
+            status = '<%s>: ' % self.response.status
+        else:
+            status = ''
+        return '%s%s' % (status, self.msg)
+
+    
 class AuthenticationException(RequestException):
     """Error in authentication request."""
 
