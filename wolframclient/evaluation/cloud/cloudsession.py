@@ -281,14 +281,15 @@ class WolframCloudSessionAsync(WolframCloudSession):
 class CloudFunction(object):
     def __init__(self, session, func, asynchronous=False):
         self.session = session
-        self.func = func
+        if isinstance(func, six.string_types) or isinstance(func, six.binary_type):
+            self.func = wl.ToExpression(func)
         if asynchronous:
-            self.evaluation_func = WolframCloudSession.evaluate
+            self.evaluation_func = session.__class__.evaluate_async
         else:
-            self.evaluation_func = WolframCloudSession.evaluate_async
+            self.evaluation_func = session.__class__.evaluate
 
     def __call__(self, *args):
-        return self.evaluation_func(wl.Construct(self.func, *args))
+        return self.evaluation_func(self.session, wl.Construct(self.func, *args))
 
 def _encode_inputs_as_wxf(inputs, multipart, **kwargs):
     encoded_inputs = {}
