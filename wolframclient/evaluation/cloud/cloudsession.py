@@ -84,14 +84,21 @@ class WolframCloudSession(object):
     @property
     def authorized(self):
         """Return a reasonnably accurate state of the authentication status."""
-        if self.authentication is not None and self.is_xauth is None:
-            self.authenticate()
-        if self.is_xauth is None or self.oauth is None:
+        # No credentials provided. This session is not authorized (public access).
+        if self.authentication is None:
             return False
+        # Authentication credentials were provided, but self.is_xauth remains None 
+        # until the first attempt. First need to authenticate first.
+        if self.is_xauth is None:
+            self.authenticate()
+        # if is_xauth was set, ensure the session is authorized.
+        if self.oauth is not None and self.oauth.authorized:
+            return True
+        # is_xauth was set but the process authentication already failed once. Retry.
         else:
-            return (bool(self.oauth._client.client_secret) and
-                    bool(self.oauth._client.resource_owner_key) and
-                    bool(self.oauth._client.resource_owner_secret))
+            logger.warn('Not authenticated. Retrying to authenticate with the server.')
+            self.authenticate()
+            return self.oauth is not None and self.oauth.authorized
 
     def _post(self, url, headers={}, body={}, files={}, params={}):
         """Do a POST request, signing the content only if authentication has been successful."""
@@ -183,7 +190,7 @@ class WolframCloudSession(object):
     def evaluate(self, expr):
         """Send `expr` to the cloud for evaluation.
 
-        `expr` can be a Python object serializable by :func:`<export> wolframclient.serializers.export`,
+        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export`,
         or a the string InputForm of an expression to evaluate.
         """
         return self._call_evaluation_api(self._normalize_input(expr))

@@ -46,7 +46,7 @@ The *WXF* format supports compression using zlib, the compression is disabled by
     >>> export([1, 2, 3], target_format = "wxf", compress = True)
     '8C:x\x9cKc.f\xf1\xc9,.qftfrf\x06\x00\x1b\xf8\x03L'
 
-Serialized output can be imported in a kernel using `BinaryDeserialize`.
+Serialized output can be imported in a kernel using :wl:`BinaryDeserialize`.
 
 Supported types
 ---------------
@@ -61,12 +61,12 @@ Example::
     >>> export({"list": [1, 2, 3], "set": set([1, 2, 2, 4]), "frozenset": frozenset([1, 2, 2, 4]), "dict": dict(a = 2)})
     '<|"list" :> {1, 2, 3}, "set" :> {1, 2, 4}, "frozenset" :> {1, 2, 4}, "dict" :> <|"a" :> 2|>|>'
 
-Any class that has an `__iter__` method is converted to a Wolfram Language `List`::
+Any class that has an `__iter__` method is converted to a Wolfram Language :wl:`List`::
 
     >>> export((i + 2 for i in range(10)))
     '"{2, 3, 4, 5, 6, 7, 8, 9, 10, 11}"'
 
-Python generators are also serialized as `List`::
+Python generators are also serialized as :wl:`List`::
 
     >>> def gen():
     ...     yield 1
@@ -94,12 +94,12 @@ their Wolfram Language counterpart::
     >>> export({'int': 1, 'float':2.3, 'decimal': decimal.Decimal(1), 'complex': complex(3, 4)})
     '<|"int" :> 1, "float" :> 2.300000, "decimal" :> 1, "complex" :> Complex[3.000000, 4.000000]|>'
 
-IEEE exceptions `infinity` and `NaN` are converted respectively to ``DirectedInfinity`` and ``Indeterminate``::
+IEEE exceptions `infinity` and `NaN` are converted respectively to :wl:`DirectedInfinity` and :wl:`Indeterminate`::
 
     >>> export({'+inf': float('inf'), '-inf': - float('inf'), 'nan': float('NaN')})
     '<|"+inf" :> DirectedInfinity[1], "-inf" :> DirectedInfinity[-1], "nan" :> Indeterminate|>'
 
-:class:`~fractions.Fraction` serializes to ``Rational``::
+:class:`~fractions.Fraction` serializes to :wl:`Rational`::
 
     >>> export(fractions.Fraction(2, 3))
     '(2 / 3)'
@@ -107,14 +107,14 @@ IEEE exceptions `infinity` and `NaN` are converted respectively to ``DirectedInf
 DateObject serialization
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-:mod:`datetime`, :func:`~datetime.time` and :func:`~datetime.date` are serialized to ``DateObject`` and all assume that the timezome to use is the current one at evaluation time::
+:mod:`datetime`, :func:`~datetime.time` and :func:`~datetime.date` are serialized to :wl:`DateObject` and all assume that the timezome to use is the current one at evaluation time::
 
     >>> import datetime
     >>> now = datetime.datetime.now()
     >>> export([now.time(), now.date(), now])
     '{TimeObject[{16, 1, 19.993822}, TimeZone -> $TimeZone], DateObject[{2018, 3, 16}], DateObject[{2018, 3, 16, 16, 1, 19.993822}, "Instant", "Gregorian", $TimeZone]}'
 
-Specify a timezone in Python using :func:`pytz.timezone` and serialize the date to a ``DateObject``::
+Specify a timezone in Python using :func:`pytz.timezone` and serialize the date to a :wl:`DateObject`::
 
     >>> from pytz import timezone
     >>> export(timezone('US/Eastern').localize(datetime.datetime.now()))

@@ -10,9 +10,9 @@ The Wolfram Client Library is structured in sub-modules all located in :mod:`wol
 
 * :mod:`~wolframclient.evaluation` provides convenient methods to evaluate Wolfram Language expressions directly from Python. There are many ways to evaluate code including: evaluation by a local kernel, direct evaluation by a public or private Wolfram Cloud, calling deployed API.
 
-* :mod:`~wolframclient.serializers` provides serialization methods to various formats such as string :wl:`InputForm` and binary `WXF` format.
+* :mod:`~wolframclient.serializers` provides serialization methods to various formats such as string :wl:`InputForm` and binary :wl:`WXF` format.
 
-* :mod:`~wolframclient.deserializers` contains a parser for `WXF`.
+* :mod:`~wolframclient.deserializers` contains a parser for :wl:`WXF`.
 
 * :mod:`~wolframclient.language` provides Python representation of Wolfram Language symbols and functions.
 
@@ -22,17 +22,36 @@ The Wolfram Client Library is structured in sub-modules all located in :mod:`wol
 Wolfram Cloud interactions
 ==============================
 
-Cloud interaction requires to be properly authenticated to a Wolfram Cloud using your **Wolfram ID** and password. To create one visit https://account.wolfram.com/auth/create.
+Cloud interaction requires to be properly authenticated to a Wolfram Cloud using your **Wolfram ID** and password. To create one visit https://account.wolfram.com/auth/create. 
+
+.. _ref-auth:
+
+Authenticate
+-------------
+
+Begin by importing from the :mod:`~wolframclient.evaluation` module, the classes :class:`~wolframclient.evaluation.UserIDPassword` and :class:`~wolframclient.evaluation.WolframCloudSession`.
+
+    >>> from wolframclient.evaluation import UserIDPassword, WolframCloudSession
+
+Create a new instance of :class:`~wolframclient.evaluation.UserIDPassword` with your Wolfram ID and password::
+
+    >>> userID = UserIDPassword('MyWolframID', 'password')
+
+Using credentials, start a new authenticated cloud session:: 
+
+    >>> session = WolframCloudSession(authentication=userID)
+    >>> session.authorized
+    True
+
+In the following sections the authenticated session initialized above is simply referred by its variable name `session`.
 
 Cloud evaluation
 -------------------------------
 
-A one-shot evaluation on the Wolfram public cloud only requires to initiate an authenticated session, e.g. using a Wolfram ID and password::
+A one-shot evaluation on the Wolfram public cloud only requires to initiate an :ref:`authenticated session<ref-auth>` and call :meth:`~wolframclient.evaluation.WolframCloudSession.evaluate`::
 
-    from wolframclient.evaluation import UserIDPassword, WolframCloudSession
-    userID = UserIDPassword('MyWolframID', 'password')
-    session = WolframCloudSession(authentication=userID)
-    session.evaluate('Range[3]')
+    >>> session.evaluate('Range[3]')
+    WolframEvaluationJSONResponse<success=True, expression={1, 2, 3}>
 
 Cloud functions
 ------------------
@@ -63,7 +82,7 @@ Using the Wolfram Language, connect to the Wolfram Cloud:
 
     CloudConnect["MyWolframID", "myPassword"]
 
-Deploy an API accepting a list and returning the result of the function `MinMax` applied on it:
+Deploy an API accepting a list and returning the result of the function :wl:`MinMax` applied on it:
 
 .. code-block :: wl
 
@@ -77,7 +96,7 @@ Deploy an API accepting a list and returning the result of the function `MinMax`
 Call API
 +++++++++++
 
-Note that the API was deployed without any particular permissions, and as such is a private `CloudObject` only usable by its owner.
+Note that the API was deployed without any particular permissions, and as such is a private :wl:`CloudObject` only usable by its owner.
 
 Use the previously authenticated session to call the API from Python::
 
@@ -175,7 +194,7 @@ In the above example the variable `session` can be seamlessly replaced by a clou
 Serialization
 =============
 
-This library is intended to provide a way to serialize python expression to Wolfram Language string `InputForm` and `WXF` string of bytes. The library was designed to be extensible so that any arbitrary Python object can be serialized with the addition of custom encoder(s). The serialization module was tested with three interpreters: 
+This library is intended to provide a way to serialize python expression to Wolfram Language string :wl:`InputForm` and :wl:`WXF` string of bytes. The library was designed to be extensible so that any arbitrary Python object can be serialized with the addition of custom encoder(s). The serialization module was tested with three interpreters: 
 - Python 2.7, 
 - Python 3.6.4, 
 - JYTHON.
@@ -197,7 +216,7 @@ Wolfram language expressions are conveniently represented using :class:`wolframc
     >>> wl.Quantity(12, "Hours")
     Quantity[<< 2 >>]
 
-Resulting Python objects are serializable to string `InputForm`:: 
+Resulting Python objects are serializable to string :wl:`InputForm`:: 
 
     >>> export(wl.Select(wl.PrimeQ, [1,2,3]))
     b'Select[PrimeQ, {1, 2, 3}]'
@@ -220,8 +239,8 @@ Any object that implements a :func:`write` method, like :class:`file`, :py:class
 Deserialize
 -----------
 
-The library can parse a WXF binary input and return Python objects from it.
-The function :func:`~wolframclient.deserializers.binary_deserialize` can deserialize any WXF input into standard Python objects and, eventually Numpy arrays. Note that Numpy is not mandatory as long as no numeric array is encountered.
+The library can parse a :wl:WXF binary input and return Python objects from it.
+The function :func:`~wolframclient.deserializers.binary_deserialize` can deserialize any :wl:WXF input into standard Python objects and, eventually Numpy arrays. Note that Numpy is not mandatory as long as no numeric array is encountered.
 
     >>> from wolframclient.serializers import export
     >>> from wolframclient.deserializers import binary_deserialize
