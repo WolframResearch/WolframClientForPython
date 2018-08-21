@@ -1,0 +1,65 @@
+.. toctree::
+    :maxdepth: 4
+
+Installation of the library
+============================
+
+The library source code is available in various repositories:
+
+* bundled with Wolfram Desktop 12+,
+* in a public repository on `Github`,
+* hosted on *PyPi.org* and available in `pip`
+
+.. note::
+    Even though most of the features were built to work on Python 2.7, it is recommended to use the library with Python 3.2 or greater.
+
+
+Install from Wolfram Desktop
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The library is bundled with Wolfram Desktop. The library location depends on your OS. Here are the usual locations:
+
++-----------+-------------------------------------------------------------------------------------------------------------------+
+| OS        | Library path                                                                                                      |
++===========+===================================================================================================================+
+| *MacOS*   | :file:`/Applications/Wolfram Desktop.app/Contents/SystemFiles/Components/WolframClientForPython`                  |
++-----------+-------------------------------------------------------------------------------------------------------------------+
+| *Windows* | :file:`C:\\Program Files\\Wolfram Research\\Wolfram Desktop\\12\\SystemFiles\\Components\\WolframClientForPython` |
++-----------+-------------------------------------------------------------------------------------------------------------------+
+| *Linux*   | :file:`/usr/local/Wolfram/Desktop/12/SystemFiles/Components/WolframClientForPython`                               |
++-----------+-------------------------------------------------------------------------------------------------------------------+
+
+
+From a terminal evaluate the following commands:
+
+.. code-block:: shell
+
+    $ cd /path/to/library
+    $ pip install .
+
+
+Install from GitHub
+^^^^^^^^^^^^^^^^^^^^^
+
+Clone the library's repository:
+
+.. code-block:: shell
+
+    $ git clone git://github.com/wolframresearch/pythonclientlibrary
+
+
+Install the library:
+
+.. code-block:: shell
+
+    $ pip install .
+
+
+Install with pip
+^^^^^^^^^^^^^^^^^^^
+
+Evaluate the following command in a terminal:
+
+.. code-block:: shell
+
+    $ pip install wolframclientlibrary

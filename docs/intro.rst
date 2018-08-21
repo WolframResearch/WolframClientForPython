@@ -8,13 +8,13 @@ Introduction to the Wolfram Client Library
 
 The Wolfram Client Library is structured in sub-modules all located in :mod:`wolframclient`:
 
-* :mod:`~wolframclient.evaluation` provides convenient methods to evaluate Wolfram Language expressions directly from Python. There are many ways to evaluate code including: evaluation by a local kernel, direct evaluation by a Wolfram Cloud, public or private, calling deployed API.
+* :mod:`~wolframclient.evaluation` provides convenient methods to evaluate Wolfram Language expressions directly from Python. There are many ways to evaluate code including: evaluation by a local kernel, direct evaluation by a public or private Wolfram Cloud, calling deployed API.
 
-* :mod:`~wolframclient.serializers` provides serialization methods to various formats such as string `InputForm` and binary `WXF` format.
+* :mod:`~wolframclient.serializers` provides serialization methods to various formats such as string :wl:`InputForm` and binary `WXF` format.
 
 * :mod:`~wolframclient.deserializers` contains a parser for `WXF`.
 
-* :mod:`~wolframclient.language` provides builder of Python objects representing Wolfram Language symbols and functions.
+* :mod:`~wolframclient.language` provides Python representation of Wolfram Language symbols and functions.
 
 * :mod:`~wolframclient.exception` regroups the exceptions and errors that the library may raise.
 
@@ -22,10 +22,12 @@ The Wolfram Client Library is structured in sub-modules all located in :mod:`wol
 Wolfram Cloud interactions
 ==============================
 
+Cloud interaction requires to be properly authenticated to a Wolfram Cloud using your **Wolfram ID** and password. To create one visit https://account.wolfram.com/auth/create.
+
 Cloud evaluation
 -------------------------------
 
-A one-shot evaluation on the Wolfram public cloud only requires to authenticate, e.g. using a *WolframID* and *password*::
+A one-shot evaluation on the Wolfram public cloud only requires to initiate an authenticated session, e.g. using a Wolfram ID and password::
 
     from wolframclient.evaluation import UserIDPassword, WolframCloudSession
     userID = UserIDPassword('MyWolframID', 'password')
