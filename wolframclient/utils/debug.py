@@ -8,12 +8,21 @@ from functools import wraps
 
 import time
 
-def timed(function):
-    def inner(*args, **opts):
-        t = time.time()
-        value = function(*args, **opts)
-        return time.time() - t, value
-    return inner
+if hasattr(time, 'perf_counter'):
+    def timed(function):
+        def inner(*args, **opts):
+            t = time.perf_counter()
+            value = function(*args, **opts)
+            return time.perf_counter() - t, value
+        return inner
+else:
+    def timed(function):
+        def inner(*args, **opts):
+            time.perf_counter()
+            t = time.time()
+            value = function(*args, **opts)
+            return time.time() - t, value
+        return inner
 
 def echo(x):
     print(x)
