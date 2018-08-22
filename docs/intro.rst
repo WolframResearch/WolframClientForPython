@@ -198,26 +198,12 @@ Parse the JSON API response::
 Wolfram Language evaluation
 ==============================
 
+.. _ref-localkernel:
+
 Local kernel
 ---------------
 
-Wolfram Language session :class:`~wolframclient.evaluation.WolframLanguageSession` is initialized with a *WolframKernel* executable specified by its path. A started session enables local evaluation of Wolfram Language code directly in Python.::
-
-    from wolframclient.evaluation import WolframLanguageSession
-
-    try:
-        session = WolframLanguageSession('/path/to/kernel-executable')
-        session.start()
-        session.evaluate('Range[3]')
-    finally:
-        session.terminate()
-
-A best practice for using :class:`~wolframclient.evaluation.WolframLanguageSession` is use a try/finally block to explicitly close the session after it is used. Alternatively a `with` can achieve the same result.::
-
-    from wolframclient.evaluation import WolframLanguageSession
-    
-    with WolframLanguageSession('/path/to/kernel-executable') as session:
-        session.evaluate('Range[3]')
+Wolfram Language session :class:`~wolframclient.evaluation.WolframLanguageSession` is initialized with a *WolframKernel* executable specified by its path. A session enables local evaluation of Wolfram Language code directly in Python.
 
 .. note ::
     Typical location of the *WolframKernel* executable depends on the operating system. The relative path from your installation directory should be:
@@ -226,28 +212,49 @@ A best practice for using :class:`~wolframclient.evaluation.WolframLanguageSessi
     * On `Windows`: `WolframKernel.exe`
     * On Linux: `Files/Executables/WolframKernel`
 
+    It is advised to first try to execute the WolframKernel executable once from your terminal.
+
+Import :class:`~wolframclient.evaluation.WolframLanguageSession`::
+    
+    >>> from wolframclient.evaluation import WolframLanguageSession
+
+:class:`~wolframclient.evaluation.WolframLanguageSession` must be terminated either: inside a `try/finally` block, by explicitly closing the session after it is used, or, alternatively, in a `with` block that achieves the same result automatically::
+
+    >>> with WolframLanguageSession('/path/to/kernel-executable') as session:
+    ...     session.evaluate('Range[3]')
+    ...
+    WolframKernelEvaluationResult<success=True, result=cba>
+
 Wolfram Call
 ------------------
-An other approach is to rely on :class:`~wolframclient.evaluation.WolframCall`. This class abstract away the evaluator (:class:`~wolframclient.evaluation.WolframLanguageSession`, or :class:`~wolframclient.evaluation.WolframCloudSession` and enable smooth transition from local evaluation to cloud evaluation::
 
-    from wolframclient.evaluation import WolframLanguageSession
-    from wolframclient.evaluation import WolframCall
+An other approach is to rely on :class:`~wolframclient.evaluation.WolframCall`. This class abstracts away the evaluator type (:class:`~wolframclient.evaluation.WolframLanguageSession` or :class:`~wolframclient.evaluation.WolframCloudSession`) and enables seamless transitions from local evaluation to cloud evaluation.
+
+First import :class:`~wolframclient.evaluation.WolframLanguageSession` and :class:`~wolframclient.evaluation.WolframCall`::
+
+    >>> from wolframclient.evaluation import WolframLanguageSession
+    >>> from wolframclient.evaluation import WolframCall
     
-    with WolframLanguageSession('/path/to/kernel-executable') as session:
-        call = WolframCall(session, 'Range[3]')
-        result = call.perform()
-        result.get()
+Using an :ref:`initialized Wolfram language session<ref-localkernel>`, it is possible to instanciate a new :class:`~wolframclient.evaluation.WolframCall` instance, and perform an evaluation::
 
-In the above example the variable `session` can be seamlessly replaced by a cloud session instance.::
+    >>> with WolframLanguageSession('/path/to/kernel-executable') as session:
+    ...     call = WolframCall(session, 'StringReverse["abc"]')
+    ...     result = call.perform()
+    ...     result.get()
+    ...
+    'cba'
 
-    from wolframclient.evaluation import WolframCloudSession
-    from wolframclient.evaluation import WolframCall
-    
-    userID = UserIDPassword('MyWolframID', 'password')
-    session = WolframCloudSession(authentication=userID)
-    call = WolframCall(session, 'Range[3]')
-    result = call.perform()
-    result.get()
+In the above example the variable `session` can be seamlessly replaced by an :ref:`initialized cloud session<ref-auth>`::
+
+    >>> from wolframclient.evaluation import WolframCloudSession
+    >>> from wolframclient.evaluation import WolframCall
+
+    >>> userID = UserIDPassword('MyWolframID', 'password')
+    >>> session = WolframCloudSession(authentication=userID)
+    >>> call = WolframCall(session, 'StringReverse["abc"]')
+    >>> result = call.perform()
+    >>> result.get()
+    '"cba"'
 
 Serialization
 =============
@@ -261,7 +268,7 @@ This library is intended to provide a way to serialize python expression to Wolf
 Serialize
 ----------
 
-This module provides an high level abstraction to represent and serialize arbitrary Wolfram Language expressions.
+The :mod:`~wolframclient.serializers` module provides a high level abstraction to represent and serialize arbitrary Wolfram Language expressions.
 The function :func:`~wolframclient.serializers.export` can serialize a variety of standard Python objects, such as :class:`list`, or :class:`dict`, and provides extensible mechanism for custom classes::
 
     >>> from wolframclient.serializers import export
@@ -279,7 +286,7 @@ Resulting Python objects are serializable to string :wl:`InputForm`::
     >>> export(wl.Select(wl.PrimeQ, [1,2,3]))
     b'Select[PrimeQ, {1, 2, 3}]'
 
-WXF format is also supported::
+:wl:`WXF` format is also supported::
 
     >>> export(wl.Select(wl.PrimeQ, [1,2,3]), target_format='wxf')
     b'8:f\x02s\x06Selects\x06PrimeQf\x03s\x04ListC\x01C\x02C\x03'    
@@ -291,14 +298,16 @@ If a string is provided as second argument then the serialized output is directl
 
 Any object that implements a :func:`write` method, like :class:`file`, :py:class:`io.BytesIO` or :py:class:`io.StringIO` is a valid `stream` value::
 
-    with open('file.wl', 'wb') as f:
-        export([1, 2, 3], f)
+    >>> with open('file.wl', 'wb') as f:
+    ...    export([1, 2, 3], f)
+    ...
+    <_io.BufferedWriter name='file.wl'>
 
 Deserialize
 -----------
 
-The library can parse a :wl:WXF binary input and return Python objects from it.
-The function :func:`~wolframclient.deserializers.binary_deserialize` can deserialize any :wl:WXF input into standard Python objects and, eventually Numpy arrays. Note that Numpy is not mandatory as long as no numeric array is encountered.
+The library can parse a :wl:`WXF` binary input and return Python objects from it.
+The function :func:`~wolframclient.deserializers.binary_deserialize` can deserialize any :wl:`WXF` input into standard Python objects and, eventually `NumPy <http://www.numpy.org/>`_ arrays. Note that `NumPy <http://www.numpy.org/>`_ is not mandatory as long as no numeric array is encountered.
 
     >>> from wolframclient.serializers import export
     >>> from wolframclient.deserializers import binary_deserialize
