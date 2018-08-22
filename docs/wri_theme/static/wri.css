@@ -79,8 +79,13 @@ div.document {
     margin: auto auto 20px 15px;
 }
 
+.highlight-wl > .highlight {
+    background:rgb(247, 247, 247);
+}
+
 .highlight-wl > .highlight > pre {
     font-family: "Source Code Pro", Courier, monospace;
+    background: rgb(247, 247, 247);;
 }
 
 .wl {
