@@ -100,7 +100,7 @@ class WolframAPICall(object):
         """Add a new API input parameter from a serialization python object."""
         self.parameters[name] = value
         return self
-
+    
     def add_file_parameter(self, name, fp, content_type=None):
         """Add a new API input parameter from a file pointer `fp`"""
         if content_type is None:
@@ -135,3 +135,10 @@ class WolframAPICall(object):
                                   input_parameters=self.parameters,
                                   files=self.files,
                                   permissions_key=self.permission_key, **kwargs)
+
+    def __repr__(self):
+        return 'WolframAPICall<api=%s>' % (self.api,)
+    
+    def __str__(self):
+        return repr(self)
+        
