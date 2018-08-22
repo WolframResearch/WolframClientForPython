@@ -37,7 +37,7 @@ Create a new instance of :class:`~wolframclient.evaluation.UserIDPassword` with 
 
     >>> userID = UserIDPassword('MyWolframID', 'password')
 
-Using credentials, start a new authenticated cloud session:: 
+Using `userID`, start a new authenticated cloud session:: 
 
     >>> session = WolframCloudSession(authentication=userID)
     >>> session.authorized
@@ -48,7 +48,7 @@ In the following sections the authenticated session initialized above is simply 
 Cloud evaluation
 -------------------------------
 
-A one-shot evaluation on the Wolfram public cloud only requires to initiate an :ref:`authenticated session<ref-auth>` and call :meth:`~wolframclient.evaluation.WolframCloudSession.evaluate`::
+A one-shot evaluation on the Wolfram public cloud requires to initiate an :ref:`authenticated session<ref-auth>`, and call its :meth:`~wolframclient.evaluation.WolframCloudSession.evaluate` method::
 
     >>> session.evaluate('Range[3]')
     WolframEvaluationJSONResponse<success=True, expression={1, 2, 3}>
@@ -56,86 +56,144 @@ A one-shot evaluation on the Wolfram public cloud only requires to initiate an :
 Cloud functions
 ------------------
 
-From an authenticated cloud session it is possible to build a cloud function, to later uses it with various parameters::
+From an :ref:`authenticated session<ref-auth>` it is possible to build a cloud function, to later use it with various parameters. Create a cloud function::
 
-    wl_str_reverse = session.cloud_function('StringReverse')
-    wl_str_reverse("hello")
-    wl_str_reverse("world.")
+    >>> wl_str_reverse = session.cloud_function('StringReverse')
 
+Apply it to a different strings::
+
+    >>> wl_str_reverse("hello")
+    WolframEvaluationJSONResponse<success=True, expression="olleh">
+
+Retrieve the evaluation result with :meth:`~wolframclient.evaluation.WolframResult.get`:
+
+    >>> wl_str_reverse("world.").get()
+    '".dlrow"'
 
 Functions may accept more than one input parameters. Define a cloud function that applies :wl:`Join` and call it from Python on multiple lists::
 
-    wl_join = session.cloud_function('Join[##] &')
-    wl_join([0,1], ["a", "b"], [2, "c"])
+    >>> wl_join = session.cloud_function('Join[##] &')
+    >>> wl_join([0,1], ["a", "b"], [2, "c"])
+    '{0, 1, "a", "b", 2, "c"}'
 
 API
 ---------------
 
+.. _ref-deployAPI:
+
 Deploy Wolfram Language API
 ++++++++++++++++++++++++++++++
 
-From the Wolfram Language it is possible to deploy arbitrary code and expose it through an API.
+From the Wolfram Language, it is possible to deploy arbitrary code and to expose it through an API.
 
-Using the Wolfram Language, connect to the Wolfram Cloud:
+Using the Wolfram Language, connect to the Wolfram Cloud using your Wolfram ID and password:
 
 .. code-block :: wl
 
     CloudConnect["MyWolframID", "myPassword"]
 
-Deploy an API accepting a list and returning the result of the function :wl:`MinMax` applied on it:
+Create an :wl:`APIFunction` that takes a list of values (:wl:`RepeatingElement`) and returns the result of :wl:`MinMax` applied to it, in the JSON format:
 
 .. code-block :: wl
 
-    CloudDeploy[
-        APIFunction[{"list" -> RepeatingElement[Expression]},
-            MinMax[#list] &
-        ],
-        CloudObject["api/private/minmax"]
+    api = APIFunction[{"list" -> RepeatingElement[Expression]},
+        MinMax[#list] &,
+        "JSON"
     ]
 
-Call API
-+++++++++++
+.. note::
+    By default, :wl:`APIFunction` formats output as string :wl:`InputForm` which is not always suited for interoperability with Python. When possible JSON is preferable and :wl:`WXF` is a versatile option.
 
-Note that the API was deployed without any particular permissions, and as such is a private :wl:`CloudObject` only usable by its owner.
+Deploy the API as a cloud object named `api/private/minmax`:
 
-Use the previously authenticated session to call the API from Python::
+.. code-block :: wl
 
-    api = ('MyWolframID', 'api/private/minmax')
-    result = session.call(api, {'list' : [[1, 2, 3], [-1, -2, -3]]})
-    if result.success:
-        print('API call successfully returned:', result.output)
-    else:
-        print('API call failed:', result.failure)
+    CloudDeploy[api, CloudObject["api/private/minmax"]]
+
+The API was deployed with default permissions, and as such is a private :wl:`CloudObject` only usable by its owner.
+
+
+API call from Python
+++++++++++++++++++++++
+
+Once again we need an :ref:`authenticated session<ref-auth>` to call the API from Python. API are specified with 2-value tuple made of the owner ID (your Wolfram ID) and the name of the :wl:`CloudObject` used to deploy::
+
+    >>> api = ('MyWolframID', 'api/private/minmax')
+
+The API sole input is `"list"`. In general API values are specified as a :class:`dict` where keys are parameters' name. Python :class:`list` are automatically converted to Wolfram Language :wl:`List` and thus are valid API input values. 
+
+Call the API::
+
+    >>> result = session.call(api, {'list' : [[1, 2, 3], [-1, -2, -3]]})
+
+Check that the API call succeeded::
+
+    >>> result.success
+    True
+
+Parse the JSON string result with :func:`json.loads`::
+
+    >>> import json
+    >>> json.loads(result.get())
+    [-3, 3]
 
 Use WolframAPICall
 ------------------
 
-:class:`~wolframclient.evaluation.WolframAPICall` provides a convenient interface to API. The above example becomes::
+:class:`~wolframclient.evaluation.WolframAPICall` provides a convenient interface to call API. Using the :ref:`previously deployed API <ref-deployAPI>`, and the :ref:`authenticated session<ref-auth>`, instanciate a new :class:`~wolframclient.evaluation.WolframAPICall`::
     
-    from wolframclient.evaluation import WolframAPICall
+    >>> from wolframclient.evaluation import WolframAPICall
+    >>> call = WolframAPICall(session, ('MyWolframID', 'api/private/minmax'))
 
-    call = WolframAPICall(session, ('MyWolframID', 'api/private/minmax'))
-    call.add_parameter('list', [[1, 2, 3], [-1, -2, -3]])
-    result = call.perform()
-    result.get()
+Add an input parameter::
 
-Some convenient functions deals with specific content type and files. It is particularly useful when dealing with images. Deploy an API that takes an image and returns its dimensions:
+    >>> call.add_parameter('list', [[1, 2, 3], [-1, -2, -3]])
+    WolframAPICall<api=('MyWolframID', 'api/private/minmax')>
+
+Perform the call::
+
+    >>> result = call.perform()
+
+ Fetch the result and parse the JSON reponse::
+
+    >>> import json
+    >>> json.loads(result.get())
+    [-3, 3]
+
+The class :class:`~wolframclient.evaluation.WolframAPICall` exposes some helper functions to deal with specific content type and files. It is particularly useful when using image inputs. 
+
+Deploy an API that takes an image and returns its :wl:`ImageDimensions` as a JSON array:
 
 .. code-block :: wl
 
     CloudDeploy[
         APIFunction[{"image" -> "Image"},
-            ImageDimensions[#image] &
+            ImageDimensions[#image] &,
+            "JSON"
         ],
         CloudObject["api/private/imagedimensions"]
     ]
 
-Call the API using a PNG file `/path/to/example.png`::
+Create a :class:`~wolframclient.evaluation.WolframAPICall` targeting the new API::
 
     >>> api_call = WolframAPICall(session, ('MyWolframID', 'api/private/imagedimensions'))
-    >>> api_call.add_file_parameter('image', '/path/to/example.png')
-    >>> result = api_call.perform().get()
-    b'{320, 240}'
+
+Add a new file parameter. File parameters have a name and their values must be an opened file object as returned by :func:`open`. Call the API using a image stored in `/path/to/example/image.png`::
+
+    >>> with open('/path/to/example/image.png', 'rb') as fp:
+    ...     api_call.add_file_parameter('image', fp)
+    ...     result = api_call.perform()
+    ...
+    WolframAPICall<api=('dorianb', 'api/private/imagedimensions')>
+
+.. note ::
+    It's important to make the call while the file object is opened, i.e. inside the `with` statement.
+
+Parse the JSON API response::
+
+    >>> import json
+    >>> json.loads(result.get())
+    [320, 240]
 
 Wolfram Language evaluation
 ==============================
