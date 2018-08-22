@@ -38,16 +38,23 @@ def update_dispatch(dispatch):
 
     @dispatch.multi(datetime.time)
     def normalizer(self, o):
-        return self.serialize_function(
-            self.serialize_symbol(b"TimeObject"), (
-                self.serialize_iterable((
-                    self.serialize_int(o.hour),
-                    self.serialize_int(o.minute),
-                    self.serialize_float(o.second + o.microsecond / 1000000.)
-                )),
+
+        inner = [
+            self.serialize_iterable((
+                self.serialize_int(o.hour),
+                self.serialize_int(o.minute),
+                self.serialize_float(o.second + o.microsecond / 1000000.)
+            ))
+        ]
+
+        if o.tzinfo:
+            inner.append(
                 self.serialize_rule(
                     self.serialize_symbol(b"TimeZone"),
                     self.serialize_tzinfo(o, name_match = None)
                 )
             )
+
+        return self.serialize_function(
+            self.serialize_symbol(b"TimeObject"), inner
         )

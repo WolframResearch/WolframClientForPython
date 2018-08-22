@@ -129,7 +129,7 @@ class TestCase(BaseTestCase):
 
         self.compare(
             test_datetime().time(),
-            b'TimeObject[{11, 15, 20.000000}, TimeZone -> $TimeZone]'
+            b'TimeObject[{11, 15, 20.000000}]'
         )
         self.compare(
             pytz.timezone("Europe/Rome").localize(test_datetime()).timetz(),
