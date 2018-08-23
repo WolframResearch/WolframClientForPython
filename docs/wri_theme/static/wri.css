@@ -80,12 +80,12 @@ div.document {
 }
 
 .highlight-wl > .highlight {
-    background:rgb(247, 247, 247);
+    background:rgb(252, 252, 252);
 }
 
 .highlight-wl > .highlight > pre {
     font-family: "Source Code Pro", Courier, monospace;
-    background: rgb(247, 247, 247);;
+    background: rgb(252, 252, 252);
 }
 
 .wl {
@@ -235,4 +235,57 @@ img.logo {
     margin-right: auto;
     margin-top: 15px;
     margin-bottom: 15px;
+}
+
+/* pygments custom CSS  */
+/* Selectors from https://github.com/rsmenon/pygments-mathematica 
+Color scheme from wolframcloud.com */
+
+/* Comment */
+.highlight-mathematica .highlight .c {
+    color: rgb(153, 153, 153);
+    font-style: italic;
+}
+
+/*  Builtins */
+.highlight-wl .highlight .nb { 
+    color: black;
+}
+/*  Messages (the "foo" in General::foo) */
+.highlight-wl .highlight .ne { 
+    color: #ab466a;
+}
+/*  Slots */
+.highlight-wl .highlight .nf { 
+    color: rgb(67, 137, 88);
+    font-style: italic;
+}
+/*  Patterns */
+.highlight-wl .highlight .nt { 
+    color: rgb(67, 137, 88);
+    font-style: italic;
+}
+/*  Non-builtin symbols */
+.highlight-wl .highlight .nv { 
+    color: rgb(0, 44, 195);
+}
+/*  Operators */
+.highlight-wl .highlight .o { 
+    color:black;
+}
+/*  Groupings */
+.highlight-wl .highlight .p { 
+    color: black;
+}
+/*  Strings */
+.highlight-wl .highlight .s { 
+    color: rgb(102, 102, 102);
+}
+/*  Local scope variables */
+.highlight-wl .highlight .vc { 
+    color: rgb(67, 137, 88);
+}
+/*  Any unrecognized input that is not lexed correctly */
+.highlight-wl .highlight .err { 
+    color: black;
 }

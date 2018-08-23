@@ -154,7 +154,7 @@ Perform the call::
 
     >>> result = call.perform()
 
- Fetch the result and parse the JSON reponse::
+Fetch the result and parse the JSON reponse::
 
     >>> import json
     >>> json.loads(result.get())
