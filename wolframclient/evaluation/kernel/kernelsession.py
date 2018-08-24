@@ -111,6 +111,9 @@ class WolframLanguageSession(object):
             self.initfile = os.path_join(os.dirname(__file__), 'initkernel.m')
         else:
             self.initfile = initfile
+        if not os.isfile(self.initfile):
+            raise FileNotFoundError('Kernel initialization file %s not found.' % self.initfile)
+        
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Initializing kernel %s using script: %s' % (self.kernel, self.initfile))
         # Socket to which we push new expressions to evaluate.
