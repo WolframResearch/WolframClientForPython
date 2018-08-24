@@ -1,9 +1,10 @@
-###########
-Examples
-###########
-
-
 .. toctree::
    :maxdepth: 4
 
-.. literalinclude:: /examples/transpose.py
+###########
+Code examples
+###########
+
+The Wolfram Client library 
+
+.. literalinclude:: /examples/python/transpose.py
