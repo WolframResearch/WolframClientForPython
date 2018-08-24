@@ -259,73 +259,108 @@ In the above example the variable `session` can be seamlessly replaced by an :re
 Serialization
 =============
 
-This library is intended to provide a way to serialize python expression to Wolfram Language string :wl:`InputForm` and :wl:`WXF` string of bytes. The library was designed to be extensible so that any arbitrary Python object can be serialized with the addition of custom encoder(s). The serialization module was tested with three interpreters: 
+This library is intended to provide a way to serialize python expression to Wolfram Language string :wl:`InputForm` and :wl:`WXF` string of bytes. The functionality was designed to be extensible, so that any arbitrary Python object can be serialized with the addition of custom encoders. The serialization module was tested with three interpreters:
+
 - Python 2.7, 
 - Python 3.6.4, 
 - JYTHON.
 
-
 Serialize
 ----------
 
-The :mod:`~wolframclient.serializers` module provides a high level abstraction to represent and serialize arbitrary Wolfram Language expressions.
-The function :func:`~wolframclient.serializers.export` can serialize a variety of standard Python objects, such as :class:`list`, or :class:`dict`, and provides extensible mechanism for custom classes::
+The modules :mod:`~wolframclient.serializers` and :mod:`~wolframclient.language` provide tools to represent and serialize arbitrary Wolfram Language expressions.
+The function :func:`~wolframclient.serializers.export` can serialize a variety of standard Python objects, such as :class:`list`, or :class:`dict`.
+
+Import the function::
 
     >>> from wolframclient.serializers import export
+
+Serialize a Python list of integer into an Wolfram Language :wl:`InputForm` string representation::
+
     >>> export([1,2,3])
     b'{1, 2, 3}'
 
-Wolfram language expressions are conveniently represented using :class:`wolframclient.language.wl`::
+Wolfram language expressions are conveniently represented using :class:`~wolframclient.language.wl`::
 
+Import the function::
+    
     >>> from wolframclient.language import wl
+
+Build a Python object representing a :wl:`Quantity`::
+
     >>> wl.Quantity(12, "Hours")
     Quantity[<< 2 >>]
 
-Resulting Python objects are serializable to string :wl:`InputForm`:: 
+The :func:`~wolframclient.serializers.export` function can serialize Python objects built with :class:`~wolframclient.language.wl`::
+
+    >>> export(wl.Quantity(12, "Hours"))
+    b'Quantity[12, "Hours"]'
+
+Expressions can be nested, and mixed with serializable Python types::
 
     >>> export(wl.Select(wl.PrimeQ, [1,2,3]))
     b'Select[PrimeQ, {1, 2, 3}]'
 
-:wl:`WXF` format is also supported::
+The :wl:`WXF` format is also supported. It is a binary format, thus not always human readable, but is the most efficient way to exchange Wolfram Language expressions. Specify a `target_format` argument to serialize the previous expression to WXF::
 
     >>> export(wl.Select(wl.PrimeQ, [1,2,3]), target_format='wxf')
-    b'8:f\x02s\x06Selects\x06PrimeQf\x03s\x04ListC\x01C\x02C\x03'    
+    b'8:f\x02s\x06Selects\x06PrimeQf\x03s\x04ListC\x01C\x02C\x03'
 
-If a string is provided as second argument then the serialized output is directly written to the file::
+If a string is provided as second argument, the serialized output is directly written to the file.
 
-    >>> export([1, 2, 3], 'file.wl')
-    'file.wl'
+Represent a Wolfram Language :wl:`ListPlot` of the first 25 :wl:`Prime` numbers::
 
-Any object that implements a :func:`write` method, like :class:`file`, :py:class:`io.BytesIO` or :py:class:`io.StringIO` is a valid `stream` value::
+    wl_expr = wl.ListPlot(wl.Prime(wl.Range(25)))
 
-    >>> with open('file.wl', 'wb') as f:
-    ...    export([1, 2, 3], f)
-    ...
-    <_io.BufferedWriter name='file.wl'>
+Serialize it to :wl:`WXF` and print the resulting bytes to the file `/path/to/file.wxf`::
+
+    >>> export(wl_expr, '/path/to/file.wxf', target_format='wxf')
+    '/path/to/file.wxf'
+
+Using the Wolfram Desktop, import the file:
+
+.. code-block:: wl
+
+    Import["/path/to/file.wxf"]
+
+.. image :: examples/listplotPrime25.svg
+    :align: center
+    :alt: ListPlot graphic. If this image does not display, it might be that your browser does not support the SVG image format.
+
+The library also provides extensible serialization mechanism for custom Python classes. Refer to the :ref:`API guide page<extensible-serialization>` detailed explanations and to the :doc:`examples page<examples>` for some use cases.
 
 Deserialize
 -----------
 
-The library can parse a :wl:`WXF` binary input and return Python objects from it.
-The function :func:`~wolframclient.deserializers.binary_deserialize` can deserialize any :wl:`WXF` input into standard Python objects and, eventually `NumPy <http://www.numpy.org/>`_ arrays. Note that `NumPy <http://www.numpy.org/>`_ is not mandatory as long as no numeric array is encountered.
+The library can parse :wl:`WXF` binary inputs and return Python objects from it.
+The function :func:`~wolframclient.deserializers.binary_deserialize` can deserialize any :wl:`WXF` input into standard Python objects and, eventually `NumPy <http://www.numpy.org/>`_ arrays. Note that the `NumPy <http://www.numpy.org/>`_ library is not mandatory so long as no numeric array is encountered.
+
+Export a Python list of integers to :wl:`WXF`::
 
     >>> from wolframclient.serializers import export
-    >>> from wolframclient.deserializers import binary_deserialize
     >>> my_list = [1,2,3]
     >>> wxf = export(my_list, target_format='wxf')
+
+Import the :func:`~wolframclient.deserializers.binary_deserialize` function::
+
+    >>> from wolframclient.deserializers import binary_deserialize
+
+Deserialize the bytes::
+
     >>> binary_deserialize(wxf)
     [1, 2, 3]
 
-Any object that implements a :func:`read` method, following the buffer specifications is a valid input. 
-
 Export a `dict` using the WXF format::
 
-    >>> export({'key1' : 1, 'key2' : 2}, target_format='wxf', stream='/path/to/file.wxf')
+    >>> export({'name' : 'Alice', 'age' : 37}, target_format='wxf', stream='/path/to/file.wxf')
     '/path/to/file.wxf'
 
 Import it as a Python object::
 
-    >>> with open('/path/to/file.wxf') as fp:
+    >>> with open('/path/to/file.wxf', 'rb') as fp:
     ...     binary_deserialize(fp)
     ...
     {'key1': 1, 'key2': 2}
+
+.. note ::
+    Make sure to :func:`open` WXF files in binary mode **'b'** to avoid encoding issues.

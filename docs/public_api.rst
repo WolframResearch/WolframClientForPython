@@ -120,6 +120,8 @@ Specify a timezone in Python using :func:`pytz.timezone` and serialize the date 
     >>> export(timezone('US/Eastern').localize(datetime.datetime.now()))
     'DateObject[{2018, 3, 16, 16, 4, 17.712409}, "Instant", "Gregorian", "US/Eastern"]'
 
+.. _extensible-serialization:
+
 Extensible mechanism
 --------------------
 
@@ -162,6 +164,9 @@ Deserialization
 
 .. autofunction:: wolframclient.deserializers.binary_deserialize
     :noindex:
+
+
+.. _extensible-deserialization:
 
 Extensible mechanism
 --------------------
