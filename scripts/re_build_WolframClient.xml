@@ -22,7 +22,7 @@
 		<!-- Copy PacletInfo file -->
 		<copy todir='${files_directory}/${component}'
 				file='${basedir}/PacletInfo.m' />
-		
+
 		<!-- Copy python script(s) in base directory -->
 		<copy todir='${files_directory}/${component}'>
 			<fileset dir='${basedir}'>
@@ -31,8 +31,8 @@
 		</copy>
 
 	</target>
-	
-		<!--
+
+	<!--
 		Paclet
 	-->
 
@@ -67,6 +67,36 @@
 				AntFail["Paclet not produced" ]];
 
 		]]></mathematica>
+
+	</target>
+
+	<target name='Installer.WolframClientForPython.execute' extensionOf='Deploy.execute'>
+
+		<!-- Ensure all necessary modules are installed -->
+		<exec executable="python">
+			<arg value="-m" />
+			<arg value="pip" />
+			<arg value="install" />
+			<arg value="--user" />
+			<arg value="--upgrade" />
+			<arg value="setuptools" />
+			<arg value="wheel" />
+		</exec>
+
+		<!-- Run setup script -->
+		<exec executable="python">
+			<arg value="setup.py" />
+			<arg value="sdist" />
+			<arg value="bdist_wheel" />
+		</exec>
+
+		<!-- Copy produced files to Files dir -->
+		<copy todir='${files_directory}'>
+			<fileset dir='${basedir}/dist'>
+				<include name="*.whl"/>
+				<include name="*.tar.gz"/>
+			</fileset>
+		</copy>
 
 	</target>
 
