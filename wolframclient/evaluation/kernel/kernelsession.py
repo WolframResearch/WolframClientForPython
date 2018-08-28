@@ -290,12 +290,10 @@ class WolframLanguageSession(object):
                     logger.info(
                         'Kernel is ready. Startup took %.2f seconds.', time.perf_counter() - t_start)
             else:
-                self._dump_pipe_to_log(self.kernel_proc.stdout)
                 self.terminate()
                 raise WolframKernelException('Kernel %s failed to start properly.' % self.kernel)
         except SocketException as se:
             logger.fatal(se)
-            self._dump_pipe_to_log(self.kernel_proc.stdout)
             self.terminate()
             raise WolframKernelException('Failed to communication with the kernel %s. Could not read from ZMQ socket.' % self.kernel)
 
@@ -355,34 +353,8 @@ class WolframLanguageSession(object):
             logger.fatal('Module concurrent.futures is missing.')
             raise NotImplementedError('Asynchronous evaluation is not available on this Python interpreter.')
 
-    def _dump_pipe_to_log(self, pipe):
-        pass
-
-    # def _dump_pipe_to_log(self, pipe):
-    #     # this will probably fails on remote kernels (broken pipe?)
-    #     try:
-    #         for line in _non_blocking_pipe_readline(pipe):
-    #             last = force_text(line.rstrip())
-    #             logger.warning(last)
-    #     except Exception as e:
-    #         logger.warn('Exception occured while reading pipe: %s', e)
-
     def __repr__(self):
         return '<WolframLanguageSession: in:%s, out:%s>' % (self.in_socket.uri, self.out_socket.uri)
-
-# def _non_blocking_pipe_readline(pipe):
-#     ''' Read lines from a given `PIPE` in a non-blocking fashion.
-
-#     Modifies the internal flags of the given pipe to do so. 
-#     TODO DOES NOT WORK ON WINDOWS
-#     May cause crashes
-#     '''
-#     import fcntl
-#     from os import O_NONBLOCK
-#     flags = fcntl.fcntl(pipe, fcntl.F_GETFL)
-#     fcntl.fcntl(pipe, fcntl.F_SETFL, flags | O_NONBLOCK)
-#     for line in pipe:
-#         yield line
 
 class SocketException(Exception):
     pass
