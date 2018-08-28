@@ -53,14 +53,25 @@ class WolframKernelEvaluationResult(WolframResult):
     Messages can be issued during a kernel evaluation. Those are
     stored as `messages`. If any message was returned by the kernel
     then the success status is automatically set to `False`.
-    """
-    __slots__ = 'messages'
 
-    def __init__(self, result, msgs):
+    The final Python expression is lazily computed when accessing the
+    field `result`. The WXF bytes holding the evaluation result are 
+    stored in `wxf` and thus can be parsed with a consumized parser if
+    necessary.
+    """
+
+    def __init__(self, wxf, msgs):
         self.success = len(msgs) == 0
         self.failure = None
         self.messages = msgs
-        self.result = binary_deserialize(result)
+        self.wxf = wxf
+        self._result = None
+
+    @property
+    def result(self):
+        if self._result is None:
+            self._result = binary_deserialize(self.wxf)
+        return self._result
 
     def get(self):
         """Kernel evaluation never fails even if the evaluated expression is a failure object."""
