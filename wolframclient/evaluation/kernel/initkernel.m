@@ -39,8 +39,9 @@ ClientLibrary`SetWarnLogLevel[] := setLogLevel[$WARN];
 ClientLibrary`SetErrorLogLevel[] := setLogLevel[$ERROR];
 ClientLibrary`DisableKernelLogging[] := setLogLevel[$NOTSET];
 
-setLogLevel[level_Integer] /; $DEBUG <= level <= $ERROR || level == Infinity := 
+setLogLevel[level:_Integer] /; $DEBUG <= level <= $ERROR := 
 	($LogLevel = level);
+setLogLevel[$NOTSET] := ($LogLevel = $NOTSET);
 
 log[msg_String, level_Integer:$INFO] /; level>=$LogLevel := If[$LoggerSocket=!=None, 
 	BinaryWrite[
@@ -155,7 +156,7 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 				{"Message", If[TrueQ[Last[#]],Internal`StuffBag[msgs,#]] &},
 				data = Lookup[#,"DataByteArray", None];
 				expr = timed[evaluate[data], "Expression evaluation"];
-				ClientLibrary`debug["deserialized expr: ", ToString[expr]];
+				If[$LogLevel >= $DEBUG, ClientLibrary`debug["deserialized expr: ", ToString[expr]]];
 			];
 			(* Check how many messages were thrown during evaluation.
 			Cap it with a default value to avoid overflow. *)
@@ -184,7 +185,7 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 				ClientLibrary`fatal["Unexpected message count. Ignoring all messages."];
 				WriteString[$OutputSocket, "0"];
 			];
-			ClientLibrary`debug["Writing to output socket: ", ToString[$OutputSocket]];
+			If[$LogLevel >= $DEBUG, ClientLibrary`debug["Writing to output socket: ", ToString[$OutputSocket]]];
 			SocketWriteFunc[
 				$OutputSocket,
 				timed[serialize[expr], "Expression serialization"]
@@ -206,6 +207,3 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 
 End[];
 End[];
-
-
-
