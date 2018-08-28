@@ -211,11 +211,10 @@ class WolframLanguageSession(object):
             try:
                 self.in_socket.zmq_socket.send(
                     b'8:f\x00s\x04Quit', flags=zmq.NOBLOCK)
-                self.kernel_proc.stdout.close()
-                self.kernel_proc.stdin.close()
                 self.kernel_proc.terminate()
                 self.kernel_proc.wait(timeout=self.get_parameter('TERMINATE_READ_TIMEOUT'))
-            except:
+            except Exception as e:
+                logger.fatal('Exception', e)
                 logger.warning('Failed to cleanly stop the kernel process after %.02f seconds. Killing it.' %
                                self.get_parameter('TERMINATE_READ_TIMEOUT'))
                 self.kernel_proc.kill()
