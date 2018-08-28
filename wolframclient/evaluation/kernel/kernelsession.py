@@ -133,16 +133,11 @@ class WolframLanguageSession(object):
             out_socket.zmq_type = zmq.PULL
             self.out_socket = out_socket
 
-        if logger.isEnabledFor(logging.INFO):
-            logger.info('Kernel receive commands to socket: %s', self.in_socket.uri)
-            logger.info('Kernel write evaluated expressions to socket: %s', self.out_socket.uri)
-
         if kernel_loglevel != logging.NOTSET:
             if logger_socket is None:
                 self.logger_socket = Socket(zmq_type=zmq.PULL)
-            elif isinstance(out_socket, Socket):
-                logger_socket.zmq_type = zmq.PULL
-                self.logger_socket = logger_socket
+            elif isinstance(logger_socket, Socket) and logger_socket.zmq_type != zmq.PULL:
+                raise ValueError('Logging socket must have zmq type PULL.')
             else:
                 raise ValueError(
                     'Expecting kernel logger socket to be a Socket instance.')
@@ -252,7 +247,11 @@ class WolframLanguageSession(object):
         """Start a new kernel process and open sockets to communicate with it."""
         # start the evaluation zmq sockets
         self.in_socket._bind()
+        
         self.out_socket._bind()
+        if logger.isEnabledFor(logging.INFO):
+            logger.info('Kernel receives commands from socket: %s', self.in_socket)
+            logger.info('Kernel writes evaluated expressions to socket: %s', self.out_socket)
         # start the kernel process
         cmd = [self.kernel, '-noprompt', "-initfile", self.initfile]
         if self.loglevel != logging.NOTSET:
@@ -271,7 +270,7 @@ class WolframLanguageSession(object):
             logger.debug('Kernel called using command: %s.' % ' '.join(cmd))
 
         try:
-            self.kernel_proc = Popen(cmd, stdout=PIPE, stdin=PIPE)
+            self.kernel_proc = Popen(cmd)
             if logger.isEnabledFor(logging.INFO):
                 logger.info('Kernel process started with PID: %s' % self.kernel_proc.pid)
                 t_start = time.perf_counter()
@@ -405,7 +404,10 @@ class Socket(object):
         self.zmq_socket.close()
 
     def __repr__(self):
-        return '<Socket: host=%s, port=%s>' % (self.host, self.port)
+        if self.bound:
+            return '<Socket: host=%s, port=%s>' % (self.host, self.port)
+        else:
+            return '<Socket (not bounded): host=%s>' % self.host
 
 # class WolframKernel(object):
 #     ''' Represents a Wolfram Kernel executable.

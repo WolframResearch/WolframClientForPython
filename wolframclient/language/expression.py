@@ -49,6 +49,9 @@ class WLSymbol(WLExpressionMeta):
     def __repr__(self):
         return self.name
 
+    def __str__(self):
+        return self.name
+
 class WLFunction(WLExpressionMeta):
     """Represent a Wolfram Language function with its head and arguments.
     """
@@ -76,7 +79,14 @@ class WLFunction(WLExpressionMeta):
         return len(self.args)
 
     def __repr__(self):
-        return '%s[<< %s >>]' % (repr(self.head), len(self))
+        if len(self) > 4:
+            return '%s[%s, << %i >>, %s]' % (
+                self.head,
+                ', '.join([str(x) for x in self.args[:2]]),
+                len(self) - 4,
+                ', '.join([str(x) for x in self.args[-2:]]))
+        else:
+            return '%s[%s]' % (repr(self.head), ', '.join([str(x) for x in self.args]))
 
 class ExpressionFactory(object):
     """Provide a convenient way to build objects representing arbitrary Wolfram Language expressions through the use of attributes.
@@ -118,4 +128,4 @@ system = ExpressionFactory('System')
 See :func:`~wolframclient.language.expression.ExpressionFactory` and
 :class:`~wolframclient.language.expression.ExpressionFactory` for more details."""
 
-__all__ = ['ExpressionFactory', 'WLSymbol', 'wl', 'system']
+__all__ = ['ExpressionFactory', 'WLSymbol', 'wl', 'system', 'WLFunction']
