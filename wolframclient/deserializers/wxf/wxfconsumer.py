@@ -85,7 +85,8 @@ class WXFConsumer(object):
     def consume_function(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *function*.
 
-        Return a :class:`list` if the head is symbol `List`, otherwise return a :class:`~wolframclient.language.expression.WLFunction`
+        Return a :class:`list` if the head is symbol `List`, otherwise returns the result of :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function` 
+        applied to the head and arguments.
         """
         head = self.next_expression(tokens, **kwargs)
         args = []
@@ -94,7 +95,15 @@ class WXFConsumer(object):
         if head == self._LIST:
             return args
         else:
-            return WLFunction(head, *args)
+            return self.build_function(head, args, **kwargs)
+
+    def build_function(self, head, arg_list, **kwargs):
+        """Create a Python object from head and args.
+
+        This function can be conveniently overloaded to create different Python objects
+        from different heads. e.g: DateObject, Complex, etc.
+        """
+        return WLFunction(head, *arg_list)
 
     def consume_association(self, current_token, tokens, dict_class = dict, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *association*.
@@ -184,7 +193,7 @@ class WXFConsumerNumpy(WXFConsumer):
 
     def consume_array(self, current_token, tokens, **kwargs):
         arr=numpy.fromstring(current_token.data, dtype=WXFConsumerNumpy.WXF_TYPE_TO_DTYPE[current_token.array_type])
-        numpy.reshape(arr, tuple(current_token.dimensions))
+        arr = numpy.reshape(arr, tuple(current_token.dimensions))
         return arr
     """Build a numpy array from a PackedArray."""
     consume_packed_array = consume_array
