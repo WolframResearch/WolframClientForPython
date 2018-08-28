@@ -25,8 +25,9 @@ setup(
         'dorianb@wolfram.com',
         'riccardod@wolfram.com'
     ],
-    packages=find_packages(exclude=['wolframclient.tests*']),
-    package_data={'wolframclient.evaluation.kernel': ['initkernel.m']},
+    include_package_data=True,
+    packages=find_packages(),
+    # package_data={'wolframclient.evaluation.kernel': ['initkernel.m']},
     install_requires = [
         'pip',
         'numpy',

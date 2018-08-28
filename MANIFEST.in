@@ -1,0 +1,4 @@
+include LICENSE PacletInfo.m run.py
+recursive-include wolframclient *.m
+recursive-include tests/data *
+recursive-include tests/*.py
