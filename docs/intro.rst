@@ -280,7 +280,7 @@ Serialize a Python list of integer into an Wolfram Language :wl:`InputForm` stri
     >>> export([1,2,3])
     b'{1, 2, 3}'
 
-Wolfram language expressions are conveniently represented using :class:`~wolframclient.language.wl`::
+Wolfram language expressions are conveniently represented using :class:`~wolframclient.language.wl`.
 
 Import the function::
     
