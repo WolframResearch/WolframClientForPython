@@ -97,7 +97,7 @@ class WolframLanguageSession(object):
     """
 
     def __init__(self, kernel=None, initfile=None,
-                 in_socket=None, out_socket=None, kernel_loglevel=logging.NOTSET, logger_socket=None):
+                 in_socket=None, out_socket=None, kernel_loglevel=logging.NOTSET, logger_socket=None, stdin=PIPE, stdout=PIPE, stderr=PIPE):
         if isinstance(kernel, six.string_types):
             if not os.isfile(kernel):
                 raise WolframKernelException('Kernel not found at %s.' % kernel)
@@ -150,6 +150,10 @@ class WolframLanguageSession(object):
         self.evaluation_count = 0
         self.thread_pool_exec = None
         self.parameters = {}
+        self.stdin = stdin
+        self.stdout = stdout
+        self.stderr = stderr
+        
 
     _DEFAULT_PARAMETERS = {
         'STARTUP_READ_TIMEOUT': 20,
@@ -211,12 +215,24 @@ class WolframLanguageSession(object):
             try:
                 self.in_socket.zmq_socket.send(
                     b'8:f\x00s\x04Quit', flags=zmq.NOBLOCK)
+                if six.PY2:
+                    self.kernel_proc.wait()
+                else:
+                    self.kernel_proc.wait(timeout=self.get_parameter('TERMINATE_READ_TIMEOUT'))
+                if self.stdin == PIPE:
+                    self.kernel_proc.stdin.close()
+                if self.stdout == PIPE:
+                    self.kernel_proc.stdout.close()
+                if self.stderr == PIPE:
+                    self.kernel_proc.stderr.close()
                 self.kernel_proc.terminate()
-                self.kernel_proc.wait(timeout=self.get_parameter('TERMINATE_READ_TIMEOUT'))
             except Exception as e:
-                logger.fatal('Exception', e)
-                logger.warning('Failed to cleanly stop the kernel process after %.02f seconds. Killing it.' %
-                               self.get_parameter('TERMINATE_READ_TIMEOUT'))
+                if six.PY3:
+                    delay = ' after %.02f seconds' % self.get_parameter('TERMINATE_READ_TIMEOUT')
+                else:
+                    delay = ''
+                logger.warning('Failed to cleanly stop the kernel process%s. Killing it. An exception occured: %s.' %
+                               (delay, e))
                 self.kernel_proc.kill()
         if self.in_socket is not None:
             try:
@@ -269,7 +285,7 @@ class WolframLanguageSession(object):
             logger.debug('Kernel called using command: %s.' % ' '.join(cmd))
 
         try:
-            self.kernel_proc = Popen(cmd)
+            self.kernel_proc = Popen(cmd, stdin=self.stdin, stdout=self.stdout, stderr=self.stderr)
             if logger.isEnabledFor(logging.INFO):
                 logger.info('Kernel process started with PID: %s' % self.kernel_proc.pid)
                 t_start = time.perf_counter()
@@ -317,6 +333,7 @@ class WolframLanguageSession(object):
             raise WolframKernelException('Kernel is not started.')
 
         if isinstance(expr, six.binary_type):
+            logger.info('Expression is already serialized in WXF.')
             self.in_socket.zmq_socket.send(expr)
         else:
             if isinstance(expr, six.string_types):
