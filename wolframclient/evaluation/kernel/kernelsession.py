@@ -225,7 +225,6 @@ class WolframLanguageSession(object):
                     self.kernel_proc.stdout.close()
                 if self.stderr == PIPE:
                     self.kernel_proc.stderr.close()
-                self.kernel_proc.terminate()
             except Exception as e:
                 if six.PY3:
                     delay = ' after %.02f seconds' % self.get_parameter('TERMINATE_READ_TIMEOUT')

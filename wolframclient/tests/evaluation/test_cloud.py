@@ -129,14 +129,16 @@ class TestCase(TestCaseSettings):
         with open(self.get_data_path('32x2.png'), 'rb') as fp:
             response = self.cloud_session.call(api, files={'image': fp})
             self.assertTrue(response.success)
-            self.assertEqual(response.get(), b'{32, 2}')
+            res = json.loads(response.get())
+            self.assertListEqual(res, [32, 2])
 
     def test_image_file(self):
         api = (self.api_owner, 'api/private/imagedimensions')
         with open(self.get_data_path('500x200.png'), 'rb') as fp:
             response = self.cloud_session.call(api, files={'image': fp})
             self.assertTrue(response.success)
-            self.assertEqual(response.get(), b'{500, 200}')
+            res = json.loads(response.get())
+            self.assertListEqual(res, [500, 200])
 
     # url_join
 
