@@ -73,6 +73,8 @@ zmq = API(
     PUSH    = 'zmq.PUSH',
     PULL    = 'zmq.PULL',
     PAIR    = 'zmq.PAIR',
+    SUB     = 'zmq.SUB',
+    SUBSCRIBE = 'zmq.SUBSCRIBE',
     NOBLOCK = 'zmq.NOBLOCK',
     Again   = 'zmq.Again'
 )

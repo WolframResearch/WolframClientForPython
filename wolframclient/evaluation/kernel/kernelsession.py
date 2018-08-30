@@ -10,7 +10,7 @@ from wolframclient.evaluation.result import WolframKernelEvaluationResult
 from wolframclient.exception import WolframKernelException
 from wolframclient.language import wl
 from wolframclient.serializers import export
-from wolframclient.utils.api import futures, os, time, zmq
+from wolframclient.utils.api import futures, os, time, zmq, json
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils import six
 
@@ -30,12 +30,14 @@ class KernelLogger(Thread):
     }
 
     MAX_MESSAGE_BEFORE_QUIT = 32
-
+    
     def __init__(self, socket, level=logging.WARN):
         if not isinstance(socket, Socket):
             raise ValueError('Expecting a Socket.')
         self.socket = socket
         self.socket._bind()
+        # Subscribe to all since we want all log messages.
+        self.socket.zmq_socket.setsockopt(zmq.SUBSCRIBE, b'')
         logger.info('Initializing Kernel logger on socket ' + self.socket.uri)
         super(KernelLogger, self).__init__(name='wolframkernel-logger-%s:%s' % (self.socket.host, self.socket.port))
         self.logger = logging.getLogger('WolframKernel-%s:%s' % (self.socket.host, self.socket.port))
@@ -135,9 +137,9 @@ class WolframLanguageSession(object):
 
         if kernel_loglevel != logging.NOTSET:
             if logger_socket is None:
-                self.logger_socket = Socket(zmq_type=zmq.PULL)
-            elif isinstance(logger_socket, Socket) and logger_socket.zmq_type != zmq.PULL:
-                raise ValueError('Logging socket must have zmq type PULL.')
+                self.logger_socket = Socket(zmq_type=zmq.SUB)
+            elif isinstance(logger_socket, Socket) and logger_socket.zmq_type != zmq.SUB:
+                raise ValueError('Logging socket must have zmq type SUB.')
             else:
                 raise ValueError(
                     'Expecting kernel logger socket to be a Socket instance.')

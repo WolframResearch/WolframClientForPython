@@ -121,7 +121,7 @@ $MaxMessagesReturned = 31;
 $NoMessage = ByteArray[{0}];
 
 SlaveKernelPrivateStart[inputsocket_String, outputsocket_String, logsocket_String] := (
-	$LoggerSocket=SocketConnect[logsocket,"ZMQ_Push"];
+	$LoggerSocket=SocketConnect[logsocket,"ZMQ_PUB"];
 	If[FailureQ[$LoggerSocket],
 		Print["Failed to connect to logging socket: ", logsocket]
 		,
