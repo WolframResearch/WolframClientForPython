@@ -18,8 +18,8 @@ Make sure you have pip and setuptools installed and upgraded and try again:
 
 setup(
     name = 'wolframclient',
-    version = '0.1',
-    description = 'A python library to call Wolfram API and serialize expressions.',
+    version = '1.0preview1',
+    description = 'A Python library with various tools to interact with the Wolfram Language and the Wolfram Cloud.',
     author = 'Wolfram Research',
     author_email = [
         'dorianb@wolfram.com',
@@ -27,12 +27,19 @@ setup(
     ],
     include_package_data=True,
     packages=find_packages(),
-    # package_data={'wolframclient.evaluation.kernel': ['initkernel.m']},
+    test_suite='wolframclient.tests',
+    python_requires='>=2.7',
     install_requires = [
         'pip',
         'numpy',
         'pytz',
         'requests',
-        'oauthlib'
+        'oauthlib',
+        'zmq'
     ],
+    project_urls={
+        'Source code': 'https://github.com/WolframResearch/TODO',
+        'Documentation': 'todo',
+        'Wolfram Research': 'https://www.wolfram.com'
+    }
 )
