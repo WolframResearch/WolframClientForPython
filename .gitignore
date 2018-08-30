@@ -5,3 +5,5 @@ __pycache__
 /dist
 *.egg-info
 wolframclient/tests/local_config.json
+/htmlcov
+.coverage

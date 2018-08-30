@@ -1,0 +1,11 @@
+[run]
+branch = True
+timid = True
+source = wolframclient
+omit = 
+    # client
+    wolframclient/cli/*
+    # unit tests
+    wolframclient/tests/*
+    # libraries
+    /usr/*
