@@ -53,6 +53,20 @@ A one-shot evaluation on the Wolfram public cloud requires to initiate an :ref:`
     >>> session.evaluate('Range[3]')
     WolframEvaluationJSONResponse<success=True, expression={1, 2, 3}>
 
+Even if the authenticated session is a persistent object, each evaluation occurs independently, similarly to :wl`:CloudEvaluate`. It means that it's not the appropriate tools to work with variables, and functions.
+
+Define a basic function `f`::
+
+    >>> result = session.evaluate('f[x_]:=x+1')
+    >>> result.get()
+    'Null'
+
+Apply `f` to `1`, but `f` is no more defined, thus getting an unevaluated result::
+
+    >>> result = session.evaluate('f[1]')
+    >>> result.get()
+    'f[1]'
+
 Cloud functions
 ------------------
 
@@ -92,23 +106,22 @@ Using the Wolfram Language, connect to the Wolfram Cloud using your Wolfram ID a
 
     CloudConnect["MyWolframID", "myPassword"]
 
-Create an :wl:`APIFunction` that takes a list of values (:wl:`RepeatingElement`) and returns the result of :wl:`MinMax` applied to it, in the JSON format:
+Create an :wl:`APIFunction` that takes an integer and returns its squared value:
 
 .. code-block :: wl
 
-    api = APIFunction[{"list" -> RepeatingElement[Expression]},
-        MinMax[#list] &,
-        "JSON"
+    api = APIFunction[{"x" -> "Integer"},
+        #x^2 &
     ]
 
 .. note::
-    By default, :wl:`APIFunction` formats output as string :wl:`InputForm` which is not always suited for interoperability with Python. When possible JSON is preferable and :wl:`WXF` is a versatile option.
+    By default, :wl:`APIFunction` formats output as string :wl:`InputForm` which is not always suited for interoperability with Python. For better inter-operability JSON is preferable. :wl:`WXF` is an other versatile option.
 
-Deploy the API as a cloud object named `api/private/minmax`:
+Deploy the API as a cloud object named `api/private/xsquared`:
 
 .. code-block :: wl
 
-    CloudDeploy[api, CloudObject["api/private/minmax"]]
+    CloudDeploy[api, CloudObject["api/private/xsquared"]]
 
 The API was deployed with default permissions, and as such is a private :wl:`CloudObject` only usable by its owner.
 
@@ -118,24 +131,28 @@ API call from Python
 
 Once again we need an :ref:`authenticated session<ref-auth>` to call the API from Python. API are specified with 2-value tuple made of the owner ID (your Wolfram ID) and the name of the :wl:`CloudObject` used to deploy::
 
-    >>> api = ('MyWolframID', 'api/private/minmax')
+    >>> api = ('MyWolframID', 'api/private/xsquared')
 
 The API sole input is `"list"`. In general API values are specified as a :class:`dict` where keys are parameters' name. Python :class:`list` are automatically converted to Wolfram Language :wl:`List` and thus are valid API input values. 
 
 Call the API::
 
-    >>> result = session.call(api, {'list' : [[1, 2, 3], [-1, -2, -3]]})
+    >>> result = session.call(api, {'x' : 4})
 
 Check that the API call succeeded::
 
     >>> result.success
     True
 
-Parse the JSON string result with :func:`json.loads`::
+Get the result as an string::
 
-    >>> import json
-    >>> json.loads(result.get())
-    [-3, 3]
+    >>> result.get()
+    b'16'
+
+Parse it as an :class:`int`::
+
+    >>> int(result.get())
+    16
 
 Use WolframAPICall
 ------------------
@@ -143,22 +160,21 @@ Use WolframAPICall
 :class:`~wolframclient.evaluation.WolframAPICall` provides a convenient interface to call API. Using the :ref:`previously deployed API <ref-deployAPI>`, and the :ref:`authenticated session<ref-auth>`, instanciate a new :class:`~wolframclient.evaluation.WolframAPICall`::
     
     >>> from wolframclient.evaluation import WolframAPICall
-    >>> call = WolframAPICall(session, ('MyWolframID', 'api/private/minmax'))
+    >>> call = WolframAPICall(session, ('MyWolframID', 'api/private/xsquared'))
 
 Add an input parameter::
 
-    >>> call.add_parameter('list', [[1, 2, 3], [-1, -2, -3]])
-    WolframAPICall<api=('MyWolframID', 'api/private/minmax')>
+    >>> call.add_parameter('x', 4)
+    WolframAPICall<api=('MyWolframID', 'api/private/xsquared')>
 
 Perform the call::
 
     >>> result = call.perform()
 
-Fetch the result and parse the JSON reponse::
+Get the result::
 
-    >>> import json
-    >>> json.loads(result.get())
-    [-3, 3]
+    >>> result.get()
+    b'16'
 
 The class :class:`~wolframclient.evaluation.WolframAPICall` exposes some helper functions to deal with specific content type and files. It is particularly useful when using image inputs. 
 

@@ -18,9 +18,9 @@ A list of features provided by the library:
 * build Python functions on top of Wolfram Language functions.
 * represent arbitrary Wolfram Language code as Python object
 * serialize Python object to Wolfram Language string :wl:`InputForm`
-* serialize Python object to :wl:WXF
+* serialize Python object to :wl:`WXF`
 * extend serialization to any arbitrary Python class.
-* parse :wl:WXF.
+* parse :wl:`WXF`.
 
 
 Table of content
