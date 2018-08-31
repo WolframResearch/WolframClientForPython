@@ -34,5 +34,5 @@ def binary_deserialize(wxf_input, consumer=None, **kwargs):
             'Input data does not represent a valid expression in WXF format. Expecting more input data.')
     if not parser.context.is_valid_final_state():
         raise WolframParserException(
-            'Input data does not represent a valid expression in WXF format. Some expressions are imcomplete.')
+            'Input data does not represent a valid expression in WXF format. Some expressions are incomplete.')
     return o
