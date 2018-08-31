@@ -275,11 +275,10 @@ In the above example the variable `session` can be seamlessly replaced by an :re
 Serialization
 =============
 
-This library is intended to provide a way to serialize python expression to Wolfram Language string :wl:`InputForm` and :wl:`WXF` string of bytes. The functionality was designed to be extensible, so that any arbitrary Python object can be serialized with the addition of custom encoders. The serialization module was tested with three interpreters:
+This library is intended to provide a way to serialize python expression to Wolfram Language string :wl:`InputForm` and :wl:`WXF` string of bytes. The functionality was designed to be extensible, so that any arbitrary Python object can be serialized with the addition of custom encoders. The serialization module was tested with Python 2 and 3 interpreters, namely:
 
-- Python 2.7, 
-- Python 3.6.4, 
-- JYTHON.
+- Python 2.7,
+- Python 3.6.4
 
 Serialize
 ----------
