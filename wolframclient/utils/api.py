@@ -130,6 +130,6 @@ numpy = API(
     complex64 = 'numpy.complex64',
     complex128 = 'numpy.complex128',
     dtype = 'numpy.dtype',
-    fromstring = 'numpy.fromstring',
+    frombuffer = 'numpy.frombuffer',
     reshape = 'numpy.reshape'
 )
