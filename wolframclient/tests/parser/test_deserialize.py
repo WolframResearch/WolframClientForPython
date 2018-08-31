@@ -6,10 +6,17 @@ from wolframclient.deserializers import binary_deserialize, WXFToken, WXFConsume
 from wolframclient.deserializers.wxf.wxfparser import parse_varint
 from wolframclient.serializers import export
 from wolframclient.serializers.wxfencoder.serializer import write_varint
+from wolframclient.serializers.wxfencoder import wxfexpr
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
 from wolframclient.exception import WolframParserException
 import unittest
+
+
+try:
+    import numpy
+except ImportError:
+    numpy = False
 
 class TestCase(BaseTestCase):
     def test_token_dimensions(self):
@@ -99,6 +106,12 @@ class TestCase(BaseTestCase):
         value = [1.2345, 0., 1.23456789e100]
         self.wxf_assert_roundtrip(value)
 
+    def test_bigreal(self):
+        wxf = b'8:R\x0710.`10.'
+        res = binary_deserialize(wxf)
+        self.assertTrue(isinstance(res, wxfexpr.WXFExprBigReal))
+        self.assertEqual(res.value, b'10.`10.')
+
     def test_empty_lists(self):
         value = [[], [[]], [1, []], []]
         self.wxf_assert_roundtrip(value)
@@ -110,20 +123,39 @@ class TestCase(BaseTestCase):
     def test_empty_dict(self):
         self.wxf_assert_roundtrip({})
 
-    # Custom consumer
+    def test_rules(self):
+        # BinarySerialize[<|"1" -> 1, "2" -> {0}, "3" -> <||>|>]
+        wxf = b'8:A\x03-S\x011C\x01-S\x012f\x01s\x04ListC\x00-S\x013A\x00'
+        res = binary_deserialize(wxf)
+        self.assertEqual(res, {'1': 1, '2': [0], '3': {}})
 
+    def test_bad_bignum(self):
+        # replace last digit by 'A'
+        wxf = b'8:I\x171234567890123456789012A'
+        with self.assertRaises(WolframParserException):
+            binary_deserialize(wxf)
 
+    # Numpy arrays
+    @unittest.skipIf(not numpy, 'NumPy not found. Skipping numpy tests.')
+    def test_numpy(self):
+        arr = numpy.array([0,1], 'uint8')
+        wxf = export(arr, target_format='wxf')
+        res = binary_deserialize(wxf)
+        self.assertListEqual(res.tolist(), arr.tolist())
+
+    # Numpy arrays
+    @unittest.skipIf(not numpy, 'NumPy not found. Skipping numpy tests.')
+    def test_numpy(self):
+        arr = numpy.array([[0,1], [1,1], [2,1]], 'uint8')
+        wxf = export(arr, target_format='wxf')
+        res = binary_deserialize(wxf)
+        self.assertListEqual(res.tolist(), arr.tolist())
+
+    # Custom consumers
     class BadGreedyConsumer(WXFConsumer):
         def consume_function(self, current_token, tokens, **kwargs):
             # fetch too many elements
             while True:
-                self.next_expression(tokens, **kwargs)
-
-    class BadIncompleteConsumer(WXFConsumer):
-        def consume_function(self, current_token, tokens, **kwargs):
-            # fetch too few elements, head comes first and is not accounted for in length.
-            args = []
-            for i in range(current_token.length):
                 self.next_expression(tokens, **kwargs)
 
     def test_bad_greedy_consumer(self):
@@ -132,8 +164,16 @@ class TestCase(BaseTestCase):
                 export([1, 2, 3], target_format='wxf'), consumer=self.BadGreedyConsumer())
             self.assertEqual(e.msg, 'Input data does not represent a valid expression in WXF format. Expecting more input data.')
 
+    class BadIncompleteConsumer(WXFConsumer):
+        def consume_function(self, current_token, tokens, **kwargs):
+            # fetch too few elements, head comes first and is not accounted for in length.
+            args = []
+            for i in range(current_token.length):
+                self.next_expression(tokens, **kwargs)
+
     def test_bad_incomplete_consumer(self):
         with self.assertRaises(WolframParserException) as e:
             binary_deserialize(
                 export([1, 2, 3], target_format='wxf'), consumer=self.BadIncompleteConsumer())
             self.assertEqual(e.msg, 'Input data does not represent a valid expression in WXF format. Some expressions are imcomplete.')
+
