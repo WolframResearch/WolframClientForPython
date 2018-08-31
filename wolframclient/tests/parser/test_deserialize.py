@@ -2,13 +2,13 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.deserializers import binary_deserialize, WXFToken
+from wolframclient.deserializers import binary_deserialize, WXFToken, WXFConsumer
 from wolframclient.deserializers.wxf.wxfparser import parse_varint
 from wolframclient.serializers import export
 from wolframclient.serializers.wxfencoder.serializer import write_varint
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
-
+from wolframclient.exception import WolframParserException
 import unittest
 
 class TestCase(BaseTestCase):
@@ -109,3 +109,31 @@ class TestCase(BaseTestCase):
 
     def test_empty_dict(self):
         self.wxf_assert_roundtrip({})
+
+    # Custom consumer
+
+
+    class BadGreedyConsumer(WXFConsumer):
+        def consume_function(self, current_token, tokens, **kwargs):
+            # fetch too many elements
+            while True:
+                self.next_expression(tokens, **kwargs)
+
+    class BadIncompleteConsumer(WXFConsumer):
+        def consume_function(self, current_token, tokens, **kwargs):
+            # fetch too few elements, head comes first and is not accounted for in length.
+            args = []
+            for i in range(current_token.length):
+                self.next_expression(tokens, **kwargs)
+
+    def test_bad_greedy_consumer(self):
+        with self.assertRaises(WolframParserException) as e:
+            binary_deserialize(
+                export([1, 2, 3], target_format='wxf'), consumer=self.BadGreedyConsumer())
+            self.assertEqual(e.msg, 'Input data does not represent a valid expression in WXF format. Expecting more input data.')
+
+    def test_bad_incomplete_consumer(self):
+        with self.assertRaises(WolframParserException) as e:
+            binary_deserialize(
+                export([1, 2, 3], target_format='wxf'), consumer=self.BadIncompleteConsumer())
+            self.assertEqual(e.msg, 'Input data does not represent a valid expression in WXF format. Some expressions are imcomplete.')
