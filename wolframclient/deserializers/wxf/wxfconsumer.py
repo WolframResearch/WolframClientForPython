@@ -190,9 +190,8 @@ class WXFConsumer(object):
             'Method consume_packed_array is not implemented by %s.' % self.__class__.__name__)
 
 class WXFConsumerNumpy(WXFConsumer):
-
     def consume_array(self, current_token, tokens, **kwargs):
-        arr=numpy.fromstring(current_token.data, dtype=WXFConsumerNumpy.WXF_TYPE_TO_DTYPE[current_token.array_type])
+        arr=numpy.frombuffer(current_token.data, dtype=WXFConsumerNumpy.WXF_TYPE_TO_DTYPE[current_token.array_type])
         arr = numpy.reshape(arr, tuple(current_token.dimensions))
         return arr
     """Build a numpy array from a PackedArray."""
