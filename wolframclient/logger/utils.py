@@ -19,3 +19,12 @@ else:
             handlers=[logging.FileHandler(path, 'a', 'utf-8')],
             level=level
         )
+
+def str_trim(o, max_char=80):
+    """Return the string representation of an object, trimmed to keep up to `max_char` characters.
+    """
+    as_str = str(o)
+    if len(as_str) > max_char:
+        return '%s...(%i more)' % (as_str[:max_char], len(as_str) - max_char)
+    else:
+        return as_str

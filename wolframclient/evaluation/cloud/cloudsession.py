@@ -183,19 +183,24 @@ class WolframCloudSession(object):
             body=data)
         return WolframEvaluationJSONResponse(response)
 
-    def _normalize_input(self, expr):
+    def _normalize_input(self, expr, **kwargs):
         if isinstance(expr, six.string_types) or isinstance(expr, six.binary_type):
             return expr
         else:
-            return export(expr)
+            return export(expr, **kwargs)
 
-    def evaluate(self, expr):
-        """Send `expr` to the cloud for evaluation.
+    def evaluate(self, expr, **kwargs):
+        """Send `expr` to the cloud for evaluation, return the result.
 
-        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export`,
+        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export`, 
         or a the string InputForm of an expression to evaluate.
         """
-        return self._call_evaluation_api(self._normalize_input(expr))
+        return self._call_evaluation_api(self._normalize_input(expr, **kwargs)).get()
+
+    def evaluate_wrap(self, expr, **kwargs):
+        """ Similar to :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframEvaluationJSONResponse`.
+        """
+        return self._call_evaluation_api(self._normalize_input(expr, **kwargs))
 
     def cloud_function(self, func):
         """Return a `callable` cloud function.

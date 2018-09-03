@@ -66,6 +66,15 @@ class WolframCall(object):
         self._ensure_target_ready()
         return self.target.evaluate(self.input)
 
+    def perform_wrap(self):
+        """Send the input to the specified target for evaluation and return the result as a 
+        class holding the result and the evaluation meta-data.
+        
+        The class instance depends on the target evaluator."""
+        self._normalize_input()
+        self._ensure_target_ready()
+        return self.target.evaluate_wrap(self.input)
+
     def perform_async(self):
         """Asynchronously send the input to the specified target for evaluation and return a future object.
 
@@ -138,7 +147,7 @@ class WolframAPICall(object):
 
     def __repr__(self):
         return 'WolframAPICall<api=%s>' % (self.api,)
-    
+
     def __str__(self):
         return repr(self)
         

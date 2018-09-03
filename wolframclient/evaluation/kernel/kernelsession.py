@@ -7,7 +7,7 @@ from subprocess import PIPE, Popen
 from threading import Event, Thread
 
 from wolframclient.evaluation.result import WolframKernelEvaluationResult
-from wolframclient.exception import WolframKernelException
+from wolframclient.exception import WolframKernelException, WolframEvaluationException
 from wolframclient.language import wl
 from wolframclient.language.expression import WLSymbol
 from wolframclient.serializers import export
@@ -318,9 +318,8 @@ class WolframLanguageSession(object):
         """Indicate if the current kernel session has started with reasonable accuracy."""
         return self.kernel_proc is not None
 
-    def evaluate(self, expr, **kwargs):
-        """Send an expression to the kernel for evaluation return a
-        :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.
+    def _evaluate(self, expr, wrap_result=False, **kwargs):
+        """Send an expression to the kernel for evaluation. Return a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.
 
         The `expr` can be:
 
@@ -353,6 +352,38 @@ class WolframLanguageSession(object):
         wxf_result = self.out_socket.zmq_socket.recv()
         self.evaluation_count += 1
         return WolframKernelEvaluationResult(wxf_result, errmsg)
+
+    def evaluate_wxf(self, expr, **kwargs):
+        """Send an expression to the kernel for evaluation and return the result encoded as WXF.
+        """
+        wxf = self._evaluate(expr, **kwargs).wxf
+        if result.success:
+            return wxf
+        else:
+            raise WolframEvaluationException('Messages issued during evaluation.', result=result.wxf, messages=result.messages)
+
+    def evaluate_wrap(self, expr, **kwargs):
+        """ Similar to :func:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.
+        """
+        return self._evaluate(expr, **kwargs)
+    
+    def evaluate(self, expr, **kwargs):
+        """Send an expression to the kernel for evaluation.
+
+        The `expr` can be:
+
+            * a text string representing the Wolfram Language expression :wl:`InputForm`.
+            * an instance of Python object serializable as WXF by :func:`~wolframclient.serializers.export`.
+            * a binary string of a serialized expression in the WXF format.
+
+        `kwargs` are passed to :func:`~wolframclient.serializers.export` during serialization step of
+        non-string inputs.
+        """
+        result = self._evaluate(expr, kwargs)
+        if result.success:
+            return result.get()
+        else:
+            raise WolframEvaluationException('Messages issued during evaluation.', result=result.result, messages=result.messages)
 
     def evaluate_async(self, expr, **kwargs):
         """Evaluate a given `expr` asynchronously.

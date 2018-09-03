@@ -6,6 +6,7 @@ from wolframclient.utils import six
 if not six.JYTHON:
     from wolframclient.evaluation import WolframCall, WolframAPICall
 from wolframclient.language.expression import WLSymbol
+from wolframclient.exception import WolframEvaluationException
 from wolframclient.logger.utils import setup_logging_to_file
 from wolframclient.utils.encoding import force_text
 from wolframclient.tests.evaluation.test_cloud import TestCaseSettings as SessionTestCase
@@ -34,21 +35,29 @@ class TestCase(SessionTestCase, KernelTestCase):
     @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
     def test_wolfram_call_kernel(self):
         result = WolframCall(self.kernel_session, '1+1').perform()
-        self.assertEqual(result.get(), 2)
+        self.assertEqual(result, 2)
 
     @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
     def test_wolfram_call_kernel_fail(self):
-        result = WolframCall(self.kernel_session, 'Range[3').perform()
+        with self.assertRaises(WolframEvaluationException):
+            result = WolframCall(self.kernel_session, 'Range[3').perform()
+
+    @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
+    def test_wolfram_call_kernel_wrap_fail(self):
+        result = WolframCall(self.kernel_session, 'Range[3').perform_wrap()
         self.assertEqual(result.get(), WLSymbol('$Failed'))
 
     def test_call_cloud_evaluation(self):
         result = WolframCall(self.cloud_session, '1+1').perform()
-        self.assertEqual(result.get(), '2')
+        self.assertEqual(result, '2')
 
     def test_call_cloud_evaluation_fail(self):
-        result = WolframCall(self.cloud_session, 'Range[3').perform()
-        self.assertFalse(result.success)
-        self.assertEqual(result.result, 'Null')
+        with self.assertRaises(WolframEvaluationException):
+            WolframCall(self.cloud_session, 'Range[3').perform()
+    
+    def test_call_cloud_evaluation_fail_wrap(self):
+        res = WolframCall(self.cloud_session, 'Range[3').perform_wrap()
+        self.assertFalse(res.success)
 
     def test_wolfram_api_call_image(self):
         api = (self.api_owner, 'api/private/imagedimensions')
@@ -64,5 +73,5 @@ class TestCase(SessionTestCase, KernelTestCase):
         api = (self.api_owner, 'api/private/stringreverse')
         apicall = WolframAPICall(self.cloud_session, api)
         apicall.add_parameter('str', 'abcde')
-        res = apicall.perform()
-        self.assertEqual('"edcba"', force_text(res.get()))
+        res = apicall.perform().get()
+        self.assertEqual('"edcba"', force_text(res))

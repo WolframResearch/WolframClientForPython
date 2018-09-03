@@ -3,7 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.deserializers import binary_deserialize
-from wolframclient.exception import EvaluationException, RequestException, WolframLanguageException
+from wolframclient.exception import RequestException, WolframLanguageException, WolframEvaluationException
 from wolframclient.utils import six
 from wolframclient.utils.api import json
 
@@ -118,14 +118,14 @@ class WolframEvaluationJSONResponse(WolframResult):
         else:
             logger.fatal('Server invalid response %i: %s',
                          response.status_code, response.text)
-            raise EvaluationException(response)
+            raise RequestException(response)
 
     def get(self):
         """Return the result or raise an exception based on the success status."""
         if self.success:
             return self.result
         else:
-            raise WolframLanguageException('Evaluation failed and issued %d messages.' % len(self.failure))
+            raise WolframEvaluationException('Cloud evaluation failed.', messages=self.failure)
 
     def __repr__(self):
         if self.success:
