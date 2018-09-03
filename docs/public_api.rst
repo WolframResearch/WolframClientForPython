@@ -232,7 +232,7 @@ Exceptions
     :noindex:
     :members:
 
-.. autoclass:: wolframclient.exception.EvaluationException
+.. autoclass:: wolframclient.exception.WolframEvaluationException
     :noindex:
     :members:
 

@@ -13,6 +13,30 @@ The library source code is available in various repositories:
 .. note::
     Even though most of the features were built to work on Python 2.7, it is recommended to use the library with Python 3.2 or greater.
 
+Install with pip
+^^^^^^^^^^^^^^^^^^^
+
+Evaluate the following command in a terminal:
+
+.. code-block:: shell
+
+    $ pip install wolframclient
+
+Install from GitHub
+^^^^^^^^^^^^^^^^^^^^^
+
+Clone the library's repository:
+
+.. code-block:: shell
+
+    $ git clone git://github.com/wolframresearch/pythonclientlibrary
+
+
+Install the library:
+
+.. code-block:: shell
+
+    $ pip install .
 
 Install from Wolfram Desktop
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -36,30 +60,3 @@ From a terminal evaluate the following commands:
 
     $ cd /path/to/library
     $ pip install .
-
-
-Install from GitHub
-^^^^^^^^^^^^^^^^^^^^^
-
-Clone the library's repository:
-
-.. code-block:: shell
-
-    $ git clone git://github.com/wolframresearch/pythonclientlibrary
-
-
-Install the library:
-
-.. code-block:: shell
-
-    $ pip install .
-
-
-Install with pip
-^^^^^^^^^^^^^^^^^^^
-
-Evaluate the following command in a terminal:
-
-.. code-block:: shell
-
-    $ pip install wolframclientlibrary

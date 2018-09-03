@@ -48,23 +48,29 @@ In the following sections the authenticated session initialized above is simply 
 Cloud evaluation
 -------------------------------
 
-A one-shot evaluation on the Wolfram public cloud requires to initiate an :ref:`authenticated session<ref-auth>`, and call its :meth:`~wolframclient.evaluation.WolframCloudSession.evaluate` method::
+A one-shot evaluation on the Wolfram public cloud requires to initiate an :ref:`authenticated session<ref-auth>`. Using an authenticated session, call a function:
 
-    >>> session.evaluate('Range[3]')
-    WolframEvaluationJSONResponse<success=True, expression={1, 2, 3}>
+    >>> session.Range(3)
+    '{1, 2, 3}'
+
+    >>> session.StringReverse('abc')
+    '"cba"'
+
+Complex expressions are evaluated with the :meth:`~wolframclient.evaluation.WolframCloudSession.evaluate` method. Return the first five `wl`:Prime` numbers::
+
+    >>> session.evaluate('Map[Prime, Range[5]]')
+    '{2, 3, 5, 7, 11}'
 
 Even if the authenticated session is a persistent object, each evaluation occurs independently, similarly to :wl`:CloudEvaluate`. It means that it's not the appropriate tools to work with variables, and functions.
 
-Define a basic function `f`::
+Define a function `f`::
 
     >>> result = session.evaluate('f[x_]:=x+1')
-    >>> result.get()
     'Null'
 
 Apply `f` to `1`, but `f` is no more defined, thus getting an unevaluated result::
 
     >>> result = session.evaluate('f[1]')
-    >>> result.get()
     'f[1]'
 
 Cloud functions
@@ -74,17 +80,17 @@ From an :ref:`authenticated session<ref-auth>` it is possible to build a cloud f
 
     >>> wl_str_reverse = session.cloud_function('StringReverse')
 
-Apply it to a different strings::
+Apply it to a first string::
 
     >>> wl_str_reverse("hello")
-    WolframEvaluationJSONResponse<success=True, expression="olleh">
+    '"olleh"'
 
-Retrieve the evaluation result with :meth:`~wolframclient.evaluation.WolframResult.get`:
+Use the function again with a new argument::
 
-    >>> wl_str_reverse("world.").get()
+    >>> wl_str_reverse("world.")
     '".dlrow"'
 
-Functions may accept more than one input parameters. Define a cloud function that applies :wl:`Join` and call it from Python on multiple lists::
+Functions may accept more than one input parameters. Define a cloud function that applies :wl:`Join` on all arguments it is given. Join multiple Python arrays::
 
     >>> wl_join = session.cloud_function('Join[##] &')
     >>> wl_join([0,1], ["a", "b"], [2, "c"])
@@ -228,23 +234,44 @@ Wolfram Language session :class:`~wolframclient.evaluation.WolframLanguageSessio
     * On `Windows`: `WolframKernel.exe`
     * On Linux: `Files/Executables/WolframKernel`
 
-    It is advised to first try to execute the WolframKernel executable once from your terminal.
+    **It is advised to first try to run the WolframKernel executable once from your terminal.**
 
 Import :class:`~wolframclient.evaluation.WolframLanguageSession`::
     
     >>> from wolframclient.evaluation import WolframLanguageSession
 
-:class:`~wolframclient.evaluation.WolframLanguageSession` must be terminated either: inside a `try/finally` block, by explicitly closing the session after it is used, or, alternatively, in a `with` block that achieves the same result automatically::
+Evaluate a Wolfram Language function from Python:
 
     >>> with WolframLanguageSession('/path/to/kernel-executable') as session:
-    ...     session.evaluate('Range[3]')
+    ...     session.StringReverse('abc')
     ...
-    WolframKernelEvaluationResult<success=True, result=cba>
+    'cba'
+
+Call the Wolfram Language function :wl:`MinMax` on a Python list::
+
+    >>> with WolframLanguageSession('/path/to/kernel-executable') as session:
+    ...     session.MinMax([1, 5, -3, 9])
+    [-3, 9]
+
+More complex expressions are evaluated using :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate`::
+
+    >>> with WolframLanguageSession('/path/to/kernel-executable') as session:
+    ...     session.evaluate('Map[Prime, Range[5]]')
+    [2, 3, 5, 7, 11]
+
+Expressions evaluated in a given session are persistent. Define a function, and call it::
+    
+    >>> with WolframLanguageSession('/path/to/kernel-executable') as session:
+    ...    session.evaluate('f[x_] := x ^ 2')
+    ...    session.evaluate('f[4]')
+    16
+
+:class:`~wolframclient.evaluation.WolframLanguageSession` must be terminated, either inside a `try/finally` block, or by explicitly :func:`terminating<wolframclient.evaluation.WolframLanguageSession.terminate>` the session, or, alternatively, in a `with` block that achieves the same result automatically, as shown above. It is highly recommended to initialize a session once to mitigate the initialization cost. Wolfram Language sessions are **not thread-safe**.
 
 Wolfram Call
 ------------------
 
-An other approach is to rely on :class:`~wolframclient.evaluation.WolframCall`. This class abstracts away the evaluator type (:class:`~wolframclient.evaluation.WolframLanguageSession` or :class:`~wolframclient.evaluation.WolframCloudSession`) and enables seamless transitions from local evaluation to cloud evaluation.
+An other approach to code evaluation is to rely on :class:`~wolframclient.evaluation.WolframCall`. This class abstracts away the evaluator type (:class:`~wolframclient.evaluation.WolframLanguageSession` or :class:`~wolframclient.evaluation.WolframCloudSession`) and enables seamless transitions from local evaluation to cloud evaluation.
 
 First import :class:`~wolframclient.evaluation.WolframLanguageSession` and :class:`~wolframclient.evaluation.WolframCall`::
 
@@ -256,29 +283,19 @@ Using an :ref:`initialized Wolfram language session<ref-localkernel>`, it is pos
     >>> with WolframLanguageSession('/path/to/kernel-executable') as session:
     ...     call = WolframCall(session, 'StringReverse["abc"]')
     ...     result = call.perform()
-    ...     result.get()
     ...
     'cba'
 
-In the above example the variable `session` can be seamlessly replaced by an :ref:`initialized cloud session<ref-auth>`::
+In the above example the variable `session` can be seamlessly replaced by an :ref:`initialized cloud session<ref-auth>` called `cloud_session`::
 
-    >>> from wolframclient.evaluation import WolframCloudSession
-    >>> from wolframclient.evaluation import WolframCall
-
-    >>> userID = UserIDPassword('MyWolframID', 'password')
-    >>> session = WolframCloudSession(authentication=userID)
-    >>> call = WolframCall(session, 'StringReverse["abc"]')
+    >>> call = WolframCall(cloud_session, 'StringReverse["abc"]')
     >>> result = call.perform()
-    >>> result.get()
     '"cba"'
 
 Serialization
 =============
 
-This library is intended to provide a way to serialize python expression to Wolfram Language string :wl:`InputForm` and :wl:`WXF` string of bytes. The functionality was designed to be extensible, so that any arbitrary Python object can be serialized with the addition of custom encoders. The serialization module was tested with Python 2 and 3 interpreters, namely:
-
-- Python 2.7,
-- Python 3.6.4
+This library is intended to provide a way to serialize python expression to Wolfram Language string :wl:`InputForm` and :wl:`WXF` string of bytes. The functionality was designed to be extensible, so that any arbitrary Python object can be serialized with the addition of custom encoders.
 
 Serialize
 ----------
