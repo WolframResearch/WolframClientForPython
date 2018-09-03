@@ -9,6 +9,7 @@ from threading import Event, Thread
 from wolframclient.evaluation.result import WolframKernelEvaluationResult
 from wolframclient.exception import WolframKernelException
 from wolframclient.language import wl
+from wolframclient.language.expression import WLSymbol
 from wolframclient.serializers import export
 from wolframclient.utils.api import futures, os, time, zmq, json
 from wolframclient.utils.encoding import force_text
@@ -368,6 +369,12 @@ class WolframLanguageSession(object):
         except ImportError:
             logger.fatal('Module concurrent.futures is missing.')
             raise NotImplementedError('Asynchronous evaluation is not available on this Python interpreter.')
+
+    def __getattr__(self, attr):
+        def inner(*args, **kwargs):
+            expr = WLSymbol(force_text(attr))(*args, **kwargs)
+            return self.evaluate(expr)
+        return inner
 
     def __repr__(self):
         return '<WolframLanguageSession: in:%s, out:%s>' % (self.in_socket.uri, self.out_socket.uri)

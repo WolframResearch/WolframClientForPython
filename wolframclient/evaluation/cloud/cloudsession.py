@@ -7,8 +7,10 @@ from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 from wolframclient.evaluation.result import WolframAPIResponseBuilder, WolframEvaluationJSONResponse
 from wolframclient.exception import AuthenticationException
 from wolframclient.language import wl
+from wolframclient.language.expression import WLSymbol
 from wolframclient.serializers import export
 from wolframclient.utils import six
+from wolframclient.utils.encoding import force_text
 from wolframclient.utils.api import futures, json, requests
 
 import logging
@@ -194,7 +196,7 @@ class WolframCloudSession(object):
         or a the string InputForm of an expression to evaluate.
         """
         return self._call_evaluation_api(self._normalize_input(expr))
-        
+
     def cloud_function(self, func):
         """Return a `callable` cloud function.
 
@@ -203,6 +205,13 @@ class WolframCloudSession(object):
         session.
         """
         return CloudFunction(self, func)
+
+    def __getattr__(self, attr):
+        def inner(*args, **kwargs):
+            expr = WLSymbol(force_text(attr))(*args, **kwargs)
+            return self.evaluate(expr)
+        return inner
+
 
     def __repr__(self):
         return '<{}:base={}, authorized={}>'.format(self.__class__.__name__, self.server.cloudbase, self.authorized)

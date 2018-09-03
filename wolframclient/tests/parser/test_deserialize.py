@@ -64,8 +64,16 @@ class TestCase(BaseTestCase):
         value = u"maître & élève"
         self.wxf_assert_roundtrip(value)
 
-    def testBinaryString(self):
+    def test_empty_string(self):
+        value = u''
+        self.wxf_assert_roundtrip(value)
+
+    def test_binary_string(self):
         value = bytearray([0,128,255])
+        self.wxf_assert_roundtrip(value)
+
+    def test_empty_binary_string(self):
+        value = bytearray([])
         self.wxf_assert_roundtrip(value)
 
     def test_max_3bytes_unicode(self):
@@ -129,15 +137,41 @@ class TestCase(BaseTestCase):
         res = binary_deserialize(wxf)
         self.assertEqual(res, {'1': 1, '2': [0], '3': {}})
 
+    # WXF format error
+    def test_bad_header_version(self):
+        wxf = b'1:'
+        with self.assertRaises(WolframParserException):
+            binary_deserialize(wxf)
+    
+    def test_bad_header_compress(self):
+        wxf = b'8x:'
+        with self.assertRaises(WolframParserException):
+            binary_deserialize(wxf)
+    
+    def test_bad_header_separator(self):
+        wxf = b'8C/'
+        with self.assertRaises(WolframParserException):
+            binary_deserialize(wxf)
+
     def test_bad_bignum(self):
         # replace last digit by 'A'
         wxf = b'8:I\x171234567890123456789012A'
         with self.assertRaises(WolframParserException):
             binary_deserialize(wxf)
 
+    def test_zero_array_rank(self):
+        wxf_rank0 = b'8:\xc2\x00\x00\x01\x00'
+        with self.assertRaises(WolframParserException):
+            binary_deserialize(wxf_rank0)
+
+    def test_zero_array_dimensions(self):
+        wxf_dim0 = b'8:\xc2\x00\x01\x00\x00'
+        with self.assertRaises(WolframParserException):
+            binary_deserialize(wxf_dim0)
+
     # Numpy arrays
     @unittest.skipIf(not numpy, 'NumPy not found. Skipping numpy tests.')
-    def test_numpy(self):
+    def test_numpy_1d_array(self):
         arr = numpy.array([0,1], 'uint8')
         wxf = export(arr, target_format='wxf')
         res = binary_deserialize(wxf)
@@ -145,11 +179,23 @@ class TestCase(BaseTestCase):
 
     # Numpy arrays
     @unittest.skipIf(not numpy, 'NumPy not found. Skipping numpy tests.')
-    def test_numpy(self):
+    def test_numpy_2d_array(self):
         arr = numpy.array([[0,1], [1,1], [2,1]], 'uint8')
         wxf = export(arr, target_format='wxf')
         res = binary_deserialize(wxf)
         self.assertListEqual(res.tolist(), arr.tolist())
+
+    def test_numpy_packedarray(self):
+        # Range[1]
+        wxf = b'8:\xc1\x00\x01\x01\x01'
+        res = binary_deserialize(wxf)
+        self.assertListEqual(res.tolist(), [1])
+
+    def test_compressed_input(self):
+        expr = [1, 2, 3]
+        wxf = export(expr, target_format='wxf', compress=True)
+        res = binary_deserialize(wxf)
+        self.assertEqual(expr, res)
 
     # Custom consumers
     class BadGreedyConsumer(WXFConsumer):
@@ -177,3 +223,7 @@ class TestCase(BaseTestCase):
                 export([1, 2, 3], target_format='wxf'), consumer=self.BadIncompleteConsumer())
             self.assertEqual(e.msg, 'Input data does not represent a valid expression in WXF format. Some expressions are imcomplete.')
 
+    def test_bad_wxf_buffer(self):
+        wxf = 1
+        with self.assertRaises(TypeError):
+            binary_deserialize(wxf)

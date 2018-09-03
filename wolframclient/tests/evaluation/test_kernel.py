@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from wolframclient.serializers import export
 from wolframclient.language import wl
 from wolframclient.language.expression import WLSymbol, WLFunction
 from wolframclient.logger.utils import setup_logging_to_file
@@ -52,6 +53,23 @@ class TestCase(TestCaseSettings):
     def test_evaluate_basic_wl(self):
         res = self.kernel_session.evaluate(wl.Plus(1, 2))
         self.assertEqual(res.get(), 3)
+
+    def test_evaluate_wxf_inputform(self):
+        wxf = export(wl.MinMax([1, -2, 3, 5]), target_format='wxf')
+        res = self.kernel_session.evaluate(wxf)
+        self.assertEqual(res.get(), [-2, 5])
+
+    def test_attr_call_function_no_arg(self):
+        res = self.kernel_session.List()
+        self.assertListEqual(res.get(), [])
+
+    def test_attr_call_function_with_1arg(self):
+        res = self.kernel_session.MinMax([-1, 2, 5])
+        self.assertListEqual(res.get(), [-1, 5])
+
+    def test_attr_call_function_with_many_args(self):
+        res = self.kernel_session.Part([[1, 2, 3], [4, 5, 6]], -1, 1)
+        self.assertEqual(res.get(), 4)
 
     def test_evaluate_variable_updates(self):
         self.kernel_session.evaluate('ClearAll[x]; x=1')
