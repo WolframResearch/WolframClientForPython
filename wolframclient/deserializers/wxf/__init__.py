@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.deserializers.wxf.wxfconsumer import WXFConsumer, WXFConsumerNumpy
+from wolframclient.deserializers.wxf.wxfconsumer import WXFConsumer
 from wolframclient.deserializers.wxf.wxfparser import WXFParser
 from wolframclient.exception import WolframParserException
 
@@ -15,7 +15,8 @@ def binary_deserialize(wxf_input, consumer=None, **kwargs):
     of :class:`~wolframclient.deserializers.wxf.wxfparser.WXFParser`.
 
     The consumer must be an instance of :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer`. If none is
-    provided :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy` is used.
+    provided :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer` is used which does not use NumPy arrays,
+    contrary to :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy`.
 
     Named parameters are passed to the consumer. They can be any valid parameter of
     :meth:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.next_expression`, namely:
@@ -25,7 +26,7 @@ def binary_deserialize(wxf_input, consumer=None, **kwargs):
     """
     parser = WXFParser(wxf_input)
     if consumer is None:
-        consumer = WXFConsumerNumpy()
+        consumer = WXFConsumer()
 
     try:
         o = consumer.next_expression(parser.tokens(), **kwargs)

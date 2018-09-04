@@ -178,16 +178,55 @@ class WXFConsumer(object):
     def consume_raw_array(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *raw array*.
 
-        This method must be implemented by subclasses."""
-        raise NotImplementedError(
-            'Method consume_raw_array is not implemented by %s.' % self.__class__.__name__)
+        This method return :class:`list`, and made the assumption that system is little endian.
+        """
+        return self._array_to_list(current_token, tokens)
 
     def consume_packed_array(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *packed array*.
 
-        This method must be implemented by subclasses."""
-        raise NotImplementedError(
-            'Method consume_packed_array is not implemented by %s.' % self.__class__.__name__)
+        This method return :class:`list`, and made the assumption that system is little endian.
+        """
+        return self._array_to_list(current_token, tokens)
+
+    unpack_mapping = {
+        wxfexpr.ARRAY_TYPES.Integer8: 'b',
+        wxfexpr.ARRAY_TYPES.UnsignedInteger8: 'B',
+        wxfexpr.ARRAY_TYPES.Integer16: 'h',
+        wxfexpr.ARRAY_TYPES.UnsignedInteger16: 'H',
+        wxfexpr.ARRAY_TYPES.Integer32: 'i',
+        wxfexpr.ARRAY_TYPES.UnsignedInteger32: 'I',
+        wxfexpr.ARRAY_TYPES.Integer64: 'q',
+        wxfexpr.ARRAY_TYPES.UnsignedInteger64: 'Q',
+        wxfexpr.ARRAY_TYPES.Real32: 'f',
+        wxfexpr.ARRAY_TYPES.Real64: 'd',
+        wxfexpr.ARRAY_TYPES.ComplexReal32: 'f',
+        wxfexpr.ARRAY_TYPES.ComplexReal64: 'd',
+    }
+
+    def _to_complex(self, array, max_depth, curr_depth):
+        # recursivelly traverse the array until the last (real) dimension is reached
+        # it correspond to an array of (fake) array of two elements (real and im parts). 
+        if curr_depth < max_depth-1:
+            for sub in array:
+                self._to_complex(sub, max_depth, curr_depth+1)
+            return
+        # iterate over the pairs
+        for index, complex_pair in enumerate(array):
+            array[index] = complex(*complex_pair)
+
+    def _array_to_list(self, current_token, tokens):
+        view = memoryview(current_token.data)
+        if current_token.array_type == wxfexpr.ARRAY_TYPES.ComplexReal32 or current_token.array_type == wxfexpr.ARRAY_TYPES.ComplexReal64:
+            dimensions = [*current_token.dimensions]
+            # In the given array, 2 reals give one complex, 
+            # adding one last dimension to represent it.
+            dimensions.append(2)
+            as_list = view.cast(self.unpack_mapping[current_token.array_type], shape=dimensions).tolist()
+            self._to_complex(as_list, len(current_token.dimensions), 0)
+            return as_list
+        else:
+            return view.cast(self.unpack_mapping[current_token.array_type], shape=current_token.dimensions).tolist()
 
 class WXFConsumerNumpy(WXFConsumer):
     def consume_array(self, current_token, tokens, **kwargs):

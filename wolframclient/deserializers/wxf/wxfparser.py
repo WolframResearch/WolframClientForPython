@@ -32,7 +32,6 @@ class WXFParser(object):
     """
 
     _mapping = {
-
         wxfexpr.WXF_CONSTANTS.Symbol:       'token_for_string',
         wxfexpr.WXF_CONSTANTS.String:       'token_for_string',
         wxfexpr.WXF_CONSTANTS.BigInteger:   'token_for_string',
@@ -109,7 +108,6 @@ class WXFParser(object):
         token.data = self.reader.read(bytecount)
 
     def token_for_string(self, token):
-
         self.context.add_part()
         token.length = parse_varint(self.reader)
         if token.length == 0:

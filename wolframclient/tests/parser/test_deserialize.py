@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.deserializers import binary_deserialize, WXFToken, WXFConsumer
+from wolframclient.deserializers import binary_deserialize, WXFToken, WXFConsumer, WXFConsumerNumpy
 from wolframclient.deserializers.wxf.wxfparser import parse_varint
 from wolframclient.serializers import export
 from wolframclient.serializers.wxfencoder.serializer import write_varint
@@ -159,38 +159,6 @@ class TestCase(BaseTestCase):
         with self.assertRaises(WolframParserException):
             binary_deserialize(wxf)
 
-    def test_zero_array_rank(self):
-        wxf_rank0 = b'8:\xc2\x00\x00\x01\x00'
-        with self.assertRaises(WolframParserException):
-            binary_deserialize(wxf_rank0)
-
-    def test_zero_array_dimensions(self):
-        wxf_dim0 = b'8:\xc2\x00\x01\x00\x00'
-        with self.assertRaises(WolframParserException):
-            binary_deserialize(wxf_dim0)
-
-    # Numpy arrays
-    @unittest.skipIf(not numpy, 'NumPy not found. Skipping numpy tests.')
-    def test_numpy_1d_array(self):
-        arr = numpy.array([0,1], 'uint8')
-        wxf = export(arr, target_format='wxf')
-        res = binary_deserialize(wxf)
-        self.assertListEqual(res.tolist(), arr.tolist())
-
-    # Numpy arrays
-    @unittest.skipIf(not numpy, 'NumPy not found. Skipping numpy tests.')
-    def test_numpy_2d_array(self):
-        arr = numpy.array([[0,1], [1,1], [2,1]], 'uint8')
-        wxf = export(arr, target_format='wxf')
-        res = binary_deserialize(wxf)
-        self.assertListEqual(res.tolist(), arr.tolist())
-
-    def test_numpy_packedarray(self):
-        # Range[1]
-        wxf = b'8:\xc1\x00\x01\x01\x01'
-        res = binary_deserialize(wxf)
-        self.assertListEqual(res.tolist(), [1])
-
     def test_compressed_input(self):
         expr = [1, 2, 3]
         wxf = export(expr, target_format='wxf', compress=True)
@@ -227,3 +195,312 @@ class TestCase(BaseTestCase):
         wxf = 1
         with self.assertRaises(TypeError):
             binary_deserialize(wxf)
+
+@unittest.skipIf(not numpy, 'NumPy not found.')
+class TestCaseNumPyArray(BaseTestCase):
+    def test_numpy_1d_array(self):
+        arr = numpy.array([0, 1], 'uint8')
+        wxf = export(arr, target_format='wxf')
+        res = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
+        self.assertListEqual(res.tolist(), arr.tolist())
+
+    def test_numpy_2d_array(self):
+        arr = numpy.array([[0, 1], [1, 1], [2, 1]], 'uint8')
+        wxf = export(arr, target_format='wxf')
+        res = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
+        self.assertListEqual(res.tolist(), arr.tolist())
+
+    def test_numpy_packedarray(self):
+        # Range[1]
+        wxf = b'8:\xc1\x00\x01\x01\x01'
+        res = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
+        self.assertListEqual(res.tolist(), [1])
+
+    def test_packedarray_ndim_int8(self):
+        # ConstantArray[1, {2, 3, 1}]
+        wxf = b'8:\xc1\x00\x03\x02\x03\x01\x01\x01\x01\x01\x01\x01'
+        a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
+        self.assertEqual(a.shape, (2,3,1))
+        self.assertEqual(a.dtype, 'int8')
+        self.assertListEqual(a.tolist(), [[[1], [1], [1]], [[1], [1], [1]]])
+
+    def test_packedarray_ndim_complex(self):
+        # ConstantArray[I + 1., {2, 3, 1}]
+        wxf = b'8:\xc14\x03\x02\x03\x01\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?'
+        a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
+        self.assertEqual(a.shape, (2, 3, 1))
+        self.assertEqual(a.dtype, 'complex128')
+
+    def test_int8_array(self):
+        # ConstantArray[1, {2, 2}]
+        wxf = b'8:\xc1\x00\x02\x02\x02\x01\x01\x01\x01'
+        a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
+        self.assertEqual(a.shape, (2,2))
+        self.assertEqual(a.dtype, 'int8')
+        self.assertEqual(a.tolist(), [[1,1],[1,1]])
+
+    def test_int16_array(self):
+        # ConstantArray[2^15 - 1, {2, 2}]
+        wxf = wxf = b'8:\xc2\x01\x02\x02\x02\xff\x7f\xff\x7f\xff\x7f\xff\x7f'
+        a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
+        self.assertEqual(a.shape, (2, 2))
+        self.assertEqual(a.dtype, 'int16')
+        self.assertEqual(a.tolist(), [[-1 + 2 ** 15, -1 + 2 ** 15], [-1 + 2 ** 15, -1 + 2 ** 15]])
+
+    def test_int32_array(self):
+        # ConstantArray[2^16, {2, 2}]
+        wxf = b'8:\xc1\x02\x02\x02\x02\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x01\x00'
+        a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
+        self.assertEqual(a.shape, (2, 2))
+        self.assertEqual(a.dtype, 'int32')
+        self.assertEqual(a.tolist(), [[2 ** 16, 2 ** 16],[2 ** 16, 2 ** 16]])
+
+    def test_int64_array(self):
+        # ConstantArray[2^40, {2, 1}]
+        wxf = b'8:\xc1\x03\x02\x02\x01\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00'
+        a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
+        self.assertEqual(a.shape, (2, 1))
+        self.assertEqual(a.dtype, 'int64')
+        self.assertEqual(a.tolist(), [[2 ** 40], [2 ** 40]])
+
+    def test_double_array(self):
+        # ConstantArray[1., {2, 1}]
+        wxf = b'8:\xc1#\x02\x02\x01\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?'
+        a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
+        self.assertEqual(a.shape, (2, 1))
+        self.assertEqual(a.dtype, 'float64')
+        self.assertAlmostEqual(a.tolist(), [[1.], [1.]])
+
+    def test_int8_rawarray(self):
+        # RawArray from ConstantArray[1, {2, 2}]
+        wxf = b'8:\xc2\x00\x02\x02\x02\x01\x01\x01\x01'
+        a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
+        self.assertEqual(a.shape, (2, 2))
+        self.assertEqual(a.dtype, 'int8')
+        self.assertEqual(a.tolist(), [[1, 1], [1, 1]])
+
+    def test_uint8_rawarray(self):
+        # RawArray from ConstantArray[255, {2, 2}]
+        wxf = b'8:\xc2\x10\x02\x02\x02\xff\xff\xff\xff'
+        a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
+        self.assertEqual(a.shape, (2, 2))
+        self.assertEqual(a.dtype, 'uint8')
+        self.assertEqual(a.tolist(), [[255, 255], [255, 255]])
+
+    def test_int16_rawarray(self):
+        # RawArray from ConstantArray[2^15 - 1, {2, 2}]
+        wxf = b'8:\xc2\x01\x02\x02\x02\xff\x7f\xff\x7f\xff\x7f\xff\x7f'
+        a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
+        self.assertEqual(a.shape, (2, 2))
+        self.assertEqual(a.dtype, 'int16')
+        self.assertEqual(
+            a.tolist(), [[-1 + 2 ** 15, -1 + 2 ** 15], [-1 + 2 ** 15, -1 + 2 ** 15]])
+
+    def test_uint16_rawarray(self):
+        # RawArray from ConstantArray[2^16 - 1, {2, 2}]
+        wxf = b'8:\xc2\x11\x02\x02\x02\xff\xff\xff\xff\xff\xff\xff\xff'
+        a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
+        self.assertEqual(a.shape, (2, 2))
+        self.assertEqual(a.dtype, 'uint16')
+        self.assertEqual(
+            a.tolist(), [[-1+2**16, -1+2**16], [-1+2**16, -1+2**16]])
+
+    def test_int32_rawarray(self):
+        # RawArray from ConstantArray[2^16, {2, 2}]
+        wxf = b'8:\xc2\x02\x02\x02\x02\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x01\x00'
+        a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
+        self.assertEqual(a.shape, (2, 2))
+        self.assertEqual(a.dtype, 'int32')
+        self.assertEqual(a.tolist(), [[2 ** 16, 2 ** 16], [2 ** 16, 2 ** 16]])
+
+    def test_uint32_rawarray(self):
+        # RawArray from ConstantArray[2^32-1, {2, 1}]
+        wxf = b'8:\xc2\x12\x02\x02\x01\xff\xff\xff\xff\xff\xff\xff\xff'
+        a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
+        self.assertEqual(a.shape, (2, 1))
+        self.assertEqual(a.dtype, 'uint32')
+        self.assertEqual(a.tolist(), [[-1 + 2 ** 32], [-1 + 2 ** 32]])
+
+    def test_int64_rawarray(self):
+        # RawArray from ConstantArray[2^40, {2, 1}]
+        wxf = b'8:\xc2\x03\x02\x02\x01\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00'
+        a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
+        self.assertEqual(a.shape, (2, 1))
+        self.assertEqual(a.dtype, 'int64')
+        self.assertEqual(a.tolist(), [[2 ** 40], [2 ** 40]])
+
+    def test_uint64_rawarray(self):
+        # RawArray from ConstantArray[2^64-1, {2, 1}]
+        wxf = b'8:\xc2\x13\x02\x02\x01\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
+        a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
+        self.assertEqual(a.shape, (2, 1))
+        self.assertEqual(a.dtype, 'uint64')
+        self.assertEqual(a.tolist(), [[-1 + 2 ** 64], [-1 + 2 ** 64]])
+
+    def test_float_rawarray(self):
+        # RawArray["Real32", ConstantArray[1., {2, 1}]]
+        wxf = b'8:\xc2"\x02\x02\x01\x00\x00\x80?\x00\x00\x80?'
+        a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
+        self.assertEqual(a.shape, (2, 1))
+        self.assertEqual(a.dtype, 'float32')
+        self.assertAlmostEqual(a.tolist(), [[1.], [1.]])
+
+    def test_double_rawarray(self):
+        # RawArray["Real64", ConstantArray[1., {2, 1}]]
+        wxf = b'8:\xc2#\x02\x02\x01\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?'
+        a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
+        self.assertEqual(a.shape, (2, 1))
+        self.assertEqual(a.dtype, 'float64')
+        self.assertAlmostEqual(a.tolist(), [[1.], [1.]])
+
+class TestCaseArrayAsList(BaseTestCase):
+    def test_zero_array_rank(self):
+        wxf_rank0 = b'8:\xc2\x00\x00\x01\x00'
+        with self.assertRaises(WolframParserException):
+            binary_deserialize(wxf_rank0)
+
+    def test_zero_array_dimensions(self):
+        wxf_dim0 = b'8:\xc2\x00\x01\x00\x00'
+        with self.assertRaises(WolframParserException):
+            binary_deserialize(wxf_dim0)
+
+    def test_packedarray_ndim_int8(self):
+        # ConstantArray[1, {2, 3, 1}]
+        wxf = b'8:\xc1\x00\x03\x02\x03\x01\x01\x01\x01\x01\x01\x01'
+        a = binary_deserialize(wxf)
+        self.assertListEqual(a, [[[1], [1], [1]], [[1], [1], [1]]])
+
+    def test_packedarray_ndim_complex(self):
+        # ConstantArray[I + 1., {2, 3, 1}]
+        wxf = b'8:\xc14\x03\x02\x03\x01\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?'
+        a = binary_deserialize(wxf)
+        self.assertEqual(len(a), 2)
+        self.assertEqual(len(a[0]), 3)
+        self.assertEqual(len(a[0][0]), 1)
+        for e1 in a:
+            for e2 in e1:
+                for e3 in e2:
+                    self.assertAlmostEqual(e3, complex(1., 1.))
+
+    def test_int8_array(self):
+        # ConstantArray[1, {2, 2}]
+        wxf = b'8:\xc1\x00\x02\x02\x02\x01\x01\x01\x01'
+        a = binary_deserialize(wxf)
+        self.assertEqual(len(a), 2)
+        self.assertEqual(len(a[0]), 2)
+        self.assertListEqual(a, [[1, 1], [1, 1]])
+
+    def test_int16_array(self):
+        # ConstantArray[2^15 - 1, {2, 2}]
+        wxf = wxf = b'8:\xc2\x01\x02\x02\x02\xff\x7f\xff\x7f\xff\x7f\xff\x7f'
+        a = binary_deserialize(wxf)
+        self.assertEqual(len(a), 2)
+        self.assertEqual(len(a[0]), 2)
+        self.assertEqual(
+            a, [[-1 + 2 ** 15, -1 + 2 ** 15], [-1 + 2 ** 15, -1 + 2 ** 15]])
+
+    def test_int32_array(self):
+        # ConstantArray[2^16, {2, 2}]
+        wxf = b'8:\xc1\x02\x02\x02\x02\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x01\x00'
+        a = binary_deserialize(wxf)
+        self.assertEqual(len(a), 2)
+        self.assertEqual(len(a[0]), 2)
+        self.assertEqual(a, [[2 ** 16, 2 ** 16], [2 ** 16, 2 ** 16]])
+
+    def test_int64_array(self):
+        # ConstantArray[2^40, {2, 1}]
+        wxf = b'8:\xc1\x03\x02\x02\x01\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00'
+        a = binary_deserialize(wxf)
+        self.assertEqual(len(a), 2)
+        self.assertEqual(len(a[0]), 1)
+        self.assertEqual(a, [[2 ** 40], [2 ** 40]])
+
+    def test_double_array(self):
+        # ConstantArray[1., {2, 1}]
+        wxf = b'8:\xc1#\x02\x02\x01\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?'
+        a = binary_deserialize(wxf)
+        self.assertEqual(len(a), 2)
+        self.assertEqual(len(a[0]), 1)
+        self.assertEqual(a, [[1.], [1.]])
+
+    def test_int8_rawarray(self):
+        # RawArray from ConstantArray[1, {2, 2}]
+        wxf = b'8:\xc2\x00\x02\x02\x02\x01\x01\x01\x01'
+        a = binary_deserialize(wxf)
+        self.assertEqual(len(a), 2)
+        self.assertEqual(len(a[0]), 2)
+        self.assertEqual(a, [[1, 1], [1, 1]])
+
+    def test_uint8_rawarray(self):
+        # RawArray from ConstantArray[255, {2, 2}]
+        wxf = b'8:\xc2\x10\x02\x02\x02\xff\xff\xff\xff'
+        a = binary_deserialize(wxf)
+        self.assertEqual(len(a), 2)
+        self.assertEqual(len(a[0]), 2)
+        self.assertEqual(a, [[255, 255], [255, 255]])
+
+    def test_int16_rawarray(self):
+        # RawArray from ConstantArray[2^15 - 1, {2, 2}]
+        wxf = b'8:\xc2\x01\x02\x02\x02\xff\x7f\xff\x7f\xff\x7f\xff\x7f'
+        a = binary_deserialize(wxf)
+        self.assertEqual(len(a), 2)
+        self.assertEqual(len(a[0]), 2)
+        self.assertEqual(
+            a, [[-1 + 2 ** 15, -1 + 2 ** 15], [-1 + 2 ** 15, -1 + 2 ** 15]])
+
+    def test_uint16_rawarray(self):
+        # RawArray from ConstantArray[2^16 - 1, {2, 2}]
+        wxf = b'8:\xc2\x11\x02\x02\x02\xff\xff\xff\xff\xff\xff\xff\xff'
+        a = binary_deserialize(wxf)
+        self.assertEqual(len(a), 2)
+        self.assertEqual(len(a[0]), 2)
+        self.assertEqual(
+            a, [[-1 + 2**16, -1 + 2**16], [-1 + 2**16, -1 + 2**16]])
+
+    def test_int32_rawarray(self):
+        # RawArray from ConstantArray[2^16, {2, 2}]
+        wxf = b'8:\xc2\x02\x02\x02\x02\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x01\x00'
+        a = binary_deserialize(wxf)
+        self.assertEqual(len(a), 2)
+        self.assertEqual(len(a[0]), 2)
+        self.assertEqual(a, [[2 ** 16, 2 ** 16], [2 ** 16, 2 ** 16]])
+
+    def test_uint32_rawarray(self):
+        # RawArray from ConstantArray[2^32-1, {2, 1}]
+        wxf = b'8:\xc2\x12\x02\x02\x01\xff\xff\xff\xff\xff\xff\xff\xff'
+        a = binary_deserialize(wxf)
+        self.assertEqual(len(a), 2)
+        self.assertEqual(len(a[0]), 1)
+        self.assertEqual(a, [[-1 + 2 ** 32], [-1 + 2 ** 32]])
+
+    def test_int64_rawarray(self):
+        # RawArray from ConstantArray[2^40, {2, 1}]
+        wxf = b'8:\xc2\x03\x02\x02\x01\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00'
+        a = binary_deserialize(wxf)
+        self.assertEqual(len(a), 2)
+        self.assertEqual(len(a[0]), 1)
+        self.assertEqual(a, [[2 ** 40], [2 ** 40]])
+
+    def test_uint64_rawarray(self):
+        # RawArray from ConstantArray[2^64-1, {2, 1}]
+        wxf = b'8:\xc2\x13\x02\x02\x01\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
+        a = binary_deserialize(wxf)
+        self.assertEqual(len(a), 2)
+        self.assertEqual(len(a[0]), 1)
+        self.assertEqual(a, [[-1 + 2 ** 64], [-1 + 2 ** 64]])
+
+    def test_float_rawarray(self):
+        # RawArray["Real32", ConstantArray[1., {2, 1}]]
+        wxf = b'8:\xc2"\x02\x02\x01\x00\x00\x80?\x00\x00\x80?'
+        a = binary_deserialize(wxf)
+        self.assertEqual(len(a), 2)
+        self.assertEqual(len(a[0]), 1)
+        self.assertEqual(a, [[1.], [1.]])
+
+    def test_double_rawarray(self):
+        # RawArray["Real64", ConstantArray[1., {2, 1}]]
+        wxf = b'8:\xc2#\x02\x02\x01\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?'
+        a = binary_deserialize(wxf)
+        self.assertEqual(len(a), 2)
+        self.assertEqual(len(a[0]), 1)
+        self.assertEqual(a, [[1.], [1.]])
