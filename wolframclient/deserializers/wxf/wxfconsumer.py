@@ -218,7 +218,7 @@ class WXFConsumer(object):
     def _array_to_list(self, current_token, tokens):
         view = memoryview(current_token.data)
         if current_token.array_type == wxfexpr.ARRAY_TYPES.ComplexReal32 or current_token.array_type == wxfexpr.ARRAY_TYPES.ComplexReal64:
-            dimensions = [*current_token.dimensions]
+            dimensions = list(current_token.dimensions)
             # In the given array, 2 reals give one complex, 
             # adding one last dimension to represent it.
             dimensions.append(2)
