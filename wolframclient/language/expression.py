@@ -117,7 +117,7 @@ by calling its attributes. The following code represents various Wolfram Languag
     # Now
     wl.Now
     # Quantity[3, "Hours"]
-    wl.Quanity(3, "Hours")
+    wl.Quantity(3, "Hours")
     # Select[PrimeQ, {1,2,3,4}]
     wl.Select(wl.PrimeQ, [1, 2, 3, 4])
 """

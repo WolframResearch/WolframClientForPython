@@ -18,7 +18,7 @@ Make sure you have pip and setuptools installed and upgraded and try again:
 
 setup(
     name = 'wolframclient',
-    version = '1.0preview1',
+    version = '1.0rc1',
     description = 'A Python library with various tools to interact with the Wolfram Language and the Wolfram Cloud.',
     author = 'Wolfram Research',
     author_email = [

@@ -1,7 +1,7 @@
 [run]
-branch = True
-timid = True
-source = wolframclient
+branch=True
+timid=True
+source=wolframclient
 omit = 
     # client
     wolframclient/cli/*
