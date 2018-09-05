@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.serializers import export
 from wolframclient.language import wl
-from wolframclient.exception import WolframEvaluationException
+from wolframclient.exception import WolframEvaluationException, WolframKernelException
 from wolframclient.language.expression import WLSymbol, WLFunction
 from wolframclient.logger.utils import setup_logging_to_file
 from wolframclient.utils import six
@@ -86,18 +86,18 @@ class TestCase(TestCaseSettings):
         self.assertEqual(res, 'Global`')
 
     def test_malformed_expr(self):
-        with self.assertRaises(WolframEvaluationException):
-            res = self.kernel_session.evaluate('Range[5')
-    
+        res = self.kernel_session.evaluate('Range[5')
+        self.assertEqual(res, WLSymbol('$Failed'))
+
     def test_malformed_expr_wrap(self):
         res = self.kernel_session.evaluate_wrap('Range[5')
         self.assertFalse(res.success)
         self.assertEqual(res.get(), WLSymbol('$Failed'))
 
     def test_one_msg(self):
-        with self.assertRaises(WolframEvaluationException):
-            res = self.kernel_session.evaluate('1/0')
-    
+        res = self.kernel_session.evaluate('1/0')
+        self.assertEqual(res, WLFunction(WLSymbol(b'DirectedInfinity')))
+
     def test_one_msg_wrap(self):
         res = self.kernel_session.evaluate_wrap('1/0')
         self.assertFalse(res.success)
@@ -108,14 +108,15 @@ class TestCase(TestCaseSettings):
     def test_silenced_msg(self):
         off = self.kernel_session.evaluate('Off[Power::infy]')
         self.assertEqual(off, wl.Null)
-        res = self.kernel_session.evaluate('1/0')
-        self.assertEqual(res, WLFunction(WLSymbol(b'DirectedInfinity')))
+        res = self.kernel_session.evaluate_wrap('1/0')
+        self.assertEqual(res.get(), WLFunction(WLSymbol(b'DirectedInfinity')))
+        self.assertTrue(res.success)
         on = self.kernel_session.evaluate('On[Power::infy]')
         self.assertEqual(on, wl.Null)
 
     def test_one_eval_many_msg(self):
-        with self.assertRaises(WolframEvaluationException):
-            res = self.kernel_session.evaluate('ImportString["[1,2", "RawJSON"]')
+        res = self.kernel_session.evaluate('ImportString["[1,2", "RawJSON"]')
+        self.assertEqual(res, WLSymbol('$Failed'))
         
     def test_one_eval_many_msg_wrap(self):
         res = self.kernel_session.evaluate_wrap('ImportString["[1,2", "RawJSON"]')
@@ -126,8 +127,8 @@ class TestCase(TestCaseSettings):
         self.assertListEqual(res.messages, expected_msgs)
 
     def test_many_failures(self):
-        with self.assertRaises(WolframEvaluationException):
-            res = self.kernel_session.evaluate('ImportString["[1,2", "RawJSON"]; 1/0')
+        res = self.kernel_session.evaluate('ImportString["[1,2", "RawJSON"]; 1/0')
+        self.assertEqual(res, WLFunction(WLSymbol(b'DirectedInfinity')))
     
     def test_many_failures_wrap(self):
         res = self.kernel_session.evaluate_wrap('ImportString["[1,2", "RawJSON"]; 1/0')
@@ -147,3 +148,25 @@ class TestCase(TestCaseSettings):
         self.assertEqual(future2.result(timeout=1), 11)
         future3 = self.kernel_session.evaluate_async('100+1')
         self.assertEqual(future3.result(timeout=1), 101)
+
+
+class TestCaseSession(TestCaseSettings):
+    def test_kernel_init_bad_path(self):
+        with self.assertRaises(WolframKernelException):
+            WolframLanguageSession('path/that/does/not/exists')
+
+    def test_kernel_init_nonstring_path(self):
+        with self.assertRaises(ValueError):
+            WolframLanguageSession(None)
+
+    def test_non_started_session(self):
+        session = WolframLanguageSession(self.KERNEL_PATH)
+        with self.assertRaises(WolframKernelException):
+            session.evaluate('1+1')
+
+    def test_terminated_session(self):
+        session = WolframLanguageSession(self.KERNEL_PATH)
+        session.start()
+        session.terminate()
+        with self.assertRaises(WolframKernelException):
+            session.evaluate('1+1')

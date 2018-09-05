@@ -157,12 +157,12 @@ class OAuthSession(object):
             token = response.json()
             return token['oauth_token'], token['oauth_token_secret']
         except:
-            logger.info('Auth response is expected to be json but wasn\'t. Parsing as query string.')
             token = urllib.parse_qs(response.text)
             return (token.get('oauth_token')[0], token.get('oauth_token_secret')[0])
 
     def xauth(self, user, password):
-        logger.debug('xauth authentication of user %s', user)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('xauth authentication of user %s', user)
         if not self.server.is_xauth():
             raise AuthenticationException('XAuth is not configured. Missing consumer key and/or secret.')
         #todo use xauth server key/secret
@@ -188,7 +188,8 @@ class OAuthSession(object):
         self._update_client()
 
     def set_oauth_request_token(self):
-        logger.debug('Fetching oauth request token from: %s',
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('Fetching oauth request token from: %s',
                       self.server.request_token_endpoint)
 
         logging.disable(logging.DEBUG)
@@ -205,7 +206,8 @@ class OAuthSession(object):
         self._oauth_token , self._oauth_token_secret = self._parse_oauth_response(response)
 
     def set_oauth_access_token(self):
-        logger.debug('Fetching oauth access token from %s',
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('Fetching oauth access token from %s',
                       self.server.access_token_endpoint)
         access_client = oauth.Client(self.consumer_key,
                                      client_secret=self.consumer_secret,

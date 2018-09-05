@@ -147,7 +147,7 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 	listener = SocketListen[
 		$InputSocket,
 	
-		Block[{data, expr=$Failed, msgs = Internal`Bag[], msgCount},
+		Block[{data, expr=$Failed, msgs = Internal`Bag[], msgCount, $MessageList={}},
 			(* Setup a handler for all messages, and keep only those that haven't been silenced.
 			The handler must deal with expressions of the form: 
 				Hold[msg_, True|False]
@@ -185,12 +185,11 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 				ClientLibrary`fatal["Unexpected message count. Ignoring all messages."];
 				WriteString[$OutputSocket, "0"];
 			];
-			If[$LogLevel >= $DEBUG, ClientLibrary`debug["Writing to output socket: ", ToString[$OutputSocket]]];
 			SocketWriteFunc[
 				$OutputSocket,
 				timed[serialize[expr], "Expression serialization"]
 			];
-			ClientLibrary`debug["End of evaluation."]
+			If[$LogLevel >= $DEBUG, ClientLibrary`debug["End of evaluation."]]
 		] &
 		,
 		HandlerFunctionsKeys->{"DataByteArray"}

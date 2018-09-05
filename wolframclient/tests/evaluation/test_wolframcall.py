@@ -5,6 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.utils import six
 if not six.JYTHON:
     from wolframclient.evaluation import WolframCall, WolframAPICall
+from wolframclient.language import wl
 from wolframclient.language.expression import WLSymbol
 from wolframclient.exception import WolframEvaluationException
 from wolframclient.logger.utils import setup_logging_to_file
@@ -39,12 +40,13 @@ class TestCase(SessionTestCase, KernelTestCase):
 
     @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
     def test_wolfram_call_kernel_fail(self):
-        with self.assertRaises(WolframEvaluationException):
-            result = WolframCall(self.kernel_session, 'Range[3').perform()
+        result = WolframCall(self.kernel_session, 'Range[3').perform()
+        self.assertEqual(result, WLSymbol('$Failed'))
 
     @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
     def test_wolfram_call_kernel_wrap_fail(self):
         result = WolframCall(self.kernel_session, 'Range[3').perform_wrap()
+        self.assertFalse(result.success)
         self.assertEqual(result.get(), WLSymbol('$Failed'))
 
     def test_call_cloud_evaluation(self):
@@ -52,12 +54,14 @@ class TestCase(SessionTestCase, KernelTestCase):
         self.assertEqual(result, '2')
 
     def test_call_cloud_evaluation_fail(self):
-        with self.assertRaises(WolframEvaluationException):
-            WolframCall(self.cloud_session, 'Range[3').perform()
+        result = WolframCall(self.cloud_session, 'Range[3').perform()
+        self.assertEqual(result, 'Null')
     
     def test_call_cloud_evaluation_fail_wrap(self):
         res = WolframCall(self.cloud_session, 'Range[3').perform_wrap()
         self.assertFalse(res.success)
+        self.assertEqual(res.get(), 'Null')
+        self.assertTrue(len(res.failure) > 0)
 
     def test_wolfram_api_call_image(self):
         api = (self.api_owner, 'api/private/imagedimensions')

@@ -91,7 +91,7 @@ class WolframEvaluationJSONResponse(WolframResult):
     Other fields provide additionnal information. The HTTP response object is
     stored as `http_response` and when HTTP error occured it is stored in `request_error`.
     """
-    __slots__ = 'http_response', 'json', 'request_error'
+    __slots__ = 'http_response', 'json', 'request_error', 'is_kernel_message'
 
     def __init__(self, response):
         self.http_response = response
@@ -102,12 +102,15 @@ class WolframEvaluationJSONResponse(WolframResult):
                 self.success = self.json['Success']
                 self.result = self.json['Result']
                 if not self.success:
-                    logger.warning('Evaluation failed:\n\t%s',
-                                   '\n\t'.join(self.json.get('MessagesText', 'Missing field "MessagesText" in response.')))
                     failure_type = self.json['FailureType']
                     if failure_type == 'MessageFailure':
+                        self.is_kernel_message = True
                         self.failure = self.json['MessagesText']
                     else:
+                        logger.warning('Evaluation failed.')
+                        for msg in self.json.get('MessagesText', []):
+                            logger.warning(msg)
+                        self.is_kernel_message = False
                         self.failure = failure_type
             except json.JSONDecodeError as e:
                 logger.fatal('Server returned invalid JSON: %s', e)
@@ -123,6 +126,10 @@ class WolframEvaluationJSONResponse(WolframResult):
     def get(self):
         """Return the result or raise an exception based on the success status."""
         if self.success:
+            return self.result
+        elif self.is_kernel_message:
+            for msg in self.failure:
+                logger.warning(msg)
             return self.result
         else:
             raise WolframEvaluationException('Cloud evaluation failed.', messages=self.failure)
