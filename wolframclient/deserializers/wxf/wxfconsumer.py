@@ -6,6 +6,7 @@ from wolframclient.exception import WolframParserException
 from wolframclient.language.expression import WLFunction, WLSymbol
 from wolframclient.serializers.wxfencoder import wxfexpr
 from wolframclient.utils.api import numpy
+from wolframclient.utils import six
 
 __all__ = ['WXFConsumer', 'WXFConsumerNumpy']
 
@@ -189,44 +190,91 @@ class WXFConsumer(object):
         """
         return self._array_to_list(current_token, tokens)
 
-    unpack_mapping = {
-        wxfexpr.ARRAY_TYPES.Integer8: 'b',
-        wxfexpr.ARRAY_TYPES.UnsignedInteger8: 'B',
-        wxfexpr.ARRAY_TYPES.Integer16: 'h',
-        wxfexpr.ARRAY_TYPES.UnsignedInteger16: 'H',
-        wxfexpr.ARRAY_TYPES.Integer32: 'i',
-        wxfexpr.ARRAY_TYPES.UnsignedInteger32: 'I',
-        wxfexpr.ARRAY_TYPES.Integer64: 'q',
-        wxfexpr.ARRAY_TYPES.UnsignedInteger64: 'Q',
-        wxfexpr.ARRAY_TYPES.Real32: 'f',
-        wxfexpr.ARRAY_TYPES.Real64: 'd',
-        wxfexpr.ARRAY_TYPES.ComplexReal32: 'f',
-        wxfexpr.ARRAY_TYPES.ComplexReal64: 'd',
-    }
+# memoryview.cast was introduced in Python 3.3.
+    if hasattr(memoryview, 'cast'):
+        unpack_mapping = {
+            wxfexpr.ARRAY_TYPES.Integer8: 'b',
+            wxfexpr.ARRAY_TYPES.UnsignedInteger8: 'B',
+            wxfexpr.ARRAY_TYPES.Integer16: 'h',
+            wxfexpr.ARRAY_TYPES.UnsignedInteger16: 'H',
+            wxfexpr.ARRAY_TYPES.Integer32: 'i',
+            wxfexpr.ARRAY_TYPES.UnsignedInteger32: 'I',
+            wxfexpr.ARRAY_TYPES.Integer64: 'q',
+            wxfexpr.ARRAY_TYPES.UnsignedInteger64: 'Q',
+            wxfexpr.ARRAY_TYPES.Real32: 'f',
+            wxfexpr.ARRAY_TYPES.Real64: 'd',
+            wxfexpr.ARRAY_TYPES.ComplexReal32: 'f',
+            wxfexpr.ARRAY_TYPES.ComplexReal64: 'd',
+        }
 
-    def _to_complex(self, array, max_depth, curr_depth):
-        # recursivelly traverse the array until the last (real) dimension is reached
-        # it correspond to an array of (fake) array of two elements (real and im parts). 
-        if curr_depth < max_depth-1:
-            for sub in array:
-                self._to_complex(sub, max_depth, curr_depth+1)
-            return
-        # iterate over the pairs
-        for index, complex_pair in enumerate(array):
-            array[index] = complex(*complex_pair)
+        def _to_complex(self, array, max_depth, curr_depth):
+            # recursivelly traverse the array until the last (real) dimension is reached
+            # it correspond to an array of (fake) array of two elements (real and im parts). 
+            if curr_depth < max_depth-1:
+                for sub in array:
+                    self._to_complex(sub, max_depth, curr_depth+1)
+                return
+            # iterate over the pairs
+            for index, complex_pair in enumerate(array):
+                array[index] = complex(*complex_pair)
 
-    def _array_to_list(self, current_token, tokens):
-        view = memoryview(current_token.data)
-        if current_token.array_type == wxfexpr.ARRAY_TYPES.ComplexReal32 or current_token.array_type == wxfexpr.ARRAY_TYPES.ComplexReal64:
-            dimensions = list(current_token.dimensions)
-            # In the given array, 2 reals give one complex, 
-            # adding one last dimension to represent it.
-            dimensions.append(2)
-            as_list = view.cast(self.unpack_mapping[current_token.array_type], shape=dimensions).tolist()
-            self._to_complex(as_list, len(current_token.dimensions), 0)
-            return as_list
-        else:
-            return view.cast(self.unpack_mapping[current_token.array_type], shape=current_token.dimensions).tolist()
+        def _array_to_list(self, current_token, tokens):
+            view = memoryview(current_token.data)
+            if current_token.array_type == wxfexpr.ARRAY_TYPES.ComplexReal32 or current_token.array_type == wxfexpr.ARRAY_TYPES.ComplexReal64:
+                dimensions = list(current_token.dimensions)
+                # In the given array, 2 reals give one complex, 
+                # adding one last dimension to represent it.
+                dimensions.append(2)
+                as_list = view.cast(self.unpack_mapping[current_token.array_type], shape=dimensions).tolist()
+                self._to_complex(as_list, len(current_token.dimensions), 0)
+                return as_list
+            else:
+                return view.cast(self.unpack_mapping[current_token.array_type], shape=current_token.dimensions).tolist()
+    else:
+        unpack_mapping = {
+            wxfexpr.ARRAY_TYPES.Integer8: wxfexpr.StructInt8LE,
+            wxfexpr.ARRAY_TYPES.UnsignedInteger8: wxfexpr.StructUInt8LE,
+            wxfexpr.ARRAY_TYPES.Integer16: wxfexpr.StructInt16LE,
+            wxfexpr.ARRAY_TYPES.UnsignedInteger16: wxfexpr.StructUInt16LE,
+            wxfexpr.ARRAY_TYPES.Integer32: wxfexpr.StructInt32LE,
+            wxfexpr.ARRAY_TYPES.UnsignedInteger32: wxfexpr.StructUInt32LE,
+            wxfexpr.ARRAY_TYPES.Integer64: wxfexpr.StructInt64LE,
+            wxfexpr.ARRAY_TYPES.UnsignedInteger64: wxfexpr.StructUInt64LE,
+            wxfexpr.ARRAY_TYPES.Real32: wxfexpr.StructFloat,
+            wxfexpr.ARRAY_TYPES.Real64: wxfexpr.StructDouble,
+            wxfexpr.ARRAY_TYPES.ComplexReal32: wxfexpr.StructFloat,
+            wxfexpr.ARRAY_TYPES.ComplexReal64: wxfexpr.StructDouble,
+        }
+        def _array_to_list(self, current_token, tokens):
+            value, _ = self._build_array_from_bytes(current_token.data, 0, current_token.array_type, current_token.dimensions, 0)
+            return value
+        
+        def _build_array_from_bytes(self, data, offset, array_type, dimensions, current_dim):
+            new_array = list()
+            if current_dim < len(dimensions)-1:
+                for i in range(dimensions[current_dim]):
+                    new_elem, offset = self._build_array_from_bytes(data, offset, array_type, dimensions, current_dim+1)
+                    new_array.append(new_elem)
+            else:
+                struct = self.unpack_mapping[array_type]
+                # complex values, need two reals for each.
+                if array_type == wxfexpr.ARRAY_TYPES.ComplexReal32 or array_type == wxfexpr.ARRAY_TYPES.ComplexReal64:
+                    for i in range(dimensions[-1]):
+                        # this returns a tuple.
+                        re = struct.unpack_from(data, offset=offset)
+                        offset = offset + struct.size
+                        im = struct.unpack_from(data, offset=offset)
+                        offset = offset + struct.size
+                        new_array.append(complex(re[0], im[0]))
+                else:
+                    for i in range(dimensions[-1]):
+                        # this returns a tuple.
+                        value = struct.unpack_from(data, offset=offset)
+                        offset = offset + struct.size
+                        new_array.append(value[0])
+            return new_array, offset
+        
+
 
 class WXFConsumerNumpy(WXFConsumer):
     def consume_array(self, current_token, tokens, **kwargs):
