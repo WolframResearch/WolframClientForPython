@@ -88,20 +88,19 @@ fmtmsg[msg_MessageName, args___] := Module[
 	]
 ];
 
-fmtmsg[msg_, args___] := TemplateApply["Invalid message `` with arguments ``", {msg, {args}}];
+fmtmsg[msg_, args___] := TemplateApply[
+	"Invalid message `` with arguments ``", 
+	{ToString[Unevaluated[msg]], {args}}];
 
-writemsg[Hold[Message[msg_MessageName, args___], _]] := writemsg[fmtmsg[msg, args]];
-
-writemsg[Failure[_, meta_Association]] := writemsg[
-	fmtmsg[
-		meta["MessageTemplate"], 
-		Sequence @@ meta["MessageParameters"]
-	]
+writemsg[Hold[Message[msg_MessageName, args___], _]] := writemsg[
+	ToString[Unevaluated[msg], InputForm], 
+	fmtmsg[msg, args]
 ];
-
-writemsg[msg_String] := (
+writemsg[msgname_String, msg_String] := (
 	ClientLibrary`warn[msg];
-	WriteString[$OutputSocket, msg];
+	WriteString[$OutputSocket, 
+		Developer`WriteRawJSONString[{msgname, msg}, "Compact"->True]
+	];
 );
 
 (* evaluate[data_String] := ToExpression[data];
@@ -161,7 +160,9 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 			(* Check how many messages were thrown during evaluation.
 			Cap it with a default value to avoid overflow. *)
 			msgCount = Internal`BagLength[msgs];
-			ClientLibrary`info["Message count: ", ToString[msgCount]];
+			If[msgCount > 0, 
+				ClientLibrary`info["Message count: ", ToString[msgCount]]
+			];
 			Which[
 				msgCount == 0,
 				WriteString[$OutputSocket, "0"]
@@ -187,7 +188,7 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 			];
 			SocketWriteFunc[
 				$OutputSocket,
-				timed[serialize[expr], "Expression serialization"]
+				serialize[expr]
 			];
 			If[$LogLevel >= $DEBUG, ClientLibrary`debug["End of evaluation."]]
 		] &

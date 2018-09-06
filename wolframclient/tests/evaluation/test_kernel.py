@@ -102,7 +102,7 @@ class TestCase(TestCaseSettings):
         res = self.kernel_session.evaluate_wrap('1/0')
         self.assertFalse(res.success)
         self.assertListEqual(res.messages,
-            ['Infinite expression Infinity encountered.']
+            [('Power::infy', 'Infinite expression Infinity encountered.')]
         )
 
     def test_silenced_msg(self):
@@ -121,9 +121,8 @@ class TestCase(TestCaseSettings):
     def test_one_eval_many_msg_wrap(self):
         res = self.kernel_session.evaluate_wrap('ImportString["[1,2", "RawJSON"]')
         self.assertFalse(res.success)
-        expected_msgs = [
-            'Expecting end of array or a value separator.',
-            "An error occurred near character 'EOF', at line 1:6"]
+        expected_msgs = [('Import::jsonarraymissingsep', 'Expecting end of array or a value separator.'), 
+        ('Import::jsonhintposandchar', "An error occurred near character 'EOF', at line 1:6")]
         self.assertListEqual(res.messages, expected_msgs)
 
     def test_many_failures(self):
@@ -133,10 +132,9 @@ class TestCase(TestCaseSettings):
     def test_many_failures_wrap(self):
         res = self.kernel_session.evaluate_wrap('ImportString["[1,2", "RawJSON"]; 1/0')
         self.assertFalse(res.success)
-        expected_msgs = [
-            'Expecting end of array or a value separator.',
-            "An error occurred near character 'EOF', at line 1:6",
-            'Infinite expression Infinity encountered.']
+        expected_msgs = [('Import::jsonarraymissingsep', 'Expecting end of array or a value separator.'), 
+        ('Import::jsonhintposandchar', "An error occurred near character 'EOF', at line 1:6"), 
+        ('Power::infy', 'Infinite expression Infinity encountered.')]
         self.assertListEqual(res.messages, expected_msgs)
 
     @unittest.skipIf(six.PY2, "No async call on Python2.")

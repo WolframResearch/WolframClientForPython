@@ -88,14 +88,33 @@ class WolframLanguageSession(object):
     * one `PUSH` socket receiving expressions to evaluate,
     * one `PULL` socket to read evaluation results.
 
-    Kernel logging is enabled by default and is done through a third socket
-    (type `PULL`). The kernel associated to a given session provides the following
+    Kernel logging is disabled by default and is done through a third socket
+    (type `SUB`). The initial log level is specificed by parameter kernel_loglevel.
+    If log level was not set at initialization, logging is not available for the entire
+    session. 
+    
+    It is possible to pass ZMQ sockets to use instead of new one, but this is generally
+    not recommanded, probably never necessary.
+
+    The kernel associated to a given session provides the following
     logging functions:
 
     * ``ClientLibrary`debug`` corresponding to :py:meth:`logging.Logger.debug`
     * ``ClientLibrary`info`` corresponding to :py:meth:`logging.Logger.info`
     * ``ClientLibrary`warn`` corresponding to :py:meth:`logging.Logger.warning`
     * ``ClientLibrary`error`` corresponding to :py:meth:`logging.Logger.error`
+    * ``ClientLibrary`SetDebugLogLevel[]send debug messages and above``
+    * ``ClientLibrary`SetInfoLogLevel[] send info messages and above``
+    * ``ClientLibrary`SetWarnLogLevel[] send warning messages and above``
+    * ``ClientLibrary`SetErrorLogLevel[] only send error messages``
+    * ``ClientLibrary`DisableKernelLogging[] stop sending error message to the logging socket``
+
+    The standart input, output and error file handles can be specified with stdin, stdout and stderr
+    named parameters. Valid values are those of subprocess.Popen. Those parameters should be handled
+    with care as deadlocks can arise from misconfiguration.
+
+    .. note :: 
+        Wolfram Language sessions are **not thread-safe**, each thread must have its own instance.
 
     """
 
@@ -323,15 +342,6 @@ class WolframLanguageSession(object):
 
     def _evaluate(self, expr, wrap_result=False, **kwargs):
         """Send an expression to the kernel for evaluation. Return a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.
-
-        The `expr` can be:
-
-            * a text string representing the Wolfram Language expression :wl:`InputForm`.
-            * an instance of Python object serializable as WXF by :func:`~wolframclient.serializers.export`.
-            * a binary string of a serialized expression in the WXF format.
-
-        `kwargs` are passed to :func:`~wolframclient.serializers.export` during serialization step of
-        non-string inputs.
         """
         if not self.started:
             raise WolframKernelException('Kernel is not started.')
@@ -352,18 +362,20 @@ class WolframLanguageSession(object):
             raise WolframKernelException('Unexpected message count returned by Kernel %s' % msg_count)
         errmsg = []
         for i in range(msg_count):
-            errmsg.append(force_text(self.out_socket.zmq_socket.recv()))
+            json_msg = self.out_socket.zmq_socket.recv_json()
+            errmsg.append((json_msg[0], force_text(json_msg[1])))
+            # errmsg.append(force_text(self.out_socket.zmq_socket.recv()))
         wxf_result = self.out_socket.zmq_socket.recv()
         self.evaluation_count += 1
         return WolframKernelEvaluationResult(wxf_result, errmsg)
 
     def evaluate_wxf(self, expr, **kwargs):
-        """Send an expression to the kernel for evaluation and return the result encoded as WXF.
+        """Send an expression to the kernel for evaluation and return the raw result still encoded as WXF.
         """
         wxf = self._evaluate(expr, **kwargs).wxf
         if not result.success:
             for msg in result.messages:
-                logger.warning(msg)
+                logger.warning(msg[1])
         return wxf
 
     def evaluate_wrap(self, expr, **kwargs):
@@ -386,7 +398,7 @@ class WolframLanguageSession(object):
         result = self._evaluate(expr, kwargs)
         if not result.success:
             for msg in result.messages:
-                logger.warning(msg)
+                logger.warning(msg[1])
         return result.get()
 
     def evaluate_async(self, expr, **kwargs):
@@ -412,7 +424,12 @@ class WolframLanguageSession(object):
         return inner
 
     def __repr__(self):
-        return '<WolframLanguageSession: in:%s, out:%s>' % (self.in_socket.uri, self.out_socket.uri)
+        if self.terminated:
+            return '<WolframLanguageSession: terminated>'
+        elif self.started:
+            return '<WolframLanguageSession: pid:%i, kernel sockets: (in:%s, out:%s)>' % (self.kernel_proc.pid, self.in_socket.uri, self.out_socket.uri)
+        else:
+            return '<WolframLanguageSession: not started>'
 
 class SocketException(Exception):
     pass

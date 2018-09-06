@@ -16,8 +16,7 @@ class WXFConsumer(object):
     This class exposes a comprehensive list of methods consuming WXF types.
     Subclasses can override these members to implement custom parsing logic.
 
-    Example: implement a consumer that parses Wolfram Language booleans :wl:`Null`
-     as Python `None`::
+    Example implementing a consumer that parses Wolfram Language booleans :wl:`Null` as Python `None`::
 
         class ExampleConsumer(WXFConsumer):
             def consume_symbol(self, current_token, tokens, **kwargs):
@@ -38,10 +37,10 @@ class WXFConsumer(object):
         {'a': 1, 'b': Null}
 
     Once initialized, the entry point of a consumer is the method
-    :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.next_expression`
-    that takes a token generator and return a Python object. This method is particularly
+    :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.next_expression`.
+    It takes a token generator and returns a Python object. This method is particularly
     useful when building nested expressions, e.g:
-    :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.consume_function`,
+    :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function`,
     :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.consume_association`, etc,
     in order to fetch sub-expressions.
     """
@@ -88,6 +87,9 @@ class WXFConsumer(object):
 
         Return a :class:`list` if the head is symbol `List`, otherwise returns the result of :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function` 
         applied to the head and arguments.
+
+        Usually custom parsing rules target Functions, but not List. To do so, it is recommanded to override
+        :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function`.
         """
         head = self.next_expression(tokens, **kwargs)
         args = []
@@ -101,8 +103,8 @@ class WXFConsumer(object):
     def build_function(self, head, arg_list, **kwargs):
         """Create a Python object from head and args.
 
-        This function can be conveniently overloaded to create different Python objects
-        from different heads. e.g: DateObject, Complex, etc.
+        This function can be conveniently overloaded to create specific Python objects
+        from various heads. e.g: DateObject, Complex, etc.
         """
         return WLFunction(head, *arg_list)
 

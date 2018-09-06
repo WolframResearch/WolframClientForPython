@@ -15,8 +15,8 @@ def binary_deserialize(wxf_input, consumer=None, **kwargs):
     of :class:`~wolframclient.deserializers.wxf.wxfparser.WXFParser`.
 
     The consumer must be an instance of :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer`. If none is
-    provided :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer` is used which does not use NumPy arrays,
-    contrary to :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy`.
+    provided :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer` is used. To enable NumPy array support,
+    use :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy`.
 
     Named parameters are passed to the consumer. They can be any valid parameter of
     :meth:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.next_expression`, namely:
