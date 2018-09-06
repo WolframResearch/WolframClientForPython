@@ -240,33 +240,69 @@ Import :class:`~wolframclient.evaluation.WolframLanguageSession`::
     
     >>> from wolframclient.evaluation import WolframLanguageSession
 
-Evaluate a Wolfram Language function from Python:
+Create a new session targeting a local *WolframKernel* specified by its path::
 
-    >>> with WolframLanguageSession('/path/to/kernel-executable') as session:
-    ...     session.StringReverse('abc')
-    ...
+    >>> session = WolframLanguageSession('/path/to/kernel-executable')
+
+Start the session::
+
+    >>> session.start()
+    >>> session.started
+    True
+
+Evaluate a Wolfram Language function from Python::
+
+    >>> session.StringReverse('abc')
     'cba'
 
 Call the Wolfram Language function :wl:`MinMax` on a Python list::
 
-    >>> with WolframLanguageSession('/path/to/kernel-executable') as session:
-    ...     session.MinMax([1, 5, -3, 9])
+    >>> session.MinMax([1, 5, -3, 9])
     [-3, 9]
+
+Query `WolframAlpha <https://www.wolframalpha.com/>`_ for the distance between the Earth and the Sun using the function :wl:`WolframAlpha`::
+
+    >>> distance = session.WolframAlpha("Earth distance from Sun", "Result")
+    Quantity[1.008045994315923, AstronomicalUnit]
+
+The Python object stored in `distance` variable is a Wolfram Language :wl:`Quantity`. Convert the unit to Kilometers, looping back the previous result in a new expression evaluation::
+
+    >>> d_km = session.UnitConvert(distance, "Kilometers")
+    Quantity[150801534.3173264, Kilometers]
+
+Finally retrieve the result as a Python number::
+
+    >>> session.QuantityMagnitude(d_km)
+    150801534.3173264
 
 More complex expressions are evaluated using :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate`::
 
-    >>> with WolframLanguageSession('/path/to/kernel-executable') as session:
-    ...     session.evaluate('Map[Prime, Range[5]]')
+    >>> session.evaluate('Map[Prime, Range[5]]')
     [2, 3, 5, 7, 11]
 
 Expressions evaluated in a given session are persistent. Define a function, and call it::
     
-    >>> with WolframLanguageSession('/path/to/kernel-executable') as session:
-    ...    session.evaluate('f[x_] := x ^ 2')
-    ...    session.evaluate('f[4]')
+    >>> session.evaluate('f[x_] := x ^ 2')
+    Null
+    >>> session.evaluate('f[4]')
     16
 
-:class:`~wolframclient.evaluation.WolframLanguageSession` must be terminated, either inside a `try/finally` block, or by explicitly :func:`terminating<wolframclient.evaluation.WolframLanguageSession.terminate>` the session, or, alternatively, in a `with` block that achieves the same result automatically, as shown above. It is highly recommended to initialize a session once to mitigate the initialization cost. Wolfram Language sessions are **not thread-safe**.
+The session is no more useful, terminating it::
+
+    session.terminate()
+
+Alternatively, it is possible to delegate the handling of the life-cycle of a session using a `with` block::
+
+    >>> with WolframLanguageSession('/path/to/kernel-executable') as wl_session:
+    ...     wl_session.StringReverse('abc')
+    ...
+    'cba'
+
+The session stored in `wl_session`, is only available in the scope of the `with` block, contrary to `session` that was initialized with :func:`~wolframclient.evaluation.WolframLanguageSession.start`.
+
+
+As shown above, :class:`~wolframclient.evaluation.WolframLanguageSession` must be initialized and terminated, either by explicitly calling :func:`~wolframclient.evaluation.WolframLanguageSession.start` and :func:`~wolframclient.evaluation.WolframLanguageSession.terminate`, or, alternatively, in a `with` block that achieves the same result automatically. It is highly recommended to initialize a session once to mitigate the initialization cost.
+
 
 Wolfram Call
 ------------------
@@ -295,7 +331,7 @@ In the above example the variable `session` can be seamlessly replaced by an :re
 Serialization
 =============
 
-This library is intended to provide a way to serialize python expression to Wolfram Language string :wl:`InputForm` and :wl:`WXF` string of bytes. The functionality was designed to be extensible, so that any arbitrary Python object can be serialized with the addition of custom encoders.
+This library is intended to provide a way to serialize python expressions to Wolfram Language string :wl:`InputForm` and :wl:`WXF` string of bytes. The functionality was designed to be extensible, so that any arbitrary Python object can be serialized with the addition of custom encoders.
 
 Serialize
 ----------
@@ -307,7 +343,7 @@ Import the function::
 
     >>> from wolframclient.serializers import export
 
-Serialize a Python list of integer into an Wolfram Language :wl:`InputForm` string representation::
+Serialize a Python list of integers into an Wolfram Language :wl:`InputForm` string representation::
 
     >>> export([1,2,3])
     b'{1, 2, 3}'
