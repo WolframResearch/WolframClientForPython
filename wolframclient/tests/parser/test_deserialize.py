@@ -84,6 +84,26 @@ class TestCase(BaseTestCase):
             value = chr(max)
         self.wxf_assert_roundtrip(value)
 
+    def test_all_char(self):
+        import itertools
+        all_char = u''
+        unicode_no_surrogate = itertools.chain(
+            range(0xD800),
+            range(1 + 0xDFFF, 1 << 16))
+        count = 0
+        for i in unicode_no_surrogate:
+            count += 1
+            if six.PY2:
+                all_char += unichr(i)
+            else:
+                all_char += chr(i)
+        path = current_file_dir = os.path.dirname(__file__)
+        path = os.path.join(path, '..', 'data', 'allchars.wxf')
+        
+        with open(path, 'rb') as r_file:
+            res = binary_deserialize(r_file)
+        self.assertEqual(res, all_char)
+
     ### INTEGER TESTS
     @unittest.skipIf(six.JYTHON, None)
     def test_integer8(self):
