@@ -103,11 +103,11 @@ class WolframLanguageSession(object):
     * ``ClientLibrary`info`` corresponding to :py:meth:`logging.Logger.info`
     * ``ClientLibrary`warn`` corresponding to :py:meth:`logging.Logger.warning`
     * ``ClientLibrary`error`` corresponding to :py:meth:`logging.Logger.error`
-    * ``ClientLibrary`SetDebugLogLevel[]send debug messages and above``
-    * ``ClientLibrary`SetInfoLogLevel[] send info messages and above``
-    * ``ClientLibrary`SetWarnLogLevel[] send warning messages and above``
-    * ``ClientLibrary`SetErrorLogLevel[] only send error messages``
-    * ``ClientLibrary`DisableKernelLogging[] stop sending error message to the logging socket``
+    * ``ClientLibrary`SetDebugLogLevel[]`` send debug messages and above``
+    * ``ClientLibrary`SetInfoLogLevel[]`` send info messages and above``
+    * ``ClientLibrary`SetWarnLogLevel[]`` send warning messages and above``
+    * ``ClientLibrary`SetErrorLogLevel[]`` only send error messages``
+    * ``ClientLibrary`DisableKernelLogging[]`` stop sending error message to the logging socket``
 
     The standart input, output and error file handles can be specified with stdin, stdout and stderr
     named parameters. Valid values are those of subprocess.Popen. Those parameters should be handled
@@ -372,11 +372,11 @@ class WolframLanguageSession(object):
     def evaluate_wxf(self, expr, **kwargs):
         """Send an expression to the kernel for evaluation and return the raw result still encoded as WXF.
         """
-        wxf = self._evaluate(expr, **kwargs).wxf
+        result = self._evaluate(expr, **kwargs)
         if not result.success:
             for msg in result.messages:
                 logger.warning(msg[1])
-        return wxf
+        return result.wxf
 
     def evaluate_wrap(self, expr, **kwargs):
         """ Similar to :func:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.

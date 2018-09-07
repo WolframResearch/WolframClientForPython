@@ -3,6 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.serializers import export
+from wolframclient.deserializers import binary_deserialize
 from wolframclient.language import wl
 from wolframclient.exception import WolframEvaluationException, WolframKernelException
 from wolframclient.language.expression import WLSymbol, WLFunction
@@ -136,6 +137,16 @@ class TestCase(TestCaseSettings):
         ('Import::jsonhintposandchar', "An error occurred near character 'EOF', at line 1:6"), 
         ('Power::infy', 'Infinite expression Infinity encountered.')]
         self.assertListEqual(res.messages, expected_msgs)
+
+    def test_valid_evaluate_wxf(self):
+        wxf = self.kernel_session.evaluate_wxf('Range[3]')
+        result = binary_deserialize(wxf)
+        self.assertEqual(result, [1,2,3])
+
+    def test_err_evaluate_wxf(self):
+        wxf = self.kernel_session.evaluate_wxf('Range[3')
+        result = binary_deserialize(wxf)
+        self.assertEqual(result, WLSymbol('$Failed'))
 
     @unittest.skipIf(six.PY2, "No async call on Python2.")
     def test_evaluate_async(self):
