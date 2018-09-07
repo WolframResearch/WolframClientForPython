@@ -5,18 +5,17 @@
 Advanced usage and code examples
 ##########################################
 
+****************************
 Local Kernel evaluation
-----------------------------
+****************************
 
-The following sections cover the client library features in details.
+The following sections provide executable demonstrations of the local kernel evaluation features of the client library.
 
 .. note ::
-    All the examples of this section require to set the variable **kernel_path** to the path to a local Wolfram Kernel.
-    The variable `session` refers to an initialized session.
-
+    All examples require to set the variable **kernel_path** to the path of a local Wolfram Kernel.
 
 Evaluation methods
-^^^^^^^^^^^^^^^^^^^^^^
+======================
 
 First initialize a session::
 
@@ -41,7 +40,7 @@ When expression involve more than one function, it's usually best to use :func:`
     >>> session.evaluate('NIntegrate[Sqrt[x^2 + y^2 + z^2], {x, 0, 1}, {y, 0, 1}, {z, 0, 1}]')
     0.9605920064034617
 
-Messages may be issued during evaluation. By default, the above evaluation methods log the error messages with severity `WARNING`. It usually results in the message being printed out. It is also possible to retrieve both the evaluation result and the messages, wrapped in an instance of :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`, by using :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wrap`::
+Messages may be issued during evaluation. By default, the above evaluation methods log the error messages with severity `warning`. It usually results in the message being printed out. It is also possible to retrieve both the evaluation result and the messages, wrapped in an instance of :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`, by using :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wrap`::
 
     >>> eval = session.evaluate_wrap('1/0')
     >>> eval.result
@@ -53,15 +52,19 @@ Messages are stored as tuple of two elements, the message name and the formatted
     [('Power::infy', 'Infinite expression Infinity encountered.')]
 
 Logging
-^^^^^^^^
+========
 
 Logging is often an important part of any application. The library relies on the standard :mod:`logging` module, and exposes various methods to control the level of information logged.
 
 The first level of control is through the logging module itself. The python library logs at various level:
 
 .. literalinclude:: /examples/python/logging1.py
+    :linenos:
+    :emphasize-lines: 5-6
 
-It's also possible to log from within the kernel. This feature is disabled by default. When initializing a :class:`~wolframclient.evaluation.WolframLanguageSession`, the parameter `kernel_loglevel` can be specified with one of the following values: logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, to activate kernel logging. If kernel logging is not activated when initializing the session, it is not possible to activate it afterward.
+It's also possible to log from within the kernel. This feature is disabled by default. When initializing a :class:`~wolframclient.evaluation.WolframLanguageSession`, the parameter `kernel_loglevel` can be specified with one of the following values: :class:`logging.DEBUG`, :class:`logging.INFO`, :class:`logging.WARNING`, :class:`logging.ERROR`, to activate kernel logging. 
+
+.. note :: If a WolframLanguageSession is initialized with the default `kernel_loglevel` (i.e: :class:`logging.NOTSET`), kernel logging is not available, and it is not possible to activate it afterward.
 
 From the Wolfram Language it is possible to issue log messages, using one of the following functions:
 
@@ -88,23 +91,53 @@ The log level of the kernel is independent of the Python one. The following func
 Manipulation of log level using Python and Kernel controls:
 
 .. literalinclude:: /examples/python/logging2.py
+    :linenos:
+    :emphasize-lines: 14,16,19,21,22
 
+**********************************************
+Extending WXF parsing – Writing a WXFConsumer
+**********************************************
 
-Eigenvalues of a matrix of integers
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Integer Eigenvalues
+====================
 
-Use the Wolfram Client library to access the Wolfram Language Algebra functions. This example makes use of :wl:`Eigenvalues` on a matrix of integers:
+Use the Wolfram Client library to access the Wolfram Language Algebra functions. Compute the integer :wl:`Eigenvalues` on a Python matrix of integers:
 
 .. literalinclude:: /examples/python/eigenvalues1.py
+    :linenos:
+    :emphasize-lines: 11-15
 
-Eigenvalues and complex numbers
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Python has a :class:`complex` type which maps to :wl:`Complex` symbol. By default the function :func:`~wolframclient.deserializers.binary_deserialize` deserializes Wolfram Language functions using a generic class :class:`~wolframclient.language.expression.WLFunction`, but conveniently provides a way to extend the mapping. In this second example, a subclass of :class:`~wolframclient.deserializers.WXFConsumer` is defined, in order to override its method :meth:`~wolframclient.deserializers.WXFConsumer.build_function`. The child method maps :wl:`Complex` to built-in python complex.
+.. _complex-consumer:
+
+Complex Eigenvalues
+====================
+Python has built-in :class:`complex`. By default the function :func:`~wolframclient.deserializers.binary_deserialize` deserializes Wolfram Language functions using a generic class :class:`~wolframclient.language.expression.WLFunction`, but conveniently provides a way to extend the mapping. Define `ComplexFunctionConsumer`, a subclass of :class:`~wolframclient.deserializers.WXFConsumer`, that overrides the method :meth:`~wolframclient.deserializers.WXFConsumer.build_function`. The subclassed method maps :wl:`Complex` to built-in python complex.
 
 .. literalinclude:: /examples/python/eigenvalues2.py
+    :emphasize-lines: 10-22, 36
+    :linenos:
 
-.. note ::
-    For readability, this example does not cover the cases of a Complex which arguments are not Python number type, such as **2πi** (`Times[Complex[0, 2], Pi]`), or **1/4 + i** (`Complex[Rational[1,4],1]`).
-    A quick way to address this issue is to apply function :wl:`N` to the output, losing exact precision.
 
-Example 3: NumPy
+Symbolic Eigenvalues
+====================
+
+A Python heavy approach
+------------------------
+
+Sometimes the resulting expression of an evaluation is a symbolic exact value, which nonetheless could be approximated to a numerical result. The Eigenvalues of the matrix :math:`\begin{pmatrix} \pi & -2 & 0 \\ 1 & \pi & -1 \\ 0 & 2 & \pi \\ \end{pmatrix}` are :math:`\frac{1}{2}(4I+2\pi)`, :math:`\frac{1}{2}(-4I+2\pi)`, and :math:`\pi`.
+
+It is possible to build a subclass of :class:`~wolframclient.deserializers.WXFConsumer`, that can convert the symbolic representation into a pure built-in Python object. Create a consumer that deals with :wl:`Plus` and :wl:`Times`, converts :wl:`Pi` to :class:`math.pi`, :wl:`Rational` to :class:`fractions.Fraction`, and :wl:`Complex` to :class:`complex`. This result is a significant code inflation but is a good in depth demo of the extension mechanism. Yet, as we will see it is not really necessary.
+
+.. literalinclude:: /examples/python/eigenvalues3.py
+    :emphasize-lines: 10-22, 36
+    :linenos:
+
+
+A Wolfram Language alternative
+------------------------------
+
+It is recommended to delegate as much as possible to the Wolfram Language. Instead of implementing a (fragile) counterpart of core functions such as :wl:`Plus` or :wl:`Times`, it is best to compute a numerical result in the kernel. This is obtained with the function :wl:`N`. Once applied to the eigenvalues, the result becomes a mixture of complex values and reals, which was already dealt with in the :ref:`previous section<complex-consumer>`.
+
+.. literalinclude:: /examples/python/eigenvalues3_alternative.py
+    :emphasize-lines: 10-22, 36
+    :linenos:
