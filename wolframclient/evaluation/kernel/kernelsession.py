@@ -452,12 +452,14 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
                 'Asynchronous evaluation is not available on this Python interpreter.')
 
     def terminate(self):
-        super().terminate()
+        # First terminate all executions.
+        # Then use the socket to actually quit. Avoid crashes when freeing zmq resources still in use.
         if self.thread_pool_exec is not None:
             try:
                 self.thread_pool_exec.shutdown(wait=True)
             except Exception as e:
                 logger.fatal(e)
+        super().terminate()
 
     def __getattr__(self, attr):
         def inner(*args, **kwargs):
