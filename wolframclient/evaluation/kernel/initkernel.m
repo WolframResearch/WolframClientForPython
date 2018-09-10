@@ -3,6 +3,9 @@
 (* Not useful since we apparently never receive multipart messages,
 no matter the total size (tested with 80MB) *)
 
+$IgnoreEOF=True
+$HistoryLength=0
+
 Needs["ZeroMQLink`"];
 
 Begin["ClientLibrary`"];
