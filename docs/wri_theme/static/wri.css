@@ -237,6 +237,12 @@ img.logo {
     margin-bottom: 15px;
 }
 
+
+.highlight-default .highlight pre {
+    font-family: Courier, monospace, sans-serif;
+    font-weight: normal;
+}
+
 /* pygments custom CSS  */
 /* Selectors from https://github.com/rsmenon/pygments-mathematica 
 Color scheme from wolframcloud.com */
