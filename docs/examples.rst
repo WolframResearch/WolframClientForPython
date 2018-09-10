@@ -17,6 +17,9 @@ The following sections provide executable demonstrations of the local kernel eva
 Evaluation methods
 ======================
 
+Synchronous
+-----------
+
 First initialize a session::
 
     from wolframclient.evaluation import WolframLanguageSession
@@ -50,6 +53,16 @@ Messages are stored as tuple of two elements, the message name and the formatted
 
     >>> eval.messages
     [('Power::infy', 'Infinite expression Infinity encountered.')]
+
+Asynchronous
+------------
+
+Some computations may take a significant time to finish, and the result might not be required immediately. Asynchronous evaluation is a way to start evaluations on a local kernel, using a background task, without blocking the python execution. Asynchronous evaluation requires a instance of :class:`~wolframclient.evaluation.WolframLanguageAsyncSession` which contains the same method as its synchronous counterpart, except that returned values are wrapped into :class:`~concurrent.futures.Future` objects.
+
+Evaluate an artificially delayed code (using :wl:`Pause`), and print time elapsed at each step:  
+
+.. literalinclude:: /examples/python/asynchronous1.py
+    :linenos:
 
 Logging
 ========
