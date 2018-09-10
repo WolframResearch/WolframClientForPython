@@ -126,10 +126,10 @@ A Python heavy approach
 
 Sometimes the resulting expression of an evaluation is a symbolic exact value, which nonetheless could be approximated to a numerical result. The Eigenvalues of the matrix :math:`\begin{pmatrix} \pi & -2 & 0 \\ 1 & \pi & -1 \\ 0 & 2 & \pi \\ \end{pmatrix}` are :math:`\frac{1}{2}(4I+2\pi)`, :math:`\frac{1}{2}(-4I+2\pi)`, and :math:`\pi`.
 
-It is possible to build a subclass of :class:`~wolframclient.deserializers.WXFConsumer`, that can convert the symbolic representation into a pure built-in Python object. Create a consumer that deals with :wl:`Plus` and :wl:`Times`, converts :wl:`Pi` to :class:`math.pi`, :wl:`Rational` to :class:`fractions.Fraction`, and :wl:`Complex` to :class:`complex`. This result is a significant code inflation but is a good in depth demo of the extension mechanism. Yet, as we will see it is not really necessary.
+It is possible to build a subclass of :class:`~wolframclient.deserializers.WXFConsumer`, that can convert some symbolic results into pure built-in Python objects. The consumer must deal with :wl:`Plus` and :wl:`Times`, converts :wl:`Pi` to :class:`math.pi`, :wl:`Rational` to :class:`fractions.Fraction`, and :wl:`Complex` to :class:`complex`. It results in a significant code inflation but provide a detailed review of the extension mechanism. Yet, as we will see it is not really necessary.
 
 .. literalinclude:: /examples/python/eigenvalues3.py
-    :emphasize-lines: 10-22, 36
+    :emphasize-lines: 15-68, 86
     :linenos:
 
 
@@ -139,5 +139,5 @@ A Wolfram Language alternative
 It is recommended to delegate as much as possible to the Wolfram Language. Instead of implementing a (fragile) counterpart of core functions such as :wl:`Plus` or :wl:`Times`, it is best to compute a numerical result in the kernel. This is obtained with the function :wl:`N`. Once applied to the eigenvalues, the result becomes a mixture of complex values and reals, which was already dealt with in the :ref:`previous section<complex-consumer>`.
 
 .. literalinclude:: /examples/python/eigenvalues3_alternative.py
-    :emphasize-lines: 10-22, 36
+    :emphasize-lines: 12-18, 32
     :linenos:

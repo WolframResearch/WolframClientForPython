@@ -14,7 +14,8 @@ Complex = wl.Complex
 
 class MathConsumer(WXFConsumer):
     """Implement a consumer with basic arithmetic operation."""
-
+    
+    # Specific convertion for Pi, other symbols use the default method.
     def consume_symbol(self, current_token, tokens, **kwargs):
         # Convert symbol Pi to its numeric value as defined in Python
         if current_token.data == 'Pi':
@@ -22,21 +23,25 @@ class MathConsumer(WXFConsumer):
         else:
             return super().consume_symbol(current_token, tokens, **kwargs)
 
+    # Define a list of heads that require a specific convertion to Python.
     DISPATCH = {
         Complex: 'build_complex',
         wl.Rational: 'build_rational',
         wl.Plus: 'build_plus',
         wl.Times: 'build_times'
     }
+    # Overload the method that builds functions. 
     def build_function(self, head, args, **kwargs):
         # check if there is a specific function associated to the function head
         builder_func = self.DISPATCH.get(head, None)
         if builder_func is not None:
             try:
+                # get the class method and apply it to the arguments.
                 return getattr(self, builder_func)(*args)
             except Exception:
+                # instead of failing, fallback to default case.
                 return super().build_function(head, args, **kwargs)
-        # otherwise delegate to parent
+        # heads not listed in DISPATH are delegated to parent's method
         else:
             return super().build_function(head, args, **kwargs)
 
