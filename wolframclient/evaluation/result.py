@@ -60,17 +60,18 @@ class WolframKernelEvaluationResult(WolframResult):
     necessary.
     """
 
-    def __init__(self, wxf, msgs):
+    def __init__(self, wxf, msgs, consumer=None):
         self.success = len(msgs) == 0
         self.failure = None
         self.messages = msgs
         self.wxf = wxf
+        self.consumer = consumer
         self._result = None
 
     @property
     def result(self):
         if self._result is None:
-            self._result = binary_deserialize(self.wxf)
+            self._result = binary_deserialize(self.wxf, consumer=self.consumer)
         return self._result
 
     def get(self):

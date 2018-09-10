@@ -118,7 +118,7 @@ class WolframLanguageSession(object):
 
     """
 
-    def __init__(self, kernel=None, initfile=None,
+    def __init__(self, kernel=None, consumer=None, initfile=None,
                  in_socket=None, out_socket=None, kernel_loglevel=logging.NOTSET, logger_socket=None, stdin=PIPE, stdout=PIPE, stderr=PIPE):
         if isinstance(kernel, six.string_types):
             if not os.isfile(kernel):
@@ -166,6 +166,7 @@ class WolframLanguageSession(object):
         else:
             self.logger_socket = None
 
+        self.consumer = consumer
         self.kernel_proc = None
         self.terminated = False
         self.loglevel = kernel_loglevel
@@ -347,6 +348,7 @@ class WolframLanguageSession(object):
             raise WolframKernelException('Kernel is not started.')
         if self.terminated:
             raise WolframKernelException('Session has been terminated.')
+        start = time.perf_counter()
         if isinstance(expr, six.binary_type):
             logger.info('Expression is already serialized in WXF.')
             self.in_socket.zmq_socket.send(expr)
@@ -354,6 +356,9 @@ class WolframLanguageSession(object):
             if isinstance(expr, six.string_types):
                 expr = wl.ToExpression(expr)
             self.in_socket.zmq_socket.send(export(expr, target_format='wxf', **kwargs))
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('Expression sent to kernel in %.06fsec', time.perf_counter()-start)
+            start = time.perf_counter()
         # read the message as bytes.
         msg_count = self.out_socket.zmq_socket.recv()
         try:
@@ -366,8 +371,10 @@ class WolframLanguageSession(object):
             errmsg.append((json_msg[0], force_text(json_msg[1])))
             # errmsg.append(force_text(self.out_socket.zmq_socket.recv()))
         wxf_result = self.out_socket.zmq_socket.recv()
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('Expression received from kernel after %.06fsec', time.perf_counter()-start)
         self.evaluation_count += 1
-        return WolframKernelEvaluationResult(wxf_result, errmsg)
+        return WolframKernelEvaluationResult(wxf_result, errmsg, consumer=self.consumer)
 
     def evaluate_wxf(self, expr, **kwargs):
         """Send an expression to the kernel for evaluation and return the raw result still encoded as WXF.
