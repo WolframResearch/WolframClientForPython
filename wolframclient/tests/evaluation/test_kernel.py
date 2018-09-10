@@ -16,7 +16,7 @@ import logging
 import unittest
 
 if not six.JYTHON:
-    from wolframclient.evaluation import WolframLanguageSession
+    from wolframclient.evaluation import WolframLanguageSession, WolframLanguageAsyncSession
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -150,13 +150,14 @@ class TestCase(TestCaseSettings):
 
     @unittest.skipIf(six.PY2, "No async call on Python2.")
     def test_evaluate_async(self):
-        future1 = self.kernel_session.evaluate_async('3+4')
-        result1 = future1.result(timeout=3)
-        self.assertEqual(result1, 7)
-        future2 = self.kernel_session.evaluate_async('10+1')
-        self.assertEqual(future2.result(timeout=1), 11)
-        future3 = self.kernel_session.evaluate_async('100+1')
-        self.assertEqual(future3.result(timeout=1), 101)
+        with WolframLanguageAsyncSession(self.KERNEL_PATH) as async_session:
+            future1 = async_session.evaluate('3+4')
+            result1 = future1.result(timeout=3)
+            self.assertEqual(result1, 7)
+            future2 = async_session.evaluate('10+1')
+            self.assertEqual(future2.result(timeout=1), 11)
+            future3 = async_session.evaluate('100+1')
+            self.assertEqual(future3.result(timeout=1), 101)
 
 
 class TestCaseSession(TestCaseSettings):

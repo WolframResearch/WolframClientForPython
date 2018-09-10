@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-
+import os
 from wolframclient.deserializers import binary_deserialize, WXFToken, WXFConsumer, WXFConsumerNumpy
 from wolframclient.deserializers.wxf.wxfparser import parse_varint
 from wolframclient.serializers import export

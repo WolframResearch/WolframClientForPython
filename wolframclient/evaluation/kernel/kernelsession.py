@@ -19,7 +19,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__all__ = ['WolframLanguageSession']
+__all__ = ['WolframLanguageSession', 'WolframLanguageAsyncSession']
 
 class KernelLogger(Thread):
 
@@ -36,7 +36,7 @@ class KernelLogger(Thread):
         if not isinstance(socket, Socket):
             raise ValueError('Expecting a Socket.')
         self.socket = socket
-        self.socket._bind()
+        self.socket.bind()
         # Subscribe to all since we want all log messages.
         self.socket.zmq_socket.setsockopt(zmq.SUBSCRIBE, b'')
         logger.info('Initializing Kernel logger on socket ' + self.socket.uri)
@@ -172,7 +172,6 @@ class WolframLanguageSession(object):
         self.loglevel = kernel_loglevel
         self.kernel_logger = None
         self.evaluation_count = 0
-        self.thread_pool_exec = None
         self.parameters = {}
         self._stdin = stdin
         self._stdout = stdout
@@ -274,11 +273,6 @@ class WolframLanguageSession(object):
                 self.kernel_logger.join()
             except Exception as e:
                 logger.fatal(e)
-        if self.thread_pool_exec is not None:
-            try:
-                self.thread_pool_exec.shutdown(wait=True)
-            except Exception as e:
-                logger.fatal(e)
 
     _KERNEL_OK = b'OK'
 
@@ -287,8 +281,8 @@ class WolframLanguageSession(object):
         if self.terminated:
             raise WolframKernelException('Session has been terminated.')
         # start the evaluation zmq sockets
-        self.in_socket._bind()
-        self.out_socket._bind()
+        self.in_socket.bind()
+        self.out_socket.bind()
         if logger.isEnabledFor(logging.INFO):
             logger.info('Kernel receives commands from socket: %s', self.in_socket)
             logger.info('Kernel writes evaluated expressions to socket: %s', self.out_socket)
@@ -321,7 +315,7 @@ class WolframLanguageSession(object):
         try:
             # First message must be "OK", acknowledging everything is up and running
             # on the kernel side.
-            response = self.out_socket._read_timeout(
+            response = self.out_socket.read_timeout(
                 timeout=self.get_parameter('STARTUP_READ_TIMEOUT'),
                 retry_sleep_time=self.get_parameter('STARTUP_RETRY_SLEEP_TIME'))
             if response == WolframLanguageSession._KERNEL_OK:
@@ -408,22 +402,6 @@ class WolframLanguageSession(object):
                 logger.warning(msg[1])
         return result.get()
 
-    def evaluate_async(self, expr, **kwargs):
-        """Evaluate a given `expr` asynchronously.
-
-        Returns a :class:`concurrent.futures.Future` object.
-
-        .. warning::
-            Asynchronous evaluation is only available for `Python 3.2` and above.
-        """
-        try:
-            if self.thread_pool_exec is None:
-                self.thread_pool_exec = futures.ThreadPoolExecutor(max_workers=1)
-            return self.thread_pool_exec.submit(self.evaluate, expr, **kwargs)
-        except ImportError:
-            logger.fatal('Module concurrent.futures is missing.')
-            raise NotImplementedError('Asynchronous evaluation is not available on this Python interpreter.')
-
     def __getattr__(self, attr):
         def inner(*args, **kwargs):
             expr = WLSymbol(force_text(attr))(*args, **kwargs)
@@ -432,11 +410,61 @@ class WolframLanguageSession(object):
 
     def __repr__(self):
         if self.terminated:
-            return '<WolframLanguageSession: terminated>'
+            return '<%s: terminated>' % self.__class__.__name__
         elif self.started:
-            return '<WolframLanguageSession: pid:%i, kernel sockets: (in:%s, out:%s)>' % (self.kernel_proc.pid, self.in_socket.uri, self.out_socket.uri)
+            return '<%s: pid:%i, kernel sockets: (in:%s, out:%s)>' % (self.__class__.__name__, self.kernel_proc.pid, self.in_socket.uri, self.out_socket.uri)
         else:
-            return '<WolframLanguageSession: not started>'
+            return '<%s: not started>' % self.__class__.__name__
+
+class WolframLanguageAsyncSession(WolframLanguageSession):
+    """Evaluate expression asynchronously.
+
+    Evaluation methods of this class returns a :class:`~concurrent.futures.Future` objects.
+
+    .. warning::
+        Asynchronous evaluation is only available for `Python 3.2` and above.
+    """
+
+    def __init__(self, kernel=None, consumer=None, initfile=None,
+                 in_socket=None, out_socket=None, kernel_loglevel=logging.NOTSET, logger_socket=None, stdin=PIPE, stdout=PIPE, stderr=PIPE):
+        super(WolframLanguageAsyncSession, self).__init__(kernel, consumer, initfile,
+            in_socket, out_socket, kernel_loglevel, logger_socket, stdin, stdout, stderr)
+        self.thread_pool_exec = None
+
+    def evaluate(self, expr, **kwargs):
+        return self._do_async(super().evaluate, expr, **kwargs)
+
+    def evaluate_wxf(self, expr, **kwargs):
+        return self._do_async(super().evaluate_wxf, expr, **kwargs)
+
+    def evaluate_wrap(self, expr, **kwargs):
+        return self._do_async(super().evaluate_wrap, expr, **kwargs)
+    
+    def _do_async(self, func, expr, **kwargs):
+        try:
+            if self.thread_pool_exec is None:
+                self.thread_pool_exec = futures.ThreadPoolExecutor(
+                    max_workers=1)
+            return self.thread_pool_exec.submit(func, expr, **kwargs)
+        except ImportError:
+            logger.fatal('Module concurrent.futures is missing.')
+            raise NotImplementedError(
+                'Asynchronous evaluation is not available on this Python interpreter.')
+
+    def terminate(self):
+        super().terminate()
+        if self.thread_pool_exec is not None:
+            try:
+                self.thread_pool_exec.shutdown(wait=True)
+            except Exception as e:
+                logger.fatal(e)
+
+    def __getattr__(self, attr):
+        def inner(*args, **kwargs):
+            expr = WLSymbol(force_text(attr))(*args, **kwargs)
+            return self.evaluate(expr)
+        return inner
+
 
 class SocketException(Exception):
     pass
@@ -454,7 +482,7 @@ class Socket(object):
         self.zmq_socket = self.zmq_socket = zmq.Context.instance().socket(zmq_type)
         self.closed = False
 
-    def _bind(self):
+    def bind(self):
         if self.bound:
             raise SocketException('Already bounded.')
         if self.closed:
@@ -470,7 +498,7 @@ class Socket(object):
         self.bound = True
         return self.zmq_socket
 
-    def _read_timeout(self, timeout=2., retry_sleep_time=0.001):
+    def read_timeout(self, timeout=2., retry_sleep_time=0.001):
         if not self.bound:
             raise SocketException('ZMQ socket not bound.')
         if timeout < 0:
