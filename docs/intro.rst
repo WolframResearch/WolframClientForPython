@@ -19,6 +19,93 @@ The Wolfram Client Library is structured in sub-modules all located in :mod:`wol
 * :mod:`~wolframclient.exception` regroups the exceptions and errors that the library may raise.
 
 
+Wolfram Language evaluation
+==============================
+
+.. _ref-localkernel:
+
+Local kernel
+---------------
+
+Wolfram Language session :class:`~wolframclient.evaluation.WolframLanguageSession` is initialized with a *WolframKernel* executable specified by its path. A session enables local evaluation of Wolfram Language code directly in Python.
+
+.. note ::
+    Typical location of the *WolframKernel* executable depends on the operating system. The relative path from your installation directory should be:
+    
+    * On `MacOS`: `Contents/MacOS/WolframKernel`
+    * On `Windows`: `WolframKernel.exe`
+    * On Linux: `Files/Executables/WolframKernel`
+
+    **It is advised to first try to run the WolframKernel executable once from your terminal.**
+
+Import :class:`~wolframclient.evaluation.WolframLanguageSession`::
+    
+    >>> from wolframclient.evaluation import WolframLanguageSession
+
+Create a new session targeting a local *WolframKernel* specified by its path::
+
+    >>> session = WolframLanguageSession('/path/to/kernel-executable')
+
+Start the session::
+
+    >>> session.start()
+    >>> session.started
+    True
+
+Evaluate a Wolfram Language function from Python::
+
+    >>> session.StringReverse('abc')
+    'cba'
+
+Call the Wolfram Language function :wl:`MinMax` on a Python list::
+
+    >>> session.MinMax([1, 5, -3, 9])
+    [-3, 9]
+
+Query `WolframAlpha <https://www.wolframalpha.com/>`_ for the distance between the Earth and the Sun using the function :wl:`WolframAlpha`::
+
+    >>> distance = session.WolframAlpha("Earth distance from Sun", "Result")
+    Quantity[1.008045994315923, AstronomicalUnit]
+
+The Python object stored in `distance` variable is a Wolfram Language :wl:`Quantity`. Convert the unit to Kilometers, looping back the previous result in a new expression evaluation::
+
+    >>> d_km = session.UnitConvert(distance, "Kilometers")
+    Quantity[150801534.3173264, Kilometers]
+
+Finally retrieve the result as a Python number::
+
+    >>> session.QuantityMagnitude(d_km)
+    150801534.3173264
+
+More complex expressions are evaluated using :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate`::
+
+    >>> session.evaluate('Map[Prime, Range[5]]')
+    [2, 3, 5, 7, 11]
+
+Expressions evaluated in a given session are persistent. Define a function, and call it::
+    
+    >>> session.evaluate('f[x_] := x ^ 2')
+    Null
+    >>> session.evaluate('f[4]')
+    16
+
+The session is no more useful, terminating it::
+
+    session.terminate()
+
+Alternatively, it is possible to delegate the handling of the life-cycle of a session using a `with` block::
+
+    >>> with WolframLanguageSession('/path/to/kernel-executable') as wl_session:
+    ...     wl_session.StringReverse('abc')
+    ...
+    'cba'
+
+The session stored in `wl_session`, is only available in the scope of the `with` block, contrary to `session` that was initialized with :func:`~wolframclient.evaluation.WolframLanguageSession.start`.
+
+
+As shown above, :class:`~wolframclient.evaluation.WolframLanguageSession` must be initialized and terminated, either by explicitly calling :func:`~wolframclient.evaluation.WolframLanguageSession.start` and :func:`~wolframclient.evaluation.WolframLanguageSession.terminate`, or, alternatively, in a `with` block that achieves the same result automatically. It is highly recommended to initialize a session once to mitigate the initialization cost.
+
+
 Wolfram Cloud interactions
 ==============================
 
@@ -217,116 +304,6 @@ Parse the JSON API response::
     >>> json.loads(result.get())
     [320, 240]
 
-Wolfram Language evaluation
-==============================
-
-.. _ref-localkernel:
-
-Local kernel
----------------
-
-Wolfram Language session :class:`~wolframclient.evaluation.WolframLanguageSession` is initialized with a *WolframKernel* executable specified by its path. A session enables local evaluation of Wolfram Language code directly in Python.
-
-.. note ::
-    Typical location of the *WolframKernel* executable depends on the operating system. The relative path from your installation directory should be:
-    
-    * On `MacOS`: `Contents/MacOS/WolframKernel`
-    * On `Windows`: `WolframKernel.exe`
-    * On Linux: `Files/Executables/WolframKernel`
-
-    **It is advised to first try to run the WolframKernel executable once from your terminal.**
-
-Import :class:`~wolframclient.evaluation.WolframLanguageSession`::
-    
-    >>> from wolframclient.evaluation import WolframLanguageSession
-
-Create a new session targeting a local *WolframKernel* specified by its path::
-
-    >>> session = WolframLanguageSession('/path/to/kernel-executable')
-
-Start the session::
-
-    >>> session.start()
-    >>> session.started
-    True
-
-Evaluate a Wolfram Language function from Python::
-
-    >>> session.StringReverse('abc')
-    'cba'
-
-Call the Wolfram Language function :wl:`MinMax` on a Python list::
-
-    >>> session.MinMax([1, 5, -3, 9])
-    [-3, 9]
-
-Query `WolframAlpha <https://www.wolframalpha.com/>`_ for the distance between the Earth and the Sun using the function :wl:`WolframAlpha`::
-
-    >>> distance = session.WolframAlpha("Earth distance from Sun", "Result")
-    Quantity[1.008045994315923, AstronomicalUnit]
-
-The Python object stored in `distance` variable is a Wolfram Language :wl:`Quantity`. Convert the unit to Kilometers, looping back the previous result in a new expression evaluation::
-
-    >>> d_km = session.UnitConvert(distance, "Kilometers")
-    Quantity[150801534.3173264, Kilometers]
-
-Finally retrieve the result as a Python number::
-
-    >>> session.QuantityMagnitude(d_km)
-    150801534.3173264
-
-More complex expressions are evaluated using :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate`::
-
-    >>> session.evaluate('Map[Prime, Range[5]]')
-    [2, 3, 5, 7, 11]
-
-Expressions evaluated in a given session are persistent. Define a function, and call it::
-    
-    >>> session.evaluate('f[x_] := x ^ 2')
-    Null
-    >>> session.evaluate('f[4]')
-    16
-
-The session is no more useful, terminating it::
-
-    session.terminate()
-
-Alternatively, it is possible to delegate the handling of the life-cycle of a session using a `with` block::
-
-    >>> with WolframLanguageSession('/path/to/kernel-executable') as wl_session:
-    ...     wl_session.StringReverse('abc')
-    ...
-    'cba'
-
-The session stored in `wl_session`, is only available in the scope of the `with` block, contrary to `session` that was initialized with :func:`~wolframclient.evaluation.WolframLanguageSession.start`.
-
-
-As shown above, :class:`~wolframclient.evaluation.WolframLanguageSession` must be initialized and terminated, either by explicitly calling :func:`~wolframclient.evaluation.WolframLanguageSession.start` and :func:`~wolframclient.evaluation.WolframLanguageSession.terminate`, or, alternatively, in a `with` block that achieves the same result automatically. It is highly recommended to initialize a session once to mitigate the initialization cost.
-
-
-Wolfram Call
-------------------
-
-An other approach to code evaluation is to rely on :class:`~wolframclient.evaluation.WolframCall`. This class abstracts away the evaluator type (:class:`~wolframclient.evaluation.WolframLanguageSession` or :class:`~wolframclient.evaluation.WolframCloudSession`) and enables seamless transitions from local evaluation to cloud evaluation.
-
-First import :class:`~wolframclient.evaluation.WolframLanguageSession` and :class:`~wolframclient.evaluation.WolframCall`::
-
-    >>> from wolframclient.evaluation import WolframLanguageSession
-    >>> from wolframclient.evaluation import WolframCall
-    
-Using an :ref:`initialized Wolfram language session<ref-localkernel>`, it is possible to instanciate a new :class:`~wolframclient.evaluation.WolframCall` instance, and perform an evaluation::
-
-    >>> with WolframLanguageSession('/path/to/kernel-executable') as session:
-    ...     call = WolframCall(session, 'StringReverse["abc"]')
-    ...     result = call.perform()
-    ...
-    'cba'
-
-In the above example the variable `session` can be seamlessly replaced by an :ref:`initialized cloud session<ref-auth>` called `cloud_session`::
-
-    >>> call = WolframCall(cloud_session, 'StringReverse["abc"]')
-    >>> result = call.perform()
-    '"cba"'
 
 Serialization
 =============

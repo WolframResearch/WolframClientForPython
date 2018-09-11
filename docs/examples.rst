@@ -67,7 +67,7 @@ Evaluate an artificially delayed code (using :wl:`Pause`), and print time elapse
 Logging
 ========
 
-Logging is often an important part of any application. The library relies on the standard :mod:`logging` module, and exposes various methods to control the level of information logged.
+Logging is often an important part of an application. The library relies on the standard :mod:`logging` module, and exposes various methods to control the level of information logged.
 
 The first level of control is through the logging module itself. The python library logs at various level:
 

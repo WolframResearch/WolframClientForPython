@@ -17,7 +17,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__all__ = ['WolframCloudSession', 'WolframCloudSessionAsync']
+__all__ = ['WolframCloudSession', 'WolframCloudSessionAsync', 'WolframAPICall']
 
 class WolframCloudSession(object):
     """Represent a session to a given cloud enabling simple API call.
@@ -292,6 +292,72 @@ class WolframCloudSessionAsync(WolframCloudSession):
         """
         return CloudFunction(self, func, asynchronous=asynchronous)
 
+
+class WolframAPICall(object):
+    """Perform an API call to a given target.
+
+    The API call is actually performed when :func:`~wolframclient.evaluation.WolframAPICall.perform`
+    is called.
+
+    Parameters can be added using one of the various functions that this class exposes. They
+    can be of many types including: string, files, WL serializable python objects, binary data with arbitrary
+    content-type (e.g: *image/png*).
+    """
+
+    def __init__(self, target, api, permission_key=None):
+        self.target = target
+        self.api = api
+        self.parameters = {}
+        self.files = {}
+        self.permission_key = permission_key
+        self.multipart = False
+
+    def add_parameter(self, name, value):
+        """Add a new API input parameter from a serialization python object."""
+        self.parameters[name] = value
+        return self
+
+    def add_file_parameter(self, name, fp, content_type=None):
+        """Add a new API input parameter from a file pointer `fp`"""
+        if content_type is None:
+            self.files[name] = fp
+        else:
+            self.files[name] = ('tmp_%s' % name, fp, content_type)
+        return self
+
+    def add_binary_parameter(self, name, data, content_type='application/octet-stream'):
+        """Add a new API input parameter as a blob of binary data."""
+        if not isinstance(data, six.binary_type):
+            raise TypeError('Input data by bytes.')
+        self.files[name] = ('tmp_%s' % name, data, content_type)
+        return self
+
+    def add_image_data_parameter(self, name, image_data, content_type='image/png'):
+        """Add a new API image input parameter from binary data.
+
+        If the data in `image_data` does not represent an image in the `PNG` format, the
+        optional parameter `content_type` must be set accordingly to the appropriate content
+        type.
+        e.g: *image/jpeg*, *image/gif*, etc.
+        """
+        if not isinstance(data, six.binary_type):
+            raise TypeError('Input data must by bytes.')
+        self.files[name] = ('tmp_image_%s' % name, data, content_type)
+        return self
+
+    def perform(self, **kwargs):
+        """Make the API call, return the result."""
+        return self.target.call(self.api,
+                                input_parameters=self.parameters,
+                                files=self.files,
+                                permissions_key=self.permission_key, **kwargs)
+
+    def __repr__(self):
+        return 'WolframAPICall<api=%s>' % (self.api,)
+
+    def __str__(self):
+        return repr(self)
+
 class CloudFunction(object):
     def __init__(self, session, func, asynchronous=False):
         self.session = session
@@ -373,3 +439,4 @@ def url_join(*fragments):
     if len(last) > 0 and last[-1] != '/':
         buff.pop()
     return ''.join(buff)
+

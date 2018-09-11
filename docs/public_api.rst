@@ -189,11 +189,6 @@ Kernel evaluation
     :noindex:
     :members:
 
-.. autoclass:: wolframclient.evaluation.WolframCall
-    :noindex:
-    :members:
-
-
 .. autoclass:: wolframclient.evaluation.WolframResult
     :noindex:
     :members:

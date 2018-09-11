@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-from wolframclient.evaluation.cloud import SecuredAuthenticationKey, UserIDPassword, WolframCloudSession, WolframCloudSessionAsync, WolframServer
+from wolframclient.evaluation.cloud import SecuredAuthenticationKey, UserIDPassword, WolframCloudSession, WolframCloudSessionAsync, WolframServer, WolframAPICall
 from wolframclient.evaluation.result import WolframAPIResponse, WolframEvaluationJSONResponse, WolframKernelEvaluationResult, WolframResult
 from wolframclient.utils.six import JYTHON
 
@@ -9,6 +9,7 @@ if JYTHON:
     __all__ = [
         'WolframServer',
         'WolframCloudSession', 'WolframCloudSessionAsync',
+        'WolframAPICall',
         'SecuredAuthenticationKey',
         'UserIDPassword',
         'WolframResult',
@@ -17,12 +18,12 @@ if JYTHON:
         'WolframEvaluationJSONResponse'
         ]
 else:
-    from wolframclient.evaluation.call import WolframAPICall, WolframCall
     from wolframclient.evaluation.kernel import WolframLanguageSession, WolframLanguageAsyncSession
     __all__ = [
-        'WolframCall', 'WolframAPICall',
+        'WolframAPICall',
         'WolframServer',
         'WolframCloudSession', 'WolframCloudSessionAsync',
+        'WolframAPICall',
         'SecuredAuthenticationKey',
         'UserIDPassword',
         'WolframLanguageSession', 'WolframLanguageAsyncSession',

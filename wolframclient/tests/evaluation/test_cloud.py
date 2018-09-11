@@ -3,7 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.evaluation.cloud.oauth import SecuredAuthenticationKey, UserIDPassword
-from wolframclient.evaluation.cloud.cloudsession import encode_api_inputs, url_join, WolframCloudSession, WolframCloudSessionAsync
+from wolframclient.evaluation.cloud.cloudsession import encode_api_inputs, url_join, WolframCloudSession, WolframCloudSessionAsync, WolframAPICall
 from wolframclient.logger.utils import setup_logging_to_file
 from wolframclient.utils import six
 from wolframclient.utils.api import json
@@ -207,3 +207,22 @@ class TestCase(TestCaseSettings):
             {'param1': {'k': [1, 2]}, 'param2': 'foo'}, target_format='wxf')
         self.assertEqual(
             encoded, {'param1__wxf': b'8:A\x01:S\x01kf\x02s\x04ListC\x01C\x02', 'param2__wxf': b'8:S\x03foo'})
+
+
+class TestWolframAPI(TestCaseSettings):
+    def test_wolfram_api_call_image(self):
+        api = (self.api_owner, 'api/private/imagedimensions')
+        apicall = WolframAPICall(self.cloud_session, api)
+        with open(self.get_data_path('32x2.png'), 'rb') as fp:
+            apicall.add_file_parameter('image', fp)
+            res = apicall.perform()
+            self.assertTrue(res.success)
+            res = json.loads(res.get())
+            self.assertListEqual(res, [32, 2])
+
+    def test_wolfram_api_call_str(self):
+        api = (self.api_owner, 'api/private/stringreverse')
+        apicall = WolframAPICall(self.cloud_session, api)
+        apicall.add_parameter('str', 'abcde')
+        res = apicall.perform().get()
+        self.assertEqual('"edcba"', force_text(res))
