@@ -1,63 +1,54 @@
 /* Default theme css */
 @import url("default.css");
 
-div.viewcode-block:target {
-    background-color: #e8e5d8;
-    border-top: 1px solid #d2cdba;
-    border-bottom: 1px solid #d2cdba;
+div.document {
+    background:linear-gradient(to right, #fff 0%,#fff 150px,#efefef 250px,#ffffff 250px,#ffffff 100%)  #eeeeee; 
 }
-
-li.nav-item.nav-item-0 {
-    color: #cacaca;
-}
-
-div.related a {
-    color: #cacaca;
-    font-size: .9em;
-}
-
-li.right {
-    color: gray;
-}
-div.body {
-    min-height: 600px;
-}
-
-body {
-    background-color: #424242;
-}
-
 div.related {
-    background-color: #424242;
+    background-color: #005c94;
 }
-
-div.sphinxsidebar input {
-    border: 1px solid #5d5d5d;
+div.sphinxsidebar ul {
+    color: #bdbdbd;
 }
-
 div.sphinxsidebar a {
-    color: #f9c155;
+    color: #005c94;
+    line-height: 1.35em;
 }
-
+div.sphinxsidebar a:hover {
+    color: #1c90d6;
+    text-decoration:none;
+}
 div.sphinxsidebar h3, div.sphinxsidebar h4 {
-    font-family: 'Source Sans Pro',Arial, sans-serif;
-    color: #bfbfbf;
-    text-transform: uppercase;
-    font-size: .9em;
-    padding-top: 10px;
+    color: #8a8a8a;
+    margin-left: 10px;
 }
-div.sphinxsidebar h3 a {
-    color: #bfbfbf;
+div.sphinxsidebar h3 a, div.sphinxsidebar h4 a {
+    color: #8a8a8a;
+    margin-left: 10px;
 }
-
+div.sphinxsidebar form {
+    margin-left: 0px;
+    margin-right: 10px;
+}
+.searchformwrapper {
+    margin-left: 10px;
+}
+div.sphinxsidebar input {
+    border: 1px solid #a7a7a7;
+}
+input[type="submit"] {
+    color: #005c94;
+    background: #f1f1f1;
+}
+div.sphinxsidebar h3 a, div.sphinxsidebar h4 a {
+    margin-left: 0px;
+}
 ul ul ul ul li, ul ul ul li {
     margin-top: 0px;
 }
-
 ul ul li {
     margin-top: 10px;
 }
-
 a.headerlink {
     color: #b9b9b9;
 }
@@ -68,10 +59,6 @@ a.headerlink:hover {
 
 div.section ul.simple li {
     padding-bottom: 5px;
-}
-
-div.document {
-    background: #ffffff repeat-y url('https://www.wolframcloud.com/objects/dvs/images/graybg.png');
 }
 
 .highlight {
