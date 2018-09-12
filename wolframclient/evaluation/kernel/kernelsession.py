@@ -34,10 +34,8 @@ class KernelLogger(Thread):
 
     MAX_MESSAGE_BEFORE_QUIT = 32
     
-    def __init__(self, socket, level=logging.WARN):
-        if not isinstance(socket, Socket):
-            raise ValueError('Expecting a Socket.')
-        self.socket = socket
+    def __init__(self, level=logging.WARN):
+        self.socket = Socket(zmq_type=zmq.SUB)
         self.socket.bind()
         # Subscribe to all since we want all log messages.
         self.socket.zmq_socket.setsockopt(zmq.SUBSCRIBE, b'')
@@ -121,7 +119,7 @@ class WolframLanguageSession(object):
     """
 
     def __init__(self, kernel=None, consumer=None, initfile=None,
-                 in_socket=None, out_socket=None, kernel_loglevel=logging.NOTSET, logger_socket=None, stdin=PIPE, stdout=PIPE, stderr=PIPE):
+                 in_socket=None, out_socket=None, kernel_loglevel=logging.NOTSET, stdin=PIPE, stdout=PIPE, stderr=PIPE):
         if isinstance(kernel, six.string_types):
             if not os.isfile(kernel):
                 raise WolframKernelException('Kernel not found at %s.' % kernel)
@@ -157,17 +155,6 @@ class WolframLanguageSession(object):
             out_socket.zmq_type = zmq.PULL
             self.out_socket = out_socket
 
-        if kernel_loglevel != logging.NOTSET:
-            if logger_socket is None:
-                self.logger_socket = Socket(zmq_type=zmq.SUB)
-            elif isinstance(logger_socket, Socket) and logger_socket.zmq_type != zmq.SUB:
-                raise ValueError('Logging socket must have zmq type SUB.')
-            else:
-                raise ValueError(
-                    'Expecting kernel logger socket to be a Socket instance.')
-        else:
-            self.logger_socket = None
-
         self.consumer = consumer
         self.kernel_proc = None
         self.terminated = False
@@ -184,6 +171,7 @@ class WolframLanguageSession(object):
         'STARTUP_READ_TIMEOUT': 20,
         'STARTUP_RETRY_SLEEP_TIME': 0.001,
         'TERMINATE_READ_TIMEOUT': 3,
+        'HIDE_SUBPROCESS_WINDOW': True
     }
 
     def get_parameter(self, parameter_name):
@@ -291,12 +279,11 @@ class WolframLanguageSession(object):
         # start the kernel process
         cmd = [self.kernel, '-noprompt', "-initfile", self.initfile]
         if self.loglevel != logging.NOTSET:
-            self.kernel_logger = KernelLogger(
-                socket=self.logger_socket, level=self.loglevel)
+            self.kernel_logger = KernelLogger(level=self.loglevel)
             self.kernel_logger.start()
             cmd.append('-run')
             cmd.append('ClientLibrary`Private`SlaveKernelPrivateStart["%s", "%s", "%s"];'
-                       % (self.in_socket.uri, self.out_socket.uri, self.logger_socket.uri))
+                       % (self.in_socket.uri, self.out_socket.uri, self.kernel_logger.socket.uri))
         else:
             cmd.append('-run')
             cmd.append('ClientLibrary`Private`SlaveKernelPrivateStart["%s", "%s"];'
@@ -304,7 +291,6 @@ class WolframLanguageSession(object):
 
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Kernel called using command: %s.' % ' '.join(cmd))
-
         # hide the WolframKernel window.
         if six.WINDOWS and self.get_parameter('HIDE_SUBPROCESS_WINDOW'):
             startupinfo = STARTUPINFO()
@@ -363,6 +349,8 @@ class WolframLanguageSession(object):
             start = time.perf_counter()
         # read the message as bytes.
         msg_count = self.out_socket.zmq_socket.recv()
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('Message count received from kernel after %.06fsec', time.perf_counter()-start)
         try:
             msg_count = int(msg_count)
         except ValueError:
@@ -371,7 +359,6 @@ class WolframLanguageSession(object):
         for i in range(msg_count):
             json_msg = self.out_socket.zmq_socket.recv_json()
             errmsg.append((json_msg[0], force_text(json_msg[1])))
-            # errmsg.append(force_text(self.out_socket.zmq_socket.recv()))
         wxf_result = self.out_socket.zmq_socket.recv()
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Expression received from kernel after %.06fsec', time.perf_counter()-start)
@@ -434,9 +421,9 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
     """
 
     def __init__(self, kernel=None, consumer=None, initfile=None,
-                 in_socket=None, out_socket=None, kernel_loglevel=logging.NOTSET, logger_socket=None, stdin=PIPE, stdout=PIPE, stderr=PIPE):
+                 in_socket=None, out_socket=None, kernel_loglevel=logging.NOTSET, stdin=PIPE, stdout=PIPE, stderr=PIPE):
         super(WolframLanguageAsyncSession, self).__init__(kernel, consumer, initfile,
-            in_socket, out_socket, kernel_loglevel, logger_socket, stdin, stdout, stderr)
+            in_socket, out_socket, kernel_loglevel, stdin, stdout, stderr)
         self.thread_pool_exec = None
 
     def evaluate(self, expr, **kwargs):
