@@ -7,12 +7,15 @@ from itertools import chain
 import datetime
 import decimal
 import sys
+import os
 import types
 
 #stripped version of SIX
 
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
+
+WINDOWS = os.name == 'nt'
 
 JYTHON = sys.platform.startswith('java')
 

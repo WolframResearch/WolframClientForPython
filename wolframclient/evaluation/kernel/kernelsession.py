@@ -14,6 +14,8 @@ from wolframclient.serializers import export
 from wolframclient.utils.api import futures, os, time, zmq, json
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils import six
+if six.WINDOWS:
+    from subprocess import STARTUPINFO, STARTF_USESHOWWINDOW
 
 import logging
 
@@ -303,8 +305,14 @@ class WolframLanguageSession(object):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Kernel called using command: %s.' % ' '.join(cmd))
 
+        # hide the WolframKernel window.
+        if six.WINDOWS and self.get_parameter('HIDE_SUBPROCESS_WINDOW'):
+            startupinfo = STARTUPINFO()
+            startupinfo.dwFlags |= STARTF_USESHOWWINDOW
+        else:
+            startupinfo = None
         try:
-            self.kernel_proc = Popen(cmd, stdin=self._stdin, stdout=self._stdout, stderr=self._stderr)
+            self.kernel_proc = Popen(cmd, stdin=self._stdin, stdout=self._stdout, stderr=self._stderr, startupinfo=startupinfo)
             if logger.isEnabledFor(logging.INFO):
                 logger.info('Kernel process started with PID: %s' % self.kernel_proc.pid)
                 t_start = time.perf_counter()
