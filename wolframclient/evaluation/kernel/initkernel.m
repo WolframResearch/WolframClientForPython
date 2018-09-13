@@ -155,7 +155,7 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 				Hold[msg_, True|False]
 			The boolean value indicates the silenced status On/Off. *)
 			Internal`HandlerBlock[
-				{"Message", If[TrueQ[Last[#]],Internal`StuffBag[msgs,#]] &},
+				{"Message", Function[msg, If[TrueQ[Last[msg]],Internal`StuffBag[msgs,msg]]]},
 				data = Lookup[#,"DataByteArray", None];
 				expr = timed[evaluate[data], "Expression evaluation"];
 				If[$LogLevel >= $DEBUG, ClientLibrary`debug["deserialized expr: ", ToString[expr]]];
