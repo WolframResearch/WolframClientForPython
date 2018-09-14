@@ -3,8 +3,8 @@
 (* Not useful since we apparently never receive multipart messages,
 no matter the total size (tested with 80MB) *)
 
-$IgnoreEOF=True
-$HistoryLength=0
+$IgnoreEOF=True;
+$HistoryLength=0;
 
 Needs["ZeroMQLink`"];
 
@@ -17,10 +17,13 @@ error;
 
 Begin["`Private`"];
 
-SocketWriteFunc = If[
+{SocketWriteByteArrayFunc, SocketReadByteArrayFunc} = If[
 	$VersionNumber < 12,
-	BinaryWrite,
-	ZMQSocketWriteMessage
+	iSocketWriteByteArray[socket_,ba_ByteArray] := ZeroMQLink`Private`ZMQWriteInternal[socket, Normal[ba]];
+	iSocketReadByteArray[uuid_String, flags_Integer]:= ByteArray@iRecvSingleMultipartMessageSocket[uuid, flags];
+	{iSocketWriteByteArray, iSocketReadByteArray}
+	,
+	{ZMQSocketWriteMessage, iRecvSingleMultipartBinaryMessageSocket}
 ];
 
 $DEBUG=1;
@@ -31,10 +34,10 @@ $NOTSET=Infinity;
 
 $LogLevel = $DEBUG;
 
-ClientLibrary`debug[msg__String] := log[msg, $DEBUG];
-ClientLibrary`info[msg__String] := log[msg, $INFO];
-ClientLibrary`warn[msg__String] := log[msg, $WARN];
-ClientLibrary`error[msg__String] := log[msg, $ERROR];
+ClientLibrary`debug[args__] := log[$DEBUG, args];
+ClientLibrary`info[args__] := log[$INFO, args];
+ClientLibrary`warn[args__] := log[$WARN, args];
+ClientLibrary`error[args__] := log[$ERROR, args];
 
 ClientLibrary`SetDebugLogLevel[] := setLogLevel[$DEBUG];
 ClientLibrary`SetInfoLogLevel[] := setLogLevel[$INFO];
@@ -42,29 +45,43 @@ ClientLibrary`SetWarnLogLevel[] := setLogLevel[$WARN];
 ClientLibrary`SetErrorLogLevel[] := setLogLevel[$ERROR];
 ClientLibrary`DisableKernelLogging[] := setLogLevel[$NOTSET];
 
-setLogLevel[level:_Integer] /; $DEBUG <= level <= $ERROR := 
+setLogLevel[level_Integer] /; $DEBUG <= level <= $ERROR := 
 	($LogLevel = level);
 setLogLevel[$NOTSET] := ($LogLevel = $NOTSET);
 
-log[msg_String, level_Integer:$INFO] /; level>=$LogLevel := If[$LoggerSocket=!=None, 
-	BinaryWrite[
-		$LoggerSocket, 
-		Developer`WriteRawJSONString[<|"msg"->msg, "level"->level|>, "ToByteString"->True]
-	],
-	Print[msg]
-];
-log[msg__String, level_Integer:$INFO] /; level>=$LogLevel := 
-	log[StringJoin[{msg}], level];
-log[msg__String, False, level_Integer:$INFO] /; level>=$LogLevel := 
-	Map[log[#, level]&, {msg}];
 
+log[level_Integer, msg_String] /; level >= $LogLevel  := If[$LoggerSocket =!= None, 
+   	SocketWriteByteArrayFunc[
+		$LoggerSocket,
+		StringToByteArray[
+			Developer`WriteRawJSONString[<|"msg" -> msg, "level" -> level|>, 
+			"ToByteString" -> True, "Compact" -> True]
+		]
+	],
+   	Print[msg]
+];
+
+log[level_Integer, args__] /; level >= $LogLevel := log[
+   level, 
+   StringJoin[
+		StringRiffle[
+			Map[format, {args}],
+			" "
+		]
+	]
+];
+
+log[___] := Null;
+
+format[e_] := ToString[e, InputForm];
+format[str_String] := str;
 
 $MaxLoggedStringLength = 1014;
-short[string_String] /; StringLength[string] >= $MaxLoggedStringLength := StringTake[string, $MaxLoggedStringLength];
+short[string_String] /; StringLength[string] >= $MaxLoggedStringLength := StringTemplate["``...(`` more)"][StringTake[string, $MaxLoggedStringLength], StringLength[string] - $MaxLoggedStringLength];
 short[string_String] := string;
 
 SetAttributes[timed, HoldAllComplete];
-timed[expr_] := timed[Unevaluated[expr], short[ToString[Unevaluated[expr], InputForm]]];
+timed[expr_] := timed[Unevaluated[expr], "Evaluation"];
 timed[expr_, label_String] := Block[
 	{timer, eval},
 	{timer, eval} = AbsoluteTiming[expr];
@@ -106,14 +123,56 @@ writemsg[msgname_String, msg_String] := (
 	];
 );
 
-(* evaluate[data_String] := ToExpression[data];
-evaluate[data_ByteArray] := evaluate[ByteArrayToString[data]];
-
-serialize[expr_] := ToString[expr, InputForm]; *)
-
-evaluate[data_ByteArray] := BinaryDeserialize[data];
-
 serialize[expr_] := BinarySerialize[expr];
+
+socketEventHandler[data_] := Block[
+	{expr=$Failed, msgs = Internal`Bag[], msgCount, $MessageList={}},
+	(* Setup a handler for all messages, and keep only those that haven't been silenced.
+	The handler must deal with expressions of the form: 
+		Hold[msg_, True|False]
+	The boolean value indicates the silenced status On/Off. *)
+	Internal`HandlerBlock[
+		{"Message", Function[msg, If[TrueQ[Last[msg]],Internal`StuffBag[msgs,msg]]]},
+		expr = timed[BinaryDeserialize[data], "Expression evaluation"];
+		(* If[$LogLevel <= $DEBUG,  *)
+			ClientLibrary`debug["deserialized expr:", expr]
+		(* ]; *)
+	];
+	(* Check how many messages were thrown during evaluation.
+	Cap it with a default value to avoid overflow. *)
+	msgCount = Internal`BagLength[msgs];
+	If[msgCount > 0, 
+		ClientLibrary`info["Message count: ", msgCount]
+	];
+	Which[
+		msgCount == 0,
+		WriteString[$OutputSocket, "0"]
+		,
+		msgCount <= $MaxMessagesReturned,
+		WriteString[$OutputSocket, ToString[msgCount]];
+		Scan[
+			writemsg,
+			Internal`BagPart[msgs, All]
+		]
+		,
+		msgCount > $MaxMessagesReturned,
+		WriteString[$OutputSocket, ToString[$MaxMessagesReturned+1]];
+		Scan[
+			writemsg,
+			Internal`BagPart[msgs, ;;$MaxMessagesReturned]
+		];
+		writemsg[TemplateApply["`` more messages issued during evaluation.", {msgCount-$MaxMessagesReturned}]];
+		,
+		_,
+		ClientLibrary`error["Unexpected message count. Ignoring all messages."];
+		WriteString[$OutputSocket, "0"];
+	];
+	SocketWriteByteArrayFunc[
+		$OutputSocket,
+		serialize[expr]
+	];
+	If[$LogLevel >= $DEBUG, ClientLibrary`debug["End of evaluation."]]
+];
 
 $LoggerSocket=None;
 $OutputSocket=None;
@@ -122,19 +181,20 @@ $InputSocket=None;
 $MaxMessagesReturned = 31;
 $NoMessage = ByteArray[{0}];
 
-SlaveKernelPrivateStart[inputsocket_String, outputsocket_String, logsocket_String] := (
+SlaveKernelPrivateStart[inputsocket_String, outputsocket_String, logsocket_String, loglevel_Integer] := (
 	$LoggerSocket=SocketConnect[logsocket,"ZMQ_PUB"];
 	If[FailureQ[$LoggerSocket],
 		Print["Failed to connect to logging socket: ", logsocket]
 		,
-		ClientLibrary`info["Connected to logging socket: ", logsocket];
+		ClientLibrary`info["Connected to logging socket:", logsocket];
+		setLogLevel[loglevel];
 		SlaveKernelPrivateStart[inputsocket, outputsocket]
-	]
+	];
 );
 
 
 SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
-	{listener},
+	{listener, msg},
 	$InputSocket = SocketConnect[inputsocket, "ZMQ_Pull"];
 	$OutputSocket = SocketConnect[outputsocket, "ZMQ_Push"];
 	If[TrueQ@FailureQ[$OutputSocket],
@@ -146,67 +206,20 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 		Quit[]
 	];
 	If[$LoggerSocket==None, ClientLibrary`DisableKernelLogging[]];
-	listener = SocketListen[
-		$InputSocket,
-	
-		Block[{data, expr=$Failed, msgs = Internal`Bag[], msgCount, $MessageList={}},
-			(* Setup a handler for all messages, and keep only those that haven't been silenced.
-			The handler must deal with expressions of the form: 
-				Hold[msg_, True|False]
-			The boolean value indicates the silenced status On/Off. *)
-			Internal`HandlerBlock[
-				{"Message", Function[msg, If[TrueQ[Last[msg]],Internal`StuffBag[msgs,msg]]]},
-				data = Lookup[#,"DataByteArray", None];
-				expr = timed[evaluate[data], "Expression evaluation"];
-				If[$LogLevel >= $DEBUG, ClientLibrary`debug["deserialized expr: ", ToString[expr]]];
-			];
-			(* Check how many messages were thrown during evaluation.
-			Cap it with a default value to avoid overflow. *)
-			msgCount = Internal`BagLength[msgs];
-			If[msgCount > 0, 
-				ClientLibrary`info["Message count: ", ToString[msgCount]]
-			];
-			Which[
-				msgCount == 0,
-				WriteString[$OutputSocket, "0"]
-				,
-				msgCount <= $MaxMessagesReturned,
-				WriteString[$OutputSocket, ToString[msgCount]];
-				Scan[
-					writemsg,
-					Internal`BagPart[msgs, All]
-				]
-				,
-				msgCount > $MaxMessagesReturned,
-				WriteString[$OutputSocket, ToString[$MaxMessagesReturned+1]];
-				Scan[
-					writemsg,
-					Internal`BagPart[msgs, ;;$MaxMessagesReturned]
-				];
-				writemsg[TemplateApply["`` more messages issued during evaluation.", {msgCount-$MaxMessagesReturned}]];
-				,
-				_,
-				ClientLibrary`fatal["Unexpected message count. Ignoring all messages."];
-				WriteString[$OutputSocket, "0"];
-			];
-			SocketWriteFunc[
-				$OutputSocket,
-				serialize[expr]
-			];
-			If[$LogLevel >= $DEBUG, ClientLibrary`debug["End of evaluation."]]
-		] &
-		,
-		HandlerFunctionsKeys->{"DataByteArray"}
-	];
-	If[TrueQ@FailureQ[listener], 
-		ClientLibrary`error["Failed to listen to input socket ", inputsocket];
-		Quit[]
-	];
 	WriteString[
 		$OutputSocket,
 		"OK"
 	];
-];
+	With[{uuidIn = First[$InputSocket]},
+		While[True,
+			msg = SocketReadByteArrayFunc[uuidIn, 1];
+			If[Length[msg] <= 3,
+				Pause[.001],
+				socketEventHandler[msg[[4;;]]]
+			]
+		]
+	];
+]
 
 End[];
 End[];

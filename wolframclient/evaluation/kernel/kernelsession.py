@@ -23,14 +23,18 @@ logger = logging.getLogger(__name__)
 
 __all__ = ['WolframLanguageSession', 'WolframLanguageAsyncSession']
 
-class KernelLogger(Thread):
+TO_PY_LOG_LEVEL = {
+    1: logging.DEBUG,
+    2: logging.INFO,
+    3: logging.WARN,
+    4: logging.FATAL
+}
+if six.PY2:
+    FROM_PY_LOG_LEVEL = dict((v, k) for k, v in TO_PY_LOG_LEVEL.iteritems())
+else:
+    FROM_PY_LOG_LEVEL = dict((v, k) for k, v in TO_PY_LOG_LEVEL.items())
 
-    TO_PY_LOG_LEVEL = {
-        1: logging.DEBUG,
-        2: logging.INFO,
-        3: logging.WARN,
-        4: logging.FATAL
-    }
+class KernelLogger(Thread):
 
     MAX_MESSAGE_BEFORE_QUIT = 32
     
@@ -53,7 +57,7 @@ class KernelLogger(Thread):
             while msg_after_quit < KernelLogger.MAX_MESSAGE_BEFORE_QUIT:
                 try:
                     msg = zmq_socket.recv_json(flags=zmq.NOBLOCK)
-                    level = KernelLogger.TO_PY_LOG_LEVEL.get(msg.get('level', 3))
+                    level = TO_PY_LOG_LEVEL.get(msg.get('level', 3))
                     msg_text = msg.get('msg', 'Malformed kernel message. Missing key "msg".')
                     self.logger.log(level, msg_text)
                     if self.stopped.is_set():
@@ -63,6 +67,8 @@ class KernelLogger(Thread):
                         break
                     else:
                         time.sleep(.01)
+                except json.JSONDecodeError as e:
+                    logger.warning('Invalid message: %s', e.doc)
         # no matter what we try to close the socket:
         finally:
             logger.info('Terminating kernel logger thread.')
@@ -282,8 +288,8 @@ class WolframLanguageSession(object):
             self.kernel_logger = KernelLogger(level=self.loglevel)
             self.kernel_logger.start()
             cmd.append('-run')
-            cmd.append('ClientLibrary`Private`SlaveKernelPrivateStart["%s", "%s", "%s"];'
-                       % (self.in_socket.uri, self.out_socket.uri, self.kernel_logger.socket.uri))
+            cmd.append('ClientLibrary`Private`SlaveKernelPrivateStart["%s", "%s", "%s", %i];'
+                       % (self.in_socket.uri, self.out_socket.uri, self.kernel_logger.socket.uri, FROM_PY_LOG_LEVEL[self.loglevel]))
         else:
             cmd.append('-run')
             cmd.append('ClientLibrary`Private`SlaveKernelPrivateStart["%s", "%s"];'

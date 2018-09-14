@@ -180,3 +180,21 @@ class TestCaseSession(TestCaseSettings):
         session.terminate()
         with self.assertRaises(WolframKernelException):
             session.evaluate('1+1')
+
+class TestCaseInternalFunctions(TestCaseSettings):
+    def test_default_loglevel(self):
+        with WolframLanguageSession(self.KERNEL_PATH) as session:
+            res = session.evaluate('ClientLibrary`Private`$LogLevel == Infinity')
+            self.assertEqual(res, WLSymbol('True'))
+            # This is not possible. Logging was not enabled in the first place.
+            session.evaluate('ClientLibrary`SetInfoLogLevel[]`')
+            # Log level remain to NOTSET
+            res = session.evaluate(
+                'ClientLibrary`Private`$LogLevel == ClientLibrary`Private`$NOTSET')
+            self.assertEqual(res, WLSymbol('True'))
+
+    def test_set_loglevel(self):
+        with WolframLanguageSession(self.KERNEL_PATH, kernel_loglevel=logging.WARN) as session:
+            res = session.evaluate(
+                'ClientLibrary`Private`$LogLevel == ClientLibrary`Private`$WARN')
+            self.assertEqual(res, WLSymbol('True'))
