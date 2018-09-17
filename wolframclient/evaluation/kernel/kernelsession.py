@@ -9,7 +9,7 @@ from threading import Event, Thread
 from wolframclient.evaluation.result import WolframKernelEvaluationResult
 from wolframclient.exception import WolframKernelException, WolframEvaluationException
 from wolframclient.language import wl
-from wolframclient.language.expression import WLSymbol
+from wolframclient.language.expression import WLSymbol, expr_from_attr
 from wolframclient.serializers import export
 from wolframclient.utils.api import futures, os, time, zmq, json
 from wolframclient.utils.encoding import force_text
@@ -401,10 +401,16 @@ class WolframLanguageSession(object):
         return result.get()
 
     def __getattr__(self, attr):
-        def inner(*args, **kwargs):
-            expr = WLSymbol(force_text(attr))(*args, **kwargs)
-            return self.evaluate(expr)
-        return inner
+        """Intercept attributes starting with a capital letter and evaluate them as a System symbol.
+        """
+        if attr[0].isupper():
+            def inner(*args):
+                return self.evaluate(expr_from_attr(attr, *args))
+            return inner
+        else:
+            raise AttributeError('%s object has no attribute %s' %
+                                 (self.__class__.__name__, attr))
+
 
     def __repr__(self):
         if self.terminated:

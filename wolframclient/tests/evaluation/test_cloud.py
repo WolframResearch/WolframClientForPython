@@ -154,6 +154,14 @@ class TestCase(TestCaseSettings):
         res = self.cloud_session.Part([[1, 2, 3],[4, 5, 6]], -1, 1)
         self.assertEqual(res, "4")
 
+    def test_compose_attr_call(self):
+        res = self.cloud_session.Total_Range(3)
+        self.assertEqual(res, str(1+2+3))
+
+    def test_bad_attr_call(self):
+        with self.assertRaises(AttributeError):
+            res = self.cloud_session.invalid_attr(123)
+
     # url_join
 
     def test_append_no_base(self):

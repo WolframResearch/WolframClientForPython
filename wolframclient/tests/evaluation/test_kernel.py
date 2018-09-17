@@ -70,9 +70,21 @@ class TestCase(TestCaseSettings):
         res = self.kernel_session.MinMax([-1, 2, 5])
         self.assertListEqual(res, [-1, 5])
 
+    def test_attr_call_function_with_1arg(self):
+        res = self.kernel_session.MinMax([-1, 2, 5])
+        self.assertListEqual(res, [-1, 5])
+
     def test_attr_call_function_with_many_args(self):
         res = self.kernel_session.Part([[1, 2, 3], [4, 5, 6]], -1, 1)
         self.assertEqual(res, 4)
+
+    def test_compose_attr_call(self):
+        res = self.kernel_session.Total_Range(3)
+        self.assertEqual(res, 1+2+3)
+
+    def test_bad_attr_call(self):
+        with self.assertRaises(AttributeError):
+            res = self.kernel_session.invalid_attr(123)
 
     def test_evaluate_variable_updates(self):
         self.kernel_session.evaluate('ClearAll[x]; x=1')
