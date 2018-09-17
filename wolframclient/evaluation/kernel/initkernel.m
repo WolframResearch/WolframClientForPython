@@ -55,7 +55,8 @@ log[level_Integer, msg_String] /; level >= $LogLevel  := If[$LoggerSocket =!= No
 		$LoggerSocket,
 		StringToByteArray[
 			Developer`WriteRawJSONString[<|"msg" -> msg, "level" -> level|>, 
-			"ToByteString" -> True, "Compact" -> True]
+			"ToByteString" -> True, "Compact" -> True],
+			"ISOLatin1"
 		]
 	],
    	Print[msg]
@@ -85,7 +86,7 @@ timed[expr_] := timed[Unevaluated[expr], "Evaluation"];
 timed[expr_, label_String] := Block[
 	{timer, eval},
 	{timer, eval} = AbsoluteTiming[expr];
-	ClientLibrary`info[label, " took: ", readableTiming[timer]];
+	ClientLibrary`info[label, "took:", readableTiming[timer]];
 	eval
 ];
 
