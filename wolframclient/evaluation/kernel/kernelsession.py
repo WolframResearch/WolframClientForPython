@@ -29,10 +29,7 @@ TO_PY_LOG_LEVEL = {
     3: logging.WARN,
     4: logging.FATAL
 }
-if six.PY2:
-    FROM_PY_LOG_LEVEL = dict((v, k) for k, v in TO_PY_LOG_LEVEL.iteritems())
-else:
-    FROM_PY_LOG_LEVEL = dict((v, k) for k, v in TO_PY_LOG_LEVEL.items())
+FROM_PY_LOG_LEVEL = dict((v, k) for k, v in TO_PY_LOG_LEVEL.items())
 
 class KernelLogger(Thread):
 

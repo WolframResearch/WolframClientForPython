@@ -5,6 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from itertools import chain
 
 import datetime
+import platform
 import decimal
 import sys
 import os
@@ -15,7 +16,7 @@ import types
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
 
-WINDOWS = os.name == 'nt'
+WINDOWS = platform.system() == 'Windows'
 
 JYTHON = sys.platform.startswith('java')
 
