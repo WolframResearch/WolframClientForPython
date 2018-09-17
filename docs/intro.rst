@@ -49,6 +49,9 @@ Create a new session targeting a local *WolframKernel* specified by its path::
 Start the session::
 
     >>> session.start()
+
+Ensure the session started successfully:
+
     >>> session.started
     True
 
@@ -57,7 +60,7 @@ Evaluate a Wolfram Language function from Python::
     >>> session.StringReverse('abc')
     'cba'
 
-Call the Wolfram Language function :wl:`MinMax` on a Python list::
+Call the Wolfram Language function :wl:`MinMax` on a Python :class:`list`::
 
     >>> session.MinMax([1, 5, -3, 9])
     [-3, 9]
@@ -76,6 +79,11 @@ Finally retrieve the result as a Python number::
 
     >>> session.QuantityMagnitude(d_km)
     150801534.3173264
+
+Alternatively use syntactic sugar to compose system symbols directly in Python::
+
+    >>> session.QuantityMagnitude_UnitConvert(distance, "Kilometers")
+    150357377.09734517
 
 More complex expressions are evaluated using :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate`::
 
