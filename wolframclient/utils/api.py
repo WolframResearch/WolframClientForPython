@@ -31,7 +31,10 @@ os = API(
     expanduser  = 'os.path.expanduser',
     dirname     = 'os.path.dirname',
     path_join   = 'os.path.join',
-    isfile      = 'os.path.isfile'
+    isfile      = 'os.path.isfile',
+    exists      = 'os.path.exists',
+    makedirs    = 'os.makedirs',
+    environ     = 'os.environ'
 )
 
 futures = API(

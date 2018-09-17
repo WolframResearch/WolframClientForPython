@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-@unittest.skipIf(json_config is None, "Could not find configuration file wolframclient/tests/local_config.json")
+@unittest.skipIf(json_config is None, "Could not find configuration file as specified in wolframclient/tests/local_config_sample.json")
 class TestCaseSettings(BaseTestCase):
     @classmethod
     def setUpClass(cls):
@@ -54,6 +54,8 @@ class TestCaseSettings(BaseTestCase):
         current_file_dir = os.path.dirname(__file__)
         return os.path.join(current_file_dir, '..', 'data', filename)
 
+
+@unittest.skipIf(json_config is None, "Could not find configuration file as specified in wolframclient/tests/local_config_sample.json")
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 class TestCase(TestCaseSettings):
 

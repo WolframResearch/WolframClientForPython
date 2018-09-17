@@ -21,13 +21,13 @@ if not six.JYTHON:
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-@unittest.skipIf(json_config is None, "Could not find configuration file wolframclient/tests/local_config.json")
+@unittest.skipIf(json_config is None, "Could not find configuration file as specified in wolframclient/tests/local_config_sample.json")
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 class TestCaseSettings(BaseTestCase):
-    KERNEL_PATH = json_config['kernel']
 
     @classmethod
     def setUpClass(cls):
+        cls.KERNEL_PATH = json_config['kernel']
         cls.setupKernelSession()
 
     @classmethod
@@ -47,6 +47,7 @@ class TestCaseSettings(BaseTestCase):
         cls.kernel_session.set_parameter('TERMINATE_READ_TIMEOUT', 3)
         cls.kernel_session.start()
 
+@unittest.skipIf(json_config is None, "Could not find configuration file as specified in wolframclient/tests/local_config_sample.json")
 class TestCase(TestCaseSettings):
     def test_evaluate_basic_inputform(self):
         res = self.kernel_session.evaluate('1+1')
@@ -160,6 +161,7 @@ class TestCase(TestCaseSettings):
             self.assertEqual(future3.result(timeout=1), 101)
 
 
+@unittest.skipIf(json_config is None, "Could not find configuration file as specified in wolframclient/tests/local_config_sample.json")
 class TestCaseSession(TestCaseSettings):
     def test_kernel_init_bad_path(self):
         with self.assertRaises(WolframKernelException):
@@ -181,6 +183,8 @@ class TestCaseSession(TestCaseSettings):
         with self.assertRaises(WolframKernelException):
             session.evaluate('1+1')
 
+
+@unittest.skipIf(json_config is None, "Could not find configuration file as specified in wolframclient/tests/local_config_sample.json")
 class TestCaseInternalFunctions(TestCaseSettings):
     def test_default_loglevel(self):
         with WolframLanguageSession(self.KERNEL_PATH) as session:
@@ -188,7 +192,7 @@ class TestCaseInternalFunctions(TestCaseSettings):
             self.assertEqual(res, WLSymbol('True'))
             # This is not possible. Logging was not enabled in the first place.
             session.evaluate('ClientLibrary`SetInfoLogLevel[]`')
-            # Log level remain to NOTSET
+            # Log level remains to NOTSET
             res = session.evaluate(
                 'ClientLibrary`Private`$LogLevel == ClientLibrary`Private`$NOTSET')
             self.assertEqual(res, WLSymbol('True'))
