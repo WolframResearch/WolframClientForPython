@@ -42,3 +42,5 @@ if _json_config_path is not None:
     except:
         raise ValueError(
             'Failed to find json configuration file %s' % _json_config_path)
+
+MSG_JSON_NOT_FOUND = "Environment variable WOLFRAMCLIENT_PY_JSON_CONFIG not set."

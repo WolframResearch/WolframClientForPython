@@ -9,7 +9,7 @@ from threading import Event, Thread
 from wolframclient.evaluation.result import WolframKernelEvaluationResult
 from wolframclient.exception import WolframKernelException, WolframEvaluationException
 from wolframclient.language import wl
-from wolframclient.language.expression import WLSymbol, expr_from_attr
+from wolframclient.evaluation.utils import expr_from_attr
 from wolframclient.serializers import export
 from wolframclient.utils.api import futures, os, time, zmq, json
 from wolframclient.utils.encoding import force_text
@@ -121,7 +121,7 @@ class WolframLanguageSession(object):
 
     """
 
-    def __init__(self, kernel=None, consumer=None, initfile=None,
+    def __init__(self, kernel, consumer=None, initfile=None,
                  in_socket=None, out_socket=None, kernel_loglevel=logging.NOTSET, stdin=PIPE, stdout=PIPE, stderr=PIPE):
         if isinstance(kernel, six.string_types):
             if not os.isfile(kernel):
@@ -325,7 +325,7 @@ class WolframLanguageSession(object):
         except SocketException as se:
             logger.fatal(se)
             self.terminate()
-            raise WolframKernelException('Failed to communication with the kernel %s. Could not read from ZMQ socket.' % self.kernel)
+            raise WolframKernelException('Failed to communicate with the kernel %s. Could not read from ZMQ socket.' % self.kernel)
 
     @property
     def started(self):
@@ -404,8 +404,8 @@ class WolframLanguageSession(object):
         """Intercept attributes starting with a capital letter and evaluate them as a System symbol.
         """
         if attr[0].isupper():
-            def inner(*args):
-                return self.evaluate(expr_from_attr(attr, *args))
+            def inner(*args, **kwargs):
+                return self.evaluate(expr_from_attr(attr, *args, **kwargs))
             return inner
         else:
             raise AttributeError('%s object has no attribute %s' %
@@ -429,10 +429,12 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
         Asynchronous evaluation is only available for `Python 3.2` and above.
     """
 
-    def __init__(self, kernel=None, consumer=None, initfile=None,
+    def __init__(self, kernel, consumer=None, initfile=None,
                  in_socket=None, out_socket=None, kernel_loglevel=logging.NOTSET, stdin=PIPE, stdout=PIPE, stderr=PIPE):
-        super(WolframLanguageAsyncSession, self).__init__(kernel, consumer, initfile,
-            in_socket, out_socket, kernel_loglevel, stdin, stdout, stderr)
+        super(WolframLanguageAsyncSession, self).__init__(kernel, consumer=consumer, initfile=initfile,
+                                                          in_socket=in_socket, out_socket=out_socket, 
+                                                          kernel_loglevel=kernel_loglevel, 
+                                                          stdin=stdin, stdout=stdout, stderr=stderr)
         self.thread_pool_exec = None
 
     def evaluate(self, expr, **kwargs):
@@ -464,12 +466,6 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
             except Exception as e:
                 logger.fatal(e)
         super().terminate()
-
-    def __getattr__(self, attr):
-        def inner(*args, **kwargs):
-            expr = WLSymbol(force_text(attr))(*args, **kwargs)
-            return self.evaluate(expr)
-        return inner
 
 
 class SocketException(Exception):

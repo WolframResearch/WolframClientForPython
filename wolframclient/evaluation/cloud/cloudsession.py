@@ -7,7 +7,7 @@ from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 from wolframclient.evaluation.result import WolframAPIResponseBuilder, WolframEvaluationJSONResponse
 from wolframclient.exception import AuthenticationException
 from wolframclient.language import wl
-from wolframclient.language.expression import expr_from_attr
+from wolframclient.evaluation.utils import expr_from_attr
 from wolframclient.language.expression import WLSymbol
 from wolframclient.serializers import export
 from wolframclient.utils import six
@@ -216,8 +216,8 @@ class WolframCloudSession(object):
         """Intercept attributes starting with a capital letter and evaluate them as a System symbol.
         """
         if attr[0].isupper():
-            def inner(*args):
-                return self.evaluate(expr_from_attr(attr, *args))
+            def inner(*args, **opts):
+                return self.evaluate(expr_from_attr(attr, *args, **opts))
             return inner
         else:
             raise AttributeError('%s object has no attribute %s' % (self.__class__.__name__, attr))

@@ -7,19 +7,6 @@ from itertools import chain
 from wolframclient.utils import six
 from wolframclient.utils.encoding import force_text
 
-def expr_from_attr(attr, *args):
-    """ Syntactic sugar for System function, apply composition to functions names separated by an underscore.
-
-    E.g: expr_from_attr('Total_Range', 3) is equivalent to Python `wl.Total(wl.Range(3))`, and 
-    Wolfram Language `Total[Range[3]]`.
-    """
-    functions = attr.split('_')
-    expr = WLSymbol(force_text(functions[-1]))(*args)
-    if len(functions) > 1:
-        functions = [WLSymbol(x) for x in functions[:-1]]
-        expr = wl.Compose(*functions)(expr)
-    return expr
-
 class WLExpressionMeta(object):
     """Abstract class to subclass when building representation of Wolfram Language expressions as Python object."""
 

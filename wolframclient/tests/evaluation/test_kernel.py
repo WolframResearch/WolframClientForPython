@@ -10,7 +10,7 @@ from wolframclient.language.expression import WLSymbol, WLFunction
 from wolframclient.logger.utils import setup_logging_to_file
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
-from wolframclient.tests.configure import json_config
+from wolframclient.tests.configure import json_config, MSG_JSON_NOT_FOUND
 
 import logging
 import unittest
@@ -21,7 +21,7 @@ if not six.JYTHON:
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-@unittest.skipIf(json_config is None, "Could not find configuration file as specified in wolframclient/tests/local_config_sample.json")
+@unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 class TestCaseSettings(BaseTestCase):
 
@@ -47,7 +47,7 @@ class TestCaseSettings(BaseTestCase):
         cls.kernel_session.set_parameter('TERMINATE_READ_TIMEOUT', 3)
         cls.kernel_session.start()
 
-@unittest.skipIf(json_config is None, "Could not find configuration file as specified in wolframclient/tests/local_config_sample.json")
+@unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestCase(TestCaseSettings):
     def test_evaluate_basic_inputform(self):
         res = self.kernel_session.evaluate('1+1')
@@ -70,10 +70,6 @@ class TestCase(TestCaseSettings):
         res = self.kernel_session.MinMax([-1, 2, 5])
         self.assertListEqual(res, [-1, 5])
 
-    def test_attr_call_function_with_1arg(self):
-        res = self.kernel_session.MinMax([-1, 2, 5])
-        self.assertListEqual(res, [-1, 5])
-
     def test_attr_call_function_with_many_args(self):
         res = self.kernel_session.Part([[1, 2, 3], [4, 5, 6]], -1, 1)
         self.assertEqual(res, 4)
@@ -82,9 +78,25 @@ class TestCase(TestCaseSettings):
         res = self.kernel_session.Total_Range(3)
         self.assertEqual(res, 1+2+3)
 
+    def test_many_compose_attr_call(self):
+        res = self.kernel_session.Total_Dimensions_ConstantArray(1, [1,2,3])
+        self.assertEqual(res, 1+2+3)
+
     def test_bad_attr_call(self):
         with self.assertRaises(AttributeError):
             res = self.kernel_session.invalid_attr(123)
+
+    def test_attr_call_option(self):
+        res = self.kernel_session.BinarySerialize(1, PerformanceGoal="Size")
+        self.assertEqual(res, b'8C:x\x9csf\x04\x00\x00\x89\x00E')
+
+    def test_attr_call_str_option(self):
+        res = self.kernel_session.ExportString([[1], [2]], u"JSON", Compact_=True)
+        self.assertEqual(res, '[[1],[2]]')
+
+    def test_attr_call_compose_option(self):
+        res = self.kernel_session.StringLength_ExportString([3], u"JSON", Compact_=True)
+        self.assertEqual(res, 3)
 
     def test_evaluate_variable_updates(self):
         self.kernel_session.evaluate('ClearAll[x]; x=1')
@@ -161,8 +173,65 @@ class TestCase(TestCaseSettings):
         result = binary_deserialize(wxf)
         self.assertEqual(result, WLSymbol('$Failed'))
 
-    @unittest.skipIf(six.PY2, "No async call on Python2.")
-    def test_evaluate_async(self):
+
+@unittest.skipIf(six.PY2, "No async call on Python2.")
+class TestAsyncSession(TestCaseSettings):
+    @classmethod
+    def tearDownKernelSession(cls):
+        if cls.async_session is not None:
+            cls.async_session.terminate()
+
+    @classmethod
+    def setupKernelSession(cls):
+        cls.async_session = WolframLanguageAsyncSession(
+            cls.KERNEL_PATH, kernel_loglevel=logging.INFO)
+        cls.async_session.set_parameter('STARTUP_READ_TIMEOUT', 5)
+        cls.async_session.set_parameter('TERMINATE_READ_TIMEOUT', 3)
+        cls.async_session.start()
+
+    def test_evaluate_async_basic_inputform(self):
+        future = self.async_session.evaluate('1+1')
+        self.assertEqual(future.result(timeout=1), 2)
+
+    def test_evaluate_async_basic_wl(self):
+        future = self.async_session.evaluate(wl.Plus(1, 2))
+        self.assertEqual(future.result(timeout=1), 3)
+
+    def test_evaluate_async_wxf_inputform(self):
+        wxf = export(wl.MinMax([1, -2, 3, 5]), target_format='wxf')
+        future = self.async_session.evaluate(wxf)
+        self.assertEqual(future.result(timeout=1), [-2, 5])
+
+    def test_attr_call_function_no_arg_async(self):
+        future = self.async_session.List()
+        self.assertListEqual(future.result(timeout=1), [])
+
+    def test_attr_call_function_with_1arg_async(self):
+        future = self.async_session.MinMax([-1, 2, 5])
+        self.assertListEqual(future.result(timeout=1), [-1, 5])
+
+    def test_attr_call_function_with_many_args_async(self):
+        future = self.async_session.Part([[1, 2, 3], [4, 5, 6]], -1, 1)
+        self.assertEqual(future.result(timeout=1), 4)
+
+    def test_compose_attr_call_async(self):
+        future = self.async_session.Total_Range(3)
+        self.assertEqual(future.result(timeout=1), 1+2+3)
+
+    def test_bad_attr_call(self):
+        with self.assertRaises(AttributeError):
+            res = self.async_session.invalid_attr(123)
+
+    def test_attr_call_option_async(self):
+        future = self.async_session.BinarySerialize(1, PerformanceGoal="Size")
+        self.assertEqual(future.result(timeout=1),
+                         b'8C:x\x9csf\x04\x00\x00\x89\x00E')
+
+    def test_attr_call_str_option_async(self):
+        future = self.async_session.ExportString([[1],[2]], u'JSON', Compact_=True)
+        self.assertEqual(future.result(timeout=1), '[[1],[2]]')
+
+    def test_evaluate_multiple_async(self):
         with WolframLanguageAsyncSession(self.KERNEL_PATH) as async_session:
             future1 = async_session.evaluate('3+4')
             result1 = future1.result(timeout=3)
@@ -172,8 +241,23 @@ class TestCase(TestCaseSettings):
             future3 = async_session.evaluate('100+1')
             self.assertEqual(future3.result(timeout=1), 101)
 
+    def test_many_failures_wrap_async(self):
+        future = self.async_session.evaluate_wrap('ImportString["[1,2", "RawJSON"]; 1/0')
+        res = future.result(timeout=1)
+        self.assertFalse(res.success)
+        expected_msgs = [('Import::jsonarraymissingsep', 'Expecting end of array or a value separator.'), 
+        ('Import::jsonhintposandchar', "An error occurred near character 'EOF', at line 1:6"), 
+        ('Power::infy', 'Infinite expression Infinity encountered.')]
+        self.assertListEqual(res.messages, expected_msgs)
 
-@unittest.skipIf(json_config is None, "Could not find configuration file as specified in wolframclient/tests/local_config_sample.json")
+    def test_valid_evaluate_wxf_async(self):
+        future = self.async_session.evaluate_wxf('Range[3]')
+        wxf = future.result(timeout=1)
+        result = binary_deserialize(wxf)
+        self.assertEqual(result, [1,2,3])
+
+
+@unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestCaseSession(TestCaseSettings):
     def test_kernel_init_bad_path(self):
         with self.assertRaises(WolframKernelException):
@@ -196,7 +280,7 @@ class TestCaseSession(TestCaseSettings):
             session.evaluate('1+1')
 
 
-@unittest.skipIf(json_config is None, "Could not find configuration file as specified in wolframclient/tests/local_config_sample.json")
+@unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestCaseInternalFunctions(TestCaseSettings):
     def test_default_loglevel(self):
         with WolframLanguageSession(self.KERNEL_PATH) as session:

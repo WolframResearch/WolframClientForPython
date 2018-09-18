@@ -9,7 +9,7 @@ from wolframclient.utils import six
 from wolframclient.utils.api import json
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.tests import TestCase as BaseTestCase
-from wolframclient.tests.configure import json_config, create_dir_if_missing, dir_test_data
+from wolframclient.tests.configure import json_config, create_dir_if_missing, dir_test_data, MSG_JSON_NOT_FOUND
 import logging
 import os
 import unittest
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-@unittest.skipIf(json_config is None, "Could not find configuration file as specified in wolframclient/tests/local_config_sample.json")
+@unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestCaseSettings(BaseTestCase):
     @classmethod
     def setUpClass(cls):
@@ -55,7 +55,7 @@ class TestCaseSettings(BaseTestCase):
         return os.path.join(current_file_dir, '..', 'data', filename)
 
 
-@unittest.skipIf(json_config is None, "Could not find configuration file as specified in wolframclient/tests/local_config_sample.json")
+@unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 class TestCase(TestCaseSettings):
 
