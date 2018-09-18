@@ -9,7 +9,7 @@ from wolframclient.utils import six
 from wolframclient.utils.api import json
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.tests import TestCase as BaseTestCase
-from wolframclient.tests import json_config
+from wolframclient.tests.configure import json_config, create_dir_if_missing, dir_test_data
 import logging
 import os
 import unittest

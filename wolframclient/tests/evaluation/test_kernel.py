@@ -10,7 +10,7 @@ from wolframclient.language.expression import WLSymbol, WLFunction
 from wolframclient.logger.utils import setup_logging_to_file
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
-from wolframclient.tests import json_config
+from wolframclient.tests.configure import json_config
 
 import logging
 import unittest

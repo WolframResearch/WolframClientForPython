@@ -8,7 +8,7 @@ from wolframclient.serializers.wxfencoder.wxfexpr import WXFExprFunction, WXFExp
 from wolframclient.serializers.wxfencoder.wxfexprprovider import WXFExprProvider
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
-from wolframclient.tests import create_dir_if_missing, dir_test_data
+from wolframclient.tests.configure import create_dir_if_missing, dir_test_data
 class MyClass(object):
     def __init__(self, *values):
         self.values = values
