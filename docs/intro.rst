@@ -38,6 +38,9 @@ Wolfram Language session :class:`~wolframclient.evaluation.WolframLanguageSessio
 
     **It is advised to first try to run the WolframKernel executable once from your terminal.**
 
+Initialization
+++++++++++++++
+
 Import :class:`~wolframclient.evaluation.WolframLanguageSession`::
     
     >>> from wolframclient.evaluation import WolframLanguageSession
@@ -54,6 +57,9 @@ Ensure the session started successfully:
 
     >>> session.started
     True
+
+Quick System function call
+++++++++++++++++++++++++++
 
 Evaluate a Wolfram Language function from Python::
 
@@ -80,10 +86,29 @@ Finally retrieve the result as a Python number::
     >>> session.QuantityMagnitude(d_km)
     150801534.3173264
 
+Composition
++++++++++++++
+
 Alternatively use syntactic sugar to compose system symbols directly in Python::
 
     >>> session.QuantityMagnitude_UnitConvert(distance, "Kilometers")
     150357377.09734517
+
+Composition is not limited to two functions::
+
+    >>> session.Total_Dimensions_ConstantArray(0, {1,2,3})
+    6
+
+Options
++++++++++
+
+With this syntax, Wolfram Language options are passed as Python named arguments. :wl:`ArrayPad`, accepts an option :wl:`Padding` to specify what padding to use. Pad an array with ones::
+
+    >>> session.ArrayPad([[0]], 1, Padding=1)
+    [[1, 1, 1], [1, 0, 1], [1, 1, 1]]
+
+Arbitrary code
+++++++++++++++++++
 
 More complex expressions are evaluated using :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate`::
 
@@ -96,6 +121,10 @@ Expressions evaluated in a given session are persistent. Define a function, and 
     Null
     >>> session.evaluate('f[4]')
     16
+
+Termination
+++++++++++++++
+
 
 The session is no more useful, terminating it::
 
@@ -113,6 +142,8 @@ The session stored in `wl_session`, is only available in the scope of the `with`
 
 As shown above, :class:`~wolframclient.evaluation.WolframLanguageSession` must be initialized and terminated, either by explicitly calling :func:`~wolframclient.evaluation.WolframLanguageSession.start` and :func:`~wolframclient.evaluation.WolframLanguageSession.terminate`, or, alternatively, in a `with` block that achieves the same result automatically. It is highly recommended to initialize a session once to mitigate the initialization cost.
 
+.. note::
+    Non terminated sessions may result in orphan kernel processes, which, ultimately, can lead to the impossibility to spawn any usable instance at all.
 
 Wolfram Cloud interactions
 ==============================

@@ -11,7 +11,8 @@ kernel_path = '/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel'
 # Start a new session, with kernel logging activated and log level set to INFO.
 with WolframLanguageSession(kernel_path, kernel_loglevel=logging.INFO) as session:
     # This message is printed
-    session.evaluate('ClientLibrary`info["ON -- Example message printed from the kernel with log level INFO --"]')
+    session.evaluate('ClientLibrary`info["ON -- Example message printed from the kernel \
+with log level INFO --"]')
     # This one is not because its level is debug. 
     session.evaluate('ClientLibrary`debug["OFF -- Debug message."]')
     

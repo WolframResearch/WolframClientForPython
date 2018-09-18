@@ -13,4 +13,5 @@ with WolframLanguageAsyncSession(kernel_path) as async_session:
           (time.perf_counter()-start))
     # wait for up to 5 seconds.
     expr = future.result(timeout = 5)
-    print('After %.02fs, result was available. Kernel evaluation returned: %s' % (time.perf_counter()-start, expr))
+    print('After %.02fs, result was available. Kernel evaluation returned: %s' 
+      % (time.perf_counter()-start, expr))

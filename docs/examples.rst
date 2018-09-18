@@ -64,20 +64,38 @@ Evaluate an artificially delayed code (using :wl:`Pause`), and print time elapse
 .. literalinclude:: /examples/python/asynchronous1.py
     :linenos:
 
+The standard output should display:
+
+.. code-block :: text
+
+    Starting an evaluation delayed by 2 seconds.
+    After 0.0069s, the code is running in the background, Python execution continues.
+    After 2.02s, result was available. Kernel evaluation returned: 2
+
 Logging
 ========
 
 Logging is often an important part of an application. The library relies on the standard :mod:`logging` module, and exposes various methods to control the level of information logged.
 
-The first level of control is through the logging module itself. The python library logs at various level:
+The first level of control is through the logging module itself. The python library logs at various levels. Setup a basic configuration for the logging module to witness some messages in the standard output:
 
 .. literalinclude:: /examples/python/logging1.py
     :linenos:
     :emphasize-lines: 5-6
 
+The standard output should display:
+
+.. code-block :: text
+
+    INFO:wolframclient.evaluation.kernel.kernelsession:Kernel receives commands from socket: <Socket: host=127.0.0.1, port=63471>
+    INFO:wolframclient.evaluation.kernel.kernelsession:Kernel writes evaluated expressions to socket: <Socket: host=127.0.0.1, port=63472>
+    INFO:wolframclient.evaluation.kernel.kernelsession:Kernel process started with PID: 37169
+    INFO:wolframclient.evaluation.kernel.kernelsession:Kernel is ready. Startup took 1.54 seconds.
+    WARNING:wolframclient.evaluation.kernel.kernelsession:Infinite expression Infinity encountered.
+
 It's also possible to log from within the kernel. This feature is disabled by default. When initializing a :class:`~wolframclient.evaluation.WolframLanguageSession`, the parameter `kernel_loglevel` can be specified with one of the following values: :class:`logging.DEBUG`, :class:`logging.INFO`, :class:`logging.WARNING`, :class:`logging.ERROR`, to activate kernel logging. 
 
-.. note :: If a WolframLanguageSession is initialized with the default `kernel_loglevel` (i.e: :class:`logging.NOTSET`), kernel logging is not available, and it is not possible to activate it afterward.
+.. note :: If a WolframLanguageSession is initialized with the default `kernel_loglevel` (i.e: :class:`logging.NOTSET`), kernel logging is disable for the session, and it is not possible to activate it afterward.
 
 From the Wolfram Language it is possible to issue log messages, using one of the following functions:
 
@@ -105,7 +123,7 @@ Manipulation of log level using Python and Kernel controls:
 
 .. literalinclude:: /examples/python/logging2.py
     :linenos:
-    :emphasize-lines: 14,16,19,21,22
+    :emphasize-lines: 14-15,17,20,22,23
 
 **********************************************
 Extending WXF parsing – Writing a WXFConsumer
@@ -142,7 +160,7 @@ Sometimes the resulting expression of an evaluation is a symbolic exact value, w
 It is possible to build a subclass of :class:`~wolframclient.deserializers.WXFConsumer`, that can convert some symbolic results into pure built-in Python objects. The consumer must deal with :wl:`Plus` and :wl:`Times`, converts :wl:`Pi` to :class:`math.pi`, :wl:`Rational` to :class:`fractions.Fraction`, and :wl:`Complex` to :class:`complex`. It results in a significant code inflation but provide a detailed review of the extension mechanism. Yet, as we will see it is not really necessary.
 
 .. literalinclude:: /examples/python/eigenvalues3.py
-    :emphasize-lines: 15-68, 86
+    :emphasize-lines: 15-68, 87
     :linenos:
 
 

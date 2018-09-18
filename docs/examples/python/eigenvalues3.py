@@ -77,7 +77,8 @@ with WolframLanguageSession(kernel_path) as session:
     expr = wl.Eigenvalues(array)
 
     # Eigenvalues are exact, but the result is a symbolic expression:
-    # [Times[Rational[1, 2], Plus[Complex[0, 4], Times[2, Pi]]], Times[Rational[1, 2], Plus[Complex[0, -4], Times[2, Pi]]], Pi]
+    # [Times[Rational[1, 2], Plus[Complex[0, 4], Times[2, Pi]]], 
+    # Times[Rational[1, 2], Plus[Complex[0, -4], Times[2, Pi]]], Pi]
     print(session.evaluate(expr))
     
     # Use evaluate_wxf to evaluate without deserializing the result.
