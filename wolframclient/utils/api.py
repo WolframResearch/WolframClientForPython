@@ -14,7 +14,7 @@ pytz = API(
 json = API(
     dumps           = 'json.dumps',
     dump            = 'json.dump',
-    loads           = 'json.loads',
+    loads           = 'wolframclient.utils.json.loads',
     load            = 'json.load',
     JSONDecodeError = 'json.decoder.JSONDecodeError'
 )

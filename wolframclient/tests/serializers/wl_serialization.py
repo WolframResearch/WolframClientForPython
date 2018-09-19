@@ -7,6 +7,7 @@ from collections import OrderedDict
 from wolframclient.language import system, wl
 from wolframclient.serializers import export
 from wolframclient.utils import six
+from wolframclient.utils.encoding import force_bytes
 from wolframclient.utils.api import pytz
 from wolframclient.utils.datastructures import Association
 from wolframclient.utils.tests import TestCase as BaseTestCase
@@ -146,16 +147,16 @@ class TestCase(BaseTestCase):
 
         prec = decimal.getcontext().prec
 
-        self.compare(decimal.Decimal(10**20),          b'100000000000000000000``%i' % prec)
-        self.compare(decimal.Decimal('100'),           b'100``%i' % prec)
-        self.compare(decimal.Decimal('100.00'),        b'100.00``%i' % prec)
-        self.compare(decimal.Decimal('0.010'),         b'0.010``%i' % prec)
-        self.compare(decimal.Decimal('0.1534'),        b'0.1534``%i' % prec)
-        self.compare(decimal.Decimal('0.0000000010'),  b'0.0000000010``%i' % prec)
+        self.compare(decimal.Decimal(10**20),          force_bytes(u'100000000000000000000``%i' % prec))
+        self.compare(decimal.Decimal('100'),           force_bytes(u'100``%i' % prec))
+        self.compare(decimal.Decimal('100.00'),        force_bytes(u'100.00``%i' % prec))
+        self.compare(decimal.Decimal('0.010'),         force_bytes(u'0.010``%i' % prec))
+        self.compare(decimal.Decimal('0.1534'),        force_bytes(u'0.1534``%i' % prec))
+        self.compare(decimal.Decimal('0.0000000010'),  force_bytes(u'0.0000000010``%i' % prec))
 
-        self.compare(decimal.Decimal('0'),             b'0``%i' % prec)
-        self.compare(decimal.Decimal('0.0'),           b'0.0``%i' % prec)
-        self.compare(decimal.Decimal('0.0000000000'),  b'0.0000000000``%i' % prec)
+        self.compare(decimal.Decimal('0'),             force_bytes(u'0``%i' % prec))
+        self.compare(decimal.Decimal('0.0'),           force_bytes(u'0.0``%i' % prec))
+        self.compare(decimal.Decimal('0.0000000000'),  force_bytes(u'0.0000000000``%i' % prec))
 
         self.compare(fractions.Fraction(1, 2),         wl.Rational(1, 2))
 
