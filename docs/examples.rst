@@ -97,15 +97,15 @@ It's also possible to log from within the kernel. This feature is disabled by de
 
 .. note :: If a WolframLanguageSession is initialized with the default `kernel_loglevel` (i.e: :class:`logging.NOTSET`), kernel logging is disable for the session, and it is not possible to activate it afterward.
 
-From the Wolfram Language it is possible to issue log messages, using one of the following functions:
+From the Wolfram Language it is possible to issue log messages, using one of the following functions, given with their signature:
 
 .. code-block :: wl
 
     (* Sends a log message to Python with a given log level *)
-    ClientLibrary`debug[msg__String]
-    ClientLibrary`info[msg__String]
-    ClientLibrary`warn[msg__String]
-    ClientLibrary`error[msg__String]
+    ClientLibrary`debug[args__]
+    ClientLibrary`info[args__]
+    ClientLibrary`warn[args__]
+    ClientLibrary`error[args__]
 
 The log level of the kernel is independent of the Python one. The following functions can be used to restrict the amount of log data sent by the kernel:
 
@@ -119,11 +119,11 @@ The log level of the kernel is independent of the Python one. The following func
     (* Sends no message at all *)
     ClientLibrary`DisableKernelLogging[]
 
-Manipulation of log level using Python and Kernel controls:
+Control the log level both at Python and Kernel level:
 
 .. literalinclude:: /examples/python/logging2.py
     :linenos:
-    :emphasize-lines: 14-15,17,20,22,23
+    :emphasize-lines: 6,14-15,17,20,22,23
 
 **********************************************
 Extending WXF parsing – Writing a WXFConsumer
@@ -155,9 +155,9 @@ Symbolic Eigenvalues
 A Python heavy approach
 ------------------------
 
-Sometimes the resulting expression of an evaluation is a symbolic exact value, which nonetheless could be approximated to a numerical result. The Eigenvalues of the matrix :math:`\begin{pmatrix} \pi & -2 & 0 \\ 1 & \pi & -1 \\ 0 & 2 & \pi \\ \end{pmatrix}` are :math:`\frac{1}{2}(4I+2\pi)`, :math:`\frac{1}{2}(-4I+2\pi)`, and :math:`\pi`.
+Sometimes the resulting expression of an evaluation is a symbolic exact value, which nonetheless could be approximated to a numerical result. The eigenvalues of :math:`\begin{pmatrix} \pi & -2 & 0 \\ 1 & \pi & -1 \\ 0 & 2 & \pi \\ \end{pmatrix}` are :math:`\frac{1}{2}(4I+2\pi)`, :math:`\frac{1}{2}(-4I+2\pi)`, and :math:`\pi`.
 
-It is possible to build a subclass of :class:`~wolframclient.deserializers.WXFConsumer`, that can convert some symbolic results into pure built-in Python objects. The consumer must deal with :wl:`Plus` and :wl:`Times`, converts :wl:`Pi` to :class:`math.pi`, :wl:`Rational` to :class:`fractions.Fraction`, and :wl:`Complex` to :class:`complex`. It results in a significant code inflation but provide a detailed review of the extension mechanism. Yet, as we will see it is not really necessary.
+It is possible to build a subclass of :class:`~wolframclient.deserializers.WXFConsumer` that can convert a subset of all Wolfram Language symbols into pure built-in Python objects. It has to deal with :wl:`Plus` and :wl:`Times`, converts :wl:`Pi` to :class:`math.pi`, :wl:`Rational` to :class:`fractions.Fraction`, and :wl:`Complex` to :class:`complex`. It results in a significant code inflation but provide a detailed review of the extension mechanism. Yet, as we will see it is not really necessary.
 
 .. literalinclude:: /examples/python/eigenvalues3.py
     :emphasize-lines: 15-68, 87
@@ -167,7 +167,7 @@ It is possible to build a subclass of :class:`~wolframclient.deserializers.WXFCo
 A Wolfram Language alternative
 ------------------------------
 
-It is recommended to delegate as much as possible to the Wolfram Language. Instead of implementing a (fragile) counterpart of core functions such as :wl:`Plus` or :wl:`Times`, it is best to compute a numerical result in the kernel. This is obtained with the function :wl:`N`. Once applied to the eigenvalues, the result becomes a mixture of complex values and reals, which was already dealt with in the :ref:`previous section<complex-consumer>`.
+It is recommended to delegate as much as possible to the Wolfram Language. Instead of implementing a (fragile) counterpart of core functions such as :wl:`Plus` or :wl:`Times`, it is best to compute a numerical result within the kernel. This can be achieved with the function :wl:`N`. Once applied to the eigenvalues, the result becomes a mixture of complex values and reals, which was already dealt with in the :ref:`previous section<complex-consumer>`.
 
 .. literalinclude:: /examples/python/eigenvalues3_alternative.py
     :emphasize-lines: 12-18, 32

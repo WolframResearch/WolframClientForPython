@@ -23,7 +23,7 @@ class MathConsumer(WXFConsumer):
         else:
             return super().consume_symbol(current_token, tokens, **kwargs)
 
-    # Define a list of heads that require a specific convertion to Python.
+    # Associate heads with the method to convert them to Python types.
     DISPATCH = {
         Complex: 'build_complex',
         wl.Rational: 'build_rational',
@@ -41,7 +41,7 @@ class MathConsumer(WXFConsumer):
             except Exception:
                 # instead of failing, fallback to default case.
                 return super().build_function(head, args, **kwargs)
-        # heads not listed in DISPATH are delegated to parent's method
+        # heads not listed in DISPATCH are delegated to parent's method
         else:
             return super().build_function(head, args, **kwargs)
 
