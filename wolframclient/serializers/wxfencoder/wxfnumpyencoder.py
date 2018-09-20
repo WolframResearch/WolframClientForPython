@@ -31,7 +31,7 @@ class NumPyWXFEncoder(WXFEncoder):
 
     def __init__(self, packed_array_support=True, rawarray_support=False):
         if not packed_array_support and not rawarray_support:
-            raise Exception(
+            raise ValueError(
                 'At least one of the two parameters packed_array_support or rawarray_support must be True.')
         self.packed_array_support = packed_array_support
         self.rawarray_support = rawarray_support
