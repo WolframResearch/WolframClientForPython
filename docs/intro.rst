@@ -140,7 +140,7 @@ Alternatively, it is possible to delegate the handling of the life-cycle of a se
 The session stored in `wl_session`, is only available in the scope of the `with` block, contrary to `session` that was initialized with :func:`~wolframclient.evaluation.WolframLanguageSession.start`.
 
 
-As shown above, :class:`~wolframclient.evaluation.WolframLanguageSession` must be initialized and terminated, either by explicitly calling :func:`~wolframclient.evaluation.WolframLanguageSession.start` and :func:`~wolframclient.evaluation.WolframLanguageSession.terminate`, or, alternatively, in a `with` block that achieves the same result automatically. It is highly recommended to initialize a session once to mitigate the initialization cost.
+As shown above, :class:`~wolframclient.evaluation.WolframLanguageSession` must be initialized and terminated, either by explicitly calling :func:`~wolframclient.evaluation.WolframLanguageSession.start` and :func:`~wolframclient.evaluation.WolframLanguageSession.terminate`, or, alternatively, in a `with` block that achieves the same result automatically. It is highly recommended to initialize a session once and for all to mitigate the initialization cost.
 
 .. note::
     Non terminated sessions may result in orphan kernel processes, which, ultimately, can lead to the impossibility to spawn any usable instance at all.
