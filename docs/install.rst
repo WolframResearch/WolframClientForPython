@@ -6,9 +6,9 @@ Installation of the library
 
 The library source code is available in various repositories:
 
-* bundled with Wolfram Desktop 12+,
+* hosted on *PyPi.org* and available in `pip`,
 * in a public repository on `Github`,
-* hosted on *PyPi.org* and available in `pip`
+* bundled with Wolfram Desktop 12+.
 
 .. note::
     Even though most of the features were built to work on Python 2.7, it is recommended to use the library with Python 3.4 or greater.

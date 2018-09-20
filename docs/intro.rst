@@ -58,8 +58,8 @@ Ensure the session started successfully:
     >>> session.started
     True
 
-Quick System function call
-++++++++++++++++++++++++++
+System functions
+++++++++++++++++
 
 Evaluate a Wolfram Language function from Python::
 
