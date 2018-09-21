@@ -58,7 +58,7 @@ class TestCase(BaseTestCase):
 
         self.compare(
             OrderedDict(enumerate([2, True, False])),
-            b'<|0 :> 2, 1 :> True, 2 :> False|>'
+            b'<|0 -> 2, 1 -> True, 2 -> False|>'
         )
 
         #instances of Association are converted using Rule, in WXF they use WXFFunction
@@ -70,7 +70,7 @@ class TestCase(BaseTestCase):
 
         self.compare(
             dict(a = 2),
-            b'<|"a" :> 2|>'
+            b'<|"a" -> 2|>'
         )
 
         self.compare(

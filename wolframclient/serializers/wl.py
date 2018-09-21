@@ -74,7 +74,7 @@ class WLSerializer(FormatSerializer):
 
     def serialize_mapping(self, mapping):
         return yield_with_separators((
-                self.serialize_rule_delayed(key, value)
+                self.serialize_rule(key, value)
                 for key, value in mapping
             ),
             first = b'<|',

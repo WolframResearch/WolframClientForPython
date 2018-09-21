@@ -202,7 +202,7 @@ class TestCase(TestCaseSettings):
         encoded = encode_api_inputs(
             {'param1': {'k': [1, 2]}, 'param2': 'foo'})
         self.assertEqual(
-            encoded, {'param1': b'<|"k" :> {1, 2}|>', 'param2': 'foo'})
+            encoded, {'param1': b'<|"k" -> {1, 2}|>', 'param2': 'foo'})
 
     def test_encode_empty_dict(self):
         self.assertEqual(encode_api_inputs({}, target_format='json'), {})
