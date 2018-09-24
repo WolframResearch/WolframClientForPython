@@ -4,6 +4,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.cli.utils import discover_with_convention, SimpleCommand
 from wolframclient.utils.importutils import import_string
+from wolframclient.utils.require import require_module
+from wolframclient.utils import six
 
 import sys
 
@@ -14,10 +16,26 @@ class DispatchCommand(SimpleCommand):
 
     default_command = None
 
+    if six.JYTHON:
+        dependencies = [
+            ("pytz",  None),
+        ]
+    else:
+        dependencies = [
+            ("pytz",     None),
+            ("numpy",    None),
+            ("requests", None),
+            ("oauthlib", None),
+        ]
+
     def subcommands(self):
         return discover_with_convention(self.modules, self.class_name)
 
     def handle(self, attr = None):
+
+        if self.dependencies:
+            require_module(*self.dependencies)
+
         all_commands = self.subcommands()
 
         if attr is None and self.default_command:

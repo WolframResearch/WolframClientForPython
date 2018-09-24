@@ -14,18 +14,6 @@ class Command(SimpleCommand):
     modules = ['wolframclient.tests']
     class_name = 'TestCase'
 
-    if six.JYTHON:
-        dependencies = [
-            ("pytz",  None),
-        ]
-    else:
-        dependencies = [
-            ("pytz",     None),
-            ("numpy",    None),
-            ("requests", None),
-            ("oauthlib", None),
-        ]
-
     @property
     def available_test_cases(self):
         try:
