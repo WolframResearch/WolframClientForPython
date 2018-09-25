@@ -61,41 +61,9 @@ class TestCase(TestCaseSettings):
         res = self.kernel_session.evaluate(wxf)
         self.assertEqual(res, [-2, 5])
 
-    def test_attr_call_function_no_arg(self):
-        res = self.kernel_session.List()
-        self.assertListEqual(res, [])
-
-    def test_attr_call_function_with_1arg(self):
-        res = self.kernel_session.MinMax([-1, 2, 5])
-        self.assertListEqual(res, [-1, 5])
-
-    def test_attr_call_function_with_many_args(self):
-        res = self.kernel_session.Part([[1, 2, 3], [4, 5, 6]], -1, 1)
-        self.assertEqual(res, 4)
-
-    def test_compose_attr_call(self):
-        res = self.kernel_session.Total_Range(3)
-        self.assertEqual(res, 1+2+3)
-
-    def test_many_compose_attr_call(self):
-        res = self.kernel_session.Total_Dimensions_ConstantArray(1, [1,2,3])
-        self.assertEqual(res, 1+2+3)
-
-    def test_bad_attr_call(self):
-        with self.assertRaises(AttributeError):
-            res = self.kernel_session.invalid_attr(123)
-
-    def test_attr_call_option(self):
-        res = self.kernel_session.BinarySerialize(1, PerformanceGoal="Size")
+    def test_evaluate_option(self):
+        res = self.kernel_session.evaluate(wl.BinarySerialize(1, PerformanceGoal="Size"))
         self.assertEqual(res, b'8C:x\x9csf\x04\x00\x00\x89\x00E')
-
-    def test_attr_call_str_option(self):
-        res = self.kernel_session.ExportString([[1], [2]], u"JSON", Compact_=True)
-        self.assertEqual(res, '[[1],[2]]')
-
-    def test_attr_call_compose_option(self):
-        res = self.kernel_session.StringLength_ExportString([3], u"JSON", Compact_=True)
-        self.assertEqual(res, 3)
 
     def test_evaluate_variable_updates(self):
         self.kernel_session.evaluate('ClearAll[x]; x=1')
@@ -200,34 +168,34 @@ class TestAsyncSession(TestCaseSettings):
         future = self.async_session.evaluate(wxf)
         self.assertEqual(future.result(timeout=1), [-2, 5])
 
-    def test_attr_call_function_no_arg_async(self):
-        future = self.async_session.List()
-        self.assertListEqual(future.result(timeout=1), [])
+    # def test_attr_call_function_no_arg_async(self):
+    #     future = self.async_session.List()
+    #     self.assertListEqual(future.result(timeout=1), [])
 
-    def test_attr_call_function_with_1arg_async(self):
-        future = self.async_session.MinMax([-1, 2, 5])
-        self.assertListEqual(future.result(timeout=1), [-1, 5])
+    # def test_attr_call_function_with_1arg_async(self):
+    #     future = self.async_session.MinMax([-1, 2, 5])
+    #     self.assertListEqual(future.result(timeout=1), [-1, 5])
 
-    def test_attr_call_function_with_many_args_async(self):
-        future = self.async_session.Part([[1, 2, 3], [4, 5, 6]], -1, 1)
-        self.assertEqual(future.result(timeout=1), 4)
+    # def test_attr_call_function_with_many_args_async(self):
+    #     future = self.async_session.Part([[1, 2, 3], [4, 5, 6]], -1, 1)
+    #     self.assertEqual(future.result(timeout=1), 4)
 
-    def test_compose_attr_call_async(self):
-        future = self.async_session.Total_Range(3)
-        self.assertEqual(future.result(timeout=1), 1+2+3)
+    # def test_compose_attr_call_async(self):
+    #     future = self.async_session.Total_Range(3)
+    #     self.assertEqual(future.result(timeout=1), 1+2+3)
 
-    def test_bad_attr_call(self):
-        with self.assertRaises(AttributeError):
-            res = self.async_session.invalid_attr(123)
+    # def test_bad_attr_call(self):
+    #     with self.assertRaises(AttributeError):
+    #         res = self.async_session.invalid_attr(123)
 
-    def test_attr_call_option_async(self):
-        future = self.async_session.BinarySerialize(1, PerformanceGoal="Size")
-        self.assertEqual(future.result(timeout=1),
-                         b'8C:x\x9csf\x04\x00\x00\x89\x00E')
+    # def test_attr_call_option_async(self):
+    #     future = self.async_session.BinarySerialize(1, PerformanceGoal="Size")
+    #     self.assertEqual(future.result(timeout=1),
+    #                      b'8C:x\x9csf\x04\x00\x00\x89\x00E')
 
-    def test_attr_call_str_option_async(self):
-        future = self.async_session.ExportString([[1],[2]], u'JSON', Compact_=True)
-        self.assertEqual(future.result(timeout=1), '[[1],[2]]')
+    # def test_attr_call_str_option_async(self):
+    #     future = self.async_session.ExportString([[1],[2]], u'JSON', Compact_=True)
+    #     self.assertEqual(future.result(timeout=1), '[[1],[2]]')
 
     def test_evaluate_multiple_async(self):
         with WolframLanguageAsyncSession(self.KERNEL_PATH) as async_session:

@@ -400,17 +400,6 @@ class WolframLanguageSession(object):
                 logger.warning(msg[1])
         return result.get()
 
-    def __getattr__(self, attr):
-        """Intercept attributes starting with a capital letter and evaluate them as a System symbol.
-        """
-        if attr[0].isupper():
-            def inner(*args, **kwargs):
-                return self.evaluate(expr_from_attr(attr, *args, **kwargs))
-            return inner
-        else:
-            raise AttributeError('%s object has no attribute %s' %
-                                 (self.__class__.__name__, attr))
-
     def __repr__(self):
         if self.terminated:
             return '<%s: terminated>' % self.__class__.__name__
