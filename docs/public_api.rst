@@ -14,7 +14,10 @@ Wolfram Language expression representation
 .. autofunction:: wolframclient.language.wl
     :noindex:
 
-.. autofunction:: wolframclient.language.system
+.. autofunction:: wolframclient.language.System
+    :noindex:
+
+.. autofunction:: wolframclient.language.Global
     :noindex:
 
 .. autofunction:: wolframclient.language.expression.ExpressionFactory

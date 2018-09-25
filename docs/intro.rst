@@ -19,6 +19,35 @@ The Wolfram Client Library is structured in sub-modules all located in :mod:`wol
 * :mod:`~wolframclient.exception` regroups the exceptions and errors that the library may raise.
 
 
+.. _ref-expressions:
+
+Wolfram Language expression representation
+==========================================
+
+The library exposes many kind of interactions with the Wolfram Language, most of which requires to represent Wolfram Language expressions as Python objects. A straightforward way to construct Python objects representing expressions is to call attributes of :func:`~wolframclient.language.wl`.
+
+Import the factory::
+
+    >>> from wolframclient.language import wl
+
+Represent a Wolfram Language symbol :wl:`Now`::
+
+    >>> wl.Now
+    Now
+
+More complex expressions are represented in a similar fashion::
+
+    >>> wl.Select(wl.PrimeQ, wl.Range(5))
+    Select[PrimeQ, Range[5]]
+
+Option are defined using named parameters. :wl:`ArrayPad` accepts option :wl:`Padding`::
+
+    >>> wl.ArrayPad([[0]], 1, Padding=1)
+    ArrayPad[[[0]], 1, Rule[Padding, 1]]
+
+.. note :: 
+    For more details about the Python representation of Wolfram Language expressions refer to :ref:`the advanced usage section<adv-expression-representation>`.
+
 Wolfram Language evaluation
 ==============================
 
@@ -61,59 +90,54 @@ Ensure the session started successfully:
 System functions
 ++++++++++++++++
 
-Evaluate a Wolfram Language function from Python::
+System function are conveniently represented using :func:`~wolframclient.language.wl`. First import it::
 
-    >>> session.StringReverse('abc')
+    >>> from wolframclient.language import wl
+
+Evaluate a Wolfram Language function from Python using :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate`::
+
+    >>> session.evaluate(wl.StringReverse('abc'))
     'cba'
 
 Call the Wolfram Language function :wl:`MinMax` on a Python :class:`list`::
 
-    >>> session.MinMax([1, 5, -3, 9])
+    >>> session.evaluate(wl.MinMax([1, 5, -3, 9]))
     [-3, 9]
 
 Query `WolframAlpha <https://www.wolframalpha.com/>`_ for the distance between the Earth and the Sun using the function :wl:`WolframAlpha`::
 
-    >>> distance = session.WolframAlpha("Earth distance from Sun", "Result")
+    >>> distance = session.evaluate(wl.WolframAlpha("Earth distance from Sun", "Result"))
     Quantity[1.008045994315923, AstronomicalUnit]
 
 The Python object stored in `distance` variable is a Wolfram Language :wl:`Quantity`. Convert the unit to Kilometers, looping back the previous result in a new expression evaluation::
 
-    >>> d_km = session.UnitConvert(distance, "Kilometers")
+    >>> d_km = session.evaluate(wl.UnitConvert(distance, "Kilometers"))
     Quantity[150801534.3173264, Kilometers]
 
 Finally retrieve the result as a Python number::
 
-    >>> session.QuantityMagnitude(d_km)
+    >>> session.evaluate(wl.QuantityMagnitude(d_km))
     150801534.3173264
 
-Composition
-+++++++++++++
-
-Alternatively use syntactic sugar to compose system symbols directly in Python::
-
-    >>> session.QuantityMagnitude_UnitConvert(distance, "Kilometers")
-    150357377.09734517
-
-Composition is not limited to two functions::
-
-    >>> session.Total_Dimensions_ConstantArray(0, {1,2,3})
-    6
 
 Options
 +++++++++
 
-With this syntax, Wolfram Language options are passed as Python named arguments. :wl:`ArrayPad`, accepts an option :wl:`Padding` to specify what padding to use. Pad an array with ones::
+Wolfram Language options are passed as Python named arguments. As we saw, :wl:`ArrayPad` accepts an option :wl:`Padding` to specify what padding to use. Pad an array with ones::
 
-    >>> session.ArrayPad([[0]], 1, Padding=1)
+    >>> session.evaluate(wl.ArrayPad([[0]], 1, Padding=1))
     [[1, 1, 1], [1, 0, 1], [1, 1, 1]]
 
-Arbitrary code
-++++++++++++++++++
+InputForm string evaluate
++++++++++++++++++++++++++
 
-More complex expressions are evaluated using :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate`::
+It is sometimes simpler to input Wolfram Language code as :wl:`InputForm` strings, and let the kernel apply :wl:`ToExpression` to it. Compute the squares of an array of integers::
 
-    >>> session.evaluate('Map[Prime, Range[5]]')
-    [2, 3, 5, 7, 11]
+    >>> session.evaluate('Map[#^2 &, Range[5]]')
+    [1, 4, 9, 16, 25]
+
+Persistence
++++++++++++
 
 Expressions evaluated in a given session are persistent. Define a function, and call it::
     
@@ -124,7 +148,6 @@ Expressions evaluated in a given session are persistent. Define a function, and 
 
 Termination
 ++++++++++++++
-
 
 The session is no more useful, terminating it::
 
@@ -144,6 +167,9 @@ As shown above, :class:`~wolframclient.evaluation.WolframLanguageSession` must b
 
 .. note::
     Non terminated sessions may result in orphan kernel processes, which, ultimately, can lead to the impossibility to spawn any usable instance at all.
+
+.. note :: 
+    For in depth explanations and use cases of local evaluation refer to :ref:`the advanced usage section<adv-local-evaluation>`.
 
 Wolfram Cloud interactions
 ==============================
@@ -174,12 +200,21 @@ In the following sections the authenticated session initialized above is simply 
 Cloud evaluation
 -------------------------------
 
-A one-shot evaluation on the Wolfram public cloud requires to initiate an :ref:`authenticated session<ref-auth>`. Using an authenticated session, call a function:
+One shot evaluation
+++++++++++++++++++++++
 
-    >>> session.Range(3)
+A one-shot evaluation on the Wolfram public cloud requires to initiate an :ref:`authenticated session<ref-auth>`. 
+
+First import the :ref:`expression factory<ref-expressions>`::
+
+    >>> from wolframclient.language import wl
+
+Using an authenticated session, call a function::
+
+    >>> session.evaluate(wl.Range(3))
     '{1, 2, 3}'
 
-    >>> session.StringReverse('abc')
+    >>> session.evaluate(wl.StringReverse('abc'))
     '"cba"'
 
 Complex expressions are evaluated with the :meth:`~wolframclient.evaluation.WolframCloudSession.evaluate` method. Return the first five `wl`:Prime` numbers::
@@ -187,7 +222,7 @@ Complex expressions are evaluated with the :meth:`~wolframclient.evaluation.Wolf
     >>> session.evaluate('Map[Prime, Range[5]]')
     '{2, 3, 5, 7, 11}'
 
-Even if the authenticated session is a persistent object, each evaluation occurs independently, similarly to :wl`:CloudEvaluate`. It means that it's not the appropriate tools to work with variables, and functions.
+Even if the authenticated session is a persistent object, each evaluation occurs independently, similarly to :wl:`CloudEvaluate`. It means that it's not the appropriate tools to work with variables, and functions.
 
 Define a function `f`::
 
