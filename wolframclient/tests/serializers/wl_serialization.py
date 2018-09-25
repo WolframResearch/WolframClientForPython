@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from collections import OrderedDict
 
-from wolframclient.language import system, wl
+from wolframclient.language import System, Global, wl
 from wolframclient.serializers import export
 from wolframclient.utils import six
 from wolframclient.utils.api import pytz
@@ -87,21 +87,39 @@ class TestCase(BaseTestCase):
         )
 
         self.compare(
-            system.YetAnotherSymbol,
+            System.YetAnotherSymbol,
             b"System`YetAnotherSymbol"
         )
         self.compare(
-            system.Expression(1, 2, 3),
+            System.Expression(1, 2, 3),
             b'System`Expression[1, 2, 3]'
         )
         self.compare(
-            system.CurriedExpression(1, 2, 3)(4, 5, 6),
+            System.CurriedExpression(1, 2, 3)(4, 5, 6),
             b'System`CurriedExpression[1, 2, 3][4, 5, 6]'
         )
 
         self.compare(
-            system.Expression(1, a = 2),
+            System.Expression(1, a = 2),
             b'System`Expression[1, Rule[a, 2]]'
+        )
+
+        self.compare(
+            Global.YetAnotherSymbol,
+            b"Global`YetAnotherSymbol"
+        )
+        self.compare(
+            Global.Expression(1, 2, 3),
+            b'Global`Expression[1, 2, 3]'
+        )
+        self.compare(
+            Global.CurriedExpression(1, 2, 3)(4, 5, 6),
+            b'Global`CurriedExpression[1, 2, 3][4, 5, 6]'
+        )
+
+        self.compare(
+            Global.Expression(1, a=2),
+            b'Global`Expression[1, Rule[a, 2]]'
         )
 
     def test_datetime(self):

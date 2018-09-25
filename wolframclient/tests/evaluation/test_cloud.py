@@ -140,26 +140,6 @@ class TestCase(TestCaseSettings):
             res = json.loads(response.get())
             self.assertListEqual(res, [500, 200])
 
-    def test_attr_call_function_no_arg(self):
-        res = self.cloud_session.List()
-        self.assertEqual(res, '{}')
-
-    def test_attr_call_function_with_1arg(self):
-        res = self.cloud_session.MinMax([-1, 2, 5])
-        self.assertEqual(res, "{-1, 5}")
-
-    def test_attr_call_function_with_many_args(self):
-        res = self.cloud_session.Part([[1, 2, 3],[4, 5, 6]], -1, 1)
-        self.assertEqual(res, "4")
-
-    def test_compose_attr_call(self):
-        res = self.cloud_session.Total_Range(3)
-        self.assertEqual(res, str(1+2+3))
-
-    def test_bad_attr_call(self):
-        with self.assertRaises(AttributeError):
-            res = self.cloud_session.invalid_attr(123)
-
     # url_join
 
     def test_append_no_base(self):
