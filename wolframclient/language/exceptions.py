@@ -71,3 +71,6 @@ class WolframLanguageException(WLSerializable, Exception):
                 self.exc_value,
                 self.tb,
             )
+
+    def __repr__(self):
+        return '%s: %s' % (self.__class__.__name__, self.failure_template())
