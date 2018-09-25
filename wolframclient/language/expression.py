@@ -96,7 +96,7 @@ class WLSymbolFactory(WLSymbol):
     """Provide a convenient way to build objects representing arbitrary Wolfram Language expressions through the use of attributes.
 
     This class is conveniently instanciated at startup as: :class:`~wolframclient.language.wl` and
-    :class:`~wolframclient.language.system`. It should be instanciated only to represent symbols belonging to a specific context.
+    :class:`~wolframclient.language.System`. It should be instanciated only to represent symbols belonging to a specific context.
 
     Example::
 
@@ -132,10 +132,17 @@ by calling its attributes. The following code represents various Wolfram Languag
     wl.Select(wl.PrimeQ, [1, 2, 3, 4])
 """
 
-system = wl.System
+System = wl.System
 """A factory of :class:`~wolframclient.language.expression.WLSymbol` instances having ``System``` context.
 
 See :func:`~wolframclient.language.expression.ExpressionFactory` and
 :class:`~wolframclient.language.expression.ExpressionFactory` for more details."""
 
-__all__ = ['ExpressionFactory', 'WLSymbol', 'wl', 'system', 'WLFunction']
+Global = ExpressionFactory('Global')
+"""A factory of :class:`~wolframclient.language.expression.WLSymbol` instances having ``Global``` context.
+
+See :func:`~wolframclient.language.expression.ExpressionFactory` and
+:class:`~wolframclient.language.expression.ExpressionFactory` for more details."""
+
+
+__all__ = ['ExpressionFactory', 'WLSymbol', 'wl', 'System', 'Global', 'WLFunction']
