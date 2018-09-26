@@ -228,28 +228,48 @@ class WolframLanguageSession(object):
         """
         # Exception handling here
         if self.kernel_proc is not None:
+            error = False
             try:
                 self.in_socket.zmq_socket.send(
                     b'8:f\x00s\x04Quit', flags=zmq.NOBLOCK)
-                if six.PY2:
+            except:
+                logger.warning('Failed to send Quit[] command to the kernel.')
+                error=True
+            if six.PY2:
+                try:
                     self.kernel_proc.wait()
-                else:
-                    self.kernel_proc.wait(timeout=self.get_parameter('TERMINATE_READ_TIMEOUT'))
-                if self._stdin == PIPE:
-                    self.kernel_proc.stdin.close()
-                if self._stdout == PIPE:
-                    self.kernel_proc.stdout.close()
-                if self._stderr == PIPE:
-                    self.kernel_proc.stderr.close()
-            except Exception as e:
-                if six.PY3:
-                    logger.warning('Failed to cleanly stop the kernel process after %.02f seconds. Killing it.' % self.get_parameter('TERMINATE_READ_TIMEOUT'))
-                else:
+                except:
                     logger.warning('Failed to cleanly stop the kernel process. Killing it.')
-                logger.warning('An exception occured: %s.' % e)
+                    error = True
+            if six.PY3:
+                try:
+                    self.kernel_proc.wait(timeout=self.get_parameter('TERMINATE_READ_TIMEOUT'))
+                except:
+                    logger.warning('Failed to cleanly stop the kernel process after %.02f seconds. Killing it.' %
+                                   self.get_parameter('TERMINATE_READ_TIMEOUT'))
+                    error = True
+            if self._stdin == PIPE:
+                try:
+                    self.kernel_proc.stdin.close()
+                except:
+                    logger.warning('Failed to close kernel process stdin.')
+                    error = True
+            if self._stdout == PIPE:
+                try:
+                    self.kernel_proc.stdout.close()
+                except:
+                    logger.warning('Failed to close kernel process stdout.')
+                    error = True
+            if self._stderr == PIPE:
+                try:
+                    self.kernel_proc.stderr.close()
+                except:
+                    logger.warning('Failed to close kernel process stderr')
+                    error = True
+            if error:
+                logger.warning('Killing kernel process.')
                 self.kernel_proc.kill()
-            finally:
-                self.terminated = True
+            self.terminated = True
         if self.in_socket is not None:
             try:
                 self.in_socket.close()
