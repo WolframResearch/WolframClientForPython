@@ -4,6 +4,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import sys
 import os
+# used for the sake of Python2 and 3 compatibility.
+import codecs
 
 try:
     from setuptools import setup, find_packages
@@ -34,7 +36,7 @@ CLASSIFIERS = [
 
 
 def read(*rellibpath):
-    with open(os.path.join(HERE, *rellibpath), 'r', encoding='utf-8') as fp:
+    with codecs.open(os.path.join(HERE, *rellibpath), 'r', encoding='utf-8') as fp:
           return fp.read()
 
 
