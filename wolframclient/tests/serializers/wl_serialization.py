@@ -137,6 +137,15 @@ class TestCase(BaseTestCase):
             b'TimeObject[{11, 15, 20.000000}, TimeZone -> 1.000000]'
         )
 
+    def test_symbol_factory(self):
+
+        self.compare(wl.Map, b'Map')
+        self.compare(wl.Map(wl.PrimeQ, (1, 2, 3)), b'Map[PrimeQ, {1, 2, 3}]')
+        self.compare(wl.System.Map, b'System`Map')
+        self.compare(wl.System.Symbol(1, 2), b'System`Symbol[1, 2]')
+        self.compare(wl.Developer.Internals.FastFunction, b'Developer`Internals`FastFunction')
+        self.compare(wl.Developer.Internals.FastFunction(1, 2), b'Developer`Internals`FastFunction[1, 2]')
+
     def test_encoding(self):
 
         self.compare("\t",  b'"\\t"')
