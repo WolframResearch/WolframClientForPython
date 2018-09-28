@@ -115,7 +115,7 @@ class WLSymbolFactory(WLSymbol):
         return "`".join(self.context)
 
     def __getattr__(self, attr):
-        #summing a tuple with another tuple is returning copy, this operation is always creating a new immutable object
+        #summing a tuple with another tuple is returning a new immutable tuple, this operation is always creating a new immutable symbol factory
         return self.__class__(self.context + (attr, ))
 
 wl = WLSymbolFactory()
