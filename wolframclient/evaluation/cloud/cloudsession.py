@@ -5,7 +5,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.evaluation.cloud.oauth import OAuthSession
 from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 from wolframclient.evaluation.result import WolframAPIResponseBuilder, WolframEvaluationJSONResponse
-from wolframclient.evaluation.utils import expr_from_attr
 from wolframclient.exception import AuthenticationException
 from wolframclient.language import wl
 from wolframclient.serializers import export
