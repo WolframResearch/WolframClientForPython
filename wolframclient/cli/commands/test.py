@@ -47,7 +47,10 @@ class Command(SimpleCommand):
 
             sys.exit(1)
 
-        return import_string(self.available_test_cases[name])
+        try:
+            return import_string(self.available_test_cases[name])
+        except ImportError, e:
+            print(e)
 
     def handle(self, *args):
 
@@ -55,9 +58,10 @@ class Command(SimpleCommand):
 
         for arg in (args or self.available_test_cases.keys()):
             test_case = self.import_test_case(arg)
-
-            for func in test_case.discover_tests():
-                suite.addTest(test_case(func))
+            
+            if test_case:
+                for func in test_case.discover_tests():
+                    suite.addTest(test_case(func))
 
         runner = unittest.TextTestRunner()
         result = runner.run(suite)
