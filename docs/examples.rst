@@ -25,7 +25,7 @@ Wolfram Language expression are conveniently represented in Python using the att
     >>> wl.Range(3)
     Range[3]
 
-This factory :func:`~wolframclient.language.wl` does not specify the symbols' context::
+This attributes of the factory :func:`~wolframclient.language.wl` do not have a context attached::
 
     >>> wl.myFunction(1)
     myFunction[1]
@@ -55,6 +55,27 @@ Create a python object representing the built-in function :wl:`Classify`::
 ---------------------
 
 User defined functions and variables are associated to the ``Global``` context by default. The factory :func:`~wolframclient.language.Global` can be used to represent those symbols.
+
+    >>> from wolframclient.language import Global
+    >>> Global`f
+
+Arbitrary Contexts
+------------------
+
+The factory :func:`~wolframclient.language.wl` can be used to build symbols with arbitrary context, and sub-contexts::
+
+    >>> wl.Developer.PackedArrayQ
+    Developer`PackedArrayQ
+
+    >>> wl.Global.f
+    Global`f
+
+    >>> wl.System.Predict
+    System`Predict
+
+    >>> wl.MyContext.MySubContext.myFunction
+    MyContext`MySubContext`myFunction
+
 
 Use case
 ----------

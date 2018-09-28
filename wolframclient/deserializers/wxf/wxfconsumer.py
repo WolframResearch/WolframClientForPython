@@ -20,13 +20,13 @@ class WXFConsumer(object):
     Example implementing a consumer that maps any function with head 
     :wl:`DirectedInfinity` to float('inf')::
 
-    class ExampleConsumer(WXFConsumer):
-        Infinity = wl.DirectedInfinity
-        def build_function(self, head, arg_list, **kwargs):
-            if head == self.Infinity:
-                return float('inf')
-            else:
-                super().build_function(head, args_list, **kwargs)
+        class ExampleConsumer(WXFConsumer):
+            Infinity = wl.DirectedInfinity
+            def build_function(self, head, arg_list, **kwargs):
+                if head == self.Infinity:
+                    return float('inf')
+                else:
+                    super().build_function(head, args_list, **kwargs)
 
     Test the new consumer::
 

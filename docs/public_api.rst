@@ -20,7 +20,7 @@ Wolfram Language expression representation
 .. autofunction:: wolframclient.language.Global
     :noindex:
 
-.. autofunction:: wolframclient.language.expression.ExpressionFactory
+.. autofunction:: wolframclient.language.expression.WLSymbolFactory
     :noindex:
 
 

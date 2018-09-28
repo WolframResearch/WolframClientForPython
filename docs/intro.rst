@@ -35,7 +35,7 @@ Represent a Wolfram Language symbol :wl:`Now`::
     >>> wl.Now
     Now
 
-More complex expressions are represented in a similar fashion::
+More functions are represented in a similar fashion::
 
     >>> wl.Select(wl.PrimeQ, wl.Range(5))
     Select[PrimeQ, Range[5]]
@@ -56,7 +56,7 @@ Wolfram Language evaluation
 Local kernel
 ---------------
 
-Wolfram Language session :class:`~wolframclient.evaluation.WolframLanguageSession` is initialized with a *WolframKernel* executable specified by its path. A session enables local evaluation of Wolfram Language code directly in Python.
+Wolfram Language session :class:`~wolframclient.evaluation.WolframLanguageSession` is initialized with a *WolframKernel* executable specified by its path. A session enables local evaluation of Wolfram Language code directly from Python.
 
 .. note ::
     Typical location of the *WolframKernel* executable depends on the operating system. The relative path from your installation directory should be:
@@ -101,34 +101,67 @@ Evaluate a Wolfram Language function from Python using :func:`~wolframclient.eva
     >>> session.evaluate(wl.StringReverse('abc'))
     'cba'
 
+.. code-block :: wl
+
+    StringReverse["abc"]
+
+
 Call the Wolfram Language function :wl:`MinMax` on a Python :class:`list`::
 
     >>> session.evaluate(wl.MinMax([1, 5, -3, 9]))
     [-3, 9]
 
+.. code-block :: wl
+
+    MinMax[{1, 5, -3, 9}]
+
 Query `WolframAlpha <https://www.wolframalpha.com/>`_ for the distance between the Earth and the Sun using the function :wl:`WolframAlpha`::
 
     >>> distance = session.evaluate(wl.WolframAlpha("Earth distance from Sun", "Result"))
-    Quantity[1.008045994315923, AstronomicalUnit]
+    distance = Quantity[1.008045994315923, AstronomicalUnit]
+
+.. code-block :: wl
+
+    WolframAlpha["Earth distance from Sun", "Result"]
 
 The Python object stored in `distance` variable is a Wolfram Language :wl:`Quantity`. Convert the unit to Kilometers, looping back the previous result in a new expression evaluation::
 
     >>> d_km = session.evaluate(wl.UnitConvert(distance, "Kilometers"))
     Quantity[150801534.3173264, Kilometers]
 
+.. code-block :: wl
+
+    dkm = UnitConvert[distance, "Kilometers"]
+
 Finally retrieve the result as a Python number::
 
     >>> session.evaluate(wl.QuantityMagnitude(d_km))
     150801534.3173264
 
+.. code-block :: wl
+    
+    QuantityMagnitude[dkm]
+
+Association are represented as Python dictionaries and vice versa:
+
+    >>> session.evaluate(wl.AssociationMap(wl.Prime, [1, 3, 5]))
+    {1: 2, 3: 5, 5: 11}
+
+.. code-block :: wl
+
+    AssociationMap[Prime, {1, 3, 5}]
 
 Options
 +++++++++
 
-Wolfram Language options are passed as Python named arguments. As we saw, :wl:`ArrayPad` accepts an option :wl:`Padding` to specify what padding to use. Pad an array with ones::
+Wolfram Language options are passed as Python named arguments (a.k.a. `**kwargs`). As we saw, :wl:`ArrayPad` accepts an option :wl:`Padding` to specify what padding to use. Pad an array with ones::
 
     >>> session.evaluate(wl.ArrayPad([[0]], 1, Padding=1))
     [[1, 1, 1], [1, 0, 1], [1, 1, 1]]
+
+.. code-block :: wl
+
+    ArrayPad[{{0}}, 1, Padding->1]
 
 InputForm string evaluate
 +++++++++++++++++++++++++
@@ -137,6 +170,11 @@ It is sometimes simpler to input Wolfram Language code as :wl:`InputForm` string
 
     >>> session.evaluate('Map[#^2 &, Range[5]]')
     [1, 4, 9, 16, 25]
+
+The library provide a function :func:`~wolframclient.language.wlexpr` to help mix string :wl:`InputForm` and objects. This is particularly useful to define pure functions. Evaluate an alternative representation of the previous expression::
+
+    >>> from wolframclient.language import wlexpr
+    >>> session.evaluate(wl.Map(wlexpr('#^2&'), wl.Range(5)))
 
 Persistence
 +++++++++++
@@ -147,6 +185,39 @@ Expressions evaluated in a given session are persistent. Define a function, and 
     Null
     >>> session.evaluate('f[4]')
     16
+
+Create Python function
+++++++++++++++++++++++
+
+From a Wolfram Language expression is it possible to create a Python function that directly evaluates when called using :func:`~wolframclient.evaluation.WolframLanguageSession.function`::
+
+    >>> str_reverse = session.function('StringReverse')
+    >>> str_reverse('abc', 'def', 'ghi')
+    'cba'
+
+Define a Wolfram Language function that takes a list or a sequence of integers and only returns the primes::
+
+    >>> session.evaluate('selectPrimes[integers : List[__Integer]] := Select[integers, PrimeQ]')
+    >>> session.evaluate('selectPrimes[integers___Integer] := selectPrimes[{integers}]')
+    
+Create a python function from it::
+
+    >>> selectPrimes = session.function('selectPrimes')
+
+Apply the function to a list::
+
+    >>> selectPrimes([1,2,3,4])
+    [2, 3]
+
+To a sequence of values::
+
+    >>> selectPrimes(2, 3, 4, 5)
+    [2, 3, 5]
+
+It also works with an iterator of integers::
+
+    >>> selectPrimes(range(100, 120))
+    [101, 103, 107, 109, 113]
 
 Termination
 ++++++++++++++
@@ -164,11 +235,10 @@ Alternatively, it is possible to delegate the handling of the life-cycle of a se
 
 The session stored in `wl_session`, is only available in the scope of the `with` block, contrary to `session` that was initialized with :func:`~wolframclient.evaluation.WolframLanguageSession.start`.
 
-
-As shown above, :class:`~wolframclient.evaluation.WolframLanguageSession` must be initialized and terminated, either by explicitly calling :func:`~wolframclient.evaluation.WolframLanguageSession.start` and :func:`~wolframclient.evaluation.WolframLanguageSession.terminate`, or, alternatively, in a `with` block that achieves the same result automatically. It is highly recommended to initialize a session once and for all to mitigate the initialization cost.
+As shown above, :class:`~wolframclient.evaluation.WolframLanguageSession` must be terminated, either by explicitly calling :func:`~wolframclient.evaluation.WolframLanguageSession.terminate`, or, alternatively, using it in a `with` block that achieves the same result automatically. It is highly recommended to initialize a session once and for all to mitigate the initialization cost.
 
 .. note::
-    Non terminated sessions may result in orphan kernel processes, which, ultimately, can lead to the impossibility to spawn any usable instance at all.
+    Non terminated sessions usually results in orphan kernel processes, which, ultimately, leads to the impossibility to spawn any usable instance at all. Typically, this ends up with a WolframKernelException raised after a failure to communicate with the kernel.
 
 .. note :: 
     For in depth explanations and use cases of local evaluation refer to :ref:`the advanced usage section<adv-local-evaluation>`.

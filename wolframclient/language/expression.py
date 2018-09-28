@@ -95,13 +95,20 @@ class WLSymbolFactory(WLSymbol):
 
     """Provide a convenient way to build objects representing arbitrary Wolfram Language expressions through the use of attributes.
 
-    This class is conveniently instanciated at startup as: :class:`~wolframclient.language.wl` and
-    :class:`~wolframclient.language.System`. It should be instanciated only to represent symbols belonging to a specific context.
+    This class is conveniently instanciated at startup as: :class:`~wolframclient.language.wl`, :class:`~wolframclient.language.Global` 
+    and :class:`~wolframclient.language.System`. It should be instanciated only to represent many symbols belonging to the same specific
+    context.
 
     Example::
 
-        developer = ExpressionFactory(context='Developer')
-        developer.PackedArrayQ(...)
+        >>> developer = WLSymbolFactory(context='Developer')
+        >>> developer.PackedArrayQ
+        Developer`PackedArrayQ
+    
+    Alternative::
+
+        >>> wl.Developer.PackedArrayQ
+        Developer`PackedArrayQ
 
     """
     def __init__(self, context = ()):
@@ -121,7 +128,7 @@ class WLSymbolFactory(WLSymbol):
 wl = WLSymbolFactory()
 """A factory of :class:`~wolframclient.language.expression.WLSymbol` instances without any particular context.
 
-This instance of :class:`~wolframclient.language.expression.ExpressionFactory` is conveniently used
+This instance of :class:`~wolframclient.language.expression.WLSymbolFactory` is conveniently used
 by calling its attributes. The following code represents various Wolfram Language expressions::
 
     # Now
@@ -130,20 +137,24 @@ by calling its attributes. The following code represents various Wolfram Languag
     wl.Quantity(3, "Hours")
     # Select[PrimeQ, {1,2,3,4}]
     wl.Select(wl.PrimeQ, [1, 2, 3, 4])
+
+It is possible to specify context using the syntax::
+
+    wl.MyContext.MySubContext.SymbolName
 """
 
 System = wl.System
 """A factory of :class:`~wolframclient.language.expression.WLSymbol` instances having ``System``` context.
 
-See :func:`~wolframclient.language.expression.ExpressionFactory` and
-:class:`~wolframclient.language.expression.ExpressionFactory` for more details."""
+See :func:`~wolframclient.language.expression.WLSymbolFactory` and
+:class:`~wolframclient.language.expression.WLSymbolFactory` for more details."""
 
 Global = wl.Global
 """A factory of :class:`~wolframclient.language.expression.WLSymbol` instances having ``Global``` context.
 
-See :func:`~wolframclient.language.expression.ExpressionFactory` and
-:class:`~wolframclient.language.expression.ExpressionFactory` for more details."""
+See :func:`~wolframclient.language.expression.WLSymbolFactory` and
+:class:`~wolframclient.language.expression.WLSymbolFactory` for more details."""
 
 wlexpr = wl.ToExpression
 
-__all__ = ['ExpressionFactory', 'WLSymbol', 'wl', 'System', 'Global', 'WLFunction', 'wlexpr']
+__all__ = ['WLSymbol', 'wl', 'System', 'Global', 'WLFunction', 'wlexpr']
