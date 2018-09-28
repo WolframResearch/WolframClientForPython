@@ -58,7 +58,7 @@ class Command(SimpleCommand):
 
         for arg in (args or self.available_test_cases.keys()):
             test_case = self.import_test_case(arg)
-            
+
             if test_case:
                 for func in test_case.discover_tests():
                     suite.addTest(test_case(func))

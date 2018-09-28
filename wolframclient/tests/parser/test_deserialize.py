@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-import os
-from wolframclient.deserializers import binary_deserialize, WXFToken, WXFConsumer, WXFConsumerNumpy
+
+from wolframclient.deserializers import binary_deserialize, WXFConsumer, WXFConsumerNumpy, WXFToken
 from wolframclient.deserializers.wxf.wxfparser import parse_varint
+from wolframclient.exception import WolframParserException
 from wolframclient.serializers import export
-from wolframclient.serializers.wxfencoder.serializer import write_varint
 from wolframclient.serializers.wxfencoder import wxfexpr
+from wolframclient.serializers.wxfencoder.serializer import write_varint
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
-from wolframclient.exception import WolframParserException
-import unittest
 
+import os
+import unittest
 
 try:
     import numpy
@@ -99,7 +100,7 @@ class TestCase(BaseTestCase):
                 all_char += chr(i)
         path = current_file_dir = os.path.dirname(__file__)
         path = os.path.join(path, '..', 'data', 'allchars.wxf')
-        
+
         with open(path, 'rb') as r_file:
             res = binary_deserialize(r_file)
         self.assertEqual(res, all_char)
@@ -162,12 +163,12 @@ class TestCase(BaseTestCase):
         wxf = b'1:'
         with self.assertRaises(WolframParserException):
             binary_deserialize(wxf)
-    
+
     def test_bad_header_compress(self):
         wxf = b'8x:'
         with self.assertRaises(WolframParserException):
             binary_deserialize(wxf)
-    
+
     def test_bad_header_separator(self):
         wxf = b'8C/'
         with self.assertRaises(WolframParserException):

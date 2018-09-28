@@ -5,13 +5,11 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.evaluation.cloud.oauth import OAuthSession
 from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 from wolframclient.evaluation.result import WolframAPIResponseBuilder, WolframEvaluationJSONResponse
+from wolframclient.evaluation.utils import expr_from_attr
 from wolframclient.exception import AuthenticationException
 from wolframclient.language import wl
-from wolframclient.evaluation.utils import expr_from_attr
-from wolframclient.language.expression import WLSymbol
 from wolframclient.serializers import export
 from wolframclient.utils import six
-from wolframclient.utils.encoding import force_text
 from wolframclient.utils.api import futures, json, requests
 
 import logging
@@ -90,7 +88,7 @@ class WolframCloudSession(object):
         # No credentials provided. This session is not authorized (public access).
         if self.authentication is None:
             return False
-        # Authentication credentials were provided, but self.is_xauth remains None 
+        # Authentication credentials were provided, but self.is_xauth remains None
         # until the first attempt. First need to authenticate first.
         if self.is_xauth is None:
             self.authenticate()
@@ -172,7 +170,7 @@ class WolframCloudSession(object):
 
     def _evaluation_api_url(self):
         return url_join(self.server.cloudbase, 'evaluations?_responseform=json')
-        
+
     def _call_evaluation_api(self, data):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(
@@ -193,7 +191,7 @@ class WolframCloudSession(object):
     def evaluate(self, expr, **kwargs):
         """Send `expr` to the cloud for evaluation, return the result.
 
-        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export`, 
+        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export`,
         or a the string InputForm of an expression to evaluate.
         """
         return self._call_evaluation_api(self._normalize_input(expr, **kwargs)).get()
@@ -221,7 +219,6 @@ class WolframCloudSession(object):
             return inner
         else:
             raise AttributeError('%s object has no attribute %s' % (self.__class__.__name__, attr))
-
 
     def __repr__(self):
         return '<{}:base={}, authorized={}>'.format(self.__class__.__name__, self.server.cloudbase, self.authorized)
@@ -281,7 +278,7 @@ class WolframCloudSessionAsync(WolframCloudSession):
             Asynchronous evaluation is only available for `Python 3.2` and above.
         """
         return self._thread_pool_exec().submit(
-            self._call_evaluation_api, 
+            self._call_evaluation_api,
             self._normalize_input(expr)
             )
 
@@ -296,7 +293,6 @@ class WolframCloudSessionAsync(WolframCloudSession):
             Asynchronous evaluation is only available for `Python 3.2` and above.
         """
         return CloudFunction(self, func, asynchronous=asynchronous)
-
 
 class WolframAPICall(object):
     """Perform an API call to a given target.
@@ -444,4 +440,3 @@ def url_join(*fragments):
     if len(last) > 0 and last[-1] != '/':
         buff.pop()
     return ''.join(buff)
-

@@ -185,7 +185,7 @@ class WXFParser(object):
 
     def next_token(self):
         next_byte = self.reader.read(1)
-        
+
         try:
             handler = self._mapping[next_byte]
         except KeyError:

@@ -3,7 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.deserializers import binary_deserialize
-from wolframclient.exception import RequestException, WolframLanguageException, WolframEvaluationException
+from wolframclient.exception import RequestException, WolframEvaluationException, WolframLanguageException
 from wolframclient.utils import six
 from wolframclient.utils.api import json
 
@@ -55,7 +55,7 @@ class WolframKernelEvaluationResult(WolframResult):
     then the success status is automatically set to `False`.
 
     The final Python expression is lazily computed when accessing the
-    field `result`. The WXF bytes holding the evaluation result are 
+    field `result`. The WXF bytes holding the evaluation result are
     stored in `wxf` and thus can be parsed with a consumized parser if
     necessary.
     """

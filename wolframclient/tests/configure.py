@@ -1,26 +1,26 @@
 # -*- coding: utf-8 -*-
+
 from __future__ import absolute_import, print_function, unicode_literals
-import json
 
 from wolframclient.logger.utils import setup_logging_to_file
 from wolframclient.utils.api import os
 
-__all__ = ['create_dir_if_missing', 'dir_test_data', 'json_config']
+import json
 
+__all__ = ['create_dir_if_missing', 'dir_test_data', 'json_config']
 
 def create_dir_if_missing(path):
     ''' Create the directory structure represented by a `path`.
-    
+
     Path can represent a file or a directory depending if it ends with
     a path separator.
-    
+
     If the path represents a file, the parent directory is created, otherwise
     the directory itself is created.
     '''
     file_dir = os.dirname(path)
     if not os.exists(file_dir):
         os.makedirs(file_dir)
-
 
 def dir_test_data():
     ''' Return path to the data directory in tests'''

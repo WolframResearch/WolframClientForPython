@@ -7,9 +7,9 @@ from collections import OrderedDict
 from wolframclient.language import system, wl
 from wolframclient.serializers import export
 from wolframclient.utils import six
-from wolframclient.utils.encoding import force_bytes
 from wolframclient.utils.api import pytz
 from wolframclient.utils.datastructures import Association
+from wolframclient.utils.encoding import force_bytes
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
 import datetime

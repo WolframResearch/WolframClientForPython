@@ -78,7 +78,6 @@ class TestCase(BaseTestCase):
         self.assertEqual(
             d.getvalue(), b'\x38\x3a\xc2\x00\x02\x02\x02\x80\xff\x01\x7f')
 
-
     def test_int16(self):
         s, d = self.initDefault()
         sRA, dRA = self.initOnlyRA()
@@ -153,5 +152,3 @@ class TestCase(BaseTestCase):
     def test_bad_options(self):
         with self.assertRaises(ValueError):
             NumPyWXFEncoder(packed_array_support=False, rawarray_support=False)
-
-    

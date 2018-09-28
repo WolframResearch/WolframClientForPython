@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-import os
+
 from wolframclient.serializers.wxfencoder.serializer import WXFExprSerializer
 from wolframclient.serializers.wxfencoder.wxfencoder import WXFEncoder
 from wolframclient.serializers.wxfencoder.wxfexpr import WXFExprFunction, WXFExprSymbol
 from wolframclient.serializers.wxfencoder.wxfexprprovider import WXFExprProvider
+from wolframclient.tests.configure import dir_test_data
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
-from wolframclient.tests.configure import create_dir_if_missing, dir_test_data
+
+import os
+
 class MyClass(object):
     def __init__(self, *values):
         self.values = values

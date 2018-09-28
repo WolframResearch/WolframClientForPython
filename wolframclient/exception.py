@@ -21,7 +21,6 @@ class RequestException(WolframLanguageException):
             status = ''
         return '%s%s' % (status, self.msg)
 
-    
 class AuthenticationException(RequestException):
     """Error in authentication request."""
     pass

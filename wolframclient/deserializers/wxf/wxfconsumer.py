@@ -6,7 +6,6 @@ from wolframclient.exception import WolframParserException
 from wolframclient.language.expression import WLFunction, WLSymbol
 from wolframclient.serializers.wxfencoder import wxfexpr
 from wolframclient.utils.api import numpy
-from wolframclient.utils import six
 
 __all__ = ['WXFConsumer', 'WXFConsumerNumpy']
 
@@ -75,17 +74,17 @@ class WXFConsumer(object):
             func = WXFConsumer._mapping[wxf_type]
         except KeyError:
             raise WolframParserException('Class %s does not implement any consumer method for WXF token %s' %s (
-                cls.__name__, 
+                cls.__name__,
                 token
             ))
         return getattr(self, func)
 
     _LIST = WLSymbol('List')
-    
+
     def consume_function(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *function*.
 
-        Return a :class:`list` if the head is symbol `List`, otherwise returns the result of :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function` 
+        Return a :class:`list` if the head is symbol `List`, otherwise returns the result of :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function`
         applied to the head and arguments.
 
         Usually custom parsing rules target Functions, but not List. To do so, it is recommanded to override
@@ -211,7 +210,7 @@ class WXFConsumer(object):
 
         def _to_complex(self, array, max_depth, curr_depth):
             # recursivelly traverse the array until the last (real) dimension is reached
-            # it correspond to an array of (fake) array of two elements (real and im parts). 
+            # it correspond to an array of (fake) array of two elements (real and im parts).
             if curr_depth < max_depth-1:
                 for sub in array:
                     self._to_complex(sub, max_depth, curr_depth+1)
@@ -224,7 +223,7 @@ class WXFConsumer(object):
             view = memoryview(current_token.data)
             if current_token.array_type == wxfexpr.ARRAY_TYPES.ComplexReal32 or current_token.array_type == wxfexpr.ARRAY_TYPES.ComplexReal64:
                 dimensions = list(current_token.dimensions)
-                # In the given array, 2 reals give one complex, 
+                # In the given array, 2 reals give one complex,
                 # adding one last dimension to represent it.
                 dimensions.append(2)
                 as_list = view.cast(self.unpack_mapping[current_token.array_type], shape=dimensions).tolist()
@@ -250,7 +249,7 @@ class WXFConsumer(object):
         def _array_to_list(self, current_token, tokens):
             value, _ = self._build_array_from_bytes(current_token.data, 0, current_token.array_type, current_token.dimensions, 0)
             return value
-        
+
         def _build_array_from_bytes(self, data, offset, array_type, dimensions, current_dim):
             new_array = list()
             if current_dim < len(dimensions)-1:
@@ -275,8 +274,6 @@ class WXFConsumer(object):
                         offset = offset + struct.size
                         new_array.append(value[0])
             return new_array, offset
-        
-
 
 class WXFConsumerNumpy(WXFConsumer):
     def consume_array(self, current_token, tokens, **kwargs):

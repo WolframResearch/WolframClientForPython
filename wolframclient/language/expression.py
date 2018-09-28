@@ -5,8 +5,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 from itertools import chain
 
 from wolframclient.utils import six
-from wolframclient.utils.encoding import force_text
 from wolframclient.utils.decorators import cached_property
+from wolframclient.utils.encoding import force_text
 
 class WLExpressionMeta(object):
     """Abstract class to subclass when building representation of Wolfram Language expressions as Python object."""

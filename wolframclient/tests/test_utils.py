@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.utils.tests import TestCase as BaseTestCase
 from wolframclient.logger.utils import str_trim
+from wolframclient.utils.tests import TestCase as BaseTestCase
 
 class TestCase(BaseTestCase):
 

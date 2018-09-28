@@ -5,8 +5,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 from decimal import Decimal
 
 from functools import wraps
-from wolframclient.utils.api import time
 
+from wolframclient.utils.api import time
 
 def timed(function):
     def inner(*args, **opts):

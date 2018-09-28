@@ -2,15 +2,14 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.serializers import export
 from wolframclient.deserializers import binary_deserialize
+from wolframclient.exception import WolframKernelException
 from wolframclient.language import wl
-from wolframclient.exception import WolframEvaluationException, WolframKernelException
-from wolframclient.language.expression import WLSymbol, WLFunction
-from wolframclient.logger.utils import setup_logging_to_file
+from wolframclient.language.expression import WLFunction, WLSymbol
+from wolframclient.serializers import export
+from wolframclient.tests.configure import json_config, MSG_JSON_NOT_FOUND
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
-from wolframclient.tests.configure import json_config, MSG_JSON_NOT_FOUND
 
 import logging
 import unittest
@@ -143,23 +142,23 @@ class TestCase(TestCaseSettings):
     def test_one_eval_many_msg(self):
         res = self.kernel_session.evaluate('ImportString["[1,2", "RawJSON"]')
         self.assertEqual(res, WLSymbol('$Failed'))
-        
+
     def test_one_eval_many_msg_wrap(self):
         res = self.kernel_session.evaluate_wrap('ImportString["[1,2", "RawJSON"]')
         self.assertFalse(res.success)
-        expected_msgs = [('Import::jsonarraymissingsep', 'Expecting end of array or a value separator.'), 
+        expected_msgs = [('Import::jsonarraymissingsep', 'Expecting end of array or a value separator.'),
         ('Import::jsonhintposandchar', "An error occurred near character 'EOF', at line 1:6")]
         self.assertListEqual(res.messages, expected_msgs)
 
     def test_many_failures(self):
         res = self.kernel_session.evaluate('ImportString["[1,2", "RawJSON"]; 1/0')
         self.assertEqual(res, WLFunction(WLSymbol(b'DirectedInfinity')))
-    
+
     def test_many_failures_wrap(self):
         res = self.kernel_session.evaluate_wrap('ImportString["[1,2", "RawJSON"]; 1/0')
         self.assertFalse(res.success)
-        expected_msgs = [('Import::jsonarraymissingsep', 'Expecting end of array or a value separator.'), 
-        ('Import::jsonhintposandchar', "An error occurred near character 'EOF', at line 1:6"), 
+        expected_msgs = [('Import::jsonarraymissingsep', 'Expecting end of array or a value separator.'),
+        ('Import::jsonhintposandchar', "An error occurred near character 'EOF', at line 1:6"),
         ('Power::infy', 'Infinite expression Infinity encountered.')]
         self.assertListEqual(res.messages, expected_msgs)
 
@@ -172,7 +171,6 @@ class TestCase(TestCaseSettings):
         wxf = self.kernel_session.evaluate_wxf('Range[3')
         result = binary_deserialize(wxf)
         self.assertEqual(result, WLSymbol('$Failed'))
-
 
 @unittest.skipIf(six.PY2, "No async call on Python2.")
 class TestAsyncSession(TestCaseSettings):
@@ -245,8 +243,8 @@ class TestAsyncSession(TestCaseSettings):
         future = self.async_session.evaluate_wrap('ImportString["[1,2", "RawJSON"]; 1/0')
         res = future.result(timeout=1)
         self.assertFalse(res.success)
-        expected_msgs = [('Import::jsonarraymissingsep', 'Expecting end of array or a value separator.'), 
-        ('Import::jsonhintposandchar', "An error occurred near character 'EOF', at line 1:6"), 
+        expected_msgs = [('Import::jsonarraymissingsep', 'Expecting end of array or a value separator.'),
+        ('Import::jsonhintposandchar', "An error occurred near character 'EOF', at line 1:6"),
         ('Power::infy', 'Infinite expression Infinity encountered.')]
         self.assertListEqual(res.messages, expected_msgs)
 
@@ -255,7 +253,6 @@ class TestAsyncSession(TestCaseSettings):
         wxf = future.result(timeout=1)
         result = binary_deserialize(wxf)
         self.assertEqual(result, [1,2,3])
-
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestCaseSession(TestCaseSettings):
@@ -278,7 +275,6 @@ class TestCaseSession(TestCaseSettings):
         session.terminate()
         with self.assertRaises(WolframKernelException):
             session.evaluate('1+1')
-
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestCaseInternalFunctions(TestCaseSettings):

@@ -3,9 +3,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.cli.utils import discover_with_convention, SimpleCommand
+from wolframclient.utils import six
 from wolframclient.utils.importutils import import_string
 from wolframclient.utils.require import require_module
-from wolframclient.utils import six
 
 import sys
 

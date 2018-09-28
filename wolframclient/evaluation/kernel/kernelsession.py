@@ -7,17 +7,18 @@ from subprocess import PIPE, Popen
 from threading import Event, Thread
 
 from wolframclient.evaluation.result import WolframKernelEvaluationResult
-from wolframclient.exception import WolframKernelException, WolframEvaluationException
-from wolframclient.language import wl
 from wolframclient.evaluation.utils import expr_from_attr
+from wolframclient.exception import WolframKernelException
+from wolframclient.language import wl
 from wolframclient.serializers import export
-from wolframclient.utils.api import futures, os, time, zmq, json
-from wolframclient.utils.encoding import force_text
 from wolframclient.utils import six
-if six.WINDOWS:
-    from subprocess import STARTUPINFO, STARTF_USESHOWWINDOW
+from wolframclient.utils.api import futures, json, os, time, zmq
+from wolframclient.utils.encoding import force_text
 
 import logging
+
+if six.WINDOWS:
+    from subprocess import STARTUPINFO, STARTF_USESHOWWINDOW
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +35,7 @@ FROM_PY_LOG_LEVEL = dict((v, k) for k, v in TO_PY_LOG_LEVEL.items())
 class KernelLogger(Thread):
 
     MAX_MESSAGE_BEFORE_QUIT = 32
-    
+
     def __init__(self, level=logging.WARN):
         self.socket = Socket(zmq_type=zmq.SUB)
         self.socket.bind()
@@ -94,8 +95,8 @@ class WolframLanguageSession(object):
     Kernel logging is disabled by default and is done through a third socket
     (type `SUB`). The initial log level is specificed by parameter kernel_loglevel.
     If log level was not set at initialization, logging is not available for the entire
-    session. 
-    
+    session.
+
     It is possible to pass ZMQ sockets to use instead of new one, but this is generally
     not recommanded, probably never necessary.
 
@@ -116,7 +117,7 @@ class WolframLanguageSession(object):
     named parameters. Valid values are those of subprocess.Popen. Those parameters should be handled
     with care as deadlocks can arise from misconfiguration.
 
-    .. note :: 
+    .. note ::
         Wolfram Language sessions are **not thread-safe**, each thread must have its own instance.
 
     """
@@ -138,7 +139,7 @@ class WolframLanguageSession(object):
             self.initfile = initfile
         if not os.isfile(self.initfile):
             raise FileNotFoundError('Kernel initialization file %s not found.' % self.initfile)
-        
+
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Initializing kernel %s using script: %s' % (self.kernel, self.initfile))
         # Socket to which we push new expressions to evaluate.
@@ -168,7 +169,6 @@ class WolframLanguageSession(object):
         self._stdin = stdin
         self._stdout = stdout
         self._stderr = stderr
-        
 
     _DEFAULT_PARAMETERS = {
         'STARTUP_READ_TIMEOUT': 20,
@@ -381,7 +381,7 @@ class WolframLanguageSession(object):
         """ Similar to :func:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.
         """
         return self._evaluate(expr, **kwargs)
-    
+
     def evaluate(self, expr, **kwargs):
         """Send an expression to the kernel for evaluation.
 
@@ -411,7 +411,6 @@ class WolframLanguageSession(object):
             raise AttributeError('%s object has no attribute %s' %
                                  (self.__class__.__name__, attr))
 
-
     def __repr__(self):
         if self.terminated:
             return '<%s: terminated>' % self.__class__.__name__
@@ -432,8 +431,8 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
     def __init__(self, kernel, consumer=None, initfile=None,
                  in_socket=None, out_socket=None, kernel_loglevel=logging.NOTSET, stdin=PIPE, stdout=PIPE, stderr=PIPE):
         super(WolframLanguageAsyncSession, self).__init__(kernel, consumer=consumer, initfile=initfile,
-                                                          in_socket=in_socket, out_socket=out_socket, 
-                                                          kernel_loglevel=kernel_loglevel, 
+                                                          in_socket=in_socket, out_socket=out_socket,
+                                                          kernel_loglevel=kernel_loglevel,
                                                           stdin=stdin, stdout=stdout, stderr=stderr)
         self.thread_pool_exec = None
 
@@ -445,7 +444,7 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
 
     def evaluate_wrap(self, expr, **kwargs):
         return self._do_async(super().evaluate_wrap, expr, **kwargs)
-    
+
     def _do_async(self, func, expr, **kwargs):
         try:
             if self.thread_pool_exec is None:
@@ -466,7 +465,6 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
             except Exception as e:
                 logger.fatal(e)
         super().terminate()
-
 
 class SocketException(Exception):
     pass
@@ -519,7 +517,7 @@ class Socket(object):
     def close(self):
         self.zmq_socket.close()
         self.closed = True
-        
+
     def __repr__(self):
         if self.bound:
             return '<Socket: host=%s, port=%s>' % (self.host, self.port)

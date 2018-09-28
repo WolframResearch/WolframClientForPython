@@ -5,10 +5,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 from itertools import chain
 
 import datetime
-import platform
 import decimal
+import platform
 import sys
-import os
 import types
 
 #stripped version of SIX
