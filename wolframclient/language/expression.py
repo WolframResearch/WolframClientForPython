@@ -6,6 +6,7 @@ from itertools import chain
 
 from wolframclient.utils import six
 from wolframclient.utils.encoding import force_text
+from wolframclient.utils.decorators import cached_property
 
 class WLExpressionMeta(object):
     """Abstract class to subclass when building representation of Wolfram Language expressions as Python object."""
@@ -88,7 +89,10 @@ class WLFunction(WLExpressionMeta):
         else:
             return '%s[%s]' % (repr(self.head), ', '.join([str(x) for x in self.args]))
 
-class ExpressionFactory(object):
+class WLSymbolFactory(WLSymbol):
+
+    __slots__ = 'context'
+
     """Provide a convenient way to build objects representing arbitrary Wolfram Language expressions through the use of attributes.
 
     This class is conveniently instanciated at startup as: :class:`~wolframclient.language.wl` and
@@ -100,15 +104,21 @@ class ExpressionFactory(object):
         developer.PackedArrayQ(...)
 
     """
-    def __init__(self, context = None):
-        self.context = context
+    def __init__(self, context = ()):
+        if isinstance(context, six.string_types):
+            self.context = (context, )
+        else:
+            self.context = context
+
+    @cached_property
+    def name(self):
+        return "`".join(self.context)
 
     def __getattr__(self, attr):
-        if self.context:
-            return WLSymbol('%s`%s' % (self.context, attr))
-        return WLSymbol(force_text(attr))
+        #summing a tuple with another tuple is returning copy, this operation is always creating a new immutable object
+        return self.__class__(self.context + (attr, ))
 
-wl = ExpressionFactory()
+wl = WLSymbolFactory()
 """A factory of :class:`~wolframclient.language.expression.WLSymbol` instances without any particular context.
 
 This instance of :class:`~wolframclient.language.expression.ExpressionFactory` is conveniently used
@@ -122,7 +132,7 @@ by calling its attributes. The following code represents various Wolfram Languag
     wl.Select(wl.PrimeQ, [1, 2, 3, 4])
 """
 
-system = ExpressionFactory('System')
+system = wl.System
 """A factory of :class:`~wolframclient.language.expression.WLSymbol` instances having ``System``` context.
 
 See :func:`~wolframclient.language.expression.ExpressionFactory` and
