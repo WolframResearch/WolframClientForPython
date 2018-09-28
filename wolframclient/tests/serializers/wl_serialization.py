@@ -143,8 +143,8 @@ class TestCase(BaseTestCase):
         self.compare(wl.Map(wl.PrimeQ, (1, 2, 3)), b'Map[PrimeQ, {1, 2, 3}]')
         self.compare(wl.System.Map, b'System`Map')
         self.compare(wl.System.Symbol(1, 2), b'System`Symbol[1, 2]')
-        self.compare(wl.Developer.Internals.FastFunction, b'Developer`Internals`FastFunction')
-        self.compare(wl.Developer.Internals.FastFunction(1, 2), b'Developer`Internals`FastFunction[1, 2]')
+        self.compare(wl.This.Thing.Just.Work, b'This`Thing`Just`Work')
+        self.compare(wl.This.Thing.Just.Work(1, 2), b'This`Thing`Just`Work[1, 2]')
 
     def test_encoding(self):
 
