@@ -7,7 +7,6 @@ from subprocess import PIPE, Popen
 from threading import Event, Thread
 
 from wolframclient.evaluation.result import WolframKernelEvaluationResult
-from wolframclient.evaluation.utils import expr_from_attr
 from wolframclient.exception import WolframKernelException
 from wolframclient.language import wl
 from wolframclient.serializers import export
@@ -355,10 +354,10 @@ class WolframLanguageSession(object):
     def _evaluate(self, expr, wrap_result=False, **kwargs):
         """Send an expression to the kernel for evaluation. Return a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.
         """
-        if not self.started:
-            raise WolframKernelException('Kernel is not started.')
         if self.terminated:
             raise WolframKernelException('Session has been terminated.')
+        if not self.started:
+            self.start()
         start = time.perf_counter()
         if isinstance(expr, six.binary_type):
             logger.info('Expression is already serialized in WXF.')
@@ -419,6 +418,9 @@ class WolframLanguageSession(object):
             for msg in result.messages:
                 logger.warning(msg[1])
         return result.get()
+    
+    def function(self, expr):
+        return WolframFunction(self, expr)
 
     def __repr__(self):
         if self.terminated:
@@ -427,6 +429,25 @@ class WolframLanguageSession(object):
             return '<%s: pid:%i, kernel sockets: (in:%s, out:%s)>' % (self.__class__.__name__, self.kernel_proc.pid, self.in_socket.uri, self.out_socket.uri)
         else:
             return '<%s: not started>' % self.__class__.__name__
+
+class WolframFunction(object):
+    __slots__ = 'session', 'wlfunc'
+    def __init__(self, session, expr):
+        if isinstance(expr, six.string_types) or isinstance(expr, six.binary_type):
+            self.wlfunc = wl.ToExpression(expr)
+        else:
+            self.wlfunc = expr
+        self.session = session
+        
+    def __call__(self, *args, **kwargs):
+        return self.session.evaluate(wl.Construct(self.wlfunc, *args, **kwargs))
+
+    def __repr__(self):
+        if self.session.kernel_proc is not None:
+            kernel = str(self.session.kernel_proc.pid)
+        else:
+            kernel = 'N/A'
+        return 'WolframFunction<function=%s, kernel=%s>' % (self.wlfunc, kernel)
 
 class WolframLanguageAsyncSession(WolframLanguageSession):
     """Evaluate expression asynchronously.

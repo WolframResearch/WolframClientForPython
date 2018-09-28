@@ -3,11 +3,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.deserializers import binary_deserialize
+from wolframclient.language import wl, wlexpr
 from wolframclient.exception import WolframKernelException
-from wolframclient.language import wl
 from wolframclient.language.expression import WLFunction, WLSymbol
-from wolframclient.serializers import export
-from wolframclient.tests.configure import json_config, MSG_JSON_NOT_FOUND
+from wolframclient.logger.utils import setup_logging_to_file
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
@@ -100,12 +99,12 @@ class TestCase(TestCaseSettings):
 
     def test_silenced_msg(self):
         off = self.kernel_session.evaluate('Off[Power::infy]')
-        self.assertEqual(off, wl.Null)
+        self.assertEqual(off, None)
         res = self.kernel_session.evaluate_wrap('1/0')
         self.assertEqual(res.get(), WLFunction(WLSymbol(b'DirectedInfinity')))
         self.assertTrue(res.success)
         on = self.kernel_session.evaluate('On[Power::infy]')
-        self.assertEqual(on, wl.Null)
+        self.assertEqual(on, None)
 
     def test_one_eval_many_msg(self):
         res = self.kernel_session.evaluate('ImportString["[1,2", "RawJSON"]')
@@ -140,6 +139,48 @@ class TestCase(TestCaseSettings):
         result = binary_deserialize(wxf)
         self.assertEqual(result, WLSymbol('$Failed'))
 
+    def test_auto_start_session(self):
+        session = WolframLanguageSession(self.KERNEL_PATH)
+        try:
+            res=session.evaluate('1+1')
+            self.assertEqual(res, 2)
+        finally:
+            session.terminate()
+
+    def test_pure_function_inputform(self):
+        f=self.kernel_session.function('#+1&')
+        self.assertEqual(f(3), 4)
+        self.assertEqual(f(10), 11)
+
+    def test_function_inputform(self):
+        stringQ = self.kernel_session.function('AllTrue[{##}, StringQ] &')
+        self.assertTrue(stringQ('abc'))
+        self.assertTrue(stringQ('a', 'b', 'c'))
+        self.assertFalse(stringQ(1))
+        self.assertFalse(stringQ('a', 1))
+
+    def test_function_symbolic(self):
+        total_range = self.kernel_session.function(wl.Composition(wl.Total, wl.Range))
+        self.assertEqual(total_range(5), 15)
+
+    def test_wlexpr_wrapper(self):
+        res = self.kernel_session.evaluate(wl.Map(wlexpr('#+1&'), [1,2,3]))
+        self.assertEqual(res, [2,3,4])
+
+    def test_built_in_symbols(self):
+        self.assertEqual(self.kernel_session.evaluate(None), None)
+        self.assertEqual(self.kernel_session.evaluate(wl.Null), None)
+        self.assertEqual(self.kernel_session.evaluate(wlexpr('True')), True)
+        self.assertEqual(self.kernel_session.evaluate(True), True)
+        self.assertEqual(self.kernel_session.evaluate(wlexpr('False')), False)
+        self.assertEqual(self.kernel_session.evaluate(False), False)
+        self.assertEqual(self.kernel_session.evaluate(wl.StringQ('foo')), True)
+
+    def test_built_in_symbols_as_func(self):
+        func_null = self.kernel_session.function('Null')
+        res = func_null(5)
+        self.assertEqual(res, WLFunction(None, 5))
+
 @unittest.skipIf(six.PY2, "No async call on Python2.")
 class TestAsyncSession(TestCaseSettings):
     @classmethod
@@ -167,35 +208,6 @@ class TestAsyncSession(TestCaseSettings):
         wxf = export(wl.MinMax([1, -2, 3, 5]), target_format='wxf')
         future = self.async_session.evaluate(wxf)
         self.assertEqual(future.result(timeout=1), [-2, 5])
-
-    # def test_attr_call_function_no_arg_async(self):
-    #     future = self.async_session.List()
-    #     self.assertListEqual(future.result(timeout=1), [])
-
-    # def test_attr_call_function_with_1arg_async(self):
-    #     future = self.async_session.MinMax([-1, 2, 5])
-    #     self.assertListEqual(future.result(timeout=1), [-1, 5])
-
-    # def test_attr_call_function_with_many_args_async(self):
-    #     future = self.async_session.Part([[1, 2, 3], [4, 5, 6]], -1, 1)
-    #     self.assertEqual(future.result(timeout=1), 4)
-
-    # def test_compose_attr_call_async(self):
-    #     future = self.async_session.Total_Range(3)
-    #     self.assertEqual(future.result(timeout=1), 1+2+3)
-
-    # def test_bad_attr_call(self):
-    #     with self.assertRaises(AttributeError):
-    #         res = self.async_session.invalid_attr(123)
-
-    # def test_attr_call_option_async(self):
-    #     future = self.async_session.BinarySerialize(1, PerformanceGoal="Size")
-    #     self.assertEqual(future.result(timeout=1),
-    #                      b'8C:x\x9csf\x04\x00\x00\x89\x00E')
-
-    # def test_attr_call_str_option_async(self):
-    #     future = self.async_session.ExportString([[1],[2]], u'JSON', Compact_=True)
-    #     self.assertEqual(future.result(timeout=1), '[[1],[2]]')
 
     def test_evaluate_multiple_async(self):
         with WolframLanguageAsyncSession(self.KERNEL_PATH) as async_session:
@@ -232,11 +244,6 @@ class TestCaseSession(TestCaseSettings):
         with self.assertRaises(ValueError):
             WolframLanguageSession(None)
 
-    def test_non_started_session(self):
-        session = WolframLanguageSession(self.KERNEL_PATH)
-        with self.assertRaises(WolframKernelException):
-            session.evaluate('1+1')
-
     def test_terminated_session(self):
         session = WolframLanguageSession(self.KERNEL_PATH)
         session.start()
@@ -249,16 +256,16 @@ class TestCaseInternalFunctions(TestCaseSettings):
     def test_default_loglevel(self):
         with WolframLanguageSession(self.KERNEL_PATH) as session:
             res = session.evaluate('ClientLibrary`Private`$LogLevel == Infinity')
-            self.assertEqual(res, WLSymbol('True'))
+            self.assertTrue(res)
             # This is not possible. Logging was not enabled in the first place.
             session.evaluate('ClientLibrary`SetInfoLogLevel[]`')
             # Log level remains to NOTSET
             res = session.evaluate(
                 'ClientLibrary`Private`$LogLevel == ClientLibrary`Private`$NOTSET')
-            self.assertEqual(res, WLSymbol('True'))
+            self.assertTrue(res)
 
     def test_set_loglevel(self):
         with WolframLanguageSession(self.KERNEL_PATH, kernel_loglevel=logging.WARN) as session:
             res = session.evaluate(
                 'ClientLibrary`Private`$LogLevel == ClientLibrary`Private`$WARN')
-            self.assertEqual(res, WLSymbol('True'))
+            self.assertTrue(res)

@@ -6,6 +6,8 @@ from wolframclient.exception import WolframParserException
 from wolframclient.language.expression import WLFunction, WLSymbol
 from wolframclient.serializers.wxfencoder import wxfexpr
 from wolframclient.utils.api import numpy
+from wolframclient.utils import six
+import math
 
 __all__ = ['WXFConsumer', 'WXFConsumerNumpy']
 
@@ -15,25 +17,27 @@ class WXFConsumer(object):
     This class exposes a comprehensive list of methods consuming WXF types.
     Subclasses can override these members to implement custom parsing logic.
 
-    Example implementing a consumer that parses Wolfram Language booleans :wl:`Null` as Python `None`::
+    Example implementing a consumer that maps any function with head 
+    :wl:`DirectedInfinity` to float('inf')::
 
-        class ExampleConsumer(WXFConsumer):
-            def consume_symbol(self, current_token, tokens, **kwargs):
-                if current_token.data == 'Null':
-                    return None
-                else:
-                    super().consume_symbol(current_token, tokens, **kwargs)
+    class ExampleConsumer(WXFConsumer):
+        Infinity = wl.DirectedInfinity
+        def build_function(self, head, arg_list, **kwargs):
+            if head == self.Infinity:
+                return float('inf')
+            else:
+                super().build_function(head, args_list, **kwargs)
 
     Test the new consumer::
 
-        >>> wxf = export({'a': 1, 'b': wl.Null}, target_format='wxf')
+        >>> wxf = export({'-inf': wl.DirectedInfinity(-1), '+inf': wl.DirectedInfinity(1)}, target_format='wxf')
         >>> binary_deserialize(wxf, consumer=ExampleConsumer())
-        {'a': 1, 'b': None}
+        {'-inf': inf, '+inf': inf}
 
     Compare with default result::
 
         >>> binary_deserialize(wxf)
-        {'a': 1, 'b': Null}
+        {'-inf': DirectedInfinity[-1], '+inf': DirectedInfinity[1]}
 
     Once initialized, the entry point of a consumer is the method
     :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.next_expression`.
@@ -127,9 +131,21 @@ class WXFConsumer(object):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *rule* as a tuple"""
         return (self.next_expression(tokens, **kwargs), self.next_expression(tokens, **kwargs))
 
+    BUILTIN_SYMBOL = {
+        'True'          : True,
+        'False'         : False,
+        'Null'          : None,
+        'None'          : None,
+        'Pi'            : math.pi,
+        'Indeterminate' : float('NaN')
+    }
+
     def consume_symbol(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *symbol* as a :class:`~wolframclient.language.expression.WLSymbol`"""
-        return WLSymbol(current_token.data)
+        try:
+            return WXFConsumer.BUILTIN_SYMBOL[current_token.data]
+        except:
+            return WLSymbol(current_token.data)
 
     def consume_bigint(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *big integer* as a :class:`int`."""

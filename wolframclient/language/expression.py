@@ -144,5 +144,6 @@ Global = ExpressionFactory('Global')
 See :func:`~wolframclient.language.expression.ExpressionFactory` and
 :class:`~wolframclient.language.expression.ExpressionFactory` for more details."""
 
+wlexpr = wl.ToExpression
 
-__all__ = ['ExpressionFactory', 'WLSymbol', 'wl', 'System', 'Global', 'WLFunction']
+__all__ = ['ExpressionFactory', 'WLSymbol', 'wl', 'System', 'Global', 'WLFunction', 'wlexpr']
