@@ -3,13 +3,14 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.deserializers import binary_deserialize
+from wolframclient.serializers import export
 from wolframclient.language import wl, wlexpr
 from wolframclient.exception import WolframKernelException
 from wolframclient.language.expression import WLFunction, WLSymbol
 from wolframclient.logger.utils import setup_logging_to_file
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
-
+from wolframclient.tests.configure import json_config, MSG_JSON_NOT_FOUND
 import logging
 import unittest
 
@@ -180,6 +181,11 @@ class TestCase(TestCaseSettings):
         func_null = self.kernel_session.function('Null')
         res = func_null(5)
         self.assertEqual(res, WLFunction(None, 5))
+
+    def test_evaluate_global_func(self):
+        self.kernel_session.evaluate('ClearAll[f]; f[x_String]:=StringReverse[x]')
+        inv = self.kernel_session.function(wl.Global.f)
+        self.assertEqual(inv('abc'), 'cba')
 
 @unittest.skipIf(six.PY2, "No async call on Python2.")
 class TestAsyncSession(TestCaseSettings):

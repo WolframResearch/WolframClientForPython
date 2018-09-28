@@ -138,7 +138,7 @@ System = wl.System
 See :func:`~wolframclient.language.expression.ExpressionFactory` and
 :class:`~wolframclient.language.expression.ExpressionFactory` for more details."""
 
-Global = ExpressionFactory('Global')
+Global = wl.Global
 """A factory of :class:`~wolframclient.language.expression.WLSymbol` instances having ``Global``` context.
 
 See :func:`~wolframclient.language.expression.ExpressionFactory` and

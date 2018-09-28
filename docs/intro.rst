@@ -78,7 +78,7 @@ Create a new session targeting a local *WolframKernel* specified by its path::
 
     >>> session = WolframLanguageSession('/path/to/kernel-executable')
 
-Start the session::
+Start the session manually::
 
     >>> session.start()
 
@@ -87,10 +87,12 @@ Ensure the session started successfully:
     >>> session.started
     True
 
-System functions
-++++++++++++++++
+Note that sessions are also automatically started when the first evaluation occurs.
 
-System function are conveniently represented using :func:`~wolframclient.language.wl`. First import it::
+Expression evaluation
+++++++++++++++++++++++++++
+
+Functions are conveniently represented using :func:`~wolframclient.language.wl`. First import it::
 
     >>> from wolframclient.language import wl
 
