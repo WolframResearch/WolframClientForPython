@@ -288,7 +288,7 @@ class WXFExprBinaryString(WXFExpr):
     required.'''
     __slots__ = 'data'
     def __init__(self, data):
-        if isinstance(data, (six.binary_type, bytearray)):
+        if isinstance(data, (six.binary_type, bytearray, six.buffer_types)):
             self.data = data
         else:
             raise TypeError(
