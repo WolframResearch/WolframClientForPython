@@ -49,7 +49,7 @@ class Command(SimpleCommand):
 
         try:
             return import_string(self.available_test_cases[name])
-        except ImportError, e:
+        except ImportError as e:
             print(e)
 
     def handle(self, *args):
