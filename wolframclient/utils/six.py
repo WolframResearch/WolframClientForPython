@@ -52,7 +52,7 @@ else:
         memoryview = memoryview
     else:
         memoryview = buffer
-    buffer_types = (bytearray, memoryview)
+    buffer_types = (bytearray, memoryview, buffer)
 
 iterable_types = (list, tuple, set, frozenset, types.GeneratorType)
 

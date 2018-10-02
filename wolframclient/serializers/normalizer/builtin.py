@@ -25,7 +25,7 @@ def update_dispatch(dispatch):
     def normalizer(self, o):
         return self.serialize_symbol('%s' % o)
 
-    @dispatch.multi((bytearray, six.binary_type))
+    @dispatch.multi((bytearray, six.binary_type, six.buffer_types))
     def normalizer(self, o):
         return self.serialize_bytes(o)
 

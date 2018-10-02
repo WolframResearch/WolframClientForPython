@@ -186,6 +186,19 @@ class TestCase(BaseTestCase):
             self.compare(special, result)
             self.compare(decimal.Decimal(special), result)
 
+    def test_buffer(self):
+
+        if six.PY2:
+            self.compare(
+                buffer(b'Hello world', 6, 5),
+                b'ByteArray["d29ybGQ="]'
+            )
+        else:
+            self.compare(
+                memoryview(b'Hello world'),
+                b'ByteArray["SGVsbG8gd29ybGQ="]'
+            )
+
     def test_hashing(self):
 
         #testing that expressions class is hashable
