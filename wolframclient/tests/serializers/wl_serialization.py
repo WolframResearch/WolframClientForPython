@@ -126,6 +126,13 @@ class TestCase(BaseTestCase):
             b'DateObject[{2000, 1, 1}]'
         )
 
+    def test_timedelta(self):
+
+        self.compare(
+            datetime.timedelta(minutes = 1, seconds = 30),
+            b'Quantity[{90.000000, "Seconds"}]'
+        )
+
     def test_time(self):
 
         self.compare(
