@@ -200,7 +200,7 @@ class WolframCloudSession(object):
         """
         return self._call_evaluation_api(self._normalize_input(expr, **kwargs))
 
-    def cloud_function(self, func):
+    def function(self, func):
         """Return a `callable` cloud function.
 
         The object returned can be applied on arguments as any other Python function, and
@@ -271,7 +271,7 @@ class WolframCloudSessionAsync(WolframCloudSession):
             self._normalize_input(expr)
             )
 
-    def cloud_function(self, func, asynchronous=False):
+    def function(self, func, asynchronous=False):
         """Return a `callable` cloud function.
 
         The object returned can be applied on arguments as any other Python function, and
@@ -349,17 +349,25 @@ class WolframAPICall(object):
         return repr(self)
 
 class CloudFunction(object):
+    
+    __slots__ = 'session', 'wlfunc', 'evaluation_func'
+    
     def __init__(self, session, func, asynchronous=False):
         self.session = session
         if isinstance(func, six.string_types) or isinstance(func, six.binary_type):
-            self.func = wl.ToExpression(func)
+            self.wlfunc = wl.ToExpression(func)
+        else:
+            self.wlfunc = func
         if asynchronous:
             self.evaluation_func = session.__class__.evaluate_async
         else:
             self.evaluation_func = session.__class__.evaluate
 
-    def __call__(self, *args):
-        return self.evaluation_func(self.session, wl.Construct(self.func, *args))
+    def __call__(self, *args, **kwargs):
+        return self.evaluation_func(self.session, wl.Construct(self.wlfunc, *args, **kwargs))
+
+    def __repr__(self):
+        return 'CloudFunction<function=%s>' % (self.wlfunc)
 
 def _encode_inputs_as_wxf(inputs, multipart, **kwargs):
     encoded_inputs = {}

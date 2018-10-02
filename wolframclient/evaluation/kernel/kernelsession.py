@@ -431,7 +431,9 @@ class WolframLanguageSession(object):
             return '<%s: not started>' % self.__class__.__name__
 
 class WolframFunction(object):
+    
     __slots__ = 'session', 'wlfunc'
+
     def __init__(self, session, expr):
         if isinstance(expr, six.string_types) or isinstance(expr, six.binary_type):
             self.wlfunc = wl.ToExpression(expr)

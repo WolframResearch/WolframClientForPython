@@ -8,6 +8,7 @@ from wolframclient.tests.configure import json_config, MSG_JSON_NOT_FOUND
 from wolframclient.utils import six
 from wolframclient.utils.api import json
 from wolframclient.utils.encoding import force_text
+from wolframclient.language import wl
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
 import logging
@@ -139,6 +140,49 @@ class TestCase(TestCaseSettings):
             self.assertTrue(response.success)
             res = json.loads(response.get())
             self.assertListEqual(res, [500, 200])
+
+    ### Evaluation
+
+    def test_evaluate_string(self):
+        res = self.cloud_session.evaluate('Range[3]')
+        self.assertEqual(res, '{1, 2, 3}')
+
+    def test_evaluate_wl_expr(self):
+        res = self.cloud_session.evaluate(wl.Range(2))
+        self.assertEqual(res, '{1, 2}')
+
+    def test_evaluate_wl_expr_option(self):
+        res = self.cloud_session.evaluate(wl.ArrayPad([[1]], 1, Padding=1))
+        self.assertEqual(res, '{{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}')
+
+    def test_evaluate_wrap(self):
+        res = self.cloud_session.evaluate_wrap(wl.Range(2))
+        self.assertTrue(res.success)
+        self.assertEqual(res.get(), '{1, 2}')
+
+    def test_evaluate_function(self):
+        f = self.cloud_session.function('Range')
+        self.assertEqual(f(3), '{1, 2, 3}')
+
+    def test_evaluate_function_wl(self):
+        f = self.cloud_session.function(wl.Range)
+        self.assertEqual(f(3), '{1, 2, 3}')
+
+    def test_evaluate_function_wl_option(self):
+        f = self.cloud_session.function(wl.ArrayPad)
+        self.assertEqual(f([[1]], 1, Padding=1), '{{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}')
+
+    def test_evaluate_string(self):
+        res1 = self.cloud_session_async.evaluate('Range[1]')
+        res2 = self.cloud_session_async.evaluate('Range[2]')
+        
+        self.assertEqual(res1.result(), '{1}')
+        self.assertEqual(res2.result(), '{1, 2}')
+
+    def test_evaluate_string(self):
+        res = self.cloud_session_async.evaluate('Range[3]')
+        self.assertEqual(res, '{1, 2, 3}')
+
 
     # url_join
 

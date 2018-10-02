@@ -311,7 +311,7 @@ Cloud functions
 
 From an :ref:`authenticated session<ref-auth>` it is possible to build a cloud function, to later use it with various parameters. Create a cloud function::
 
-    >>> wl_str_reverse = session.cloud_function('StringReverse')
+    >>> wl_str_reverse = session.function('StringReverse')
 
 Apply it to a first string::
 
@@ -325,7 +325,7 @@ Use the function again with a new argument::
 
 Functions may accept more than one input parameters. Define a cloud function that applies :wl:`Join` on all arguments it is given. Join multiple Python arrays::
 
-    >>> wl_join = session.cloud_function('Join[##] &')
+    >>> wl_join = session.function('Join[##] &')
     >>> wl_join([0,1], ["a", "b"], [2, "c"])
     '{0, 1, "a", "b", 2, "c"}'
 
