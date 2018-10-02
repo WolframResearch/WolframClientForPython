@@ -28,10 +28,8 @@ def update_dispatch(dispatch):
     def normalizer(self, o):
         return self.serialize_function(
             self.serialize_symbol(b"Quantity"), (
-                self.serialize_iterable((
-                    self.serialize_float(o.total_seconds()),
-                    self.serialize_string("Seconds"),
-                )),
+                self.serialize_float(o.total_seconds()),
+                self.serialize_string("Seconds"),
             )
         )
     @dispatch.multi(datetime.date)

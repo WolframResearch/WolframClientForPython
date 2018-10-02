@@ -130,7 +130,7 @@ class TestCase(BaseTestCase):
 
         self.compare(
             datetime.timedelta(minutes = 1, seconds = 30),
-            b'Quantity[{90.000000, "Seconds"}]'
+            b'Quantity[90.000000, "Seconds"]'
         )
 
     def test_time(self):
