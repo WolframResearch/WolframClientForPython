@@ -135,7 +135,6 @@ class WXFConsumer(object):
         'True'          : True,
         'False'         : False,
         'Null'          : None,
-        'None'          : None,
         'Pi'            : math.pi,
         'Indeterminate' : float('NaN')
     }
