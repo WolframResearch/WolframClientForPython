@@ -8,6 +8,8 @@ from wolframclient.serializers.wxfencoder import wxfexpr
 from wolframclient.utils.api import numpy
 from wolframclient.utils import six
 import math
+import re
+import decimal
 
 __all__ = ['WXFConsumer', 'WXFConsumerNumpy']
 
@@ -151,8 +153,9 @@ class WXFConsumer(object):
         try:
             return int(current_token.data)
         except ValueError:
-            raise WolframParserException(
-                'Invalid big integer value: %s' % current_token.data)
+            raise WolframParserException('Invalid big integer value: %s' % current_token.data)
+
+    BIGREAL_RE = re.compile(r'([^`]+)(`[0-9.]+){0,1}(\*\^[0-9]+){0,1}')
 
     def consume_bigreal(self, current_token, tokens, **kwargs):
         """Parse a WXF big real as a WXF serializable big real.
@@ -162,7 +165,19 @@ class WXFConsumer(object):
         Introducing `ToExpression` would imply to marshall the big real data to avoid malicious
         code from being introduced in place of an actual real.
         """
-        return wxfexpr.WXFExprBigReal(current_token.data)
+
+        match = self.BIGREAL_RE.match(current_token.data)
+
+        if match:
+
+            num, prec, exp = match.groups()
+
+            if exp:
+                return decimal.Decimal('%se%s' % (num, exp[2:]))
+
+            return decimal.Decimal(num)
+
+        raise WolframParserException('Invalid big real value: %s' % current_token.data)
 
     def consume_string(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *string* as a string of unicode utf8 encoded."""
