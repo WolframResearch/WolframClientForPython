@@ -5,9 +5,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 from collections import defaultdict
 
 from wolframclient.utils.dispatch import ClassDispatch
+from wolframclient.utils.decorators import synchronized
 from wolframclient.utils.functional import composition, iterate
 from wolframclient.utils.importutils import safe_import_string
-
+import multiprocessing
 import inspect
 import sys
 
@@ -26,6 +27,10 @@ def normalizer(self, o):
 
 
 class DispatchUpdater(object):
+    
+    # global lock to avoid multiple dispatcher updating in multithreaded programs.
+    _lock = multiprocessing.Lock()
+
     def __init__(self, dispatch):
         self.registry = defaultdict(list)
         self.modules = set()
@@ -35,15 +40,16 @@ class DispatchUpdater(object):
         for module, handlers in handlers.items():
             self.modules.add(module)
             self.registry[module].extend(iterate(handlers))
-
+    
     def update_dispatch(self):
-        if self.modules:
-            for module in self.modules.intersection(sys.modules.keys()):
-                for handler in self.registry[module]:
-                    safe_import_string(handler)(self.dispatch)
+        with DispatchUpdater._lock:
+            if self.modules:
+                for module in self.modules.intersection(sys.modules.keys()):
+                    for handler in self.registry[module]:
+                        safe_import_string(handler)(self.dispatch)
 
-                del self.registry[module]
-                self.modules.remove(module)
+                    del self.registry[module]
+                    self.modules.remove(module)
 
 
 updater = DispatchUpdater(dispatch)
@@ -78,6 +84,10 @@ class Normalizer(object):
 
         self.default_updater.update_dispatch()
 
-        return composition(
-            *map(safe_import_string,
-                 iterate(func or (), self.default_normalizer)))
+        return composition(*map(
+            safe_import_string,
+            iterate(
+                func or (),
+                self.default_normalizer
+            )
+        ))

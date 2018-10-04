@@ -257,7 +257,7 @@ def parse_varint(reader):
     # except if we reached EOF in which case taking index 0 raises IndexError.
     try:
         while continuation and count < 8:
-            count = count + 1
+            count += 1
             next_byte = reader.read(1)
             next_byte = ord(next_byte)
             length |= (next_byte & 0x7F) << shift

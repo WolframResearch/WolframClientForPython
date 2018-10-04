@@ -292,7 +292,7 @@ class WolframLanguageSession(object):
                     logger.warning('Failed to close kernel process stderr')
                     error = True
             if error:
-                logger.warning('Killing kernel process.')
+                logger.warning('Killing kernel process: %i' % self.kernel_proc.pid)
                 self.kernel_proc.kill()
             self.terminated = True
         if self.in_socket is not None:
@@ -375,8 +375,8 @@ class WolframLanguageSession(object):
                     'STARTUP_RETRY_SLEEP_TIME'))
             if response == WolframLanguageSession._KERNEL_OK:
                 if logger.isEnabledFor(logging.INFO):
-                    logger.info('Kernel is ready. Startup took %.2f seconds.',
-                                time.perf_counter() - t_start)
+                    logger.info(
+                        'Kernel %s is ready. Startup took %.2f seconds.' % (self.pid, time.perf_counter() - t_start))
             else:
                 self.terminate()
                 raise WolframKernelException(
@@ -387,6 +387,13 @@ class WolframLanguageSession(object):
             raise WolframKernelException(
                 'Failed to communicate with the kernel %s. Could not read from ZMQ socket.'
                 % self.kernel)
+
+    @property
+    def pid(self):
+        if self.kernel_proc:
+            return self.kernel_proc.pid
+        else:
+            return None
 
     @property
     def started(self):
@@ -538,34 +545,75 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
         self.thread_pool_exec = None
 
     def evaluate(self, expr, **kwargs):
-        return self._do_async(super().evaluate, expr, **kwargs)
+        return self._do_in_thread(super().evaluate, expr, **kwargs)
 
     def evaluate_wxf(self, expr, **kwargs):
-        return self._do_async(super().evaluate_wxf, expr, **kwargs)
+        return self._do_in_thread(super().evaluate_wxf, expr, **kwargs)
 
     def evaluate_wrap(self, expr, **kwargs):
-        return self._do_async(super().evaluate_wrap, expr, **kwargs)
+        return self._do_in_thread(super().evaluate_wrap, expr, **kwargs)
 
-    def _do_async(self, func, expr, **kwargs):
+    def _do_in_thread(self, func, *args, **kwargs):
         try:
-            if self.thread_pool_exec is None:
-                self.thread_pool_exec = futures.ThreadPoolExecutor(
-                    max_workers=1)
-            return self.thread_pool_exec.submit(func, expr, **kwargs)
+            self.get_exec_pool()
+            return self.thread_pool_exec.submit(func, *args, **kwargs)
         except ImportError:
             logger.fatal('Module concurrent.futures is missing.')
             raise NotImplementedError(
                 'Asynchronous evaluation is not available on this Python interpreter.'
             )
 
+    def get_exec_pool(self):
+        if self.thread_pool_exec is None:
+                self.thread_pool_exec = futures.ThreadPoolExecutor(
+                    max_workers=1)
+        return self.thread_pool_exec
+
+    async def async_start(self, loop=None):
+        if not loop:
+            loop = asyncio.get_event_loop()
+        await loop.run_in_executor(self.get_exec_pool(), super().start)
+
+    async def async_terminate(self, loop=None):
+        # make sure the session was started. Otherwise it's an initialized session
+        # that was never started.
+        if self.thread_pool_exec:
+            try:
+                if not loop:
+                    loop = asyncio.get_event_loop()
+                await loop.run_in_executor(self.get_exec_pool(), super().terminate)
+            except Exception as e:
+                logger.fatal('Error when terminating session: %s' % e)
+            finally:
+                try:
+                    self.thread_pool_exec.shutdown(wait=True)
+                except Exception as e:
+                    logger.fatal('Error when shutting down thread pool executor: %s' % e)
+        elif self.started:
+            self.terminate()
+
+    async def async_evaluate(self, expr, loop=None, **kwargs):
+        return await self._async_evaluate(super().evaluate, expr, loop, **kwargs)
+
+    async def async_evaluate_wxf(self, expr, loop=None, **kwargs):
+        return await self._async_evaluate(super().evaluate_wxf, expr, loop, **kwargs)
+
+    async def async_evaluate_wrap(self, expr, loop=None, **kwargs):
+        return await self._async_evaluate(super().evaluate_wrap, expr, loop, **kwargs)
+
+    async def _async_evaluate(self, func, expr, loop=None, **kwargs):
+        if not loop:
+            loop=asyncio.get_event_loop()
+        return await loop.run_in_executor(self.get_exec_pool(), func, expr, **kwargs)
+
     def terminate(self):
         # First terminate all executions.
         # Then use the socket to actually quit. Avoid crashes when freeing zmq resources still in use.
-        if self.thread_pool_exec is not None:
+        if self.thread_pool_exec:
             try:
                 self.thread_pool_exec.shutdown(wait=True)
             except Exception as e:
-                logger.fatal(e)
+                logger.fatal('Failed to stop thread pool executor: %s' % e)
         super().terminate()
 
 
