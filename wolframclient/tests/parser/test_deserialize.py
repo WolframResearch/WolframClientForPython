@@ -10,7 +10,7 @@ from wolframclient.serializers.wxfencoder import wxfexpr
 from wolframclient.serializers.wxfencoder.serializer import write_varint
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
-
+import decimal
 import os
 import unittest
 
@@ -135,11 +135,15 @@ class TestCase(BaseTestCase):
         value = [1.2345, 0., 1.23456789e100]
         self.wxf_assert_roundtrip(value)
 
-    def test_bigreal(self):
+    def test_bigreal_precision(self):
         wxf = b'8:R\x0710.`10.'
         res = binary_deserialize(wxf)
-        self.assertTrue(isinstance(res, wxfexpr.WXFExprBigReal))
-        self.assertEqual(res.value, b'10.`10.')
+        self.assertEqual(res, decimal.Decimal(10))
+
+    def test_bigreal_precision_exponent(self):
+        wxf = b'8:R>9.999999999999996843873323328588479844`15.352529778863042*^999'
+        res = binary_deserialize(wxf)
+        self.assertEqual(res, decimal.Decimal('9.999999999999996843873323328588479844E+999'))
 
     def test_empty_lists(self):
         value = [[], [[]], [1, []], []]
