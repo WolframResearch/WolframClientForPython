@@ -58,7 +58,7 @@ class FormatSerializer(Normalizer):
         return self.serialize_function(
             self.serialize_symbol('ArrayReshape'), (
                 self.serialize_function(
-                    self.serialize_symbol(b'RawArray'), (
+                    self.serialize_symbol(b'NumericArray'), (
                         self.serialize_string(wl_type),
                         self.serialize_function(
                             self.serialize_symbol('ImportByteArray'), (
