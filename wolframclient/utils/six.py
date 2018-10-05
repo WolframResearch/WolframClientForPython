@@ -2,13 +2,12 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from itertools import chain
-
 import datetime
 import decimal
 import platform
 import sys
 import types
+from itertools import chain
 
 #stripped version of SIX
 
@@ -20,12 +19,12 @@ WINDOWS = platform.system() == 'Windows'
 JYTHON = sys.platform.startswith('java')
 
 if PY3:
-    string_types  = str,
+    string_types = str,
     integer_types = int,
-    class_types   = type,
-    text_type     = str
-    binary_type   = bytes
-    none_type     = type(None)
+    class_types = type,
+    text_type = str
+    binary_type = bytes
+    none_type = type(None)
 
     import io
     StringIO = io.StringIO
@@ -35,12 +34,12 @@ if PY3:
     buffer_types = (bytes, bytearray, memoryview)
 
 else:
-    string_types  = basestring,
+    string_types = basestring,
     integer_types = (int, long)
-    class_types   = (type, types.ClassType)
-    text_type     = unicode
-    binary_type   = str
-    none_type     = types.NoneType
+    class_types = (type, types.ClassType)
+    text_type = unicode
+    binary_type = str
+    none_type = types.NoneType
 
     import StringIO
     StringIO = BytesIO = StringIO.StringIO
@@ -57,9 +56,6 @@ else:
 iterable_types = (list, tuple, set, frozenset, types.GeneratorType)
 
 protected_types = tuple(
-    chain(
-        string_types,
-        integer_types,
-        (float, decimal.Decimal, datetime.date, datetime.datetime, datetime.time, bool, none_type)
-    )
-)
+    chain(string_types, integer_types,
+          (float, decimal.Decimal, datetime.date, datetime.datetime,
+           datetime.time, bool, none_type)))

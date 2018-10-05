@@ -2,16 +2,17 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import decimal
+import math
+import re
+
 from wolframclient.exception import WolframParserException
 from wolframclient.language.expression import WLFunction, WLSymbol
 from wolframclient.serializers.wxfencoder import wxfexpr
 from wolframclient.utils.api import numpy
-from wolframclient.utils import six
-import math
-import re
-import decimal
 
 __all__ = ['WXFConsumer', 'WXFConsumerNumpy']
+
 
 class WXFConsumer(object):
     """Map WXF types to Python object generating functions.
@@ -79,10 +80,9 @@ class WXFConsumer(object):
         try:
             func = WXFConsumer._mapping[wxf_type]
         except KeyError:
-            raise WolframParserException('Class %s does not implement any consumer method for WXF token %s' %s (
-                cls.__name__,
-                token
-            ))
+            raise WolframParserException(
+                'Class %s does not implement any consumer method for WXF token %s'
+                % s(cls.__name__, token))
         return getattr(self, func)
 
     _LIST = WLSymbol('List')
@@ -113,7 +113,11 @@ class WXFConsumer(object):
         """
         return WLFunction(head, *arg_list)
 
-    def consume_association(self, current_token, tokens, dict_class = dict, **kwargs):
+    def consume_association(self,
+                            current_token,
+                            tokens,
+                            dict_class=dict,
+                            **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *association*.
 
         By default, return a :class:`dict` made from the rules.
@@ -122,24 +126,25 @@ class WXFConsumer(object):
         """
         return dict_class(
             self.next_expression(tokens, **kwargs)
-            for i in range(current_token.length)
-        )
+            for i in range(current_token.length))
 
     def consume_rule(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *rule* as a tuple"""
-        return (self.next_expression(tokens, **kwargs), self.next_expression(tokens, **kwargs))
+        return (self.next_expression(tokens, **kwargs),
+                self.next_expression(tokens, **kwargs))
 
     def consume_rule_delayed(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *rule* as a tuple"""
-        return (self.next_expression(tokens, **kwargs), self.next_expression(tokens, **kwargs))
+        return (self.next_expression(tokens, **kwargs),
+                self.next_expression(tokens, **kwargs))
 
     BUILTIN_SYMBOL = {
-        'True'          : True,
-        'False'         : False,
-        'None'          : None,
-        'Null'          : None,
-        'Pi'            : math.pi,
-        'Indeterminate' : float('NaN')
+        'True': True,
+        'False': False,
+        'None': None,
+        'Null': None,
+        'Pi': math.pi,
+        'Indeterminate': float('NaN')
     }
 
     def consume_symbol(self, current_token, tokens, **kwargs):
@@ -154,7 +159,8 @@ class WXFConsumer(object):
         try:
             return int(current_token.data)
         except ValueError:
-            raise WolframParserException('Invalid big integer value: %s' % current_token.data)
+            raise WolframParserException(
+                'Invalid big integer value: %s' % current_token.data)
 
     BIGREAL_RE = re.compile(r'([^`]+)(`[0-9.]+){0,1}(\*\^[0-9]+){0,1}')
 
@@ -178,7 +184,8 @@ class WXFConsumer(object):
 
             return decimal.Decimal(num)
 
-        raise WolframParserException('Invalid big real value: %s' % current_token.data)
+        raise WolframParserException(
+            'Invalid big real value: %s' % current_token.data)
 
     def consume_string(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *string* as a string of unicode utf8 encoded."""
@@ -222,7 +229,9 @@ class WXFConsumer(object):
         """
         return self._array_to_list(current_token, tokens)
 
+
 # memoryview.cast was introduced in Python 3.3.
+
     if hasattr(memoryview, 'cast'):
         unpack_mapping = {
             wxfexpr.ARRAY_TYPES.Integer8: 'b',
@@ -242,9 +251,9 @@ class WXFConsumer(object):
         def _to_complex(self, array, max_depth, curr_depth):
             # recursivelly traverse the array until the last (real) dimension is reached
             # it correspond to an array of (fake) array of two elements (real and im parts).
-            if curr_depth < max_depth-1:
+            if curr_depth < max_depth - 1:
                 for sub in array:
-                    self._to_complex(sub, max_depth, curr_depth+1)
+                    self._to_complex(sub, max_depth, curr_depth + 1)
                 return
             # iterate over the pairs
             for index, complex_pair in enumerate(array):
@@ -257,11 +266,15 @@ class WXFConsumer(object):
                 # In the given array, 2 reals give one complex,
                 # adding one last dimension to represent it.
                 dimensions.append(2)
-                as_list = view.cast(self.unpack_mapping[current_token.array_type], shape=dimensions).tolist()
+                as_list = view.cast(
+                    self.unpack_mapping[current_token.array_type],
+                    shape=dimensions).tolist()
                 self._to_complex(as_list, len(current_token.dimensions), 0)
                 return as_list
             else:
-                return view.cast(self.unpack_mapping[current_token.array_type], shape=current_token.dimensions).tolist()
+                return view.cast(
+                    self.unpack_mapping[current_token.array_type],
+                    shape=current_token.dimensions).tolist()
     else:
         unpack_mapping = {
             wxfexpr.ARRAY_TYPES.Integer8: wxfexpr.StructInt8LE,
@@ -277,15 +290,20 @@ class WXFConsumer(object):
             wxfexpr.ARRAY_TYPES.ComplexReal32: wxfexpr.StructFloat,
             wxfexpr.ARRAY_TYPES.ComplexReal64: wxfexpr.StructDouble,
         }
+
         def _array_to_list(self, current_token, tokens):
-            value, _ = self._build_array_from_bytes(current_token.data, 0, current_token.array_type, current_token.dimensions, 0)
+            value, _ = self._build_array_from_bytes(
+                current_token.data, 0, current_token.array_type,
+                current_token.dimensions, 0)
             return value
 
-        def _build_array_from_bytes(self, data, offset, array_type, dimensions, current_dim):
+        def _build_array_from_bytes(self, data, offset, array_type, dimensions,
+                                    current_dim):
             new_array = list()
-            if current_dim < len(dimensions)-1:
+            if current_dim < len(dimensions) - 1:
                 for i in range(dimensions[current_dim]):
-                    new_elem, offset = self._build_array_from_bytes(data, offset, array_type, dimensions, current_dim+1)
+                    new_elem, offset = self._build_array_from_bytes(
+                        data, offset, array_type, dimensions, current_dim + 1)
                     new_array.append(new_elem)
             else:
                 struct = self.unpack_mapping[array_type]
@@ -306,14 +324,17 @@ class WXFConsumer(object):
                         new_array.append(value[0])
             return new_array, offset
 
+
 class WXFConsumerNumpy(WXFConsumer):
     def consume_array(self, current_token, tokens, **kwargs):
-        arr=numpy.frombuffer(current_token.data, dtype=WXFConsumerNumpy.WXF_TYPE_TO_DTYPE[current_token.array_type])
+        arr = numpy.frombuffer(
+            current_token.data,
+            dtype=WXFConsumerNumpy.WXF_TYPE_TO_DTYPE[current_token.array_type])
         arr = numpy.reshape(arr, tuple(current_token.dimensions))
         return arr
+
     """Build a numpy array from a PackedArray."""
     consume_packed_array = consume_array
-
     """Build a numpy array from a RawArray."""
     consume_raw_array = consume_array
 

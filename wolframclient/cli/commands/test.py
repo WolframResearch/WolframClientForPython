@@ -2,12 +2,12 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.cli.utils import discover_with_convention, SimpleCommand
-from wolframclient.utils import six
-from wolframclient.utils.importutils import import_string
-
 import sys
 import unittest
+
+from wolframclient.cli.utils import SimpleCommand, discover_with_convention
+from wolframclient.utils.importutils import import_string
+
 
 class Command(SimpleCommand):
 
@@ -20,10 +20,7 @@ class Command(SimpleCommand):
             return self._test_cases
         except AttributeError:
             self._test_cases = discover_with_convention(
-                self.modules,
-                self.class_name,
-                walk = True
-            )
+                self.modules, self.class_name, walk=True)
             return self._test_cases
 
     def add_arguments(self, parser):
@@ -40,10 +37,10 @@ class Command(SimpleCommand):
                 self.print(' -', t)
 
             self.print()
-            self.print('%s is not a defined test suite. Create a TestCase in %s' % (
-                name,
-                " or ".join('%s.%s.%s' % (m, name, self.class_name) for m in self.modules)
-            ))
+            self.print(
+                '%s is not a defined test suite. Create a TestCase in %s' %
+                (name, " or ".join('%s.%s.%s' % (m, name, self.class_name)
+                                   for m in self.modules)))
 
             sys.exit(1)
 

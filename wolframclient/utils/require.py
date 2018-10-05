@@ -6,11 +6,10 @@ from functools import wraps
 
 from wolframclient.utils.api import pip
 
+
 def installed_modules():
-    return {
-        i.key: i.version
-        for i in pip.get_installed_distributions()
-    }
+    return {i.key: i.version for i in pip.get_installed_distributions()}
+
 
 def missing_requirements(*modules):
 
@@ -21,8 +20,10 @@ def missing_requirements(*modules):
         if isinstance(module, (tuple, list)):
             module, version = module
 
-        if not module in distributions or version and not distributions[module] == version:
+        if not module in distributions or version and not distributions[
+                module] == version:
             yield version and "%s==%s" % (module, version) or module
+
 
 def require_module(*modules):
 
@@ -37,11 +38,14 @@ def require_module(*modules):
         else:
             pip.main(["install", "--user"] + commands)
 
+
 def require(*modules):
     def outer(func):
         @wraps(func)
         def inner(*args, **kw):
             require_module(*modules)
             return func(*args, **kw)
+
         return inner
+
     return outer

@@ -2,42 +2,31 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import math
+
 from wolframclient.utils import six
 from wolframclient.utils.dispatch import ClassDispatch, Dispatch
 from wolframclient.utils.functional import partition, riffle
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
-import math
 
 class TestCase(BaseTestCase):
-
     def test_riffle(self):
         self.assertEqual(
-            list(riffle(range(5), "/")),
-            [0, "/", 1, "/", 2, "/", 3, "/", 4]
-        )
+            list(riffle(range(5), "/")), [0, "/", 1, "/", 2, "/", 3, "/", 4])
 
-        self.assertEqual(
-            list(riffle([], "/")),
-            []
-        )
+        self.assertEqual(list(riffle([], "/")), [])
 
     def test_partition(self):
 
         self.assertEqual(
-            list(partition(range(10), 5)),
-            [(0, 1, 2, 3, 4), (5, 6, 7, 8, 9)]
-        )
+            list(partition(range(10), 5)), [(0, 1, 2, 3, 4), (5, 6, 7, 8, 9)])
 
         self.assertEqual(
-            list(partition(range(10), 3)),
-            [(0, 1, 2), (3, 4, 5), (6, 7, 8), (9,)]
-        )
+            list(partition(range(10), 3)), [(0, 1, 2), (3, 4, 5), (6, 7, 8),
+                                            (9, )])
 
-        self.assertEqual(
-            list(partition([], 3)),
-            []
-        )
+        self.assertEqual(list(partition([], 3)), [])
 
     def test_dispatch(self):
 
@@ -56,8 +45,8 @@ class TestCase(BaseTestCase):
             return 'Hello %s' % o
 
         self.assertEqual(normalizer('Ric'), 'Hello Ric')
-        self.assertEqual(normalizer(2),     4)
-        self.assertEqual(normalizer(None),  None)
+        self.assertEqual(normalizer(2), 4)
+        self.assertEqual(normalizer(None), None)
 
     def test_dispatch_multi(self):
 
@@ -80,8 +69,8 @@ class TestCase(BaseTestCase):
             return a + b
 
         self.assertEqual(normalizer("a", "b"), ("a", "b"))
-        self.assertEqual(normalizer(1,   2  ), 3)
-        self.assertEqual(normalizer(1,   4.5), 5)
+        self.assertEqual(normalizer(1, 2), 3)
+        self.assertEqual(normalizer(1, 4.5), 5)
         self.assertEqual(normalizer(1.2, 4.5), 5.7)
 
     def test_class_dispatch(self):
@@ -89,7 +78,6 @@ class TestCase(BaseTestCase):
         dispatcher = ClassDispatch()
 
         class Foo(object):
-
             @dispatcher.default()
             def normalizer(self, o):
                 return o
@@ -103,5 +91,5 @@ class TestCase(BaseTestCase):
                 return o * 2
 
         self.assertEqual(Foo().normalizer('Ric'), 'Hello Ric')
-        self.assertEqual(Foo().normalizer(2),     4)
-        self.assertEqual(Foo().normalizer(None),  None)
+        self.assertEqual(Foo().normalizer(2), 4)
+        self.assertEqual(Foo().normalizer(None), None)

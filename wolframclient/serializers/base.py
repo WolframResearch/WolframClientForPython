@@ -2,20 +2,20 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import inspect
+import re
+
 from wolframclient.serializers.normalizer import Normalizer
 from wolframclient.utils import six
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import first
 
-import inspect
-import re
 
 class FormatSerializer(Normalizer):
-
     def dump(self, data, stream):
         raise NotImplementedError
 
-    def export(self, data, stream = None):
+    def export(self, data, stream=None):
         if stream:
             if isinstance(stream, six.string_types):
                 with open(stream, 'wb') as file:
@@ -56,79 +56,54 @@ class FormatSerializer(Normalizer):
     def serialize_raw_array(self, data, shape, wl_type):
 
         return self.serialize_function(
-            self.serialize_symbol('ArrayReshape'), (
-                self.serialize_function(
-                    self.serialize_symbol(b'NumericArray'), (
-                        self.serialize_string(wl_type),
-                        self.serialize_function(
-                            self.serialize_symbol('ImportByteArray'), (
-                                self.serialize_bytes(data),
-                                self.serialize_string(wl_type),
-                            )
-                        )
-                    )
-                ),
-                self.serialize_iterable(
-                    map(self.serialize_int, shape)
-                )
-            )
-        )
+            self.serialize_symbol('ArrayReshape'),
+            (self.serialize_function(
+                self.serialize_symbol(b'NumericArray'),
+                (self.serialize_string(wl_type),
+                 self.serialize_function(
+                     self.serialize_symbol('ImportByteArray'), (
+                         self.serialize_bytes(data),
+                         self.serialize_string(wl_type),
+                     )))),
+             self.serialize_iterable(map(self.serialize_int, shape))))
 
     def serialize_iterable(self, iterable):
         return self.serialize_function(
-            self.serialize_symbol(b'List'),
-            iterable
-        )
+            self.serialize_symbol(b'List'), iterable)
 
     def serialize_mapping(self, mappable):
         return self.serialize_function(
-            self.serialize_symbol(b'Association'), (
-                self.serialize_rule(key, value)
-                for key, value in mappable
-            )
-        )
+            self.serialize_symbol(b'Association'),
+            (self.serialize_rule(key, value) for key, value in mappable))
 
     def serialize_association(self, mappable):
         return self.serialize_function(
-            self.serialize_symbol(b'Association'), (
-                self.serialize_rule(key, value)
-                for key, value in mappable
-            )
-        )
+            self.serialize_symbol(b'Association'),
+            (self.serialize_rule(key, value) for key, value in mappable))
 
     def serialize_fraction(self, o):
         return self.serialize_function(
-            self.serialize_symbol(b'Rational'), (
-                self.serialize_int(o.numerator),
-                self.serialize_int(o.denominator)
-            )
-        )
+            self.serialize_symbol(b'Rational'), (self.serialize_int(
+                o.numerator), self.serialize_int(o.denominator)))
 
     def serialize_complex(self, o):
         return self.serialize_function(
             self.serialize_symbol(b'Complex'), (
                 self.serialize_float(o.real),
                 self.serialize_float(o.imag),
-            )
-        )
+            ))
 
     def serialize_rule(self, lhs, rhs):
         return self.serialize_function(
-            self.serialize_symbol(b'Rule'), (
-                lhs,
-                rhs
-            )
-        )
+            self.serialize_symbol(b'Rule'), (lhs, rhs))
 
     def serialize_rule_delayed(self, lhs, rhs):
         return self.serialize_function(
-            self.serialize_symbol(b'RuleDelayed'), (
-                lhs,
-                rhs
-            )
-        )
+            self.serialize_symbol(b'RuleDelayed'), (lhs, rhs))
 
-    def serialize_tzinfo(self, date, name_match = re.compile('^[A-Za-z]+(/[A-Za-z]+)?$')):
+    def serialize_tzinfo(self,
+                         date,
+                         name_match=re.compile('^[A-Za-z]+(/[A-Za-z]+)?$')):
 
         if date.tzinfo is None:
             return self.serialize_symbol(b"$TimeZone")
@@ -138,13 +113,14 @@ class FormatSerializer(Normalizer):
             if name and name_match.match(name):
                 return self.serialize_string(name)
 
-        return self.serialize_float(date.tzinfo.utcoffset(date).total_seconds() / 3600)
+        return self.serialize_float(
+            date.tzinfo.utcoffset(date).total_seconds() / 3600)
 
     def _serialize_external_object(self, o):
 
-        yield "Type",       "PythonFunction"
-        yield "Name",       force_text(o.__name__)
-        yield "BuiltIn",    inspect.isbuiltin(o),
+        yield "Type", "PythonFunction"
+        yield "Name", force_text(o.__name__)
+        yield "BuiltIn", inspect.isbuiltin(o),
 
         is_module = inspect.ismodule(o)
 
@@ -155,9 +131,9 @@ class FormatSerializer(Normalizer):
             if module:
                 yield "Module", force_text(module.__name__)
 
-        yield "IsClass",    inspect.isclass(o),
+        yield "IsClass", inspect.isclass(o),
         yield "IsFunction", inspect.isfunction(o),
-        yield "IsMethod",   inspect.ismethod(o),
+        yield "IsMethod", inspect.ismethod(o),
         yield "IsCallable", callable(o)
 
         if callable(o):
@@ -169,10 +145,6 @@ class FormatSerializer(Normalizer):
 
     def serialize_external_object(self, obj):
         return self.serialize_function(
-            self.serialize_symbol(b'ExternalObject'), (
-                self.serialize_mapping(
-                    (self.normalize(key), self.normalize(value))
-                    for key, value in self._serialize_external_object(obj)
-                ),
-            )
-        )
+            self.serialize_symbol(b'ExternalObject'), (self.serialize_mapping(
+                (self.normalize(key), self.normalize(value))
+                for key, value in self._serialize_external_object(obj)), ))

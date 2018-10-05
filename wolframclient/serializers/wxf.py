@@ -4,23 +4,25 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from itertools import chain
 
+import wolframclient.serializers.wxfencoder.wxfexpr as wxfexpr
 from wolframclient.serializers.base import FormatSerializer
 from wolframclient.serializers.utils import py_encode_decimal
 from wolframclient.serializers.wxfencoder.serializer import WXFExprSerializer
 from wolframclient.serializers.wxfencoder.wxfexpr import ARRAY_TYPES
 
-import wolframclient.serializers.wxfencoder.wxfexpr as wxfexpr
 
 class WXFSerializer(FormatSerializer):
     ''' TODO
     '''
-    def __init__(self, normalizer = None, compress = False, enforce = False, **opts):
-        super(WXFSerializer, self).__init__(normalizer = normalizer, **opts)
+
+    def __init__(self, normalizer=None, compress=False, enforce=False, **opts):
+        super(WXFSerializer, self).__init__(normalizer=normalizer, **opts)
         self.compress = compress
-        self.enforce  = enforce
+        self.enforce = enforce
 
     def dump(self, data, stream):
-        serializer = WXFExprSerializer(stream, enforce=self.enforce, compress = self.compress)
+        serializer = WXFExprSerializer(
+            stream, enforce=self.enforce, compress=self.compress)
         serializer.serialize(self.normalize(data))
         return stream
 
@@ -37,11 +39,8 @@ class WXFSerializer(FormatSerializer):
             args = tuple(args)
             l = len(args)
 
-        return chain(
-            (wxfexpr.WXFExprFunction(l), ),
-            head,
-            chain.from_iterable(args)
-        )
+        return chain((wxfexpr.WXFExprFunction(l), ), head,
+                     chain.from_iterable(args))
 
     #numeric
     def serialize_int(self, number):
@@ -69,18 +68,11 @@ class WXFSerializer(FormatSerializer):
     def serialize_mapping(self, keyvalue):
         #the normalizer is always sending an generator key, value
         keyvalue = tuple(keyvalue)
-        return chain(
-            (wxfexpr.WXFExprAssociation(len(keyvalue)), ),
-            chain.from_iterable(
-                chain((wxfexpr.WXFExprRuleDelayed(), ), key, value)
-                for key, value in keyvalue
-            )
-        )
+        return chain((wxfexpr.WXFExprAssociation(len(keyvalue)), ),
+                     chain.from_iterable(
+                         chain((wxfexpr.WXFExprRuleDelayed(), ), key, value)
+                         for key, value in keyvalue))
 
     def serialize_raw_array(self, data, shape, wl_type):
 
-        yield wxfexpr.WXFExprRawArray(
-            shape,
-            ARRAY_TYPES[wl_type],
-            data
-        )
+        yield wxfexpr.WXFExprRawArray(shape, ARRAY_TYPES[wl_type], data)

@@ -6,6 +6,7 @@ from wolframclient.utils.api import zlib
 from wolframclient.utils.encoding import force_bytes
 from wolframclient.utils.six import BytesIO
 
+
 class ZipCompressedWriter(object):
 
     __slots__ = '_compressor', '_writer'
@@ -30,8 +31,10 @@ class ZipCompressedWriter(object):
     def __exit__(self, type, value, traceback):
         self.flush()
 
+
 class ExactSizeReader(object):
     """ Read exactly the amount of bytes requested and fails otherwise."""
+
     def __init__(self, reader):
         self._reader = reader
 
@@ -58,6 +61,7 @@ class ExactSizeReader(object):
             data.write(chunk)
             out_len = out_len + len(chunk)
         return data.getvalue()
+
 
 class ZipCompressedReader(object):
     """A buffer implementation reading zip compressed data from a source buffer and returning uncompressed data.
@@ -98,7 +102,7 @@ class ZipCompressedReader(object):
                 data_in = self._reader.read(chunk_size)
                 # no more data is available.
                 if data_in == b'':
-                        break
+                    break
             # second step, decompress the new chunk
             if size > 0:
                 chunk = self._compressor.decompress(data_in, size - out_len)

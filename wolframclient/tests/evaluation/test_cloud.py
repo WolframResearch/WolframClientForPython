@@ -2,21 +2,25 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.evaluation.cloud.cloudsession import encode_api_inputs, url_join, WolframAPICall, WolframCloudSession, WolframCloudSessionAsync
-from wolframclient.evaluation.cloud.oauth import SecuredAuthenticationKey, UserIDPassword
-from wolframclient.tests.configure import json_config, MSG_JSON_NOT_FOUND
-from wolframclient.utils import six
-from wolframclient.utils.api import json
-from wolframclient.utils.encoding import force_text
-from wolframclient.language import wl
-from wolframclient.utils.tests import TestCase as BaseTestCase
-
 import logging
 import os
 import unittest
 
+from wolframclient.evaluation.cloud.cloudsession import (
+    WolframAPICall, WolframCloudSession, WolframCloudSessionAsync,
+    encode_api_inputs, url_join)
+from wolframclient.evaluation.cloud.oauth import (SecuredAuthenticationKey,
+                                                  UserIDPassword)
+from wolframclient.language import wl
+from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config
+from wolframclient.utils import six
+from wolframclient.utils.api import json
+from wolframclient.utils.encoding import force_text
+from wolframclient.utils.tests import TestCase as BaseTestCase
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestCaseSettings(BaseTestCase):
@@ -29,16 +33,14 @@ class TestCaseSettings(BaseTestCase):
         cloud_config = json_config['cloud_credentials']
         cls.sak = SecuredAuthenticationKey(
             cloud_config['SAK']['consumer_key'],
-            cloud_config['SAK']['consumer_secret']
-            )
-        cls.user_cred = UserIDPassword(
-            cloud_config['User']['id'],
-            cloud_config['User']['password']
-        )
+            cloud_config['SAK']['consumer_secret'])
+        cls.user_cred = UserIDPassword(cloud_config['User']['id'],
+                                       cloud_config['User']['password'])
         cls.api_owner = cloud_config.get('ApiOwner', 'dorianb')
 
         cls.cloud_session = WolframCloudSession(authentication=cls.sak)
-        cls.cloud_session_async = WolframCloudSessionAsync(authentication=cls.sak)
+        cls.cloud_session_async = WolframCloudSessionAsync(
+            authentication=cls.sak)
 
     @classmethod
     def tearDownClass(cls):
@@ -54,10 +56,10 @@ class TestCaseSettings(BaseTestCase):
         current_file_dir = os.path.dirname(__file__)
         return os.path.join(current_file_dir, '..', 'data', filename)
 
+
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 class TestCase(TestCaseSettings):
-
     def test_section_not_authorized(self):
         cloud_session = WolframCloudSession()
         self.assertEqual(cloud_session.authorized, False)
@@ -80,9 +82,8 @@ class TestCase(TestCaseSettings):
 
     def test_section_api_call_one_param(self):
         url = 'api/private/stringreverse'
-        response = self.cloud_session.call(
-            (self.api_owner, url),
-            input_parameters={'str': 'abcde'})
+        response = self.cloud_session.call((self.api_owner, url),
+                                           input_parameters={'str': 'abcde'})
         self.assertEqual('"edcba"', force_text(response.get()))
 
     def test_section_api_call_one_param_wrong(self):
@@ -97,18 +98,18 @@ class TestCase(TestCaseSettings):
         cloud_session = WolframCloudSession()
         self.assertFalse(cloud_session.authorized)
         response = cloud_session.call((self.api_owner, url),
-            input_parameters={'i': 5})
+                                      input_parameters={'i': 5})
         self.assertTrue(response.success)
         self.assertEqual(json.loads(response.get()), list(range(1, 6)))
 
     def test_section_api_call_two_param(self):
         api = (self.api_owner, 'api/private/range/formated/json')
         v_min, v_max, step = (1, 10, 2)
-        response = self.cloud_session.call(api,
-            input_parameters={
+        response = self.cloud_session.call(
+            api, input_parameters={
                 'min': v_min,
                 'max': v_max,
-                'step':step
+                'step': step
             })
         if not response.success:
             logger.warning(response.failure)
@@ -118,10 +119,7 @@ class TestCase(TestCaseSettings):
     def test_section_wl_error(self):
         api = (self.api_owner, "api/private/range/wlerror")
         i = 1
-        response = self.cloud_session.call(api,
-            input_parameters={
-                'i' : i
-            })
+        response = self.cloud_session.call(api, input_parameters={'i': i})
         self.assertFalse(response.success)
         self.assertEqual(response.response.status_code, 500)
 
@@ -170,19 +168,19 @@ class TestCase(TestCaseSettings):
 
     def test_evaluate_function_wl_option(self):
         f = self.cloud_session.function(wl.ArrayPad)
-        self.assertEqual(f([[1]], 1, Padding=1), '{{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}')
+        self.assertEqual(
+            f([[1]], 1, Padding=1), '{{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}')
 
     def test_evaluate_string(self):
         res1 = self.cloud_session_async.evaluate('Range[1]')
         res2 = self.cloud_session_async.evaluate('Range[2]')
-        
+
         self.assertEqual(res1.result(), '{1}')
         self.assertEqual(res2.result(), '{1, 2}')
 
     def test_evaluate_string(self):
         res = self.cloud_session_async.evaluate('Range[3]')
         self.assertEqual(res, '{1, 2, 3}')
-
 
     # url_join
 
@@ -207,7 +205,7 @@ class TestCase(TestCaseSettings):
         self.assertEqual(url, 'http://wolfram.com/foo')
 
     def test_extend(self):
-        url = url_join('http://wolfram.com/', 'foo','bar','baz')
+        url = url_join('http://wolfram.com/', 'foo', 'bar', 'baz')
         self.assertEqual(url, 'http://wolfram.com/foo/bar/baz')
 
     def test_extend_some_empty(self):
@@ -221,24 +219,42 @@ class TestCase(TestCaseSettings):
     # encode input parameters
 
     def test_encode_wl(self):
-        encoded = encode_api_inputs(
-            {'param1': {'k': [1, 2]}, 'param2': 'foo'})
-        self.assertEqual(
-            encoded, {'param1': b'<|"k" -> {1, 2}|>', 'param2': 'foo'})
+        encoded = encode_api_inputs({'param1': {'k': [1, 2]}, 'param2': 'foo'})
+        self.assertEqual(encoded, {
+            'param1': b'<|"k" -> {1, 2}|>',
+            'param2': 'foo'
+        })
 
     def test_encode_empty_dict(self):
         self.assertEqual(encode_api_inputs({}, target_format='json'), {})
 
     def test_encode_json_dict(self):
-        encoded = encode_api_inputs({'param1' : {'k' : [1,2]}, 'param2' : 'foo'}, target_format='json')
-        self.assertEqual(
-            encoded, {'param1__json': '{"k": [1, 2]}', 'param2__json': '"foo"'})
+        encoded = encode_api_inputs({
+            'param1': {
+                'k': [1, 2]
+            },
+            'param2': 'foo'
+        },
+                                    target_format='json')
+        self.assertEqual(encoded, {
+            'param1__json': '{"k": [1, 2]}',
+            'param2__json': '"foo"'
+        })
 
     def test_encode_wxf_dict(self):
-        encoded = encode_api_inputs(
-            {'param1': {'k': [1, 2]}, 'param2': 'foo'}, target_format='wxf')
+        encoded = encode_api_inputs({
+            'param1': {
+                'k': [1, 2]
+            },
+            'param2': 'foo'
+        },
+                                    target_format='wxf')
         self.assertEqual(
-            encoded, {'param1__wxf': b'8:A\x01:S\x01kf\x02s\x04ListC\x01C\x02', 'param2__wxf': b'8:S\x03foo'})
+            encoded, {
+                'param1__wxf': b'8:A\x01:S\x01kf\x02s\x04ListC\x01C\x02',
+                'param2__wxf': b'8:S\x03foo'
+            })
+
 
 class TestWolframAPI(TestCaseSettings):
     def test_wolfram_api_call_image(self):

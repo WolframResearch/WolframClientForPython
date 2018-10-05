@@ -5,8 +5,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.logger.utils import str_trim
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
-class TestCase(BaseTestCase):
 
+class TestCase(BaseTestCase):
     def test_str_trim_no_limit(self):
         self.assertEqual(str_trim('abcde'), 'abcde')
 

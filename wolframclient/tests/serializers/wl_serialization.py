@@ -2,9 +2,12 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import datetime
+import decimal
+import fractions
 from collections import OrderedDict
 
-from wolframclient.language import System, Global, wl
+from wolframclient.language import Global, System, wl
 from wolframclient.serializers import export
 from wolframclient.utils import six
 from wolframclient.utils.api import pytz
@@ -12,35 +15,24 @@ from wolframclient.utils.datastructures import Association
 from wolframclient.utils.encoding import force_bytes
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
-import datetime
-import decimal
-import fractions
 
 def test_datetime():
     return datetime.datetime(
-        year   = 2000,
-        month  = 1,
-        day    = 1,
-        hour   = 11,
-        minute = 15,
-        second = 20
-    )
+        year=2000, month=1, day=1, hour=11, minute=15, second=20)
+
 
 #you can run those tests by doing
 #> python wolfram.py test wolfram.tests.serialization
 
+
 class TestCase(BaseTestCase):
+    def dumps(self, data, target_format='wl', **opts):
+        return export(data, target_format=target_format, **opts)
 
-    def dumps(self, data, target_format = 'wl', **opts):
-        return export(data, target_format = target_format, **opts)
-
-    def compare(self, data, output = None, **opts):
+    def compare(self, data, output=None, **opts):
 
         if isinstance(output, six.binary_type):
-            self.assertEqual(
-                self.dumps(data, **opts),
-                output
-            )
+            self.assertEqual(self.dumps(data, **opts), output)
         else:
             self.assertEqual(
                 self.dumps(data, **opts),
@@ -49,78 +41,44 @@ class TestCase(BaseTestCase):
 
     def test_serialization(self):
 
-        self.compare(
-            [1, 2, 3],
-            b'{1, 2, 3}'
-        )
+        self.compare([1, 2, 3], b'{1, 2, 3}')
 
         #instances of dict are converted using RuleDelayed
 
         self.compare(
             OrderedDict(enumerate([2, True, False])),
-            b'<|0 -> 2, 1 -> True, 2 -> False|>'
-        )
+            b'<|0 -> 2, 1 -> True, 2 -> False|>')
 
         #instances of Association are converted using Rule, in WXF they use WXFFunction
 
         self.compare(
-            Association(enumerate("abc")),
-            b'<|0 -> "a", 1 -> "b", 2 -> "c"|>'
-        )
+            Association(enumerate("abc")), b'<|0 -> "a", 1 -> "b", 2 -> "c"|>')
 
-        self.compare(
-            dict(a = 2),
-            b'<|"a" -> 2|>'
-        )
+        self.compare(dict(a=2), b'<|"a" -> 2|>')
 
-        self.compare(
-            wl.YetAnotherSymbol,
-            b'YetAnotherSymbol'
-        )
-        self.compare(
-            wl.Expression(1, 2, 3),
-            b'Expression[1, 2, 3]'
-        )
+        self.compare(wl.YetAnotherSymbol, b'YetAnotherSymbol')
+        self.compare(wl.Expression(1, 2, 3), b'Expression[1, 2, 3]')
         self.compare(
             wl.CurriedExpression(1, 2, 3)(4, 5, 6),
-            b'CurriedExpression[1, 2, 3][4, 5, 6]'
-        )
+            b'CurriedExpression[1, 2, 3][4, 5, 6]')
 
-        self.compare(
-            System.YetAnotherSymbol,
-            b"System`YetAnotherSymbol"
-        )
-        self.compare(
-            System.Expression(1, 2, 3),
-            b'System`Expression[1, 2, 3]'
-        )
+        self.compare(System.YetAnotherSymbol, b"System`YetAnotherSymbol")
+        self.compare(System.Expression(1, 2, 3), b'System`Expression[1, 2, 3]')
         self.compare(
             System.CurriedExpression(1, 2, 3)(4, 5, 6),
-            b'System`CurriedExpression[1, 2, 3][4, 5, 6]'
-        )
+            b'System`CurriedExpression[1, 2, 3][4, 5, 6]')
 
         self.compare(
-            System.Expression(1, a = 2),
-            b'System`Expression[1, Rule[a, 2]]'
-        )
+            System.Expression(1, a=2), b'System`Expression[1, Rule[a, 2]]')
 
-        self.compare(
-            Global.YetAnotherSymbol,
-            b"Global`YetAnotherSymbol"
-        )
-        self.compare(
-            Global.Expression(1, 2, 3),
-            b'Global`Expression[1, 2, 3]'
-        )
+        self.compare(Global.YetAnotherSymbol, b"Global`YetAnotherSymbol")
+        self.compare(Global.Expression(1, 2, 3), b'Global`Expression[1, 2, 3]')
         self.compare(
             Global.CurriedExpression(1, 2, 3)(4, 5, 6),
-            b'Global`CurriedExpression[1, 2, 3][4, 5, 6]'
-        )
+            b'Global`CurriedExpression[1, 2, 3][4, 5, 6]')
 
         self.compare(
-            Global.Expression(1, a=2),
-            b'Global`Expression[1, Rule[a, 2]]'
-        )
+            Global.Expression(1, a=2), b'Global`Expression[1, Rule[a, 2]]')
 
     def test_datetime(self):
 
@@ -139,28 +97,21 @@ class TestCase(BaseTestCase):
 
     def test_date(self):
 
-        self.compare(
-            test_datetime().date(),
-            b'DateObject[{2000, 1, 1}]'
-        )
+        self.compare(test_datetime().date(), b'DateObject[{2000, 1, 1}]')
 
     def test_timedelta(self):
 
         self.compare(
-            datetime.timedelta(minutes = 1, seconds = 30),
-            b'Quantity[90.000000, "Seconds"]'
-        )
+            datetime.timedelta(minutes=1, seconds=30),
+            b'Quantity[90.000000, "Seconds"]')
 
     def test_time(self):
 
-        self.compare(
-            test_datetime().time(),
-            b'TimeObject[{11, 15, 20.000000}]'
-        )
+        self.compare(test_datetime().time(),
+                     b'TimeObject[{11, 15, 20.000000}]')
         self.compare(
             pytz.timezone("Europe/Rome").localize(test_datetime()).timetz(),
-            b'TimeObject[{11, 15, 20.000000}, TimeZone -> 1.000000]'
-        )
+            b'TimeObject[{11, 15, 20.000000}, TimeZone -> 1.000000]')
 
     def test_symbol_factory(self):
 
@@ -169,38 +120,48 @@ class TestCase(BaseTestCase):
         self.compare(wl.System.Map, b'System`Map')
         self.compare(wl.System.Symbol(1, 2), b'System`Symbol[1, 2]')
         self.compare(wl.This.Thing.Just.Works, b'This`Thing`Just`Works')
-        self.compare(wl.This.Thing.Just.Works(1, 2), b'This`Thing`Just`Works[1, 2]')
+        self.compare(
+            wl.This.Thing.Just.Works(1, 2), b'This`Thing`Just`Works[1, 2]')
 
     def test_encoding(self):
 
-        self.compare("\t",  b'"\\t"')
-        self.compare("\n",  b'"\\n"')
+        self.compare("\t", b'"\\t"')
+        self.compare("\n", b'"\\n"')
         self.compare("a\\", b'"a\\\\"')
 
     def test_numeric(self):
 
         prec = decimal.getcontext().prec
 
-        self.compare(decimal.Decimal(10**20),          force_bytes(u'100000000000000000000``%i' % prec))
-        self.compare(decimal.Decimal('100'),           force_bytes(u'100``%i' % prec))
-        self.compare(decimal.Decimal('100.00'),        force_bytes(u'100.00``%i' % prec))
-        self.compare(decimal.Decimal('0.010'),         force_bytes(u'0.010``%i' % prec))
-        self.compare(decimal.Decimal('0.1534'),        force_bytes(u'0.1534``%i' % prec))
-        self.compare(decimal.Decimal('0.0000000010'),  force_bytes(u'0.0000000010``%i' % prec))
+        self.compare(
+            decimal.Decimal(10**20),
+            force_bytes(u'100000000000000000000``%i' % prec))
+        self.compare(decimal.Decimal('100'), force_bytes(u'100``%i' % prec))
+        self.compare(
+            decimal.Decimal('100.00'), force_bytes(u'100.00``%i' % prec))
+        self.compare(
+            decimal.Decimal('0.010'), force_bytes(u'0.010``%i' % prec))
+        self.compare(
+            decimal.Decimal('0.1534'), force_bytes(u'0.1534``%i' % prec))
+        self.compare(
+            decimal.Decimal('0.0000000010'),
+            force_bytes(u'0.0000000010``%i' % prec))
 
-        self.compare(decimal.Decimal('0'),             force_bytes(u'0``%i' % prec))
-        self.compare(decimal.Decimal('0.0'),           force_bytes(u'0.0``%i' % prec))
-        self.compare(decimal.Decimal('0.0000000000'),  force_bytes(u'0.0000000000``%i' % prec))
+        self.compare(decimal.Decimal('0'), force_bytes(u'0``%i' % prec))
+        self.compare(decimal.Decimal('0.0'), force_bytes(u'0.0``%i' % prec))
+        self.compare(
+            decimal.Decimal('0.0000000000'),
+            force_bytes(u'0.0000000000``%i' % prec))
 
-        self.compare(fractions.Fraction(1, 2),         wl.Rational(1, 2))
+        self.compare(fractions.Fraction(1, 2), wl.Rational(1, 2))
 
-        self.compare(float('0.150000'),          b'0.150000')
+        self.compare(float('0.150000'), b'0.150000')
 
         for special, result in (
-            [float('inf'),  self.dumps(wl.DirectedInfinity(1))],
+            [float('inf'), self.dumps(wl.DirectedInfinity(1))],
             [float('-inf'), self.dumps(wl.DirectedInfinity(-1))],
-            [float('nan'),  self.dumps(wl.Indeterminate)],
-            ):
+            [float('nan'), self.dumps(wl.Indeterminate)],
+        ):
             self.compare(special, result)
             self.compare(decimal.Decimal(special), result)
 
@@ -208,14 +169,10 @@ class TestCase(BaseTestCase):
 
         if six.PY2:
             self.compare(
-                buffer(b'Hello world', 6, 5),
-                b'ByteArray["d29ybGQ="]'
-            )
+                buffer(b'Hello world', 6, 5), b'ByteArray["d29ybGQ="]')
         else:
             self.compare(
-                memoryview(b'Hello world'),
-                b'ByteArray["SGVsbG8gd29ybGQ="]'
-            )
+                memoryview(b'Hello world'), b'ByteArray["SGVsbG8gd29ybGQ="]')
 
     def test_hashing(self):
 
@@ -227,9 +184,7 @@ class TestCase(BaseTestCase):
                 [wl.a, wl.a(3)],
                 [wl.a(2), wl.a(2)],
                 [wl.a(2), wl.a(3)],
-            ]),
-            b'<|a -> a[3], a[2] -> a[3]|>'
-        )
+            ]), b'<|a -> a[3], a[2] -> a[3]|>')
 
         self.assertEqual(wl.a == wl.a, True)
         self.assertEqual(wl.a(2) == wl.a(2), True)

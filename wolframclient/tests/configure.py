@@ -2,12 +2,13 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import json
+
 from wolframclient.logger.utils import setup_logging_to_file
 from wolframclient.utils.api import os
 
-import json
-
 __all__ = ['create_dir_if_missing', 'dir_test_data', 'json_config']
+
 
 def create_dir_if_missing(path):
     ''' Create the directory structure represented by a `path`.
@@ -22,10 +23,12 @@ def create_dir_if_missing(path):
     if not os.exists(file_dir):
         os.makedirs(file_dir)
 
+
 def dir_test_data():
     ''' Return path to the data directory in tests'''
     current_file_dir = os.dirname(__file__)
     return os.path_join(current_file_dir, 'data')
+
 
 log_file = os.environ.get('WOLFRAMCLIENT_PY_LOG_FILE', None)
 if log_file is not None:

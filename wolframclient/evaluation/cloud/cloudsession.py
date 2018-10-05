@@ -2,20 +2,22 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import logging
+
 from wolframclient.evaluation.cloud.oauth import OAuthSession
 from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
-from wolframclient.evaluation.result import WolframAPIResponseBuilder, WolframEvaluationJSONResponse
+from wolframclient.evaluation.result import (WolframAPIResponseBuilder,
+                                             WolframEvaluationJSONResponse)
 from wolframclient.exception import AuthenticationException
 from wolframclient.language import wl
 from wolframclient.serializers import export
 from wolframclient.utils import six
 from wolframclient.utils.api import futures, json, requests
 
-import logging
-
 logger = logging.getLogger(__name__)
 
 __all__ = ['WolframCloudSession', 'WolframCloudSessionAsync', 'WolframAPICall']
+
 
 class WolframCloudSession(object):
     """Represent a session to a given cloud enabling simple API call.
@@ -66,13 +68,14 @@ class WolframCloudSession(object):
         self.consumer = self.authentication.consumer_key
         self.consumer_secret = self.authentication.consumer_secret
         self.is_xauth = False
-        self.oauth = OAuthSession(
-            self.server, self.consumer, self.consumer_secret)
+        self.oauth = OAuthSession(self.server, self.consumer,
+                                  self.consumer_secret)
         self.oauth.auth()
 
     def user_authentication(self):
         if not self.server.is_xauth():
-            raise AuthenticationException('XAuth is not configured. Missing consumer key and/or secret.')
+            raise AuthenticationException(
+                'XAuth is not configured. Missing consumer key and/or secret.')
         self.user = self.authentication.user
         self.password = self.authentication.password
         self.is_xauth = True
@@ -96,7 +99,8 @@ class WolframCloudSession(object):
             return True
         # is_xauth was set but the process authentication already failed once. Retry.
         else:
-            logger.warn('Not authenticated. Retrying to authenticate with the server.')
+            logger.warn(
+                'Not authenticated. Retrying to authenticate with the server.')
             self.authenticate()
             return self.oauth is not None and self.oauth.authorized
 
@@ -105,13 +109,25 @@ class WolframCloudSession(object):
         headers['User-Agent'] = 'WolframClientForPython/1.0'
         if self.authorized:
             logger.info('Authenticated call to api %s', url)
-            return self.oauth.signed_request(url, headers=headers, body=body, files=files)
+            return self.oauth.signed_request(
+                url, headers=headers, body=body, files=files)
         else:
             logger.info('Anonymous call to api %s', url)
             return requests.post(
-                url, params=params, headers=headers, data=body, files=files, verify=self.server.verify)
+                url,
+                params=params,
+                headers=headers,
+                data=body,
+                files=files,
+                verify=self.server.verify)
 
-    def call(self, api, input_parameters={}, files={}, target_format='wl', permissions_key=None, **kwargv):
+    def call(self,
+             api,
+             input_parameters={},
+             files={},
+             target_format='wl',
+             permissions_key=None,
+             **kwargv):
         """Call a given API, using the provided input parameters.
 
         `api` can be a string url or a :class:`tuple` (`username`, `api name`). User name is
@@ -137,10 +153,15 @@ class WolframCloudSession(object):
         and get access to a given resource.
         """
         url = self._user_api_url(api)
-        params = {'_key': permissions_key} if permissions_key is not None else {}
+        params = {
+            '_key': permissions_key
+        } if permissions_key is not None else {}
         is_multipart = isinstance(files, dict) and len(files) > 0
         encoded_inputs = encode_api_inputs(
-            input_parameters, target_format=target_format, multipart=is_multipart, **kwargv)
+            input_parameters,
+            target_format=target_format,
+            multipart=is_multipart,
+            **kwargv)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Encoded input %s', encoded_inputs)
         # in multipart requests we have to merge input parameters with files.
@@ -157,10 +178,12 @@ class WolframCloudSession(object):
         '''Build an API URL from a user name and an API id. '''
         if isinstance(api, tuple) or isinstance(api, list):
             if len(api) == 2:
-                return url_join(self.server.cloudbase, 'objects', api[0], api[1])
+                return url_join(self.server.cloudbase, 'objects', api[0],
+                                api[1])
             else:
                 raise ValueError(
-                    'Target api specified as a tuple must have two elements: the user name, the API name.')
+                    'Target api specified as a tuple must have two elements: the user name, the API name.'
+                )
         elif isinstance(api, six.string_types):
             return api
         else:
@@ -168,21 +191,22 @@ class WolframCloudSession(object):
                 'Invalid API description. Expecting string or tuple.')
 
     def _evaluation_api_url(self):
-        return url_join(self.server.cloudbase, 'evaluations?_responseform=json')
+        return url_join(self.server.cloudbase,
+                        'evaluations?_responseform=json')
 
     def _call_evaluation_api(self, data):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(
                 'Sending expression to cloud server for evaluation: %s', data)
-        if not isinstance(data, six.string_types) and not isinstance(data, six.binary_type):
+        if not isinstance(data, six.string_types) and not isinstance(
+                data, six.binary_type):
             raise ValueError('Expecting string input, unicode or binary.')
-        response = self._post(
-            self.evaluation_api_url,
-            body=data)
+        response = self._post(self.evaluation_api_url, body=data)
         return WolframEvaluationJSONResponse(response)
 
     def _normalize_input(self, expr, **kwargs):
-        if isinstance(expr, six.string_types) or isinstance(expr, six.binary_type):
+        if isinstance(expr, six.string_types) or isinstance(
+                expr, six.binary_type):
             return expr
         else:
             return export(expr, **kwargs)
@@ -193,7 +217,8 @@ class WolframCloudSession(object):
         `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export`,
         or a the string InputForm of an expression to evaluate.
         """
-        return self._call_evaluation_api(self._normalize_input(expr, **kwargs)).get()
+        return self._call_evaluation_api(
+            self._normalize_input(expr, **kwargs)).get()
 
     def evaluate_wrap(self, expr, **kwargs):
         """ Similar to :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframEvaluationJSONResponse`.
@@ -210,7 +235,9 @@ class WolframCloudSession(object):
         return CloudFunction(self, func)
 
     def __repr__(self):
-        return '<{}:base={}, authorized={}>'.format(self.__class__.__name__, self.server.cloudbase, self.authorized)
+        return '<{}:base={}, authorized={}>'.format(
+            self.__class__.__name__, self.server.cloudbase, self.authorized)
+
 
 class WolframCloudSessionAsync(WolframCloudSession):
     ''' A Wolfram cloud session that call issue asynchronous call.
@@ -218,6 +245,7 @@ class WolframCloudSessionAsync(WolframCloudSession):
     Contrary to :class:`~wolframclient.evaluation.WolframCloudSession`, this
     class must be terminated when no more used.
     '''
+
     def __init__(self, authentication=None, server=WolframPublicCloudServer):
         super(WolframCloudSessionAsync, self).__init__(authentication, server)
         self.thread_pool_exec = None
@@ -239,10 +267,16 @@ class WolframCloudSessionAsync(WolframCloudSession):
             except ImportError:
                 logger.fatal('Module concurrent.futures is missing.')
                 raise NotImplementedError(
-                    'Asynchronous evaluation is not available for this Python interpreter.')
+                    'Asynchronous evaluation is not available for this Python interpreter.'
+                )
         return self.thread_pool_exec
 
-    def call_async(self, api, input_parameters={}, target_format='wl', permissions_key=None, **kwargv):
+    def call_async(self,
+                   api,
+                   input_parameters={},
+                   target_format='wl',
+                   permissions_key=None,
+                   **kwargv):
         """Call a given API asynchronously. Returns a :class:`concurrent.futures.Future` object.
 
         This method requires :mod:`concurrent.futures` which was introduced in `Python 3.2`.
@@ -252,7 +286,12 @@ class WolframCloudSessionAsync(WolframCloudSession):
             Asynchronous evaluation is only available for `Python 3.2` and above.
         """
         return self._thread_pool_exec().submit(
-            self.call, api, input_parameters=input_parameters, target_format=target_format, permissions_key=permissions_key, **kwargv)
+            self.call,
+            api,
+            input_parameters=input_parameters,
+            target_format=target_format,
+            permissions_key=permissions_key,
+            **kwargv)
 
     def evaluate_async(self, expr):
         """Send `expr` to the cloud for asynchronous evaluation.
@@ -266,10 +305,8 @@ class WolframCloudSessionAsync(WolframCloudSession):
         .. warning::
             Asynchronous evaluation is only available for `Python 3.2` and above.
         """
-        return self._thread_pool_exec().submit(
-            self._call_evaluation_api,
-            self._normalize_input(expr)
-            )
+        return self._thread_pool_exec().submit(self._call_evaluation_api,
+                                               self._normalize_input(expr))
 
     def function(self, func, asynchronous=False):
         """Return a `callable` cloud function.
@@ -282,6 +319,7 @@ class WolframCloudSessionAsync(WolframCloudSession):
             Asynchronous evaluation is only available for `Python 3.2` and above.
         """
         return CloudFunction(self, func, asynchronous=asynchronous)
+
 
 class WolframAPICall(object):
     """Perform an API call to a given target.
@@ -315,14 +353,20 @@ class WolframAPICall(object):
             self.files[name] = ('tmp_%s' % name, fp, content_type)
         return self
 
-    def add_binary_parameter(self, name, data, content_type='application/octet-stream'):
+    def add_binary_parameter(self,
+                             name,
+                             data,
+                             content_type='application/octet-stream'):
         """Add a new API input parameter as a blob of binary data."""
         if not isinstance(data, six.binary_type):
             raise TypeError('Input data by bytes.')
         self.files[name] = ('tmp_%s' % name, data, content_type)
         return self
 
-    def add_image_data_parameter(self, name, image_data, content_type='image/png'):
+    def add_image_data_parameter(self,
+                                 name,
+                                 image_data,
+                                 content_type='image/png'):
         """Add a new API image input parameter from binary data.
 
         If the data in `image_data` does not represent an image in the `PNG` format, the
@@ -337,24 +381,28 @@ class WolframAPICall(object):
 
     def perform(self, **kwargs):
         """Make the API call, return the result."""
-        return self.target.call(self.api,
-                                input_parameters=self.parameters,
-                                files=self.files,
-                                permissions_key=self.permission_key, **kwargs)
+        return self.target.call(
+            self.api,
+            input_parameters=self.parameters,
+            files=self.files,
+            permissions_key=self.permission_key,
+            **kwargs)
 
     def __repr__(self):
-        return 'WolframAPICall<api=%s>' % (self.api,)
+        return 'WolframAPICall<api=%s>' % (self.api, )
 
     def __str__(self):
         return repr(self)
 
+
 class CloudFunction(object):
-    
+
     __slots__ = 'session', 'wlfunc', 'evaluation_func'
-    
+
     def __init__(self, session, func, asynchronous=False):
         self.session = session
-        if isinstance(func, six.string_types) or isinstance(func, six.binary_type):
+        if isinstance(func, six.string_types) or isinstance(
+                func, six.binary_type):
             self.wlfunc = wl.ToExpression(func)
         else:
             self.wlfunc = func
@@ -364,10 +412,12 @@ class CloudFunction(object):
             self.evaluation_func = session.__class__.evaluate
 
     def __call__(self, *args, **kwargs):
-        return self.evaluation_func(self.session, wl.Construct(self.wlfunc, *args, **kwargs))
+        return self.evaluation_func(self.session,
+                                    wl.Construct(self.wlfunc, *args, **kwargs))
 
     def __repr__(self):
         return 'CloudFunction<function=%s>' % (self.wlfunc)
+
 
 def _encode_inputs_as_wxf(inputs, multipart, **kwargs):
     encoded_inputs = {}
@@ -377,6 +427,7 @@ def _encode_inputs_as_wxf(inputs, multipart, **kwargs):
         update_parameter_list(encoded_inputs, wxf_name, wxf_value, multipart)
     return encoded_inputs
 
+
 def _encode_inputs_as_json(inputs, multipart, **kwargs):
     encoded_inputs = {}
     for name, value in inputs.items():
@@ -384,6 +435,7 @@ def _encode_inputs_as_json(inputs, multipart, **kwargs):
         json_value = json.dumps(value, **kwargs)
         update_parameter_list(encoded_inputs, name, json_value, multipart)
     return encoded_inputs
+
 
 def _encode_inputs_as_wl(inputs, multipart, **kwargs):
     encoded_inputs = {}
@@ -393,8 +445,10 @@ def _encode_inputs_as_wl(inputs, multipart, **kwargs):
             update_parameter_list(encoded_inputs, name, value, multipart)
         else:
             exported_value = export(value, target_format='wl', **kwargs)
-            update_parameter_list(encoded_inputs, name, exported_value, multipart)
+            update_parameter_list(encoded_inputs, name, exported_value,
+                                  multipart)
     return encoded_inputs
+
 
 def update_parameter_list(parameters, name, value, multipart=False):
     ''' Update the given :class:`~parameters` with a new inputs using the appropriate form based on `multipart`.
@@ -404,11 +458,13 @@ def update_parameter_list(parameters, name, value, multipart=False):
     else:
         parameters[name] = value
 
+
 SUPPORTED_ENCODING_FORMATS = {
     'json': _encode_inputs_as_json,
-    'wxf':  _encode_inputs_as_wxf,
-    'wl':   _encode_inputs_as_wl
+    'wxf': _encode_inputs_as_wxf,
+    'wl': _encode_inputs_as_wl
 }
+
 
 def encode_api_inputs(inputs, target_format='wl', multipart=False, **kwargs):
     if len(inputs) == 0:
@@ -416,10 +472,12 @@ def encode_api_inputs(inputs, target_format='wl', multipart=False, **kwargs):
 
     encoder = SUPPORTED_ENCODING_FORMATS.get(target_format, None)
     if encoder is None:
-        raise ValueError('Invalid encoding format %s. Choices are: %s' % (
-            target_format, ', '.join(SUPPORTED_ENCODING_FORMATS.keys())))
+        raise ValueError(
+            'Invalid encoding format %s. Choices are: %s' %
+            (target_format, ', '.join(SUPPORTED_ENCODING_FORMATS.keys())))
 
     return encoder(inputs, multipart, **kwargs)
+
 
 def url_join(*fragments):
     ''' Join fragments of a URL, dealing with slashes.'''

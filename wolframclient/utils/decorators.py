@@ -5,16 +5,22 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.utils.datastructures import Association
 from wolframclient.utils.functional import composition
 
+
 def decorate(*func):
     comp = composition(*func)
+
     def multipass(fn):
         def caller(*args, **opts):
             return comp(fn(*args, **opts))
+
         return caller
+
     return multipass
 
+
 to_tuple = decorate(tuple)
-to_dict  = decorate(Association)
+to_dict = decorate(Association)
+
 
 class cached_property(object):
     """
@@ -24,6 +30,7 @@ class cached_property(object):
     Optional ``name`` argument allows you to make cached properties of other
     methods. (e.g.  url = cached_property(get_absolute_url, name='url') )
     """
+
     def __init__(self, func, name=None):
         self.func = func
         self.__doc__ = getattr(func, '__doc__')

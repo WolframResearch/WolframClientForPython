@@ -2,11 +2,11 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import math
+
 from wolframclient.utils import six
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import identity
-
-import math
 
 if six.PY2:
     #in py2 if you construct use dict(a=2) then "a" is binary
@@ -19,8 +19,8 @@ if six.PY2:
 else:
     safe_key = identity
 
-def update_dispatch(dispatch):
 
+def update_dispatch(dispatch):
     @dispatch.multi((bool, six.none_type))
     def normalizer(self, o):
         return self.serialize_symbol('%s' % o)
@@ -35,10 +35,9 @@ def update_dispatch(dispatch):
 
     @dispatch.multi(dict)
     def normalizer(self, o):
-        return self.serialize_mapping(
-            (self.normalize(safe_key(key)), self.normalize(value))
-            for key, value in o.items()
-        )
+        return self.serialize_mapping((self.normalize(safe_key(key)),
+                                       self.normalize(value))
+                                      for key, value in o.items())
 
     @dispatch.multi(six.integer_types)
     def normalizer(self, o):
@@ -49,10 +48,8 @@ def update_dispatch(dispatch):
 
         if math.isinf(o):
             return self.serialize_function(
-                self.serialize_symbol(b"DirectedInfinity"), (
-                    self.serialize_int(o < 0 and -1 or 1),
-                )
-            )
+                self.serialize_symbol(b"DirectedInfinity"),
+                (self.serialize_int(o < 0 and -1 or 1), ))
 
         if math.isnan(o):
             return self.serialize_symbol(b"Indeterminate")
@@ -65,7 +62,4 @@ def update_dispatch(dispatch):
 
     @dispatch.multi(six.iterable_types)
     def normalizer(self, o):
-        return self.serialize_iterable(
-            self.normalize(value)
-            for value in o
-        )
+        return self.serialize_iterable(self.normalize(value) for value in o)

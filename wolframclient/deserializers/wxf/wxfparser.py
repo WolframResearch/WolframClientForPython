@@ -4,9 +4,13 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.exception import WolframParserException
 from wolframclient.serializers.wxfencoder import wxfexpr
-from wolframclient.serializers.wxfencoder.serializer import SerializationContext, WXF_HEADER_COMPRESS, WXF_HEADER_SEPARATOR, WXF_VERSION
-from wolframclient.serializers.wxfencoder.streaming import ExactSizeReader, ZipCompressedReader
-from wolframclient.utils.six import binary_type, BytesIO, integer_types
+from wolframclient.serializers.wxfencoder.serializer import (
+    WXF_HEADER_COMPRESS, WXF_HEADER_SEPARATOR, WXF_VERSION,
+    SerializationContext)
+from wolframclient.serializers.wxfencoder.streaming import (
+    ExactSizeReader, ZipCompressedReader)
+from wolframclient.utils.six import BytesIO, binary_type, integer_types
+
 
 class WXFParser(object):
     """Parse a WXF input.
@@ -32,24 +36,22 @@ class WXFParser(object):
     """
 
     _mapping = {
-        wxfexpr.WXF_CONSTANTS.Symbol:       'token_for_string',
-        wxfexpr.WXF_CONSTANTS.String:       'token_for_string',
-        wxfexpr.WXF_CONSTANTS.BigInteger:   'token_for_string',
-        wxfexpr.WXF_CONSTANTS.BigReal:      'token_for_string',
-
-        wxfexpr.WXF_CONSTANTS.Function:     'token_for_function',
+        wxfexpr.WXF_CONSTANTS.Symbol: 'token_for_string',
+        wxfexpr.WXF_CONSTANTS.String: 'token_for_string',
+        wxfexpr.WXF_CONSTANTS.BigInteger: 'token_for_string',
+        wxfexpr.WXF_CONSTANTS.BigReal: 'token_for_string',
+        wxfexpr.WXF_CONSTANTS.Function: 'token_for_function',
         wxfexpr.WXF_CONSTANTS.BinaryString: 'token_for_binary_string',
-        wxfexpr.WXF_CONSTANTS.Integer8:     'token_for_integer8',
-        wxfexpr.WXF_CONSTANTS.Integer16:    'token_for_integer16',
-        wxfexpr.WXF_CONSTANTS.Integer32:    'token_for_integer32',
-        wxfexpr.WXF_CONSTANTS.Integer64:    'token_for_integer64',
-        wxfexpr.WXF_CONSTANTS.Real64:       'token_for_real64',
-
-        wxfexpr.WXF_CONSTANTS.PackedArray:  'token_for_packed_array',
-        wxfexpr.WXF_CONSTANTS.RawArray:     'token_for_raw_array',
-        wxfexpr.WXF_CONSTANTS.Association:  'token_for_association',
-        wxfexpr.WXF_CONSTANTS.Rule:         'token_for_rule',
-        wxfexpr.WXF_CONSTANTS.RuleDelayed:  'token_for_rule'
+        wxfexpr.WXF_CONSTANTS.Integer8: 'token_for_integer8',
+        wxfexpr.WXF_CONSTANTS.Integer16: 'token_for_integer16',
+        wxfexpr.WXF_CONSTANTS.Integer32: 'token_for_integer32',
+        wxfexpr.WXF_CONSTANTS.Integer64: 'token_for_integer64',
+        wxfexpr.WXF_CONSTANTS.Real64: 'token_for_real64',
+        wxfexpr.WXF_CONSTANTS.PackedArray: 'token_for_packed_array',
+        wxfexpr.WXF_CONSTANTS.RawArray: 'token_for_raw_array',
+        wxfexpr.WXF_CONSTANTS.Association: 'token_for_association',
+        wxfexpr.WXF_CONSTANTS.Rule: 'token_for_rule',
+        wxfexpr.WXF_CONSTANTS.RuleDelayed: 'token_for_rule'
     }
 
     def __init__(self, wxf_input):
@@ -61,8 +63,9 @@ class WXFParser(object):
         elif hasattr(wxf_input, 'read'):
             self.reader = wxf_input
         else:
-            raise TypeError('Class %s neither implements a read method nor is a binary type.' %
-                            wxf_input.__class__.__name__)
+            raise TypeError(
+                'Class %s neither implements a read method nor is a binary type.'
+                % wxf_input.__class__.__name__)
         version, compress = self.parse_header()
         if compress == True:
             self.reader = ZipCompressedReader(self.reader)
@@ -82,8 +85,7 @@ class WXFParser(object):
             version = int(next_byte)
             next_byte = self.reader.read(1)
         else:
-            raise WolframParserException(
-                'Invalid version %s.' % next_byte)
+            raise WolframParserException('Invalid version %s.' % next_byte)
         if next_byte == WXF_HEADER_COMPRESS:
             compress = True
             next_byte = self.reader.read(1)
@@ -101,10 +103,12 @@ class WXFParser(object):
         for i in range(rank):
             dim = parse_varint(self.reader)
             if dim == 0:
-                raise WolframParserException('Array dimensions cannot be zero.')
+                raise WolframParserException(
+                    'Array dimensions cannot be zero.')
             token.dimensions.append(dim)
         # reading values
-        bytecount = wxfexpr.ARRAY_TYPES_ELEM_SIZE[token.array_type] * token.element_count
+        bytecount = wxfexpr.ARRAY_TYPES_ELEM_SIZE[
+            token.array_type] * token.element_count
         token.data = self.reader.read(bytecount)
 
     def token_for_string(self, token):
@@ -154,7 +158,8 @@ class WXFParser(object):
 
     def token_for_rule(self, token):
         if not self.context.is_rule_valid():
-            raise WolframParserException('Rule and RuleDelayed must be parts of an Association.')
+            raise WolframParserException(
+                'Rule and RuleDelayed must be parts of an Association.')
         self.context.step_into_new_rule()
         return token
 
@@ -162,7 +167,8 @@ class WXFParser(object):
         self.context.add_part()
         token.array_type = self.reader.read(1)
         if token.array_type not in wxfexpr.VALID_PACKED_ARRAY_TYPES:
-            raise WolframParserException('Invalid PackedArray value type: %s' % token.array_type)
+            raise WolframParserException(
+                'Invalid PackedArray value type: %s' % token.array_type)
         self.parse_array(token)
         return token
 
@@ -170,7 +176,8 @@ class WXFParser(object):
         self.context.add_part()
         token.array_type = self.reader.read(1)
         if token.array_type not in wxfexpr.ARRAY_TYPES_ELEM_SIZE:
-            raise WolframParserException('Invalid RawArray value type: %s' % token.array_type)
+            raise WolframParserException(
+                'Invalid RawArray value type: %s' % token.array_type)
         self.parse_array(token)
         return token
 
@@ -192,6 +199,7 @@ class WXFParser(object):
             raise WolframParserException('Unexpected token %s' % next_byte)
 
         return getattr(self, handler)(WXFToken(next_byte))
+
 
 class WXFToken(object):
     """Represent a WXF element, often referred as WXF tokens.
@@ -233,9 +241,11 @@ class WXFToken(object):
 
     def __str__(self):
         if self.length is not None:
-            return 'WXFToken<%s, data=%s, len=%i>' % (self.wxf_type, self.data, self.length)
+            return 'WXFToken<%s, data=%s, len=%i>' % (self.wxf_type, self.data,
+                                                      self.length)
         else:
             return 'WXFToken<%s, data=%s>' % (self.wxf_type, self.data)
+
 
 def parse_varint(reader):
     """Parse a readable binary buffer for a positive varint encoded integer."""

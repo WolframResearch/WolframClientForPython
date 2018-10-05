@@ -2,11 +2,11 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import os
 from importlib import import_module
 
 from wolframclient.utils import six
 
-import os
 
 def module_path(module, *args):
     if isinstance(module, six.string_types):
@@ -15,9 +15,8 @@ def module_path(module, *args):
         except ImportError:
             return None
     return os.path.join(
-        os.path.dirname(os.path.realpath(module.__file__)),
-        *args
-    )
+        os.path.dirname(os.path.realpath(module.__file__)), *args)
+
 
 def import_string(dotted_path):
     """
@@ -41,7 +40,9 @@ def import_string(dotted_path):
     try:
         return getattr(module, class_name)
     except AttributeError:
-        raise ImportError('Module "%s" does not define a "%s" attribute/class' % (module_path, class_name))
+        raise ImportError('Module "%s" does not define a "%s" attribute/class'
+                          % (module_path, class_name))
+
 
 def safe_import_string(f):
     if isinstance(f, (list, tuple)):
@@ -55,12 +56,14 @@ def safe_import_string(f):
         return import_string(f)
     return f
 
+
 def safe_import_string_and_call(f, *args, **kw):
     return safe_import_string(f)(*args, **kw)
 
-class API(object):
 
-    def __init__(self, **mapping):
+class API(object):
+    def __init__(self, importer=safe_import_string, **mapping):
+        self.__dict__['importer'] = importer
         self.__dict__['mapping'] = mapping
         self.__dict__['imports'] = {}
 

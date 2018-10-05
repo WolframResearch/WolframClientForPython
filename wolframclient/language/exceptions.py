@@ -7,13 +7,15 @@ from wolframclient.serializers.serializable import WLSerializable
 from wolframclient.utils.decorators import to_dict
 from wolframclient.utils.encoding import safe_force_text
 
+
 class WolframLanguageException(WLSerializable, Exception):
     ''' The most generic exception raised by the wolframclient library.
 
     This class is :class:`~wolframclient.serializers.serializable.WLSerializable`,
     and will automatically serialize to a failure box when evaluated in a Wolfram Desktop.
     '''
-    def __init__(self, payload, exec_info = None):
+
+    def __init__(self, payload, exec_info=None):
 
         self.payload = payload
 
@@ -41,11 +43,8 @@ class WolframLanguageException(WLSerializable, Exception):
     def to_wl(self, **opts):
         return wl.Failure(
             self.failure_tag(),
-            wl.Association(*(
-                wl.RuleDelayed(key, value)
-                for key, value in self.failure_meta().items()
-            ))
-        )
+            wl.Association(*(wl.RuleDelayed(key, value)
+                             for key, value in self.failure_meta().items())))
 
     def show_traceback(self):
         return True
@@ -53,10 +52,11 @@ class WolframLanguageException(WLSerializable, Exception):
     @to_dict
     def failure_meta(self):
 
-        template, parameters, code = self.failure_template(), self.failure_parameters(), self.failure_code()
+        template, parameters, code = self.failure_template(
+        ), self.failure_parameters(), self.failure_code()
 
         if template:
-            yield "MessageTemplate",   template
+            yield "MessageTemplate", template
             yield "MessageParameters", parameters
 
         if code:

@@ -5,20 +5,21 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.serializers.wxfencoder.streaming import ZipCompressedWriter
 
 __all__ = [
-    'WXFExprSerializer',
-    'SerializationContext',
-    'write_varint',
+    'WXFExprSerializer', 'SerializationContext', 'write_varint',
     'WXFSerializerException'
-    ]
+]
+
 
 class WXFSerializerException(Exception):
     pass
+
 
 def write_varint(int_value, stream):
     """Serialize `int_value` into varint bytes and write them to
     `stream`, return the stream.
     """
     stream.write(varint_bytes(int_value))
+
 
 def varint_bytes(int_value):
     """Serialize `int_value` into varint bytes and return them as a byetarray."""
@@ -39,36 +40,44 @@ def varint_bytes(int_value):
 
     return buf[:count]
 
+
 class _Context(object):
     def __init__(self):
         pass
 
     def add_part(self):
-        raise NotImplementedError(
-            'class %s must implement a add_part method' % self.__class__.__name__)
+        raise NotImplementedError('class %s must implement a add_part method' %
+                                  self.__class__.__name__)
 
     def step_into_new_function(self, length):
         raise NotImplementedError(
-            'class %s must implement a step_into_new_function method' % self.__class__.__name__)
+            'class %s must implement a step_into_new_function method' %
+            self.__class__.__name__)
 
     def step_into_new_assoc(self, length):
         raise NotImplementedError(
-            'class %s must implement a step_into_new_assoc method' % self.__class__.__name__)
+            'class %s must implement a step_into_new_assoc method' %
+            self.__class__.__name__)
 
     def step_into_new_rule(self):
         raise NotImplementedError(
-            'class %s must implement a step_into_new_rule method' % self.__class__.__name__)
+            'class %s must implement a step_into_new_rule method' %
+            self.__class__.__name__)
 
     def is_valid_final_state(self):
         raise NotImplementedError(
-            'class %s must implement a is_valid_final_state method' % self.__class__.__name__)
+            'class %s must implement a is_valid_final_state method' %
+            self.__class__.__name__)
 
     def is_rule_valid(self):
         raise NotImplementedError(
-            'class %s must implement a is_rule_valid method' % self.__class__.__name__)
+            'class %s must implement a is_rule_valid method' %
+            self.__class__.__name__)
+
 
 class NoEnforcingContext(_Context):
     ''' This context doesn't prevent inconsistent state. '''
+
     def add_part(self):
         pass
 
@@ -86,6 +95,7 @@ class NoEnforcingContext(_Context):
 
     def is_rule_valid(self):
         return True
+
 
 class SerializationContext(_Context):
     """ Keeps track of various parameter associated to an expression being serialized.
@@ -112,12 +122,15 @@ class SerializationContext(_Context):
         self._in_assoc_stack = [False]
 
     def _check_insert(self):
-        if self._depth >= 0 and self._current_index_stack[self._depth] >= self._expected_length_stack[self._depth]:
-            raise IndexError('Out of bound, number of parts is greater than declared length %d.' %
-                             self._expected_length_stack[self._depth])
+        if self._depth >= 0 and self._current_index_stack[
+                self._depth] >= self._expected_length_stack[self._depth]:
+            raise IndexError(
+                'Out of bound, number of parts is greater than declared length %d.'
+                % self._expected_length_stack[self._depth])
 
     def _step_out_finalized_expr(self):
-        while self._depth >= 0 and self._current_index_stack[self._depth] == self._expected_length_stack[self._depth]:
+        while self._depth >= 0 and self._current_index_stack[
+                self._depth] == self._expected_length_stack[self._depth]:
             self._depth -= 1
 
     def add_part(self):
@@ -138,10 +151,12 @@ class SerializationContext(_Context):
         elif len(array) > index:
             array[index] = value
         else:
-            raise IndexError('Index {} is greater than array length: {}'.format(index, len(array)))
+            raise IndexError(
+                'Index {} is greater than array length: {}'.format(
+                    index, len(array)))
 
     def step_into_new_function(self, length):
-        self.step_into_new_expr(length+1)
+        self.step_into_new_expr(length + 1)
 
     def step_into_new_assoc(self, length):
         self.step_into_new_expr(length, is_assoc=True)
@@ -149,7 +164,7 @@ class SerializationContext(_Context):
     def step_into_new_rule(self):
         self.step_into_new_expr(2)
 
-    def step_into_new_expr(self, length, is_assoc = False):
+    def step_into_new_expr(self, length, is_assoc=False):
         """ Indicate the beginning of a new expr of a given length.
 
         Note that the length is the number of WXF elements which includes the head for functions.
@@ -161,9 +176,12 @@ class SerializationContext(_Context):
         # go down one level in the expr tree, into the new expr.
         self._depth += 1
         # set or append element at index self._depth
-        SerializationContext._set_at_index_or_append(self._expected_length_stack, self._depth, length)
-        SerializationContext._set_at_index_or_append(self._current_index_stack, self._depth, 0)
-        SerializationContext._set_at_index_or_append(self._in_assoc_stack, self._depth, is_assoc)
+        SerializationContext._set_at_index_or_append(
+            self._expected_length_stack, self._depth, length)
+        SerializationContext._set_at_index_or_append(self._current_index_stack,
+                                                     self._depth, 0)
+        SerializationContext._set_at_index_or_append(self._in_assoc_stack,
+                                                     self._depth, is_assoc)
 
         if len(self._expected_length_stack) <= self._depth:
             self._expected_length_stack.append(length)
@@ -184,11 +202,16 @@ class SerializationContext(_Context):
         return self._in_assoc_stack[self._depth]
 
     def __repr__(self):
-        return '{}(depth={}, element={}/{})'.format(self.__class__.__name__, self._depth, self._current_index_stack[self._depth], self._expected_length_stack[self._depth])
+        return '{}(depth={}, element={}/{})'.format(
+            self.__class__.__name__, self._depth,
+            self._current_index_stack[self._depth],
+            self._expected_length_stack[self._depth])
+
 
 WXF_VERSION = b'8'
 WXF_HEADER_SEPARATOR = b':'
 WXF_HEADER_COMPRESS = b'C'
+
 
 class WXFExprSerializer(object):
     """Main serialization class that convert internal object into bytes.
@@ -206,7 +229,11 @@ class WXFExprSerializer(object):
 
     __slots__ = '_expr_provider', '_writer', '_context', '_compress', '_enforce'
 
-    def __init__(self, stream, expr_provider=None, compress=False, enforce=True):
+    def __init__(self,
+                 stream,
+                 expr_provider=None,
+                 compress=False,
+                 enforce=True):
         self._compress = compress
         self._writer = stream
         self._expr_provider = expr_provider

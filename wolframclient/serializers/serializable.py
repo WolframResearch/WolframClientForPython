@@ -4,6 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 __all__ = ['WLSerializable']
 
+
 class WLSerializable:
     """A familly of classes that can be serialized using :func:`~wolframclient.serializers.export`.
 
@@ -28,4 +29,5 @@ class WLSerializable:
 
     def to_wl(self):
         """Return a serialization of a given python class as a combinasion of WL serializable objects."""
-        raise NotImplementedError('class %s must implement a to_wl method' % self.__class__.__name__)
+        raise NotImplementedError(
+            'class %s must implement a to_wl method' % self.__class__.__name__)

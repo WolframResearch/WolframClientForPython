@@ -2,32 +2,36 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import re
+
 from wolframclient.language import wl
 from wolframclient.utils import six
 from wolframclient.utils.decorators import to_tuple
 from wolframclient.utils.encoding import force_text, safe_force_text
 from wolframclient.utils.functional import iterate
 
-import re
 
 def serialize_traceback(exc_type, exc_value, tb, **opts):
     return wl.OpenerView([
-        wl.Row([safe_force_text(exc_type.__name__), " ", safe_force_text(exc_value)]),
+        wl.Row([
+            safe_force_text(exc_type.__name__), " ",
+            safe_force_text(exc_value)
+        ]),
         wl.Style(
             wl.Column(_serialize_traceback(exc_type, exc_value, tb, **opts)),
-            FontFamily = "Courier"
-        )
-        ],
-        True
-    )
+            FontFamily="Courier")
+    ], True)
+
 
 def _serialize_traceback(exc_type, exc_value, tb, **opts):
 
     frames = _get_traceback_frames(tb, exc_value, **opts)
 
     for i, frame in enumerate(frames):
-        for sub in _serialize_frames(is_opened = i + 1 > len(frames) - 2, **frame):
+        for sub in _serialize_frames(
+                is_opened=i + 1 > len(frames) - 2, **frame):
             yield sub
+
 
 def _serialize_variables(variables):
 
@@ -39,11 +43,8 @@ def _serialize_variables(variables):
     if not isinstance(hidden, (tuple, list)):
         hidden = ()
 
-    variables = tuple(
-        (safe_force_text(key), safe_force_text(value))
-        for key, value in variables.items()
-        if not key in hidden
-    )
+    variables = tuple((safe_force_text(key), safe_force_text(value))
+                      for key, value in variables.items() if not key in hidden)
 
     if variables:
         return wl.OpenerView([
@@ -53,56 +54,68 @@ def _serialize_variables(variables):
                     (("Key", "Value"), ),
                     variables,
                 ),
-                Background = [None, [wl.LightGray]],
-                Alignment = wl.Left,
-                Frame = wl.LightGray
-            )
+                Background=[None, [wl.LightGray]],
+                Alignment=wl.Left,
+                Frame=wl.LightGray)
         ])
 
     return "No local variables"
 
+
 def _paginate(i, line):
     return '%s.  %s' % (force_text(i).rjust(4), line)
 
-def _serialize_frames(filename, function, pre_context, post_context, context_line, variables, lineno, pre_context_lineno, is_opened = False, **opts):
+
+def _serialize_frames(filename,
+                      function,
+                      pre_context,
+                      post_context,
+                      context_line,
+                      variables,
+                      lineno,
+                      pre_context_lineno,
+                      is_opened=False,
+                      **opts):
 
     if filename:
         description = wl.Row([
             wl.Button(
-                wl.Style(filename, wl.RGBColor(0.25, 0.48, 1), wl.Small, FontFamily = "Courier"),
-                wl.If(
-                    wl.FileExistsQ(filename),
-                    wl.SystemOpen(filename)
-                ),
-                Appearance = "Frameless"
-            ),
-            ' in ',
-            function
+                wl.Style(
+                    filename,
+                    wl.RGBColor(0.25, 0.48, 1),
+                    wl.Small,
+                    FontFamily="Courier"),
+                wl.If(wl.FileExistsQ(filename), wl.SystemOpen(filename)),
+                Appearance="Frameless"), ' in ', function
         ])
     else:
         description = function
 
-    yield wl.OpenerView(
-        [
-            description,
-            wl.Column([
-                wl.Column(
-                    iterate(
-                        (_paginate(pre_context_lineno+i, l) for i, l in enumerate(pre_context)),
-                        [wl.Item(_paginate(lineno, context_line), Background = wl.LightYellow)],
-                        (_paginate(lineno+i+1, l) for i, l in enumerate(post_context)),
-                    ),
-                    Background = [[wl.GrayLevel(0.95), wl.GrayLevel(1)]],
-                    Frame = wl.LightGray
+    yield wl.OpenerView([
+        description,
+        wl.Column([
+            wl.Column(
+                iterate(
+                    (_paginate(pre_context_lineno + i, l)
+                     for i, l in enumerate(pre_context)),
+                    [
+                        wl.Item(
+                            _paginate(lineno, context_line),
+                            Background=wl.LightYellow)
+                    ],
+                    (_paginate(lineno + i + 1, l)
+                     for i, l in enumerate(post_context)),
                 ),
-                _serialize_variables(variables)
-            ])
-        ],
-        is_opened
-    )
+                Background=[[wl.GrayLevel(0.95),
+                             wl.GrayLevel(1)]],
+                Frame=wl.LightGray),
+            _serialize_variables(variables)
+        ])
+    ], is_opened)
+
 
 @to_tuple
-def _get_traceback_frames(traceback, exc_value, context_lines = 7):
+def _get_traceback_frames(traceback, exc_value, context_lines=7):
     def explicit_or_implicit_cause(exc_value):
         explicit = getattr(exc_value, '__cause__', None)
         implicit = getattr(exc_value, '__context__', None)
@@ -131,11 +144,16 @@ def _get_traceback_frames(traceback, exc_value, context_lines = 7):
             filename = tb.tb_frame.f_code.co_filename
             function = tb.tb_frame.f_code.co_name
             lineno = tb.tb_lineno - 1
-            loader = tb.tb_frame.f_locals.get('__loader__') or tb.tb_frame.f_globals.get('__loader__')
+            loader = tb.tb_frame.f_locals.get(
+                '__loader__') or tb.tb_frame.f_globals.get('__loader__')
             module_name = tb.tb_frame.f_globals.get('__name__') or ''
 
             pre_context_lineno, pre_context, context_line, post_context = _get_lines_from_file(
-                filename, lineno, context_lines, loader, module_name,
+                filename,
+                lineno,
+                context_lines,
+                loader,
+                module_name,
             )
 
             if pre_context_lineno is None:
@@ -163,7 +181,12 @@ def _get_traceback_frames(traceback, exc_value, context_lines = 7):
             else:
                 tb = tb.tb_next
 
-def _get_lines_from_file(filename, lineno, context_lines, loader=None, module_name=None):
+
+def _get_lines_from_file(filename,
+                         lineno,
+                         context_lines,
+                         loader=None,
+                         module_name=None):
     """
     Return context_lines before and after lineno from file.
     Return (pre_context_lineno, pre_context, context_line, post_context).

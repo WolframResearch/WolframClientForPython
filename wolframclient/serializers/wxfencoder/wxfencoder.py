@@ -2,14 +2,13 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import wolframclient.serializers.wxfencoder.wxfexpr as wxfexpr
 from wolframclient.utils import six
 
-import wolframclient.serializers.wxfencoder.wxfexpr as wxfexpr
 
 class NotEncodedException(Exception):
     """Exception used during encoding to signal that a given python object has been ignored by a :class:`~wolframclient.serializers.wxfencoder.WXFEncoder`."""
 
-    pass
 
 class WXFEncoder(object):
     """Encode a given python object into a stream of :class:`~wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr`.
@@ -30,6 +29,7 @@ class WXFEncoder(object):
     """
 
     __slots__ = '_provider'
+
     def __init__(self):
         self._provider = None
 
@@ -67,6 +67,7 @@ class WXFEncoder(object):
             yield value
         if value is WXFEncoder.NOT_PROVIDED:
             raise NotEncodedException
+
 
 class DefaultWXFEncoder(WXFEncoder):
     """The most straight forward serialization of python expressions to their Wolfram Language counterpart.

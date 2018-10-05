@@ -4,6 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.utils import six
 
+
 def force_text(s, encoding='utf-8', errors='strict'):
     """
     Similar to smart_text, except that lazy instances are resolved to
@@ -31,6 +32,7 @@ def force_text(s, encoding='utf-8', errors='strict'):
         s = s.decode(encoding, errors)
     return s
 
+
 def force_bytes(s, encoding='utf-8', errors='strict'):
     """
     If strings_only is True, don't convert (some) non-string-like objects.
@@ -56,14 +58,15 @@ def force_bytes(s, encoding='utf-8', errors='strict'):
                 # An Exception subclass containing non-ASCII data that doesn't
                 # know how to print itself properly. We shouldn't raise a
                 # further exception.
-                return b' '.join(force_bytes(arg, encoding, errors = errors)
-                                 for arg in s)
+                return b' '.join(
+                    force_bytes(arg, encoding, errors=errors) for arg in s)
             return six.text_type(s).encode(encoding, errors)
     else:
         return s.encode(encoding, errors)
 
+
 def safe_force_text(obj):
     try:
-        return force_text(obj, errors = 'ignore')
+        return force_text(obj, errors='ignore')
     except Exception as e:
         return '<unprintable obj: %s>' % e

@@ -2,27 +2,33 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import os
+
 from wolframclient.serializers.wxfencoder.serializer import WXFExprSerializer
 from wolframclient.serializers.wxfencoder.wxfencoder import WXFEncoder
-from wolframclient.serializers.wxfencoder.wxfexpr import WXFExprFunction, WXFExprSymbol
-from wolframclient.serializers.wxfencoder.wxfexprprovider import WXFExprProvider
+from wolframclient.serializers.wxfencoder.wxfexpr import (WXFExprFunction,
+                                                          WXFExprSymbol)
+from wolframclient.serializers.wxfencoder.wxfexprprovider import (
+    WXFExprProvider)
 from wolframclient.tests.configure import dir_test_data
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
-import os
 
 class MyClass(object):
     def __init__(self, *values):
         self.values = values
 
+
 class MyClass1(MyClass):
     def __init__(self, *values):
         super(MyClass1, self).__init__(*values)
 
+
 class MyClass2(MyClass):
     def __init__(self, *values):
         super(MyClass2, self).__init__(*values)
+
 
 class MyClassEncoder(WXFEncoder):
     def encode(self, o):
@@ -32,6 +38,7 @@ class MyClassEncoder(WXFEncoder):
             for sub in o.values:
                 for wxfexpr in self.serialize(sub):
                     yield wxfexpr
+
 
 class TestCase(BaseTestCase):
     def test_custom_encoder(self):

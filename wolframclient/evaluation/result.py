@@ -2,22 +2,21 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import logging
+
 from wolframclient.deserializers import binary_deserialize
-from wolframclient.exception import RequestException, WolframEvaluationException, WolframLanguageException
+from wolframclient.exception import (
+    RequestException, WolframEvaluationException, WolframLanguageException)
 from wolframclient.utils import six
 from wolframclient.utils.api import json
-
-import logging
 
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    'WolframResult',
-    'WolframAPIResponseBuilder',
-    'WolframAPIResponse',
-    'WolframEvaluationJSONResponse',
-    'WolframKernelEvaluationResult'
-    ]
+    'WolframResult', 'WolframAPIResponseBuilder', 'WolframAPIResponse',
+    'WolframEvaluationJSONResponse', 'WolframKernelEvaluationResult'
+]
+
 
 class WolframResult(object):
     """Most generic result object.
@@ -43,9 +42,12 @@ class WolframResult(object):
 
     def __repr__(self):
         if self.success:
-            return '{}<success={}, result={}>'.format(self.__class__.__name__, self.success, self.result)
+            return '{}<success={}, result={}>'.format(
+                self.__class__.__name__, self.success, self.result)
         else:
-            return '{}<success={}, failure={}>'.format(self.__class__.__name__, self.success, self.failure)
+            return '{}<success={}, failure={}>'.format(
+                self.__class__.__name__, self.success, self.failure)
+
 
 class WolframKernelEvaluationResult(WolframResult):
     """A Wolfram result with WXF encoded data.
@@ -80,10 +82,14 @@ class WolframKernelEvaluationResult(WolframResult):
 
     def __repr__(self):
         if self.success:
-            return '{}<success={}, result={}>'.format(self.__class__.__name__, self.success, self.result)
+            return '{}<success={}, result={}>'.format(
+                self.__class__.__name__, self.success, self.result)
         else:
             # msgs = '\n\t'.join(self.messages)
-            return '{}<success={}, result={}, messages={}>'.format(self.__class__.__name__, self.success, self.result, self.messages)
+            return '{}<success={}, result={}, messages={}>'.format(
+                self.__class__.__name__, self.success, self.result,
+                self.messages)
+
 
 class WolframEvaluationJSONResponse(WolframResult):
     """Result object associated with cloud kernel evaluation.
@@ -133,15 +139,20 @@ class WolframEvaluationJSONResponse(WolframResult):
                 logger.warning(msg)
             return self.result
         else:
-            raise WolframEvaluationException('Cloud evaluation failed.', messages=self.failure)
+            raise WolframEvaluationException(
+                'Cloud evaluation failed.', messages=self.failure)
 
     def __repr__(self):
         if self.success:
-            return '{}<success={}, expression={}>'.format(self.__class__.__name__, self.success, self.result)
+            return '{}<success={}, expression={}>'.format(
+                self.__class__.__name__, self.success, self.result)
         elif not self.request_error:
-            return '{}<success={}, expression={}>'.format(self.__class__.__name__, self.success, self.result)
+            return '{}<success={}, expression={}>'.format(
+                self.__class__.__name__, self.success, self.result)
         else:
-            return '{}<request error {}>'.format(self.__class__.__name__, self.http_response.status_code)
+            return '{}<request error {}>'.format(
+                self.__class__.__name__, self.http_response.status_code)
+
 
 class WolframAPIResponse(WolframResult):
     """Generic API response."""
@@ -187,6 +198,7 @@ class WolframAPIResponse(WolframResult):
     def __repr__(self):
         return '<%s:success=%s>' % (self.__class__.__name__, self.success)
 
+
 class WolframAPIResponse200(WolframAPIResponse):
     def __init__(self, response, decoder=None):
         super(WolframAPIResponse200, self).__init__(response, decoder)
@@ -205,6 +217,7 @@ class WolframAPIResponse200(WolframAPIResponse):
         else:
             self.result = self.response.content
 
+
 class WolframAPIResponseRedirect(WolframAPIResponse):
     def __init__(self, response, decoder=None):
         super(WolframAPIResponseRedirect, self).__init__(response, decoder)
@@ -219,6 +232,7 @@ class WolframAPIResponseRedirect(WolframAPIResponse):
     def _specific_failure(self):
         raise NotImplementedError
 
+
 class WolframAPIResponse301(WolframAPIResponseRedirect):
     def __init__(self, response, decoder=None):
         super(WolframAPIResponse301, self).__init__(response, decoder)
@@ -227,6 +241,7 @@ class WolframAPIResponse301(WolframAPIResponseRedirect):
         ''' should not happen since we follow redirection '''
         self.failure = 'Resource permanently moved to new location {}'.format(
             self.location)
+
 
 class WolframAPIResponse302(WolframAPIResponseRedirect):
     def __init__(self, response, decoder=None):
@@ -240,6 +255,7 @@ class WolframAPIResponse302(WolframAPIResponseRedirect):
             self.failure = 'Resource moved to new location {}'.format(
                 self.location)
 
+
 class WolframAPIResponse400(WolframAPIResponse):
     def __init__(self, response, decoder=None):
         super(WolframAPIResponse400, self).__init__(response, decoder)
@@ -250,16 +266,17 @@ class WolframAPIResponse400(WolframAPIResponse):
         try:
             self.json = self.response.json()
         except json.JSONDecodeError as e:
-            logger.fatal(
-                'Failed to parse server response as json:\n%s', self.response.content)
-            raise RequestException(
-                self.response, 'Failed to parse server response as json.')
+            logger.fatal('Failed to parse server response as json:\n%s',
+                         self.response.content)
+            raise RequestException(self.response,
+                                   'Failed to parse server response as json.')
         self.failure = self.json.get('Failure', None)
         fields = self.json.get('Fields', None)
         logger.warning('Wolfram API error response: %s', self.failure)
         if fields is not None:
             self._fields_in_error = set(fields.keys())
             logger.warning('Fields in error: %s', self._fields_in_error)
+
 
 class WolframAPIResponse401(WolframAPIResponse):
     def __init__(self, response, decoder=None):
@@ -269,8 +286,9 @@ class WolframAPIResponse401(WolframAPIResponse):
         self.success = False
         # ignoring content-type. Must be JSON. Make sure it's robust enough.
         self.failure = self.response.text
-        logger.warning(
-            'Authentication missing or failed. Server response: %s', self.failure)
+        logger.warning('Authentication missing or failed. Server response: %s',
+                       self.failure)
+
 
 class WolframAPIResponse404(WolframAPIResponse):
     def __init__(self, response, decoder=None):
@@ -281,6 +299,7 @@ class WolframAPIResponse404(WolframAPIResponse):
         self.failure = "The resource %s can't not be found." % self.response.url
         logger.warning('Wolfram API error response: %s', self.failure)
 
+
 class WolframAPIResponseGeneric(WolframAPIResponse):
     def __init__(self, response, decoder=None):
         super(WolframAPIResponseGeneric, self).__init__(response, decoder)
@@ -289,10 +308,12 @@ class WolframAPIResponseGeneric(WolframAPIResponse):
         self.success = False
         self.failure = self.response.text
 
+
 class WolframAPIResponse500(WolframAPIResponseGeneric):
     def __init__(self, response, decoder=None):
         super(WolframAPIResponse500, self).__init__(response, decoder)
         logger.fatal('Internal server error occurred.')
+
 
 class WolframAPIResponseBuilder(object):
     """Map error code to handler building the appropriate
@@ -310,16 +331,19 @@ class WolframAPIResponseBuilder(object):
 
     @staticmethod
     def build(response, decoder=None):
-        return WolframAPIResponseBuilder.response_mapper.get(response.status_code, WolframAPIResponseGeneric)(response, decoder=decoder)
+        return WolframAPIResponseBuilder.response_mapper.get(
+            response.status_code, WolframAPIResponseGeneric)(
+                response, decoder=decoder)
 
     @staticmethod
     def map(status_code, response_class):
         if not isinstance(response_class, WolframAPIResponse):
-            raise ValueError('Response class %s is not a subclass of %s' % (
-                response_class.__class__.__name__, WolframAPIResponse.__class__.__name__))
+            raise ValueError('Response class %s is not a subclass of %s' %
+                             (response_class.__class__.__name__,
+                              WolframAPIResponse.__class__.__name__))
         if not isinstance(status_code, six.integer_types):
             logger.warning('Invalid status code: %s', status_code)
-            raise ValueError('HTTP status code must be string.',)
+            raise ValueError('HTTP status code must be string.', )
         logger.debug('Mapping http response status %i to function %s',
                      status_code, response_class.__name__)
         WolframAPIResponseBuilder.response_mapper[status_code] = response_class

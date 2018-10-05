@@ -8,28 +8,18 @@ from wolframclient.utils.six import JYTHON
 
 if JYTHON:
     __all__ = [
-        'WolframServer',
-        'WolframCloudSession', 'WolframCloudSessionAsync',
-        'WolframAPICall',
-        'SecuredAuthenticationKey',
-        'UserIDPassword',
-        'WolframResult',
-        'WolframKernelEvaluationResult',
-        'WolframAPIResponse',
+        'WolframServer', 'WolframCloudSession', 'WolframCloudSessionAsync',
+        'WolframAPICall', 'SecuredAuthenticationKey', 'UserIDPassword',
+        'WolframResult', 'WolframKernelEvaluationResult', 'WolframAPIResponse',
         'WolframEvaluationJSONResponse'
-        ]
+    ]
 else:
     from wolframclient.evaluation.kernel import WolframLanguageSession, WolframLanguageAsyncSession
     __all__ = [
-        'WolframAPICall',
-        'WolframServer',
-        'WolframCloudSession', 'WolframCloudSessionAsync',
-        'WolframAPICall',
-        'SecuredAuthenticationKey',
-        'UserIDPassword',
-        'WolframLanguageSession', 'WolframLanguageAsyncSession',
-        'WolframResult',
-        'WolframKernelEvaluationResult',
-        'WolframAPIResponse',
+        'WolframAPICall', 'WolframServer', 'WolframCloudSession',
+        'WolframCloudSessionAsync', 'WolframAPICall',
+        'SecuredAuthenticationKey', 'UserIDPassword', 'WolframLanguageSession',
+        'WolframLanguageAsyncSession', 'WolframResult',
+        'WolframKernelEvaluationResult', 'WolframAPIResponse',
         'WolframEvaluationJSONResponse'
     ]

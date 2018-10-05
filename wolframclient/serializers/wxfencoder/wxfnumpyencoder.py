@@ -3,12 +3,14 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.serializers.wxfencoder.wxfencoder import WXFEncoder
-from wolframclient.serializers.wxfencoder.wxfexpr import ARRAY_TYPES, WXFExprPackedArray, WXFExprRawArray
+from wolframclient.serializers.wxfencoder.wxfexpr import (
+    ARRAY_TYPES, WXFExprPackedArray, WXFExprRawArray)
 from wolframclient.utils.api import numpy
 
 __all__ = [
     'NumPyWXFEncoder',
 ]
+
 
 class NumPyWXFEncoder(WXFEncoder):
     '''
@@ -32,7 +34,8 @@ class NumPyWXFEncoder(WXFEncoder):
     def __init__(self, packed_array_support=True, rawarray_support=False):
         if not packed_array_support and not rawarray_support:
             raise ValueError(
-                'At least one of the two parameters packed_array_support or rawarray_support must be True.')
+                'At least one of the two parameters packed_array_support or rawarray_support must be True.'
+            )
         self.packed_array_support = packed_array_support
         self.rawarray_support = rawarray_support
 
@@ -60,7 +63,7 @@ class NumPyWXFEncoder(WXFEncoder):
                     value_type = ARRAY_TYPES.UnsignedInteger8
                     data = python_expr.astype('<u1')
                     array_class = WXFExprRawArray
-                else :
+                else:
                     value_type = ARRAY_TYPES.Integer16
                     data = python_expr.astype('<i2')
             elif python_expr.dtype == numpy.uint16:
@@ -87,7 +90,8 @@ class NumPyWXFEncoder(WXFEncoder):
                     data = python_expr.astype('<u8')
                     array_class = WXFExprRawArray
                 else:
-                    TypeError('Cannot represent data of type uint64 as signed int64')
+                    TypeError(
+                        'Cannot represent data of type uint64 as signed int64')
             elif python_expr.dtype == numpy.float32:
                 value_type = ARRAY_TYPES.Real32
                 data = python_expr
@@ -102,11 +106,13 @@ class NumPyWXFEncoder(WXFEncoder):
                 data = python_expr
             else:
                 raise NotImplementedError(
-                    'NumPy serialization not implemented for %s' % repr(python_expr.dtype)
-                )
+                    'NumPy serialization not implemented for %s' % repr(
+                        python_expr.dtype))
 
             if hasattr(data, 'tobytes'):
                 #Numpy 1.9+ support array.tobytes, but previous versions don't and use tostring instead.
-                yield array_class(python_expr.shape, value_type, data.tobytes())
+                yield array_class(python_expr.shape, value_type,
+                                  data.tobytes())
             else:
-                yield array_class(python_expr.shape, value_type, data.tostring())
+                yield array_class(python_expr.shape, value_type,
+                                  data.tostring())

@@ -7,8 +7,8 @@ from wolframclient.serializers.normalizer.builtin import safe_key
 from wolframclient.serializers.serializable import WLSerializable
 from wolframclient.utils.datastructures import Association
 
-def update_dispatch(dispatch):
 
+def update_dispatch(dispatch):
     @dispatch.multi(WLSymbol)
     def normalizer(self, o):
         return self.serialize_symbol(o.name)
@@ -16,9 +16,8 @@ def update_dispatch(dispatch):
     @dispatch.multi(WLFunction)
     def normalizer(self, o):
         return self.serialize_function(
-            self.normalize(o.head),
-            tuple(self.normalize(arg) for arg in o.args)
-        )
+            self.normalize(o.head), tuple(
+                self.normalize(arg) for arg in o.args))
 
     @dispatch.multi(WLSerializable)
     def normalizer(self, o):
@@ -26,7 +25,6 @@ def update_dispatch(dispatch):
 
     @dispatch.multi(Association)
     def normalizer(self, o):
-        return self.serialize_association(
-            (self.normalize(safe_key(key)), self.normalize(value))
-            for key, value in o.items()
-        )
+        return self.serialize_association((self.normalize(safe_key(key)),
+                                           self.normalize(value))
+                                          for key, value in o.items())

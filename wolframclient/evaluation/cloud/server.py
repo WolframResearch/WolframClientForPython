@@ -6,6 +6,7 @@ from wolframclient.utils import six
 
 __all__ = ['WolframServer']
 
+
 class WolframServer(object):
     ''' Represents the cloud server.
 
@@ -18,8 +19,13 @@ class WolframServer(object):
     '''
     __slots__ = 'cloudbase', 'request_token_endpoint', 'access_token_endpoint', 'xauth_consumer_key', 'xauth_consumer_secret', 'certificate'
 
-    def __init__(self, cloudbase, request_token_endpoint, access_token_endpoint,
-                 xauth_consumer_key=None, xauth_consumer_secret=None, certificate=None):
+    def __init__(self,
+                 cloudbase,
+                 request_token_endpoint,
+                 access_token_endpoint,
+                 xauth_consumer_key=None,
+                 xauth_consumer_secret=None,
+                 certificate=None):
         self.cloudbase = cloudbase
         self.request_token_endpoint = request_token_endpoint
         self.access_token_endpoint = access_token_endpoint
@@ -37,7 +43,9 @@ class WolframServer(object):
         elif isinstance(self.certificate, six.string_types):
             return self.certificate
         else:
-            raise ValueError('Invalid certificate. Must be a string type or None.')
+            raise ValueError(
+                'Invalid certificate. Must be a string type or None.')
+
 
 # A built-in instance representing the Wolfram public Cloud.
 WolframPublicCloudServer = WolframServer(

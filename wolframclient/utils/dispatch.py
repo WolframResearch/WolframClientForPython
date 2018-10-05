@@ -3,7 +3,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from collections import defaultdict
-
 from itertools import product
 
 from wolframclient.utils.functional import force_tuple
@@ -13,12 +12,12 @@ from wolframclient.utils.functional import force_tuple
 
 UNDEFINED = object()
 
-class Dispatch(object):
 
+class Dispatch(object):
     def __init__(self):
         self.dispatchmap = defaultdict(dict)
-        self.defaultmap  = dict()
-        self.proxymap    = dict()
+        self.defaultmap = dict()
+        self.proxymap = dict()
 
     def get_key(self, function):
         return function.__name__
@@ -34,10 +33,10 @@ class Dispatch(object):
     def create_proxy(self, function):
         def inner(*args, **opts):
             return self.resolve(function, *args)(*args, **opts)
+
         return inner
 
     def multi(self, *types):
-
         def register(function):
 
             key = (self.get_key(function), len(types))
@@ -68,8 +67,8 @@ class Dispatch(object):
 
     def resolve(self, source, *args):
 
-        key    = (self.get_key(source), len(args))
-        types  = tuple(arg.__class__ for arg in args)
+        key = (self.get_key(source), len(args))
+        types = tuple(arg.__class__ for arg in args)
 
         function = self.dispatchmap[key].get(types, UNDEFINED)
 
@@ -90,9 +89,10 @@ class Dispatch(object):
             raise TypeError("no match")
         return function
 
-class ClassDispatch(Dispatch):
 
+class ClassDispatch(Dispatch):
     def create_proxy(self, function):
         def inner(obj, *args, **opts):
             return self.resolve(function, *args)(obj, *args, **opts)
+
         return inner

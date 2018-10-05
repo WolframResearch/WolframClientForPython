@@ -2,13 +2,12 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import types
 from functools import reduce
-
 from itertools import islice
 
 from wolframclient.utils import six
 
-import types
 
 def force_tuple(obj):
     if isinstance(obj, tuple):
@@ -17,20 +16,24 @@ def force_tuple(obj):
         return tuple(obj)
     return obj,
 
-def first(iterable, default = None):
+
+def first(iterable, default=None):
     try:
         return next(iter(iterable))
     except StopIteration:
         return default
 
-def last(iterable, default = None):
+
+def last(iterable, default=None):
     try:
         return iterable[-1]
     except IndexError:
         return default
 
+
 def identity(x):
     return x
+
 
 def composition(*functions):
 
@@ -40,15 +43,15 @@ def composition(*functions):
     if len(functions) == 1:
         return first(functions)
 
-    return reduce(
-        lambda f, g: lambda *args, **kw: f(g(*args, **kw)),
-        reversed(functions)
-    )
+    return reduce(lambda f, g: lambda *args, **kw: f(g(*args, **kw)),
+                  reversed(functions))
 
-def is_iterable(obj, exclude_list = six.string_types):
+
+def is_iterable(obj, exclude_list=six.string_types):
     if isinstance(obj, exclude_list):
         return False
     return hasattr(obj, '__iter__')
+
 
 def iterate(*args):
     for arg in args:
@@ -57,6 +60,7 @@ def iterate(*args):
         else:
             for item in arg:
                 yield item
+
 
 def flatten(*args):
     for arg in args:
@@ -67,6 +71,7 @@ def flatten(*args):
         else:
             yield arg
 
+
 def riffle(iterable, separator):
     iterable = iter(iterable)
     try:
@@ -76,6 +81,7 @@ def riffle(iterable, separator):
             yield el
     except StopIteration:
         pass
+
 
 def partition(iterable, n):
     """ Yield successive n-sized chunks from l. """

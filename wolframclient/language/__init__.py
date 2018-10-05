@@ -6,7 +6,6 @@ from wolframclient.language.expression import WLSymbolFactory
 
 __all__ = ['wl', 'System', 'Global', 'wlexpr']
 
-
 wl = WLSymbolFactory()
 """A factory of :class:`~wolframclient.language.expression.WLSymbol` instances without any particular context.
 

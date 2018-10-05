@@ -1,20 +1,25 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, print_function, unicode_literals, with_statement
-
-from wolframclient.serializers.wxfencoder.streaming import ExactSizeReader, ZipCompressedReader, ZipCompressedWriter
-from wolframclient.utils import six
-from wolframclient.utils.tests import TestCase as BaseTestCase
+from __future__ import (absolute_import, print_function, unicode_literals,
+                        with_statement)
 
 import random
 import zlib
 
+from wolframclient.serializers.wxfencoder.streaming import (
+    ExactSizeReader, ZipCompressedReader, ZipCompressedWriter)
+from wolframclient.utils import six
+from wolframclient.utils.tests import TestCase as BaseTestCase
+
 if six.PY3:
+
     def _bytes(value):
-        return bytes((value,))
+        return bytes((value, ))
 else:
+
     def _bytes(value):
         return chr(value)
+
 
 class TestCase(BaseTestCase):
     def test_compress(self):
@@ -46,7 +51,7 @@ class TestCase(BaseTestCase):
         buff = six.BytesIO()
         for i in range(num_of_chunk):
             buff.write(reader.read(chunk_size))
-            self.assertEqual(buff.getvalue(), data[: (i + 1) * chunk_size])
+            self.assertEqual(buff.getvalue(), data[:(i + 1) * chunk_size])
 
         buff.write(reader.read())
         self.assertEqual(buff.getvalue(), data)
@@ -64,7 +69,7 @@ class TestCase(BaseTestCase):
         buff = six.BytesIO()
         for i in range(num_of_chunk):
             buff.write(reader.read(chunk_size))
-            self.assertEqual(buff.getvalue(), data[: (i + 1) * chunk_size])
+            self.assertEqual(buff.getvalue(), data[:(i + 1) * chunk_size])
 
         buff.write(reader.read())
         self.assertEqual(buff.getvalue(), data)

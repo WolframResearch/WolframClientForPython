@@ -2,7 +2,9 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.serializers.wxfencoder.wxfencoder import DefaultWXFEncoder, NotEncodedException, WXFEncoder
+from wolframclient.serializers.wxfencoder.wxfencoder import (
+    DefaultWXFEncoder, NotEncodedException, WXFEncoder)
+
 
 class WXFExprProvider(object):
     '''

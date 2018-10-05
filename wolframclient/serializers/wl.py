@@ -2,15 +2,15 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import base64
 from itertools import chain
 
 from wolframclient.serializers.base import FormatSerializer
 from wolframclient.serializers.utils import py_encode_decimal, py_encode_text
 from wolframclient.utils.encoding import force_bytes
 
-import base64
 
-def yield_with_separators(iterable, separator = b', ', first = None, last = None):
+def yield_with_separators(iterable, separator=b', ', first=None, last=None):
     if first:
         yield first
     for i, arg in enumerate(iterable):
@@ -21,10 +21,10 @@ def yield_with_separators(iterable, separator = b', ', first = None, last = None
     if last:
         yield last
 
-class WLSerializer(FormatSerializer):
 
-    def __init__(self, normalizer = None, indent = None, **opts):
-        super(WLSerializer, self).__init__(normalizer = normalizer, **opts)
+class WLSerializer(FormatSerializer):
+    def __init__(self, normalizer=None, indent=None, **opts):
+        super(WLSerializer, self).__init__(normalizer=normalizer, **opts)
         self.indent = indent
 
     def dump(self, data, stream):
@@ -33,10 +33,7 @@ class WLSerializer(FormatSerializer):
         return stream
 
     def serialize_function(self, head, args):
-        return chain(
-            head,
-            yield_with_separators(args, first = b'[', last = b']')
-        )
+        return chain(head, yield_with_separators(args, first=b'[', last=b']'))
 
     def serialize_symbol(self, name):
         yield force_bytes(name)
@@ -46,10 +43,8 @@ class WLSerializer(FormatSerializer):
 
     def serialize_bytes(self, bytes):
         return self.serialize_function(
-            self.serialize_symbol('ByteArray'), (
-                (b'"', base64.b64encode(bytes), b'"'),
-            )
-        )
+            self.serialize_symbol('ByteArray'),
+            ((b'"', base64.b64encode(bytes), b'"'), ))
 
     def serialize_decimal(self, number):
         yield py_encode_decimal(number).encode('utf-8')
@@ -61,38 +56,22 @@ class WLSerializer(FormatSerializer):
         yield ('%i' % number).encode('utf-8')
 
     def serialize_rule(self, lhs, rhs):
-        return yield_with_separators(
-            (lhs, rhs),
-            separator = b' -> '
-        )
+        return yield_with_separators((lhs, rhs), separator=b' -> ')
 
     def serialize_rule_delayed(self, lhs, rhs):
-        return yield_with_separators(
-            (lhs, rhs),
-            separator = b' :> '
-        )
+        return yield_with_separators((lhs, rhs), separator=b' :> ')
 
     def serialize_mapping(self, mapping):
-        return yield_with_separators((
-                self.serialize_rule(key, value)
-                for key, value in mapping
-            ),
-            first = b'<|',
-            last  = b'|>'
-        )
+        return yield_with_separators(
+            (self.serialize_rule(key, value) for key, value in mapping),
+            first=b'<|',
+            last=b'|>')
 
     def serialize_association(self, mapping):
-        return yield_with_separators((
-                self.serialize_rule(key, value)
-                for key, value in mapping
-            ),
-            first = b'<|',
-            last  = b'|>'
-        )
+        return yield_with_separators(
+            (self.serialize_rule(key, value) for key, value in mapping),
+            first=b'<|',
+            last=b'|>')
 
     def serialize_iterable(self, iterable):
-        return yield_with_separators(
-            iterable,
-            first = b'{',
-            last  = b'}'
-        )
+        return yield_with_separators(iterable, first=b'{', last=b'}')

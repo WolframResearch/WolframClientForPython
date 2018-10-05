@@ -7,9 +7,6 @@ from wolframclient.deserializers.wxf.wxfconsumer import WXFConsumer, WXFConsumer
 from wolframclient.deserializers.wxf.wxfparser import WXFToken
 
 __all__ = [
-    'WXFConsumer',
-    'WXFToken',
-    'binary_deserialize',
-    'WXFConsumer',
+    'WXFConsumer', 'WXFToken', 'binary_deserialize', 'WXFConsumer',
     'WXFConsumerNumpy'
 ]

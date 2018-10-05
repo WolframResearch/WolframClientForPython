@@ -2,12 +2,13 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.cli.utils import discover_with_convention, SimpleCommand
+import sys
+
+from wolframclient.cli.utils import SimpleCommand, discover_with_convention
 from wolframclient.utils import six
 from wolframclient.utils.importutils import import_string
 from wolframclient.utils.require import require_module
 
-import sys
 
 class DispatchCommand(SimpleCommand):
 
@@ -18,12 +19,12 @@ class DispatchCommand(SimpleCommand):
 
     if six.JYTHON:
         dependencies = [
-            ("pytz",  None),
+            ("pytz", None),
         ]
     else:
         dependencies = [
-            ("pytz",     None),
-            ("numpy",    None),
+            ("pytz", None),
+            ("numpy", None),
             ("requests", None),
             ("oauthlib", None),
         ]
@@ -31,7 +32,7 @@ class DispatchCommand(SimpleCommand):
     def subcommands(self):
         return discover_with_convention(self.modules, self.class_name)
 
-    def handle(self, attr = None):
+    def handle(self, attr=None):
 
         all_commands = self.subcommands()
 
@@ -39,7 +40,8 @@ class DispatchCommand(SimpleCommand):
             attr = self.default_command
 
         if attr in all_commands:
-            return import_string(all_commands[attr])(self.subcommand_args(), name = all_commands[attr]).main()
+            return import_string(all_commands[attr])(
+                self.subcommand_args(), name=all_commands[attr]).main()
 
         self.print('Select one of the following commands:')
         for command in sorted(all_commands.keys()):
@@ -57,10 +59,11 @@ class DispatchCommand(SimpleCommand):
 
         if self.dependencies:
             require_module(*self.dependencies)
-        
+
         if len(self.argv) > 1 and self.argv[1]:
             return self.handle(self.argv[1])
         return self.handle()
 
-def execute_from_command_line(argv = None, **opts):
+
+def execute_from_command_line(argv=None, **opts):
     return DispatchCommand(argv).main()

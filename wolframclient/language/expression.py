@@ -5,15 +5,16 @@ from __future__ import absolute_import, print_function, unicode_literals
 from itertools import chain
 
 from wolframclient.utils import six
-from wolframclient.utils.decorators import cached_property
 from wolframclient.utils.encoding import force_text
 
 __all__ = ['WLSymbol', 'WLFunction', 'WLSymbolFactory']
+
 
 class WLExpressionMeta(object):
     """Abstract class to subclass when building representation of Wolfram Language expressions as Python object."""
 
     if six.PY2:
+
         def __nonzero__(self):
             return True
 
@@ -22,6 +23,7 @@ class WLExpressionMeta(object):
 
     def __call__(self, *args, **opts):
         return WLFunction(self, *args, **opts)
+
 
 class WLSymbol(WLExpressionMeta):
     """Represent a Wolfram Language symbol in Python."""
@@ -34,17 +36,15 @@ class WLSymbol(WLExpressionMeta):
         elif isinstance(name, six.text_type):
             self.name = name
         else:
-            raise ValueError('Symbol name should be %s not %s. You provided: %s' % (
-                six.text_type.__name__,
-                name.__class__.__name__,
-                name
-            ))
+            raise ValueError(
+                'Symbol name should be %s not %s. You provided: %s' %
+                (six.text_type.__name__, name.__class__.__name__, name))
 
     def __hash__(self):
         return hash((self.__class__.__name__, self.name))
 
     def __len__(self):
-        return 0 #consistent with Length(x)
+        return 0  #consistent with Length(x)
 
     def __eq__(self, other):
         return isinstance(other, WLSymbol) and self.name == other.name
@@ -54,6 +54,7 @@ class WLSymbol(WLExpressionMeta):
 
     def __str__(self):
         return self.name
+
 
 class WLFunction(WLExpressionMeta):
     """Represent a Wolfram Language function with its head and arguments.
@@ -68,7 +69,9 @@ class WLFunction(WLExpressionMeta):
         self.head = head
 
         if opts:
-            self.args = tuple(chain(args, (WLSymbol('Rule')(WLSymbol(k), v) for k, v in opts.items())))
+            self.args = tuple(
+                chain(args, (WLSymbol('Rule')(WLSymbol(k), v)
+                             for k, v in opts.items())))
         else:
             self.args = args
 
@@ -76,23 +79,24 @@ class WLFunction(WLExpressionMeta):
         return hash((self.head, self.args))
 
     def __eq__(self, other):
-        return isinstance(other, WLFunction) and self.head == other.head and self.args == other.args
+        return isinstance(
+            other,
+            WLFunction) and self.head == other.head and self.args == other.args
 
     def __len__(self):
         return len(self.args)
 
     def __repr__(self):
         if len(self) > 4:
-            return '%s[%s, << %i >>, %s]' % (
-                self.head,
-                ', '.join([str(x) for x in self.args[:2]]),
-                len(self) - 4,
-                ', '.join([str(x) for x in self.args[-2:]]))
+            return '%s[%s, << %i >>, %s]' % (self.head, ', '.join([
+                str(x) for x in self.args[:2]
+            ]), len(self) - 4, ', '.join([str(x) for x in self.args[-2:]]))
         else:
-            return '%s[%s]' % (repr(self.head), ', '.join([str(x) for x in self.args]))
+            return '%s[%s]' % (repr(self.head), ', '.join(
+                [str(x) for x in self.args]))
+
 
 class WLSymbolFactory(WLSymbol):
-
     """Provide a convenient way to build objects representing arbitrary Wolfram Language expressions through the use of attributes.
 
     This class is conveniently instanciated at startup as: :class:`~wolframclient.language.wl`, :class:`~wolframclient.language.Global` 
@@ -112,9 +116,10 @@ class WLSymbolFactory(WLSymbol):
 
     """
 
-    def __init__(self, name = None):
+    def __init__(self, name=None):
         self.name = name
 
     def __getattr__(self, attr):
         #summing a tuple with another tuple is returning a new immutable tuple, this operation is always creating a new immutable symbol factory
-        return self.__class__(self.name and '%s`%s' % (self.name, attr) or attr)
+        return self.__class__(self.name and '%s`%s' % (self.name, attr)
+                              or attr)

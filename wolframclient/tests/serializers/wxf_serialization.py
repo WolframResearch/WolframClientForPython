@@ -2,19 +2,22 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import os
+import unittest
 from collections import OrderedDict
 
 from wolframclient.language import wl
 from wolframclient.serializers import export
-from wolframclient.serializers.wxfencoder.serializer import write_varint, WXFExprSerializer
-from wolframclient.serializers.wxfencoder.wxfexpr import WXFExprBinaryString, WXFExprInteger, WXFExprString
-from wolframclient.serializers.wxfencoder.wxfexprprovider import WXFExprProvider
+from wolframclient.serializers.wxfencoder.serializer import (WXFExprSerializer,
+                                                             write_varint)
+from wolframclient.serializers.wxfencoder.wxfexpr import (
+    WXFExprBinaryString, WXFExprInteger, WXFExprString)
+from wolframclient.serializers.wxfencoder.wxfexprprovider import (
+    WXFExprProvider)
 from wolframclient.utils import six
 from wolframclient.utils.datastructures import Association
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
-import os
-import unittest
 
 def init(compress=False, enforce=True):
     expr_provider = WXFExprProvider()
@@ -23,9 +26,13 @@ def init(compress=False, enforce=True):
         stream, expr_provider=expr_provider, enforce=True, compress=compress)
     return (serializer, stream)
 
-class SerializeTest(BaseTestCase):
 
-    def serialize_compare(self, pythonExpr, expected_wxf, compress=False, enforce=True):
+class SerializeTest(BaseTestCase):
+    def serialize_compare(self,
+                          pythonExpr,
+                          expected_wxf,
+                          compress=False,
+                          enforce=True):
         serializer, stream = init(compress=compress)
         serializer.serialize(pythonExpr)
         self.assertSequenceEqual(stream.getvalue(), expected_wxf)
@@ -34,44 +41,54 @@ class SerializeTest(BaseTestCase):
         current_file_dir = os.path.dirname(__file__)
         return os.path.join(current_file_dir, '..', 'data', file_name)
 
-class TestCase(SerializeTest):
 
+class TestCase(SerializeTest):
     def test_zero(self):
         buffer = six.BytesIO()
         write_varint(0, buffer)
-        self.assertSequenceEqual(bytearray(buffer.getvalue()), bytearray([0x00]))
+        self.assertSequenceEqual(
+            bytearray(buffer.getvalue()), bytearray([0x00]))
 
     def test_one_byte(self):
         buffer = six.BytesIO()
         write_varint(127, buffer)
-        self.assertSequenceEqual(bytearray(buffer.getvalue()), bytearray([127]))
+        self.assertSequenceEqual(
+            bytearray(buffer.getvalue()), bytearray([127]))
 
     def test_two_bytes(self):
         buffer = six.BytesIO()
         write_varint(128, buffer)
-        self.assertSequenceEqual(bytearray(buffer.getvalue()), bytearray([0x80, 0x01]))
+        self.assertSequenceEqual(
+            bytearray(buffer.getvalue()), bytearray([0x80, 0x01]))
 
         buffer = six.BytesIO()
-        write_varint((1<<(7*2))-1, buffer)
-        self.assertSequenceEqual(bytearray(buffer.getvalue()), bytearray([0xFF, 0x7F]))
+        write_varint((1 << (7 * 2)) - 1, buffer)
+        self.assertSequenceEqual(
+            bytearray(buffer.getvalue()), bytearray([0xFF, 0x7F]))
 
     def test_three_bytes(self):
         buffer = six.BytesIO()
         write_varint((1 << (7 * 2)), buffer)
-        self.assertSequenceEqual(bytearray(buffer.getvalue()), bytearray([0x80, 0x80, 0x01]))
+        self.assertSequenceEqual(
+            bytearray(buffer.getvalue()), bytearray([0x80, 0x80, 0x01]))
 
         buffer = six.BytesIO()
         write_varint((1 << (7 * 3)) - 1, buffer)
-        self.assertSequenceEqual(bytearray(buffer.getvalue()), bytearray([0xFF, 0xFF, 0x7F]))
+        self.assertSequenceEqual(
+            bytearray(buffer.getvalue()), bytearray([0xFF, 0xFF, 0x7F]))
 
     def test_max_bytes(self):
         buffer = six.BytesIO()
         write_varint((1 << (7 * 8)), buffer)
-        self.assertSequenceEqual(bytearray(buffer.getvalue()), bytearray([0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x01]))
+        self.assertSequenceEqual(
+            bytearray(buffer.getvalue()),
+            bytearray([0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x01]))
 
         buffer = six.BytesIO()
         write_varint((1 << (7 * 9)) - 1, buffer)
-        self.assertSequenceEqual(bytearray(buffer.getvalue()), bytearray([0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F]))
+        self.assertSequenceEqual(
+            bytearray(buffer.getvalue()),
+            bytearray([0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F]))
 
     ### STRING TESTS
 
@@ -85,20 +102,20 @@ class TestCase(SerializeTest):
         with self.assertRaises(TypeError):
             WXFExprString(value)
 
-        value = [1,2,3]
+        value = [1, 2, 3]
         with self.assertRaises(TypeError):
             WXFExprString(value)
 
-        value = {1 : 'foo'}
+        value = {1: 'foo'}
         with self.assertRaises(TypeError):
             WXFExprString(value)
 
-        value = bytearray([1,2,3])
+        value = bytearray([1, 2, 3])
         with self.assertRaises(TypeError):
             WXFExprString(value)
 
     def testBinaryString(self):
-        value = bytearray([0,128,255])
+        value = bytearray([0, 128, 255])
         wxfexpr = WXFExprBinaryString(value)
         self.assertSequenceEqual(wxfexpr.data, value)
 
@@ -108,7 +125,7 @@ class TestCase(SerializeTest):
         self.serialize_compare(value, wxf)
 
     def test_max_3bytes_unicode(self):
-        max = (1<<16)-1
+        max = (1 << 16) - 1
         if six.PY2:
             value = unichr(max)
         else:
@@ -120,10 +137,8 @@ class TestCase(SerializeTest):
     def test_high_surrogates(self):
         values = [0xD800, 0xDB7F, 0xDC00, 0xDFFF]
         wxf_outs = [
-            b'\x38\x3a\x53\x03\xed\xa0\x80',
-            b'\x38\x3a\x53\x03\xed\xad\xbf',
-            b'\x38\x3a\x53\x03\xed\xb0\x80',
-            b'\x38\x3a\x53\x03\xed\xbf\xbf'
+            b'\x38\x3a\x53\x03\xed\xa0\x80', b'\x38\x3a\x53\x03\xed\xad\xbf',
+            b'\x38\x3a\x53\x03\xed\xb0\x80', b'\x38\x3a\x53\x03\xed\xbf\xbf'
         ]
         # PY2 does not care about high surrogate, so does the WL.
         # PY3 on the other hand raises exception when it encounters one.
@@ -135,9 +150,9 @@ class TestCase(SerializeTest):
                     self.serialize_compare(chr(val), wxf)
 
     ### INTEGER TESTS
-
     ''' Mostly useful for Python 2.7. Otherwise we test int.to_bytes.
     '''
+
     @unittest.skipIf(six.JYTHON, None)
     def test_int8(self):
         values = [0, 1, 127, -1, -128]
@@ -157,8 +172,7 @@ class TestCase(SerializeTest):
     @unittest.skipIf(six.JYTHON, None)
     def test_int32(self):
         values = [-(1 << 31), (1 << 31) - 1]
-        res = [(0x00, 0x00, 0x00, 0x80),
-               (0xFF, 0xFF, 0xFF, 0x7F)]
+        res = [(0x00, 0x00, 0x00, 0x80), (0xFF, 0xFF, 0xFF, 0x7F)]
         for i in range(0, len(values)):
             wxf_expr = WXFExprInteger(values[i])
             self.assertSequenceEqual(wxf_expr.to_bytes(), res[i])
@@ -223,7 +237,7 @@ class TestCase(SerializeTest):
         # Note: Dict must be used with care as the key ordering is not guaranted.
         # One way to make reproducible tests is to use at most one key.
 
-        value = {1:2}
+        value = {1: 2}
         wxf = b'\x38\x3a\x41\x01\x3a\x43\x01\x43\x02'
         self.serialize_compare(value, wxf)
 
@@ -247,47 +261,38 @@ class TestCase(SerializeTest):
         import itertools
         all_char = u''
         unicode_no_surrogate = itertools.chain(
-            range(0xD800),
-            range(1 + 0xDFFF, 1<<16))
-        count=0
+            range(0xD800), range(1 + 0xDFFF, 1 << 16))
+        count = 0
         for i in unicode_no_surrogate:
-            count+=1
+            count += 1
             if six.PY2:
                 all_char += unichr(i)
             else:
                 all_char += chr(i)
 
-        with open(self.path_to_file_in_data_dir('allchars.wxf'), 'rb') as r_file:
+        with open(self.path_to_file_in_data_dir('allchars.wxf'),
+                  'rb') as r_file:
             ba = bytearray(r_file.read())
         self.serialize_compare(all_char, ba)
 
     def test_default(self):
         expr_provider = WXFExprProvider(default=list)
         stream = six.BytesIO()
-        serializer = WXFExprSerializer(
-            stream, expr_provider=expr_provider)
+        serializer = WXFExprSerializer(stream, expr_provider=expr_provider)
         serializer.serialize(range(1, 4))
         wxf = b'\x38\x3a\x66\x03\x73\x04\x4c\x69\x73\x74\x43\x01\x43\x02\x43\x03'
-        self.assertSequenceEqual(stream.getvalue(),wxf)
+        self.assertSequenceEqual(stream.getvalue(), wxf)
 
     def test_export(self):
 
-        for value in (
-            1,
-            2,
-            "aaaa",
-            2.0,
-            {1: 2},
-            [1, 2, 3]
-            ):
-            self.serialize_compare(
-                value,
-                export(value, target_format = 'wxf')
-            )
+        for value in (1, 2, "aaaa", 2.0, {1: 2}, [1, 2, 3]):
+            self.serialize_compare(value, export(value, target_format='wxf'))
 
         self.assertEqual(
-            export(Association(enumerate('abc')), target_format = 'wxf'),
-            export(wl.Association(*(wl.Rule(i, v) for i, v in enumerate('abc'))), target_format = 'wxf'),
+            export(Association(enumerate('abc')), target_format='wxf'),
+            export(
+                wl.Association(*(wl.Rule(i, v) for i, v in enumerate('abc'))),
+                target_format='wxf'),
         )
 
     def test_small_compression(self):
