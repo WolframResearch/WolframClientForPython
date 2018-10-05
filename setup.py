@@ -41,7 +41,7 @@ def read(*rellibpath):
 
 setup(
     name = 'wolframclient',
-    version = '1.0.1dev5',
+    version = '1.0.1.dev5',
     description = 'A Python library with various tools to interact with the Wolfram Language and the Wolfram Cloud.',
     long_description = read('README.rst'),
     long_description_content_type = 'text/x-rst',
@@ -51,7 +51,7 @@ setup(
     include_package_data=True,
     packages=find_packages(),
     test_suite='wolframclient.tests',
-    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*',
+    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',
     install_requires = [
         'pip',
         'numpy',
