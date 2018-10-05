@@ -58,7 +58,7 @@ class WolframKernelPool(object):
                     logger.info(
                         'Termination requested for kernel: %s.' % kernel)
                     break
-                # func is one of the async_evaluate* methods from WolframLanguageAsyncSession.
+                # func is one of the evaluate* methods from WolframLanguageAsyncSession.
                 future, func, args, kwargs = task
                 logger.debug('Processing expr %s' % args)
                 # those method can't be canceled since the kernel is evaluating anyway.
@@ -170,20 +170,20 @@ class WolframKernelPool(object):
     async def evaluate(self, expr, **kwargs):
         future = asyncio.Future(loop=self._loop)
         await self._put_evaluation_task(
-            future, WolframLanguageAsyncSession.async_evaluate, expr, **kwargs)
+            future, WolframLanguageAsyncSession.evaluate, expr, **kwargs)
         return await future
 
     async def evaluate_wxf(self, expr, **kwargs):
         future = asyncio.Future(loop=self._loop)
         await self._put_evaluation_task(
-            future, WolframLanguageAsyncSession.async_evaluate_wxf, expr,
+            future, WolframLanguageAsyncSession.evaluate_wxf, expr,
             **kwargs)
         return await future
 
     async def evaluate_wrap(self, expr, **kwargs):
         future = asyncio.Future(loop=self._loop)
         await self._put_evaluation_task(
-            future, WolframLanguageAsyncSession.async_evaluate_wrap, expr,
+            future, WolframLanguageAsyncSession.evaluate_wrap, expr,
             **kwargs)
         return await future
 
