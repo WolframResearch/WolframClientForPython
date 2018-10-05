@@ -2,6 +2,11 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from wolframclient.utils.decorators import to_dict
+from wolframclient.utils.importutils import module_path
+
+from wolframclient.utils.require import require_module
+
 import argparse
 import os
 import sys
@@ -56,7 +61,7 @@ class SimpleCommand(object):
 
     dependencies = ()
 
-    def __init__(self, argv=None, name=None):
+    def __init__(self, argv = None, name = None):
         if argv is None:
             self.argv = tuple(sys.argv)
         else:
@@ -77,7 +82,7 @@ class SimpleCommand(object):
 
         if self.dependencies:
             require_module(*self.dependencies)
-
+        
         parser = self.create_parser()
         if parser:
             self.add_arguments(parser)

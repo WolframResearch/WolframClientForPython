@@ -13,6 +13,12 @@ class Command(SimpleCommand):
 
     modules = ['wolframclient']
 
+    dependencies = (
+        ('autopep8', '1.4'), 
+        ('isort', '4.3.4'), 
+        ('autoflake', '1.2'),
+    )
+
     def _module_args(self, *args):
 
         yield __file__  # autopep main is dropping the first argument
@@ -23,7 +29,6 @@ class Command(SimpleCommand):
         for arg in args:
             yield arg
 
-    @require(('autopep8', '1.4'), ('isort', '4.3.4'), ('autoflake', '1.2'))
     def handle(self, *args):
 
         # https://pypi.org/project/isort/
