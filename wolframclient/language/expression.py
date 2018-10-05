@@ -9,7 +9,6 @@ from wolframclient.utils.encoding import force_text
 
 __all__ = ['WLSymbol', 'WLFunction', 'WLSymbolFactory']
 
-
 class WLExpressionMeta(object):
     """Abstract class to subclass when building representation of Wolfram Language expressions as Python object."""
 
@@ -69,9 +68,7 @@ class WLFunction(WLExpressionMeta):
         self.head = head
 
         if opts:
-            self.args = tuple(
-                chain(args, (WLSymbol('Rule')(WLSymbol(k), v)
-                             for k, v in opts.items())))
+            self.args = tuple(chain(args, (WLSymbol('Rule')(WLSymbol(k), v) for k, v in opts.items())))
         else:
             self.args = args
 
@@ -97,6 +94,7 @@ class WLFunction(WLExpressionMeta):
 
 
 class WLSymbolFactory(WLSymbol):
+
     """Provide a convenient way to build objects representing arbitrary Wolfram Language expressions through the use of attributes.
 
     This class is conveniently instanciated at startup as: :class:`~wolframclient.language.wl`, :class:`~wolframclient.language.Global` 
@@ -121,5 +119,4 @@ class WLSymbolFactory(WLSymbol):
 
     def __getattr__(self, attr):
         #summing a tuple with another tuple is returning a new immutable tuple, this operation is always creating a new immutable symbol factory
-        return self.__class__(self.name and '%s`%s' % (self.name, attr)
-                              or attr)
+        return self.__class__(self.name and '%s`%s' % (self.name, attr) or attr)
