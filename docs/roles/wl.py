@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+
+from __future__ import absolute_import, print_function, unicode_literals
 from docutils import nodes, utils
 from docutils.parsers.rst import roles
 

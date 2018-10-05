@@ -4,7 +4,7 @@
 # You can set these variables from the command line.
 SPHINXOPTS    =
 # SPHINXBUILD   = sphinx-build
-SPHINXBUILD   = python -msphinx
+SPHINXBUILD   = python3 -msphinx
 SPHINXPROJ    = WolframClientLibraryForPython
 SOURCEDIR     = .
 BUILDDIR      = _build
