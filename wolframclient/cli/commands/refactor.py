@@ -33,8 +33,6 @@ class Command(SimpleCommand):
 
         argv = sys.argv
 
-        # https://pypi.org/project/isort/
-
         from autoflake import main
 
         sys.argv = tuple(
