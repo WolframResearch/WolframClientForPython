@@ -12,11 +12,8 @@ class Command(SimpleCommand):
 
     modules = ['wolframclient']
 
-    dependencies = (
-        ('autopep8', '1.4'), 
-        ('isort', '4.3.4'),
-        ('yapf', '0.24.0')
-    )
+    dependencies = (('autopep8', '1.4'), ('isort', '4.3.4'),
+                    ('yapf', '0.24.0'), ('autoflake', '1.2'))
 
     def _module_args(self, *args):
 
