@@ -6,7 +6,6 @@ import sys
 
 from wolframclient.cli.utils import SimpleCommand
 from wolframclient.utils.importutils import module_path
-from wolframclient.utils.require import require
 
 
 class Command(SimpleCommand):
@@ -15,8 +14,8 @@ class Command(SimpleCommand):
 
     dependencies = (
         ('autopep8', '1.4'), 
-        ('isort', '4.3.4'), 
-        ('autoflake', '1.2'),
+        ('isort', '4.3.4'),
+        ('yapf', '0.24.0')
     )
 
     def _module_args(self, *args):
@@ -36,12 +35,9 @@ class Command(SimpleCommand):
         from autoflake import main
 
         sys.argv = tuple(
-            self._module_args(
-                '--in-place',
-                '--remove-duplicate-keys',
-                '--expand-star-import',
-                '--remove-all-unused-imports',
-                '--recursive'))
+            self._module_args('--in-place', '--remove-duplicate-keys',
+                              '--expand-star-import',
+                              '--remove-all-unused-imports', '--recursive'))
 
         main()
 
@@ -49,22 +45,17 @@ class Command(SimpleCommand):
 
         sys.argv = list(
             self._module_args(
-                '-rc',
-                '--multi-line',
-                '5',
-                '-a',
-                "from __future__ import absolute_import, print_function, unicode_literals"))
+                '-rc', '--multi-line', '5', '-a',
+                "from __future__ import absolute_import, print_function, unicode_literals"
+            ))
 
         main()
 
-        from autopep8 import main
+        import yapf
 
-        sys.argv = tuple(
-            self._module_args(
-                '--in-place',
-                '--aggressive',
-                '--recursive'))
+        sys.argv = list(
+            self._module_args('--in-place', '--recursive', '--parallel'))
 
-        main()
+        yapf.run_main()
 
         sys.argv = argv
