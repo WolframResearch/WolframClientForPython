@@ -33,9 +33,6 @@ class DispatchCommand(SimpleCommand):
 
     def handle(self, attr = None):
 
-        if self.dependencies:
-            require_module(*self.dependencies)
-
         all_commands = self.subcommands()
 
         if attr is None and self.default_command:
@@ -57,6 +54,10 @@ class DispatchCommand(SimpleCommand):
         return argv
 
     def main(self):
+
+        if self.dependencies:
+            require_module(*self.dependencies)
+        
         if len(self.argv) > 1 and self.argv[1]:
             return self.handle(self.argv[1])
         return self.handle()
