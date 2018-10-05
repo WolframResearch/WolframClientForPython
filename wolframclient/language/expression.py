@@ -101,7 +101,7 @@ class WLSymbolFactory(WLSymbol):
 
     Example::
 
-        >>> developer = WLSymbolFactory(context='Developer')
+        >>> developer = WLSymbolFactory('Developer')
         >>> developer.PackedArrayQ
         Developer`PackedArrayQ
     
