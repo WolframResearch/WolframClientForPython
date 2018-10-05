@@ -51,11 +51,11 @@ class WolframCloudSession(object):
         self.is_xauth = None
 
     def authenticate(self):
-        '''Authenticate with the server using the credentials.
+        """Authenticate with the server using the credentials.
 
         This method supports both oauth and xauth methods. It is not necessary
         to call it, since the session will try to authenticate when the first
-        request is issued. '''
+        request is issued. """
         logger.info('Authenticating to the server.')
         if self.authentication is None:
             raise AuthenticationException('Missing authentication.')
@@ -175,7 +175,7 @@ class WolframCloudSession(object):
         return WolframAPIResponseBuilder.build(response)
 
     def _user_api_url(self, api):
-        '''Build an API URL from a user name and an API id. '''
+        """Build an API URL from a user name and an API id. """
         if isinstance(api, tuple) or isinstance(api, list):
             if len(api) == 2:
                 return url_join(self.server.cloudbase, 'objects', api[0],
@@ -240,15 +240,18 @@ class WolframCloudSession(object):
 
 
 class WolframCloudSessionAsync(WolframCloudSession):
-    ''' A Wolfram cloud session that call issue asynchronous call.
+    """ A Wolfram cloud session that call issue asynchronous call.
 
     Contrary to :class:`~wolframclient.evaluation.WolframCloudSession`, this
     class must be terminated when no more used.
-    '''
 
-    def __init__(self, authentication=None, server=WolframPublicCloudServer):
+    `max_workers` can be specified and is passed to the ThreadPoolExecutor.
+    """
+
+    def __init__(self, authentication=None, server=WolframPublicCloudServer, max_workers=None):
         super(WolframCloudSessionAsync, self).__init__(authentication, server)
         self.thread_pool_exec = None
+        self._max_workers = max_workers
 
     def __enter__(self):
         return self
@@ -263,7 +266,8 @@ class WolframCloudSessionAsync(WolframCloudSession):
     def _thread_pool_exec(self):
         if self.thread_pool_exec is None:
             try:
-                self.thread_pool_exec = futures.ThreadPoolExecutor()
+                self.thread_pool_exec = futures.ThreadPoolExecutor(
+                    max_workers=self._max_workers)
             except ImportError:
                 logger.fatal('Module concurrent.futures is missing.')
                 raise NotImplementedError(
@@ -451,8 +455,8 @@ def _encode_inputs_as_wl(inputs, multipart, **kwargs):
 
 
 def update_parameter_list(parameters, name, value, multipart=False):
-    ''' Update the given :class:`~parameters` with a new inputs using the appropriate form based on `multipart`.
-    '''
+    """ Update the given :class:`~parameters` with a new inputs using the appropriate form based on `multipart`.
+    """
     if multipart:
         parameters[name] = ('tmp_file_%s' % name, value)
     else:
@@ -480,7 +484,7 @@ def encode_api_inputs(inputs, target_format='wl', multipart=False, **kwargs):
 
 
 def url_join(*fragments):
-    ''' Join fragments of a URL, dealing with slashes.'''
+    """ Join fragments of a URL, dealing with slashes."""
     if len(fragments) == 0:
         return ''
     buff = []

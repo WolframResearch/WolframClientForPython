@@ -11,7 +11,7 @@ from wolframclient.exception import WolframKernelException
 from wolframclient.language import wl
 from wolframclient.serializers import export
 from wolframclient.utils import six
-from wolframclient.utils.api import futures, json, os, time, zmq
+from wolframclient.utils.api import json, os, time, zmq
 from wolframclient.utils.encoding import force_text
 
 if six.WINDOWS:
@@ -19,7 +19,7 @@ if six.WINDOWS:
 
 logger = logging.getLogger(__name__)
 
-__all__ = ['WolframLanguageSession', 'WolframLanguageAsyncSession']
+__all__ = ['WolframLanguageSession']
 
 TO_PY_LOG_LEVEL = {
     1: logging.DEBUG,
@@ -254,24 +254,21 @@ class WolframLanguageSession(object):
                 self.in_socket.zmq_socket.send(
                     b'8:f\x00s\x04Quit', flags=zmq.NOBLOCK)
             except:
-                logger.warning('Failed to send Quit[] command to the kernel.')
-                error = True
+                logger.info('Failed to send Quit[] command to the kernel.')
+                error=True
             if six.PY2:
                 try:
                     self.kernel_proc.wait()
                 except:
-                    logger.warning(
-                        'Failed to cleanly stop the kernel process. Killing it.'
-                    )
+                    logger.info('Failed to cleanly stop the kernel process. Killing it.')
                     error = True
             if six.PY3:
                 try:
                     self.kernel_proc.wait(
                         timeout=self.get_parameter('TERMINATE_READ_TIMEOUT'))
                 except:
-                    logger.warning(
-                        'Failed to cleanly stop the kernel process after %.02f seconds. Killing it.'
-                        % self.get_parameter('TERMINATE_READ_TIMEOUT'))
+                    logger.info('Failed to cleanly stop the kernel process after %.02f seconds. Killing it.' %
+                                   self.get_parameter('TERMINATE_READ_TIMEOUT'))
                     error = True
             if self._stdin == PIPE:
                 try:
@@ -292,7 +289,7 @@ class WolframLanguageSession(object):
                     logger.warning('Failed to close kernel process stderr')
                     error = True
             if error:
-                logger.warning('Killing kernel process: %i' % self.kernel_proc.pid)
+                logger.info('Killing kernel process: %i' % self.kernel_proc.pid)
                 self.kernel_proc.kill()
             self.terminated = True
         if self.in_socket is not None:
@@ -382,7 +379,7 @@ class WolframLanguageSession(object):
                 raise WolframKernelException(
                     'Kernel %s failed to start properly.' % self.kernel)
         except SocketException as se:
-            logger.fatal(se)
+            logger.warning(se)
             self.terminate()
             raise WolframKernelException(
                 'Failed to communicate with the kernel %s. Could not read from ZMQ socket.'
@@ -390,6 +387,7 @@ class WolframLanguageSession(object):
 
     @property
     def pid(self):
+        """Return the PID of the Wolfram Kernel process, if any, or None."""
         if self.kernel_proc:
             return self.kernel_proc.pid
         else:
@@ -509,112 +507,7 @@ class WolframFunction(object):
             kernel = str(self.session.kernel_proc.pid)
         else:
             kernel = 'N/A'
-        return 'WolframFunction<function=%s, kernel=%s>' % (self.wlfunc,
-                                                            kernel)
-
-
-class WolframLanguageAsyncSession(WolframLanguageSession):
-    """Evaluate expression asynchronously.
-
-    Evaluation methods of this class returns a :class:`~concurrent.futures.Future` objects.
-
-    .. warning::
-        Asynchronous evaluation is only available for `Python 3.2` and above.
-    """
-
-    def __init__(self,
-                 kernel,
-                 consumer=None,
-                 initfile=None,
-                 in_socket=None,
-                 out_socket=None,
-                 kernel_loglevel=logging.NOTSET,
-                 stdin=PIPE,
-                 stdout=PIPE,
-                 stderr=PIPE):
-        super(WolframLanguageAsyncSession, self).__init__(
-            kernel,
-            consumer=consumer,
-            initfile=initfile,
-            in_socket=in_socket,
-            out_socket=out_socket,
-            kernel_loglevel=kernel_loglevel,
-            stdin=stdin,
-            stdout=stdout,
-            stderr=stderr)
-        self.thread_pool_exec = None
-
-    def evaluate(self, expr, **kwargs):
-        return self._do_in_thread(super().evaluate, expr, **kwargs)
-
-    def evaluate_wxf(self, expr, **kwargs):
-        return self._do_in_thread(super().evaluate_wxf, expr, **kwargs)
-
-    def evaluate_wrap(self, expr, **kwargs):
-        return self._do_in_thread(super().evaluate_wrap, expr, **kwargs)
-
-    def _do_in_thread(self, func, *args, **kwargs):
-        try:
-            self.get_exec_pool()
-            return self.thread_pool_exec.submit(func, *args, **kwargs)
-        except ImportError:
-            logger.fatal('Module concurrent.futures is missing.')
-            raise NotImplementedError(
-                'Asynchronous evaluation is not available on this Python interpreter.'
-            )
-
-    def get_exec_pool(self):
-        if self.thread_pool_exec is None:
-                self.thread_pool_exec = futures.ThreadPoolExecutor(
-                    max_workers=1)
-        return self.thread_pool_exec
-
-    async def async_start(self, loop=None):
-        if not loop:
-            loop = asyncio.get_event_loop()
-        await loop.run_in_executor(self.get_exec_pool(), super().start)
-
-    async def async_terminate(self, loop=None):
-        # make sure the session was started. Otherwise it's an initialized session
-        # that was never started.
-        if self.thread_pool_exec:
-            try:
-                if not loop:
-                    loop = asyncio.get_event_loop()
-                await loop.run_in_executor(self.get_exec_pool(), super().terminate)
-            except Exception as e:
-                logger.fatal('Error when terminating session: %s' % e)
-            finally:
-                try:
-                    self.thread_pool_exec.shutdown(wait=True)
-                except Exception as e:
-                    logger.fatal('Error when shutting down thread pool executor: %s' % e)
-        elif self.started:
-            self.terminate()
-
-    async def async_evaluate(self, expr, loop=None, **kwargs):
-        return await self._async_evaluate(super().evaluate, expr, loop, **kwargs)
-
-    async def async_evaluate_wxf(self, expr, loop=None, **kwargs):
-        return await self._async_evaluate(super().evaluate_wxf, expr, loop, **kwargs)
-
-    async def async_evaluate_wrap(self, expr, loop=None, **kwargs):
-        return await self._async_evaluate(super().evaluate_wrap, expr, loop, **kwargs)
-
-    async def _async_evaluate(self, func, expr, loop=None, **kwargs):
-        if not loop:
-            loop=asyncio.get_event_loop()
-        return await loop.run_in_executor(self.get_exec_pool(), func, expr, **kwargs)
-
-    def terminate(self):
-        # First terminate all executions.
-        # Then use the socket to actually quit. Avoid crashes when freeing zmq resources still in use.
-        if self.thread_pool_exec:
-            try:
-                self.thread_pool_exec.shutdown(wait=True)
-            except Exception as e:
-                logger.fatal('Failed to stop thread pool executor: %s' % e)
-        super().terminate()
+        return 'WolframFunction<function=%s, kernel=%s>' % (self.wlfunc, kernel)
 
 
 class SocketException(Exception):

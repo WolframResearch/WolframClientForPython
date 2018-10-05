@@ -9,13 +9,19 @@ from wolframclient.deserializers import binary_deserialize
 from wolframclient.exception import WolframKernelException
 from wolframclient.language import wl, wlexpr
 from wolframclient.language.expression import WLFunction, WLSymbol
-from wolframclient.serializers import export
-from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config
+from wolframclient.logger.utils import setup_logging_to_file
+from wolframclient.utils.importutils import safe_import_string
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
+try:
+    from wolframclient.evaluation import WolframLanguageAsyncSession
+    async_eval = True
+except:
+    async_eval = False
+
 if not six.JYTHON:
-    from wolframclient.evaluation import WolframLanguageSession, WolframLanguageAsyncSession
+    from wolframclient.evaluation import WolframLanguageSession
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -203,7 +209,7 @@ class TestCase(TestCaseSettings):
         self.assertEqual(inv('abc'), 'cba')
 
 
-@unittest.skipIf(six.PY2, "No async call on Python2.")
+@unittest.skipIf(not async_eval, "async coroutines not available.")
 class TestAsyncSession(TestCaseSettings):
     @classmethod
     def tearDownKernelSession(cls):
