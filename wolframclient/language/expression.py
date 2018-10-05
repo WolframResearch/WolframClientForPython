@@ -111,19 +111,13 @@ class WLSymbolFactory(WLSymbol):
         Developer`PackedArrayQ
 
     """
-    def __init__(self, context = ()):
-        if isinstance(context, six.string_types):
-            self.context = (context, )
-        else:
-            self.context = context
 
-    @cached_property
-    def name(self):
-        return "`".join(self.context)
+    def __init__(self, name = None):
+        self.name = name
 
     def __getattr__(self, attr):
         #summing a tuple with another tuple is returning a new immutable tuple, this operation is always creating a new immutable symbol factory
-        return self.__class__(self.context + (attr, ))
+        return self.__class__(self.name and '%s`%s' % (self.name, attr) or attr)
 
 wl = WLSymbolFactory()
 """A factory of :class:`~wolframclient.language.expression.WLSymbol` instances without any particular context.
