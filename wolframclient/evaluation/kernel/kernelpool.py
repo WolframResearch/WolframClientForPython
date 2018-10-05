@@ -6,7 +6,8 @@ import asyncio
 import logging
 
 from wolframclient.evaluation.kernel.asyncsession import (
-    WolframLanguageAsyncSession)
+    WolframLanguageAsyncSession
+)
 
 logger = logging.getLogger(__name__)
 

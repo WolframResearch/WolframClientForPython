@@ -18,8 +18,9 @@ else:
     __all__ = [
         'WolframAPICall', 'WolframServer', 'WolframCloudSession',
         'WolframCloudSessionAsync', 'WolframAPICall',
-        'SecuredAuthenticationKey', 'UserIDPassword', 'WolframLanguageSession', 'WolframLanguageFutureSession',
-        'WolframResult', 'WolframKernelEvaluationResult', 'WolframAPIResponse',
+        'SecuredAuthenticationKey', 'UserIDPassword', 'WolframLanguageSession',
+        'WolframLanguageFutureSession', 'WolframResult',
+        'WolframKernelEvaluationResult', 'WolframAPIResponse',
         'WolframEvaluationJSONResponse'
     ]
     try:

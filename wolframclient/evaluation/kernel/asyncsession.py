@@ -7,7 +7,8 @@ import logging
 from subprocess import PIPE
 
 from wolframclient.evaluation.kernel.kernelsession import (
-    WolframLanguageSession)
+    WolframLanguageSession
+)
 from wolframclient.utils.api import futures
 
 logger = logging.getLogger(__name__)
