@@ -29,7 +29,9 @@ class Command(SimpleCommand):
         for arg in args:
             yield arg
 
-    def handle(self, *args):
+    def handle(self, **opts):
+
+        argv = sys.argv
 
         # https://pypi.org/project/isort/
 
@@ -66,3 +68,5 @@ class Command(SimpleCommand):
                 '--recursive'))
 
         main()
+
+        sys.argv = argv
