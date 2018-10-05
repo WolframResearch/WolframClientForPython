@@ -8,6 +8,8 @@ from wolframclient.utils import six
 from wolframclient.utils.decorators import cached_property
 from wolframclient.utils.encoding import force_text
 
+__all__ = ['WLSymbol', 'WLFunction', 'WLSymbolFactory']
+
 class WLExpressionMeta(object):
     """Abstract class to subclass when building representation of Wolfram Language expressions as Python object."""
 
@@ -66,7 +68,7 @@ class WLFunction(WLExpressionMeta):
         self.head = head
 
         if opts:
-            self.args = tuple(chain(args, (wl.Rule(WLSymbol(k), v) for k, v in opts.items())))
+            self.args = tuple(chain(args, (WLSymbol('Rule')(WLSymbol(k), v) for k, v in opts.items())))
         else:
             self.args = args
 
@@ -90,8 +92,6 @@ class WLFunction(WLExpressionMeta):
             return '%s[%s]' % (repr(self.head), ', '.join([str(x) for x in self.args]))
 
 class WLSymbolFactory(WLSymbol):
-
-    __slots__ = 'context'
 
     """Provide a convenient way to build objects representing arbitrary Wolfram Language expressions through the use of attributes.
 
@@ -118,37 +118,3 @@ class WLSymbolFactory(WLSymbol):
     def __getattr__(self, attr):
         #summing a tuple with another tuple is returning a new immutable tuple, this operation is always creating a new immutable symbol factory
         return self.__class__(self.name and '%s`%s' % (self.name, attr) or attr)
-
-wl = WLSymbolFactory()
-"""A factory of :class:`~wolframclient.language.expression.WLSymbol` instances without any particular context.
-
-This instance of :class:`~wolframclient.language.expression.WLSymbolFactory` is conveniently used
-by calling its attributes. The following code represents various Wolfram Language expressions::
-
-    # Now
-    wl.Now
-    # Quantity[3, "Hours"]
-    wl.Quantity(3, "Hours")
-    # Select[PrimeQ, {1,2,3,4}]
-    wl.Select(wl.PrimeQ, [1, 2, 3, 4])
-
-It is possible to specify context using the syntax::
-
-    wl.MyContext.MySubContext.SymbolName
-"""
-
-System = wl.System
-"""A factory of :class:`~wolframclient.language.expression.WLSymbol` instances having ``System``` context.
-
-See :func:`~wolframclient.language.expression.WLSymbolFactory` and
-:class:`~wolframclient.language.expression.WLSymbolFactory` for more details."""
-
-Global = wl.Global
-"""A factory of :class:`~wolframclient.language.expression.WLSymbol` instances having ``Global``` context.
-
-See :func:`~wolframclient.language.expression.WLSymbolFactory` and
-:class:`~wolframclient.language.expression.WLSymbolFactory` for more details."""
-
-wlexpr = wl.ToExpression
-
-__all__ = ['WLSymbol', 'wl', 'System', 'Global', 'WLFunction', 'wlexpr']
