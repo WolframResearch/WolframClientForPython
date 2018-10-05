@@ -9,8 +9,8 @@ from wolframclient.deserializers import binary_deserialize
 from wolframclient.exception import WolframKernelException
 from wolframclient.language import wl, wlexpr
 from wolframclient.language.expression import WLFunction, WLSymbol
-from wolframclient.logger.utils import setup_logging_to_file
-from wolframclient.utils.importutils import safe_import_string
+from wolframclient.serializers import export
+from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
 

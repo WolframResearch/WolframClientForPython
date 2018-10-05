@@ -255,20 +255,23 @@ class WolframLanguageSession(object):
                     b'8:f\x00s\x04Quit', flags=zmq.NOBLOCK)
             except:
                 logger.info('Failed to send Quit[] command to the kernel.')
-                error=True
+                error = True
             if six.PY2:
                 try:
                     self.kernel_proc.wait()
                 except:
-                    logger.info('Failed to cleanly stop the kernel process. Killing it.')
+                    logger.info(
+                        'Failed to cleanly stop the kernel process. Killing it.'
+                    )
                     error = True
             if six.PY3:
                 try:
                     self.kernel_proc.wait(
                         timeout=self.get_parameter('TERMINATE_READ_TIMEOUT'))
                 except:
-                    logger.info('Failed to cleanly stop the kernel process after %.02f seconds. Killing it.' %
-                                   self.get_parameter('TERMINATE_READ_TIMEOUT'))
+                    logger.info(
+                        'Failed to cleanly stop the kernel process after %.02f seconds. Killing it.'
+                        % self.get_parameter('TERMINATE_READ_TIMEOUT'))
                     error = True
             if self._stdin == PIPE:
                 try:
@@ -289,7 +292,8 @@ class WolframLanguageSession(object):
                     logger.warning('Failed to close kernel process stderr')
                     error = True
             if error:
-                logger.info('Killing kernel process: %i' % self.kernel_proc.pid)
+                logger.info(
+                    'Killing kernel process: %i' % self.kernel_proc.pid)
                 self.kernel_proc.kill()
             self.terminated = True
         if self.in_socket is not None:
@@ -373,7 +377,8 @@ class WolframLanguageSession(object):
             if response == WolframLanguageSession._KERNEL_OK:
                 if logger.isEnabledFor(logging.INFO):
                     logger.info(
-                        'Kernel %s is ready. Startup took %.2f seconds.' % (self.pid, time.perf_counter() - t_start))
+                        'Kernel %s is ready. Startup took %.2f seconds.' %
+                        (self.pid, time.perf_counter() - t_start))
             else:
                 self.terminate()
                 raise WolframKernelException(
@@ -507,7 +512,9 @@ class WolframFunction(object):
             kernel = str(self.session.kernel_proc.pid)
         else:
             kernel = 'N/A'
-        return 'WolframFunction<function=%s, kernel=%s>' % (self.wlfunc, kernel)
+        return 'WolframFunction<function=%s, kernel=%s>' % (self.wlfunc,
+                                                            kernel)
+
 
 
 class SocketException(Exception):

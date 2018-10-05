@@ -32,7 +32,7 @@ class DispatchCommand(SimpleCommand):
     def subcommands(self):
         return discover_with_convention(self.modules, self.class_name)
 
-    def handle(self, attr = None):
+    def handle(self, attr=None):
 
         all_commands = self.subcommands()
 
@@ -59,7 +59,7 @@ class DispatchCommand(SimpleCommand):
 
         if self.dependencies:
             require_module(*self.dependencies)
-        
+
         if len(self.argv) > 1 and self.argv[1]:
             return self.handle(self.argv[1])
         return self.handle()

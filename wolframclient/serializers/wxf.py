@@ -4,6 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from itertools import chain
 
+import wolframclient.serializers.wxfencoder.wxfexpr as wxfexpr
 from wolframclient.serializers.base import FormatSerializer
 from wolframclient.serializers.utils import py_encode_decimal, safe_len
 from wolframclient.serializers.wxfencoder.constants import (

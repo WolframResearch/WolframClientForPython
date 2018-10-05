@@ -5,7 +5,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 from collections import defaultdict
 
 from wolframclient.utils.dispatch import ClassDispatch
-from wolframclient.utils.decorators import synchronized
 from wolframclient.utils.functional import composition, iterate
 from wolframclient.utils.importutils import safe_import_string
 import multiprocessing
@@ -27,7 +26,7 @@ def normalizer(self, o):
 
 
 class DispatchUpdater(object):
-    
+
     # global lock to avoid multiple dispatcher updating in multithreaded programs.
     _lock = multiprocessing.Lock()
 
@@ -40,7 +39,7 @@ class DispatchUpdater(object):
         for module, handlers in handlers.items():
             self.modules.add(module)
             self.registry[module].extend(iterate(handlers))
-    
+
     def update_dispatch(self):
         with DispatchUpdater._lock:
             if self.modules:
@@ -84,10 +83,5 @@ class Normalizer(object):
 
         self.default_updater.update_dispatch()
 
-        return composition(*map(
-            safe_import_string,
-            iterate(
-                func or (),
-                self.default_normalizer
-            )
-        ))
+        return composition(*map(safe_import_string,
+                                iterate(func or (), self.default_normalizer)))

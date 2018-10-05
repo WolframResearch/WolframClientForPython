@@ -16,20 +16,13 @@ if JYTHON:
 else:
     from wolframclient.evaluation.kernel import WolframLanguageSession
     __all__ = [
-        'WolframAPICall',
-        'WolframServer',
-        'WolframCloudSession', 'WolframCloudSessionAsync',
-        'WolframAPICall',
-        'SecuredAuthenticationKey',
-        'UserIDPassword',
-        'WolframLanguageSession',
-        'WolframResult',
-        'WolframKernelEvaluationResult',
-        'WolframAPIResponse',
+        'WolframAPICall', 'WolframServer', 'WolframCloudSession',
+        'WolframCloudSessionAsync', 'WolframAPICall',
+        'SecuredAuthenticationKey', 'UserIDPassword', 'WolframLanguageSession',
+        'WolframResult', 'WolframKernelEvaluationResult', 'WolframAPIResponse',
         'WolframEvaluationJSONResponse'
     ]
     try:
-        from wolframclient.evaluation.kernel import WolframLanguageAsyncSession, WolframKernelPool
         __all__.append('WolframKernelPool')
         __all__.append('WolframLanguageAsyncSession')
     except:

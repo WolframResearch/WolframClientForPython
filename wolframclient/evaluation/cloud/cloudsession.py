@@ -248,7 +248,10 @@ class WolframCloudSessionAsync(WolframCloudSession):
     `max_workers` can be specified and is passed to the ThreadPoolExecutor.
     """
 
-    def __init__(self, authentication=None, server=WolframPublicCloudServer, max_workers=None):
+    def __init__(self,
+                 authentication=None,
+                 server=WolframPublicCloudServer,
+                 max_workers=None):
         super(WolframCloudSessionAsync, self).__init__(authentication, server)
         self.thread_pool_exec = None
         self._max_workers = max_workers
