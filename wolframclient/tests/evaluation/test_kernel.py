@@ -14,14 +14,8 @@ from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
-try:
-    from wolframclient.evaluation import WolframLanguageAsyncSession
-    async_eval = True
-except:
-    async_eval = False
-
 if not six.JYTHON:
-    from wolframclient.evaluation import WolframLanguageSession
+    from wolframclient.evaluation import WolframLanguageSession, WolframLanguageFutureSession
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -209,46 +203,46 @@ class TestCase(TestCaseSettings):
         self.assertEqual(inv('abc'), 'cba')
 
 
-@unittest.skipIf(not async_eval, "async coroutines not available.")
-class TestAsyncSession(TestCaseSettings):
+@unittest.skipIf(six.PY2, "Module future is not available.")
+class TestFutureSession(TestCaseSettings):
     @classmethod
     def tearDownKernelSession(cls):
-        if cls.async_session is not None:
-            cls.async_session.terminate()
+        if cls.future_session is not None:
+            cls.future_session.terminate()
 
     @classmethod
     def setupKernelSession(cls):
-        cls.async_session = WolframLanguageAsyncSession(
+        cls.future_session = WolframLanguageFutureSession(
             cls.KERNEL_PATH, kernel_loglevel=logging.INFO)
-        cls.async_session.set_parameter('STARTUP_READ_TIMEOUT', 5)
-        cls.async_session.set_parameter('TERMINATE_READ_TIMEOUT', 3)
-        cls.async_session.start()
+        cls.future_session.set_parameter('STARTUP_READ_TIMEOUT', 5)
+        cls.future_session.set_parameter('TERMINATE_READ_TIMEOUT', 3)
+        cls.future_session.start()
 
     def test_evaluate_async_basic_inputform(self):
-        future = self.async_session.evaluate('1+1')
+        future = self.future_session.evaluate('1+1')
         self.assertEqual(future.result(timeout=1), 2)
 
     def test_evaluate_async_basic_wl(self):
-        future = self.async_session.evaluate(wl.Plus(1, 2))
+        future = self.future_session.evaluate(wl.Plus(1, 2))
         self.assertEqual(future.result(timeout=1), 3)
 
     def test_evaluate_async_wxf_inputform(self):
         wxf = export(wl.MinMax([1, -2, 3, 5]), target_format='wxf')
-        future = self.async_session.evaluate(wxf)
+        future = self.future_session.evaluate(wxf)
         self.assertEqual(future.result(timeout=1), [-2, 5])
 
     def test_evaluate_multiple_async(self):
-        with WolframLanguageAsyncSession(self.KERNEL_PATH) as async_session:
-            future1 = async_session.evaluate('3+4')
+        with WolframLanguageFutureSession(self.KERNEL_PATH) as future_session:
+            future1 = future_session.evaluate('3+4')
             result1 = future1.result(timeout=3)
             self.assertEqual(result1, 7)
-            future2 = async_session.evaluate('10+1')
+            future2 = future_session.evaluate('10+1')
             self.assertEqual(future2.result(timeout=1), 11)
-            future3 = async_session.evaluate('100+1')
+            future3 = future_session.evaluate('100+1')
             self.assertEqual(future3.result(timeout=1), 101)
 
     def test_many_failures_wrap_async(self):
-        future = self.async_session.evaluate_wrap(
+        future = self.future_session.evaluate_wrap(
             'ImportString["[1,2", "RawJSON"]; 1/0')
         res = future.result(timeout=1)
         self.assertFalse(res.success)
@@ -262,7 +256,7 @@ class TestAsyncSession(TestCaseSettings):
         self.assertListEqual(res.messages, expected_msgs)
 
     def test_valid_evaluate_wxf_async(self):
-        future = self.async_session.evaluate_wxf('Range[3]')
+        future = self.future_session.evaluate_wxf('Range[3]')
         wxf = future.result(timeout=1)
         result = binary_deserialize(wxf)
         self.assertEqual(result, [1, 2, 3])

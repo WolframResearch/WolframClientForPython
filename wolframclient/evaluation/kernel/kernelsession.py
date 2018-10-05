@@ -319,6 +319,9 @@ class WolframLanguageSession(object):
         """Start a new kernel process and open sockets to communicate with it."""
         if self.terminated:
             raise WolframKernelException('Session has been terminated.')
+        if self.started:
+            logger.warning('Session was already started.')
+            return
         # start the evaluation zmq sockets
         self.in_socket.bind()
         self.out_socket.bind()
