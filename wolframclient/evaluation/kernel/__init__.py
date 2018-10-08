@@ -8,6 +8,8 @@ from wolframclient.evaluation.kernel.futuresession import WolframLanguageFutureS
 __all__ = ['WolframLanguageSession', 'WolframLanguageFutureSession']
 
 try:
+    from wolframclient.evaluation.kernel.asyncsession import WolframLanguageAsyncSession
+    from wolframclient.evaluation.kernel.kernelpool import WolframKernelPool
     __all__.append('WolframLanguageAsyncSession')
     __all__.append('WolframKernelPool')
 except Exception as e:

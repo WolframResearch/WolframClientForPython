@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import asyncio
+from wolframclient.utils.api import asyncio
 import logging
 from subprocess import PIPE
 
@@ -75,7 +75,7 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
     def _get_loop(self):
         # we only need a loop when coroutines are involved.
         if self._loop is None:
-            self._loop = asyncio.get_event_loop()
+            self._loop = asyncio.get_running_loop()
         return self._loop
 
     async def evaluate(self, expr, **kwargs):

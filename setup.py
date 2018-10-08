@@ -39,6 +39,10 @@ def read(*rellibpath):
     with codecs.open(os.path.join(HERE, *rellibpath), 'r', encoding='utf-8') as fp:
           return fp.read()
 
+def load_tests():
+    import unittest
+    from wolframclient.cli.commands.test import Command as TestCommand
+    TestCommand().handle()
 
 setup(
     name = 'wolframclient',
@@ -51,7 +55,7 @@ setup(
     author_email = 'dorianb@wolfram.com, riccardod@wolfram.com',
     include_package_data=True,
     packages=find_packages(),
-    test_suite='wolframclient.tests',
+    test_suite='setup.load_tests',
     python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*',
     install_requires = [
         'pip',

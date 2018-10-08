@@ -3,64 +3,39 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import sys
+import os
 import unittest
 
-from wolframclient.cli.utils import SimpleCommand, discover_with_convention
-from wolframclient.utils.importutils import import_string
+from wolframclient.utils import six
+from wolframclient.cli.utils import SimpleCommand
 
 
 class Command(SimpleCommand):
-
-    modules = ['wolframclient.tests']
-    class_name = 'TestCase'
-
-    @property
-    def available_test_cases(self):
-        try:
-            return self._test_cases
-        except AttributeError:
-            self._test_cases = discover_with_convention(
-                self.modules, self.class_name, walk=True)
-            return self._test_cases
-
+    """ Run test suites from the tests modules.
+    A list of patterns can be provided to specify the tests to run.
+    """
     def add_arguments(self, parser):
         parser.add_argument('args', nargs='*')
 
-    def import_test_case(self, name):
-
-        if not name in self.available_test_cases:
-
-            #we need to validate names manually, I was not able to use .add_argument(choices = ...)
-
-            self.print('Available test suites:')
-            for t in sorted(self.available_test_cases.keys()):
-                self.print(' -', t)
-
-            self.print()
-            self.print(
-                '%s is not a defined test suite. Create a TestCase in %s' %
-                (name, " or ".join('%s.%s.%s' % (m, name, self.class_name)
-                                   for m in self.modules)))
-
-            sys.exit(1)
-
-        try:
-            return import_string(self.available_test_cases[name])
-        except ImportError as e:
-            print(e)
-
     def handle(self, *args):
+        here = os.path.abspath(os.path.dirname(__file__))
+        project_root = os.path.dirname(os.path.dirname(here))
 
-        suite = unittest.TestSuite()
+        # args can be a list of patterns.
+        if args:
+            suite = unittest.TestSuite()
+            for arg in args:
+                suite.addTests(
+                    unittest.defaultTestLoader.discover(os.path.join(
+                    project_root, 'tests'), pattern=arg, top_level_dir=project_root)
+                )
+        # take every single test from tests module.
+        else:
+            suite = unittest.defaultTestLoader.discover(os.path.join(
+                project_root, 'tests'), pattern='*', top_level_dir=project_root)
 
-        for arg in (args or self.available_test_cases.keys()):
-            test_case = self.import_test_case(arg)
-
-            if test_case:
-                for func in test_case.discover_tests():
-                    suite.addTest(test_case(func))
-
-        runner = unittest.TextTestRunner()
+        # verbosity > 1 print test name
+        runner = unittest.TextTestRunner(verbosity=2)
         result = runner.run(suite)
         if not result.wasSuccessful():
             sys.exit(1)

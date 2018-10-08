@@ -24,6 +24,8 @@ else:
         'WolframEvaluationJSONResponse'
     ]
     try:
+        from wolframclient.evaluation.kernel import WolframLanguageAsyncSession
+        from wolframclient.evaluation.kernel import WolframKernelPool
         __all__.append('WolframKernelPool')
         __all__.append('WolframLanguageAsyncSession')
     except:

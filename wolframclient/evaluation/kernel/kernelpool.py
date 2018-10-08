@@ -2,12 +2,11 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import asyncio
 import logging
-
 from wolframclient.evaluation.kernel.asyncsession import (
     WolframLanguageAsyncSession
 )
+from wolframclient.utils.api import asyncio
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +31,7 @@ class WolframKernelPool(object):
             raise ValueError(
                 'Invalid pool size value %i. Expecting a positive integer.' %
                 i)
-        self._loop = loop or asyncio.get_event_loop()
+        self._loop = loop or asyncio.get_running_loop()
         self._queue = asyncio.Queue(load_factor * poolsize, loop=self._loop)
         self._kernels = {
             WolframLanguageAsyncSession(kernelpath, loop=self._loop)
@@ -117,7 +116,7 @@ class WolframKernelPool(object):
             # start the kernel
             await kernel.async_start()
             # shedule the infinite evaluation loop
-            task = asyncio.ensure_future(
+            task = asyncio.ensure_task(
                 self._kernel_loop(kernel), loop=self._loop)
             # register the task. The loop is not always started at this point.
             self._started_tasks.append(task)
@@ -139,7 +138,7 @@ class WolframKernelPool(object):
         If not all the kernels were able to start fails and terminate the pool.
         """
         self._init_tasks = {
-            asyncio.ensure_future(self._async_start_kernel(kernel))
+            asyncio.ensure_task(self._async_start_kernel(kernel))
             for kernel in self._kernels
         }
 
@@ -157,7 +156,7 @@ class WolframKernelPool(object):
                 logger.warn('Exception raised while terminating loop: %s', e)
         # terminate the kernel instances.
         tasks = {
-            asyncio.ensure_future(kernel.async_terminate())
+            asyncio.ensure_task(kernel.async_terminate())
             for kernel in self._kernels
         }
         # Raise the first exception, but wait for all tasks to finish.
