@@ -10,7 +10,7 @@ __all__ = ['WolframLanguageSession', 'WolframLanguageFutureSession']
 try:
     from wolframclient.evaluation.kernel.asyncsession import WolframLanguageAsyncSession
     from wolframclient.evaluation.kernel.kernelpool import WolframKernelPool
-    __all__.append('WolframLanguageAsyncSession')
-    __all__.append('WolframKernelPool')
+    __all__.append(WolframKernelPool.__name__)
+    __all__.append(WolframLanguageAsyncSession.__name__)
 except Exception as e:
     pass
