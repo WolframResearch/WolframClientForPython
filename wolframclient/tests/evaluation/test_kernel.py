@@ -288,11 +288,12 @@ class TestCaseInternalFunctions(TestCaseSettings):
                 'ClientLibrary`Private`$LogLevel == Infinity')
             self.assertTrue(res)
             # This is not possible. Logging was not enabled in the first place.
-            session.evaluate('ClientLibrary`SetInfoLogLevel[]`')
+            session.evaluate('ClientLibrary`SetInfoLogLevel[]')
             # Log level remains to NOTSET
             res = session.evaluate(
                 'ClientLibrary`Private`$LogLevel == ClientLibrary`Private`$NOTSET'
             )
+            logger.info('LOG LEVEL: %s', session.evaluate('ClientLibrary`Private`$LogLevel'))
             self.assertTrue(res)
 
     def test_set_loglevel(self):

@@ -45,8 +45,11 @@ ClientLibrary`SetWarnLogLevel[] := setLogLevel[$WARN];
 ClientLibrary`SetErrorLogLevel[] := setLogLevel[$ERROR];
 ClientLibrary`DisableKernelLogging[] := setLogLevel[$NOTSET];
 
-setLogLevel[level_Integer] /; $DEBUG <= level <= $ERROR := 
-	($LogLevel = level);
+(* for clarity loglevel cannot be changed and remains $NOTSET if log is disable.*)
+setLogLevel[level_Integer] /; $DEBUG <= level <= $ERROR := If[
+	$LoggerSocket =!= None,
+	($LogLevel = level)
+];
 setLogLevel[$NOTSET] := ($LogLevel = $NOTSET);
 
 
@@ -58,8 +61,7 @@ log[level_Integer, msg_String] /; level >= $LogLevel  := If[$LoggerSocket =!= No
 			"ToByteString" -> True, "Compact" -> True],
 			"ISOLatin1"
 		]
-	],
-   	Print[msg]
+	]
 ];
 
 log[level_Integer, args__] /; level >= $LogLevel := log[
