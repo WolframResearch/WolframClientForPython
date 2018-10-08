@@ -6,7 +6,6 @@ from functools import wraps
 
 from wolframclient.utils.api import pip
 
-
 def installed_modules():
     return {i.key: i.version for i in pip.get_installed_distributions()}
 
@@ -33,11 +32,10 @@ def require_module(*modules):
 
         print("Update in progress: pip install %s --user" % " ".join(commands))
 
-        if pip.virtualenv_no_global():
+        if pip.running_under_virtualenv():
             pip.main(["install"] + commands)
         else:
             pip.main(["install", "--user"] + commands)
-
 
 def require(*modules):
     def outer(func):

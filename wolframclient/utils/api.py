@@ -53,10 +53,11 @@ pip = API(
         'pip.utils.get_installed_distributions',
         'pip._internal.utils.misc.get_installed_distributions',
     ),
-    virtualenv_no_global=(
-        'pip.locations.virtualenv_no_global',
-        'pip._internal.locations.virtualenv_no_global',
-    ))
+    running_under_virtualenv=(
+        'pip.locations.running_under_virtualenv',
+        'pip._internal.locations.running_under_virtualenv',
+    )
+)
 
 zmq = API(
     Context='zmq.Context',
