@@ -2,11 +2,10 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import sys
 import os
+import sys
 import unittest
 
-from wolframclient.utils import six
 from wolframclient.cli.utils import SimpleCommand
 
 
@@ -14,6 +13,7 @@ class Command(SimpleCommand):
     """ Run test suites from the tests modules.
     A list of patterns can be provided to specify the tests to run.
     """
+
     def add_arguments(self, parser):
         parser.add_argument('args', nargs='*')
 
@@ -26,13 +26,16 @@ class Command(SimpleCommand):
             suite = unittest.TestSuite()
             for arg in args:
                 suite.addTests(
-                    unittest.defaultTestLoader.discover(os.path.join(
-                    project_root, 'tests'), pattern=arg, top_level_dir=project_root)
-                )
+                    unittest.defaultTestLoader.discover(
+                        os.path.join(project_root, 'tests'),
+                        pattern=arg,
+                        top_level_dir=project_root))
         # take every single test from tests module.
         else:
-            suite = unittest.defaultTestLoader.discover(os.path.join(
-                project_root, 'tests'), pattern='*', top_level_dir=project_root)
+            suite = unittest.defaultTestLoader.discover(
+                os.path.join(project_root, 'tests'),
+                pattern='*',
+                top_level_dir=project_root)
 
         # verbosity > 1 print test name
         runner = unittest.TextTestRunner(verbosity=2)

@@ -3,9 +3,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
+
 from wolframclient.evaluation.kernel.asyncsession import (
-    WolframLanguageAsyncSession
-)
+    WolframLanguageAsyncSession)
 from wolframclient.utils.api import asyncio
 
 logger = logging.getLogger(__name__)
@@ -175,15 +175,13 @@ class WolframKernelPool(object):
     async def evaluate_wxf(self, expr, **kwargs):
         future = asyncio.Future(loop=self._loop)
         await self._put_evaluation_task(
-            future, WolframLanguageAsyncSession.evaluate_wxf, expr,
-            **kwargs)
+            future, WolframLanguageAsyncSession.evaluate_wxf, expr, **kwargs)
         return await future
 
     async def evaluate_wrap(self, expr, **kwargs):
         future = asyncio.Future(loop=self._loop)
         await self._put_evaluation_task(
-            future, WolframLanguageAsyncSession.evaluate_wrap, expr,
-            **kwargs)
+            future, WolframLanguageAsyncSession.evaluate_wrap, expr, **kwargs)
         return await future
 
     def __repr__(self):

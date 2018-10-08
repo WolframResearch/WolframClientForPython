@@ -2,14 +2,12 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.utils.api import asyncio
 import logging
 from subprocess import PIPE
 
 from wolframclient.evaluation.kernel.kernelsession import (
-    WolframLanguageSession
-)
-from wolframclient.utils.api import futures
+    WolframLanguageSession)
+from wolframclient.utils.api import asyncio, futures
 
 logger = logging.getLogger(__name__)
 

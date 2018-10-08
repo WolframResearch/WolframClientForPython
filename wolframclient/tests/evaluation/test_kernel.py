@@ -293,7 +293,8 @@ class TestCaseInternalFunctions(TestCaseSettings):
             res = session.evaluate(
                 'ClientLibrary`Private`$LogLevel == ClientLibrary`Private`$NOTSET'
             )
-            logger.info('LOG LEVEL: %s', session.evaluate('ClientLibrary`Private`$LogLevel'))
+            logger.info('LOG LEVEL: %s',
+                        session.evaluate('ClientLibrary`Private`$LogLevel'))
             self.assertTrue(res)
 
     def test_set_loglevel(self):
