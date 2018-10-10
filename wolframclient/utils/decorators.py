@@ -25,13 +25,16 @@ to_dict = decorate(Association)
 
 def synchronized(lock):
     """Synchronized call to the wrapped function using the provided `lock`."""
+
     def wrap(fn):
         @functools.wraps(fn)
         def caller(*args, **kwargs):
             with lock:
                 return fn(*args, **kwargs)
         return caller
+
     return wrap
+
 
 def silence(*exceptions):
     def wrap(fn):
@@ -41,7 +44,9 @@ def silence(*exceptions):
                 return fn(*args, **kwargs)
             except tuple(exceptions):
                 pass
+
         return wrapper
+
     return wrap
 
 class cached_property(object):

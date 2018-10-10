@@ -25,6 +25,7 @@ logger.setLevel(logging.INFO)
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 class TestCaseSettings(BaseTestCase):
     KERNEL_PATH = json_config['kernel']
+
     @classmethod
     def setUpClass(cls):
         cls.setupKernelSession()
@@ -49,28 +50,26 @@ class TestCaseSettings(BaseTestCase):
     @classmethod
     def class_kwargs_parameters(cls, testcase, kernelclass):
         kernel_session = kernelclass(
-            cls.KERNEL_PATH, kernel_loglevel=logging.INFO,
-            STARTUP_READ_TIMEOUT=5, TERMINATE_READ_TIMEOUT=3,
+            cls.KERNEL_PATH,
+            kernel_loglevel=logging.INFO,
+            STARTUP_READ_TIMEOUT=5,
+            TERMINATE_READ_TIMEOUT=3,
             HIDE_SUBPROCESS_WINDOW=False,
-            STARTUP_RETRY_SLEEP_TIME=1
-        )
-        testcase.assertEqual(kernel_session.get_parameter(
-            'STARTUP_READ_TIMEOUT'), 5)
-        testcase.assertEqual(kernel_session.get_parameter(
-            'TERMINATE_READ_TIMEOUT'), 3)
-        testcase.assertEqual(kernel_session.get_parameter(
-            'HIDE_SUBPROCESS_WINDOW'), False)
-        testcase.assertEqual(kernel_session.get_parameter(
-            'STARTUP_RETRY_SLEEP_TIME'), 1)
-
+            STARTUP_RETRY_SLEEP_TIME=1)
+        testcase.assertEqual(
+            kernel_session.get_parameter('STARTUP_READ_TIMEOUT'), 5)
+        testcase.assertEqual(
+            kernel_session.get_parameter('TERMINATE_READ_TIMEOUT'), 3)
+        testcase.assertEqual(
+            kernel_session.get_parameter('HIDE_SUBPROCESS_WINDOW'), False)
+        testcase.assertEqual(
+            kernel_session.get_parameter('STARTUP_RETRY_SLEEP_TIME'), 1)
 
     @classmethod
     def class_bad_kwargs_parameters(cls, testcase, kernelclass):
         with testcase.assertRaises(KeyError):
             kernel_session = kernelclass(
-                cls.KERNEL_PATH, kernel_loglevel=logging.INFO,
-                foo=1
-            )
+                cls.KERNEL_PATH, kernel_loglevel=logging.INFO, foo=1)
 
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
@@ -232,8 +231,8 @@ class TestCase(TestCaseSettings):
         TestCaseSettings.class_kwargs_parameters(self, WolframLanguageSession)
 
     def test_bad_kwargs_parameters(self):
-        TestCaseSettings.class_bad_kwargs_parameters(
-            self, WolframLanguageSession)
+        TestCaseSettings.class_bad_kwargs_parameters(self,
+                                                     WolframLanguageSession)
 
 
 @unittest.skipIf(six.PY2, "Module future is not available.")
@@ -295,13 +294,12 @@ class TestFutureSession(TestCaseSettings):
         self.assertEqual(result, [1, 2, 3])
 
     def test_kwargs_parameters(self):
-        TestCaseSettings.class_kwargs_parameters(
-            self, WolframLanguageFutureSession)
+        TestCaseSettings.class_kwargs_parameters(self,
+                                                 WolframLanguageFutureSession)
 
     def test_bad_kwargs_parameters(self):
         TestCaseSettings.class_bad_kwargs_parameters(
             self, WolframLanguageFutureSession)
-
 
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)

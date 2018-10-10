@@ -3,11 +3,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
-
-from wolframclient.exception import WolframKernelException
-from wolframclient.evaluation.kernel.asyncsession import (WolframLanguageAsyncSession)
-from wolframclient.utils.api import asyncio
 from asyncio import CancelledError
+
+from wolframclient.evaluation.kernel.asyncsession import (
+    WolframLanguageAsyncSession)
+from wolframclient.exception import WolframKernelException
+from wolframclient.utils.api import asyncio
 
 logger = logging.getLogger(__name__)
 
@@ -72,8 +73,8 @@ class WolframKernelPool(object):
                     kernel)
                 raise interrupt
             except CancelledError as cancel:
-                logger.warning(
-                    'Loop associated to kernel %s cancelled.', kernel)
+                logger.warning('Loop associated to kernel %s cancelled.',
+                               kernel)
                 raise cancel
             except RuntimeError as runtime:
                 logger.error('Unexpected runtime error: {}', runtime)
@@ -100,7 +101,6 @@ class WolframKernelPool(object):
 
     def __exit__(self, type, value, traceback):
         """ Let the __enter__ method fail and propagate doing nothing. """
-        pass
 
     async def __aenter__(self):
         """Awaitable start"""
@@ -122,7 +122,9 @@ class WolframKernelPool(object):
                 logger.warning('A kernel failed to start. %s', e)
                 await kernel.async_terminate()
             except Exception as e2:
-                logger.warning('Exception raised during clean-up after failed start: %s', e2)
+                logger.warning(
+                    'Exception raised during clean-up after failed start: %s',
+                    e2)
             finally:
                 self._kernels.remove(kernel)
         if kernel_started:
@@ -140,17 +142,17 @@ class WolframKernelPool(object):
         If not all the kernels were able to start fails and terminate the pool.
         """
         # keep track of the init tasks. We have to wait before terminating.
-        self._pending_init_tasks = {
-            (asyncio.ensure_task(self._async_start_kernel(kernel)))
-            for kernel in self._kernels
-        }
-        
+        self._pending_init_tasks = {(asyncio.ensure_task(
+            self._async_start_kernel(kernel)))
+                                    for kernel in self._kernels}
+
         # uninitialized kernels are removed if they failed to start
         # if they do start the task (the loop) is added to _started_tasks.
         # we need at least one working kernel.
         # we also need to keep track of start kernel tasks in case of early termination.
         while len(self._started_tasks) == 0:
-            _, self._pending_init_tasks = await asyncio.wait(self._pending_init_tasks, return_when=asyncio.FIRST_COMPLETED)
+            _, self._pending_init_tasks = await asyncio.wait(
+                self._pending_init_tasks, return_when=asyncio.FIRST_COMPLETED)
             if len(self._kernels) == 0:
                 raise WolframKernelException('Failed to start any kernel.')
 
@@ -168,7 +170,8 @@ class WolframKernelPool(object):
             except CancelledError:
                 pass
             except Exception as e:
-                logger.warning('Exception raised while terminating loop: %s', e)
+                logger.warning('Exception raised while terminating loop: %s',
+                               e)
         # terminate the kernel instances.
         tasks = {
             asyncio.ensure_task(kernel.async_terminate())

@@ -95,8 +95,8 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
                                           **kwargs)
 
     async def _async_evaluate(self, func, expr, **kwargs):
-        return await self._loop.run_in_executor(self._get_exec_pool(),
-                                                      func, expr, **kwargs)
+        return await self._loop.run_in_executor(self._get_exec_pool(), func,
+                                                expr, **kwargs)
 
     async def __aenter__(self):
         await self.async_start()
@@ -109,8 +109,7 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
         """Asynchronously start the session.
         
         This method is a coroutine."""
-        await self._loop.run_in_executor(self._get_exec_pool(),
-                                               super().start)
+        await self._loop.run_in_executor(self._get_exec_pool(), super().start)
 
     async def async_terminate(self):
         """Asynchronously terminate the session.
@@ -121,7 +120,7 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
         if self.thread_pool_exec:
             try:
                 await self._loop.run_in_executor(self._get_exec_pool(),
-                                                       super().terminate)
+                                                 super().terminate)
             except Exception as e:
                 logger.info(
                     'Failed to terminate kernel asynchronously: %s' % e)

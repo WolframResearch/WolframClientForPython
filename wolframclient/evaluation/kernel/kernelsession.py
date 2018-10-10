@@ -178,7 +178,7 @@ class WolframLanguageSession(object):
         else:
             out_socket.zmq_type = zmq.PULL
             self.out_socket = out_socket
-        
+
         self.consumer = consumer
         self.kernel_proc = None
         self.terminated = False
@@ -215,7 +215,8 @@ class WolframLanguageSession(object):
                 parameter_name, self._DEFAULT_PARAMETERS.get(parameter_name))
         except KeyError:
             raise KeyError(
-                '%s is not one of the valid parameters: %s' % (parameter_name, ', '.join(self._DEFAULT_PARAMETERS.keys())))
+                '%s is not one of the valid parameters: %s' %
+                (parameter_name, ', '.join(self._DEFAULT_PARAMETERS.keys())))
 
     def set_parameter(self, parameter_name, parameter_value):
         """Set a new value for a given parameter. The new value only applies for this session.
@@ -228,7 +229,8 @@ class WolframLanguageSession(object):
         """
         if parameter_name not in self._DEFAULT_PARAMETERS:
             raise KeyError(
-                '%s is not one of the valid parameters: %s' % (parameter_name, ', '.join(self._DEFAULT_PARAMETERS.keys())))
+                '%s is not one of the valid parameters: %s' %
+                (parameter_name, ', '.join(self._DEFAULT_PARAMETERS.keys())))
         self.parameters[parameter_name] = parameter_value
 
     def __enter__(self):
