@@ -7,3 +7,4 @@ __pycache__
 wolframclient/tests/local_config.json
 /htmlcov
 .coverage
+.vscode
