@@ -73,13 +73,13 @@ class Command(SimpleCommand):
             "", *(force_text(c).ljust(self.col_size) for c in self.complexity))
         self.table_divider(len(self.complexity) + 1)
 
-        for export_format, opts in (
-            ("wl", dict()),
-            ("wxf", dict()),
-            ("wxf", dict(compress=True)),
+        for label, export_format, opts in (
+            ("wl", "wl", dict()),
+            ("wxf", "wxf", dict()),
+            ("wxf zip", "wxf", dict(compress=True)),
         ):
             self.table_line(
-                export_format,
+                label,
                 *(self.formatted_time(
                     expr,
                     stream=os.path.join(
