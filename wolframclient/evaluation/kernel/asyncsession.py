@@ -51,7 +51,8 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
                  kernel_loglevel=logging.NOTSET,
                  stdin=PIPE,
                  stdout=PIPE,
-                 stderr=PIPE):
+                 stderr=PIPE,
+                 **kwargs):
         super(WolframLanguageAsyncSession, self).__init__(
             kernel,
             consumer=consumer,
@@ -61,20 +62,15 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
             kernel_loglevel=kernel_loglevel,
             stdin=stdin,
             stdout=stdout,
-            stderr=stderr)
+            stderr=stderr,
+            **kwargs)
         self.thread_pool_exec = None
-        self._loop = loop
+        self._loop = loop or asyncio.get_event_loop()
 
     def _get_exec_pool(self):
         if self.thread_pool_exec is None:
             self.thread_pool_exec = futures.ThreadPoolExecutor(max_workers=1)
         return self.thread_pool_exec
-
-    def _get_loop(self):
-        # we only need a loop when coroutines are involved.
-        if self._loop is None:
-            self._loop = asyncio.get_running_loop()
-        return self._loop
 
     async def evaluate(self, expr, **kwargs):
         """Evaluate :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate`
@@ -99,7 +95,7 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
                                           **kwargs)
 
     async def _async_evaluate(self, func, expr, **kwargs):
-        return await self._get_loop().run_in_executor(self._get_exec_pool(),
+        return await self._loop.run_in_executor(self._get_exec_pool(),
                                                       func, expr, **kwargs)
 
     async def __aenter__(self):
@@ -113,7 +109,7 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
         """Asynchronously start the session.
         
         This method is a coroutine."""
-        await self._get_loop().run_in_executor(self._get_exec_pool(),
+        await self._loop.run_in_executor(self._get_exec_pool(),
                                                super().start)
 
     async def async_terminate(self):
@@ -124,7 +120,7 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
         # that was never started.
         if self.thread_pool_exec:
             try:
-                await self._get_loop().run_in_executor(self._get_exec_pool(),
+                await self._loop.run_in_executor(self._get_exec_pool(),
                                                        super().terminate)
             except Exception as e:
                 logger.info(

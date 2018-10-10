@@ -36,7 +36,8 @@ class WolframLanguageFutureSession(WolframLanguageSession):
                  kernel_loglevel=logging.NOTSET,
                  stdin=PIPE,
                  stdout=PIPE,
-                 stderr=PIPE):
+                 stderr=PIPE,
+                 **kwargs):
         super(WolframLanguageFutureSession, self).__init__(
             kernel,
             consumer=consumer,
@@ -46,7 +47,8 @@ class WolframLanguageFutureSession(WolframLanguageSession):
             kernel_loglevel=kernel_loglevel,
             stdin=stdin,
             stdout=stdout,
-            stderr=stderr)
+            stderr=stderr,
+            **kwargs)
         self.thread_pool_exec = None
 
     def evaluate(self, expr, **kwargs):

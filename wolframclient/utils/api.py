@@ -72,13 +72,13 @@ time = API(perf_counter=('time.perf_counter', 'time.time'), sleep='time.sleep')
 
 asyncio = API(
     ensure_task=('asyncio.ensure_task', 'asyncio.ensure_future'),
-    # introduced in 3.7, recommanded over get_event_loop if available.
-    get_running_loop=('asyncio.get_running_loop', 'asyncio.get_event_loop'),
-    new_event_loop=('asyncio.new_event_loop'),
+    get_event_loop='asyncio.get_event_loop',
+    new_event_loop='asyncio.new_event_loop',
     Queue='asyncio.Queue',
     shield='asyncio.shield',
     CancelledError='asyncio.CancelledError',
     wait='asyncio.wait',
+    FIRST_COMPLETED='asyncio.FIRST_COMPLETED',
     gather='asyncio.gather',
     Future='asyncio.Future',
 )
