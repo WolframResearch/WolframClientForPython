@@ -31,8 +31,6 @@ os = API(
     makedirs='os.makedirs',
     environ='os.environ')
 
-futures = API(ThreadPoolExecutor='concurrent.futures.ThreadPoolExecutor')
-
 requests = API(
     get='requests.get',
     post='requests.post',
@@ -70,8 +68,11 @@ zmq = API(
 
 time = API(perf_counter=('time.perf_counter', 'time.time'), sleep='time.sleep')
 
+futures = API(ThreadPoolExecutor='concurrent.futures.ThreadPoolExecutor')
+
 asyncio = API(
     ensure_task=('asyncio.ensure_task', 'asyncio.ensure_future'),
+    ensure_future=('asyncio.ensure_future'),
     get_event_loop='asyncio.get_event_loop',
     new_event_loop='asyncio.new_event_loop',
     Queue='asyncio.Queue',
@@ -81,7 +82,7 @@ asyncio = API(
     FIRST_COMPLETED='asyncio.FIRST_COMPLETED',
     gather='asyncio.gather',
     Future='asyncio.Future',
-)
+    sleep='asyncio.sleep')
 
 urllib = API(
     urlparse=('urllib.parse.urlparse', 'urlparse.urlparse'),

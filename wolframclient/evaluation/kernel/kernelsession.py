@@ -181,6 +181,7 @@ class WolframLanguageSession(object):
 
         self.consumer = consumer
         self.kernel_proc = None
+        self.started = False
         self.terminated = False
         self.loglevel = kernel_loglevel
         self.kernel_logger = None
@@ -254,18 +255,25 @@ class WolframLanguageSession(object):
             simultaneously. Make sure to always terminate sessions to avoid
             unexpected start-up errors.
         """
-        # Exception handling here
+        logger.info('Start termination on kernel %s', self)
         if self.kernel_proc is not None:
             error = False
+            # first send a Quit command to the kernel.
             try:
                 self.in_socket.zmq_socket.send(
                     b'8:f\x00s\x04Quit', flags=zmq.NOBLOCK)
             except:
                 logger.info('Failed to send Quit[] command to the kernel.')
                 error = True
+            # Kill process if not already terminated.
+            # Wait for it to cleanly stop if the Quit command was succesfully sent,
+            # otherwise the kernel is likely in a bad state so we kill it immediatly.
             if six.PY2:
                 try:
-                    self.kernel_proc.wait()
+                    if error:
+                        self.kernel_proc.kill()
+                    else:
+                        self.kernel_proc.wait()
                 except:
                     logger.info(
                         'Failed to cleanly stop the kernel process. Killing it.'
@@ -273,8 +281,12 @@ class WolframLanguageSession(object):
                     error = True
             if six.PY3:
                 try:
-                    self.kernel_proc.wait(
-                        timeout=self.get_parameter('TERMINATE_READ_TIMEOUT'))
+                    if error:
+                        self.kernel_proc.kill()
+                    else:
+                        self.kernel_proc.wait(
+                            timeout=self.get_parameter(
+                                'TERMINATE_READ_TIMEOUT'))
                 except:
                     logger.info(
                         'Failed to cleanly stop the kernel process after %.02f seconds. Killing it.'
@@ -302,6 +314,7 @@ class WolframLanguageSession(object):
                 logger.info(
                     'Killing kernel process: %i' % self.kernel_proc.pid)
                 self.kernel_proc.kill()
+                self.kernel_proc = None
             self.terminated = True
         if self.in_socket is not None:
             try:
@@ -319,6 +332,8 @@ class WolframLanguageSession(object):
                 self.kernel_logger.join()
             except Exception as e:
                 logger.fatal(e)
+
+    _socket_read_sleep_func = time.sleep
 
     _KERNEL_OK = b'OK'
 
@@ -374,7 +389,7 @@ class WolframLanguageSession(object):
                             self.kernel_proc.pid)
                 t_start = time.perf_counter()
         except Exception as e:
-            logger.fatal(e)
+            logger.exception(e)
             self.terminate()
             raise e
         try:
@@ -383,7 +398,8 @@ class WolframLanguageSession(object):
             response = self.out_socket.read_timeout(
                 timeout=self.get_parameter('STARTUP_READ_TIMEOUT'),
                 retry_sleep_time=self.get_parameter(
-                    'STARTUP_RETRY_SLEEP_TIME'))
+                    'STARTUP_RETRY_SLEEP_TIME'),
+                sleep=self._socket_read_sleep_func)
             if response == WolframLanguageSession._KERNEL_OK:
                 if logger.isEnabledFor(logging.INFO):
                     logger.info(
@@ -394,11 +410,12 @@ class WolframLanguageSession(object):
                 raise WolframKernelException(
                     'Kernel %s failed to start properly.' % self.kernel)
         except SocketException as se:
-            logger.warning(se)
+            logger.info(se)
             self.terminate()
             raise WolframKernelException(
                 'Failed to communicate with the kernel %s. Could not read from ZMQ socket.'
                 % self.kernel)
+        self.started = True
 
     @property
     def pid(self):
@@ -408,10 +425,10 @@ class WolframLanguageSession(object):
         else:
             return None
 
-    @property
-    def started(self):
-        """Indicate if the current kernel session has started with reasonable accuracy."""
-        return self.kernel_proc is not None
+    # @property
+    # def started(self):
+    #     """Indicate if the current kernel session has started with reasonable accuracy."""
+    #     return self.kernel_proc is not None
 
     def _evaluate(self, expr, wrap_result=False, **kwargs):
         """Send an expression to the kernel for evaluation. Return a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.
@@ -561,7 +578,13 @@ class Socket(object):
         self.bound = True
         return self.zmq_socket
 
-    def read_timeout(self, timeout=2., retry_sleep_time=0.001):
+    def read_timeout(self,
+                     timeout=2.,
+                     retry_sleep_time=0.001,
+                     sleep=time.sleep):
+        """ Read a socket in a non-blocking fashion, until a timeout is reach, retrying at a given interval.
+        The sleep function is passed as parameter and can be conveniently modify to support Event based interruption.
+        """
         if not self.bound:
             raise SocketException('ZMQ socket not bound.')
         if timeout < 0:
@@ -573,7 +596,10 @@ class Socket(object):
                 return self.zmq_socket.recv(flags=zmq.NOBLOCK)
             except zmq.Again:
                 retry += 1
-                time.sleep(retry_sleep_time)
+                try:
+                    sleep(retry_sleep_time)
+                except TimeoutError:
+                    break
         raise SocketException(
             'Read time out. Failed to read any message from socket %s after %.1f seconds and %i retries.'
             % (self.uri, time.perf_counter() - start, retry))

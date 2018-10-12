@@ -4,6 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
 from subprocess import PIPE
+from threading import Event
 
 from wolframclient.evaluation.kernel.kernelsession import (
     WolframLanguageSession)
@@ -66,6 +67,17 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
             **kwargs)
         self.thread_pool_exec = None
         self._loop = loop or asyncio.get_event_loop()
+        self.event_abort = Event()
+
+    def _socket_read_sleep_func(self, duration):
+        if not self.event_abort.is_set():
+            self.event_abort.wait(timeout=duration)
+        else:
+            raise TimeoutError
+
+    def _abort(self):
+        if not self.started:
+            self.event_abort.set()
 
     def _get_exec_pool(self):
         if self.thread_pool_exec is None:
@@ -115,25 +127,27 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
         """Asynchronously terminate the session.
         
         This method is a coroutine."""
-        # make sure the session was started. Otherwise it's an initialized session
-        # that was never started.
+        # Check that the thread pool was created, otherwise it's an initialized session
+        # that was never started, and use it to asynchronously stop the kernel.
         if self.thread_pool_exec:
             try:
+                logger.info('Call terminate from asyncsession')
                 await self._loop.run_in_executor(self._get_exec_pool(),
                                                  super().terminate)
+            except asyncio.CancelledError:
+                logger.info('Cancelled terminate task.')
             except Exception as e:
                 logger.info(
                     'Failed to terminate kernel asynchronously: %s' % e)
-            finally:
-                # Loop may not be available, fallback to synchronous termination.
-                try:
-                    self.thread_pool_exec.shutdown(wait=True)
-                except Exception as e:
-                    logger.info(
-                        'Error when shutting down thread pool executor: %s' %
-                        e)
-        elif self.started:
-            self.termiate()
+            # kernel stopped. Joining thread.
+            try:
+                self.thread_pool_exec.shutdown(wait=True)
+                self.thread_pool_exec = None
+            except Exception as e:
+                logger.info('Thread pool executor error on shutdown: %s', e)
+        # synchronous termination required if the kernel is still not terminated.
+        if self.started and not self.terminated:
+            self.terminate()
 
     def terminate(self):
         """Terminate the current session. This is a synchronous method."""
@@ -143,5 +157,5 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
             try:
                 self.thread_pool_exec.shutdown(wait=True)
             except Exception as e:
-                logger.fatal('Failed to stop thread pool executor: %s' % e)
+                logger.info('Failed to stop thread pool executor: %s' % e)
         super().terminate()

@@ -25,8 +25,9 @@ else:
     ]
     try:
         from wolframclient.evaluation.kernel import WolframLanguageAsyncSession
-        from wolframclient.evaluation.kernel import WolframKernelPool
+        from wolframclient.evaluation.kernel import WolframKernelPool, parallel_evaluate
         __all__.append(WolframKernelPool.__name__)
         __all__.append(WolframLanguageAsyncSession.__name__)
+        __all__.append(parallel_evaluate.__name__)
     except:
         pass
