@@ -192,6 +192,21 @@ Kernel evaluation
     :noindex:
     :members:
 
+.. autoclass:: wolframclient.evaluation.WolframLanguageAsyncSession
+    :noindex:
+    :members:
+
+.. autoclass:: wolframclient.evaluation.WolframLanguageFutureSession
+    :noindex:
+    :members:
+
+.. autoclass:: wolframclient.evaluation.WolframKernelPool
+    :noindex:
+    :members:
+
+.. autofunction:: wolframclient.evaluation.parallel_evaluate
+    :noindex:
+
 .. autoclass:: wolframclient.evaluation.WolframResult
     :noindex:
     :members:

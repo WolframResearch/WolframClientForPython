@@ -31,5 +31,5 @@ Table of content
 
     install
     intro
-    examples
+    advanced_usages
     public_api

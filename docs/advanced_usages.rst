@@ -137,12 +137,16 @@ Messages are stored as tuple of two elements, the message name and the formatted
 Asynchronous
 ------------
 
-Some computations may take a significant time to finish, and the result might not be required immediately. Asynchronous evaluation is a way to start evaluations on a local kernel, using a background task, without blocking the python execution. Asynchronous evaluation requires a instance of :class:`~wolframclient.evaluation.WolframLanguageAsyncSession` which contains the same method as its synchronous counterpart, except that returned values are wrapped into :class:`~concurrent.futures.Future` objects.
+Concurrent Future API
+^^^^^^^^^^^^^^^^^^^^^
+
+Some computations may take a significant time to finish, and the result might not be required immediately. Asynchronous evaluation is a way to start evaluations on a local kernel, using a background task, without blocking the main python execution. Asynchronous evaluation requires a instance of :class:`~wolframclient.evaluation.WolframLanguageFutureSession` which contains the same method as its synchronous counterpart, except that returned values are wrapped into :class:`~concurrent.futures.Future` objects.
 
 Evaluate an artificially delayed code (using :wl:`Pause`), and print time elapsed at each step:  
 
 .. literalinclude:: /examples/python/asynchronous1.py
     :linenos:
+    :emphasize-lines: 2,8,11,15
 
 The standard output should display:
 
@@ -151,6 +155,89 @@ The standard output should display:
     Starting an evaluation delayed by 2 seconds.
     After 0.0069s, the code is running in the background, Python execution continues.
     After 2.02s, result was available. Kernel evaluation returned: 2
+
+Coroutine and asyncio API
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The :mod:`asyncio` provides high level concurrent code and asynchronous evaluation using coroutines, and the `async`/`await` keywords. Asynchronous evaluation based on :mod:`asyncio` requires a instance of :class:`~wolframclient.evaluation.WolframLanguageAsyncSession` which methods are mostly coroutines.
+
+Define a coroutine `delayed_evaluation` that artificially delays evaluation, using asyncio sleep coroutine. Use this newly created coroutine to evaluate a first expression, wait for the coroutine to finish and evaluate the second one:
+
+.. literalinclude:: /examples/python/asynchronous2.py
+    :linenos:
+    :emphasize-lines: 2-3,10-12,14,15,18,20,25-26
+
+The timer printed in the standard output indicates that the total evaluation took roughly two seconds, which is the expected value for sequential evaluations:
+
+.. code-block :: text
+
+    Starting two tasks sequentially.
+    After 2.04s, both evaluations finished returning: [1, 2, 3], 6
+
+When coroutines can be evaluated independently one from each other, it is convenient to run them in parallel. Start two independent coroutines in a concurrent fashion, and wait for the result:
+
+.. literalinclude:: /examples/python/asynchronous3.py
+    :linenos:
+    :emphasize-lines: 18-19,21-22
+
+The total evaluation took roughly one second, indicating that both delayed coroutine ran in parallel:
+
+.. code-block :: text
+
+    Running two tasks concurrently.
+    After 1.03s, both evaluations finished returning: hello, world!
+
+In the above examples we use only one Wolfram Kernel which is a single threaded process. Evaluating two computation heavy Wolfram Language expressions in parallel will have no impact on performances. This requires more than one kernel which is exactly what kernel pool was designed for.
+
+.. note :: 
+
+    Available on Python 3.5+
+
+Kernel pool
+^^^^^^^^^^^
+
+A :class:`~wolframclient.evaluation.WolframKernelPool` start up to a certain amount of kernels and dispatch work load on them asynchronously. The pool is usable right after the first kernel has successfully started, some kernels take more time to start and become 
+
+.. literalinclude:: /examples/python/asynchronous4.py
+    :linenos:
+    :emphasize-lines: 3,10,12-16
+
+
+Evaluation output shows that if more than one kernels was started, the total time is below ten seconds:
+
+.. code-block :: text
+
+    Done after 3.04s, using up to 4 kernels.
+
+.. note :: 
+    Available on Python 3.5+
+
+parallel_evaluate
+^^^^^^^^^^^^^^^^^
+
+It is possible to evaluate many expressions at once, using :func:`~wolframclient.evaluation.parallel_evaluate`. This method starts a kernel pool and uses it to compute expressions provided as an iterable object. The pool is then terminated.
+
+Import the function::
+
+    >>> from wolframclient.evaluation import parallel_evaluate
+
+Specify the path of a target kernel::
+
+    >>> kernel_path = '/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel'
+    
+Build a list of ten delayed :wl:`$ProcessID` which returns the kernel process identified (`pid`) after one second::
+    
+    >>> expressions = ['Pause[1]; $ProcessID' for _ in range(10)]
+
+Evaluate in parallel and get back a list of ten values `pid`::
+
+    >>> parallel_evaluate(kernel_path, expressions)
+    [72094, 72098, 72095, 72096, 72099, 72097, 72094, 72098, 72095, 72096]
+
+The result varies but the pattern remains the same, namely, at least one process was started, and each process is eventually used more than once.
+
+.. note :: 
+    Available on Python 3.5+
 
 Logging
 ========

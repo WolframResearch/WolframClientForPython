@@ -518,7 +518,7 @@ Using the Wolfram Desktop, import the file:
     :align: center
     :alt: ListPlot graphic. If this image does not display, it might be that your browser does not support the SVG image format.
 
-The library also provides extensible serialization mechanism for custom Python classes. Refer to the :ref:`API guide page<extensible-serialization>` detailed explanations and to the :doc:`examples page<examples>` for some use cases.
+The library also provides extensible serialization mechanism for custom Python classes. Refer to the :ref:`API guide page<extensible-serialization>` detailed explanations and to the :doc:`examples page<advanced_usages>` for some use cases.
 
 Deserialize
 -----------
