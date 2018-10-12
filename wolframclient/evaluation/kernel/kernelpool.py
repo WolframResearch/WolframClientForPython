@@ -221,7 +221,7 @@ class WolframKernelPool(object):
         return self._loop.run_until_complete(self._evaluate_all(iterable))
 
     async def _evaluate_all(self, iterable):
-        tasks = {asyncio.ensure_task(self.evaluate(expr)) for expr in iterable}
+        tasks = [asyncio.ensure_task(self.evaluate(expr)) for expr in iterable]
         return await asyncio.gather(*tasks)
 
     def __repr__(self):
@@ -243,7 +243,7 @@ def parallel_evaluate(kernelpath, expressions, max_kernels=6, loop=None):
     try:
         pool = WolframKernelPool(kernelpath, poolsize=max_kernels, loop=loop)
         loop.run_until_complete(pool.start())
-        return pool.evaluate_all(iterable)
+        return pool.evaluate_all(expressions)
     finally:
         if pool:
             loop.run_until_complete(pool.terminate())
