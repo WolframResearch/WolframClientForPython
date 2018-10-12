@@ -228,6 +228,9 @@ class WolframKernelPool(object):
         return 'WolframKernelPool<started %i/%i kernels cummulating %i evaluations>' % (
             len(self._started_tasks), self.requestedsize, self.eval_count)
 
+    def __len__(self):
+        return len(self._started_tasks)
+
 
 def parallel_evaluate(kernelpath, expressions, max_kernels=6, loop=None):
     """ Start a kernel pool using `kernelpath` and evaluate the expressions on the created
