@@ -8,8 +8,7 @@ from wolframclient.serializers import export
 from wolframclient.serializers.wxfencoder.serializer import WXFExprSerializer
 from wolframclient.serializers.wxfencoder.wxfencoder import DefaultWXFEncoder
 from wolframclient.serializers.wxfencoder.wxfexprprovider import (
-    WXFExprProvider
-)
+    WXFExprProvider)
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
@@ -34,12 +33,16 @@ class TestCase(BaseTestCase):
     def initOnlyRA(cls):
         return cls.init(False, True)
 
-    def compare_serializer(self, serializer, array, value, test_round_trip = False):
+    def compare_serializer(self,
+                           serializer,
+                           array,
+                           value,
+                           test_round_trip=False):
         serializer.serialize(array)
         self.assertEqual(serializer._writer.getvalue(), value)
 
         if test_round_trip:
-            self.assertEqual(export(array, target_format = 'wxf'), value)
+            self.assertEqual(export(array, target_format='wxf'), value)
 
     @staticmethod
     def init(pa, ra):
@@ -87,7 +90,8 @@ class TestCase(BaseTestCase):
         self.compare_serializer(
             self.initOnlyRA(),
             numpy.array([[-(1 << 7), -1], [1, (1 << 7) - 1]], numpy.int8),
-            b'\x38\x3a\xc2\x00\x02\x02\x02\x80\xff\x01\x7f', test_round_trip = True)
+            b'\x38\x3a\xc2\x00\x02\x02\x02\x80\xff\x01\x7f',
+            test_round_trip=True)
 
     def test_int16(self):
         s = self.initDefault()
@@ -96,8 +100,11 @@ class TestCase(BaseTestCase):
 
         self.compare_serializer(s, arr,
                                 b'8:\xc1\x01\x02\x02\x01\x00\x80\xff\x7f')
-        self.compare_serializer(sRA, arr,
-                                b'8:\xc2\x01\x02\x02\x01\x00\x80\xff\x7f', test_round_trip = True)
+        self.compare_serializer(
+            sRA,
+            arr,
+            b'8:\xc2\x01\x02\x02\x01\x00\x80\xff\x7f',
+            test_round_trip=True)
 
     def test_int32(self):
 
@@ -107,8 +114,10 @@ class TestCase(BaseTestCase):
             self.initDefault(), arr,
             b'8:\xc1\x02\x02\x02\x01\x00\x00\x00\x80\xff\xff\xff\x7f')
         self.compare_serializer(
-            self.initOnlyRA(), arr,
-            b'8:\xc2\x02\x02\x02\x01\x00\x00\x00\x80\xff\xff\xff\x7f', test_round_trip = True)
+            self.initOnlyRA(),
+            arr,
+            b'8:\xc2\x02\x02\x02\x01\x00\x00\x00\x80\xff\xff\xff\x7f',
+            test_round_trip=True)
 
     def test_int64(self):
 
