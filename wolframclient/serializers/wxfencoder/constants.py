@@ -4,8 +4,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import struct
 
-from wolframclient.serializers.wxfencoder.serializer import (
-    WXFSerializerException, write_varint)
 from wolframclient.utils import six
 from wolframclient.utils.datastructures import Settings
 
