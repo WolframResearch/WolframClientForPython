@@ -61,7 +61,7 @@ class FormatSerializer(Normalizer):
                 self.serialize_symbol(b'NumericArray'),
                 (self.serialize_string(wl_type),
                  self.serialize_function(
-                     self.serialize_symbol('ImportByteArray'), (
+                     self.serialize_symbol(b'ImportByteArray'), (
                          self.serialize_bytes(data),
                          self.serialize_string(wl_type),
                      )))),

@@ -43,7 +43,7 @@ class WLSerializer(FormatSerializer):
 
     def serialize_bytes(self, bytes):
         return self.serialize_function(
-            self.serialize_symbol('ByteArray'),
+            self.serialize_symbol(b'ByteArray'),
             ((b'"', base64.b64encode(bytes), b'"'), ))
 
     def serialize_decimal(self, number):
