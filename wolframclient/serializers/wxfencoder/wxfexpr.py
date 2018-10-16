@@ -61,6 +61,13 @@ class WXFExprInteger(WXFExpr):
     '''
     __slots__ = 'value', 'int_size'
 
+    packing = {
+        1: StructInt8LE,
+        2: StructInt16LE,
+        4: StructInt32LE,
+        8: StructInt64LE
+    }
+
     def __init__(self, value):
         if not isinstance(value, six.integer_types):
             raise TypeError(
@@ -83,16 +90,6 @@ class WXFExprInteger(WXFExpr):
 
         self.value = value
 
-    def _pack(self, buffer):
-        if self.int_size == 1:
-            StructInt8LE.pack_into(buffer, 0, self.value)
-        elif self.int_size == 2:
-            StructInt16LE.pack_into(buffer, 0, self.value)
-        elif self.int_size == 4:
-            StructInt32LE.pack_into(buffer, 0, self.value)
-        else:
-            StructInt64LE.pack_into(buffer, 0, self.value)
-
     ''' Encode the integer into bytes and return them in a `buffer`.
 
     Note that the buffer is an bytearray in python 2.7 and an array in 3.x.
@@ -104,13 +101,13 @@ class WXFExprInteger(WXFExpr):
 
         def to_bytes(self):
             buffer = jarray.zeros(8, 'c')
-            self._pack(buffer)
+            self.packing.get(self.int_size).pack_into(buffer, 0, self.value)
             return buffer[:self.int_size].tostring()
     elif six.PY2:
 
         def to_bytes(self):
             buffer = bytearray(8)
-            self._pack(buffer)
+            self.packing.get(self.int_size).pack_into(buffer, 0, self.value)
             return buffer[:self.int_size]
     else:
 
