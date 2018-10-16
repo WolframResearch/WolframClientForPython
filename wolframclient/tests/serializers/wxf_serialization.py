@@ -9,7 +9,8 @@ from collections import OrderedDict
 from wolframclient.language import wl
 from wolframclient.serializers import export
 from wolframclient.serializers.wxfencoder.serializer import WXFExprSerializer
-from wolframclient.serializers.wxfencoder.utils import write_varint
+from wolframclient.serializers.wxfencoder.utils import (
+    float_to_bytes, integer_size, integer_to_bytes, write_varint)
 from wolframclient.serializers.wxfencoder.wxfexpr import (
     WXFExprBinaryString, WXFExprInteger, WXFExprString)
 from wolframclient.serializers.wxfencoder.wxfexprprovider import (

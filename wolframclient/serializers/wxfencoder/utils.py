@@ -11,6 +11,7 @@ from wolframclient.utils import six
 if six.JYTHON:
     import jarray
 
+
 def write_varint(int_value, stream):
     """Serialize `int_value` into varint bytes and write them to
     `stream`, return the stream.

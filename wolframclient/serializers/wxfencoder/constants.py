@@ -19,6 +19,7 @@ else:
     def _bytes(value):
         return chr(value)
 
+
 WXF_VERSION = b'8'
 WXF_HEADER_SEPARATOR = b':'
 WXF_HEADER_COMPRESS = b'C'
