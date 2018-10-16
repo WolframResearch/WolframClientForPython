@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import decimal
 import os
 import unittest
 from collections import OrderedDict
@@ -19,7 +20,6 @@ from wolframclient.utils import six
 from wolframclient.utils.datastructures import Association
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
-import decimal
 
 def init(compress=False, enforce=True):
     expr_provider = WXFExprProvider()
@@ -287,7 +287,10 @@ class TestCase(SerializeTest):
 
     def test_export(self):
 
-        for value in (1, 2, "aaaa", 2.0, {1: 2}, [1, 2, 3], [b'hello', decimal.Decimal('1.23')]):
+        for value in (1, 2, "aaaa", 2.0, {
+                1: 2
+        }, [1, 2, 3], [b'hello', decimal.Decimal('1.23')], wl.Foo,
+                      wl.Foo(2, wl.Context.Internal)):
             self.serialize_compare(value, export(value, target_format='wxf'))
 
         self.assertEqual(
