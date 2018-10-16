@@ -9,11 +9,8 @@ from wolframclient.serializers.wxfencoder.constants import (
 from wolframclient.serializers.wxfencoder.serializer import (
     WXFSerializerException)
 from wolframclient.serializers.wxfencoder.utils import (
-    integer_size, integer_to_bytes, write_varint)
+    float_to_bytes, integer_size, integer_to_bytes, write_varint)
 from wolframclient.utils import six
-
-if six.JYTHON:
-    import jarray
 
 __all__ = [
     'WXFExprFunction', 'WXFExprInteger', 'WXFExprString', 'WXFExprSymbol',
@@ -75,10 +72,13 @@ class WXFExprInteger(WXFExpr):
     It is proxying int.to_bytes for version 3.4 and above.
     '''
 
+    def to_bytes(self):
+        return integer_to_bytes(self.value, self.int_size)
+
     def _serialize_to_wxf(self, stream, context):
         stream.write(self.wxf_type)
         context.add_part()
-        stream.write(integer_to_bytes(self.value, self.int_size))
+        stream.write(self.to_bytes())
 
 
 class WXFExprReal(WXFExpr):
@@ -92,23 +92,10 @@ class WXFExprReal(WXFExpr):
         super(WXFExprReal, self).__init__(WXF_CONSTANTS.Real64)
         self.value = value
 
-    if six.JYTHON:
-
-        def to_bytes(self):
-            buffer = jarray.zeros(8, 'c')
-            StructDouble.pack_into(buffer, 0, self.value)
-            return buffer.tostring()
-    else:
-
-        def to_bytes(self):
-            buffer = bytearray(8)
-            StructDouble.pack_into(buffer, 0, self.value)
-            return buffer
-
     def _serialize_to_wxf(self, stream, context):
         stream.write(self.wxf_type)
         context.add_part()
-        stream.write(self.to_bytes())
+        stream.write(float_to_bytes(self.value))
 
 
 class _WXFExprStringLike(WXFExpr):

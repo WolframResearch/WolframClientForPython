@@ -8,6 +8,8 @@ from wolframclient.serializers.wxfencoder.constants import (
     StructInt8LE, StructInt16LE, StructInt32LE, StructInt64LE)
 from wolframclient.utils import six
 
+if six.JYTHON:
+    import jarray
 
 def write_varint(int_value, stream):
     """Serialize `int_value` into varint bytes and write them to
@@ -76,3 +78,17 @@ else:
 
     def integer_to_bytes(value, int_size):
         return value.to_bytes(int_size, byteorder='little', signed=True)
+
+
+if six.JYTHON:
+
+    def float_to_bytes(value):
+        buffer = jarray.zeros(8, 'c')
+        StructDouble.pack_into(buffer, 0, value)
+        return buffer.tostring()
+else:
+
+    def float_to_bytes(value):
+        buffer = bytearray(8)
+        StructDouble.pack_into(buffer, 0, value)
+        return buffer
