@@ -4,6 +4,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import wolframclient.serializers.wxfencoder.wxfexpr as wxfexpr
 from wolframclient.utils import six
+import decimal
+from wolframclient.serializers.utils import py_encode_decimal
+
 
 
 class NotEncodedException(Exception):
@@ -81,7 +84,9 @@ class DefaultWXFEncoder(WXFEncoder):
 
     def encode(self, pythonExpr):
         """Encode most common Python types to their Wolfram Language counterpart."""
-        if isinstance(pythonExpr, six.string_types):
+        if isinstance(pythonExpr, six.binary_type):
+            yield wxfexpr.WXFExprBinaryString(pythonExpr)
+        elif isinstance(pythonExpr, six.string_types):
             yield wxfexpr.WXFExprString(pythonExpr)
         elif isinstance(pythonExpr, six.integer_types):
             yield wxfexpr.WXFExprInteger(pythonExpr)
@@ -114,3 +119,5 @@ class DefaultWXFEncoder(WXFEncoder):
             yield wxfexpr.WXFExprReal(pythonExpr.imag)
         elif isinstance(pythonExpr, wxfexpr.WXFExpr):
             yield pythonExpr
+        elif isinstance(pythonExpr, decimal.Decimal):
+            yield wxfexpr.WXFExprBigReal(py_encode_decimal(pythonExpr))
