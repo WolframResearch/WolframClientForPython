@@ -232,7 +232,7 @@ class WolframKernelPool(object):
         return len(self._started_tasks)
 
 
-def parallel_evaluate(kernelpath, expressions, max_kernels=6, loop=None):
+def parallel_evaluate(kernelpath, expressions, max_kernels=4, loop=None):
     """ Start a kernel pool using `kernelpath` and evaluate the expressions on the created
     pool, then terminate it and returns the results.
 
