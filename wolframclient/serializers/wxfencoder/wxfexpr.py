@@ -7,7 +7,8 @@ from wolframclient.serializers.wxfencoder.constants import (
     INT64_MIN, VALID_PACKED_ARRAY_TYPES, WXF_CONSTANTS, StructDouble,
     StructInt8LE, StructInt16LE, StructInt32LE, StructInt64LE)
 from wolframclient.serializers.wxfencoder.serializer import (
-    WXFSerializerException, write_varint)
+    WXFSerializerException)
+from wolframclient.serializers.wxfencoder.utils import write_varint
 from wolframclient.utils import six
 
 if six.JYTHON:

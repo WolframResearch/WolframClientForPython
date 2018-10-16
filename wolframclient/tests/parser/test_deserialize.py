@@ -11,7 +11,7 @@ from wolframclient.deserializers import (WXFConsumer, WXFConsumerNumpy,
 from wolframclient.deserializers.wxf.wxfparser import parse_varint
 from wolframclient.exception import WolframParserException
 from wolframclient.serializers import export
-from wolframclient.serializers.wxfencoder.serializer import write_varint
+from wolframclient.serializers.wxfencoder.utils import write_varint
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
