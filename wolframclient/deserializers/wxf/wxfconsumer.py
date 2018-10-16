@@ -8,7 +8,7 @@ import re
 
 from wolframclient.exception import WolframParserException
 from wolframclient.language.expression import WLFunction, WLSymbol
-from wolframclient.serializers.wxfencoder import wxfexpr
+from wolframclient.serializers.wxfencoder import constants
 from wolframclient.utils.api import numpy
 
 __all__ = ['WXFConsumer', 'WXFConsumerNumpy']
@@ -52,22 +52,22 @@ class WXFConsumer(object):
     """
 
     _mapping = {
-        wxfexpr.WXF_CONSTANTS.Function: 'consume_function',
-        wxfexpr.WXF_CONSTANTS.Symbol: 'consume_symbol',
-        wxfexpr.WXF_CONSTANTS.String: 'consume_string',
-        wxfexpr.WXF_CONSTANTS.BinaryString: 'consume_binary_string',
-        wxfexpr.WXF_CONSTANTS.Integer8: 'consume_integer8',
-        wxfexpr.WXF_CONSTANTS.Integer16: 'consume_integer16',
-        wxfexpr.WXF_CONSTANTS.Integer32: 'consume_integer32',
-        wxfexpr.WXF_CONSTANTS.Integer64: 'consume_integer64',
-        wxfexpr.WXF_CONSTANTS.Real64: 'consume_real64',
-        wxfexpr.WXF_CONSTANTS.BigInteger: 'consume_bigint',
-        wxfexpr.WXF_CONSTANTS.BigReal: 'consume_bigreal',
-        wxfexpr.WXF_CONSTANTS.PackedArray: 'consume_packed_array',
-        wxfexpr.WXF_CONSTANTS.RawArray: 'consume_raw_array',
-        wxfexpr.WXF_CONSTANTS.Association: 'consume_association',
-        wxfexpr.WXF_CONSTANTS.Rule: 'consume_rule',
-        wxfexpr.WXF_CONSTANTS.RuleDelayed: 'consume_rule_delayed'
+        constants.WXF_CONSTANTS.Function: 'consume_function',
+        constants.WXF_CONSTANTS.Symbol: 'consume_symbol',
+        constants.WXF_CONSTANTS.String: 'consume_string',
+        constants.WXF_CONSTANTS.BinaryString: 'consume_binary_string',
+        constants.WXF_CONSTANTS.Integer8: 'consume_integer8',
+        constants.WXF_CONSTANTS.Integer16: 'consume_integer16',
+        constants.WXF_CONSTANTS.Integer32: 'consume_integer32',
+        constants.WXF_CONSTANTS.Integer64: 'consume_integer64',
+        constants.WXF_CONSTANTS.Real64: 'consume_real64',
+        constants.WXF_CONSTANTS.BigInteger: 'consume_bigint',
+        constants.WXF_CONSTANTS.BigReal: 'consume_bigreal',
+        constants.WXF_CONSTANTS.PackedArray: 'consume_packed_array',
+        constants.WXF_CONSTANTS.RawArray: 'consume_raw_array',
+        constants.WXF_CONSTANTS.Association: 'consume_association',
+        constants.WXF_CONSTANTS.Rule: 'consume_rule',
+        constants.WXF_CONSTANTS.RuleDelayed: 'consume_rule_delayed'
     }
 
     def next_expression(self, tokens, **kwargs):
@@ -234,18 +234,18 @@ class WXFConsumer(object):
 
     if hasattr(memoryview, 'cast'):
         unpack_mapping = {
-            wxfexpr.ARRAY_TYPES.Integer8: 'b',
-            wxfexpr.ARRAY_TYPES.UnsignedInteger8: 'B',
-            wxfexpr.ARRAY_TYPES.Integer16: 'h',
-            wxfexpr.ARRAY_TYPES.UnsignedInteger16: 'H',
-            wxfexpr.ARRAY_TYPES.Integer32: 'i',
-            wxfexpr.ARRAY_TYPES.UnsignedInteger32: 'I',
-            wxfexpr.ARRAY_TYPES.Integer64: 'q',
-            wxfexpr.ARRAY_TYPES.UnsignedInteger64: 'Q',
-            wxfexpr.ARRAY_TYPES.Real32: 'f',
-            wxfexpr.ARRAY_TYPES.Real64: 'd',
-            wxfexpr.ARRAY_TYPES.ComplexReal32: 'f',
-            wxfexpr.ARRAY_TYPES.ComplexReal64: 'd',
+            constants.ARRAY_TYPES.Integer8: 'b',
+            constants.ARRAY_TYPES.UnsignedInteger8: 'B',
+            constants.ARRAY_TYPES.Integer16: 'h',
+            constants.ARRAY_TYPES.UnsignedInteger16: 'H',
+            constants.ARRAY_TYPES.Integer32: 'i',
+            constants.ARRAY_TYPES.UnsignedInteger32: 'I',
+            constants.ARRAY_TYPES.Integer64: 'q',
+            constants.ARRAY_TYPES.UnsignedInteger64: 'Q',
+            constants.ARRAY_TYPES.Real32: 'f',
+            constants.ARRAY_TYPES.Real64: 'd',
+            constants.ARRAY_TYPES.ComplexReal32: 'f',
+            constants.ARRAY_TYPES.ComplexReal64: 'd',
         }
 
         def _to_complex(self, array, max_depth, curr_depth):
@@ -261,7 +261,7 @@ class WXFConsumer(object):
 
         def _array_to_list(self, current_token, tokens):
             view = memoryview(current_token.data)
-            if current_token.array_type == wxfexpr.ARRAY_TYPES.ComplexReal32 or current_token.array_type == wxfexpr.ARRAY_TYPES.ComplexReal64:
+            if current_token.array_type == constants.ARRAY_TYPES.ComplexReal32 or current_token.array_type == constants.ARRAY_TYPES.ComplexReal64:
                 dimensions = list(current_token.dimensions)
                 # In the given array, 2 reals give one complex,
                 # adding one last dimension to represent it.
@@ -277,18 +277,18 @@ class WXFConsumer(object):
                     shape=current_token.dimensions).tolist()
     else:
         unpack_mapping = {
-            wxfexpr.ARRAY_TYPES.Integer8: wxfexpr.StructInt8LE,
-            wxfexpr.ARRAY_TYPES.UnsignedInteger8: wxfexpr.StructUInt8LE,
-            wxfexpr.ARRAY_TYPES.Integer16: wxfexpr.StructInt16LE,
-            wxfexpr.ARRAY_TYPES.UnsignedInteger16: wxfexpr.StructUInt16LE,
-            wxfexpr.ARRAY_TYPES.Integer32: wxfexpr.StructInt32LE,
-            wxfexpr.ARRAY_TYPES.UnsignedInteger32: wxfexpr.StructUInt32LE,
-            wxfexpr.ARRAY_TYPES.Integer64: wxfexpr.StructInt64LE,
-            wxfexpr.ARRAY_TYPES.UnsignedInteger64: wxfexpr.StructUInt64LE,
-            wxfexpr.ARRAY_TYPES.Real32: wxfexpr.StructFloat,
-            wxfexpr.ARRAY_TYPES.Real64: wxfexpr.StructDouble,
-            wxfexpr.ARRAY_TYPES.ComplexReal32: wxfexpr.StructFloat,
-            wxfexpr.ARRAY_TYPES.ComplexReal64: wxfexpr.StructDouble,
+            constants.ARRAY_TYPES.Integer8: constants.StructInt8LE,
+            constants.ARRAY_TYPES.UnsignedInteger8: constants.StructUInt8LE,
+            constants.ARRAY_TYPES.Integer16: constants.StructInt16LE,
+            constants.ARRAY_TYPES.UnsignedInteger16: constants.StructUInt16LE,
+            constants.ARRAY_TYPES.Integer32: constants.StructInt32LE,
+            constants.ARRAY_TYPES.UnsignedInteger32: constants.StructUInt32LE,
+            constants.ARRAY_TYPES.Integer64: constants.StructInt64LE,
+            constants.ARRAY_TYPES.UnsignedInteger64: constants.StructUInt64LE,
+            constants.ARRAY_TYPES.Real32: constants.StructFloat,
+            constants.ARRAY_TYPES.Real64: constants.StructDouble,
+            constants.ARRAY_TYPES.ComplexReal32: constants.StructFloat,
+            constants.ARRAY_TYPES.ComplexReal64: constants.StructDouble,
         }
 
         def _array_to_list(self, current_token, tokens):
@@ -308,7 +308,7 @@ class WXFConsumer(object):
             else:
                 struct = self.unpack_mapping[array_type]
                 # complex values, need two reals for each.
-                if array_type == wxfexpr.ARRAY_TYPES.ComplexReal32 or array_type == wxfexpr.ARRAY_TYPES.ComplexReal64:
+                if array_type == constants.ARRAY_TYPES.ComplexReal32 or array_type == constants.ARRAY_TYPES.ComplexReal64:
                     for i in range(dimensions[-1]):
                         # this returns a tuple.
                         re = struct.unpack_from(data, offset=offset)
@@ -339,16 +339,16 @@ class WXFConsumerNumpy(WXFConsumer):
     consume_raw_array = consume_array
 
     WXF_TYPE_TO_DTYPE = {
-        wxfexpr.ARRAY_TYPES.Integer8: 'int8',
-        wxfexpr.ARRAY_TYPES.Integer16: 'int16',
-        wxfexpr.ARRAY_TYPES.Integer32: 'int32',
-        wxfexpr.ARRAY_TYPES.Integer64: 'int64',
-        wxfexpr.ARRAY_TYPES.UnsignedInteger8: 'uint8',
-        wxfexpr.ARRAY_TYPES.UnsignedInteger16: 'uint16',
-        wxfexpr.ARRAY_TYPES.UnsignedInteger32: 'uint32',
-        wxfexpr.ARRAY_TYPES.UnsignedInteger64: 'uint64',
-        wxfexpr.ARRAY_TYPES.Real32: 'float32',
-        wxfexpr.ARRAY_TYPES.Real64: 'float64',
-        wxfexpr.ARRAY_TYPES.ComplexReal32: 'complex64',
-        wxfexpr.ARRAY_TYPES.ComplexReal64: 'complex128',
+        constants.ARRAY_TYPES.Integer8: 'int8',
+        constants.ARRAY_TYPES.Integer16: 'int16',
+        constants.ARRAY_TYPES.Integer32: 'int32',
+        constants.ARRAY_TYPES.Integer64: 'int64',
+        constants.ARRAY_TYPES.UnsignedInteger8: 'uint8',
+        constants.ARRAY_TYPES.UnsignedInteger16: 'uint16',
+        constants.ARRAY_TYPES.UnsignedInteger32: 'uint32',
+        constants.ARRAY_TYPES.UnsignedInteger64: 'uint64',
+        constants.ARRAY_TYPES.Real32: 'float32',
+        constants.ARRAY_TYPES.Real64: 'float64',
+        constants.ARRAY_TYPES.ComplexReal32: 'complex64',
+        constants.ARRAY_TYPES.ComplexReal64: 'complex128',
     }

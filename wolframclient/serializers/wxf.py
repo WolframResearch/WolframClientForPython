@@ -7,8 +7,8 @@ from itertools import chain
 import wolframclient.serializers.wxfencoder.wxfexpr as wxfexpr
 from wolframclient.serializers.base import FormatSerializer
 from wolframclient.serializers.utils import py_encode_decimal
+from wolframclient.serializers.wxfencoder.constants import ARRAY_TYPES
 from wolframclient.serializers.wxfencoder.serializer import WXFExprSerializer
-from wolframclient.serializers.wxfencoder.wxfexpr import ARRAY_TYPES
 
 
 class WXFSerializer(FormatSerializer):
