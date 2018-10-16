@@ -6,7 +6,7 @@
 
 
 =============================================================
-Welcome to Wolfram Client Library for Python's documentation
+Wolfram Client Library for Python's documentation
 =============================================================
 
 The Client Library provides seamless Wolfram Language integration in Python.
@@ -23,7 +23,7 @@ A list of features provided by the library:
 * parse :wl:`WXF`.
 
 
-Table of content
+Table of contents
 ==================
 
 .. toctree::
