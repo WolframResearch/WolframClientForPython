@@ -2,11 +2,12 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import wolframclient.serializers.wxfencoder.wxfexpr as wxfexpr
-from wolframclient.utils import six
 import decimal
-from wolframclient.serializers.utils import py_encode_decimal
 
+import wolframclient.serializers.wxfencoder.wxfexpr as wxfexpr
+from wolframclient.language.expression import WLFunction, WLSymbol
+from wolframclient.serializers.utils import py_encode_decimal
+from wolframclient.utils import six
 
 
 class NotEncodedException(Exception):
@@ -88,6 +89,15 @@ class DefaultWXFEncoder(WXFEncoder):
             yield wxfexpr.WXFExprBinaryString(pythonExpr)
         elif isinstance(pythonExpr, six.string_types):
             yield wxfexpr.WXFExprString(pythonExpr)
+        elif isinstance(pythonExpr, WLSymbol):
+            yield wxfexpr.WXFExprSymbol(pythonExpr.name)
+        elif isinstance(pythonExpr, WLFunction):
+            yield wxfexpr.WXFExprFunction(len(pythonExpr))
+            for sub in self.encode(pythonExpr.head):
+                yield sub
+            for arg in pythonExpr.args:
+                for sub in self.encode(arg):
+                    yield sub
         elif isinstance(pythonExpr, six.integer_types):
             yield wxfexpr.WXFExprInteger(pythonExpr)
         elif isinstance(pythonExpr, list):
