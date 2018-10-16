@@ -2,6 +2,12 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from wolframclient.serializers.wxfencoder.constants import (
+    INT8_MAX, INT8_MIN, INT16_MAX, INT16_MIN, INT32_MAX, INT32_MIN, INT64_MAX,
+    INT64_MIN, VALID_PACKED_ARRAY_TYPES, WXF_CONSTANTS, StructDouble,
+    StructInt8LE, StructInt16LE, StructInt32LE, StructInt64LE)
+from wolframclient.utils import six
+
 
 def write_varint(int_value, stream):
     """Serialize `int_value` into varint bytes and write them to
@@ -28,3 +34,45 @@ def varint_bytes(int_value):
             break
 
     return buf[:count]
+
+
+def integer_size(value):
+    if not isinstance(value, six.integer_types):
+        raise TypeError(
+            'WXFExprInteger must be initialize with an integer value.')
+    if value < INT8_MAX and value >= INT8_MIN:
+        return WXF_CONSTANTS.Integer8, 1
+    elif value < INT16_MAX and value >= INT16_MIN:
+        return WXF_CONSTANTS.Integer16, 2
+    elif value < INT32_MAX and value >= INT32_MIN:
+        return WXF_CONSTANTS.Integer32, 4
+    elif value < INT64_MAX and value >= INT64_MIN:
+        return WXF_CONSTANTS.Integer64, 8
+    else:
+        raise ValueError('Value %i is not a machine-sized integer.' % value)
+
+
+_packing = {
+    1: StructInt8LE,
+    2: StructInt16LE,
+    4: StructInt32LE,
+    8: StructInt64LE
+}
+
+if six.JYTHON:
+
+    def integer_to_bytes(value, int_size):
+        buffer = jarray.zeros(8, 'c')
+        _packing.get(int_size).pack_into(buffer, 0, value)
+        return buffer[:int_size].tostring()
+
+elif six.PY2:
+
+    def integer_to_bytes(value, int_size):
+        buffer = bytearray(8)
+        _packing.get(int_size).pack_into(buffer, 0, value)
+        return buffer[:int_size]
+else:
+
+    def integer_to_bytes(value, int_size):
+        return value.to_bytes(int_size, byteorder='little', signed=True)

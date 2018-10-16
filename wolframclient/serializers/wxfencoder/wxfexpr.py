@@ -8,7 +8,8 @@ from wolframclient.serializers.wxfencoder.constants import (
     StructInt8LE, StructInt16LE, StructInt32LE, StructInt64LE)
 from wolframclient.serializers.wxfencoder.serializer import (
     WXFSerializerException)
-from wolframclient.serializers.wxfencoder.utils import write_varint
+from wolframclient.serializers.wxfencoder.utils import (
+    integer_size, integer_to_bytes, write_varint)
 from wolframclient.utils import six
 
 if six.JYTHON:
@@ -62,33 +63,9 @@ class WXFExprInteger(WXFExpr):
     '''
     __slots__ = 'value', 'int_size'
 
-    packing = {
-        1: StructInt8LE,
-        2: StructInt16LE,
-        4: StructInt32LE,
-        8: StructInt64LE
-    }
-
     def __init__(self, value):
-        if not isinstance(value, six.integer_types):
-            raise TypeError(
-                'WXFExprInteger must be initialize with an integer value.')
-        if value < INT8_MAX and value >= INT8_MIN:
-            super(WXFExprInteger, self).__init__(WXF_CONSTANTS.Integer8)
-            self.int_size = 1
-        elif value < INT16_MAX and value >= INT16_MIN:
-            super(WXFExprInteger, self).__init__(WXF_CONSTANTS.Integer16)
-            self.int_size = 2
-        elif value < INT32_MAX and value >= INT32_MIN:
-            super(WXFExprInteger, self).__init__(WXF_CONSTANTS.Integer32)
-            self.int_size = 4
-        elif value < INT64_MAX and value >= INT64_MIN:
-            super(WXFExprInteger, self).__init__(WXF_CONSTANTS.Integer64)
-            self.int_size = 8
-        else:
-            raise ValueError(
-                'Value %i is not a machine-sized integer.' % value)
-
+        wxf_type, self.int_size = integer_size(value)
+        super(WXFExprInteger, self).__init__(wxf_type)
         self.value = value
 
     ''' Encode the integer into bytes and return them in a `buffer`.
@@ -98,28 +75,10 @@ class WXFExprInteger(WXFExpr):
     It is proxying int.to_bytes for version 3.4 and above.
     '''
 
-    if six.JYTHON:
-
-        def to_bytes(self):
-            buffer = jarray.zeros(8, 'c')
-            self.packing.get(self.int_size).pack_into(buffer, 0, self.value)
-            return buffer[:self.int_size].tostring()
-    elif six.PY2:
-
-        def to_bytes(self):
-            buffer = bytearray(8)
-            self.packing.get(self.int_size).pack_into(buffer, 0, self.value)
-            return buffer[:self.int_size]
-    else:
-
-        def to_bytes(self):
-            return self.value.to_bytes(
-                self.int_size, byteorder='little', signed=True)
-
     def _serialize_to_wxf(self, stream, context):
         stream.write(self.wxf_type)
         context.add_part()
-        stream.write(self.to_bytes())
+        stream.write(integer_to_bytes(self.value, self.int_size))
 
 
 class WXFExprReal(WXFExpr):
