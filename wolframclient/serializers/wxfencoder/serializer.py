@@ -3,6 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.serializers.wxfencoder.streaming import ZipCompressedWriter
+from wolframclient.serializers.wxfencoder.constants import WXF_VERSION, WXF_HEADER_SEPARATOR, WXF_HEADER_COMPRESS
 
 __all__ = [
     'WXFExprSerializer', 'SerializationContext', 'write_varint',
@@ -208,9 +209,7 @@ class SerializationContext(_Context):
             self._expected_length_stack[self._depth])
 
 
-WXF_VERSION = b'8'
-WXF_HEADER_SEPARATOR = b':'
-WXF_HEADER_COMPRESS = b'C'
+
 
 
 class WXFExprSerializer(object):
