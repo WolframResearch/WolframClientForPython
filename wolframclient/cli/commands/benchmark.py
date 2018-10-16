@@ -13,6 +13,7 @@ from wolframclient.utils.decorators import to_tuple
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import first
 
+import decimal
 
 class Command(SimpleCommand):
 
@@ -23,7 +24,7 @@ class Command(SimpleCommand):
     @to_tuple
     def complexity_handler(self, complexity):
         for i in range(complexity):
-            yield [wl.Symbol, {"a": [1, 2, 3], 2: 2}]
+            yield [wl.Symbol, {"a": [1, 2, 3], 2: [2, 1.23, decimal.Decimal('1.23'), b'bytes']}]
 
     @timed
     def export(self, *args, **opts):
