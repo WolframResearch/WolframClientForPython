@@ -6,24 +6,24 @@
 
 
 =============================================================
-Wolfram Client Library for Python's documentation
+Wolfram Client Library for Python's Documentation
 =============================================================
 
-The Client Library provides seamless Wolfram Language integration in Python.
+The client library provides seamless Wolfram Language integration in Python.
 A list of features provided by the library:
 
 * evaluate arbitrary code on a local kernel
-* evaluate arbitrary code on Wolfram cloud, public or private
+* evaluate arbitrary code in the Wolfram cloud, public or private
 * call deployed :wl:`APIFunction`
-* build Python functions on top of Wolfram Language functions.
-* represent arbitrary Wolfram Language code as Python object
-* serialize Python object to Wolfram Language string :wl:`InputForm`
-* serialize Python object to :wl:`WXF`
-* extend serialization to any arbitrary Python class.
-* parse :wl:`WXF`.
+* build Python functions on top of Wolfram Language functions
+* represent arbitrary Wolfram Language code as a Python object
+* serialize a Python object to a Wolfram Language string :wl:`InputForm`
+* serialize a Python object to :wl:`WXF`
+* extend serialization to any arbitrary Python class
+* parse :wl:`WXF`
 
 
-Table of contents
+Table of Contents
 ==================
 
 .. toctree::

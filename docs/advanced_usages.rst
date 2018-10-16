@@ -293,7 +293,7 @@ Control the log level both at Python and Kernel level:
     :emphasize-lines: 6,14-15,17,20,22,23
 
 **********************************************
-Extending WXF parsing – Writing a WXFConsumer
+Extending WXF parsing: Writing a WXFConsumer
 **********************************************
 
 Integer Eigenvalues

@@ -1,5 +1,5 @@
 ###########
-API – Guide
+API: Guide
 ###########
 
 .. toctree::

@@ -6,31 +6,31 @@
 Introduction to the Wolfram Client Library
 *******************************************
 
-The Wolfram Client Library is structured in sub-modules all located in :mod:`wolframclient`:
+The Wolfram Client Library is structured in submodules all located in :mod:`wolframclient`:
 
-* :mod:`~wolframclient.evaluation` provides convenient methods to evaluate Wolfram Language expressions directly from Python. There are many ways to evaluate code including: evaluation by a local kernel, direct evaluation by a public or private Wolfram Cloud, calling deployed API.
+* :mod:`~wolframclient.evaluation` provides convenient methods to evaluate Wolfram Language expressions directly from Python. There are many ways to evaluate code including: evaluation by a local kernel, direct evaluation by a public or private Wolfram Cloud, calling a deployed API.
 
 * :mod:`~wolframclient.serializers` provides serialization methods to various formats such as string :wl:`InputForm` and binary :wl:`WXF` format.
 
 * :mod:`~wolframclient.deserializers` contains a parser for :wl:`WXF`.
 
-* :mod:`~wolframclient.language` provides Python representation of Wolfram Language symbols and functions.
+* :mod:`~wolframclient.language` provides a Python representation of Wolfram Language symbols and functions.
 
 * :mod:`~wolframclient.exception` regroups the exceptions and errors that the library may raise.
 
 
 .. _ref-expressions:
 
-Wolfram Language expression representation
+Wolfram Language Expression Representation
 ==========================================
 
-The library exposes many kind of interactions with the Wolfram Language, most of which requires to represent Wolfram Language expressions as Python objects. A straightforward way to construct Python objects representing expressions is to call attributes of :func:`~wolframclient.language.wl`.
+The library exposes many kinds of interactions with the Wolfram Language, many of which requires representation of Wolfram Language expressions as Python objects. A straightforward way to construct Python objects representing expressions is to call attributes of :func:`~wolframclient.language.wl`.
 
 Import the factory::
 
     >>> from wolframclient.language import wl
 
-Represent a Wolfram Language symbol :wl:`Now`::
+Represent the Wolfram Language symbol :wl:`Now`::
 
     >>> wl.Now
     Now
@@ -46,14 +46,14 @@ Option are defined using named parameters. :wl:`ArrayPad` accepts option :wl:`Pa
     ArrayPad[[[0]], 1, Rule[Padding, 1]]
 
 .. note :: 
-    For more details about the Python representation of Wolfram Language expressions refer to :ref:`the advanced usage section<adv-expression-representation>`.
+    for more details about the Python representation of Wolfram Language expressions, refer to :ref:`the advanced usage section<adv-expression-representation>`.
 
-Wolfram Language evaluation
+Wolfram Language Evaluation
 ==============================
 
 .. _ref-localkernel:
 
-Local kernel
+Local Kernel
 ---------------
 
 Wolfram Language session :class:`~wolframclient.evaluation.WolframLanguageSession` is initialized with a *WolframKernel* executable specified by its path. A session enables local evaluation of Wolfram Language code directly from Python.
@@ -124,7 +124,7 @@ Query `WolframAlpha <https://www.wolframalpha.com/>`_ for the distance between t
 
     WolframAlpha["Earth distance from Sun", "Result"]
 
-The Python object stored in `distance` variable is a Wolfram Language :wl:`Quantity`. Convert the unit to Kilometers, looping back the previous result in a new expression evaluation::
+The Python object stored in the `distance` variable is a Wolfram Language :wl:`Quantity`. Convert the unit to kilometers, looping back the previous result in a new expression evaluation::
 
     >>> d_km = session.evaluate(wl.UnitConvert(distance, "Kilometers"))
     Quantity[150801534.3173264, Kilometers]
@@ -133,7 +133,7 @@ The Python object stored in `distance` variable is a Wolfram Language :wl:`Quant
 
     dkm = UnitConvert[distance, "Kilometers"]
 
-Finally retrieve the result as a Python number::
+Finally, retrieve the result as a Python number::
 
     >>> session.evaluate(wl.QuantityMagnitude(d_km))
     150801534.3173264
@@ -142,7 +142,7 @@ Finally retrieve the result as a Python number::
     
     QuantityMagnitude[dkm]
 
-Association are represented as Python dictionaries and vice versa:
+Associations are represented as Python dictionaries and vice versa:
 
     >>> session.evaluate(wl.AssociationMap(wl.Prime, [1, 3, 5]))
     {1: 2, 3: 5, 5: 11}
@@ -154,7 +154,7 @@ Association are represented as Python dictionaries and vice versa:
 Options
 +++++++++
 
-Wolfram Language options are passed as Python named arguments (a.k.a. `**kwargs`). As we saw, :wl:`ArrayPad` accepts an option :wl:`Padding` to specify what padding to use. Pad an array with ones::
+Wolfram Language options are passed as Python named arguments (a.k.a. `**kwargs`). As seen previously, :wl:`ArrayPad` accepts an option :wl:`Padding` to specify what padding to use. Pad an array with ones::
 
     >>> session.evaluate(wl.ArrayPad([[0]], 1, Padding=1))
     [[1, 1, 1], [1, 0, 1], [1, 1, 1]]
@@ -163,7 +163,7 @@ Wolfram Language options are passed as Python named arguments (a.k.a. `**kwargs`
 
     ArrayPad[{{0}}, 1, Padding->1]
 
-InputForm string evaluate
+InputForm String Evaluate
 +++++++++++++++++++++++++
 
 It is sometimes simpler to input Wolfram Language code as :wl:`InputForm` strings, and let the kernel apply :wl:`ToExpression` to it. Compute the squares of an array of integers::
@@ -171,7 +171,7 @@ It is sometimes simpler to input Wolfram Language code as :wl:`InputForm` string
     >>> session.evaluate('Map[#^2 &, Range[5]]')
     [1, 4, 9, 16, 25]
 
-The library provide a function :func:`~wolframclient.language.wlexpr` to help mix string :wl:`InputForm` and objects. This is particularly useful to define pure functions. Evaluate an alternative representation of the previous expression::
+The library provides a function :func:`~wolframclient.language.wlexpr` to help mix :wl:`InputForm` strings and objects. This is particularly useful to define pure functions. Evaluate an alternative representation of the previous expression::
 
     >>> from wolframclient.language import wlexpr
     >>> session.evaluate(wl.Map(wlexpr('#^2&'), wl.Range(5)))
@@ -186,10 +186,10 @@ Expressions evaluated in a given session are persistent. Define a function, and 
     >>> session.evaluate('f[4]')
     16
 
-Create Python function
+Create Python Function
 ++++++++++++++++++++++
 
-From a Wolfram Language expression is it possible to create a Python function that directly evaluates when called using :func:`~wolframclient.evaluation.WolframLanguageSession.function`::
+From a Wolfram Language expression, it is possible to create a Python function that directly evaluates when called using :func:`~wolframclient.evaluation.WolframLanguageSession.function`::
 
     >>> str_reverse = session.function('StringReverse')
     >>> str_reverse('abc', 'def', 'ghi')
@@ -200,7 +200,7 @@ Define a Wolfram Language function that takes a list or a sequence of integers a
     >>> session.evaluate('selectPrimes[integers : List[__Integer]] := Select[integers, PrimeQ]')
     >>> session.evaluate('selectPrimes[integers___Integer] := selectPrimes[{integers}]')
     
-Create a python function from it::
+Create a Python function from it::
 
     >>> selectPrimes = session.function('selectPrimes')
 
@@ -209,7 +209,7 @@ Apply the function to a list::
     >>> selectPrimes([1,2,3,4])
     [2, 3]
 
-To a sequence of values::
+Apply the function to a sequence of values::
 
     >>> selectPrimes(2, 3, 4, 5)
     [2, 3, 5]
@@ -222,38 +222,38 @@ It also works with an iterator of integers::
 Termination
 ++++++++++++++
 
-The session is no more useful, terminating it::
+The session is no more useful, so terminate it::
 
     session.terminate()
 
-Alternatively, it is possible to delegate the handling of the life-cycle of a session using a `with` block::
+Alternatively, it is possible to delegate the handling of the lifecycle of a session using a `with` block::
 
     >>> with WolframLanguageSession('/path/to/kernel-executable') as wl_session:
     ...     wl_session.StringReverse('abc')
     ...
     'cba'
 
-The session stored in `wl_session`, is only available in the scope of the `with` block, contrary to `session` that was initialized with :func:`~wolframclient.evaluation.WolframLanguageSession.start`.
+The session stored in `wl_session`, is only available in the scope of the `with` block – contrary to `session` that was initialized with :func:`~wolframclient.evaluation.WolframLanguageSession.start`.
 
-As shown above, :class:`~wolframclient.evaluation.WolframLanguageSession` must be terminated, either by explicitly calling :func:`~wolframclient.evaluation.WolframLanguageSession.terminate`, or, alternatively, using it in a `with` block that achieves the same result automatically. It is highly recommended to initialize a session once and for all to mitigate the initialization cost.
+As shown previously, :class:`~wolframclient.evaluation.WolframLanguageSession` must be terminated, either by explicitly calling :func:`~wolframclient.evaluation.WolframLanguageSession.terminate` or, alternatively, using it in a `with` block that achieves the same result automatically. It is highly recommended to initialize a session once and for all to mitigate the initialization cost.
 
 .. note::
-    Non terminated sessions usually results in orphan kernel processes, which, ultimately, leads to the impossibility to spawn any usable instance at all. Typically, this ends up with a WolframKernelException raised after a failure to communicate with the kernel.
+    Nonterminated sessions usually result in orphan kernel processes, which ultimately lead to the inability to spawn any usable instance at all. Typically, this ends up with a WolframKernelException raised after a failure to communicate with the kernel.
 
 .. note :: 
-    For in depth explanations and use cases of local evaluation refer to :ref:`the advanced usage section<adv-local-evaluation>`.
+    for in depth explanations and use cases of local evaluation, refer to :ref:`the advanced usage section<adv-local-evaluation>`.
 
-Wolfram Cloud interactions
+Wolfram Cloud Interactions
 ==============================
 
-Cloud interaction requires to be properly authenticated to a Wolfram Cloud using your **Wolfram ID** and password. To create one visit https://account.wolfram.com/auth/create. 
+Cloud interaction requires proper authentication to the Wolfram Cloud using your **Wolfram ID** and password. To create one, visit https://account.wolfram.com/auth/create. 
 
 .. _ref-auth:
 
 Authenticate
 -------------
 
-Begin by importing from the :mod:`~wolframclient.evaluation` module, the classes :class:`~wolframclient.evaluation.UserIDPassword` and :class:`~wolframclient.evaluation.WolframCloudSession`.
+Begin by importing the classes :class:`~wolframclient.evaluation.UserIDPassword` and :class:`~wolframclient.evaluation.WolframCloudSession` from the :mod:`~wolframclient.evaluation` module.
 
     >>> from wolframclient.evaluation import UserIDPassword, WolframCloudSession
 
@@ -267,15 +267,15 @@ Using `userID`, start a new authenticated cloud session::
     >>> session.authorized
     True
 
-In the following sections the authenticated session initialized above is simply referred by its variable name `session`.
+In the following sections, the authenticated session initialized here is simply referred to by its variable name `session`.
 
-Cloud evaluation
+Cloud Evaluation
 -------------------------------
 
-One shot evaluation
+One-Shot Evaluation
 ++++++++++++++++++++++
 
-A one-shot evaluation on the Wolfram public cloud requires to initiate an :ref:`authenticated session<ref-auth>`. 
+A one-shot evaluation on the Wolfram Public Cloud requires the initiation of an :ref:`authenticated session<ref-auth>`. 
 
 First import the :ref:`expression factory<ref-expressions>`::
 
@@ -294,22 +294,22 @@ Complex expressions are evaluated with the :meth:`~wolframclient.evaluation.Wolf
     >>> session.evaluate('Map[Prime, Range[5]]')
     '{2, 3, 5, 7, 11}'
 
-Even if the authenticated session is a persistent object, each evaluation occurs independently, similarly to :wl:`CloudEvaluate`. It means that it's not the appropriate tools to work with variables, and functions.
+Even if the authenticated session is a persistent object, each evaluation occurs independently, similarly to :wl:`CloudEvaluate`. This means that this is not the appropriate tool to work with variables and functions.
 
 Define a function `f`::
 
     >>> result = session.evaluate('f[x_]:=x+1')
     'Null'
 
-Apply `f` to `1`, but `f` is no more defined, thus getting an unevaluated result::
+Apply `f` to `1`. However `f` is no longer defined, thus returning an unevaluated result::
 
     >>> result = session.evaluate('f[1]')
     'f[1]'
 
-Cloud functions
+Cloud Functions
 ------------------
 
-From an :ref:`authenticated session<ref-auth>` it is possible to build a cloud function, to later use it with various parameters. Create a cloud function::
+From an :ref:`authenticated session<ref-auth>`, it is possible to build a cloud function to later use it with various parameters. Create a cloud function::
 
     >>> wl_str_reverse = session.function('StringReverse')
 
@@ -323,7 +323,7 @@ Use the function again with a new argument::
     >>> wl_str_reverse("world.")
     '".dlrow"'
 
-Functions may accept more than one input parameters. Define a cloud function that applies :wl:`Join` on all arguments it is given. Join multiple Python arrays::
+Functions may accept more than one input parameter. Define a cloud function that applies :wl:`Join` on all arguments it is given. Join multiple Python arrays::
 
     >>> wl_join = session.function('Join[##] &')
     >>> wl_join([0,1], ["a", "b"], [2, "c"])
@@ -334,10 +334,10 @@ API
 
 .. _ref-deployAPI:
 
-Deploy Wolfram Language API
+Deploy a Wolfram Language API
 ++++++++++++++++++++++++++++++
 
-From the Wolfram Language, it is possible to deploy arbitrary code and to expose it through an API.
+From the Wolfram Language, it is possible to deploy arbitrary code and expose it through an API.
 
 Using the Wolfram Language, connect to the Wolfram Cloud using your Wolfram ID and password:
 
@@ -354,7 +354,7 @@ Create an :wl:`APIFunction` that takes an integer and returns its squared value:
     ]
 
 .. note::
-    By default, :wl:`APIFunction` formats output as string :wl:`InputForm` which is not always suited for interoperability with Python. For better inter-operability JSON is preferable. :wl:`WXF` is an other versatile option.
+    By default, :wl:`APIFunction` formats output as string :wl:`InputForm`, which is not always suited for interoperability with Python. For better interoperability, JSON is preferable. :wl:`WXF` is another versatile option.
 
 Deploy the API as a cloud object named `api/private/xsquared`:
 
@@ -365,14 +365,14 @@ Deploy the API as a cloud object named `api/private/xsquared`:
 The API was deployed with default permissions, and as such is a private :wl:`CloudObject` only usable by its owner.
 
 
-API call from Python
+API Call from Python
 ++++++++++++++++++++++
 
-Once again we need an :ref:`authenticated session<ref-auth>` to call the API from Python. API are specified with 2-value tuple made of the owner ID (your Wolfram ID) and the name of the :wl:`CloudObject` used to deploy::
+Once again, an :ref:`authenticated session<ref-auth>` to call the API from Python. APIs are specified with a two-value tuple made up of the owner ID (your Wolfram ID) and the name of the :wl:`CloudObject` used to deploy::
 
     >>> api = ('MyWolframID', 'api/private/xsquared')
 
-The API sole input is `"list"`. In general API values are specified as a :class:`dict` where keys are parameters' name. Python :class:`list` are automatically converted to Wolfram Language :wl:`List` and thus are valid API input values. 
+The API sole input is "`list`". In general, an API value is specified as a :class:`dict`, in which keys are parameters names. A :class:`list` in Python is automatically converted to a Wolfram Language :wl:`List` and thus are valid API input values. 
 
 Call the API::
 
@@ -383,7 +383,7 @@ Check that the API call succeeded::
     >>> result.success
     True
 
-Get the result as an string::
+Get the result as a string::
 
     >>> result.get()
     b'16'
@@ -396,7 +396,7 @@ Parse it as an :class:`int`::
 Use WolframAPICall
 ------------------
 
-:class:`~wolframclient.evaluation.WolframAPICall` provides a convenient interface to call API. Using the :ref:`previously deployed API <ref-deployAPI>`, and the :ref:`authenticated session<ref-auth>`, instanciate a new :class:`~wolframclient.evaluation.WolframAPICall`::
+:class:`~wolframclient.evaluation.WolframAPICall` provides a convenient interface to call an API. Using the :ref:`previously deployed API <ref-deployAPI>` and the :ref:`authenticated session<ref-auth>`, initiate a new :class:`~wolframclient.evaluation.WolframAPICall`::
     
     >>> from wolframclient.evaluation import WolframAPICall
     >>> call = WolframAPICall(session, ('MyWolframID', 'api/private/xsquared'))
@@ -415,7 +415,7 @@ Get the result::
     >>> result.get()
     b'16'
 
-The class :class:`~wolframclient.evaluation.WolframAPICall` exposes some helper functions to deal with specific content type and files. It is particularly useful when using image inputs. 
+The class :class:`~wolframclient.evaluation.WolframAPICall` exposes some helper functions to deal with specific content types and files. It is particularly useful when using image inputs. 
 
 Deploy an API that takes an image and returns its :wl:`ImageDimensions` as a JSON array:
 
@@ -433,7 +433,7 @@ Create a :class:`~wolframclient.evaluation.WolframAPICall` targeting the new API
 
     >>> api_call = WolframAPICall(session, ('MyWolframID', 'api/private/imagedimensions'))
 
-Add a new file parameter. File parameters have a name and their values must be an opened file object as returned by :func:`open`. Call the API using a image stored in `/path/to/example/image.png`::
+Add a new file parameter. File parameters have a name, and their values must be an opened file object as returned by :func:`open`. Call the API using an image stored in `/path/to/example/image.png`::
 
     >>> with open('/path/to/example/image.png', 'rb') as fp:
     ...     api_call.add_file_parameter('image', fp)
@@ -442,7 +442,7 @@ Add a new file parameter. File parameters have a name and their values must be a
     WolframAPICall<api=('dorianb', 'api/private/imagedimensions')>
 
 .. note ::
-    It's important to make the call while the file object is opened, i.e. inside the `with` statement.
+    it's important to make the call while the file object is opened, i.e. inside the `with` statement.
 
 Parse the JSON API response::
 
@@ -454,24 +454,24 @@ Parse the JSON API response::
 Serialization
 =============
 
-This library is intended to provide a way to serialize python expressions to Wolfram Language string :wl:`InputForm` and :wl:`WXF` string of bytes. The functionality was designed to be extensible, so that any arbitrary Python object can be serialized with the addition of custom encoders.
+This library is intended to provide a way to serialize Python expressions to Wolfram Language :wl:`InputForm` strings and :wl:`WXF` strings of bytes. The functionality was designed to be extensible, so that any arbitrary Python object can be serialized with the addition of custom encoders.
 
 Serialize
 ----------
 
 The modules :mod:`~wolframclient.serializers` and :mod:`~wolframclient.language` provide tools to represent and serialize arbitrary Wolfram Language expressions.
-The function :func:`~wolframclient.serializers.export` can serialize a variety of standard Python objects, such as :class:`list`, or :class:`dict`.
+The function :func:`~wolframclient.serializers.export` can serialize a variety of standard Python objects, such as :class:`list` or :class:`dict`.
 
 Import the function::
 
     >>> from wolframclient.serializers import export
 
-Serialize a Python list of integers into an Wolfram Language :wl:`InputForm` string representation::
+Serialize a Python list of integers into a Wolfram Language :wl:`InputForm` string representation::
 
     >>> export([1,2,3])
     b'{1, 2, 3}'
 
-Wolfram language expressions are conveniently represented using :class:`~wolframclient.language.wl`.
+Wolfram Language expressions are conveniently represented using :class:`~wolframclient.language.wl`.
 
 Import the function::
     
@@ -487,12 +487,12 @@ The :func:`~wolframclient.serializers.export` function can serialize Python obje
     >>> export(wl.Quantity(12, "Hours"))
     b'Quantity[12, "Hours"]'
 
-Expressions can be nested, and mixed with serializable Python types::
+Expressions can be nested and mixed with serializable Python types::
 
     >>> export(wl.Select(wl.PrimeQ, [1,2,3]))
     b'Select[PrimeQ, {1, 2, 3}]'
 
-The :wl:`WXF` format is also supported. It is a binary format, thus not always human readable, but is the most efficient way to exchange Wolfram Language expressions. Specify a `target_format` argument to serialize the previous expression to WXF::
+The :wl:`WXF` format is also supported. It is a binary format, thus not always human readable, but it is the most efficient way to exchange Wolfram Language expressions. Specify a `target_format` argument to serialize the previous expression to WXF::
 
     >>> export(wl.Select(wl.PrimeQ, [1,2,3]), target_format='wxf')
     b'8:f\x02s\x06Selects\x06PrimeQf\x03s\x04ListC\x01C\x02C\x03'
@@ -518,13 +518,13 @@ Using the Wolfram Desktop, import the file:
     :align: center
     :alt: ListPlot graphic. If this image does not display, it might be that your browser does not support the SVG image format.
 
-The library also provides extensible serialization mechanism for custom Python classes. Refer to the :ref:`API guide page<extensible-serialization>` detailed explanations and to the :doc:`examples page<advanced_usages>` for some use cases.
+The library also provides extensible serialization mechanisms for custom Python classes. Refer to the :ref:`API guide page<extensible-serialization>` for detailed explanations and to the :doc:`examples page<advanced_usages>` for some use cases.
 
 Deserialize
 -----------
 
 The library can parse :wl:`WXF` binary inputs and return Python objects from it.
-The function :func:`~wolframclient.deserializers.binary_deserialize` can deserialize any :wl:`WXF` input into standard Python objects and, eventually `NumPy <http://www.numpy.org/>`_ arrays. Note that the `NumPy <http://www.numpy.org/>`_ library is not mandatory so long as no numeric array is encountered.
+The function :func:`~wolframclient.deserializers.binary_deserialize` can deserialize any :wl:`WXF` input into standard Python objects and, eventually, `NumPy <http://www.numpy.org/>`_ arrays. Note that the `NumPy <http://www.numpy.org/>`_ library is not mandatory so long as no numeric array is encountered.
 
 Export a Python list of integers to :wl:`WXF`::
 
@@ -554,4 +554,4 @@ Import it as a Python object::
     {'key1': 1, 'key2': 2}
 
 .. note ::
-    Make sure to :func:`open` WXF files in binary mode **'b'** to avoid encoding issues.
+    make sure to :func:`open` WXF files in binary mode **'b'** to avoid encoding issues.

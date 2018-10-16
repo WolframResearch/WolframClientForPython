@@ -1,17 +1,17 @@
 .. toctree::
     :maxdepth: 4
 
-Installation of the library
+Installation of the Library
 ============================
 
 The library source code is available in various repositories:
 
-* hosted on *PyPi.org* and available in `pip`,
-* in a public repository on `Github`,
-* bundled with Wolfram Desktop 12+.
+* hosted on *PyPi.org* and available in `pip`
+* in a public repository on `GitHub`
+* bundled with Wolfram Desktop 12+
 
 .. note::
-    Even though most of the features were built to work on Python 2.7, it is recommended to use the library with Python 3.4 or greater.
+    even though most of the features were built to work on Python 2.7, it is recommended to use the library with Python 3.4 or greater.
 
 Install with pip
 ^^^^^^^^^^^^^^^^^^^
@@ -38,10 +38,10 @@ Install the library:
 
     $ pip install .
 
-Install from Wolfram Desktop
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Install from the Wolfram Desktop
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The library is bundled with Wolfram Desktop. The library location depends on your OS. Here are the usual locations:
+The library is bundled with the Wolfram Desktop. The library location depends on your OS. Here are the usual locations:
 
 +-----------+-------------------------------------------------------------------------------------------------------------------+
 | OS        | Library path                                                                                                      |
@@ -54,7 +54,7 @@ The library is bundled with Wolfram Desktop. The library location depends on you
 +-----------+-------------------------------------------------------------------------------------------------------------------+
 
 
-From a terminal evaluate the following commands:
+From a terminal, evaluate the following commands:
 
 .. code-block:: shell
 
