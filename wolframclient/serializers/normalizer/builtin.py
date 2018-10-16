@@ -5,7 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import math
 
 from wolframclient.utils import six
-from wolframclient.utils.encoding import force_text
+from wolframclient.utils.encoding import force_bytes, force_text
 from wolframclient.utils.functional import identity
 
 if six.PY2:
@@ -23,7 +23,7 @@ else:
 def update_dispatch(dispatch):
     @dispatch.multi((bool, six.none_type))
     def normalizer(self, o):
-        return self.serialize_symbol('%s' % o)
+        return self.serialize_symbol(force_bytes(o))
 
     @dispatch.multi((bytearray, six.binary_type, six.buffer_types))
     def normalizer(self, o):
