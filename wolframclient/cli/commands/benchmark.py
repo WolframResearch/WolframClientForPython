@@ -15,16 +15,29 @@ from wolframclient.utils.functional import first
 
 import decimal
 
+@to_tuple
+def repeat(el, n = 1):
+    for i in range(n):
+        yield el
+
 class Command(SimpleCommand):
 
     col_size = 8
     repetitions = 10
     complexity = [1, 2, 5, 10, 100, 1000]
 
-    @to_tuple
     def complexity_handler(self, complexity):
-        for i in range(complexity):
-            yield [wl.Symbol, {"a": [1, 2, 3], 2: [2, 1.23, decimal.Decimal('1.23'), b'bytes']}]
+        return {
+            'symbols': repeat(wl.Symbol, complexity),
+            'strings': repeat("string", complexity),
+            'bytes': repeat(b"bytes", complexity),
+            'integers': repeat(1, complexity),
+            'decimals': repeat(decimal.Decimal('1.23'), complexity),
+            'floats': repeat(1.23, complexity),
+            'dict': repeat({1:2, 3:4, 5:6}, complexity),
+            'list': repeat([1, 2, 3], complexity),
+            'functions': repeat(wl.Function(1, 2, 3), complexity),
+        }
 
     @timed
     def export(self, *args, **opts):
