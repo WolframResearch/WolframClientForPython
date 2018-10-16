@@ -6,6 +6,7 @@ from functools import wraps
 
 from wolframclient.utils.api import pip
 
+
 def installed_modules():
     return {i.key: i.version for i in pip.get_installed_distributions()}
 
@@ -36,6 +37,7 @@ def require_module(*modules):
             pip.main(["install"] + commands)
         else:
             pip.main(["install", "--user"] + commands)
+
 
 def require(*modules):
     def outer(func):

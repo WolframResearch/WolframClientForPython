@@ -56,8 +56,7 @@ pip = API(
     running_under_virtualenv=(
         'pip.locations.running_under_virtualenv',
         'pip._internal.locations.running_under_virtualenv',
-    )
-)
+    ))
 
 zmq = API(
     Context='zmq.Context',
