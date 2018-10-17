@@ -111,12 +111,16 @@ IEEE exceptions `infinity` and `NaN` are converted respectively to :wl:`Directed
 DateObject Serialization
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-:mod:`datetime`, :func:`~datetime.time` and :func:`~datetime.date` are serialized to :wl:`DateObject` and all assume that the timezome to use is the current one at evaluation time::
+:mod:`datetime`, :class:`~datetime.time` and :class:`~datetime.date` are serialized to :wl:`DateObject` and all assume that the timezome to use is the current one at evaluation time::
 
     >>> import datetime
     >>> now = datetime.datetime.now()
     >>> export([now.time(), now.date(), now])
     '{TimeObject[{16, 1, 19.993822}, TimeZone -> $TimeZone], DateObject[{2018, 3, 16}], DateObject[{2018, 3, 16, 16, 1, 19.993822}, "Instant", "Gregorian", $TimeZone]}'
+
+:class:`~datetime.timedelta` are serialized to :wl:`Quantity`::
+
+    >>> export(datetime.timedelta(seconds = 340))
 
 Specify a timezone in Python using :func:`pytz.timezone` and serialize the date to a :wl:`DateObject`::
 

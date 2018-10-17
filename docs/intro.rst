@@ -218,6 +218,7 @@ Session management
 +++++++++++++++++++++
 
 :class:`~wolframclient.evaluation.WolframLanguageSession` must be terminated, either by explicitly calling :func:`~wolframclient.evaluation.WolframLanguageSession.terminate` or, preferably, using it in a `with` block that achieves the same result automatically. 
+
 It is highly recommended to initialize a session once and for all to mitigate the initialization cost.
 
 Delegate the handling of the lifecycle of a session using a `with` block::
@@ -255,10 +256,10 @@ Most Cloud interactions require proper authentication to the Wolfram Cloud. Auth
 .. _ref-auth:
 
 Authenticate
-------------
+----------------
 
 Generate a Secured Authentication Key
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++++++++++++++++++++++++++++++++++++++
 
 Using a Wolfram Desktop, or a the Wolfram Public Cloud, generate a new authentication key called `pythonclientlibrary`:
 
@@ -273,8 +274,8 @@ Get the key and secret as strings:
     sak["ConsumerKey"]
     sak["ConsumerSecret"]
 
-Authenticate
-^^^^^^^^^^^^^^^^
+Start authenticated cloud session
+++++++++++++++++++++++++++++++++++
 
 Begin by importing the classes :class:`~wolframclient.evaluation.SecuredAuthenticationKey` and :class:`~wolframclient.evaluation.WolframCloudSession` from the :mod:`~wolframclient.evaluation` module.
 
