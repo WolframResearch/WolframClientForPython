@@ -117,7 +117,7 @@ class WXFSerializer(FormatSerializer):
 
         return chain((WXF_CONSTANTS.Association, varint_bytes(length)),
                      chain.from_iterable(
-                         chain((WXF_CONSTANTS.RuleDelayed, ), key, value)
+                         chain((WXF_CONSTANTS.Rule, ), key, value)
                          for key, value in iterable))
 
     def serialize_raw_array(self, data, dimensions, wl_type):
