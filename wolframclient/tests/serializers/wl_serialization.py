@@ -84,15 +84,15 @@ class TestCase(BaseTestCase):
 
         self.compare(
             test_datetime(),
-            b'DateObject[{2000, 1, 1, 11, 15, 20.000000}, "Instant", "Gregorian", $TimeZone]'
+            b'DateObject[{2000, 1, 1, 11, 15, 20.0}, "Instant", "Gregorian", $TimeZone]'
         )
         self.compare(
             pytz.FixedOffset(60).localize(test_datetime()),
-            b'DateObject[{2000, 1, 1, 11, 15, 20.000000}, "Instant", "Gregorian", 1.000000]'
+            b'DateObject[{2000, 1, 1, 11, 15, 20.0}, "Instant", "Gregorian", 1.0]'
         )
         self.compare(
             pytz.timezone("Europe/Rome").localize(test_datetime()),
-            b'DateObject[{2000, 1, 1, 11, 15, 20.000000}, "Instant", "Gregorian", "Europe/Rome"]'
+            b'DateObject[{2000, 1, 1, 11, 15, 20.0}, "Instant", "Gregorian", "Europe/Rome"]'
         )
 
     def test_date(self):
@@ -103,15 +103,15 @@ class TestCase(BaseTestCase):
 
         self.compare(
             datetime.timedelta(minutes=1, seconds=30),
-            b'Quantity[90.000000, "Seconds"]')
+            b'Quantity[90.0, "Seconds"]')
 
     def test_time(self):
 
         self.compare(test_datetime().time(),
-                     b'TimeObject[{11, 15, 20.000000}]')
+                     b'TimeObject[{11, 15, 20.0}]')
         self.compare(
             pytz.timezone("Europe/Rome").localize(test_datetime()).timetz(),
-            b'TimeObject[{11, 15, 20.000000}, TimeZone -> 1.000000]')
+            b'TimeObject[{11, 15, 20.0}, TimeZone -> 1.0]')
 
     def test_symbol_factory(self):
 
@@ -155,7 +155,7 @@ class TestCase(BaseTestCase):
 
         self.compare(fractions.Fraction(1, 2), wl.Rational(1, 2))
 
-        self.compare(float('0.150000'), b'0.150000')
+        self.compare(float('0.150000'), b'0.15')
 
         for special, result in (
             [float('inf'), self.dumps(wl.DirectedInfinity(1))],
