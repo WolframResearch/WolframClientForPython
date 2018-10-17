@@ -50,18 +50,6 @@ def integer_size(value):
     except KeyError:
         raise ValueError('Value %i is not a machine-sized integer.' % value)
 
-    if value < INT8_MAX and value >= INT8_MIN:
-        return WXF_CONSTANTS.Integer8, 1
-    elif value < INT16_MAX and value >= INT16_MIN:
-        return WXF_CONSTANTS.Integer16, 2
-    elif value < INT32_MAX and value >= INT32_MIN:
-        return WXF_CONSTANTS.Integer32, 4
-    elif value < INT64_MAX and value >= INT64_MIN:
-        return WXF_CONSTANTS.Integer64, 8
-    else:
-        raise ValueError('Value %i is not a machine-sized integer.' % value)
-
-
 _packing = {
     1: StructInt8LE,
     2: StructInt16LE,
