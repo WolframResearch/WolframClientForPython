@@ -191,7 +191,7 @@ class WXFExprSerializer(object):
 
     This class also ensures the output data is a valid WXF encoded expression, and raises an exception otherwise.
 
-    For an in depth description of the format see `tutorial/WXFFormatDescription` from Wolfram product documentation
+    For an in-depth description of the format see `tutorial/WXFFormatDescription` from Wolfram product documentation
     or visit http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html.
 
     """

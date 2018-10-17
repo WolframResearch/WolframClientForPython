@@ -2,42 +2,42 @@
    :maxdepth: 4
 
 ##########################################
-Advanced usage and code examples
+Advanced Usage and Code Examples
 ##########################################
 
 .. note ::
-    All examples require to set the variable **kernel_path** to the path of a local Wolfram Kernel.
+    all examples require the setting of the variable **kernel_path** to the path of a local Wolfram kernel.
 
 .. _adv-expression-representation:
 
 ****************************
-Expression representation
+Expression Representation
 ****************************
 
 Contexts
 ========
 
-In the Wolfram Language expressions live in :wl:`Context`, which serves as a namespace mechanism. Built-in functions belong to the ``System``` context. By default the context called ``Global``` is associated to user defined functions and new variables. More information about contexts can be found at `tutorial/Contexts <http://reference.wolfram.com/language/tutorial/Contexts.html>`_.
+In the Wolfram Language, expressions live in :wl:`Context`, which serves as a namespace mechanism. Built-in functions belong to the ``System``` context. By default, the context called ``Global``` is associated to user-defined functions and new variables. More information about contexts can be found at `tutorial/Contexts <http://reference.wolfram.com/language/tutorial/Contexts.html>`_.
 
-Wolfram Language expression are conveniently represented in Python using the attributes of the factory :func:`~wolframclient.language.wl`::
+Wolfram Language expressions are conveniently represented in Python using the attributes of the factory :func:`~wolframclient.language.wl`::
 
     >>> from wolframclient.language import wl
     >>> wl.Range(3)
     Range[3]
 
-This attributes of the factory :func:`~wolframclient.language.wl` do not have a context attached::
+These attributes of the factory :func:`~wolframclient.language.wl` do not have a context attached::
 
     >>> wl.myFunction(1)
     myFunction[1]
 
 The representation of a given expression using its string :wl:`InputForm` is readable but ambiguous, since the context is resolved in the kernel during evaluation, and as such different kernels may return different results. See :wl:`$ContextPath`.
 
-On the other hand in the :wl:`WXF` format expressions are represented with their full name. Context must be fully specified for all symbols, with exception to ``System``` context that can be omitted. As a consequence, in WXF a symbol with no context is always deserialized as a ``System``` symbol.
+On the other hand, in the :wl:`WXF` format, expressions are represented with their full names. Context must be fully specified for all symbols, the exception being the ``System``` context, which can be omitted. As a consequence, in WXF a symbol with no context is always deserialized as a ``System``` symbol.
 
 The method :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate` accepts two types of input:
 
-* Python strings are treated as a string :wl:`InputForm`, as such, context is resolved during evaluation. User defined functions are most of the time automatically created with the ``Global``` context. 
-* Serializable python objects are serialized to WXF before evaluation, as such, context must be explicitly specified, except for ``System``` symbols.
+* Python strings are treated as a string :wl:`InputForm`; as such, context is resolved during evaluation. User-defined functions are most of the time automatically created with the ``Global``` context. 
+* Serializable Python objects are serialized to WXF before evaluation; as such, context must be explicitly specified, except for ``System``` symbols.
 
 ``System``` Context
 --------------------
@@ -46,7 +46,7 @@ In order to explicitly represent a system symbol in Python, the factory :func:`~
 
     >>> from wolframclient.language import System
 
-Create a python object representing the built-in function :wl:`Classify`::    
+Create a Python object representing the built-in function :wl:`Classify`::    
 
     >>> System.Classify
     System`Classify
@@ -54,7 +54,7 @@ Create a python object representing the built-in function :wl:`Classify`::
 ``Global``` Context
 ---------------------
 
-User defined functions and variables are associated to the ``Global``` context by default. The factory :func:`~wolframclient.language.Global` can be used to represent those symbols.
+User-defined functions and variables are associated to the ``Global``` context by default. The factory :func:`~wolframclient.language.Global` can be used to represent those symbols::
 
     >>> from wolframclient.language import Global
     >>> Global`f
@@ -62,7 +62,7 @@ User defined functions and variables are associated to the ``Global``` context b
 Arbitrary Contexts
 ------------------
 
-The factory :func:`~wolframclient.language.wl` can be used to build symbols with arbitrary context, and sub-contexts::
+The factory :func:`~wolframclient.language.wl` can be used to build symbols with arbitrary context, as well as subcontexts::
 
     >>> wl.Developer.PackedArrayQ
     Developer`PackedArrayQ
@@ -77,10 +77,10 @@ The factory :func:`~wolframclient.language.wl` can be used to build symbols with
     MyContext`MySubContext`myFunction
 
 
-Use case
+Use Case
 ----------
 
-Create a new function using :wl:`InputForm` evaluation, that takes a list of strings and returns the longer ones. The function Wolfram Language `max` is:
+Create a new function using :wl:`InputForm` evaluation that takes a list of strings and returns the longer ones. The Wolfram Language function `max` is:
 
 .. code-block :: wl
 
@@ -90,21 +90,21 @@ Create a new function using :wl:`InputForm` evaluation, that takes a list of str
     :linenos:
     :emphasize-lines: 7,13,17
 
-In the code above, a simple replacement of `g.max` by `wl.max` shows that kernel no more unevaluates the input.
+In that code, a simple replacement of `g.max` by `wl.max` shows that kernel no longer evaluates the input.
 
 .. note :: 
-    It is important to understand that :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate` applied to a string is equivalent to evaluating :wl:`ToExpression` on top of the string input, and as such some context inference are performed. In this case the `max` function is actually ``Global`max``. Whereas when the Python object is passed to :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate`, it is serialized to :wl:`WXF` first, which is strict in term of symbol context. The only context that can be omitted is the ``System``` context. As a consequence any symbol without context is attached to ``System``` context, `max` is thus ``System`max`` which is not defined.
+    it is important to understand that :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate` applied to a string is equivalent to evaluating :wl:`ToExpression` on top of the string input, and as such some context inference is performed. In this case the `max` function is actually ``Global`max``, whereas when the Python object is passed to :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate`, it is serialized to :wl:`WXF` first, which is strict in terms of symbol context. The only context that can be omitted is the ``System``` context. As a consequence, any symbol without context is attached to the ``System``` context; `max` is thus ``System`max``, which is not defined.
 
 
 .. _adv-local-evaluation:
 
 ****************************
-Local Kernel evaluation
+Local Kernel Evaluation
 ****************************
 
 The following sections provide executable demonstrations of the local kernel evaluation features of the client library.
 
-Evaluation methods
+Evaluation Methods
 ======================
 
 Synchronous
@@ -118,18 +118,18 @@ First initialize a session::
     session=WolframLanguageSession(kernel_path)
     session.start()
 
-Expressions involving more than one function, are usually evaluate with :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate`. Compute an integral::
+Expressions involving more than one function are usually evaluated with :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate`. Compute an integral::
 
     >>> session.evaluate('NIntegrate[Sqrt[x^2 + y^2 + z^2], {x, 0, 1}, {y, 0, 1}, {z, 0, 1}]')
     0.9605920064034617
 
-Messages may be issued during evaluation. By default, the above evaluation methods log the error messages with severity `warning`. It usually results in the message being printed out. It is also possible to retrieve both the evaluation result and the messages, wrapped in an instance of :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`, by using :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wrap`::
+Messages may be issued during evaluation. By default, the above evaluation methods log error messages with severity `warning`. It usually results in the message being printed out. It is also possible to retrieve both the evaluation result and the messages, wrapped in an instance of :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`, by using :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wrap`::
 
     >>> eval = session.evaluate_wrap('1/0')
     >>> eval.result
     DirectedInfinity[]
 
-Messages are stored as tuple of two elements, the message name and the formatted message. 
+Messages are stored as tuples of two elements; the message name and the formatted message. 
 
     >>> eval.messages
     [('Power::infy', 'Infinite expression Infinity encountered.')]
@@ -140,9 +140,9 @@ Asynchronous
 Concurrent Future API
 ^^^^^^^^^^^^^^^^^^^^^
 
-Some computations may take a significant time to finish, and the result might not be required immediately. Asynchronous evaluation is a way to start evaluations on a local kernel, using a background task, without blocking the main python execution. Asynchronous evaluation requires a instance of :class:`~wolframclient.evaluation.WolframLanguageFutureSession` which contains the same method as its synchronous counterpart, except that returned values are wrapped into :class:`~concurrent.futures.Future` objects.
+Some computations may take a significant time to finish, and the result might not be required immediately. Asynchronous evaluation is a way to start evaluations on a local kernel using a background task, without blocking the main Python execution. Asynchronous evaluation requires an instance of :class:`~wolframclient.evaluation.WolframLanguageFutureSession` which contains the same method as its synchronous counterpart, except that returned values are wrapped into :class:`~concurrent.futures.Future` objects.
 
-Evaluate an artificially delayed code (using :wl:`Pause`), and print time elapsed at each step:  
+Evaluate an artificially delayed code (using :wl:`Pause`), and print the time elapsed at each step:  
 
 .. literalinclude:: /examples/python/asynchronous1.py
     :linenos:
@@ -156,12 +156,12 @@ The standard output should display:
     After 0.0069s, the code is running in the background, Python execution continues.
     After 2.02s, result was available. Kernel evaluation returned: 2
 
-Coroutine and asyncio API
+Coroutine and Asyncio APIs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The :mod:`asyncio` provides high level concurrent code and asynchronous evaluation using coroutines, and the `async`/`await` keywords. Asynchronous evaluation based on :mod:`asyncio` requires a instance of :class:`~wolframclient.evaluation.WolframLanguageAsyncSession` which methods are mostly coroutines.
+The :mod:`asyncio` provides high-level concurrent code and asynchronous evaluation using coroutines and the `async`/`await` keywords. Asynchronous evaluation based on :mod:`asyncio` requires an instance of :class:`~wolframclient.evaluation.WolframLanguageAsyncSession`, which methods are mostly coroutines.
 
-Define a coroutine `delayed_evaluation` that artificially delays evaluation, using asyncio sleep coroutine. Use this newly created coroutine to evaluate a first expression, wait for the coroutine to finish and evaluate the second one:
+Define a coroutine `delayed_evaluation` that artificially delays evaluation, using an asyncio sleep coroutine. Use this newly created coroutine to evaluate a first expression, wait for the coroutine to finish and evaluate the second:
 
 .. literalinclude:: /examples/python/asynchronous2.py
     :linenos:
@@ -180,42 +180,42 @@ When coroutines can be evaluated independently one from each other, it is conven
     :linenos:
     :emphasize-lines: 18-19,21-22
 
-The total evaluation took roughly one second, indicating that both delayed coroutine ran in parallel:
+The total evaluation took roughly one second, indicating that both delayed coroutines ran in parallel:
 
 .. code-block :: text
 
     Running two tasks concurrently.
     After 1.03s, both evaluations finished returning: hello, world!
 
-In the above examples we use only one Wolfram Kernel which is a single threaded process. Evaluating two computation heavy Wolfram Language expressions in parallel will have no impact on performances. This requires more than one kernel which is exactly what kernel pool was designed for.
+In the examples shown, only one Wolfram kernel was used, which is a single-threaded process. Evaluating two computation-heavy Wolfram Language expressions in parallel will have no impact on performances. This requires more than one kernel, which is exactly what kernel pool was designed for.
 
 .. note :: 
 
-    Available on Python 3.5+
+    require on Python 3.5+
 
-Kernel pool
+Kernel Pool
 ^^^^^^^^^^^
 
-A :class:`~wolframclient.evaluation.WolframKernelPool` start up to a certain amount of kernels and dispatch work load on them asynchronously. The pool is usable right after the first kernel has successfully started, some kernels take more time to start and become 
+A :class:`~wolframclient.evaluation.WolframKernelPool` starts up a certain amount of kernels and dispatch work load on them asynchronously. The pool is usable right after the first kernel has successfully started. Some kernels may take more time to start and become available after a delay.
 
 .. literalinclude:: /examples/python/asynchronous4.py
     :linenos:
     :emphasize-lines: 3,10,12-16
 
 
-Evaluation output shows that if more than one kernels was started, the total time is below ten seconds:
+Evaluation output shows that if more than one kernel was started, the total time is less than ten seconds:
 
 .. code-block :: text
 
     Done after 3.04s, using up to 4 kernels.
 
 .. note :: 
-    Available on Python 3.5+
+    require on Python 3.5+
 
 parallel_evaluate
 ^^^^^^^^^^^^^^^^^
 
-It is possible to evaluate many expressions at once, using :func:`~wolframclient.evaluation.parallel_evaluate`. This method starts a kernel pool and uses it to compute expressions provided as an iterable object. The pool is then terminated.
+It is possible to evaluate many expressions at once using :func:`~wolframclient.evaluation.parallel_evaluate`. This method starts a kernel pool and uses it to compute expressions yield from an iterable object. The pool is then terminated.
 
 Import the function::
 
@@ -225,7 +225,7 @@ Specify the path of a target kernel::
 
     >>> kernel_path = '/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel'
     
-Build a list of ten delayed :wl:`$ProcessID` which returns the kernel process identified (`pid`) after one second::
+Build a list of ten delayed :wl:`$ProcessID`, which returns the kernel process identified (`pid`) after one second::
     
     >>> expressions = ['Pause[1]; $ProcessID' for _ in range(10)]
 
@@ -234,17 +234,17 @@ Evaluate in parallel and get back a list of ten values `pid`::
     >>> parallel_evaluate(kernel_path, expressions)
     [72094, 72098, 72095, 72096, 72099, 72097, 72094, 72098, 72095, 72096]
 
-The result varies but the pattern remains the same, namely, at least one process was started, and each process is eventually used more than once.
+The result varies but the pattern remains the same – namely, at least one process was started, and each process is eventually used more than once.
 
 .. note :: 
-    Available on Python 3.5+
+    require on Python 3.5+
 
 Logging
 ========
 
 Logging is often an important part of an application. The library relies on the standard :mod:`logging` module, and exposes various methods to control the level of information logged.
 
-The first level of control is through the logging module itself. The python library logs at various levels. Setup a basic configuration for the logging module to witness some messages in the standard output:
+The first level of control is through the logging module itself. The Python library logs at various levels. Set up a basic configuration for the logging module to witness some messages in the standard output:
 
 .. literalinclude:: /examples/python/logging1.py
     :linenos:
@@ -260,11 +260,13 @@ The standard output should display:
     INFO:wolframclient.evaluation.kernel.kernelsession:Kernel is ready. Startup took 1.54 seconds.
     WARNING:wolframclient.evaluation.kernel.kernelsession:Infinite expression Infinity encountered.
 
-It's also possible to log from within the kernel. This feature is disabled by default. When initializing a :class:`~wolframclient.evaluation.WolframLanguageSession`, the parameter `kernel_loglevel` can be specified with one of the following values: :class:`logging.DEBUG`, :class:`logging.INFO`, :class:`logging.WARNING`, :class:`logging.ERROR`, to activate kernel logging. 
+It is also possible to log from within the kernel. This feature is disabled by default. When initializing a :class:`~wolframclient.evaluation.WolframLanguageSession`, the parameter `kernel_loglevel` can be specified with one of the following values to activate kernel logging: :class:`logging.DEBUG`, :class:`logging.INFO`, :class:`logging.WARNING`, :class:`logging.ERROR`. 
 
-.. note :: If a WolframLanguageSession is initialized with the default `kernel_loglevel` (i.e: :class:`logging.NOTSET`), kernel logging is disable for the session, and it is not possible to activate it afterward.
+.. note :: 
 
-From the Wolfram Language it is possible to issue log messages, using one of the following functions, given with their signature:
+    if a WolframLanguageSession is initialized with the default `kernel_loglevel` (i.e: :class:`logging.NOTSET`), kernel logging is disable for the session, and it is not possible to activate it afterward.
+
+From the Wolfram Language, it is possible to issue log messages using one of the following functions, given with its signature:
 
 .. code-block :: wl
 
@@ -286,20 +288,20 @@ The log level of the kernel is independent of the Python one. The following func
     (* Sends no message at all *)
     ClientLibrary`DisableKernelLogging[]
 
-Control the log level both at Python and Kernel level:
+Control the log level at both the Python and the kernel levels:
 
 .. literalinclude:: /examples/python/logging2.py
     :linenos:
     :emphasize-lines: 6,14-15,17,20,22,23
 
 **********************************************
-Extending WXF parsing: Writing a WXFConsumer
+Extending WXF Parsing: Writing a WXFConsumer
 **********************************************
 
 Integer Eigenvalues
 ====================
 
-Use the Wolfram Client library to access the Wolfram Language Algebra functions. Compute the integer :wl:`Eigenvalues` on a Python matrix of integers:
+Use the Wolfram Client Library to access the Wolfram Language algebra functions. Compute the integer :wl:`Eigenvalues` on a Python matrix of integers:
 
 .. literalinclude:: /examples/python/eigenvalues1.py
     :linenos:
@@ -309,7 +311,8 @@ Use the Wolfram Client library to access the Wolfram Language Algebra functions.
 
 Complex Eigenvalues
 ====================
-Python has built-in :class:`complex`. By default the function :func:`~wolframclient.deserializers.binary_deserialize` deserializes Wolfram Language functions using a generic class :class:`~wolframclient.language.expression.WLFunction`, but conveniently provides a way to extend the mapping. Define `ComplexFunctionConsumer`, a subclass of :class:`~wolframclient.deserializers.WXFConsumer`, that overrides the method :meth:`~wolframclient.deserializers.WXFConsumer.build_function`. The subclassed method maps :wl:`Complex` to built-in python complex.
+
+Python has built-in :class:`complex`. By default, the function :func:`~wolframclient.deserializers.binary_deserialize` deserializes Wolfram Language functions using a generic class :class:`~wolframclient.language.expression.WLFunction`, but conveniently provides a way to extend the mapping. Define `ComplexFunctionConsumer`, a subclass of :class:`~wolframclient.deserializers.WXFConsumer` that overrides the method :meth:`~wolframclient.deserializers.WXFConsumer.build_function`. The subclassed method maps :wl:`Complex` to the built-in Python complex.
 
 .. literalinclude:: /examples/python/eigenvalues2.py
     :emphasize-lines: 10-22, 36
@@ -319,22 +322,22 @@ Python has built-in :class:`complex`. By default the function :func:`~wolframcli
 Symbolic Eigenvalues
 ====================
 
-A Python heavy approach
+A Python-Heavy Approach
 ------------------------
 
-Sometimes the resulting expression of an evaluation is a symbolic exact value, which nonetheless could be approximated to a numerical result. The eigenvalues of :math:`\begin{pmatrix} \pi & -2 & 0 \\ 1 & \pi & -1 \\ 0 & 2 & \pi \\ \end{pmatrix}` are :math:`\frac{1}{2}(4I+2\pi)`, :math:`\frac{1}{2}(-4I+2\pi)`, and :math:`\pi`.
+Sometimes the resulting expression of an evaluation is a symbolic exact value, which nonetheless could be approximated to a numerical result. The eigenvalues of :math:`\begin{pmatrix} \pi & -2 & 0 \\ 1 & \pi & -1 \\ 0 & 2 & \pi \\ \end{pmatrix}` are :math:`\frac{1}{2}(4I+2\pi)`, :math:`\frac{1}{2}(-4I+2\pi)` and :math:`\pi`.
 
-It is possible to build a subclass of :class:`~wolframclient.deserializers.WXFConsumer` that can convert a subset of all Wolfram Language symbols into pure built-in Python objects. It has to deal with :wl:`Plus` and :wl:`Times`, converts :wl:`Pi` to :class:`math.pi`, :wl:`Rational` to :class:`fractions.Fraction`, and :wl:`Complex` to :class:`complex`. It results in a significant code inflation but provide a detailed review of the extension mechanism. Yet, as we will see it is not really necessary.
+It is possible to build a subclass of :class:`~wolframclient.deserializers.WXFConsumer` that can convert a subset of all Wolfram Language symbols into pure built-in Python objects. It has to deal with :wl:`Plus` and :wl:`Times`, converts :wl:`Pi` to :class:`math.pi`, :wl:`Rational` to :class:`fractions.Fraction` and :wl:`Complex` to :class:`complex`. It results in a significant code inflation but provide a detailed review of the extension mechanism. However, as will be shown, this is not really necessary.
 
 .. literalinclude:: /examples/python/eigenvalues3.py
     :emphasize-lines: 15-68, 87
     :linenos:
 
 
-A Wolfram Language alternative
+A Wolfram Language Alternative
 ------------------------------
 
-It is recommended to delegate as much as possible to the Wolfram Language. Instead of implementing a (fragile) counterpart of core functions such as :wl:`Plus` or :wl:`Times`, it is best to compute a numerical result within the kernel. This can be achieved with the function :wl:`N`. Once applied to the eigenvalues, the result becomes a mixture of complex values and reals, which was already dealt with in the :ref:`previous section<complex-consumer>`.
+It is recommended to delegate as much as possible to the Wolfram Language. Instead of implementing a (fragile) counterpart of core functions such as :wl:`Plus` or :wl:`Times`, it is best to compute a numerical result within the kernel. This can be achieved with the function :wl:`N`. Once applied to the eigenvalues the result becomes a mixture of complex values and reals, which was already dealt with in the :ref:`previous section<complex-consumer>`.
 
 .. literalinclude:: /examples/python/eigenvalues3_alternative.py
     :emphasize-lines: 12-18, 32

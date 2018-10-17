@@ -7,7 +7,7 @@ API: Guide
 
 The library provides features through the classes and functions listed on this page. There are grouped by functionality and cover topics ranging from basic usage to most advanced features.
 
-Wolfram Language expression representation
+Wolfram Language Expression Representation
 ===========================================
 
 
@@ -52,10 +52,10 @@ The *WXF* format supports compression using zlib, the compression is disabled by
 
 Serialized output can be imported in a kernel using :wl:`BinaryDeserialize`.
 
-Supported types
+Supported Types
 ---------------
 
-Built-in data types
+Built-in Data Types
 ^^^^^^^^^^^^^^^^^^^
 
 Built-in data structures are all supported: :class:`list`, :class:`set`, :class:`frozenset`, :class:`dict`.
@@ -89,7 +89,7 @@ To preserve ordering in associations use :class:`collections.OrderedDict`::
     >>> export(OrderedDict([(0, 'a'), (1, 'b'), (2, 'c'), (3, 'd')]))
     '<|0 :> "a", 1 :> "b", 2 :> "c", 3 :> "d"|>'
 
-Numeric types
+Numeric Types
 ^^^^^^^^^^^^^
 
 Numeric types are natively supported: :class:`int`, :class:`float`, :class:`complex` and :class:`~decimal.Decimal` serializes to
@@ -108,7 +108,7 @@ IEEE exceptions `infinity` and `NaN` are converted respectively to :wl:`Directed
     >>> export(fractions.Fraction(2, 3))
     '(2 / 3)'
 
-DateObject serialization
+DateObject Serialization
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 :mod:`datetime`, :func:`~datetime.time` and :func:`~datetime.date` are serialized to :wl:`DateObject` and all assume that the timezome to use is the current one at evaluation time::

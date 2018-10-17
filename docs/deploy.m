@@ -15,7 +15,7 @@ DeployDocumentation[root_String, target_String, setperm : True | False : False] 
       ];
      ]
     &,
-   FileNames[{"*.js", "*.html", "*.css", "*.png"}, root, Infinity]
+   FileNames[{"*.js", "*.html", "*.css", "*.png", "*.svg"}, root, Infinity]
    ];
    If[setperm,
       SetOptions[CloudObject[target],Permissions -> "Public"]

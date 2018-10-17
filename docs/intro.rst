@@ -24,7 +24,7 @@ The Wolfram Client Library is structured in submodules all located in :mod:`wolf
 Wolfram Language Expression Representation
 ==========================================
 
-The library exposes many kinds of interactions with the Wolfram Language, many of which requires representation of Wolfram Language expressions as Python objects. A straightforward way to construct Python objects representing expressions is to call attributes of :func:`~wolframclient.language.wl`.
+The library exposes many kinds of interactions with the Wolfram Language, many of which require representation of Wolfram Language expressions as Python objects. A straightforward way to construct Python objects representing expressions is to call attributes of :func:`~wolframclient.language.wl`.
 
 Import the factory::
 
@@ -56,10 +56,10 @@ Wolfram Language Evaluation
 Local Kernel
 ---------------
 
-Wolfram Language session :class:`~wolframclient.evaluation.WolframLanguageSession` is initialized with a *WolframKernel* executable specified by its path. A session enables local evaluation of Wolfram Language code directly from Python.
+The Wolfram Language session :class:`~wolframclient.evaluation.WolframLanguageSession` is initialized with a *WolframKernel* executable specified by its path. A session enables local evaluation of Wolfram Language code directly from Python.
 
 .. note ::
-    Typical location of the *WolframKernel* executable depends on the operating system. The relative path from your installation directory should be:
+    the typical location of the *WolframKernel* executable depends on the operating system. The relative path from your installation directory should be:
     
     * On `MacOS`: `Contents/MacOS/WolframKernel`
     * On `Windows`: `WolframKernel.exe`
@@ -89,7 +89,7 @@ Ensure the session started successfully:
 
 Note that sessions are also automatically started when the first evaluation occurs.
 
-Expression evaluation
+Expression Evaluation
 ++++++++++++++++++++++++++
 
 Functions are conveniently represented using :func:`~wolframclient.language.wl`. First import it::
@@ -241,7 +241,7 @@ As shown previously, :class:`~wolframclient.evaluation.WolframLanguageSession` m
     Nonterminated sessions usually result in orphan kernel processes, which ultimately lead to the inability to spawn any usable instance at all. Typically, this ends up with a WolframKernelException raised after a failure to communicate with the kernel.
 
 .. note :: 
-    for in depth explanations and use cases of local evaluation, refer to :ref:`the advanced usage section<adv-local-evaluation>`.
+    for in-depth explanations and use cases of local evaluation, refer to :ref:`the advanced usage section<adv-local-evaluation>`.
 
 Wolfram Cloud Interactions
 ==============================
@@ -301,7 +301,7 @@ Define a function `f`::
     >>> result = session.evaluate('f[x_]:=x+1')
     'Null'
 
-Apply `f` to `1`. However `f` is no longer defined, thus returning an unevaluated result::
+Apply `f` to `1`. However, `f` is no longer defined, thus returning an unevaluated result::
 
     >>> result = session.evaluate('f[1]')
     'f[1]'
@@ -368,11 +368,11 @@ The API was deployed with default permissions, and as such is a private :wl:`Clo
 API Call from Python
 ++++++++++++++++++++++
 
-Once again, an :ref:`authenticated session<ref-auth>` to call the API from Python. APIs are specified with a two-value tuple made up of the owner ID (your Wolfram ID) and the name of the :wl:`CloudObject` used to deploy::
+Once again, an :ref:`authenticated session<ref-auth>` is needed to call the API from Python. APIs are specified with a two-value tuple made up of the owner ID (your Wolfram ID) and the name of the :wl:`CloudObject` used to deploy::
 
     >>> api = ('MyWolframID', 'api/private/xsquared')
 
-The API sole input is "`list`". In general, an API value is specified as a :class:`dict`, in which keys are parameters names. A :class:`list` in Python is automatically converted to a Wolfram Language :wl:`List` and thus are valid API input values. 
+The API's sole input is "`list`". In general, an API value is specified as a :class:`dict`, in which keys are parameters names. A :class:`list` in Python is automatically converted to a Wolfram Language :wl:`List` and is thus a valid API input values. 
 
 Call the API::
 
@@ -442,7 +442,7 @@ Add a new file parameter. File parameters have a name, and their values must be 
     WolframAPICall<api=('dorianb', 'api/private/imagedimensions')>
 
 .. note ::
-    it's important to make the call while the file object is opened, i.e. inside the `with` statement.
+    it is important to make the call while the file object is opened, i.e. inside the `with` statement.
 
 Parse the JSON API response::
 
