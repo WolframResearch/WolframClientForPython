@@ -24,15 +24,6 @@ WXF_VERSION = b'8'
 WXF_HEADER_SEPARATOR = b':'
 WXF_HEADER_COMPRESS = b'C'
 
-INT8_MAX = 1 << 7
-INT8_MIN = -(1 << 7)
-INT16_MAX = 1 << 15
-INT16_MIN = -(1 << 15)
-INT32_MAX = 1 << 31
-INT32_MIN = -(1 << 31)
-INT64_MAX = 1 << 63
-INT64_MIN = -(1 << 63)
-
 #The list of all the WXF tokens.
 WXF_CONSTANTS = Settings(
     Function=b'f',

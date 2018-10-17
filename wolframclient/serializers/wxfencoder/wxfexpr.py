@@ -3,8 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.serializers.wxfencoder.constants import (
-    INT8_MAX, INT8_MIN, INT16_MAX, INT16_MIN, INT32_MAX, INT32_MIN, INT64_MAX,
-    INT64_MIN, VALID_PACKED_ARRAY_TYPES, WXF_CONSTANTS, StructDouble,
+    VALID_PACKED_ARRAY_TYPES, WXF_CONSTANTS, StructDouble,
     StructInt8LE, StructInt16LE, StructInt32LE, StructInt64LE)
 from wolframclient.serializers.wxfencoder.serializer import (
     WXFSerializerException)
@@ -61,6 +60,9 @@ class WXFExprInteger(WXFExpr):
     __slots__ = 'value', 'int_size'
 
     def __init__(self, value):
+        if not isinstance(value, six.integer_types):
+            raise TypeError(
+                'WXFExprInteger must be initialize with an integer value.')
         wxf_type, self.int_size = integer_size(value)
         super(WXFExprInteger, self).__init__(wxf_type)
         self.value = value

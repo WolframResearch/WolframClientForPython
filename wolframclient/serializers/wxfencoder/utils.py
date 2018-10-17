@@ -3,11 +3,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.serializers.wxfencoder.constants import (
-    INT8_MAX, INT8_MIN, INT16_MAX, INT16_MIN, INT32_MAX, INT32_MIN, INT64_MAX,
-    INT64_MIN, VALID_PACKED_ARRAY_TYPES, WXF_CONSTANTS, StructDouble,
+    VALID_PACKED_ARRAY_TYPES, WXF_CONSTANTS, StructDouble,
     StructInt8LE, StructInt16LE, StructInt32LE, StructInt64LE)
 from wolframclient.utils import six
-
+import math
 if six.JYTHON:
     import jarray
 
@@ -38,11 +37,19 @@ def varint_bytes(int_value):
 
     return buf[:count]
 
+_size = dict(
+    (j, WXF_CONSTANTS['Integer%i' % ih])
+    for il, ih in ((1, 8), (9, 16), (17, 32), (33, 64))
+    for j in range(il, ih+1)
+)
 
 def integer_size(value):
-    if not isinstance(value, six.integer_types):
-        raise TypeError(
-            'WXFExprInteger must be initialize with an integer value.')
+    v = value.bit_length()
+    try:
+        return _size[v], v
+    except KeyError:
+        raise ValueError('Value %i is not a machine-sized integer.' % value)
+
     if value < INT8_MAX and value >= INT8_MIN:
         return WXF_CONSTANTS.Integer8, 1
     elif value < INT16_MAX and value >= INT16_MIN:
