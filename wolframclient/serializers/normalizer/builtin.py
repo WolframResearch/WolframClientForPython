@@ -4,6 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import math
 
+from wolframclient.serializers.utils import safe_len
 from wolframclient.utils import six
 from wolframclient.utils.encoding import force_bytes, force_text
 from wolframclient.utils.functional import identity
@@ -35,9 +36,10 @@ def update_dispatch(dispatch):
 
     @dispatch.multi(dict)
     def normalizer(self, o):
-        return self.serialize_mapping((self.normalize(safe_key(key)),
-                                       self.normalize(value))
-                                      for key, value in o.items())
+        return self.serialize_mapping(
+            ((self.normalize(safe_key(key)), self.normalize(value))
+             for key, value in o.items()),
+            length=safe_len(o))
 
     @dispatch.multi(six.integer_types)
     def normalizer(self, o):
@@ -62,4 +64,5 @@ def update_dispatch(dispatch):
 
     @dispatch.multi(six.iterable_types)
     def normalizer(self, o):
-        return self.serialize_iterable(self.normalize(value) for value in o)
+        return self.serialize_iterable((self.normalize(value) for value in o),
+                                       length=safe_len(o))

@@ -5,7 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from itertools import chain
 
 from wolframclient.serializers.base import FormatSerializer
-from wolframclient.serializers.utils import py_encode_decimal
+from wolframclient.serializers.utils import py_encode_decimal, safe_len
 from wolframclient.serializers.wxfencoder.constants import (
     ARRAY_TYPES, WXF_CONSTANTS, WXF_HEADER_COMPRESS, WXF_HEADER_SEPARATOR,
     WXF_VERSION)
@@ -13,6 +13,20 @@ from wolframclient.serializers.wxfencoder.streaming import ZipCompressedWriter
 from wolframclient.serializers.wxfencoder.utils import (
     float_to_bytes, integer_size, integer_to_bytes, varint_bytes, write_varint)
 from wolframclient.utils.encoding import force_bytes
+
+
+def get_length(iterable, length=None):
+    if length is not None:
+        return iterable, length
+
+    length = safe_len(iterable)
+
+    if length is not None:
+        return iterable, length
+
+    iterable = tuple(iterable)
+
+    return iterable, len(iterable)
 
 
 class WXFSerializer(FormatSerializer):
@@ -48,18 +62,13 @@ class WXFSerializer(FormatSerializer):
         yield varint_bytes(len(name))
         yield force_bytes(name)
 
-    def serialize_function(self, head, args):
+    def serialize_function(self, head, args, **opts):
         #args is always a tuple
 
-        try:
-            l = len(args)
-        except TypeError:
-            #generator might not have a length
-            args = tuple(args)
-            l = len(args)
+        iterable, length = get_length(args, **opts)
 
-        return chain((WXF_CONSTANTS.Function, varint_bytes(l)), head,
-                     chain.from_iterable(args))
+        return chain((WXF_CONSTANTS.Function, varint_bytes(length)), head,
+                     chain.from_iterable(iterable))
 
     #numeric
     def serialize_int(self, number):
@@ -101,14 +110,15 @@ class WXFSerializer(FormatSerializer):
         yield varint_bytes(len(bytes))
         yield bytes
 
-    def serialize_mapping(self, keyvalue):
+    def serialize_mapping(self, keyvalue, **opts):
         #the normalizer is always sending an generator key, value
-        keyvalue = tuple(keyvalue)
 
-        return chain((WXF_CONSTANTS.Association, varint_bytes(len(keyvalue))),
+        iterable, length = get_length(keyvalue, **opts)
+
+        return chain((WXF_CONSTANTS.Association, varint_bytes(length)),
                      chain.from_iterable(
                          chain((WXF_CONSTANTS.RuleDelayed, ), key, value)
-                         for key, value in keyvalue))
+                         for key, value in iterable))
 
     def serialize_raw_array(self, data, dimensions, wl_type):
         yield WXF_CONSTANTS.RawArray

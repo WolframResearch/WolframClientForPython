@@ -35,3 +35,10 @@ def py_encode_text(s):
 
 def py_encode_decimal(number):
     return '{0:f}``{1:d}'.format(number, decimal.getcontext().prec)
+
+
+def safe_len(obj):
+    try:
+        return len(obj)
+    except TypeError:
+        return

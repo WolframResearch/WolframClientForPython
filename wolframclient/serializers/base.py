@@ -32,7 +32,7 @@ class FormatSerializer(Normalizer):
 
     #implementation of several methods
 
-    def serialize_function(self, head, args):
+    def serialize_function(self, head, args, **opts):
         raise NotImplementedError
 
     def serialize_symbol(self, symbol):
@@ -67,19 +67,21 @@ class FormatSerializer(Normalizer):
                      )))),
              self.serialize_iterable(map(self.serialize_int, shape))))
 
-    def serialize_iterable(self, iterable):
+    def serialize_iterable(self, iterable, **opts):
         return self.serialize_function(
-            self.serialize_symbol(b'List'), iterable)
+            self.serialize_symbol(b'List'), iterable, **opts)
 
-    def serialize_mapping(self, mappable):
+    def serialize_mapping(self, mappable, **opts):
         return self.serialize_function(
             self.serialize_symbol(b'Association'),
-            (self.serialize_rule(key, value) for key, value in mappable))
+            (self.serialize_rule(key, value) for key, value in mappable),
+            **opts)
 
-    def serialize_association(self, mappable):
+    def serialize_association(self, mappable, **opts):
         return self.serialize_function(
             self.serialize_symbol(b'Association'),
-            (self.serialize_rule(key, value) for key, value in mappable))
+            (self.serialize_rule(key, value) for key, value in mappable),
+            **opts)
 
     def serialize_fraction(self, o):
         return self.serialize_function(

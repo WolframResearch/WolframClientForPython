@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import decimal
 import os
 import tempfile
 
@@ -13,12 +14,12 @@ from wolframclient.utils.decorators import to_tuple
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import first
 
-import decimal
 
 @to_tuple
-def repeat(el, n = 1):
+def repeat(el, n=1):
     for i in range(n):
         yield el
+
 
 class Command(SimpleCommand):
 
@@ -34,7 +35,11 @@ class Command(SimpleCommand):
             'integers': repeat(1, complexity),
             'decimals': repeat(decimal.Decimal('1.23'), complexity),
             'floats': repeat(1.23, complexity),
-            'dict': repeat({1:2, 3:4, 5:6}, complexity),
+            'dict': repeat({
+                1: 2,
+                3: 4,
+                5: 6
+            }, complexity),
             'list': repeat([1, 2, 3], complexity),
             'functions': repeat(wl.Function(1, 2, 3), complexity),
         }

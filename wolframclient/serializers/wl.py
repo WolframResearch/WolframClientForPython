@@ -61,17 +61,17 @@ class WLSerializer(FormatSerializer):
     def serialize_rule_delayed(self, lhs, rhs):
         return yield_with_separators((lhs, rhs), separator=b' :> ')
 
-    def serialize_mapping(self, mapping):
+    def serialize_mapping(self, mapping, **opts):
         return yield_with_separators(
             (self.serialize_rule(key, value) for key, value in mapping),
             first=b'<|',
             last=b'|>')
 
-    def serialize_association(self, mapping):
+    def serialize_association(self, mapping, **opts):
         return yield_with_separators(
             (self.serialize_rule(key, value) for key, value in mapping),
             first=b'<|',
             last=b'|>')
 
-    def serialize_iterable(self, iterable):
+    def serialize_iterable(self, iterable, **opts):
         return yield_with_separators(iterable, first=b'{', last=b'}')
