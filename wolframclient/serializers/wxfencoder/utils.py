@@ -38,15 +38,14 @@ def varint_bytes(int_value):
     return buf[:count]
 
 _size = dict(
-    (j, WXF_CONSTANTS['Integer%i' % ih])
+    (j, (WXF_CONSTANTS['Integer%i' % ih], ih))
     for il, ih in ((1, 8), (9, 16), (17, 32), (33, 64))
     for j in range(il, ih+1)
 )
 
 def integer_size(value):
-    v = value.bit_length()
     try:
-        return _size[v], v
+        return _size[value.bit_length()]
     except KeyError:
         raise ValueError('Value %i is not a machine-sized integer.' % value)
 
