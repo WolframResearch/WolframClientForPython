@@ -4,6 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.exception import WolframParserException
 from wolframclient.serializers.wxfencoder import wxfexpr
+from wolframclient.serializers.wxfencoder import constants
 from wolframclient.serializers.wxfencoder.serializer import (
     WXF_HEADER_COMPRESS, WXF_HEADER_SEPARATOR, WXF_VERSION,
     SerializationContext)
@@ -36,22 +37,22 @@ class WXFParser(object):
     """
 
     _mapping = {
-        wxfexpr.WXF_CONSTANTS.Symbol: 'token_for_string',
-        wxfexpr.WXF_CONSTANTS.String: 'token_for_string',
-        wxfexpr.WXF_CONSTANTS.BigInteger: 'token_for_string',
-        wxfexpr.WXF_CONSTANTS.BigReal: 'token_for_string',
-        wxfexpr.WXF_CONSTANTS.Function: 'token_for_function',
-        wxfexpr.WXF_CONSTANTS.BinaryString: 'token_for_binary_string',
-        wxfexpr.WXF_CONSTANTS.Integer8: 'token_for_integer8',
-        wxfexpr.WXF_CONSTANTS.Integer16: 'token_for_integer16',
-        wxfexpr.WXF_CONSTANTS.Integer32: 'token_for_integer32',
-        wxfexpr.WXF_CONSTANTS.Integer64: 'token_for_integer64',
-        wxfexpr.WXF_CONSTANTS.Real64: 'token_for_real64',
-        wxfexpr.WXF_CONSTANTS.PackedArray: 'token_for_packed_array',
-        wxfexpr.WXF_CONSTANTS.RawArray: 'token_for_raw_array',
-        wxfexpr.WXF_CONSTANTS.Association: 'token_for_association',
-        wxfexpr.WXF_CONSTANTS.Rule: 'token_for_rule',
-        wxfexpr.WXF_CONSTANTS.RuleDelayed: 'token_for_rule'
+        constants.WXF_CONSTANTS.Symbol: 'token_for_string',
+        constants.WXF_CONSTANTS.String: 'token_for_string',
+        constants.WXF_CONSTANTS.BigInteger: 'token_for_string',
+        constants.WXF_CONSTANTS.BigReal: 'token_for_string',
+        constants.WXF_CONSTANTS.Function: 'token_for_function',
+        constants.WXF_CONSTANTS.BinaryString: 'token_for_binary_string',
+        constants.WXF_CONSTANTS.Integer8: 'token_for_integer8',
+        constants.WXF_CONSTANTS.Integer16: 'token_for_integer16',
+        constants.WXF_CONSTANTS.Integer32: 'token_for_integer32',
+        constants.WXF_CONSTANTS.Integer64: 'token_for_integer64',
+        constants.WXF_CONSTANTS.Real64: 'token_for_real64',
+        constants.WXF_CONSTANTS.PackedArray: 'token_for_packed_array',
+        constants.WXF_CONSTANTS.RawArray: 'token_for_raw_array',
+        constants.WXF_CONSTANTS.Association: 'token_for_association',
+        constants.WXF_CONSTANTS.Rule: 'token_for_rule',
+        constants.WXF_CONSTANTS.RuleDelayed: 'token_for_rule'
     }
 
     def __init__(self, wxf_input):
@@ -107,7 +108,7 @@ class WXFParser(object):
                     'Array dimensions cannot be zero.')
             token.dimensions.append(dim)
         # reading values
-        bytecount = wxfexpr.ARRAY_TYPES_ELEM_SIZE[
+        bytecount = constants.ARRAY_TYPES_ELEM_SIZE[
             token.array_type] * token.element_count
         token.data = self.reader.read(bytecount)
 
@@ -123,27 +124,27 @@ class WXFParser(object):
 
     def token_for_integer8(self, token):
         self.context.add_part()
-        token.data = wxfexpr.StructInt8LE.unpack(self.reader.read(1))[0]
+        token.data = constants.StructInt8LE.unpack(self.reader.read(1))[0]
         return token
 
     def token_for_integer16(self, token):
         self.context.add_part()
-        token.data = wxfexpr.StructInt16LE.unpack(self.reader.read(2))[0]
+        token.data = constants.StructInt16LE.unpack(self.reader.read(2))[0]
         return token
 
     def token_for_integer32(self, token):
         self.context.add_part()
-        token.data = wxfexpr.StructInt32LE.unpack(self.reader.read(4))[0]
+        token.data = constants.StructInt32LE.unpack(self.reader.read(4))[0]
         return token
 
     def token_for_integer64(self, token):
         self.context.add_part()
-        token.data = wxfexpr.StructInt64LE.unpack(self.reader.read(8))[0]
+        token.data = constants.StructInt64LE.unpack(self.reader.read(8))[0]
         return token
 
     def token_for_real64(self, token):
         self.context.add_part()
-        token.data = wxfexpr.StructDouble.unpack(self.reader.read(8))[0]
+        token.data = constants.StructDouble.unpack(self.reader.read(8))[0]
         return token
 
     def token_for_function(self, token):
@@ -166,7 +167,7 @@ class WXFParser(object):
     def token_for_packed_array(self, token):
         self.context.add_part()
         token.array_type = self.reader.read(1)
-        if token.array_type not in wxfexpr.VALID_PACKED_ARRAY_TYPES:
+        if token.array_type not in constants.VALID_PACKED_ARRAY_TYPES:
             raise WolframParserException(
                 'Invalid PackedArray value type: %s' % token.array_type)
         self.parse_array(token)
@@ -175,7 +176,7 @@ class WXFParser(object):
     def token_for_raw_array(self, token):
         self.context.add_part()
         token.array_type = self.reader.read(1)
-        if token.array_type not in wxfexpr.ARRAY_TYPES_ELEM_SIZE:
+        if token.array_type not in constants.ARRAY_TYPES_ELEM_SIZE:
             raise WolframParserException(
                 'Invalid RawArray value type: %s' % token.array_type)
         self.parse_array(token)
