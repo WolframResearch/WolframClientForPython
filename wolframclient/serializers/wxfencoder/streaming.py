@@ -22,8 +22,7 @@ class ZipCompressedWriter(object):
 
     def write(self, data):
         """ Write the compression of `data` to the underlying buffer writer. """
-        b = force_bytes(data)
-        self._writer.write(self._compressor.compress(b))
+        self._writer.write(self._compressor.compress(force_bytes(data)))
 
     def __enter__(self):
         return self
