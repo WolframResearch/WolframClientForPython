@@ -2,12 +2,12 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import os
 import sys
 import unittest
 
 from wolframclient.cli.utils import SimpleCommand
 from wolframclient.utils.importutils import module_path
+
 
 class Command(SimpleCommand):
     """ Run test suites from the tests modules.
@@ -26,9 +26,7 @@ class Command(SimpleCommand):
             for arg in args or ['*']:
                 suite.addTests(
                     unittest.defaultTestLoader.discover(
-                        root,
-                        pattern=arg,
-                        top_level_dir=root))
+                        root, pattern=arg, top_level_dir=root))
 
         # verbosity > 1 print test name
         runner = unittest.TextTestRunner(verbosity=2)
