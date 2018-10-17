@@ -24,7 +24,9 @@ logger.setLevel(logging.INFO)
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 class TestCaseSettings(BaseTestCase):
-    KERNEL_PATH = json_config['kernel']
+
+    if json_config:
+        KERNEL_PATH = json_config['kernel']
 
     @classmethod
     def setUpClass(cls):

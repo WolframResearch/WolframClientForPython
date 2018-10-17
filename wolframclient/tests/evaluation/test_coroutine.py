@@ -115,7 +115,9 @@ class TestCoroutineSession(BaseTestCase):
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestKernelPool(BaseTestCase):
-    KERNEL_PATH = json_config['kernel']
+
+    if json_config:
+        KERNEL_PATH = json_config['kernel']
 
     @classmethod
     def setUpClass(cls):
