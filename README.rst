@@ -6,7 +6,7 @@
 Wolfram Client library for Python
 ##########################################
 
-The Wolfram Client Library is provide seamless Wolfram Language integration in Python. A list of features provided by the library:
+The Wolfram Client Library provides seamless Wolfram Language integration in Python. A list of features provided by the library:
 
 * evaluate arbitrary code on a local kernel,
 * evaluate arbitrary code on Wolfram cloud, public or private,
@@ -18,6 +18,16 @@ The Wolfram Client Library is provide seamless Wolfram Language integration in P
 * extend serialization to any arbitrary Python class,
 * parse `WXF` encoded expressions.
 
+#############
+Links
+#############
+
+* `Installation instructions <docs/install.rst>`_
+* `Introduction <docs/intro.rst>`_
+* `Documentation <docs/index.rst>`_
+* `Contributor guidelines <CONTRIBUTING.md>`_
+* `License <LICENSE>`_
+
 #########################
 Project Information
 #########################
@@ -25,7 +35,7 @@ Project Information
 Licencing 
 =============
 
-This project is released under MIT licence.
+This project is released under the MIT licence.
 
 Contributions
 =============
