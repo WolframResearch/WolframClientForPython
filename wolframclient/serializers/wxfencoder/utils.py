@@ -3,10 +3,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.serializers.wxfencoder.constants import (
-    VALID_PACKED_ARRAY_TYPES, WXF_CONSTANTS, StructDouble,
-    StructInt8LE, StructInt16LE, StructInt32LE, StructInt64LE)
+    VALID_PACKED_ARRAY_TYPES, WXF_CONSTANTS, StructDouble, StructInt8LE,
+    StructInt16LE, StructInt32LE, StructInt64LE)
 from wolframclient.utils import six
-import math
+
 if six.JYTHON:
     import jarray
 
@@ -37,18 +37,18 @@ def varint_bytes(int_value):
 
     return buf[:count]
 
+
 _exceptions = {
     0: (WXF_CONSTANTS.Integer8, 1),
     -(1 << 7): (WXF_CONSTANTS.Integer8, 1),
-     -(1 << 15): (WXF_CONSTANTS.Integer16, 2),
-     -(1 << 31): (WXF_CONSTANTS.Integer32, 4),
-     -(1 << 63): (WXF_CONSTANTS.Integer64, 8),
+    -(1 << 15): (WXF_CONSTANTS.Integer16, 2),
+    -(1 << 31): (WXF_CONSTANTS.Integer32, 4),
+    -(1 << 63): (WXF_CONSTANTS.Integer64, 8),
 }
-_size = dict(
-    (j, (WXF_CONSTANTS['Integer%i' % ih], ih // 8))
-    for il, ih in ((1, 8), (9, 16), (17, 32), (33, 64))
-    for j in range(il, ih+1)
-)
+_size = dict((j, (WXF_CONSTANTS['Integer%i' % ih], ih // 8))
+             for il, ih in ((1, 8), (9, 16), (17, 32), (33, 64))
+             for j in range(il, ih + 1))
+
 
 def integer_size(value):
     try:
@@ -57,7 +57,9 @@ def integer_size(value):
         try:
             return _size[value.bit_length() + 1]
         except KeyError:
-            raise ValueError('Value %i is not a machine-sized integer.' % value)
+            raise ValueError(
+                'Value %i is not a machine-sized integer.' % value)
+
 
 _packing = {
     1: StructInt8LE,

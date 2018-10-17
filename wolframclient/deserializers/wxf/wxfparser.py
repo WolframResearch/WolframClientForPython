@@ -3,7 +3,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.exception import WolframParserException
-from wolframclient.serializers.wxfencoder import wxfexpr
 from wolframclient.serializers.wxfencoder import constants
 from wolframclient.serializers.wxfencoder.serializer import (
     WXF_HEADER_COMPRESS, WXF_HEADER_SEPARATOR, WXF_VERSION,

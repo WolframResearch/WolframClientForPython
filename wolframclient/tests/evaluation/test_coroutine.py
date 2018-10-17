@@ -171,13 +171,12 @@ class TestKernelPool(BaseTestCase):
         res = {binary_deserialize(wxf) for wxf in res}
         self.assertEqual(res,
                          {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"})
-    
+
     @run_in_loop
     async def test_failed_expr(self):
         tasks = [
-            asyncio.ensure_task(
-                self.pool.evaluate('Pause[.1]; 1/0'))
+            asyncio.ensure_task(self.pool.evaluate('Pause[.1]; 1/0'))
             for i in range(1, 10)
         ]
         res = await asyncio.gather(*tasks)
-        self.assertEqual(res, [wl.DirectedInfinity() for _ in range(1,10)])
+        self.assertEqual(res, [wl.DirectedInfinity() for _ in range(1, 10)])

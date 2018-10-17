@@ -107,8 +107,7 @@ class TestCase(BaseTestCase):
 
     def test_time(self):
 
-        self.compare(test_datetime().time(),
-                     b'TimeObject[{11, 15, 20.0}]')
+        self.compare(test_datetime().time(), b'TimeObject[{11, 15, 20.0}]')
         self.compare(
             pytz.timezone("Europe/Rome").localize(test_datetime()).timetz(),
             b'TimeObject[{11, 15, 20.0}, TimeZone -> 1.0]')
