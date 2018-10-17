@@ -34,10 +34,9 @@ class WXFSerializer(FormatSerializer):
     ''' TODO
     '''
 
-    def __init__(self, normalizer=None, compress=False, enforce=False, **opts):
+    def __init__(self, normalizer=None, compress=False, **opts):
         super(WXFSerializer, self).__init__(normalizer=normalizer, **opts)
         self.compress = compress
-        self.enforce = enforce
 
     def dump(self, data, stream):
 
