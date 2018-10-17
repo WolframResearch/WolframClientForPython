@@ -63,7 +63,7 @@ Built-in data structures are all supported: :class:`list`, :class:`set`, :class:
 Example::
 
     >>> export({"list": [1, 2, 3], "set": set([1, 2, 2, 4]), "frozenset": frozenset([1, 2, 2, 4]), "dict": dict(a = 2)})
-    '<|"list" :> {1, 2, 3}, "set" :> {1, 2, 4}, "frozenset" :> {1, 2, 4}, "dict" :> <|"a" :> 2|>|>'
+    '<|"list" -> {1, 2, 3}, "set" -> {1, 2, 4}, "frozenset" -> {1, 2, 4}, "dict" -> <|"a" -> 2|>|>'
 
 Any class that has an `__iter__` method is converted to a Wolfram Language :wl:`List`::
 
@@ -87,7 +87,7 @@ To preserve ordering in associations use :class:`collections.OrderedDict`::
 
     >>> from collections import OrderedDict
     >>> export(OrderedDict([(0, 'a'), (1, 'b'), (2, 'c'), (3, 'd')]))
-    '<|0 :> "a", 1 :> "b", 2 :> "c", 3 :> "d"|>'
+    '<|0 -> "a", 1 -> "b", 2 -> "c", 3 -> "d"|>'
 
 Numeric Types
 ^^^^^^^^^^^^^
@@ -96,12 +96,12 @@ Numeric types are natively supported: :class:`int`, :class:`float`, :class:`comp
 their Wolfram Language counterpart::
 
     >>> export({'int': 1, 'float':2.3, 'decimal': decimal.Decimal(1), 'complex': complex(3, 4)})
-    '<|"int" :> 1, "float" :> 2.300000, "decimal" :> 1, "complex" :> Complex[3.000000, 4.000000]|>'
+    '<|"int" -> 1, "float" -> 2.300000, "decimal" -> 1, "complex" -> Complex[3.000000, 4.000000]|>'
 
 IEEE exceptions `infinity` and `NaN` are converted respectively to :wl:`DirectedInfinity` and :wl:`Indeterminate`::
 
     >>> export({'+inf': float('inf'), '-inf': - float('inf'), 'nan': float('NaN')})
-    '<|"+inf" :> DirectedInfinity[1], "-inf" :> DirectedInfinity[-1], "nan" :> Indeterminate|>'
+    '<|"+inf" -> DirectedInfinity[1], "-inf" -> DirectedInfinity[-1], "nan" -> Indeterminate|>'
 
 :class:`~fractions.Fraction` serializes to :wl:`Rational`::
 

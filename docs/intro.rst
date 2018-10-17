@@ -78,15 +78,6 @@ Create a new session targeting a local *WolframKernel* specified by its path::
 
     >>> session = WolframLanguageSession('/path/to/kernel-executable')
 
-Start the session manually::
-
-    >>> session.start()
-
-Ensure the session started successfully:
-
-    >>> session.started
-    True
-
 Note that sessions are also automatically started when the first evaluation occurs.
 
 Expression Evaluation
@@ -219,26 +210,39 @@ It also works with an iterator of integers::
     >>> selectPrimes(range(100, 120))
     [101, 103, 107, 109, 113]
 
-Termination
-++++++++++++++
-
 The session is no more useful, so terminate it::
 
-    session.terminate()
+    >>> session.terminate()
 
-Alternatively, it is possible to delegate the handling of the lifecycle of a session using a `with` block::
+Session management
++++++++++++++++++++++
+
+:class:`~wolframclient.evaluation.WolframLanguageSession` must be terminated, either by explicitly calling :func:`~wolframclient.evaluation.WolframLanguageSession.terminate` or, preferably, using it in a `with` block that achieves the same result automatically. 
+It is highly recommended to initialize a session once and for all to mitigate the initialization cost.
+
+Delegate the handling of the lifecycle of a session using a `with` block::
 
     >>> with WolframLanguageSession('/path/to/kernel-executable') as wl_session:
     ...     wl_session.StringReverse('abc')
     ...
     'cba'
 
-The session stored in `wl_session`, is only available in the scope of the `with` block – contrary to `session` that was initialized with :func:`~wolframclient.evaluation.WolframLanguageSession.start`.
+Alternatively, start a session manually::
 
-As shown previously, :class:`~wolframclient.evaluation.WolframLanguageSession` must be terminated, either by explicitly calling :func:`~wolframclient.evaluation.WolframLanguageSession.terminate` or, alternatively, using it in a `with` block that achieves the same result automatically. It is highly recommended to initialize a session once and for all to mitigate the initialization cost.
+    >>> session = WolframLanguageSession('/path/to/kernel-executable')
+    >>> session.start()
+
+This is not required, since this operation is automatically performed during the first evaluation. Ensure the session started successfully:
+
+    >>> session.started
+    True
+
+Manually terminate the session::
+
+    >>> session.terminate()
 
 .. note::
-    Nonterminated sessions usually result in orphan kernel processes, which ultimately lead to the inability to spawn any usable instance at all. Typically, this ends up with a WolframKernelException raised after a failure to communicate with the kernel.
+    nonterminated sessions usually result in orphan kernel processes, which ultimately lead to the inability to spawn any usable instance at all. Typically, this ends up with a WolframKernelException raised after a failure to communicate with the kernel.
 
 .. note :: 
     for in-depth explanations and use cases of local evaluation, refer to :ref:`the advanced usage section<adv-local-evaluation>`.
@@ -246,24 +250,43 @@ As shown previously, :class:`~wolframclient.evaluation.WolframLanguageSession` m
 Wolfram Cloud Interactions
 ==============================
 
-Cloud interaction requires proper authentication to the Wolfram Cloud using your **Wolfram ID** and password. To create one, visit https://account.wolfram.com/auth/create. 
+Most Cloud interactions require proper authentication to the Wolfram Cloud. Authentication from the library is done with a secured authentication key. Secured authentication keys are attached to a Wolfram account. To create one, visit https://account.wolfram.com/auth/create.
 
 .. _ref-auth:
 
 Authenticate
--------------
+------------
 
-Begin by importing the classes :class:`~wolframclient.evaluation.UserIDPassword` and :class:`~wolframclient.evaluation.WolframCloudSession` from the :mod:`~wolframclient.evaluation` module.
+Generate a Secured Authentication Key
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    >>> from wolframclient.evaluation import UserIDPassword, WolframCloudSession
+Using a Wolfram Desktop, or a the Wolfram Public Cloud, generate a new authentication key called `pythonclientlibrary`:
 
-Create a new instance of :class:`~wolframclient.evaluation.UserIDPassword` with your Wolfram ID and password::
+.. code-block :: wl
 
-    >>> userID = UserIDPassword('MyWolframID', 'password')
+    sak = GenerateSecuredAuthenticationKey["pythonclientlibrary"]
 
-Using `userID`, start a new authenticated cloud session:: 
+Get the key and secret as strings:
 
-    >>> session = WolframCloudSession(authentication=userID)
+.. code-block :: wl
+
+    sak["ConsumerKey"]
+    sak["ConsumerSecret"]
+
+Authenticate
+^^^^^^^^^^^^^^^^
+
+Begin by importing the classes :class:`~wolframclient.evaluation.SecuredAuthenticationKey` and :class:`~wolframclient.evaluation.WolframCloudSession` from the :mod:`~wolframclient.evaluation` module.
+
+    >>> from wolframclient.evaluation import SecuredAuthenticationKey, WolframCloudSession
+
+Create a new instance of :class:`~wolframclient.evaluation.SecuredAuthenticationKey` with the consumer key and secret strings::
+
+    >>> sak = SecuredAuthenticationKey('my consumer key', 'my consumer secret')
+
+Using `sak`, start a new authenticated cloud session:: 
+
+    >>> session = WolframCloudSession(authentication=sak)
     >>> session.authorized
     True
 
@@ -362,7 +385,11 @@ Deploy the API as a cloud object named `api/private/xsquared`:
 
     CloudDeploy[api, CloudObject["api/private/xsquared"]]
 
-The API was deployed with default permissions, and as such is a private :wl:`CloudObject` only usable by its owner.
+The API was deployed with default permissions, and as such is a private :wl:`CloudObject` only usable by its owner. Provide read access to the newly created secured authentication key called `pythonclientlibrary`:
+
+.. code-block :: wl
+
+    SetPermissions[CloudObject["api/private/xsquared"], SecuredAuthenticationKeys["pythonclientlibrary"] -> {"Read", "Execute"}]
 
 
 API Call from Python
