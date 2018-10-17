@@ -47,13 +47,13 @@ class WLSerializer(FormatSerializer):
             ((b'"', base64.b64encode(bytes), b'"'), ))
 
     def serialize_decimal(self, number):
-        yield py_encode_decimal(number).encode('utf-8')
+        yield py_encode_decimal(number)
 
     def serialize_float(self, number):
-        yield ('{0:f}'.format(number)).encode('utf-8')
+        yield force_bytes(number)
 
     def serialize_int(self, number):
-        yield ('%i' % number).encode('utf-8')
+        yield force_bytes(number)
 
     def serialize_rule(self, lhs, rhs):
         return yield_with_separators((lhs, rhs), separator=b' -> ')
