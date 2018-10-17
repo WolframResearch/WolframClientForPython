@@ -9,6 +9,7 @@ import unittest
 from wolframclient.evaluation.cloud.cloudsession import (
     WolframAPICall, WolframCloudSession, WolframCloudSessionAsync,
     encode_api_inputs, url_join)
+from wolframclient.evaluation.cloud import WolframServer
 from wolframclient.evaluation.cloud.oauth import (SecuredAuthenticationKey,
                                                   UserIDPassword)
 from wolframclient.language import wl
@@ -24,6 +25,9 @@ logger.setLevel(logging.INFO)
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestCaseSettings(BaseTestCase):
+    user_cred = None
+    server = None
+
     @classmethod
     def setUpClass(cls):
         cls.setupCloudSession()
@@ -34,9 +38,20 @@ class TestCaseSettings(BaseTestCase):
         cls.sak = SecuredAuthenticationKey(
             cloud_config['SAK']['consumer_key'],
             cloud_config['SAK']['consumer_secret'])
-        cls.user_cred = UserIDPassword(cloud_config['User']['id'],
-                                       cloud_config['User']['password'])
         cls.api_owner = cloud_config.get('ApiOwner', 'dorianb')
+        try:
+            cls.user_cred = UserIDPassword(cloud_config['User']['id'],
+                                        cloud_config['User']['password'])
+            server_json = json_config['server']
+            cls.server = WolframServer(server_json['host'],
+                                       server_json['request_token_endpoint'],
+                                       server_json['access_token_endpoint'],
+                                       xauth_consumer_key=server_json['xauth_consumer_key'],
+                                       xauth_consumer_secret=server_json['xauth_consumer_secret'])
+        except KeyError as e:
+            print(e)
+            cls.user_cred = None
+            cls.server = None
 
         cls.cloud_session = WolframCloudSession(authentication=cls.sak)
         cls.cloud_session_async = WolframCloudSessionAsync(
@@ -70,8 +85,9 @@ class TestCase(TestCaseSettings):
         self.assertEqual(cloud_session.authorized, True)
         self.assertEqual(cloud_session.is_xauth, False)
 
+    @unittest.skipUnless(TestCaseSettings.user_cred and TestCaseSettings.server, "xauth not available.")
     def test_section_authorized_xauth(self):
-        cloud_session = WolframCloudSession(self.user_cred)
+        cloud_session = WolframCloudSession(authentication=self.user_cred, server=self.server)
         self.assertEqual(cloud_session.authorized, True)
         self.assertEqual(cloud_session.is_xauth, True)
 

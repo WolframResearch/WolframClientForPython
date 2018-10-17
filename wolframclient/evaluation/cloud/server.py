@@ -52,6 +52,5 @@ WolframPublicCloudServer = WolframServer(
     'https://www.wolframcloud.com',
     'https://account.wolfram.com/auth/request-token',
     'https://account.wolfram.com/auth/access-token',
-    xauth_consumer_key='tbd',
-    xauth_consumer_secret='tbd'
-)
+    xauth_consumer_key=None,
+    xauth_consumer_secret=None)

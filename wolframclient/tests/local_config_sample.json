@@ -13,5 +13,12 @@
             "consumer_secret": "consumer secret"
         },
         "ApiOwner": "$UserName"
+    },
+    "server": {
+        "host": "https://www.my.wolframcloud.com",
+        "request_token_endpoint": "https://account.my.wolfram.cloud.com/auth/request-token",
+        "access_token_endpoint": "https://account.my.wolfram.cloud.com/auth/access-token",
+        "xauth_consumer_key": "my xauth consumer key",
+        "xauth_consumer_secret": "my xauth consumer secret"
     }
 }
