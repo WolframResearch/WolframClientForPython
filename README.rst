@@ -22,9 +22,9 @@ The Wolfram Client Library provides seamless Wolfram Language integration in Pyt
 Links
 #############
 
-* `Installation instructions <docs/install.rst>`_
-* `Introduction <docs/intro.rst>`_
-* `Documentation <docs/index.rst>`_
+* `Installation instructions <http://www.wolframcloud.com/objects/dorianb/lcl/python/doc/install.html>`_
+* `Introduction <http://www.wolframcloud.com/objects/dorianb/lcl/python/doc/intro.html>`_
+* `Documentation <https://wolfr.am/wolframclientdoc>`_
 * `Contributor guidelines <CONTRIBUTING.md>`_
 * `License <LICENSE>`_
 
