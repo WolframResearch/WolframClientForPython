@@ -7,9 +7,10 @@ from collections import defaultdict
 from wolframclient.utils.dispatch import ClassDispatch
 from wolframclient.utils.functional import composition, iterate
 from wolframclient.utils.importutils import safe_import_string
-import multiprocessing
+from wolframclient.utils import six
 import inspect
 import sys
+from wolframclient.utils.api import multiprocessing
 
 dispatch = ClassDispatch()
 
@@ -28,7 +29,6 @@ def normalizer(self, o):
 class DispatchUpdater(object):
 
     # global lock to avoid multiple dispatcher updating in multithreaded programs.
-    _lock = multiprocessing.Lock()
 
     def __init__(self, dispatch):
         self.registry = defaultdict(list)
@@ -40,15 +40,26 @@ class DispatchUpdater(object):
             self.modules.add(module)
             self.registry[module].extend(iterate(handlers))
 
-    def update_dispatch(self):
-        with DispatchUpdater._lock:
-            if self.modules:
-                for module in self.modules.intersection(sys.modules.keys()):
-                    for handler in self.registry[module]:
-                        safe_import_string(handler)(self.dispatch)
+    def _update_dispatch(self):
+        if self.modules:
+            for module in self.modules.intersection(sys.modules.keys()):
+                for handler in self.registry[module]:
+                    safe_import_string(handler)(self.dispatch)
 
-                    del self.registry[module]
-                    self.modules.remove(module)
+                del self.registry[module]
+                self.modules.remove(module)
+
+    if not six.JYTHON:
+        # global lock to avoid multiple dispatcher updating in multithreaded programs.
+        _lock = multiprocessing.Lock()
+
+        def update_dispatch(self):
+            with self._lock:
+                self._update_dispatch()
+    else:
+
+        def update_dispatch(self):
+            self._update_dispatch()
 
 
 updater = DispatchUpdater(dispatch)

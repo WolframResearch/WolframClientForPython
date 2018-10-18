@@ -113,3 +113,5 @@ numpy = API(
     dtype='numpy.dtype',
     frombuffer='numpy.frombuffer',
     reshape='numpy.reshape')
+
+multiprocessing = API(Lock='multiprocessing.Lock')
