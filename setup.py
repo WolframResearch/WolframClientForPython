@@ -46,7 +46,7 @@ def load_tests():
 
 setup(
     name = 'wolframclient',
-    version = '1.0.1.dev5',
+    version = '1.0.0.dev2',
     description = 'A Python library with various tools to interact with the Wolfram Language and the Wolfram Cloud.',
     long_description = read('README.rst'),
     long_description_content_type = 'text/x-rst',
@@ -66,8 +66,8 @@ setup(
         'zmq'
     ],
     project_urls={
-        'Source code': 'https://github.com/WolframResearch/TODO',
-        'Documentation': 'https://www.wolframcloud.com/objects/dorianb/lcl/python/doc/intro.html',
+        'Source code': 'https://github.com/WolframResearch/WolframClientForPython',
+        'Documentation': 'https://wolfr.am/wolframclientdoc',
         'Wolfram Research': 'https://www.wolfram.com'
     }
 )

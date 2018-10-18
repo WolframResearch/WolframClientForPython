@@ -25,8 +25,8 @@ Links
 * `Installation instructions <http://www.wolframcloud.com/objects/dorianb/lcl/python/doc/install.html>`_
 * `Introduction <http://www.wolframcloud.com/objects/dorianb/lcl/python/doc/intro.html>`_
 * `Documentation <https://wolfr.am/wolframclientdoc>`_
-* `Contributor guidelines <CONTRIBUTING.md>`_
-* `License <LICENSE>`_
+* `Contributor guidelines <https://github.com/WolframResearch/WolframClientForPython/blob/master/CONTRIBUTING.md>`_
+* `License <https://github.com/WolframResearch/WolframClientForPython/blob/master/LICENSE>`_
 
 #########################
 Project Information

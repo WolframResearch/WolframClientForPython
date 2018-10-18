@@ -29,8 +29,7 @@ Clone the library's repository:
 
 .. code-block:: shell
 
-    $ git clone git://github.com/wolframresearch/pythonclientlibrary
-
+    $ git clone git://github.com/WolframResearch/WolframClientForPython
 
 Install the library:
 
