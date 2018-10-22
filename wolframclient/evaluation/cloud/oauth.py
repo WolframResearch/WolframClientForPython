@@ -66,15 +66,16 @@ class OAuthSession(object):
         self.server = server
 
     def _check_response(self, response):
+        msg = None
         if response.status_code == 200:
             return
         try:
             as_json = response.json()
             msg = as_json.get('message', None)
+            raise AuthenticationException(response, msg)
         # msg is None if response is not JSON, but it's fine.
         except:
-            pass
-        raise AuthenticationException(response, msg)
+            raise AuthenticationException(response, 'Request failed with status %i' % response.status_code)
 
     def _update_client(self):
         self._client = oauth.Client(

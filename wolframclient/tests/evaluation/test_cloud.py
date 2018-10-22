@@ -10,6 +10,7 @@ from wolframclient.evaluation.cloud import WolframServer
 from wolframclient.evaluation.cloud.cloudsession import (
     WolframAPICall, WolframCloudSession, WolframCloudSessionAsync,
     encode_api_inputs, url_join)
+from wolframclient.exception import AuthenticationException
 from wolframclient.evaluation.cloud.oauth import (SecuredAuthenticationKey,
                                                   UserIDPassword)
 from wolframclient.language import wl
@@ -93,6 +94,11 @@ class TestCase(TestCaseSettings):
             authentication=self.user_cred, server=self.server)
         self.assertEqual(cloud_session.authorized, True)
         self.assertEqual(cloud_session.is_xauth, True)
+
+    def test_bad_sak(self):
+        bad_sak = SecuredAuthenticationKey('foo', 'bar')
+        with self.assertRaises(AuthenticationException):
+            cloud_session = WolframCloudSession(authentication=bad_sak)
 
     def test_section_api_call_no_param(self):
         url = 'api/private/requesterid'
