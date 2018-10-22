@@ -543,7 +543,6 @@ class WolframFunction(object):
                                                             kernel)
 
 
-
 class SocketException(Exception):
     pass
 

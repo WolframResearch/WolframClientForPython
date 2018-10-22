@@ -5,13 +5,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 import argparse
 import os
 import sys
-import logging
-
-logger = logging.getLogger(__name__)
-
-from wolframclient.utils.decorators import to_dict
-from wolframclient.utils.importutils import module_path
-from wolframclient.utils.require import require_module
 
 from wolframclient.utils.decorators import to_dict
 from wolframclient.utils.importutils import module_path
