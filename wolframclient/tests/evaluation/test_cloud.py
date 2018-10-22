@@ -270,7 +270,7 @@ class TestCase(TestCaseSettings):
                                     target_format='wxf')
         self.assertEqual(
             encoded, {
-                'param1__wxf': b'8:A\x01:S\x01kf\x02s\x04ListC\x01C\x02',
+                'param1__wxf': b'8:A\x01-S\x01kf\x02s\x04ListC\x01C\x02',
                 'param2__wxf': b'8:S\x03foo'
             })
 

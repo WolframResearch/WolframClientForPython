@@ -109,7 +109,7 @@ class DefaultWXFEncoder(WXFEncoder):
         elif isinstance(pythonExpr, dict):
             yield wxfexpr.WXFExprAssociation(len(pythonExpr))
             for key, value in pythonExpr.items():
-                yield wxfexpr.WXFExprRuleDelayed()
+                yield wxfexpr.WXFExprRule()
                 for wxf_expr in self.serialize(key):
                     yield wxf_expr
                 for wxf_expr in self.serialize(value):

@@ -240,21 +240,21 @@ class TestCase(SerializeTest):
         # One way to make reproducible tests is to use at most one key.
 
         value = {1: 2}
-        wxf = b'\x38\x3a\x41\x01\x3a\x43\x01\x43\x02'
+        wxf = b'8:A\x01-C\x01C\x02'
         self.serialize_compare(value, wxf)
 
     def test_empty_dict(self):
         wxf = b'\x38\x3a\x41\x00'
         self.serialize_compare({}, wxf)
 
-    def test_empty_dicts(self):
+    def test_dicts(self):
         value = OrderedDict(enumerate('abc'))
-        wxf = b'\x38\x3a\x41\x03\x3a\x43\x00\x53\x01\x61\x3a\x43\x01\x53\x01\x62\x3a\x43\x02\x53\x01\x63'
+        wxf = b'8:A\x03-C\x00S\x01a-C\x01S\x01b-C\x02S\x01c'
         self.serialize_compare(value, wxf)
 
     def test_no_enforcing_valid(self):
         value = OrderedDict(enumerate('abc'))
-        wxf = b'\x38\x3a\x41\x03\x3a\x43\x00\x53\x01\x61\x3a\x43\x01\x53\x01\x62\x3a\x43\x02\x53\x01\x63'
+        wxf = b'8:A\x03-C\x00S\x01a-C\x01S\x01b-C\x02S\x01c'
         self.serialize_compare(value, wxf, enforce=False)
 
     ### MIXED TESTS
