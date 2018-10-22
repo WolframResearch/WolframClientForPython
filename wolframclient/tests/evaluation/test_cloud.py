@@ -87,18 +87,20 @@ class TestCase(TestCaseSettings):
         self.assertEqual(cloud_session.authorized, True)
         self.assertEqual(cloud_session.is_xauth, False)
 
-    @unittest.skipUnless(TestCaseSettings.user_cred
-                         and TestCaseSettings.server, "xauth not available.")
     def test_section_authorized_xauth(self):
-        cloud_session = WolframCloudSession(
-            authentication=self.user_cred, server=self.server)
-        self.assertEqual(cloud_session.authorized, True)
-        self.assertEqual(cloud_session.is_xauth, True)
+        if TestCaseSettings.user_cred and TestCaseSettings.server:
+            cloud_session = WolframCloudSession(
+                authentication=self.user_cred, server=self.server)
+            self.assertEqual(cloud_session.authorized, True)
+            self.assertEqual(cloud_session.is_xauth, True)
+        else:
+            print('xauth not available. Test skipped.')
 
     def test_bad_sak(self):
         bad_sak = SecuredAuthenticationKey('foo', 'bar')
         with self.assertRaises(AuthenticationException):
             cloud_session = WolframCloudSession(authentication=bad_sak)
+            cloud_session.authorized
 
     def test_section_api_call_no_param(self):
         url = 'api/private/requesterid'
