@@ -1,0 +1,312 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>wolframclient.language package &#8212; Wolfram Client Library for Python 1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css">
+ 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="wolframclient-language-package">
+<h1>wolframclient.language package<a class="headerlink" href="#wolframclient-language-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-wolframclient.language.decorators">
+<span id="wolframclient-language-decorators-module"></span><h2>wolframclient.language.decorators module<a class="headerlink" href="#module-wolframclient.language.decorators" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="wolframclient.language.decorators.safe_wl_execute">
+<code class="descclassname">wolframclient.language.decorators.</code><code class="descname">safe_wl_execute</code><span class="sig-paren">(</span><em>function</em>, <em>args=()</em>, <em>opts={}</em>, <em>export_opts={}</em>, <em>exception_class=&lt;class 'wolframclient.language.exceptions.WolframLanguageException'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/decorators.html#safe_wl_execute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.language.decorators.safe_wl_execute" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wolframclient.language.decorators.to_wl">
+<code class="descclassname">wolframclient.language.decorators.</code><code class="descname">to_wl</code><span class="sig-paren">(</span><em>**export_opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/decorators.html#to_wl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.language.decorators.to_wl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-wolframclient.language.exceptions">
+<span id="wolframclient-language-exceptions-module"></span><h2>wolframclient.language.exceptions module<a class="headerlink" href="#module-wolframclient.language.exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="wolframclient.language.exceptions.WolframLanguageException">
+<em class="property">exception </em><code class="descclassname">wolframclient.language.exceptions.</code><code class="descname">WolframLanguageException</code><span class="sig-paren">(</span><em>payload</em>, <em>exec_info=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/exceptions.html#WolframLanguageException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.language.exceptions.WolframLanguageException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="wolframclient.serializers.html#wolframclient.serializers.serializable.WLSerializable" title="wolframclient.serializers.serializable.WLSerializable"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.serializers.serializable.WLSerializable</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<p>The most generic exception raised by the wolframclient library.</p>
+<p>This class is <a class="reference internal" href="wolframclient.serializers.html#wolframclient.serializers.serializable.WLSerializable" title="wolframclient.serializers.serializable.WLSerializable"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSerializable</span></code></a>,
+and will automatically serialize to a failure box when evaluated in a Wolfram Desktop.</p>
+<dl class="method">
+<dt id="wolframclient.language.exceptions.WolframLanguageException.failure_code">
+<code class="descname">failure_code</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/exceptions.html#WolframLanguageException.failure_code"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.language.exceptions.WolframLanguageException.failure_code" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.language.exceptions.WolframLanguageException.failure_meta">
+<code class="descname">failure_meta</code><span class="sig-paren">(</span><em>**opts</em><span class="sig-paren">)</span><a class="headerlink" href="#wolframclient.language.exceptions.WolframLanguageException.failure_meta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.language.exceptions.WolframLanguageException.failure_parameters">
+<code class="descname">failure_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/exceptions.html#WolframLanguageException.failure_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.language.exceptions.WolframLanguageException.failure_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.language.exceptions.WolframLanguageException.failure_tag">
+<code class="descname">failure_tag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/exceptions.html#WolframLanguageException.failure_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.language.exceptions.WolframLanguageException.failure_tag" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.language.exceptions.WolframLanguageException.failure_template">
+<code class="descname">failure_template</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/exceptions.html#WolframLanguageException.failure_template"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.language.exceptions.WolframLanguageException.failure_template" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.language.exceptions.WolframLanguageException.set_traceback">
+<code class="descname">set_traceback</code><span class="sig-paren">(</span><em>exc_type</em>, <em>exc_value</em>, <em>tb</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/exceptions.html#WolframLanguageException.set_traceback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.language.exceptions.WolframLanguageException.set_traceback" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.language.exceptions.WolframLanguageException.show_traceback">
+<code class="descname">show_traceback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/exceptions.html#WolframLanguageException.show_traceback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.language.exceptions.WolframLanguageException.show_traceback" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.language.exceptions.WolframLanguageException.to_wl">
+<code class="descname">to_wl</code><span class="sig-paren">(</span><em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/exceptions.html#WolframLanguageException.to_wl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.language.exceptions.WolframLanguageException.to_wl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a serialization of a given python class as a combinasion of WL serializable objects.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-wolframclient.language.expression">
+<span id="wolframclient-language-expression-module"></span><h2>wolframclient.language.expression module<a class="headerlink" href="#module-wolframclient.language.expression" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="wolframclient.language.expression.WLSymbol">
+<em class="property">class </em><code class="descclassname">wolframclient.language.expression.</code><code class="descname">WLSymbol</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/expression.html#WLSymbol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.language.expression.WLSymbol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.language.expression.WLExpressionMeta</span></code></p>
+<p>Represent a Wolfram Language symbol in Python.</p>
+<dl class="attribute">
+<dt id="wolframclient.language.expression.WLSymbol.name">
+<code class="descname">name</code><a class="headerlink" href="#wolframclient.language.expression.WLSymbol.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="wolframclient.language.expression.WLFunction">
+<em class="property">class </em><code class="descclassname">wolframclient.language.expression.</code><code class="descname">WLFunction</code><span class="sig-paren">(</span><em>head</em>, <em>*args</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/expression.html#WLFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.language.expression.WLFunction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.language.expression.WLExpressionMeta</span></code></p>
+<p>Represent a Wolfram Language function with its head and arguments.</p>
+<dl class="attribute">
+<dt id="wolframclient.language.expression.WLFunction.args">
+<code class="descname">args</code><a class="headerlink" href="#wolframclient.language.expression.WLFunction.args" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="wolframclient.language.expression.WLFunction.head">
+<code class="descname">head</code><a class="headerlink" href="#wolframclient.language.expression.WLFunction.head" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="wolframclient.language.expression.WLSymbolFactory">
+<em class="property">class </em><code class="descclassname">wolframclient.language.expression.</code><code class="descname">WLSymbolFactory</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/expression.html#WLSymbolFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.language.expression.WLSymbolFactory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wolframclient.language.expression.WLSymbol" title="wolframclient.language.expression.WLSymbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.language.expression.WLSymbol</span></code></a></p>
+<p>Provide a convenient way to build objects representing arbitrary Wolfram Language expressions through the use of attributes.</p>
+<p>This class is conveniently instanciated at startup as: <a class="reference internal" href="#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-class docutils literal notranslate"><span class="pre">wl</span></code></a>, <a class="reference internal" href="#wolframclient.language.Global" title="wolframclient.language.Global"><code class="xref py py-class docutils literal notranslate"><span class="pre">Global</span></code></a> 
+and <a class="reference internal" href="#wolframclient.language.System" title="wolframclient.language.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">System</span></code></a>. It should be instanciated only to represent many symbols belonging to the same specific
+context.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">developer</span> <span class="o">=</span> <span class="n">WLSymbolFactory</span><span class="p">(</span><span class="s1">&#39;Developer&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">developer</span><span class="o">.</span><span class="n">PackedArrayQ</span>
+<span class="go">Developer`PackedArrayQ</span>
+</pre></div>
+</div>
+<p>Alternative:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">Developer</span><span class="o">.</span><span class="n">PackedArrayQ</span>
+<span class="go">Developer`PackedArrayQ</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="module-wolframclient.language.side_effects">
+<span id="wolframclient-language-side-effects-module"></span><h2>wolframclient.language.side_effects module<a class="headerlink" href="#module-wolframclient.language.side_effects" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="wolframclient.language.side_effects.wl_print">
+<code class="descclassname">wolframclient.language.side_effects.</code><code class="descname">wl_print</code><span class="sig-paren">(</span><em>*payload</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/side_effects.html#wl_print"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.language.side_effects.wl_print" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wolframclient.language.side_effects.wl_side_effect">
+<code class="descclassname">wolframclient.language.side_effects.</code><code class="descname">wl_side_effect</code><span class="sig-paren">(</span><em>payload</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/side_effects.html#wl_side_effect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.language.side_effects.wl_side_effect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-wolframclient.language.traceback">
+<span id="wolframclient-language-traceback-module"></span><h2>wolframclient.language.traceback module<a class="headerlink" href="#module-wolframclient.language.traceback" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="wolframclient.language.traceback.serialize_traceback">
+<code class="descclassname">wolframclient.language.traceback.</code><code class="descname">serialize_traceback</code><span class="sig-paren">(</span><em>exc_type</em>, <em>exc_value</em>, <em>tb</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/traceback.html#serialize_traceback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.language.traceback.serialize_traceback" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-wolframclient.language">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-wolframclient.language" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt id="wolframclient.language.wl">
+<code class="descclassname">wolframclient.language.</code><code class="descname">wl</code><a class="headerlink" href="#wolframclient.language.wl" title="Permalink to this definition">¶</a></dt>
+<dd><p>A factory of <a class="reference internal" href="#wolframclient.language.expression.WLSymbol" title="wolframclient.language.expression.WLSymbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbol</span></code></a> instances without any particular context.</p>
+<p>This instance of <a class="reference internal" href="#wolframclient.language.expression.WLSymbolFactory" title="wolframclient.language.expression.WLSymbolFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbolFactory</span></code></a> is conveniently used
+by calling its attributes. The following code represents various Wolfram Language expressions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Now</span>
+<span class="n">wl</span><span class="o">.</span><span class="n">Now</span>
+<span class="c1"># Quantity[3, &quot;Hours&quot;]</span>
+<span class="n">wl</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Hours&quot;</span><span class="p">)</span>
+<span class="c1"># Select[PrimeQ, {1,2,3,4}]</span>
+<span class="n">wl</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">PrimeQ</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>It is possible to specify context using the syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wl</span><span class="o">.</span><span class="n">MyContext</span><span class="o">.</span><span class="n">MySubContext</span><span class="o">.</span><span class="n">SymbolName</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="wolframclient.language.System">
+<code class="descclassname">wolframclient.language.</code><code class="descname">System</code><a class="headerlink" href="#wolframclient.language.System" title="Permalink to this definition">¶</a></dt>
+<dd><p>A factory of <a class="reference internal" href="#wolframclient.language.expression.WLSymbol" title="wolframclient.language.expression.WLSymbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbol</span></code></a> instances having <code class="docutils literal notranslate"><span class="pre">System`</span></code> context.</p>
+<p>See <a class="reference internal" href="#wolframclient.language.expression.WLSymbolFactory" title="wolframclient.language.expression.WLSymbolFactory"><code class="xref py py-func docutils literal notranslate"><span class="pre">WLSymbolFactory()</span></code></a> and
+<a class="reference internal" href="#wolframclient.language.expression.WLSymbolFactory" title="wolframclient.language.expression.WLSymbolFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbolFactory</span></code></a> for more details.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="wolframclient.language.Global">
+<code class="descclassname">wolframclient.language.</code><code class="descname">Global</code><a class="headerlink" href="#wolframclient.language.Global" title="Permalink to this definition">¶</a></dt>
+<dd><p>A factory of <a class="reference internal" href="#wolframclient.language.expression.WLSymbol" title="wolframclient.language.expression.WLSymbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbol</span></code></a> instances having <code class="docutils literal notranslate"><span class="pre">Global`</span></code> context.</p>
+<p>See <a class="reference internal" href="#wolframclient.language.expression.WLSymbolFactory" title="wolframclient.language.expression.WLSymbolFactory"><code class="xref py py-func docutils literal notranslate"><span class="pre">WLSymbolFactory()</span></code></a> and
+<a class="reference internal" href="#wolframclient.language.expression.WLSymbolFactory" title="wolframclient.language.expression.WLSymbolFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbolFactory</span></code></a> for more details.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="wolframclient.language.wlexpr">
+<code class="descclassname">wolframclient.language.</code><code class="descname">wlexpr</code><a class="headerlink" href="#wolframclient.language.wlexpr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide a convenient way to build objects representing arbitrary Wolfram Language expressions through the use of attributes.</p>
+<p>This class is conveniently instanciated at startup as: <a class="reference internal" href="#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-class docutils literal notranslate"><span class="pre">wl</span></code></a>, <a class="reference internal" href="#wolframclient.language.Global" title="wolframclient.language.Global"><code class="xref py py-class docutils literal notranslate"><span class="pre">Global</span></code></a> 
+and <a class="reference internal" href="#wolframclient.language.System" title="wolframclient.language.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">System</span></code></a>. It should be instanciated only to represent many symbols belonging to the same specific
+context.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">developer</span> <span class="o">=</span> <span class="n">WLSymbolFactory</span><span class="p">(</span><span class="s1">&#39;Developer&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">developer</span><span class="o">.</span><span class="n">PackedArrayQ</span>
+<span class="go">Developer`PackedArrayQ</span>
+</pre></div>
+</div>
+<p>Alternative:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">Developer</span><span class="o">.</span><span class="n">PackedArrayQ</span>
+<span class="go">Developer`PackedArrayQ</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+    <a href="../index.html">
+        <img class="logo" src="../_static/python-client-library-logo.png" title="https://www.wolfram.com/" />
+    </a>
+
+
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">wolframclient.language package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-wolframclient.language.decorators">wolframclient.language.decorators module</a></li>
+<li><a class="reference internal" href="#module-wolframclient.language.exceptions">wolframclient.language.exceptions module</a></li>
+<li><a class="reference internal" href="#module-wolframclient.language.expression">wolframclient.language.expression module</a></li>
+<li><a class="reference internal" href="#module-wolframclient.language.side_effects">wolframclient.language.side_effects module</a></li>
+<li><a class="reference internal" href="#module-wolframclient.language.traceback">wolframclient.language.traceback module</a></li>
+<li><a class="reference internal" href="#module-wolframclient.language">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/wolframclient.language.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Wolfram Research.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

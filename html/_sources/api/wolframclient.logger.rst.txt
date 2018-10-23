@@ -1,0 +1,22 @@
+wolframclient.logger package
+============================
+
+Submodules
+----------
+
+wolframclient.logger.utils module
+---------------------------------
+
+.. automodule:: wolframclient.logger.utils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: wolframclient.logger
+    :members:
+    :undoc-members:
+    :show-inheritance:

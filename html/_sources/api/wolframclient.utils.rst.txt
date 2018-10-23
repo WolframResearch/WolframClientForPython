@@ -1,0 +1,110 @@
+wolframclient.utils package
+===========================
+
+Submodules
+----------
+
+wolframclient.utils.api module
+------------------------------
+
+.. automodule:: wolframclient.utils.api
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.utils.datastructures module
+-----------------------------------------
+
+.. automodule:: wolframclient.utils.datastructures
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.utils.debug module
+--------------------------------
+
+.. automodule:: wolframclient.utils.debug
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.utils.decorators module
+-------------------------------------
+
+.. automodule:: wolframclient.utils.decorators
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.utils.dispatch module
+-----------------------------------
+
+.. automodule:: wolframclient.utils.dispatch
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.utils.encoding module
+-----------------------------------
+
+.. automodule:: wolframclient.utils.encoding
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.utils.functional module
+-------------------------------------
+
+.. automodule:: wolframclient.utils.functional
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.utils.importutils module
+--------------------------------------
+
+.. automodule:: wolframclient.utils.importutils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.utils.json module
+-------------------------------
+
+.. automodule:: wolframclient.utils.json
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.utils.require module
+----------------------------------
+
+.. automodule:: wolframclient.utils.require
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.utils.six module
+------------------------------
+
+.. automodule:: wolframclient.utils.six
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.utils.tests module
+--------------------------------
+
+.. automodule:: wolframclient.utils.tests
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: wolframclient.utils
+    :members:
+    :undoc-members:
+    :show-inheritance:

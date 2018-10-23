@@ -1,0 +1,38 @@
+wolframclient.cli.commands package
+==================================
+
+Submodules
+----------
+
+wolframclient.cli.commands.benchmark module
+-------------------------------------------
+
+.. automodule:: wolframclient.cli.commands.benchmark
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.cli.commands.refactor module
+------------------------------------------
+
+.. automodule:: wolframclient.cli.commands.refactor
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.cli.commands.test module
+--------------------------------------
+
+.. automodule:: wolframclient.cli.commands.test
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: wolframclient.cli.commands
+    :members:
+    :undoc-members:
+    :show-inheritance:

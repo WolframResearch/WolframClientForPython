@@ -1,0 +1,62 @@
+wolframclient.serializers package
+=================================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    wolframclient.serializers.normalizer
+    wolframclient.serializers.wxfencoder
+
+Submodules
+----------
+
+wolframclient.serializers.base module
+-------------------------------------
+
+.. automodule:: wolframclient.serializers.base
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.serializable module
+---------------------------------------------
+
+.. automodule:: wolframclient.serializers.serializable
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.utils module
+--------------------------------------
+
+.. automodule:: wolframclient.serializers.utils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.wl module
+-----------------------------------
+
+.. automodule:: wolframclient.serializers.wl
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.wxf module
+------------------------------------
+
+.. automodule:: wolframclient.serializers.wxf
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: wolframclient.serializers
+    :members:
+    :undoc-members:
+    :show-inheritance:

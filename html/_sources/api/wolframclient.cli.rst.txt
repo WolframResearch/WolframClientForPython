@@ -1,0 +1,37 @@
+wolframclient.cli package
+=========================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    wolframclient.cli.commands
+
+Submodules
+----------
+
+wolframclient.cli.dispatch module
+---------------------------------
+
+.. automodule:: wolframclient.cli.dispatch
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.cli.utils module
+------------------------------
+
+.. automodule:: wolframclient.cli.utils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: wolframclient.cli
+    :members:
+    :undoc-members:
+    :show-inheritance:

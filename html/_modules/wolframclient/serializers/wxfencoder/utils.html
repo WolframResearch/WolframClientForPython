@@ -1,0 +1,192 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>wolframclient.serializers.wxfencoder.utils &#8212; Wolfram Client Library for Python 1.0 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css">
+ 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../serializers.html" accesskey="U">wolframclient.serializers</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for wolframclient.serializers.wxfencoder.utils</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+
+<span class="kn">from</span> <span class="nn">wolframclient.serializers.wxfencoder.constants</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">VALID_PACKED_ARRAY_TYPES</span><span class="p">,</span> <span class="n">WXF_CONSTANTS</span><span class="p">,</span> <span class="n">StructDouble</span><span class="p">,</span> <span class="n">StructInt8LE</span><span class="p">,</span>
+    <span class="n">StructInt16LE</span><span class="p">,</span> <span class="n">StructInt32LE</span><span class="p">,</span> <span class="n">StructInt64LE</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils</span> <span class="k">import</span> <span class="n">six</span>
+
+<span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">JYTHON</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">jarray</span>
+
+
+<div class="viewcode-block" id="write_varint"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.utils.write_varint">[docs]</a><span class="k">def</span> <span class="nf">write_varint</span><span class="p">(</span><span class="n">int_value</span><span class="p">,</span> <span class="n">stream</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Serialize `int_value` into varint bytes and write them to</span>
+<span class="sd">    `stream`, return the stream.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">varint_bytes</span><span class="p">(</span><span class="n">int_value</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="varint_bytes"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.utils.varint_bytes">[docs]</a><span class="k">def</span> <span class="nf">varint_bytes</span><span class="p">(</span><span class="n">int_value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Serialize `int_value` into varint bytes and return them as a byetarray.&quot;&quot;&quot;</span>
+    <span class="n">buf</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">int_value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Negative values cannot be encoded as varint.&#39;</span><span class="p">)</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="nb">next</span> <span class="o">=</span> <span class="n">int_value</span> <span class="o">&amp;</span> <span class="mh">0x7f</span>
+        <span class="n">int_value</span> <span class="o">&gt;&gt;=</span> <span class="mi">7</span>
+        <span class="k">if</span> <span class="n">int_value</span><span class="p">:</span>
+            <span class="n">buf</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="nb">next</span> <span class="o">|</span> <span class="mh">0x80</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">buf</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="nb">next</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">break</span>
+
+    <span class="k">return</span> <span class="n">buf</span><span class="p">[:</span><span class="n">count</span><span class="p">]</span></div>
+
+
+<span class="n">_exceptions</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">Integer8</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="o">-</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">7</span><span class="p">):</span> <span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">Integer8</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="o">-</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">15</span><span class="p">):</span> <span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">Integer16</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="o">-</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">31</span><span class="p">):</span> <span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">Integer32</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+    <span class="o">-</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">63</span><span class="p">):</span> <span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">Integer64</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+<span class="p">}</span>
+<span class="n">_size</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">j</span><span class="p">,</span> <span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="p">[</span><span class="s1">&#39;Integer</span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">ih</span><span class="p">],</span> <span class="n">ih</span> <span class="o">//</span> <span class="mi">8</span><span class="p">))</span>
+             <span class="k">for</span> <span class="n">il</span><span class="p">,</span> <span class="n">ih</span> <span class="ow">in</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span> <span class="p">(</span><span class="mi">17</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span> <span class="p">(</span><span class="mi">33</span><span class="p">,</span> <span class="mi">64</span><span class="p">))</span>
+             <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">il</span><span class="p">,</span> <span class="n">ih</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="integer_size"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.utils.integer_size">[docs]</a><span class="k">def</span> <span class="nf">integer_size</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_exceptions</span><span class="p">[</span><span class="n">value</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_size</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Value </span><span class="si">%i</span><span class="s1"> is not a machine-sized integer.&#39;</span> <span class="o">%</span> <span class="n">value</span><span class="p">)</span></div>
+
+
+<span class="n">_packing</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="n">StructInt8LE</span><span class="p">,</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="n">StructInt16LE</span><span class="p">,</span>
+    <span class="mi">4</span><span class="p">:</span> <span class="n">StructInt32LE</span><span class="p">,</span>
+    <span class="mi">8</span><span class="p">:</span> <span class="n">StructInt64LE</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">JYTHON</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">integer_to_bytes</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">int_size</span><span class="p">):</span>
+        <span class="n">buffer</span> <span class="o">=</span> <span class="n">jarray</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">)</span>
+        <span class="n">_packing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">int_size</span><span class="p">)</span><span class="o">.</span><span class="n">pack_into</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">buffer</span><span class="p">[:</span><span class="n">int_size</span><span class="p">]</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
+
+<span class="k">elif</span> <span class="n">six</span><span class="o">.</span><span class="n">PY2</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">integer_to_bytes</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">int_size</span><span class="p">):</span>
+        <span class="n">buffer</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+        <span class="n">_packing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">int_size</span><span class="p">)</span><span class="o">.</span><span class="n">pack_into</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">buffer</span><span class="p">[:</span><span class="n">int_size</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+
+<div class="viewcode-block" id="integer_to_bytes"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.utils.integer_to_bytes">[docs]</a>    <span class="k">def</span> <span class="nf">integer_to_bytes</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">int_size</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="n">int_size</span><span class="p">,</span> <span class="n">byteorder</span><span class="o">=</span><span class="s1">&#39;little&#39;</span><span class="p">,</span> <span class="n">signed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">JYTHON</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">float_to_bytes</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="n">buffer</span> <span class="o">=</span> <span class="n">jarray</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">)</span>
+        <span class="n">StructDouble</span><span class="o">.</span><span class="n">pack_into</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">buffer</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
+<span class="k">else</span><span class="p">:</span>
+
+<div class="viewcode-block" id="float_to_bytes"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.utils.float_to_bytes">[docs]</a>    <span class="k">def</span> <span class="nf">float_to_bytes</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="n">buffer</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+        <span class="n">StructDouble</span><span class="o">.</span><span class="n">pack_into</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">buffer</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+    <a href="../../../../index.html">
+        <img class="logo" src="../../../../_static/python-client-library-logo.png" title="https://www.wolfram.com/" />
+    </a>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../serializers.html" >wolframclient.serializers</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Wolfram Research.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

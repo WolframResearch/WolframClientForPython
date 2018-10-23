@@ -1,0 +1,537 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>wolframclient.serializers.wxfencoder package &#8212; Wolfram Client Library for Python 1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css">
+ 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="wolframclient-serializers-wxfencoder-package">
+<h1>wolframclient.serializers.wxfencoder package<a class="headerlink" href="#wolframclient-serializers-wxfencoder-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-wolframclient.serializers.wxfencoder.constants">
+<span id="wolframclient-serializers-wxfencoder-constants-module"></span><h2>wolframclient.serializers.wxfencoder.constants module<a class="headerlink" href="#module-wolframclient.serializers.wxfencoder.constants" title="Permalink to this headline">¶</a></h2>
+<dl class="data">
+<dt id="wolframclient.serializers.wxfencoder.constants.ARRAY_TYPES_ELEM_SIZE">
+<code class="descclassname">wolframclient.serializers.wxfencoder.constants.</code><code class="descname">ARRAY_TYPES_ELEM_SIZE</code><em class="property"> = {b'\x00': 1, b'\x01': 2, b'\x02': 4, b'\x03': 8, b'\x10': 1, b'\x11': 2, b'\x12': 4, b'\x13': 8, b'&quot;': 4, b'#': 8, b'3': 8, b'4': 16}</em><a class="headerlink" href="#wolframclient.serializers.wxfencoder.constants.ARRAY_TYPES_ELEM_SIZE" title="Permalink to this definition">¶</a></dt>
+<dd><p>A set of all valid value type tokens for PackedArray.
+There is no restriction for RawArray value types.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-wolframclient.serializers.wxfencoder.serializer">
+<span id="wolframclient-serializers-wxfencoder-serializer-module"></span><h2>wolframclient.serializers.wxfencoder.serializer module<a class="headerlink" href="#module-wolframclient.serializers.wxfencoder.serializer" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="wolframclient.serializers.wxfencoder.serializer.WXFExprSerializer">
+<em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.serializer.</code><code class="descname">WXFExprSerializer</code><span class="sig-paren">(</span><em>stream</em>, <em>expr_provider=None</em>, <em>compress=False</em>, <em>enforce=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/serializer.html#WXFExprSerializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.serializer.WXFExprSerializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Main serialization class that convert internal object into bytes.</p>
+<p>Pulls instances of <code class="xref py py-class docutils literal notranslate"><span class="pre">WXFExpr</span></code> from an
+<a class="reference internal" href="#wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider" title="wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFExprProvider</span></code></a>, serializes
+them into wxf bytes and write the data to a stream.</p>
+<p>This class also ensures the output data is a valid WXF encoded expression, and raises an exception otherwise.</p>
+<p>For an in-depth description of the format see <cite>tutorial/WXFFormatDescription</cite> from Wolfram product documentation
+or visit <a class="reference external" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html">http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html</a>.</p>
+<dl class="attribute">
+<dt id="wolframclient.serializers.wxfencoder.serializer.WXFExprSerializer.context">
+<code class="descname">context</code><a class="headerlink" href="#wolframclient.serializers.wxfencoder.serializer.WXFExprSerializer.context" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.serializers.wxfencoder.serializer.WXFExprSerializer.provide_wxfexpr">
+<code class="descname">provide_wxfexpr</code><span class="sig-paren">(</span><em>pyExpr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/serializer.html#WXFExprSerializer.provide_wxfexpr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.serializer.WXFExprSerializer.provide_wxfexpr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.serializers.wxfencoder.serializer.WXFExprSerializer.serialize">
+<code class="descname">serialize</code><span class="sig-paren">(</span><em>pyExpr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/serializer.html#WXFExprSerializer.serialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.serializer.WXFExprSerializer.serialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize the python expression given as parameter.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="wolframclient.serializers.wxfencoder.serializer.SerializationContext">
+<em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.serializer.</code><code class="descname">SerializationContext</code><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/serializer.html#SerializationContext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.serializer.SerializationContext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.serializers.wxfencoder.serializer._Context</span></code></p>
+<p>Keeps track of various parameter associated to an expression being serialized.
+The finalized expression has a tree structure; it is serialized depth first. During
+the serialization process of an expression involving many non-atomic elements (e.g List),
+we end up having incomplete parts at various level.</p>
+<p>For each level of the expression tree we have to remember the expected length, the number
+of elements already inserted, and whether or not the node is an association. The first two
+parameters prevent inconsistencies in the number of elements and the declared length, the
+last one avoid incorrect use of <cite>WXFExprRule(Delayed)</cite> tokens.</p>
+<dl class="method">
+<dt id="wolframclient.serializers.wxfencoder.serializer.SerializationContext.add_part">
+<code class="descname">add_part</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/serializer.html#SerializationContext.add_part"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.serializer.SerializationContext.add_part" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.serializers.wxfencoder.serializer.SerializationContext.is_rule_valid">
+<code class="descname">is_rule_valid</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/serializer.html#SerializationContext.is_rule_valid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.serializer.SerializationContext.is_rule_valid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.serializers.wxfencoder.serializer.SerializationContext.is_valid_final_state">
+<code class="descname">is_valid_final_state</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/serializer.html#SerializationContext.is_valid_final_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.serializer.SerializationContext.is_valid_final_state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.serializers.wxfencoder.serializer.SerializationContext.step_into_new_assoc">
+<code class="descname">step_into_new_assoc</code><span class="sig-paren">(</span><em>length</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/serializer.html#SerializationContext.step_into_new_assoc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.serializer.SerializationContext.step_into_new_assoc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.serializers.wxfencoder.serializer.SerializationContext.step_into_new_expr">
+<code class="descname">step_into_new_expr</code><span class="sig-paren">(</span><em>length</em>, <em>is_assoc=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/serializer.html#SerializationContext.step_into_new_expr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.serializer.SerializationContext.step_into_new_expr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicate the beginning of a new expr of a given length.</p>
+<p>Note that the length is the number of WXF elements which includes the head for functions.
+Association and rules don’t have head in WXF so their length value matches the one of the
+expression in the Wolfram Language.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.serializers.wxfencoder.serializer.SerializationContext.step_into_new_function">
+<code class="descname">step_into_new_function</code><span class="sig-paren">(</span><em>length</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/serializer.html#SerializationContext.step_into_new_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.serializer.SerializationContext.step_into_new_function" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.serializers.wxfencoder.serializer.SerializationContext.step_into_new_rule">
+<code class="descname">step_into_new_rule</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/serializer.html#SerializationContext.step_into_new_rule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.serializer.SerializationContext.step_into_new_rule" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="wolframclient.serializers.wxfencoder.serializer.WXFSerializerException">
+<em class="property">exception </em><code class="descclassname">wolframclient.serializers.wxfencoder.serializer.</code><code class="descname">WXFSerializerException</code><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/serializer.html#WXFSerializerException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.serializer.WXFSerializerException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-wolframclient.serializers.wxfencoder.streaming">
+<span id="wolframclient-serializers-wxfencoder-streaming-module"></span><h2>wolframclient.serializers.wxfencoder.streaming module<a class="headerlink" href="#module-wolframclient.serializers.wxfencoder.streaming" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="wolframclient.serializers.wxfencoder.streaming.ExactSizeReader">
+<em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.streaming.</code><code class="descname">ExactSizeReader</code><span class="sig-paren">(</span><em>reader</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/streaming.html#ExactSizeReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.streaming.ExactSizeReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Read exactly the amount of bytes requested and fails otherwise.</p>
+<dl class="method">
+<dt id="wolframclient.serializers.wxfencoder.streaming.ExactSizeReader.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>size=-1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/streaming.html#ExactSizeReader.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.streaming.ExactSizeReader.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read from an underlying readable object.</p>
+<p>If size is negative the data is read until EOF.
+If it is 0 then b’’ is returned.
+Otherwise the exact amount of bytes is read from the source. More than
+one call may be necessary.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="wolframclient.serializers.wxfencoder.streaming.ZipCompressedReader">
+<em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.streaming.</code><code class="descname">ZipCompressedReader</code><span class="sig-paren">(</span><em>reader</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/streaming.html#ZipCompressedReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.streaming.ZipCompressedReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A buffer implementation reading zip compressed data from a source buffer and returning uncompressed data.</p>
+<p>This class is instanciated from a reader, any object implementing a <a class="reference external" href="https://docs.python.org/3/library/io.html#io.BufferedIOBase.read" title="(in Python v3.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">read()</span></code></a> method.</p>
+<dl class="attribute">
+<dt id="wolframclient.serializers.wxfencoder.streaming.ZipCompressedReader.CHUNK_SIZE">
+<code class="descname">CHUNK_SIZE</code><em class="property"> = 8192</em><a class="headerlink" href="#wolframclient.serializers.wxfencoder.streaming.ZipCompressedReader.CHUNK_SIZE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.serializers.wxfencoder.streaming.ZipCompressedReader.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>size=-1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/streaming.html#ZipCompressedReader.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.streaming.ZipCompressedReader.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read from a compressed stream of bytes and return the inflated byte sequence.</p>
+<p>Parameter <cite>size</cite> specifies the amount of bytes to return at most. If <cite>size</cite> is set to -1
+then the reader is read until EOF is reached.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="wolframclient.serializers.wxfencoder.streaming.ZipCompressedWriter">
+<em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.streaming.</code><code class="descname">ZipCompressedWriter</code><span class="sig-paren">(</span><em>writer</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/streaming.html#ZipCompressedWriter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.streaming.ZipCompressedWriter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="method">
+<dt id="wolframclient.serializers.wxfencoder.streaming.ZipCompressedWriter.flush">
+<code class="descname">flush</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/streaming.html#ZipCompressedWriter.flush"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.streaming.ZipCompressedWriter.flush" title="Permalink to this definition">¶</a></dt>
+<dd><p>Must be called when closing or destroying the object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.serializers.wxfencoder.streaming.ZipCompressedWriter.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/streaming.html#ZipCompressedWriter.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.streaming.ZipCompressedWriter.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the compression of <cite>data</cite> to the underlying buffer writer.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-wolframclient.serializers.wxfencoder.utils">
+<span id="wolframclient-serializers-wxfencoder-utils-module"></span><h2>wolframclient.serializers.wxfencoder.utils module<a class="headerlink" href="#module-wolframclient.serializers.wxfencoder.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="wolframclient.serializers.wxfencoder.utils.float_to_bytes">
+<code class="descclassname">wolframclient.serializers.wxfencoder.utils.</code><code class="descname">float_to_bytes</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/utils.html#float_to_bytes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.utils.float_to_bytes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wolframclient.serializers.wxfencoder.utils.integer_size">
+<code class="descclassname">wolframclient.serializers.wxfencoder.utils.</code><code class="descname">integer_size</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/utils.html#integer_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.utils.integer_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wolframclient.serializers.wxfencoder.utils.integer_to_bytes">
+<code class="descclassname">wolframclient.serializers.wxfencoder.utils.</code><code class="descname">integer_to_bytes</code><span class="sig-paren">(</span><em>value</em>, <em>int_size</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/utils.html#integer_to_bytes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.utils.integer_to_bytes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wolframclient.serializers.wxfencoder.utils.varint_bytes">
+<code class="descclassname">wolframclient.serializers.wxfencoder.utils.</code><code class="descname">varint_bytes</code><span class="sig-paren">(</span><em>int_value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/utils.html#varint_bytes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.utils.varint_bytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize <cite>int_value</cite> into varint bytes and return them as a byetarray.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wolframclient.serializers.wxfencoder.utils.write_varint">
+<code class="descclassname">wolframclient.serializers.wxfencoder.utils.</code><code class="descname">write_varint</code><span class="sig-paren">(</span><em>int_value</em>, <em>stream</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/utils.html#write_varint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.utils.write_varint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize <cite>int_value</cite> into varint bytes and write them to
+<cite>stream</cite>, return the stream.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-wolframclient.serializers.wxfencoder.wxfencoder">
+<span id="wolframclient-serializers-wxfencoder-wxfencoder-module"></span><h2>wolframclient.serializers.wxfencoder.wxfencoder module<a class="headerlink" href="#module-wolframclient.serializers.wxfencoder.wxfencoder" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="wolframclient.serializers.wxfencoder.wxfencoder.DefaultWXFEncoder">
+<em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.wxfencoder.</code><code class="descname">DefaultWXFEncoder</code><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/wxfencoder.html#DefaultWXFEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfencoder.DefaultWXFEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder" title="wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder</span></code></a></p>
+<p>The most straight forward serialization of python expressions to their Wolfram Language counterpart.</p>
+<p>This class is meant to represent basically JSON like objects, and is intended to be used in all providers.
+As such it should only deal with obvious convertion.</p>
+<p>e.g: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> to Wolfram Language <code class="docutils literal notranslate"><span class="pre">Integer</span></code>, but iterators are not supported but user defined implementation
+can be added easily.</p>
+<dl class="method">
+<dt id="wolframclient.serializers.wxfencoder.wxfencoder.DefaultWXFEncoder.encode">
+<code class="descname">encode</code><span class="sig-paren">(</span><em>pythonExpr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/wxfencoder.html#DefaultWXFEncoder.encode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfencoder.DefaultWXFEncoder.encode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encode most common Python types to their Wolfram Language counterpart.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="wolframclient.serializers.wxfencoder.wxfencoder.NotEncodedException">
+<em class="property">exception </em><code class="descclassname">wolframclient.serializers.wxfencoder.wxfencoder.</code><code class="descname">NotEncodedException</code><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/wxfencoder.html#NotEncodedException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfencoder.NotEncodedException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<p>Exception used during encoding to signal that a given python object has been ignored by a <code class="xref py py-class docutils literal notranslate"><span class="pre">WXFEncoder</span></code>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder">
+<em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.wxfencoder.</code><code class="descname">WXFEncoder</code><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/wxfencoder.html#WXFEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Encode a given python object into a stream of <code class="xref py py-class docutils literal notranslate"><span class="pre">WXFExpr</span></code>.</p>
+<p>This class is meant to be subclassed in order to add support for new classes. The encoder does not have to do anything
+since more than one can be attached to a given <a class="reference internal" href="#wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider" title="wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFExprProvider</span></code></a>.
+The library provides a default encoder that should cover basic needs, more or less json types, and that should be useful in any case.</p>
+<p>To implement a new encoder one needs to sub-class <a class="reference internal" href="#wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder" title="wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFEncoder</span></code></a>
+and implements method <a class="reference internal" href="#wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder.encode" title="wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder.encode"><code class="xref py py-func docutils literal notranslate"><span class="pre">encode()</span></code></a>. Encode is a generator function
+that takes a given python object and instances of <code class="xref py py-class docutils literal notranslate"><span class="pre">WXFExpr</span></code>. If it returns before
+yielding anything a <a class="reference internal" href="#wolframclient.serializers.wxfencoder.wxfencoder.NotEncodedException" title="wolframclient.serializers.wxfencoder.wxfencoder.NotEncodedException"><code class="xref py py-class docutils literal notranslate"><span class="pre">NotEncodedException</span></code></a> is raised to signal that
+the encoder is not supporting the given object, and that the encoding must be delegating to the next encoder (if any).</p>
+<p>Sometimes it is useful to start a new serialization using the provider, re-entrant call, especially when dealing with non-atomic
+<code class="xref py py-class docutils literal notranslate"><span class="pre">WXFExpr</span></code>, such as <code class="docutils literal notranslate"><span class="pre">Function</span></code> or <code class="docutils literal notranslate"><span class="pre">Association</span></code>.
+To do so one must call <code class="docutils literal notranslate"><span class="pre">self.serialize</span></code> on the target object and yield the results (yield from in PY3).</p>
+<dl class="attribute">
+<dt id="wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder.NOT_PROVIDED">
+<code class="descname">NOT_PROVIDED</code><em class="property"> = &lt;object object&gt;</em><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder.NOT_PROVIDED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder.encode">
+<code class="descname">encode</code><span class="sig-paren">(</span><em>o</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/wxfencoder.html#WXFEncoder.encode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder.encode" title="Permalink to this definition">¶</a></dt>
+<dd><p>The method to implement in sub-classes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder.serialize">
+<code class="descname">serialize</code><span class="sig-paren">(</span><em>o</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/wxfencoder.html#WXFEncoder.serialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder.serialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-entrant method used to serialize part of a python object.</p>
+<p>Example: when serializing a custom class <code class="docutils literal notranslate"><span class="pre">foo[{'k1'-&gt;1,'k2'-&gt;2}]</span></code>, the user
+defined encoder for class foo could encode it as a function with head ‘foo’ and a dict.
+The generator would be something similar to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">yield</span> <span class="n">WXFFunction</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="k">yield</span> <span class="n">WXFSymbol</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+<span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize</span><span class="p">({</span><span class="s1">&#39;k1&#39;</span><span class="o">-&gt;</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;k2&#39;</span><span class="o">-&gt;</span><span class="mi">2</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>Using a re-entrant call (line 3) allows the dictionnary to be encoded as a new expr;
+assuming <code class="xref py py-class docutils literal notranslate"><span class="pre">WXFDefaultEncoder</span></code>
+is also registered as a provider, the dict will get encoded as an association.</p>
+<p>It also enables transformation mechanism, say apply list to all iterable object and
+pass the result to the provider.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-wolframclient.serializers.wxfencoder.wxfexpr">
+<span id="wolframclient-serializers-wxfencoder-wxfexpr-module"></span><h2>wolframclient.serializers.wxfencoder.wxfexpr module<a class="headerlink" href="#module-wolframclient.serializers.wxfencoder.wxfexpr" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="wolframclient.serializers.wxfencoder.wxfexpr.WXFExprFunction">
+<em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.wxfexpr.</code><code class="descname">WXFExprFunction</code><span class="sig-paren">(</span><em>length</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/wxfexpr.html#WXFExprFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfexpr.WXFExprFunction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr</span></code></p>
+<p>Functions have a length representing the number of parts (including zero).
+Each function has a head which is itself a expr, usually a <cite>WXFExprSymbol</cite> which
+is not accounted in the length.</p>
+<dl class="attribute">
+<dt id="wolframclient.serializers.wxfencoder.wxfexpr.WXFExprFunction.length">
+<code class="descname">length</code><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfexpr.WXFExprFunction.length" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="wolframclient.serializers.wxfencoder.wxfexpr.WXFExprInteger">
+<em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.wxfexpr.</code><code class="descname">WXFExprInteger</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/wxfexpr.html#WXFExprInteger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfexpr.WXFExprInteger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr</span></code></p>
+<p>Integers have various length, from one byte up to eigth and are signed
+values. Values above 2^63-1 are represented with <cite>WXFExprBigInteger</cite>.
+Internally WXF uses the two’s complement representation of integer values.
+The endianness is system independant and is always little-endian.</p>
+<dl class="attribute">
+<dt id="wolframclient.serializers.wxfencoder.wxfexpr.WXFExprInteger.int_size">
+<code class="descname">int_size</code><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfexpr.WXFExprInteger.int_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.serializers.wxfencoder.wxfexpr.WXFExprInteger.to_bytes">
+<code class="descname">to_bytes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/wxfexpr.html#WXFExprInteger.to_bytes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfexpr.WXFExprInteger.to_bytes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="wolframclient.serializers.wxfencoder.wxfexpr.WXFExprInteger.value">
+<code class="descname">value</code><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfexpr.WXFExprInteger.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="wolframclient.serializers.wxfencoder.wxfexpr.WXFExprString">
+<em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.wxfexpr.</code><code class="descname">WXFExprString</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/wxfexpr.html#WXFExprString"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfexpr.WXFExprString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.serializers.wxfencoder.wxfexpr._WXFExprStringLike</span></code></p>
+<p>A string of unicode character. The string is always utf8 encoded.</p>
+<p>Notabene: Python 3 does not allow utf8 encoding of the surrogate range
+from <cite>0xD800</cite> to <cite>0xDFFF</cite>. Python 2 and the Wolfram Language on the other
+hand handle those characters as any other unicode code points.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="wolframclient.serializers.wxfencoder.wxfexpr.WXFExprSymbol">
+<em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.wxfexpr.</code><code class="descname">WXFExprSymbol</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/wxfexpr.html#WXFExprSymbol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfexpr.WXFExprSymbol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.serializers.wxfencoder.wxfexpr._WXFExprStringLike</span></code></p>
+<p>A symbol represented by a string name. The name is always utf8 encoded.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="wolframclient.serializers.wxfencoder.wxfexpr.WXFExprBinaryString">
+<em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.wxfexpr.</code><code class="descname">WXFExprBinaryString</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/wxfexpr.html#WXFExprBinaryString"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfexpr.WXFExprBinaryString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr</span></code></p>
+<p>A string of arbitrary bytes. Contrary to <cite>WXFExprString</cite> no encoding is
+required.</p>
+<dl class="attribute">
+<dt id="wolframclient.serializers.wxfencoder.wxfexpr.WXFExprBinaryString.data">
+<code class="descname">data</code><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfexpr.WXFExprBinaryString.data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-wolframclient.serializers.wxfencoder.wxfexprprovider">
+<span id="wolframclient-serializers-wxfencoder-wxfexprprovider-module"></span><h2>wolframclient.serializers.wxfencoder.wxfexprprovider module<a class="headerlink" href="#module-wolframclient.serializers.wxfencoder.wxfexprprovider" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider">
+<em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.wxfexprprovider.</code><code class="descname">WXFExprProvider</code><span class="sig-paren">(</span><em>encoder=None</em>, <em>default=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/wxfexprprovider.html#WXFExprProvider"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Expression provider pull instances of WXFExpr from instances of <cite>WXFEncoder</cite>.</p>
+<p><cite>WXFExprProvider</cite> can be initialized with an encoder. If none is provided the
+default class <cite>DefaultWXFEncoder</cite> is used to instanciate one. It is possible
+to add extra encoder using <cite>add_encoder</cite>. The order in which encoders are called
+is the one in which they were added. Note that for performance reasons, it is
+recommanded to have the default encoder be first, as such one should not initialize
+a provider with an encoder except if the default one is not suited for ones needs.</p>
+<p>An optional <cite>default</cite> function can be passed to the provider at initialization. It
+is used in last resort if no encoder handled the object. It is applied to the
+object and is expected to transform it to something serializable
+e.g: a string using <cite>default=repr</cite>.</p>
+<p>One must carefully design the <cite>default</cite> function to avoid stack overflow.</p>
+<dl class="method">
+<dt id="wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider.add_encoder">
+<code class="descname">add_encoder</code><span class="sig-paren">(</span><em>*encoders</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/wxfexprprovider.html#WXFExprProvider.add_encoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider.add_encoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new encoder to be called last if all others failed to encode an object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider.default">
+<code class="descname">default</code><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider.default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider.encoders">
+<code class="descname">encoders</code><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider.encoders" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider.provide_wxfexpr">
+<code class="descname">provide_wxfexpr</code><span class="sig-paren">(</span><em>o</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/wxfexprprovider.html#WXFExprProvider.provide_wxfexpr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider.provide_wxfexpr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main function, a generator of wxf expr.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-wolframclient.serializers.wxfencoder.wxfnumpyencoder">
+<span id="wolframclient-serializers-wxfencoder-wxfnumpyencoder-module"></span><h2>wolframclient.serializers.wxfencoder.wxfnumpyencoder module<a class="headerlink" href="#module-wolframclient.serializers.wxfencoder.wxfnumpyencoder" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="wolframclient.serializers.wxfencoder.wxfnumpyencoder.NumPyWXFEncoder">
+<em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.wxfnumpyencoder.</code><code class="descname">NumPyWXFEncoder</code><span class="sig-paren">(</span><em>packed_array_support=True</em>, <em>rawarray_support=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/wxfnumpyencoder.html#NumPyWXFEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfnumpyencoder.NumPyWXFEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder" title="wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder</span></code></a></p>
+<p>NumPy array encoder. Encode numpy array as instances of packed array and / or raw array.
+By default only packed arrays are generated. Unsigned integer data are cast to a type that
+can fit the maximum value.</p>
+<p>It’s possible to add support for raw arrays only for unsigned data, in which case both
+<cite>packed_array_support</cite> and <cite>rawarray_support</cite> must be true.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">NumPyWXFEncoder</span><span class="p">(</span><span class="n">packed_array_support</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rawarray_support</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally it’s possible to only output raw arrays with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">NumPyWXFEncoder</span><span class="p">(</span><span class="n">packed_array_support</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rawarray_support</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="wolframclient.serializers.wxfencoder.wxfnumpyencoder.NumPyWXFEncoder.encode">
+<code class="descname">encode</code><span class="sig-paren">(</span><em>python_expr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/wxfnumpyencoder.html#NumPyWXFEncoder.encode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfnumpyencoder.NumPyWXFEncoder.encode" title="Permalink to this definition">¶</a></dt>
+<dd><p>The method to implement in sub-classes.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="wolframclient.serializers.wxfencoder.wxfnumpyencoder.NumPyWXFEncoder.packed_array_support">
+<code class="descname">packed_array_support</code><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfnumpyencoder.NumPyWXFEncoder.packed_array_support" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="wolframclient.serializers.wxfencoder.wxfnumpyencoder.NumPyWXFEncoder.rawarray_support">
+<code class="descname">rawarray_support</code><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfnumpyencoder.NumPyWXFEncoder.rawarray_support" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-wolframclient.serializers.wxfencoder">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-wolframclient.serializers.wxfencoder" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+    <a href="../index.html">
+        <img class="logo" src="../_static/python-client-library-logo.png" title="https://www.wolfram.com/" />
+    </a>
+
+
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">wolframclient.serializers.wxfencoder package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-wolframclient.serializers.wxfencoder.constants">wolframclient.serializers.wxfencoder.constants module</a></li>
+<li><a class="reference internal" href="#module-wolframclient.serializers.wxfencoder.serializer">wolframclient.serializers.wxfencoder.serializer module</a></li>
+<li><a class="reference internal" href="#module-wolframclient.serializers.wxfencoder.streaming">wolframclient.serializers.wxfencoder.streaming module</a></li>
+<li><a class="reference internal" href="#module-wolframclient.serializers.wxfencoder.utils">wolframclient.serializers.wxfencoder.utils module</a></li>
+<li><a class="reference internal" href="#module-wolframclient.serializers.wxfencoder.wxfencoder">wolframclient.serializers.wxfencoder.wxfencoder module</a></li>
+<li><a class="reference internal" href="#module-wolframclient.serializers.wxfencoder.wxfexpr">wolframclient.serializers.wxfencoder.wxfexpr module</a></li>
+<li><a class="reference internal" href="#module-wolframclient.serializers.wxfencoder.wxfexprprovider">wolframclient.serializers.wxfencoder.wxfexprprovider module</a></li>
+<li><a class="reference internal" href="#module-wolframclient.serializers.wxfencoder.wxfnumpyencoder">wolframclient.serializers.wxfencoder.wxfnumpyencoder module</a></li>
+<li><a class="reference internal" href="#module-wolframclient.serializers.wxfencoder">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/wolframclient.serializers.wxfencoder.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Wolfram Research.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

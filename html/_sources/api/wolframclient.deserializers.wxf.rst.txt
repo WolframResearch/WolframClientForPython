@@ -1,0 +1,30 @@
+wolframclient.deserializers.wxf package
+=======================================
+
+Submodules
+----------
+
+wolframclient.deserializers.wxf.wxfconsumer module
+--------------------------------------------------
+
+.. automodule:: wolframclient.deserializers.wxf.wxfconsumer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.deserializers.wxf.wxfparser module
+------------------------------------------------
+
+.. automodule:: wolframclient.deserializers.wxf.wxfparser
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: wolframclient.deserializers.wxf
+    :members:
+    :undoc-members:
+    :show-inheritance:

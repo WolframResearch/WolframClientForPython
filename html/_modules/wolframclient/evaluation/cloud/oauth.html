@@ -1,0 +1,350 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>wolframclient.evaluation.cloud.oauth &#8212; Wolfram Client Library for Python 1.0 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css">
+ 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for wolframclient.evaluation.cloud.oauth</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">wolframclient.exception</span> <span class="k">import</span> <span class="n">AuthenticationException</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils</span> <span class="k">import</span> <span class="n">six</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils.api</span> <span class="k">import</span> <span class="n">oauth</span><span class="p">,</span> <span class="n">requests</span><span class="p">,</span> <span class="n">urllib</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SecuredAuthenticationKey&#39;</span><span class="p">,</span> <span class="s1">&#39;UserIDPassword&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="SecuredAuthenticationKey"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.SecuredAuthenticationKey">[docs]</a><span class="k">class</span> <span class="nc">SecuredAuthenticationKey</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Represents a Secured Authentication Key generated using the Wolfram Language</span>
+<span class="sd">    function `GenerateSecuredAuthenticationKey[]`</span>
+
+<span class="sd">    It is used as an input when authenticating a cloud session.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;consumer_key&#39;</span><span class="p">,</span> <span class="s1">&#39;consumer_secret&#39;</span>
+    <span class="n">is_xauth</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consumer_key</span><span class="p">,</span> <span class="n">consumer_secret</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">consumer_key</span> <span class="o">=</span> <span class="n">consumer_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">consumer_secret</span> <span class="o">=</span> <span class="n">consumer_secret</span></div>
+
+
+<div class="viewcode-block" id="UserIDPassword"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.UserIDPassword">[docs]</a><span class="k">class</span> <span class="nc">UserIDPassword</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Represents user credentials used to login to a cloud.</span>
+
+<span class="sd">    It is used as an input when authenticating a cloud session.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span>
+    <span class="n">is_xauth</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">password</span></div>
+
+
+<span class="k">class</span> <span class="nc">OAuthSession</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; A wrapper around the OAuth client taking care of fetching the various oauth tokens.</span>
+
+<span class="sd">    This class is used by the cloud session. It is not meant to be used out of this scope.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;consumer_key&#39;</span><span class="p">,</span> <span class="s1">&#39;consumer_secret&#39;</span><span class="p">,</span> <span class="s1">&#39;signature_method&#39;</span><span class="p">,</span> <span class="s1">&#39;_oauth_token&#39;</span><span class="p">,</span> <span class="s1">&#39;_oauth_token_secret&#39;</span><span class="p">,</span> <span class="s1">&#39;_base_header&#39;</span><span class="p">,</span> <span class="s1">&#39;_client&#39;</span><span class="p">,</span> <span class="s1">&#39;server&#39;</span><span class="p">,</span> <span class="s1">&#39;_session&#39;</span>
+    <span class="n">DEFAULT_CONTENT_TYPE</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/x-www-form-urlencoded&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;WolframClientForPython/1.0&#39;</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">server</span><span class="p">,</span>
+                 <span class="n">consumer_key</span><span class="p">,</span>
+                 <span class="n">consumer_secret</span><span class="p">,</span>
+                 <span class="n">signature_method</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">consumer_key</span> <span class="o">=</span> <span class="n">consumer_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">consumer_secret</span> <span class="o">=</span> <span class="n">consumer_secret</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signature_method</span> <span class="o">=</span> <span class="n">signature_method</span> <span class="ow">or</span> <span class="n">oauth</span><span class="o">.</span><span class="n">SIGNATURE_HMAC</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token_secret</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="n">server</span>
+
+    <span class="k">def</span> <span class="nf">_check_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">as_json</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">as_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">AuthenticationException</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+        <span class="c1"># msg is None if response is not JSON, but it&#39;s fine.</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AuthenticationException</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="s1">&#39;Request failed with status </span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_update_client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">oauth</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">consumer_key</span><span class="p">,</span>
+            <span class="n">client_secret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">consumer_secret</span><span class="p">,</span>
+            <span class="n">resource_owner_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token</span><span class="p">,</span>
+            <span class="n">resource_owner_secret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token_secret</span><span class="p">,</span>
+            <span class="n">signature_type</span><span class="o">=</span><span class="n">oauth</span><span class="o">.</span><span class="n">SIGNATURE_TYPE_AUTH_HEADER</span><span class="p">,</span>
+            <span class="n">realm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">cloudbase</span><span class="p">,</span>  <span class="c1"># TODO should we have realm?</span>
+            <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;iso-8859-1&#39;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_has_content_type</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">mimetype</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="n">mimetype</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_is_json_content</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">OAuthSession</span><span class="o">.</span><span class="n">_has_content_type</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;application/json&#39;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_is_textplain_content</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">OAuthSession</span><span class="o">.</span><span class="n">_has_content_type</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;text/plain&#39;</span><span class="p">)</span>
+
+    <span class="c1"># TODO Add a session and prepared requests?</span>
+    <span class="k">def</span> <span class="nf">signed_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{},</span> <span class="n">body</span><span class="o">=</span><span class="p">{},</span> <span class="n">files</span><span class="o">=</span><span class="p">{},</span>
+                       <span class="n">method</span><span class="o">=</span><span class="s1">&#39;POST&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AuthenticationException</span><span class="p">(</span><span class="s1">&#39;Not authenticated.&#39;</span><span class="p">)</span>
+
+        <span class="n">req_headers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">headers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">req_headers</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="n">sign_body</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1">#if files is set, it&#39;s a multipart request.</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="c1"># url encode the body</span>
+                <span class="n">encoded_body</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlencode</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+                <span class="n">sign_body</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">if</span> <span class="s1">&#39;Content-Type&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">req_headers</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="s1">&#39;Content type not provided by user. Setting it to &quot;application/x-www-form-urlencoded&quot;.&#39;</span>
+                    <span class="p">)</span>
+                    <span class="n">req_headers</span><span class="p">[</span>
+                        <span class="s1">&#39;Content-Type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;application/x-www-form-urlencoded&#39;</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span>
+                    <span class="n">body</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">binary_type</span><span class="p">):</span>
+                <span class="c1"># application/octet-stream for binary data?</span>
+                <span class="k">if</span> <span class="s1">&#39;Content-Type&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">req_headers</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="s1">&#39;Content type not provided by user. Setting it to &quot;text/plain&quot;.&#39;</span>
+                    <span class="p">)</span>
+                    <span class="n">req_headers</span><span class="p">[</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;text/plain&#39;</span>
+                    <span class="n">sign_body</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">elif</span> <span class="s1">&#39;application/x-www-form-urlencoded&#39;</span> <span class="o">==</span> <span class="n">req_headers</span><span class="p">[</span>
+                        <span class="s1">&#39;Content-Type&#39;</span><span class="p">]:</span>
+                    <span class="n">encoded_body</span> <span class="o">=</span> <span class="n">body</span>
+                    <span class="n">sign_body</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sign_body</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s1">&#39;Invalid body: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Body must be dict or string type.&#39;</span><span class="p">)</span>
+
+        <span class="n">uri</span><span class="p">,</span> <span class="n">req_headers</span><span class="p">,</span> <span class="n">signed_body</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span>
+            <span class="n">uri</span><span class="p">,</span>
+            <span class="n">method</span><span class="p">,</span>
+            <span class="n">body</span><span class="o">=</span><span class="n">encoded_body</span> <span class="k">if</span> <span class="n">sign_body</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="n">req_headers</span><span class="p">,</span>
+            <span class="n">realm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">cloudbase</span>  <span class="c1"># TODO should we have realm?</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Signed uri: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">uri</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Signed header: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">req_headers</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Is body signed: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">sign_body</span><span class="p">)</span>
+
+            <span class="c1"># s = requests.Session()</span>
+            <span class="c1"># req = requests.Request(method, uri,</span>
+            <span class="c1">#                  headers=req_headers,</span>
+            <span class="c1">#                  data=signed_body if sign_body else body,</span>
+            <span class="c1">#                  files=files,</span>
+            <span class="c1">#                  )</span>
+            <span class="c1"># prepared = req.prepare()</span>
+            <span class="c1"># logger.debug(&#39;Prepared request (generated only in debug)\nheaders: %s\nbody: %s&#39;, prepared.headers, prepared.body)</span>
+            <span class="c1"># return s.send(prepared, verify=self.server.verify)</span>
+
+        <span class="k">return</span> <span class="n">requests</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
+            <span class="n">method</span><span class="p">,</span>
+            <span class="n">uri</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="n">req_headers</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">signed_body</span> <span class="k">if</span> <span class="n">sign_body</span> <span class="k">else</span> <span class="n">body</span><span class="p">,</span>
+            <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span>
+            <span class="n">verify</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">verify</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">authorized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">client_secret</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">resource_owner_key</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">resource_owner_secret</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_parse_oauth_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">token</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">token</span><span class="p">[</span><span class="s1">&#39;oauth_token&#39;</span><span class="p">],</span> <span class="n">token</span><span class="p">[</span><span class="s1">&#39;oauth_token_secret&#39;</span><span class="p">]</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">token</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse_qs</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;oauth_token&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="n">token</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;oauth_token_secret&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">xauth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;xauth authentication of user </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">is_xauth</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">AuthenticationException</span><span class="p">(</span>
+                <span class="s1">&#39;XAuth is not configured. Missing consumer key and/or secret.&#39;</span><span class="p">)</span>
+        <span class="c1">#todo use xauth server key/secret</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">oauth</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">consumer_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer_secret</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;x_auth_username&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;x_auth_password&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">password</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;x_auth_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;client_auth&quot;</span>
+
+        <span class="c1"># avoid dumping password in log files.</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+
+        <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">access_token_endpoint</span><span class="p">,</span>
+            <span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="n">OAuthSession</span><span class="o">.</span><span class="n">DEFAULT_CONTENT_TYPE</span><span class="p">,</span>
+            <span class="n">body</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">verify</span><span class="p">)</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">NOTSET</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token_secret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_oauth_response</span><span class="p">(</span>
+            <span class="n">response</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_client</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">set_oauth_request_token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Fetching oauth request token from: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
+                         <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">request_token_endpoint</span><span class="p">)</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+
+        <span class="n">token_client</span> <span class="o">=</span> <span class="n">oauth</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">consumer_key</span><span class="p">,</span> <span class="n">client_secret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">consumer_secret</span><span class="p">)</span>
+        <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">token_client</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">request_token_endpoint</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">verify</span><span class="p">)</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">NOTSET</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token_secret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_oauth_response</span><span class="p">(</span>
+            <span class="n">response</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_oauth_access_token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Fetching oauth access token from </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
+                         <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">access_token_endpoint</span><span class="p">)</span>
+        <span class="n">access_client</span> <span class="o">=</span> <span class="n">oauth</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">consumer_key</span><span class="p">,</span>
+            <span class="n">client_secret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">consumer_secret</span><span class="p">,</span>
+            <span class="n">resource_owner_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token</span><span class="p">,</span>
+            <span class="n">resource_owner_secret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token_secret</span><span class="p">)</span>
+        <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">access_client</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">access_token_endpoint</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">)</span>
+        <span class="n">access_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">verify</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_response</span><span class="p">(</span><span class="n">access_response</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token_secret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_oauth_response</span><span class="p">(</span>
+            <span class="n">access_response</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">auth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_oauth_request_token</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_oauth_access_token</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_client</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+    <a href="../../../../index.html">
+        <img class="logo" src="../../../../_static/python-client-library-logo.png" title="https://www.wolfram.com/" />
+    </a>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Wolfram Research.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

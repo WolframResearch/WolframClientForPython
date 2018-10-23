@@ -1,0 +1,238 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Wolfram Client Library for Python’s Documentation &#8212; Wolfram Client Library for Python 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/wri.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css">
+ 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation of the Library"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="wolfram-client-library-for-python-s-documentation">
+<h1>Wolfram Client Library for Python’s Documentation<a class="headerlink" href="#wolfram-client-library-for-python-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p>The client library provides seamless Wolfram Language integration in Python.
+A list of features provided by the library:</p>
+<ul class="simple">
+<li>evaluate arbitrary code on a local kernel</li>
+<li>evaluate arbitrary code in the Wolfram Cloud, public or private</li>
+<li>call deployed <a class="wl external reference" href="http://reference.wolfram.com/language/ref/APIFunction.html" target="_blank">APIFunction</a></li>
+<li>build Python functions on top of Wolfram Language functions</li>
+<li>represent arbitrary Wolfram Language code as a Python object</li>
+<li>serialize a Python object to a Wolfram Language string <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html" target="_blank">InputForm</a></li>
+<li>serialize a Python object to <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html" target="_blank">WXF</a></li>
+<li>extend serialization to any arbitrary Python class</li>
+<li>parse <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html" target="_blank">WXF</a></li>
+</ul>
+<div class="section" id="table-of-contents">
+<h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation of the Library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#install-with-pip">Install with pip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#install-from-github">Install from GitHub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#install-from-the-wolfram-desktop">Install from the Wolfram Desktop</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction to the Wolfram Client Library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#wolfram-language-expression-representation">Wolfram Language Expression Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#wolfram-language-evaluation">Wolfram Language Evaluation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#local-kernel">Local Kernel</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="intro.html#initialization">Initialization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="intro.html#expression-evaluation">Expression Evaluation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="intro.html#options">Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="intro.html#inputform-string-evaluate">InputForm String Evaluate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="intro.html#persistence">Persistence</a></li>
+<li class="toctree-l4"><a class="reference internal" href="intro.html#create-python-function">Create Python Function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="intro.html#session-management">Session management</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#wolfram-cloud-interactions">Wolfram Cloud Interactions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#authenticate">Authenticate</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="intro.html#generate-a-secured-authentication-key">Generate a Secured Authentication Key</a></li>
+<li class="toctree-l4"><a class="reference internal" href="intro.html#start-authenticated-cloud-session">Start authenticated cloud session</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#cloud-evaluation">Cloud Evaluation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="intro.html#one-shot-evaluation">One-Shot Evaluation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#cloud-functions">Cloud Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#api">API</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="intro.html#deploy-a-wolfram-language-api">Deploy a Wolfram Language API</a></li>
+<li class="toctree-l4"><a class="reference internal" href="intro.html#api-call-from-python">API Call from Python</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#use-wolframapicall">Use WolframAPICall</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#serialization">Serialization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#serialize">Serialize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#deserialize">Deserialize</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_usages.html">Advanced Usage and Code Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usages.html#expression-representation">Expression Representation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="advanced_usages.html#contexts">Contexts</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="advanced_usages.html#system-context"><code class="docutils literal notranslate"><span class="pre">System`</span></code> Context</a></li>
+<li class="toctree-l4"><a class="reference internal" href="advanced_usages.html#global-context"><code class="docutils literal notranslate"><span class="pre">Global`</span></code> Context</a></li>
+<li class="toctree-l4"><a class="reference internal" href="advanced_usages.html#arbitrary-contexts">Arbitrary Contexts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="advanced_usages.html#use-case">Use Case</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usages.html#local-kernel-evaluation">Local Kernel Evaluation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="advanced_usages.html#evaluation-methods">Evaluation Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="advanced_usages.html#synchronous">Synchronous</a></li>
+<li class="toctree-l4"><a class="reference internal" href="advanced_usages.html#asynchronous">Asynchronous</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="advanced_usages.html#logging">Logging</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usages.html#extending-wxf-parsing-writing-a-wxfconsumer">Extending WXF Parsing: Writing a WXFConsumer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="advanced_usages.html#integer-eigenvalues">Integer Eigenvalues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="advanced_usages.html#complex-eigenvalues">Complex Eigenvalues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="advanced_usages.html#symbolic-eigenvalues">Symbolic Eigenvalues</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="advanced_usages.html#a-python-heavy-approach">A Python-Heavy Approach</a></li>
+<li class="toctree-l4"><a class="reference internal" href="advanced_usages.html#a-wolfram-language-alternative">A Wolfram Language Alternative</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="public_api.html">API: Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="public_api.html#wolfram-language-expression-representation">Wolfram Language Expression Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="public_api.html#serialization">Serialization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="public_api.html#formats">Formats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="public_api.html#supported-types">Supported Types</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="public_api.html#built-in-data-types">Built-in Data Types</a></li>
+<li class="toctree-l4"><a class="reference internal" href="public_api.html#numeric-types">Numeric Types</a></li>
+<li class="toctree-l4"><a class="reference internal" href="public_api.html#dateobject-serialization">DateObject Serialization</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="public_api.html#extensible-mechanism">Extensible mechanism</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="public_api.html#serializable-classes">Serializable classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="public_api.html#normalizer">Normalizer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="public_api.html#deserialization">Deserialization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="public_api.html#extensible-deserialization">Extensible mechanism</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="public_api.html#kernel-evaluation">Kernel evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="public_api.html#api-call">API call</a></li>
+<li class="toctree-l2"><a class="reference internal" href="public_api.html#exceptions">Exceptions</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+    <a href="#">
+        <img class="logo" src="_static/python-client-library-logo.png" title="https://www.wolfram.com/" />
+    </a>
+
+
+  <h3><a href="#">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Wolfram Client Library for Python’s Documentation</a><ul>
+<li><a class="reference internal" href="#table-of-contents">Table of Contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Next topic</h4>
+  <p class="topless"><a href="install.html"
+                        title="next chapter">Installation of the Library</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation of the Library"
+             >next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Wolfram Research.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

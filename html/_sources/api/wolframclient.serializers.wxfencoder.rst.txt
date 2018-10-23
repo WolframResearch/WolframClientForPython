@@ -1,0 +1,78 @@
+wolframclient.serializers.wxfencoder package
+============================================
+
+Submodules
+----------
+
+wolframclient.serializers.wxfencoder.constants module
+-----------------------------------------------------
+
+.. automodule:: wolframclient.serializers.wxfencoder.constants
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.wxfencoder.serializer module
+------------------------------------------------------
+
+.. automodule:: wolframclient.serializers.wxfencoder.serializer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.wxfencoder.streaming module
+-----------------------------------------------------
+
+.. automodule:: wolframclient.serializers.wxfencoder.streaming
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.wxfencoder.utils module
+-------------------------------------------------
+
+.. automodule:: wolframclient.serializers.wxfencoder.utils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.wxfencoder.wxfencoder module
+------------------------------------------------------
+
+.. automodule:: wolframclient.serializers.wxfencoder.wxfencoder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.wxfencoder.wxfexpr module
+---------------------------------------------------
+
+.. automodule:: wolframclient.serializers.wxfencoder.wxfexpr
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.wxfencoder.wxfexprprovider module
+-----------------------------------------------------------
+
+.. automodule:: wolframclient.serializers.wxfencoder.wxfexprprovider
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.wxfencoder.wxfnumpyencoder module
+-----------------------------------------------------------
+
+.. automodule:: wolframclient.serializers.wxfencoder.wxfnumpyencoder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: wolframclient.serializers.wxfencoder
+    :members:
+    :undoc-members:
+    :show-inheritance:

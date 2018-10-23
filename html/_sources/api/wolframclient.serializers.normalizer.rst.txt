@@ -1,0 +1,70 @@
+wolframclient.serializers.normalizer package
+============================================
+
+Submodules
+----------
+
+wolframclient.serializers.normalizer.builtin module
+---------------------------------------------------
+
+.. automodule:: wolframclient.serializers.normalizer.builtin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.normalizer.datetime module
+----------------------------------------------------
+
+.. automodule:: wolframclient.serializers.normalizer.datetime
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.normalizer.decimal module
+---------------------------------------------------
+
+.. automodule:: wolframclient.serializers.normalizer.decimal
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.normalizer.fractions module
+-----------------------------------------------------
+
+.. automodule:: wolframclient.serializers.normalizer.fractions
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.normalizer.numpy module
+-------------------------------------------------
+
+.. automodule:: wolframclient.serializers.normalizer.numpy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.normalizer.pil module
+-----------------------------------------------
+
+.. automodule:: wolframclient.serializers.normalizer.pil
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.normalizer.wolfram module
+---------------------------------------------------
+
+.. automodule:: wolframclient.serializers.normalizer.wolfram
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: wolframclient.serializers.normalizer
+    :members:
+    :undoc-members:
+    :show-inheritance:

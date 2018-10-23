@@ -1,0 +1,593 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>wolframclient.evaluation.cloud.cloudsession &#8212; Wolfram Client Library for Python 1.0 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css">
+ 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for wolframclient.evaluation.cloud.cloudsession</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">wolframclient.evaluation.cloud.oauth</span> <span class="k">import</span> <span class="n">OAuthSession</span>
+<span class="kn">from</span> <span class="nn">wolframclient.evaluation.cloud.server</span> <span class="k">import</span> <span class="n">WolframPublicCloudServer</span>
+<span class="kn">from</span> <span class="nn">wolframclient.evaluation.result</span> <span class="k">import</span> <span class="p">(</span><span class="n">WolframAPIResponseBuilder</span><span class="p">,</span>
+                                             <span class="n">WolframEvaluationJSONResponse</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">wolframclient.exception</span> <span class="k">import</span> <span class="n">AuthenticationException</span>
+<span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="k">import</span> <span class="n">wl</span>
+<span class="kn">from</span> <span class="nn">wolframclient.serializers</span> <span class="k">import</span> <span class="n">export</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils</span> <span class="k">import</span> <span class="n">six</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils.api</span> <span class="k">import</span> <span class="n">futures</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">requests</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;WolframCloudSession&#39;</span><span class="p">,</span> <span class="s1">&#39;WolframCloudSessionAsync&#39;</span><span class="p">,</span> <span class="s1">&#39;WolframAPICall&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="WolframCloudSession"><a class="viewcode-back" href="../../../../public_api.html#wolframclient.evaluation.WolframCloudSession">[docs]</a><span class="k">class</span> <span class="nc">WolframCloudSession</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represent a session to a given cloud enabling simple API call.</span>
+
+<span class="sd">    This is the central class of the cloud evaluation package. It is initialized with a server instance</span>
+<span class="sd">    representing a given cloud. By default a session targets the Wolfram public cloud.</span>
+
+<span class="sd">    Most of the time it is necessary to authenticate with the server before issuing requests. Session</span>
+<span class="sd">    supports two forms of authentication:</span>
+
+<span class="sd">    * 2-legged oauth using a secured authentication key.</span>
+<span class="sd">    * xauth using the user ID and password.</span>
+
+<span class="sd">    Calling an API is done through the method :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.call`</span>
+<span class="sd">    which will return an instance of :class:`~wolframclient.evaluation.result.WolframAPIResponse`.</span>
+<span class="sd">    It is strongly advised to re-use a session to make multiple calls to mitigate the cost of initialization.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;server&#39;</span><span class="p">,</span> <span class="s1">&#39;oauth&#39;</span><span class="p">,</span> <span class="s1">&#39;consumer&#39;</span><span class="p">,</span> <span class="s1">&#39;consumer_secret&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">,</span> <span class="s1">&#39;is_xauth&#39;</span><span class="p">,</span> <span class="s1">&#39;evaluation_api_url&#39;</span><span class="p">,</span> <span class="s1">&#39;authentication&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">authentication</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">server</span><span class="o">=</span><span class="n">WolframPublicCloudServer</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="n">server</span>
+        <span class="c1"># user provided information to authenticate.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">authentication</span> <span class="o">=</span> <span class="n">authentication</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evaluation_api_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluation_api_url</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oauth</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">consumer_secret</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_xauth</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="WolframCloudSession.authenticate"><a class="viewcode-back" href="../../../../public_api.html#wolframclient.evaluation.WolframCloudSession.authenticate">[docs]</a>    <span class="k">def</span> <span class="nf">authenticate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Authenticate with the server using the credentials.</span>
+
+<span class="sd">        This method supports both oauth and xauth methods. It is not necessary</span>
+<span class="sd">        to call it, since the session will try to authenticate when the first</span>
+<span class="sd">        request is issued. &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Authenticating to the server.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">authentication</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AuthenticationException</span><span class="p">(</span><span class="s1">&#39;Missing authentication.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">authentication</span><span class="o">.</span><span class="n">is_xauth</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_authentication</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sak_authentication</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="WolframCloudSession.sak_authentication"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudSession.sak_authentication">[docs]</a>    <span class="k">def</span> <span class="nf">sak_authentication</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">authentication</span><span class="o">.</span><span class="n">consumer_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">consumer_secret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">authentication</span><span class="o">.</span><span class="n">consumer_secret</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_xauth</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oauth</span> <span class="o">=</span> <span class="n">OAuthSession</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="p">,</span>
+                                  <span class="bp">self</span><span class="o">.</span><span class="n">consumer_secret</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oauth</span><span class="o">.</span><span class="n">auth</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="WolframCloudSession.user_authentication"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudSession.user_authentication">[docs]</a>    <span class="k">def</span> <span class="nf">user_authentication</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">is_xauth</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">AuthenticationException</span><span class="p">(</span>
+                <span class="s1">&#39;XAuth is not configured. Missing consumer key and/or secret.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">authentication</span><span class="o">.</span><span class="n">user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">authentication</span><span class="o">.</span><span class="n">password</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_xauth</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oauth</span> <span class="o">=</span> <span class="n">OAuthSession</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">xauth_consumer_key</span><span class="p">,</span>
+                                  <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">xauth_consumer_secret</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oauth</span><span class="o">.</span><span class="n">xauth</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">authentication</span><span class="o">.</span><span class="n">user</span><span class="p">,</span>
+                         <span class="bp">self</span><span class="o">.</span><span class="n">authentication</span><span class="o">.</span><span class="n">password</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">authorized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a reasonnably accurate state of the authentication status.&quot;&quot;&quot;</span>
+        <span class="c1"># No credentials provided. This session is not authorized (public access).</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">authentication</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="c1"># Authentication credentials were provided, but self.is_xauth remains None</span>
+        <span class="c1"># until the first attempt. First need to authenticate first.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_xauth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">authenticate</span><span class="p">()</span>
+        <span class="c1"># if is_xauth was set, ensure the session is authorized.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth</span><span class="o">.</span><span class="n">authorized</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="c1"># is_xauth was set but the process authentication already failed once. Retry.</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s1">&#39;Not authenticated. Retrying to authenticate with the server.&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">authenticate</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth</span><span class="o">.</span><span class="n">authorized</span>
+
+    <span class="k">def</span> <span class="nf">_post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{},</span> <span class="n">body</span><span class="o">=</span><span class="p">{},</span> <span class="n">files</span><span class="o">=</span><span class="p">{},</span> <span class="n">params</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Do a POST request, signing the content only if authentication has been successful.&quot;&quot;&quot;</span>
+        <span class="n">headers</span><span class="p">[</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;WolframClientForPython/1.0&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">authorized</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Authenticated call to api </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth</span><span class="o">.</span><span class="n">signed_request</span><span class="p">(</span>
+                <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Anonymous call to api </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                <span class="n">url</span><span class="p">,</span>
+                <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">,</span>
+                <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span>
+                <span class="n">verify</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">verify</span><span class="p">)</span>
+
+<div class="viewcode-block" id="WolframCloudSession.call"><a class="viewcode-back" href="../../../../public_api.html#wolframclient.evaluation.WolframCloudSession.call">[docs]</a>    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+             <span class="n">api</span><span class="p">,</span>
+             <span class="n">input_parameters</span><span class="o">=</span><span class="p">{},</span>
+             <span class="n">files</span><span class="o">=</span><span class="p">{},</span>
+             <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wl&#39;</span><span class="p">,</span>
+             <span class="n">permissions_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="o">**</span><span class="n">kwargv</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Call a given API, using the provided input parameters.</span>
+
+<span class="sd">        `api` can be a string url or a :class:`tuple` (`username`, `api name`). User name is</span>
+<span class="sd">        generally the Wolfram Language symbol ``$UserName``. The API name can be a uuid or a</span>
+<span class="sd">        relative path e.g: *myapi/foo/bar*.</span>
+
+<span class="sd">        The input parameters are provided as a dictionary with string keys being the name</span>
+<span class="sd">        of the parameters associated to their value.</span>
+
+<span class="sd">        Files are passed in a dictionary. Value can have multiple forms::</span>
+
+<span class="sd">            {&#39;parameter name&#39;: file_pointer}</span>
+
+<span class="sd">        It is possible to explicitly specify a filename and a content type::</span>
+
+<span class="sd">            {&#39;parameter name&#39;: (&#39;filename&#39;, file_pointer, &#39;content-type&#39;)}</span>
+
+<span class="sd">        String can also be passed as files::</span>
+
+<span class="sd">            {&#39;parameter name&#39;: (&#39;filename&#39;, &#39;...string...data...&#39;, &#39;content-type&#39;)}</span>
+
+<span class="sd">        It&#39;s possible to pass a ``PermissionsKey`` to the server along side to the query,</span>
+<span class="sd">        and get access to a given resource.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_api_url</span><span class="p">(</span><span class="n">api</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;_key&#39;</span><span class="p">:</span> <span class="n">permissions_key</span>
+        <span class="p">}</span> <span class="k">if</span> <span class="n">permissions_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
+        <span class="n">is_multipart</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="n">encoded_inputs</span> <span class="o">=</span> <span class="n">encode_api_inputs</span><span class="p">(</span>
+            <span class="n">input_parameters</span><span class="p">,</span>
+            <span class="n">target_format</span><span class="o">=</span><span class="n">target_format</span><span class="p">,</span>
+            <span class="n">multipart</span><span class="o">=</span><span class="n">is_multipart</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargv</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Encoded input </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">encoded_inputs</span><span class="p">)</span>
+        <span class="c1"># in multipart requests we have to merge input parameters with files.</span>
+        <span class="c1"># and use the same format for both.</span>
+        <span class="k">if</span> <span class="n">is_multipart</span><span class="p">:</span>
+            <span class="n">encoded_inputs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="n">encoded_inputs</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">encoded_inputs</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">WolframAPIResponseBuilder</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_user_api_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Build an API URL from a user name and an API id. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">api</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">api</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">api</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">url_join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">cloudbase</span><span class="p">,</span> <span class="s1">&#39;objects&#39;</span><span class="p">,</span> <span class="n">api</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                <span class="n">api</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;Target api specified as a tuple must have two elements: the user name, the API name.&#39;</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">api</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">api</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Invalid API description. Expecting string or tuple.&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_evaluation_api_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">url_join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">cloudbase</span><span class="p">,</span>
+                        <span class="s1">&#39;evaluations?_responseform=json&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_call_evaluation_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s1">&#39;Sending expression to cloud server for evaluation: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">binary_type</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Expecting string input, unicode or binary.&#39;</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluation_api_url</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">WolframEvaluationJSONResponse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_normalize_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">expr</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">binary_type</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">expr</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">export</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="WolframCloudSession.evaluate"><a class="viewcode-back" href="../../../../public_api.html#wolframclient.evaluation.WolframCloudSession.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send `expr` to the cloud for evaluation, return the result.</span>
+
+<span class="sd">        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export`,</span>
+<span class="sd">        or a the string InputForm of an expression to evaluate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_evaluation_api</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span><span class="o">.</span><span class="n">get</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="WolframCloudSession.evaluate_wrap"><a class="viewcode-back" href="../../../../public_api.html#wolframclient.evaluation.WolframCloudSession.evaluate_wrap">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Similar to :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframEvaluationJSONResponse`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_evaluation_api</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="WolframCloudSession.function"><a class="viewcode-back" href="../../../../public_api.html#wolframclient.evaluation.WolframCloudSession.function">[docs]</a>    <span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a `callable` cloud function.</span>
+
+<span class="sd">        The object returned can be applied on arguments as any other Python function, and</span>
+<span class="sd">        is evaluated in the cloud as a Wolfram Language expression using the current cloud</span>
+<span class="sd">        session.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">CloudFunction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">{}</span><span class="s1">:base=</span><span class="si">{}</span><span class="s1">, authorized=</span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">cloudbase</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">authorized</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WolframCloudSessionAsync"><a class="viewcode-back" href="../../../../public_api.html#wolframclient.evaluation.WolframCloudSessionAsync">[docs]</a><span class="k">class</span> <span class="nc">WolframCloudSessionAsync</span><span class="p">(</span><span class="n">WolframCloudSession</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Wolfram cloud session that call issue asynchronous call.</span>
+
+<span class="sd">    Contrary to :class:`~wolframclient.evaluation.WolframCloudSession`, this</span>
+<span class="sd">    class must be terminated when no more used.</span>
+
+<span class="sd">    `max_workers` can be specified and is passed to the ThreadPoolExecutor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">authentication</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">server</span><span class="o">=</span><span class="n">WolframPublicCloudServer</span><span class="p">,</span>
+                 <span class="n">max_workers</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WolframCloudSessionAsync</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">authentication</span><span class="p">,</span> <span class="n">server</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thread_pool_exec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_workers</span> <span class="o">=</span> <span class="n">max_workers</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+
+<div class="viewcode-block" id="WolframCloudSessionAsync.terminate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudSessionAsync.terminate">[docs]</a>    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">thread_pool_exec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thread_pool_exec</span><span class="o">.</span><span class="n">shutdown</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_thread_pool_exec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">thread_pool_exec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">thread_pool_exec</span> <span class="o">=</span> <span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span>
+                    <span class="n">max_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_workers</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s1">&#39;Module concurrent.futures is missing.&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                    <span class="s1">&#39;Asynchronous evaluation is not available for this Python interpreter.&#39;</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">thread_pool_exec</span>
+
+<div class="viewcode-block" id="WolframCloudSessionAsync.call_async"><a class="viewcode-back" href="../../../../public_api.html#wolframclient.evaluation.WolframCloudSessionAsync.call_async">[docs]</a>    <span class="k">def</span> <span class="nf">call_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                   <span class="n">api</span><span class="p">,</span>
+                   <span class="n">input_parameters</span><span class="o">=</span><span class="p">{},</span>
+                   <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wl&#39;</span><span class="p">,</span>
+                   <span class="n">permissions_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                   <span class="o">**</span><span class="n">kwargv</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Call a given API asynchronously. Returns a :class:`concurrent.futures.Future` object.</span>
+
+<span class="sd">        This method requires :mod:`concurrent.futures` which was introduced in `Python 3.2`.</span>
+<span class="sd">        See :func:`WolframCloudSession.call` for more details about input parameters.</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">            Asynchronous evaluation is only available for `Python 3.2` and above.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread_pool_exec</span><span class="p">()</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">call</span><span class="p">,</span>
+            <span class="n">api</span><span class="p">,</span>
+            <span class="n">input_parameters</span><span class="o">=</span><span class="n">input_parameters</span><span class="p">,</span>
+            <span class="n">target_format</span><span class="o">=</span><span class="n">target_format</span><span class="p">,</span>
+            <span class="n">permissions_key</span><span class="o">=</span><span class="n">permissions_key</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargv</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WolframCloudSessionAsync.evaluate_async"><a class="viewcode-back" href="../../../../public_api.html#wolframclient.evaluation.WolframCloudSessionAsync.evaluate_async">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send `expr` to the cloud for asynchronous evaluation.</span>
+
+<span class="sd">        Returns a</span>
+<span class="sd">        :class:`concurrent.futures.Future` object.</span>
+
+<span class="sd">        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export`,</span>
+<span class="sd">        or a the string InputForm of an expression to evaluate.</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">            Asynchronous evaluation is only available for `Python 3.2` and above.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread_pool_exec</span><span class="p">()</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_call_evaluation_api</span><span class="p">,</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="WolframCloudSessionAsync.function"><a class="viewcode-back" href="../../../../public_api.html#wolframclient.evaluation.WolframCloudSessionAsync.function">[docs]</a>    <span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">asynchronous</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a `callable` cloud function.</span>
+
+<span class="sd">        The object returned can be applied on arguments as any other Python function, and</span>
+<span class="sd">        is evaluated in the cloud as a Wolfram Language expression using the current cloud</span>
+<span class="sd">        session.</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">            Asynchronous evaluation is only available for `Python 3.2` and above.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">CloudFunction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">asynchronous</span><span class="o">=</span><span class="n">asynchronous</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="WolframAPICall"><a class="viewcode-back" href="../../../../public_api.html#wolframclient.evaluation.WolframAPICall">[docs]</a><span class="k">class</span> <span class="nc">WolframAPICall</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Perform an API call to a given target.</span>
+
+<span class="sd">    The API call is actually performed when :func:`~wolframclient.evaluation.WolframAPICall.perform`</span>
+<span class="sd">    is called.</span>
+
+<span class="sd">    Parameters can be added using one of the various functions that this class exposes. They</span>
+<span class="sd">    can be of many types including: string, files, WL serializable python objects, binary data with arbitrary</span>
+<span class="sd">    content-type (e.g: *image/png*).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">api</span><span class="p">,</span> <span class="n">permission_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">api</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">permission_key</span> <span class="o">=</span> <span class="n">permission_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">multipart</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="WolframAPICall.add_parameter"><a class="viewcode-back" href="../../../../public_api.html#wolframclient.evaluation.WolframAPICall.add_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">add_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a new API input parameter from a serialization python object.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="WolframAPICall.add_file_parameter"><a class="viewcode-back" href="../../../../public_api.html#wolframclient.evaluation.WolframAPICall.add_file_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">add_file_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a new API input parameter from a file pointer `fp`&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">content_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">fp</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;tmp_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">content_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="WolframAPICall.add_binary_parameter"><a class="viewcode-back" href="../../../../public_api.html#wolframclient.evaluation.WolframAPICall.add_binary_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">add_binary_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                             <span class="n">name</span><span class="p">,</span>
+                             <span class="n">data</span><span class="p">,</span>
+                             <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;application/octet-stream&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a new API input parameter as a blob of binary data.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">binary_type</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Input data by bytes.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;tmp_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">content_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="WolframAPICall.add_image_data_parameter"><a class="viewcode-back" href="../../../../public_api.html#wolframclient.evaluation.WolframAPICall.add_image_data_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">add_image_data_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                 <span class="n">name</span><span class="p">,</span>
+                                 <span class="n">image_data</span><span class="p">,</span>
+                                 <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;image/png&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a new API image input parameter from binary data.</span>
+
+<span class="sd">        If the data in `image_data` does not represent an image in the `PNG` format, the</span>
+<span class="sd">        optional parameter `content_type` must be set accordingly to the appropriate content</span>
+<span class="sd">        type.</span>
+<span class="sd">        e.g: *image/jpeg*, *image/gif*, etc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">binary_type</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Input data must by bytes.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;tmp_image_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">content_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="WolframAPICall.perform"><a class="viewcode-back" href="../../../../public_api.html#wolframclient.evaluation.WolframAPICall.perform">[docs]</a>    <span class="k">def</span> <span class="nf">perform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Make the API call, return the result.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">call</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="p">,</span>
+            <span class="n">input_parameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span>
+            <span class="n">files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">,</span>
+            <span class="n">permissions_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">permission_key</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;WolframAPICall&lt;api=</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="p">,</span> <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">CloudFunction</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;session&#39;</span><span class="p">,</span> <span class="s1">&#39;wlfunc&#39;</span><span class="p">,</span> <span class="s1">&#39;evaluation_func&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">asynchronous</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">session</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">func</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">binary_type</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wlfunc</span> <span class="o">=</span> <span class="n">wl</span><span class="o">.</span><span class="n">ToExpression</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wlfunc</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="k">if</span> <span class="n">asynchronous</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">evaluation_func</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">evaluate_async</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">evaluation_func</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">evaluate</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluation_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">,</span>
+                                    <span class="n">wl</span><span class="o">.</span><span class="n">Construct</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wlfunc</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;CloudFunction&lt;function=</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wlfunc</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_encode_inputs_as_wxf</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">multipart</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">encoded_inputs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">wxf_name</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;__wxf&#39;</span>
+        <span class="n">wxf_value</span> <span class="o">=</span> <span class="n">export</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wxf&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">update_parameter_list</span><span class="p">(</span><span class="n">encoded_inputs</span><span class="p">,</span> <span class="n">wxf_name</span><span class="p">,</span> <span class="n">wxf_value</span><span class="p">,</span> <span class="n">multipart</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">encoded_inputs</span>
+
+
+<span class="k">def</span> <span class="nf">_encode_inputs_as_json</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">multipart</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">encoded_inputs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;__json&#39;</span>
+        <span class="n">json_value</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">update_parameter_list</span><span class="p">(</span><span class="n">encoded_inputs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">json_value</span><span class="p">,</span> <span class="n">multipart</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">encoded_inputs</span>
+
+
+<span class="k">def</span> <span class="nf">_encode_inputs_as_wl</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">multipart</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">encoded_inputs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># avoid double encoding of strings &#39;\&quot;string\&quot;&#39;.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="n">update_parameter_list</span><span class="p">(</span><span class="n">encoded_inputs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">multipart</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">exported_value</span> <span class="o">=</span> <span class="n">export</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wl&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">update_parameter_list</span><span class="p">(</span><span class="n">encoded_inputs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">exported_value</span><span class="p">,</span>
+                                  <span class="n">multipart</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">encoded_inputs</span>
+
+
+<span class="k">def</span> <span class="nf">update_parameter_list</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">multipart</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Update the given :class:`~parameters` with a new inputs using the appropriate form based on `multipart`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">multipart</span><span class="p">:</span>
+        <span class="n">parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;tmp_file_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+
+<span class="n">SUPPORTED_ENCODING_FORMATS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;json&#39;</span><span class="p">:</span> <span class="n">_encode_inputs_as_json</span><span class="p">,</span>
+    <span class="s1">&#39;wxf&#39;</span><span class="p">:</span> <span class="n">_encode_inputs_as_wxf</span><span class="p">,</span>
+    <span class="s1">&#39;wl&#39;</span><span class="p">:</span> <span class="n">_encode_inputs_as_wl</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">encode_api_inputs</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wl&#39;</span><span class="p">,</span> <span class="n">multipart</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="n">encoder</span> <span class="o">=</span> <span class="n">SUPPORTED_ENCODING_FORMATS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">target_format</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">encoder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;Invalid encoding format </span><span class="si">%s</span><span class="s1">. Choices are: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
+            <span class="p">(</span><span class="n">target_format</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SUPPORTED_ENCODING_FORMATS</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+
+    <span class="k">return</span> <span class="n">encoder</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">multipart</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">url_join</span><span class="p">(</span><span class="o">*</span><span class="n">fragments</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Join fragments of a URL, dealing with slashes.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fragments</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">buff</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="n">fragments</span><span class="p">:</span>
+        <span class="n">stripped</span> <span class="o">=</span> <span class="n">fragment</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stripped</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">buff</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stripped</span><span class="p">)</span>
+            <span class="n">buff</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+
+    <span class="n">last</span> <span class="o">=</span> <span class="n">fragments</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c1"># add a trailing &#39;/&#39; if present.</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">last</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">last</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;/&#39;</span><span class="p">:</span>
+        <span class="n">buff</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">buff</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+    <a href="../../../../index.html">
+        <img class="logo" src="../../../../_static/python-client-library-logo.png" title="https://www.wolfram.com/" />
+    </a>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Wolfram Research.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

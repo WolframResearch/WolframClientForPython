@@ -1,0 +1,46 @@
+wolframclient.evaluation.kernel package
+=======================================
+
+Submodules
+----------
+
+wolframclient.evaluation.kernel.asyncsession module
+---------------------------------------------------
+
+.. automodule:: wolframclient.evaluation.kernel.asyncsession
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.evaluation.kernel.futuresession module
+----------------------------------------------------
+
+.. automodule:: wolframclient.evaluation.kernel.futuresession
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.evaluation.kernel.kernelpool module
+-------------------------------------------------
+
+.. automodule:: wolframclient.evaluation.kernel.kernelpool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.evaluation.kernel.kernelsession module
+----------------------------------------------------
+
+.. automodule:: wolframclient.evaluation.kernel.kernelsession
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: wolframclient.evaluation.kernel
+    :members:
+    :undoc-members:
+    :show-inheritance:

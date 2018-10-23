@@ -1,0 +1,43 @@
+wolframclient package
+=====================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    wolframclient.cli
+    wolframclient.deserializers
+    wolframclient.evaluation
+    wolframclient.language
+    wolframclient.logger
+    wolframclient.serializers
+    wolframclient.utils
+
+Submodules
+----------
+
+wolframclient.exception module
+------------------------------
+
+.. automodule:: wolframclient.exception
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.settings module
+-----------------------------
+
+.. automodule:: wolframclient.settings
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: wolframclient
+    :members:
+    :undoc-members:
+    :show-inheritance:

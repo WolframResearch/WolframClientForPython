@@ -1,0 +1,243 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>wolframclient.serializers.base &#8212; Wolfram Client Library for Python 1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/wri.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css">
+ 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../serializers.html" accesskey="U">wolframclient.serializers</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for wolframclient.serializers.base</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">from</span> <span class="nn">wolframclient.serializers.normalizer</span> <span class="k">import</span> <span class="n">Normalizer</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils</span> <span class="k">import</span> <span class="n">six</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils.encoding</span> <span class="k">import</span> <span class="n">force_text</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils.functional</span> <span class="k">import</span> <span class="n">first</span>
+
+
+<div class="viewcode-block" id="FormatSerializer"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer">[docs]</a><span class="k">class</span> <span class="nc">FormatSerializer</span><span class="p">(</span><span class="n">Normalizer</span><span class="p">):</span>
+<div class="viewcode-block" id="FormatSerializer.dump"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">stream</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="FormatSerializer.export"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.export">[docs]</a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">stream</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">stream</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">stream</span>
+
+        <span class="n">stream</span> <span class="o">=</span> <span class="n">six</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
+        <span class="n">stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">stream</span><span class="p">)</span>
+        <span class="n">stream</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">stream</span><span class="o">.</span><span class="n">read</span><span class="p">()</span></div>
+
+    <span class="c1">#implementation of several methods</span>
+
+<div class="viewcode-block" id="FormatSerializer.serialize_function"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_function">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="FormatSerializer.serialize_symbol"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_symbol">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">symbol</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="FormatSerializer.serialize_string"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_string">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="FormatSerializer.serialize_bytes"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_bytes">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="FormatSerializer.serialize_float"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_float">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_float</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="FormatSerializer.serialize_decimal"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_decimal">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_decimal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="FormatSerializer.serialize_int"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_int">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="FormatSerializer.serialize_raw_array"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_raw_array">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_raw_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">wl_type</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="s1">&#39;ArrayReshape&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;NumericArray&#39;</span><span class="p">),</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">serialize_string</span><span class="p">(</span><span class="n">wl_type</span><span class="p">),</span>
+                 <span class="bp">self</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
+                     <span class="bp">self</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;ImportByteArray&#39;</span><span class="p">),</span> <span class="p">(</span>
+                         <span class="bp">self</span><span class="o">.</span><span class="n">serialize_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">),</span>
+                         <span class="bp">self</span><span class="o">.</span><span class="n">serialize_string</span><span class="p">(</span><span class="n">wl_type</span><span class="p">),</span>
+                     <span class="p">)))),</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">serialize_iterable</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">serialize_int</span><span class="p">,</span> <span class="n">shape</span><span class="p">))))</span></div>
+
+<div class="viewcode-block" id="FormatSerializer.serialize_iterable"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_iterable">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_iterable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;List&#39;</span><span class="p">),</span> <span class="n">iterable</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FormatSerializer.serialize_mapping"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_mapping">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mappable</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Association&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">serialize_rule</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">mappable</span><span class="p">),</span>
+            <span class="o">**</span><span class="n">opts</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FormatSerializer.serialize_association"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_association">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_association</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mappable</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Association&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">serialize_rule</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">mappable</span><span class="p">),</span>
+            <span class="o">**</span><span class="n">opts</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FormatSerializer.serialize_fraction"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_fraction">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_fraction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Rational&#39;</span><span class="p">),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">serialize_int</span><span class="p">(</span>
+                <span class="n">o</span><span class="o">.</span><span class="n">numerator</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_int</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">denominator</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="FormatSerializer.serialize_complex"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_complex">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_complex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Complex&#39;</span><span class="p">),</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">serialize_float</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">real</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">serialize_float</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">imag</span><span class="p">),</span>
+            <span class="p">))</span></div>
+
+<div class="viewcode-block" id="FormatSerializer.serialize_rule"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_rule">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_rule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Rule&#39;</span><span class="p">),</span> <span class="p">(</span><span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="FormatSerializer.serialize_rule_delayed"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_rule_delayed">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_rule_delayed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;RuleDelayed&#39;</span><span class="p">),</span> <span class="p">(</span><span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="FormatSerializer.serialize_tzinfo"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_tzinfo">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_tzinfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                         <span class="n">date</span><span class="p">,</span>
+                         <span class="n">name_match</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^[A-Za-z]+(/[A-Za-z]+)?$&#39;</span><span class="p">)):</span>
+
+        <span class="k">if</span> <span class="n">date</span><span class="o">.</span><span class="n">tzinfo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;$TimeZone&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">name_match</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">tzinfo</span><span class="o">.</span><span class="n">tzname</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">and</span> <span class="n">name_match</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_string</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_float</span><span class="p">(</span>
+            <span class="n">date</span><span class="o">.</span><span class="n">tzinfo</span><span class="o">.</span><span class="n">utcoffset</span><span class="p">(</span><span class="n">date</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mi">3600</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_serialize_external_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
+
+        <span class="k">yield</span> <span class="s2">&quot;Type&quot;</span><span class="p">,</span> <span class="s2">&quot;PythonFunction&quot;</span>
+        <span class="k">yield</span> <span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="n">force_text</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="s2">&quot;BuiltIn&quot;</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isbuiltin</span><span class="p">(</span><span class="n">o</span><span class="p">),</span>
+
+        <span class="n">is_module</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismodule</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+
+        <span class="k">yield</span> <span class="s2">&quot;IsModule&quot;</span><span class="p">,</span> <span class="n">is_module</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_module</span><span class="p">:</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmodule</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">module</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="s2">&quot;Module&quot;</span><span class="p">,</span> <span class="n">force_text</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+
+        <span class="k">yield</span> <span class="s2">&quot;IsClass&quot;</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">o</span><span class="p">),</span>
+        <span class="k">yield</span> <span class="s2">&quot;IsFunction&quot;</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">o</span><span class="p">),</span>
+        <span class="k">yield</span> <span class="s2">&quot;IsMethod&quot;</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismethod</span><span class="p">(</span><span class="n">o</span><span class="p">),</span>
+        <span class="k">yield</span> <span class="s2">&quot;IsCallable&quot;</span><span class="p">,</span> <span class="n">callable</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="s2">&quot;Arguments&quot;</span><span class="p">,</span> <span class="n">first</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getargspec</span><span class="p">(</span><span class="n">o</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="c1">#this function can fail with TypeError unsupported callable</span>
+                <span class="k">pass</span>
+
+<div class="viewcode-block" id="FormatSerializer.serialize_external_object"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_external_object">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_external_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;ExternalObject&#39;</span><span class="p">),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">serialize_mapping</span><span class="p">(</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_external_object</span><span class="p">(</span><span class="n">obj</span><span class="p">)),</span> <span class="p">))</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+    <a href="../../../index.html">
+        <img class="logo" src="../../../_static/python-client-library-logo.png" title="https://www.wolfram.com/" />
+    </a>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../serializers.html" >wolframclient.serializers</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Wolfram Research.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

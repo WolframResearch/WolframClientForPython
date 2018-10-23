@@ -1,0 +1,185 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Installation of the Library &#8212; Wolfram Client Library for Python 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/wri.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css">
+ 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="intro.html" title="Introduction to the Wolfram Client Library"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Wolfram Client Library for Python’s Documentation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="toctree-wrapper compound">
+</div>
+<div class="section" id="installation-of-the-library">
+<h1>Installation of the Library<a class="headerlink" href="#installation-of-the-library" title="Permalink to this headline">¶</a></h1>
+<p>The library source code is available in various repositories:</p>
+<ul class="simple">
+<li>hosted on <em>PyPi.org</em> and available in <cite>pip</cite></li>
+<li>in a public repository on <cite>GitHub</cite></li>
+<li>bundled with Wolfram Desktop 12+</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">even though most of the features were built to work on Python 2.7, it is recommended to use the library with Python 3.5 or greater.</p>
+</div>
+<div class="section" id="install-with-pip">
+<h2>Install with pip<a class="headerlink" href="#install-with-pip" title="Permalink to this headline">¶</a></h2>
+<p>Evaluate the following command in a terminal:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ pip install wolframclient
+</pre></div>
+</div>
+</div>
+<div class="section" id="install-from-github">
+<h2>Install from GitHub<a class="headerlink" href="#install-from-github" title="Permalink to this headline">¶</a></h2>
+<p>Clone the library’s repository:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ git clone git://github.com/WolframResearch/WolframClientForPython
+</pre></div>
+</div>
+<p>Install the library:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ pip install .
+</pre></div>
+</div>
+</div>
+<div class="section" id="install-from-the-wolfram-desktop">
+<h2>Install from the Wolfram Desktop<a class="headerlink" href="#install-from-the-wolfram-desktop" title="Permalink to this headline">¶</a></h2>
+<p>The library is bundled with the Wolfram Desktop. The library location depends on your OS. Here are the usual locations:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">OS</th>
+<th class="head">Library path</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><em>MacOS</em></td>
+<td><code class="file docutils literal notranslate"><span class="pre">/Applications/Wolfram</span> <span class="pre">Desktop.app/Contents/SystemFiles/Components/WolframClientForPython</span></code></td>
+</tr>
+<tr class="row-odd"><td><em>Windows</em></td>
+<td><code class="file docutils literal notranslate"><span class="pre">C:\Program</span> <span class="pre">Files\Wolfram</span> <span class="pre">Research\Wolfram</span> <span class="pre">Desktop\12\SystemFiles\Components\WolframClientForPython</span></code></td>
+</tr>
+<tr class="row-even"><td><em>Linux</em></td>
+<td><code class="file docutils literal notranslate"><span class="pre">/usr/local/Wolfram/Desktop/12/SystemFiles/Components/WolframClientForPython</span></code></td>
+</tr>
+</tbody>
+</table>
+<p>From a terminal, evaluate the following commands:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> /path/to/library
+$ pip install .
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+    <a href="index.html">
+        <img class="logo" src="_static/python-client-library-logo.png" title="https://www.wolfram.com/" />
+    </a>
+
+
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installation of the Library</a><ul>
+<li><a class="reference internal" href="#install-with-pip">Install with pip</a></li>
+<li><a class="reference internal" href="#install-from-github">Install from GitHub</a></li>
+<li><a class="reference internal" href="#install-from-the-wolfram-desktop">Install from the Wolfram Desktop</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Wolfram Client Library for Python’s Documentation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="intro.html"
+                        title="next chapter">Introduction to the Wolfram Client Library</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/install.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="intro.html" title="Introduction to the Wolfram Client Library"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Wolfram Client Library for Python’s Documentation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Wolfram Research.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

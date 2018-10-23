@@ -1,0 +1,7 @@
+wolframclient
+=============
+
+.. toctree::
+   :maxdepth: 4
+
+   wolframclient
