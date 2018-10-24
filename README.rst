@@ -1,4 +1,4 @@
-.. image:: https://www.wolframcloud.com/objects/dorianb/lcl/python/doc/_static/python-client-library-logo.png
+.. image:: https://wolframresearch.github.io/WolframClientForPython/_static/python-client-library-logo.png
     :alt: Wolfram Logo
 
 
@@ -22,8 +22,8 @@ The Wolfram Client Library provides seamless Wolfram Language integration in Pyt
 Links
 #############
 
-* `Installation instructions <http://www.wolframcloud.com/objects/dorianb/lcl/python/doc/install.html>`_
-* `Introduction <http://www.wolframcloud.com/objects/dorianb/lcl/python/doc/intro.html>`_
+* `Installation instructions <https://wolframresearch.github.io/WolframClientForPython/docpages/install.html>`_
+* `Introduction <https://wolframresearch.github.io/WolframClientForPython/docpages/intro.html>`_
 * `Documentation <https://wolfr.am/wolframclientdoc>`_
 * `Contributor guidelines <https://github.com/WolframResearch/WolframClientForPython/blob/master/CONTRIBUTING.md>`_
 * `License <https://github.com/WolframResearch/WolframClientForPython/blob/master/LICENSE>`_
