@@ -9,12 +9,12 @@
 #>     -b path, --build=path
 #>         set the output directory to path. It must be a valid directory.
 #>         BUILDDIR is set to path if specified, otherwise the default 
-#>         directory _build is used.
+#>         directory _build is used. When targetting Github.io the path should
+#>         target a directory called `docs`.
 #> 
 #>     -a, --all
-#>         rebuild the api directory. This is not equivalent to `make clean`,
-#>         because the later is to aggressiv and also delete directories such
-#>         as .git, which is likely be an issue.
+#>         rebuild from scratch. Call `make clean` and remove the api directory.
+#>         Useful when the codebase has changed and some source files were removed.
 #> 
 #>     -h display this page.
 #> 
@@ -27,7 +27,7 @@ function help(){
 export LC_ALL="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
 
-target='_build'
+target=''
 
 while [ "$#" -gt 0 ]; do
     case "$1" in
@@ -42,19 +42,33 @@ while [ "$#" -gt 0 ]; do
     esac
 done
 
-if [[ -d "${target}" ]]; then
-    export BUILDDIR="${target}"
-else
-    echo "Invalid build directory: ${target}"
-    exit 1
+if [[ ! -z "${target}" ]]; then
+    if [[ ! -d "${target}" ]]; then
+        echo "Invalid build directory: ${target}"
+        exit 1
+    fi 
+    # normalize path
+    target="`dirname \"${target}\"`/`basename \"${target}\"`"
 fi
 
 # clean up
 if [[ $all == 1 ]]; then
     [[ -r ./api ]] && rm -r ./api
+    if [[ ! -z "${target}" ]]; then
+        echo "Removing ${target}/html"
+        rm -r "${target}/html"
+        echo "Removing ${target}/*.js"
+        rm "${target}/*.js"
+        echo "Removing ${target}/*.html"
+        rm "${target}/*.html"
+    fi
 fi
 # static analysis
 sphinx-apidoc -o api ../wolframclient ../wolframclient/tests*
 
 # build html
 make html
+
+if [[ ! -z "${target}" ]]; then
+    cp -r "./_build/html/." "${target}"
+fi

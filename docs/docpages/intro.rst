@@ -542,7 +542,7 @@ Using the Wolfram Desktop, import the file:
 
     Import["/path/to/file.wxf"]
 
-.. image :: examples/svg/listplotPrime25.svg
+.. image :: ../examples/svg/listplotPrime25.svg
     :align: center
     :alt: ListPlot graphic. If this image does not display, it might be that your browser does not support the SVG image format.
 

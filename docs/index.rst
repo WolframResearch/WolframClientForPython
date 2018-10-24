@@ -29,7 +29,7 @@ Table of Contents
 .. toctree::
     :maxdepth: 4
 
-    install
-    intro
-    advanced_usages
-    public_api
+    docpages/install
+    docpages/intro
+    docpages/advanced_usages
+    docpages/public_api
