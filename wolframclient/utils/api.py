@@ -118,5 +118,8 @@ numpy = API(
 multiprocessing = API(Lock='multiprocessing.Lock')
 
 PIL = API(
-    Image = 'PIL.Image.Image'
+    Image='PIL.Image.Image',
+    open='PIL.Image.open',
 )
+
+base64 = API(b64encode='base64.b64encode')
