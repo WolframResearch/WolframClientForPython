@@ -75,7 +75,9 @@ class OAuthSession(object):
             raise AuthenticationException(response, msg)
         # msg is None if response is not JSON, but it's fine.
         except:
-            raise AuthenticationException(response, 'Request failed with status %i' % response.status_code)
+            raise AuthenticationException(
+                response,
+                'Request failed with status %i' % response.status_code)
 
     def _update_client(self):
         self._client = oauth.Client(

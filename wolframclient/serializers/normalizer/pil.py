@@ -5,6 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.utils import six
 from wolframclient.utils.api import PIL
 
+
 def update_dispatch(dispatch):
     @dispatch.multi(PIL.Image)
     def normalizer(self, im):

@@ -7,8 +7,9 @@ import unittest
 from functools import wraps
 
 from wolframclient.deserializers import binary_deserialize
-from wolframclient.evaluation import (WolframKernelPool,
-                                      WolframLanguageAsyncSession)
+from wolframclient.evaluation import (
+    WolframKernelPool, WolframLanguageAsyncSession
+)
 from wolframclient.language import wl
 from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config
 from wolframclient.tests.evaluation.test_kernel import \

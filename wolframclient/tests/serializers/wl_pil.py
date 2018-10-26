@@ -12,7 +12,8 @@ class TestCase(BaseTestCase):
     def test_pil(self):
 
         with PIL.open(
-            module_path('wolframclient', 'tests', 'data', '5x2.png')) as image:
+                module_path('wolframclient', 'tests', 'data',
+                            '5x2.png')) as image:
 
             self.assertEqual(
                 export(image, target_format='wl'),

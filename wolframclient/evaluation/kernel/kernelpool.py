@@ -6,7 +6,8 @@ import logging
 from asyncio import CancelledError
 
 from wolframclient.evaluation.kernel.asyncsession import (
-    WolframLanguageAsyncSession)
+    WolframLanguageAsyncSession
+)
 from wolframclient.exception import WolframKernelException
 from wolframclient.utils.api import asyncio
 

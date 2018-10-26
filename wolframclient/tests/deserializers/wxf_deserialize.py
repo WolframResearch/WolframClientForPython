@@ -13,8 +13,8 @@ from wolframclient.exception import WolframParserException
 from wolframclient.serializers import export
 from wolframclient.serializers.wxfencoder.utils import write_varint
 from wolframclient.utils import six
-from wolframclient.utils.tests import TestCase as BaseTestCase
 from wolframclient.utils.api import numpy
+from wolframclient.utils.tests import TestCase as BaseTestCase
 
 
 class TestCase(BaseTestCase):

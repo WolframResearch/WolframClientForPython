@@ -11,6 +11,7 @@ from wolframclient.serializers.wxfencoder.streaming import (
     ExactSizeReader, ZipCompressedReader)
 from wolframclient.utils import six
 
+
 class WXFParser(object):
     """Parse a WXF input.
 

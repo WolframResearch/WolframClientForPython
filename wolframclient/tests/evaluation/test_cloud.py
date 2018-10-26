@@ -10,9 +10,9 @@ from wolframclient.evaluation.cloud import WolframServer
 from wolframclient.evaluation.cloud.cloudsession import (
     WolframAPICall, WolframCloudSession, WolframCloudSessionAsync,
     encode_api_inputs, url_join)
-from wolframclient.exception import AuthenticationException
 from wolframclient.evaluation.cloud.oauth import (SecuredAuthenticationKey,
                                                   UserIDPassword)
+from wolframclient.exception import AuthenticationException
 from wolframclient.language import wl
 from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config
 from wolframclient.utils import six

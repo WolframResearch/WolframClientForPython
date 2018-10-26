@@ -2,9 +2,9 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from wolframclient.utils import six
 from wolframclient.utils.api import zlib
 from wolframclient.utils.encoding import force_bytes
-from wolframclient.utils import six
 
 
 class ZipCompressedWriter(object):

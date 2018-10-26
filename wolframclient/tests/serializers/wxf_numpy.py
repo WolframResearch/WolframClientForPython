@@ -9,10 +9,12 @@ from wolframclient.serializers.wxfencoder.serializer import WXFExprSerializer
 from wolframclient.serializers.wxfencoder.wxfencoder import DefaultWXFEncoder
 from wolframclient.serializers.wxfencoder.wxfexprprovider import (
     WXFExprProvider)
+from wolframclient.serializers.wxfencoder.wxfnumpyencoder import (
+    NumPyWXFEncoder)
 from wolframclient.utils import six
-from wolframclient.utils.tests import TestCase as BaseTestCase
 from wolframclient.utils.api import numpy
-from wolframclient.serializers.wxfencoder.wxfnumpyencoder import NumPyWXFEncoder
+from wolframclient.utils.tests import TestCase as BaseTestCase
+
 
 @unittest.skipIf(six.JYTHON, "numpy is not supported in jython")
 class TestCase(BaseTestCase):
