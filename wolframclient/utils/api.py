@@ -115,3 +115,7 @@ numpy = API(
     reshape='numpy.reshape')
 
 multiprocessing = API(Lock='multiprocessing.Lock')
+
+PIL = API(
+    Image = 'PIL.Image.Image'
+)
