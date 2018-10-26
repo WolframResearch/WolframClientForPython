@@ -17,17 +17,7 @@ class DispatchCommand(SimpleCommand):
 
     default_command = None
 
-    if six.JYTHON:
-        dependencies = [
-            ("pytz", None),
-        ]
-    else:
-        dependencies = [
-            ("pytz", None),
-            ("numpy", None),
-            ("requests", None),
-            ("oauthlib", None),
-        ]
+    dependencies = []
 
     def subcommands(self):
         return discover_with_convention(self.modules, self.class_name)
