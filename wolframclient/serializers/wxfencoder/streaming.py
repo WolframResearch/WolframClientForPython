@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.utils.api import zlib
 from wolframclient.utils.encoding import force_bytes
-from wolframclient.utils.six import BytesIO
+from wolframclient.utils import six
 
 
 class ZipCompressedWriter(object):
@@ -52,7 +52,7 @@ class ExactSizeReader(object):
             return data
         # need an intermediary buffer
         out_len = len(data)
-        data = BytesIO(data)
+        data = six.BytesIO(data)
         while out_len < size:
             chunk = self._reader.read(size - out_len)
             if chunk == b'':
@@ -88,7 +88,7 @@ class ZipCompressedReader(object):
             size = -1
         else:
             chunk_size = ZipCompressedReader.CHUNK_SIZE
-        out_data = BytesIO()
+        out_data = six.BytesIO()
         out_len = 0
         while True:
             # first step find try to find some data to uncompress.

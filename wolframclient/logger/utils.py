@@ -4,9 +4,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
 
-from wolframclient.utils.six import PY2
+from wolframclient.utils import six
 
-if PY2:
+if six.PY2:
 
     def setup_logging_to_file(path, level=logging.INFO):
         logging.basicConfig(

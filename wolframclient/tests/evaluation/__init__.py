@@ -2,12 +2,12 @@
 import os
 import unittest
 import fnmatch
-from wolframclient.utils.six import PY3
+from wolframclient.utils import six
 from . import test_cloud as m1
 from . import test_kernel as m2
 # Only Python 3.5 and above support async, so we need the test suite
 # to avoid loading the module testing coroutines.
-if PY3:
+if six.PY3:
     from . import test_coroutine as m3
     test_modules = (m1, m2, m3)
 else:

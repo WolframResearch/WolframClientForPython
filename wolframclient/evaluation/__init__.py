@@ -4,9 +4,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.evaluation.cloud import SecuredAuthenticationKey, UserIDPassword, WolframAPICall, WolframCloudSession, WolframCloudSessionAsync, WolframServer
 from wolframclient.evaluation.result import WolframAPIResponse, WolframEvaluationJSONResponse, WolframKernelEvaluationResult, WolframResult
-from wolframclient.utils.six import JYTHON
+from wolframclient.utils import six
 
-if JYTHON:
+if six.JYTHON:
     __all__ = [
         'WolframServer', 'WolframCloudSession', 'WolframCloudSessionAsync',
         'WolframAPICall', 'SecuredAuthenticationKey', 'UserIDPassword',

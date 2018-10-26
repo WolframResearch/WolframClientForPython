@@ -9,8 +9,7 @@ from wolframclient.serializers.wxfencoder.serializer import (
     SerializationContext)
 from wolframclient.serializers.wxfencoder.streaming import (
     ExactSizeReader, ZipCompressedReader)
-from wolframclient.utils.six import BytesIO, binary_type, integer_types
-
+from wolframclient.utils import six
 
 class WXFParser(object):
     """Parse a WXF input.
@@ -58,8 +57,8 @@ class WXFParser(object):
         """WXF parser returning Python object from a WXF encoded byte sequence.
         """
         self.context = SerializationContext()
-        if isinstance(wxf_input, binary_type):
-            self.reader = BytesIO(wxf_input)
+        if isinstance(wxf_input, six.binary_type):
+            self.reader = six.BytesIO(wxf_input)
         elif hasattr(wxf_input, 'read'):
             self.reader = wxf_input
         else:
@@ -235,7 +234,7 @@ class WXFToken(object):
         count = 1
         for dim in self._dimensions:
             count = count * dim
-        if not isinstance(count, integer_types) or count <= 0:
+        if not isinstance(count, six.integer_types) or count <= 0:
             raise TypeError('Dimensions must be strictly positive integers.')
         self._element_count = count
 
