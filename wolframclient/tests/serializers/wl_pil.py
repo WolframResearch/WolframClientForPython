@@ -11,10 +11,10 @@ from wolframclient.utils.tests import TestCase as BaseTestCase
 class TestCase(BaseTestCase):
     def test_pil(self):
 
-        image = PIL.open(
-            module_path('wolframclient', 'tests', 'data', '5x2.png'))
+        with PIL.open(
+            module_path('wolframclient', 'tests', 'data', '5x2.png')) as image:
 
-        self.assertEqual(
-            export(image, target_format='wl'),
-            b'ImportByteArray[ByteArray["iVBORw0KGgoAAAANSUhEUgAAAAUAAAACEAAAAADlkZXCAAAAH0lEQVR4nGP0+P39rf6+ky9/R7Aoen2+9shDWSRCHwCO7ws73c3PRQAAAABJRU5ErkJggg=="], "PNG"]'
-        )
+            self.assertEqual(
+                export(image, target_format='wl'),
+                b'ImportByteArray[ByteArray["iVBORw0KGgoAAAANSUhEUgAAAAUAAAACEAAAAADlkZXCAAAAH0lEQVR4nGP0+P39rf6+ky9/R7Aoen2+9shDWSRCHwCO7ws73c3PRQAAAABJRU5ErkJggg=="], "PNG"]'
+            )
