@@ -14,11 +14,7 @@ from wolframclient.serializers import export
 from wolframclient.serializers.wxfencoder.utils import write_varint
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
-
-try:
-    import numpy
-except ImportError:
-    numpy = False
+from wolframclient.utils.api import numpy
 
 
 class TestCase(BaseTestCase):
@@ -234,7 +230,7 @@ class TestCase(BaseTestCase):
             binary_deserialize(wxf)
 
 
-@unittest.skipIf(not numpy, 'NumPy not found.')
+@unittest.skipIf(six.JYTHON, "numpy is not supported in jython")
 class TestCaseNumPyArray(BaseTestCase):
     def test_numpy_1d_array(self):
         arr = numpy.array([0, 1], 'uint8')

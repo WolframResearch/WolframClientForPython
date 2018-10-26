@@ -11,15 +11,10 @@ from wolframclient.serializers.wxfencoder.wxfexprprovider import (
     WXFExprProvider)
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
+from wolframclient.utils.api import numpy
+from wolframclient.serializers.wxfencoder.wxfnumpyencoder import NumPyWXFEncoder
 
-try:
-    import numpy
-    from wolframclient.serializers.wxfencoder.wxfnumpyencoder import NumPyWXFEncoder
-except ImportError:
-    numpy = False
-
-
-@unittest.skipIf(not numpy, 'NumPy not found. Skipping numpy tests.')
+@unittest.skipIf(six.JYTHON, "numpy is not supported in jython")
 class TestCase(BaseTestCase):
     @classmethod
     def initDefault(cls):

@@ -97,6 +97,7 @@ urllib = API(
 atexit = API(register='atexit.register', unregister=('atexit.unregister', ))
 
 numpy = API(
+    array='numpy.array',
     ndarray='numpy.ndarray',
     int8='numpy.int8',
     int16='numpy.int16',
