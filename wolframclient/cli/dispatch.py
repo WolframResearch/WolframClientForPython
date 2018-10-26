@@ -5,7 +5,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 import sys
 
 from wolframclient.cli.utils import SimpleCommand, discover_with_convention
-from wolframclient.utils import six
 from wolframclient.utils.importutils import import_string
 from wolframclient.utils.require import require_module
 
