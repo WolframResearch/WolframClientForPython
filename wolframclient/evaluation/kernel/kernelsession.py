@@ -430,7 +430,7 @@ class WolframLanguageSession(object):
     #     """Indicate if the current kernel session has started with reasonable accuracy."""
     #     return self.kernel_proc is not None
 
-    def _evaluate(self, expr, wrap_result=False, **kwargs):
+    def _evaluate(self, expr, **kwargs):
         """Send an expression to the kernel for evaluation. Return a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.
         """
         if self.terminated:
