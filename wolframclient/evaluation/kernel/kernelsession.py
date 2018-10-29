@@ -13,6 +13,7 @@ from wolframclient.serializers import export
 from wolframclient.utils import six
 from wolframclient.utils.api import json, os, time, zmq
 from wolframclient.utils.encoding import force_text
+from wolframclient.utils.encoding import force_text
 
 if six.WINDOWS:
     from subprocess import STARTUPINFO, STARTF_USESHOWWINDOW
@@ -536,7 +537,7 @@ class WolframFunction(object):
 
     def __repr__(self):
         if self.session.kernel_proc is not None:
-            kernel = str(self.session.kernel_proc.pid)
+            kernel = force_text(self.session.kernel_proc.pid)
         else:
             kernel = 'N/A'
         return 'WolframFunction<function=%s, kernel=%s>' % (self.wlfunc,

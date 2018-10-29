@@ -14,7 +14,7 @@ from wolframclient.serializers.wxfencoder.wxfnumpyencoder import (
 from wolframclient.utils import six
 from wolframclient.utils.api import numpy
 from wolframclient.utils.tests import TestCase as BaseTestCase
-
+from wolframclient.utils.encoding import force_text
 
 @unittest.skipIf(six.JYTHON, "numpy is not supported in jython")
 class TestCase(BaseTestCase):
@@ -66,7 +66,7 @@ class TestCase(BaseTestCase):
             next(provider.provide_wxfexpr(arr))
 
         self.assertEqual(
-            str(err.exception), "Dimensions must be positive integers.")
+            force_text(err.exception), "Dimensions must be positive integers.")
 
     def test_int8_PA(self):
 

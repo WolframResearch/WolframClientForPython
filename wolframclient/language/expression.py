@@ -89,11 +89,11 @@ class WLFunction(WLExpressionMeta):
     def __repr__(self):
         if len(self) > 4:
             return '%s[%s, << %i >>, %s]' % (self.head, ', '.join([
-                str(x) for x in self.args[:2]
-            ]), len(self) - 4, ', '.join([str(x) for x in self.args[-2:]]))
+                force_text(x) for x in self.args[:2]
+            ]), len(self) - 4, ', '.join([force_text(x) for x in self.args[-2:]]))
         else:
             return '%s[%s]' % (repr(self.head), ', '.join(
-                [str(x) for x in self.args]))
+                [force_text(x) for x in self.args]))
 
 
 class WLSymbolFactory(WLSymbol):
