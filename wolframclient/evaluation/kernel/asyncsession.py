@@ -7,8 +7,7 @@ from subprocess import PIPE
 from threading import Event
 
 from wolframclient.evaluation.kernel.kernelsession import (
-    WolframLanguageSession
-)
+    WolframLanguageSession)
 from wolframclient.utils.api import asyncio, futures
 
 logger = logging.getLogger(__name__)

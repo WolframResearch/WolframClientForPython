@@ -13,7 +13,6 @@ from wolframclient.serializers import export
 from wolframclient.utils import six
 from wolframclient.utils.api import json, os, time, zmq
 from wolframclient.utils.encoding import force_text
-from wolframclient.utils.encoding import force_text
 
 if six.WINDOWS:
     from subprocess import STARTUPINFO, STARTF_USESHOWWINDOW

@@ -195,7 +195,6 @@ class WolframAPIResponse(WolframResult):
 
 
 class WolframAPIResponse200(WolframAPIResponse):
-
     def _build(self):
         self.success = True
         self.failure = None
@@ -227,7 +226,6 @@ class WolframAPIResponseRedirect(WolframAPIResponse):
 
 
 class WolframAPIResponse301(WolframAPIResponseRedirect):
-
     def _specific_failure(self):
         ''' should not happen since we follow redirection '''
         self.failure = 'Resource permanently moved to new location {}'.format(
@@ -235,7 +233,6 @@ class WolframAPIResponse301(WolframAPIResponseRedirect):
 
 
 class WolframAPIResponse302(WolframAPIResponseRedirect):
-
     def _specific_failure(self):
         # hack because the server is not returning 403. cf. CLOUD-12946
         if self.location is not None and 'j_spring_oauth_security_check' in self.location:
@@ -268,7 +265,6 @@ class WolframAPIResponse400(WolframAPIResponse):
 
 
 class WolframAPIResponse401(WolframAPIResponse):
-
     def _build(self):
         self.success = False
         # ignoring content-type. Must be JSON. Make sure it's robust enough.
@@ -278,7 +274,6 @@ class WolframAPIResponse401(WolframAPIResponse):
 
 
 class WolframAPIResponse404(WolframAPIResponse):
-
     def _build(self):
         self.success = False
         self.failure = "The resource %s can't not be found." % self.response.url
@@ -286,7 +281,6 @@ class WolframAPIResponse404(WolframAPIResponse):
 
 
 class WolframAPIResponseGeneric(WolframAPIResponse):
-
     def _build(self):
         self.success = False
         self.failure = self.response.text
