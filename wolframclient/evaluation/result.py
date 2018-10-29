@@ -141,10 +141,7 @@ class WolframEvaluationJSONResponse(WolframResult):
                 'Cloud evaluation failed.', messages=self.failure)
 
     def __repr__(self):
-        if self.success:
-            return '{}<success={}, expression={}>'.format(
-                self.__class__.__name__, self.success, self.result)
-        elif not self.request_error:
+        if self.success or not self.request_error:
             return '{}<success={}, expression={}>'.format(
                 self.__class__.__name__, self.success, self.result)
         else:
