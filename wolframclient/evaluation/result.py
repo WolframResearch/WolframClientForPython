@@ -9,6 +9,7 @@ from wolframclient.exception import (
     RequestException, WolframEvaluationException, WolframLanguageException)
 from wolframclient.utils import six
 from wolframclient.utils.api import json
+from wolframclient.utils.decorators import cached_property
 
 logger = logging.getLogger(__name__)
 
@@ -68,13 +69,10 @@ class WolframKernelEvaluationResult(WolframResult):
         self.messages = msgs
         self.wxf = wxf
         self.consumer = consumer
-        self._result = None
 
-    @property
+    @cached_property
     def result(self):
-        if self._result is None:
-            self._result = binary_deserialize(self.wxf, consumer=self.consumer)
-        return self._result
+        return binary_deserialize(self.wxf, consumer=self.consumer)
 
     def get(self):
         """Kernel evaluation never fails even if the evaluated expression is a failure object."""
