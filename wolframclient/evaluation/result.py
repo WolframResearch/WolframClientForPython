@@ -200,8 +200,6 @@ class WolframAPIResponse(WolframResult):
 
 
 class WolframAPIResponse200(WolframAPIResponse):
-    def __init__(self, response, decoder=None):
-        super(WolframAPIResponse200, self).__init__(response, decoder)
 
     def _build(self):
         self.success = True
@@ -234,8 +232,6 @@ class WolframAPIResponseRedirect(WolframAPIResponse):
 
 
 class WolframAPIResponse301(WolframAPIResponseRedirect):
-    def __init__(self, response, decoder=None):
-        super(WolframAPIResponse301, self).__init__(response, decoder)
 
     def _specific_failure(self):
         ''' should not happen since we follow redirection '''
@@ -244,8 +240,6 @@ class WolframAPIResponse301(WolframAPIResponseRedirect):
 
 
 class WolframAPIResponse302(WolframAPIResponseRedirect):
-    def __init__(self, response, decoder=None):
-        super(WolframAPIResponse302, self).__init__(response, decoder)
 
     def _specific_failure(self):
         # hack because the server is not returning 403. cf. CLOUD-12946
@@ -279,8 +273,6 @@ class WolframAPIResponse400(WolframAPIResponse):
 
 
 class WolframAPIResponse401(WolframAPIResponse):
-    def __init__(self, response, decoder=None):
-        super(WolframAPIResponse401, self).__init__(response, decoder)
 
     def _build(self):
         self.success = False
@@ -291,8 +283,6 @@ class WolframAPIResponse401(WolframAPIResponse):
 
 
 class WolframAPIResponse404(WolframAPIResponse):
-    def __init__(self, response, decoder=None):
-        super(WolframAPIResponse404, self).__init__(response, decoder)
 
     def _build(self):
         self.success = False
@@ -301,8 +291,6 @@ class WolframAPIResponse404(WolframAPIResponse):
 
 
 class WolframAPIResponseGeneric(WolframAPIResponse):
-    def __init__(self, response, decoder=None):
-        super(WolframAPIResponseGeneric, self).__init__(response, decoder)
 
     def _build(self):
         self.success = False
