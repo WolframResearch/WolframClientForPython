@@ -3,15 +3,16 @@ import os
 import unittest
 import fnmatch
 from wolframclient.utils import six
-from . import test_cloud as m1
-from . import test_kernel as m2
-# Only Python 3.5 and above support async, so we need the test suite
-# to avoid loading the module testing coroutines.
-if six.PY3:
+# The evaluation modules is only supported on python 3.5+, because of asyncio
+# We need to prevent the test suite from loading this module containing coroutines.
+if six.PY_35:
+    from . import test_cloud as m1
+    from . import test_kernel as m2
     from . import test_coroutine as m3
-    test_modules = (m1, m2, m3)
+    from . import test_async_cloud as m4
+    test_modules = (m1, m2, m3, m4)
 else:
-    test_modules = (m1, m2)
+    test_modules = ()
 
 __all__ = ['load_tests']
 

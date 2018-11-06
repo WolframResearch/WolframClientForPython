@@ -13,6 +13,9 @@ from itertools import chain
 
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
+PY_35 = sys.version_info >= (3, 5)
+PY_36 = sys.version_info >= (3, 6)
+PY_37 = sys.version_info >= (3, 7)
 
 WINDOWS = platform.system() == 'Windows'
 

@@ -31,20 +31,25 @@ class WolframServer(object):
         self.access_token_endpoint = access_token_endpoint
         self.xauth_consumer_key = xauth_consumer_key
         self.xauth_consumer_secret = xauth_consumer_secret
-        self.certificate = certificate
+        if certificate is None or isinstance(certificate, six.string_types):
+            self.certificate = certificate
+        else:
+            raise ValueError(
+                'Invalid certificate. Must be a string type or None.')
 
     def is_xauth(self):
         return self.xauth_consumer_key is not None and self.xauth_consumer_secret is not None
 
-    @property
-    def verify(self):
-        if self.certificate is None:
-            return True
-        elif isinstance(self.certificate, six.string_types):
-            return self.certificate
-        else:
-            raise ValueError(
-                'Invalid certificate. Must be a string type or None.')
+# # TODO REMOVE
+#     @property
+#     def verify(self):
+#         if self.certificate is None:
+#             return False
+#         elif isinstance(self.certificate, six.string_types):
+#             return self.certificate
+#         else:
+#             raise ValueError(
+#                 'Invalid certificate. Must be a string type or None.')
 
 
 # A built-in instance representing the Wolfram public Cloud.

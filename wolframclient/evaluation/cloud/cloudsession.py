@@ -4,13 +4,16 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
 
-from wolframclient.evaluation.cloud.oauth import OAuthSession
+from wolframclient.evaluation.cloud.oauth import (
+    OAuth1RequestsSyncSession as OAuthSession,  XAuthRequestsSyncSession as XAuthSession)
 from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
+from wolframclient.evaluation.base import WolframEvaluator
 from wolframclient.evaluation.result import (WolframAPIResponseBuilder,
                                              WolframEvaluationJSONResponse)
 from wolframclient.exception import AuthenticationException
 from wolframclient.language import wl
 from wolframclient.serializers import export
+from wolframclient.utils.url import url_join, evaluation_api_url, user_api_url
 from wolframclient.utils import six
 from wolframclient.utils.api import futures, json, requests
 
@@ -19,7 +22,7 @@ logger = logging.getLogger(__name__)
 __all__ = ['WolframCloudSession', 'WolframCloudSessionAsync', 'WolframAPICall']
 
 
-class WolframCloudSession(object):
+class WolframCloudSession(WolframEvaluator):
     """Represent a session to a given cloud enabling simple API call.
 
     This is the central class of the cloud evaluation package. It is initialized with a server instance
@@ -36,19 +39,48 @@ class WolframCloudSession(object):
     It is strongly advised to re-use a session to make multiple calls to mitigate the cost of initialization.
     """
 
-    __slots__ = 'server', 'oauth', 'consumer', 'consumer_secret', 'user', 'password', 'is_xauth', 'evaluation_api_url', 'authentication'
+    __slots__ = 'server', 'oauth', 'consumer', 'consumer_secret', 'user', 'password', 'evaluation_api_url', 'credentials'
+    '_stopped'
 
-    def __init__(self, authentication=None, server=WolframPublicCloudServer):
+    def __init__(self, credentials=None, server=WolframPublicCloudServer,
+                    oauth_session_class=OAuthSession, 
+                    xauth_session_class=XAuthSession):
         self.server = server
-        # user provided information to authenticate.
-        self.authentication = authentication
-        self.evaluation_api_url = self._evaluation_api_url()
-        self.oauth = None
-        self.consumer = None
-        self.consumer_secret = None
-        self.user = None
-        self.password = None
-        self.is_xauth = None
+        self.evaluation_api_url = evaluation_api_url(self.server)
+        self._stopped = False
+        self.credentials = credentials
+        self.evaluation_api_url = evaluation_api_url(self.server)
+        if self.credentials:
+            if self.credentials.is_xauth:
+                self.xauth_session_class = xauth_session_class
+            else:
+                self.oauth_session_class = oauth_session_class
+        self.oauth_session = None
+        self.verify = self.server.certificate
+
+    def started(self):
+        return (self.anonymous() or self.authorized())
+
+    def start(self):
+        self._stopped = False
+        if not self.started():
+            self.authenticate()
+
+    def stopped(self):
+        return self._stopped    
+
+    def stop(self):
+        self.terminate()
+    
+    def terminate(self):
+        self._stopped = True
+        self.oauth_session = None
+
+    def anonymous(self):
+        return self.credentials is None
+    
+    def authorized(self):
+        return self.oauth_session is not None and self.oauth_session.authorized()
 
     def authenticate(self):
         """Authenticate with the server using the credentials.
@@ -57,59 +89,66 @@ class WolframCloudSession(object):
         to call it, since the session will try to authenticate when the first
         request is issued. """
         logger.info('Authenticating to the server.')
-        if self.authentication is None:
-            raise AuthenticationException('Missing authentication.')
-        if self.authentication.is_xauth:
-            self.user_authentication()
+        if self.credentials is None:
+            raise AuthenticationException('Missing credentials.')
+        if self.credentials.is_xauth:
+            self.oauth_session = self.xauth_session_class(
+                self.credentials, self.server, self.server.xauth_consumer_key,
+                self.server.xauth_consumer_secret
+            )
         else:
-            self.sak_authentication()
+            self.oauth_session = self.oauth_session_class(self.server, self.credentials.consumer_key, self.credentials.consumer_secret)
+        self.oauth_session.authenticate()
 
-    def sak_authentication(self):
-        self.consumer = self.authentication.consumer_key
-        self.consumer_secret = self.authentication.consumer_secret
-        self.is_xauth = False
-        self.oauth = OAuthSession(self.server, self.consumer,
-                                  self.consumer_secret)
-        self.oauth.auth()
+    # def sak_authentication(self):
+    #     self.consumer = self.credentials.consumer_key
+    #     self.consumer_secret = self.credentials.consumer_secret
+    #     self.is_xauth = False
+    #     self.oauth = OAuthSession(self.server, self.consumer,
+    #                               self.consumer_secret)
+    #     self.oauth.auth()
 
-    def user_authentication(self):
-        if not self.server.is_xauth():
-            raise AuthenticationException(
-                'XAuth is not configured. Missing consumer key and/or secret.')
-        self.user = self.authentication.user
-        self.password = self.authentication.password
-        self.is_xauth = True
-        self.oauth = OAuthSession(self.server, self.server.xauth_consumer_key,
-                                  self.server.xauth_consumer_secret)
-        self.oauth.xauth(self.authentication.user,
-                         self.authentication.password)
+    # def user_authentication(self):
+    #     if not self.server.is_xauth():
+    #         raise AuthenticationException(
+    #             'XAuth is not configured. Missing consumer key and/or secret.')
+    #     self.user = self.credentials.user
+    #     self.password = self.credentials.password
+    #     self.is_xauth = True
+    #     self.oauth = OAuthSession(self.server, self.server.xauth_consumer_key,
+    #                               self.server.xauth_consumer_secret)
+    #     self.oauth.xauth(self.credentials.user,
+    #                      self.credentials.password)
 
-    @property
-    def authorized(self):
-        """Return a reasonnably accurate state of the authentication status."""
-        # No credentials provided. This session is not authorized (public access).
-        if self.authentication is None:
-            return False
-        # Authentication credentials were provided, but self.is_xauth remains None
-        # until the first attempt. First need to authenticate first.
-        if self.is_xauth is None:
-            self.authenticate()
-        # if is_xauth was set, ensure the session is authorized.
-        if self.oauth is not None and self.oauth.authorized:
-            return True
-        # is_xauth was set but the process authentication already failed once. Retry.
-        else:
-            logger.warn(
-                'Not authenticated. Retrying to authenticate with the server.')
-            self.authenticate()
-            return self.oauth is not None and self.oauth.authorized
+    # def authorized(self):
+    #     """Return a reasonnably accurate state of the authentication status."""
+    #     # No credentials provided. This session is not authorized (public access).
+    #     if self.credentials is None:
+    #         return False
+    #     # Authentication credentials were provided, but self.is_xauth remains None
+    #     # until the first attempt. First need to authenticate first.
+    #     if self.is_xauth is None:
+    #         self.authenticate()
+    #     # if is_xauth was set, ensure the session is authorized.
+    #     if self.oauth is not None and self.oauth.started():
+    #         return True
+    #     # is_xauth was set but the process authentication already failed once. Retry.
+    #     else:
+    #         logger.warn(
+    #             'Not authenticated. Retrying to authenticate with the server.')
+    #         self.authenticate()
+    #         return self.oauth is not None and self.oauth.started()
 
     def _post(self, url, headers={}, body={}, files={}, params={}):
         """Do a POST request, signing the content only if authentication has been successful."""
         headers['User-Agent'] = 'WolframClientForPython/1.0'
-        if self.authorized:
+        if not self.started():
+            self.start()
+        if self.stopped():
+            self.restart()
+        if self.authorized():
             logger.info('Authenticated call to api %s', url)
-            return self.oauth.signed_request(
+            return self.oauth_session.signed_request(
                 url, headers=headers, body=body, files=files)
         else:
             logger.info('Anonymous call to api %s', url)
@@ -119,7 +158,7 @@ class WolframCloudSession(object):
                 headers=headers,
                 data=body,
                 files=files,
-                verify=self.server.verify)
+                verify=self.verify)
 
     def call(self,
              api,
@@ -152,7 +191,7 @@ class WolframCloudSession(object):
         It's possible to pass a ``PermissionsKey`` to the server along side to the query,
         and get access to a given resource.
         """
-        url = self._user_api_url(api)
+        url = user_api_url(self.server, api)
         params = {
             '_key': permissions_key
         } if permissions_key is not None else {}
@@ -174,25 +213,25 @@ class WolframCloudSession(object):
 
         return WolframAPIResponseBuilder.build(response)
 
-    def _user_api_url(self, api):
-        """Build an API URL from a user name and an API id. """
-        if isinstance(api, tuple) or isinstance(api, list):
-            if len(api) == 2:
-                return url_join(self.server.cloudbase, 'objects', api[0],
-                                api[1])
-            else:
-                raise ValueError(
-                    'Target api specified as a tuple must have two elements: the user name, the API name.'
-                )
-        elif isinstance(api, six.string_types):
-            return api
-        else:
-            raise ValueError(
-                'Invalid API description. Expecting string or tuple.')
+    # def _user_api_url(self, api):
+    #     """Build an API URL from a user name and an API id. """
+    #     if isinstance(api, tuple) or isinstance(api, list):
+    #         if len(api) == 2:
+    #             return url_join(self.server.cloudbase, 'objects', api[0],
+    #                             api[1])
+    #         else:
+    #             raise ValueError(
+    #                 'Target api specified as a tuple must have two elements: the user name, the API name.'
+    #             )
+    #     elif isinstance(api, six.string_types):
+    #         return api
+    #     else:
+    #         raise ValueError(
+    #             'Invalid API description. Expecting string or tuple.')
 
-    def _evaluation_api_url(self):
-        return url_join(self.server.cloudbase,
-                        'evaluations?_responseform=json')
+    # def evaluation_api_url(self):
+    #     return url_join(self.server.cloudbase,
+    #                     'evaluations?_responseform=json')
 
     def _call_evaluation_api(self, data):
         if logger.isEnabledFor(logging.DEBUG):
@@ -236,7 +275,7 @@ class WolframCloudSession(object):
 
     def __repr__(self):
         return '<{}:base={}, authorized={}>'.format(
-            self.__class__.__name__, self.server.cloudbase, self.authorized)
+            self.__class__.__name__, self.server.cloudbase, self.authorized())
 
 
 class WolframCloudSessionAsync(WolframCloudSession):
@@ -249,10 +288,10 @@ class WolframCloudSessionAsync(WolframCloudSession):
     """
 
     def __init__(self,
-                 authentication=None,
+                 credentials=None,
                  server=WolframPublicCloudServer,
                  max_workers=None):
-        super(WolframCloudSessionAsync, self).__init__(authentication, server)
+        super(WolframCloudSessionAsync, self).__init__(credentials, server)
         self.thread_pool_exec = None
         self._max_workers = max_workers
 
@@ -381,9 +420,9 @@ class WolframAPICall(object):
         type.
         e.g: *image/jpeg*, *image/gif*, etc.
         """
-        if not isinstance(data, six.binary_type):
+        if not isinstance(image_data, six.binary_type):
             raise TypeError('Input data must by bytes.')
-        self.files[name] = ('tmp_image_%s' % name, data, content_type)
+        self.files[name] = ('tmp_image_%s' % name, image_data, content_type)
         return self
 
     def perform(self, **kwargs):
@@ -486,19 +525,19 @@ def encode_api_inputs(inputs, target_format='wl', multipart=False, **kwargs):
     return encoder(inputs, multipart, **kwargs)
 
 
-def url_join(*fragments):
-    """ Join fragments of a URL, dealing with slashes."""
-    if len(fragments) == 0:
-        return ''
-    buff = []
-    for fragment in fragments:
-        stripped = fragment.strip('/')
-        if len(stripped) > 0:
-            buff.append(stripped)
-            buff.append('/')
+# def url_join(*fragments):
+#     """ Join fragments of a URL, dealing with slashes."""
+#     if len(fragments) == 0:
+#         return ''
+#     buff = []
+#     for fragment in fragments:
+#         stripped = fragment.strip('/')
+#         if len(stripped) > 0:
+#             buff.append(stripped)
+#             buff.append('/')
 
-    last = fragments[-1]
-    # add a trailing '/' if present.
-    if len(last) > 0 and last[-1] != '/':
-        buff.pop()
-    return ''.join(buff)
+#     last = fragments[-1]
+#     # add a trailing '/' if present.
+#     if len(last) > 0 and last[-1] != '/':
+#         buff.pop()
+#     return ''.join(buff)

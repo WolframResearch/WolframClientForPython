@@ -71,7 +71,7 @@ time = API(perf_counter=('time.perf_counter', 'time.time'), sleep='time.sleep')
 futures = API(ThreadPoolExecutor='concurrent.futures.ThreadPoolExecutor')
 
 asyncio = API(
-    ensure_task=('asyncio.ensure_task', 'asyncio.ensure_future'),
+    ensure_task=('asyncio.create_task', 'asyncio.ensure_future'),
     ensure_future=('asyncio.ensure_future'),
     get_event_loop='asyncio.get_event_loop',
     new_event_loop='asyncio.new_event_loop',
@@ -82,7 +82,8 @@ asyncio = API(
     FIRST_COMPLETED='asyncio.FIRST_COMPLETED',
     gather='asyncio.gather',
     Future='asyncio.Future',
-    sleep='asyncio.sleep')
+    sleep='asyncio.sleep',
+    BytesIO='asyncio.io.BytesIO')
 
 urllib = API(
     urlparse=('urllib.parse.urlparse', 'urlparse.urlparse'),

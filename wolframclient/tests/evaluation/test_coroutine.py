@@ -16,20 +16,12 @@ from wolframclient.tests.evaluation.test_kernel import \
     TestCaseSettings as TestKernelBase
 from wolframclient.utils.api import asyncio, time
 from wolframclient.utils.tests import TestCase as BaseTestCase
+from wolframclient.utils.asyncio import run_in_loop, get_event_loop
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-loop = asyncio.get_event_loop()
-
-
-def run_in_loop(cor):
-    @wraps(cor)
-    def wrapped(*args, **kwargs):
-        loop.run_until_complete(cor(*args, **kwargs))
-
-    return wrapped
-
+LOOP = get_event_loop()
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestCoroutineSession(BaseTestCase):
@@ -131,7 +123,7 @@ class TestKernelPool(BaseTestCase):
     @classmethod
     def tearDownKernelSession(cls):
         if cls.pool is not None:
-            loop.run_until_complete(cls.pool.terminate())
+            LOOP.run_until_complete(cls.pool.terminate())
 
     @classmethod
     def setupKernelSession(cls):
@@ -140,7 +132,7 @@ class TestKernelPool(BaseTestCase):
             kernel_loglevel=logging.INFO,
             STARTUP_READ_TIMEOUT=5,
             TERMINATE_READ_TIMEOUT=3)
-        loop.run_until_complete(cls.pool.start())
+        LOOP.run_until_complete(cls.pool.start())
 
     @run_in_loop
     async def test_eval_wlsymbol(self):

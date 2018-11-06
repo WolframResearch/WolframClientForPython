@@ -3,67 +3,49 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
-
+from wolframclient.evaluation.cloud.base import (
+    UserIDPassword, OAuthSessionBase, OAuthSyncSessionBase)
 from wolframclient.exception import AuthenticationException
 from wolframclient.utils import six
 from wolframclient.utils.api import oauth, requests, urllib
 
 logger = logging.getLogger(__name__)
 
-__all__ = ['SecuredAuthenticationKey', 'UserIDPassword']
+__all__ = ['OAuth1RequestsSyncSession', 'XAuthRequestsSyncSession']
 
-
-class SecuredAuthenticationKey(object):
-    ''' Represents a Secured Authentication Key generated using the Wolfram Language
-    function `GenerateSecuredAuthenticationKey[]`
-
-    It is used as an input when authenticating a cloud session.
-    '''
-    __slots__ = 'consumer_key', 'consumer_secret'
-    is_xauth = False
-
-    def __init__(self, consumer_key, consumer_secret):
-        self.consumer_key = consumer_key
-        self.consumer_secret = consumer_secret
-
-
-class UserIDPassword(object):
-    ''' Represents user credentials used to login to a cloud.
-
-    It is used as an input when authenticating a cloud session.
-    '''
-    __slots__ = 'user', 'password'
-    is_xauth = True
-
-    def __init__(self, user, password):
-        self.user = user
-        self.password = password
-
-
-class OAuthSession(object):
+class OAuthRequestsSyncSessionBase(OAuthSyncSessionBase):
     ''' A wrapper around the OAuth client taking care of fetching the various oauth tokens.
 
     This class is used by the cloud session. It is not meant to be used out of this scope.
     '''
-    __slots__ = 'consumer_key', 'consumer_secret', 'signature_method', '_oauth_token', '_oauth_token_secret', '_base_header', '_client', 'server', '_session'
-    DEFAULT_CONTENT_TYPE = {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent': 'WolframClientForPython/1.0'
-    }
 
     def __init__(self,
                  server,
                  consumer_key,
                  consumer_secret,
-                 signature_method=None):
-        self.consumer_key = consumer_key
-        self.consumer_secret = consumer_secret
-        self.signature_method = signature_method or oauth.SIGNATURE_HMAC
-        self._client = None
-        self._session = None
-        self._oauth_token = None
-        self._oauth_token_secret = None
-        self.server = server
+                 signature_method=None,
+                 client_class=oauth.Client):
+        super().__init__(server, consumer_key, consumer_secret, signature_method=signature_method, client_class=client_class)
+        self.verify = self.server.certificate
+    # __slots__ = 'consumer_key', 'consumer_secret', 'signature_method', '_oauth_token', '_oauth_token_secret', '_base_header', '_client', 'server'
+    # DEFAULT_CONTENT_TYPE = {
+    #     'Content-Type': 'application/x-www-form-urlencoded',
+    #     'User-Agent': 'WolframClientForPython/1.0'
+    # }
+
+    # def __init__(self,
+    #              server,
+    #              consumer_key,
+    #              consumer_secret,
+    #              signature_method=None,
+    #              client_class=self.client_class):
+    #     # self.consumer_key = consumer_key
+    #     # self.consumer_secret = consumer_secret
+    #     # self.signature_method = signature_method or oauth.SIGNATURE_HMAC
+    #     # self._client = None
+    #     # self._oauth_token = None
+    #     # self._oauth_token_secret = None
+    #     # self.server = server
 
     def _check_response(self, response):
         msg = None
@@ -72,41 +54,29 @@ class OAuthSession(object):
         try:
             as_json = response.json()
             msg = as_json.get('message', None)
-            raise AuthenticationException(response, msg)
         # msg is None if response is not JSON, but it's fine.
         except:
             raise AuthenticationException(
                 response,
                 'Request failed with status %i' % response.status_code)
+        raise AuthenticationException(response, msg)
 
-    def _update_client(self):
-        self._client = oauth.Client(
-            self.consumer_key,
-            client_secret=self.consumer_secret,
-            resource_owner_key=self._oauth_token,
-            resource_owner_secret=self._oauth_token_secret,
-            signature_type=oauth.SIGNATURE_TYPE_AUTH_HEADER,
-            realm=self.server.cloudbase,  # TODO should we have realm?
-            encoding='iso-8859-1')
-
-    @staticmethod
-    def _has_content_type(request, mimetype):
-        return request.headers.get('Content-Type', None) == mimetype
-
-    @staticmethod
-    def _is_json_content(request):
-        return OAuthSession._has_content_type(request, 'application/json')
-
-    @staticmethod
-    def _is_textplain_content(request):
-        return OAuthSession._has_content_type(request, 'text/plain')
+    # def _update_client(self):
+    #     self._client = self.client_class(
+    #         self.consumer_key,
+    #         client_secret=self.consumer_secret,
+    #         resource_owner_key=self._oauth_token,
+    #         resource_owner_secret=self._oauth_token_secret,
+    #         signature_type=oauth.SIGNATURE_TYPE_AUTH_HEADER,
+    #         realm=self.server.cloudbase,  # TODO should we have realm?
+    #         encoding='iso-8859-1')
 
     # TODO Add a session and prepared requests?
     def signed_request(self, uri, headers={}, body={}, files={},
                        method='POST'):
-        if self._client is None:
-            raise AuthenticationException('Not authenticated.')
-
+        if not self.authorized():
+            self.authenticate()
+        
         req_headers = {}
         for k, v in headers.items():
             req_headers[k] = v
@@ -170,35 +140,98 @@ class OAuthSession(object):
             headers=req_headers,
             data=signed_body if sign_body else body,
             files=files,
-            verify=self.server.verify)
+            verify=self.verify)
 
-    @property
-    def authorized(self):
-        return self._client is not None and bool(
-            self._client.client_secret) and bool(
-                self._client.resource_owner_key) and bool(
-                    self._client.resource_owner_secret)
+    # @property
+    # def authorized(self):
+    #     return self._client is not None and bool(
+    #         self._client.client_secret) and bool(
+    #             self._client.resource_owner_key) and bool(
+    #                 self._client.resource_owner_secret)
 
-    def _parse_oauth_response(self, response):
-        try:
-            token = response.json()
-            return token['oauth_token'], token['oauth_token_secret']
-        except:
-            token = urllib.parse_qs(response.text)
-            return (token.get('oauth_token')[0],
-                    token.get('oauth_token_secret')[0])
+    # def _parse_oauth_response(self, response):
+    #     try:
+    #         token = response.json()
+    #         return token['oauth_token'], token['oauth_token_secret']
+    #     except:
+    #         token = urllib.parse_qs(response.text)
+    #         return (token.get('oauth_token')[0],
+    #                 token.get('oauth_token_secret')[0])
 
-    def xauth(self, user, password):
+        
+
+class OAuth1RequestsSyncSession(OAuthRequestsSyncSessionBase):
+
+    def authenticate(self):
+        self.set_oauth_request_token()
+        self.set_oauth_access_token()
+        self._update_client()
+    
+    def set_oauth_request_token(self):
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('Fetching oauth request token from: %s',
+                         self.server.request_token_endpoint)
+
+        logging.disable(logging.DEBUG)
+
+        token_client = self.client_class(
+            self.consumer_key, client_secret=self.consumer_secret)
+        uri, headers, body = token_client.sign(
+            self.server.request_token_endpoint, "POST")
+        response = requests.post(
+            uri, headers=headers, data=body, verify=self.verify)
+
+        logging.disable(logging.NOTSET)
+
+        self._check_response(response)
+        self._update_token_from_request_body(response.content)
+
+    def set_oauth_access_token(self):
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('Fetching oauth access token from %s',
+                         self.server.access_token_endpoint)
+        access_client = self.client_class(
+            self.consumer_key,
+            client_secret=self.consumer_secret,
+            resource_owner_key=self._oauth_token,
+            resource_owner_secret=self._oauth_token_secret)
+
+        uri, headers, body = access_client.sign(
+            self.server.access_token_endpoint, "POST")
+        access_response = requests.post(
+            uri, headers=headers, data=body, verify=self.verify)
+        
+        self._check_response(access_response)
+        self._update_token_from_request_body(access_response.content)
+
+
+class XAuthRequestsSyncSession(OAuthRequestsSyncSessionBase):
+
+    def __init__(self, userid_password, server, consumer_key, consumer_secret, signature_method=None, client_class=oauth.Client):
+        super().__init__(server, server.xauth_consumer_key,
+            server.xauth_consumer_secret, 
+            signature_method=signature_method, client_class=client_class)
+        if not self.server.is_xauth():
+            raise AuthenticationException(
+                'XAuth is not configured for this server. Missing xauth consumer key and/or secret.')
+        if isinstance(userid_password, tuple) and len(userid_password) == 2:
+            self.xauth_credentials = UserIDPassword(*userid_password)
+        elif isinstance(userid_password, UserIDPassword):
+            self.xauth_credentials = userid_password
+        else:
+            raise ValueError('User ID and password must be specified as a tuple or a UserIDPassword instance.')
+        
+    def authenticate(self):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('xauth authentication of user %s', user)
         if not self.server.is_xauth():
             raise AuthenticationException(
                 'XAuth is not configured. Missing consumer key and/or secret.')
         #todo use xauth server key/secret
-        client = oauth.Client(self.consumer_key, self.consumer_secret)
+        client = self.client_class(self.consumer_key, self.consumer_secret)
         params = {}
-        params["x_auth_username"] = user
-        params["x_auth_password"] = password
+        params["x_auth_username"] = self.xauth_credentials.user
+        params["x_auth_password"] = self.xauth_credentials.password
         params["x_auth_mode"] = "client_auth"
 
         # avoid dumping password in log files.
@@ -207,57 +240,14 @@ class OAuthSession(object):
         uri, headers, body = client.sign(
             self.server.access_token_endpoint,
             'POST',
-            headers=OAuthSession.DEFAULT_CONTENT_TYPE,
+            headers=self.DEFAULT_CONTENT_TYPE,
             body=params)
 
         response = requests.post(
-            uri, headers=headers, data=body, verify=self.server.verify)
+            uri, headers=headers, data=body, verify=self.verify)
 
         logging.disable(logging.NOTSET)
 
         self._check_response(response)
-        self._oauth_token, self._oauth_token_secret = self._parse_oauth_response(
-            response)
-        self._update_client()
-
-    def set_oauth_request_token(self):
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('Fetching oauth request token from: %s',
-                         self.server.request_token_endpoint)
-
-        logging.disable(logging.DEBUG)
-
-        token_client = oauth.Client(
-            self.consumer_key, client_secret=self.consumer_secret)
-        uri, headers, body = token_client.sign(
-            self.server.request_token_endpoint, "POST")
-        response = requests.post(
-            uri, headers=headers, data=body, verify=self.server.verify)
-
-        logging.disable(logging.NOTSET)
-
-        self._check_response(response)
-        self._oauth_token, self._oauth_token_secret = self._parse_oauth_response(
-            response)
-
-    def set_oauth_access_token(self):
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('Fetching oauth access token from %s',
-                         self.server.access_token_endpoint)
-        access_client = oauth.Client(
-            self.consumer_key,
-            client_secret=self.consumer_secret,
-            resource_owner_key=self._oauth_token,
-            resource_owner_secret=self._oauth_token_secret)
-        uri, headers, body = access_client.sign(
-            self.server.access_token_endpoint, "POST")
-        access_response = requests.post(
-            uri, headers=headers, data=body, verify=self.server.verify)
-        self._check_response(access_response)
-        self._oauth_token, self._oauth_token_secret = self._parse_oauth_response(
-            access_response)
-
-    def auth(self):
-        self.set_oauth_request_token()
-        self.set_oauth_access_token()
+        self._update_token_from_request_body(response.content)
         self._update_client()
