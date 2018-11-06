@@ -287,8 +287,8 @@ Create a new instance of :class:`~wolframclient.evaluation.SecuredAuthentication
 
 Using `sak`, start a new authenticated cloud session:: 
 
-    >>> session = WolframCloudSession(authentication=sak)
-    >>> session.authorized
+    >>> session = WolframCloudSession(credentials=sak)
+    >>> session.authorized()
     True
 
 In the following sections, the authenticated session initialized here is simply referred to by its variable name `session`.
