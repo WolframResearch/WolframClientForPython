@@ -5,7 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import logging
 import ssl
 
-from aiohttp import BytesPayload, ClientSession, FormData, StringPayload
+from aiohttp import BytesPayload, ClientSession, FormData
 
 from wolframclient.evaluation.base import WolframAsyncEvaluator
 from wolframclient.evaluation.cloud.asyncoauth import \
@@ -17,8 +17,8 @@ from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 from wolframclient.evaluation.result import (
     WolframAPIResponseBuilder, WolframEvaluationJSONResponseAsync)
 from wolframclient.exception import AuthenticationException
-from wolframclient.serializers import export
 from wolframclient.language import wlexpr
+from wolframclient.serializers import export
 from wolframclient.utils import six
 from wolframclient.utils.url import evaluation_api_url, user_api_url
 
@@ -195,7 +195,8 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
         return WolframEvaluationJSONResponseAsync(response)
 
     def _normalize_input(self, expr):
-        if self.inputform_string_evaluation and (isinstance(expr, six.string_types) or isinstance(expr, six.binary_type)):
+        if self.inputform_string_evaluation and (isinstance(
+                expr, six.string_types) or isinstance(expr, six.binary_type)):
             expr = wlexpr(expr)
         return expr
 
@@ -214,7 +215,7 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
         """
         return await self._call_evaluation_api(
             self._normalize_input(expr), **kwargs)
-    
+
     def function(self, func):
         return super().function(self._normalize_input(func))
 

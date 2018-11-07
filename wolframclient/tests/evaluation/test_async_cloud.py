@@ -13,7 +13,7 @@ from wolframclient.evaluation.cloud.base import (SecuredAuthenticationKey,
                                                  UserIDPassword)
 from wolframclient.exception import (AuthenticationException,
                                      WolframLanguageException)
-from wolframclient.language import wl, wlexpr
+from wolframclient.language import wl
 from wolframclient.tests.configure import (MSG_JSON_NOT_FOUND, json_config,
                                            secured_authentication_key, server,
                                            user_configuration)
@@ -221,7 +221,9 @@ class TestCase(TestCaseSettings):
 
     @run_in_loop
     async def test_evaluate_string_disable(self):
-        async with WolframCloudAsyncSession(credentials=self.sak, inputform_string_evaluation=False) as session:
+        async with WolframCloudAsyncSession(
+                credentials=self.sak,
+                inputform_string_evaluation=False) as session:
             res = await session.evaluate('Range[3]')
             self.assertEqual(res, '"Range[3]"')
             cor = session.function('f')

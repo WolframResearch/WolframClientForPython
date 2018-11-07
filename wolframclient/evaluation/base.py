@@ -80,8 +80,10 @@ class WolframEvaluator(WolframEvaluatorBase):
         The object returned can be applied on arguments as any other Python function, and
         is evaluated using the underlying Wolfram evaluator.
         """
+
         def inner(*args, **opts):
             return self.evaluate(WLFunction(expr, *args, **opts))
+
         return inner
 
     def __enter__(self):

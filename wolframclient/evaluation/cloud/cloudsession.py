@@ -14,7 +14,7 @@ from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 from wolframclient.evaluation.result import (WolframAPIResponseBuilder,
                                              WolframEvaluationJSONResponse)
 from wolframclient.exception import AuthenticationException
-from wolframclient.language import wl,wlexpr
+from wolframclient.language import wlexpr
 from wolframclient.serializers import export
 from wolframclient.utils import six
 from wolframclient.utils.api import futures, json, requests
@@ -211,10 +211,11 @@ class WolframCloudSession(WolframEvaluator):
         return WolframEvaluationJSONResponse(response)
 
     def _normalize_input(self, expr):
-        if self.inputform_string_evaluation and (isinstance(expr, six.string_types) or isinstance(expr, six.binary_type)):
+        if self.inputform_string_evaluation and (isinstance(
+                expr, six.string_types) or isinstance(expr, six.binary_type)):
             expr = wlexpr(expr)
         return expr
-    
+
     def evaluate(self, expr, **kwargs):
         """Send `expr` to the cloud for evaluation, return the result.
 

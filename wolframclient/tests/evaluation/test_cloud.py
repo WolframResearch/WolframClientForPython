@@ -13,7 +13,7 @@ from wolframclient.evaluation.cloud.cloudsession import (
     encode_api_inputs)
 from wolframclient.exception import (AuthenticationException,
                                      WolframLanguageException)
-from wolframclient.language import wl, wlexpr
+from wolframclient.language import wl
 from wolframclient.tests.configure import (MSG_JSON_NOT_FOUND, json_config,
                                            secured_authentication_key, server,
                                            user_configuration)
@@ -221,17 +221,23 @@ class TestCase(TestCaseSettings):
         res = self.cloud_session_future.evaluate('Range[3]')
         self.assertEqual(res.result(), '{1, 2, 3}')
 
+
 # inputform evaluation option disabled
+
     def test_evaluate_string_disable(self):
-        with WolframCloudSession(credentials=self.sak, inputform_string_evaluation=False) as session:
+        with WolframCloudSession(
+                credentials=self.sak,
+                inputform_string_evaluation=False) as session:
             res = session.evaluate('Range[3]')
             self.assertEqual(res, '"Range[3]"')
             func = session.function('f')
             res = func('abc')
             self.assertEqual(res, '"f"["abc"]')
-    
+
     def test_evaluate_future_string_disable(self):
-        with WolframCloudSessionFuture(credentials=self.sak,inputform_string_evaluation=False) as session:
+        with WolframCloudSessionFuture(
+                credentials=self.sak,
+                inputform_string_evaluation=False) as session:
             res = session.evaluate('Range[3]')
             self.assertEqual(res.result(), '"Range[3]"')
             func = session.function('f')
