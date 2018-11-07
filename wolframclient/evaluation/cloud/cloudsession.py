@@ -101,45 +101,6 @@ class WolframCloudSession(WolframEvaluator):
             self.oauth_session = self.oauth_session_class(self.server, self.credentials.consumer_key, self.credentials.consumer_secret)
         self.oauth_session.authenticate()
 
-    # def sak_authentication(self):
-    #     self.consumer = self.credentials.consumer_key
-    #     self.consumer_secret = self.credentials.consumer_secret
-    #     self.is_xauth = False
-    #     self.oauth = OAuthSession(self.server, self.consumer,
-    #                               self.consumer_secret)
-    #     self.oauth.auth()
-
-    # def user_authentication(self):
-    #     if not self.server.is_xauth():
-    #         raise AuthenticationException(
-    #             'XAuth is not configured. Missing consumer key and/or secret.')
-    #     self.user = self.credentials.user
-    #     self.password = self.credentials.password
-    #     self.is_xauth = True
-    #     self.oauth = OAuthSession(self.server, self.server.xauth_consumer_key,
-    #                               self.server.xauth_consumer_secret)
-    #     self.oauth.xauth(self.credentials.user,
-    #                      self.credentials.password)
-
-    # def authorized(self):
-    #     """Return a reasonnably accurate state of the authentication status."""
-    #     # No credentials provided. This session is not authorized (public access).
-    #     if self.credentials is None:
-    #         return False
-    #     # Authentication credentials were provided, but self.is_xauth remains None
-    #     # until the first attempt. First need to authenticate first.
-    #     if self.is_xauth is None:
-    #         self.authenticate()
-    #     # if is_xauth was set, ensure the session is authorized.
-    #     if self.oauth is not None and self.oauth.started():
-    #         return True
-    #     # is_xauth was set but the process authentication already failed once. Retry.
-    #     else:
-    #         logger.warn(
-    #             'Not authenticated. Retrying to authenticate with the server.')
-    #         self.authenticate()
-    #         return self.oauth is not None and self.oauth.started()
-
     def _post(self, url, headers={}, body={}, files={}, params={}):
         """Do a POST request, signing the content only if authentication has been successful."""
         headers['User-Agent'] = 'WolframClientForPython/1.0'
@@ -213,26 +174,6 @@ class WolframCloudSession(WolframEvaluator):
             response = self._post(url, body=encoded_inputs, params=params)
 
         return WolframAPIResponseBuilder.build(response)
-
-    # def _user_api_url(self, api):
-    #     """Build an API URL from a user name and an API id. """
-    #     if isinstance(api, tuple) or isinstance(api, list):
-    #         if len(api) == 2:
-    #             return url_join(self.server.cloudbase, 'objects', api[0],
-    #                             api[1])
-    #         else:
-    #             raise ValueError(
-    #                 'Target api specified as a tuple must have two elements: the user name, the API name.'
-    #             )
-    #     elif isinstance(api, six.string_types):
-    #         return api
-    #     else:
-    #         raise ValueError(
-    #             'Invalid API description. Expecting string or tuple.')
-
-    # def evaluation_api_url(self):
-    #     return url_join(self.server.cloudbase,
-    #                     'evaluations?_responseform=json')
 
     def _call_evaluation_api(self, data):
         if logger.isEnabledFor(logging.DEBUG):
@@ -464,21 +405,3 @@ def encode_api_inputs(inputs, target_format='wl', multipart=False, **kwargs):
             (target_format, ', '.join(SUPPORTED_ENCODING_FORMATS.keys())))
 
     return encoder(inputs, multipart, **kwargs)
-
-
-# def url_join(*fragments):
-#     """ Join fragments of a URL, dealing with slashes."""
-#     if len(fragments) == 0:
-#         return ''
-#     buff = []
-#     for fragment in fragments:
-#         stripped = fragment.strip('/')
-#         if len(stripped) > 0:
-#             buff.append(stripped)
-#             buff.append('/')
-
-#     last = fragments[-1]
-#     # add a trailing '/' if present.
-#     if len(last) > 0 and last[-1] != '/':
-#         buff.pop()
-#     return ''.join(buff)

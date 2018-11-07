@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
 from wolframclient.evaluation.cloud.base import (
-    UserIDPassword, OAuthSessionBase, OAuthSyncSessionBase)
+    UserIDPassword, OAuthSessionBase)
 from wolframclient.exception import AuthenticationException
 from wolframclient.utils import six
 from wolframclient.utils.api import oauth, requests, urllib
@@ -13,11 +13,10 @@ logger = logging.getLogger(__name__)
 
 __all__ = ['OAuth1RequestsSyncSession', 'XAuthRequestsSyncSession']
 
-class OAuthRequestsSyncSessionBase(OAuthSyncSessionBase):
-    ''' A wrapper around the OAuth client taking care of fetching the various oauth tokens.
-
-    This class is used by the cloud session. It is not meant to be used out of this scope.
-    '''
+class OAuthRequestsSyncSessionBase(OAuthSessionBase):
+    """ A wrapper around the OAuth client taking care of fetching the various oauth tokens,
+    using the requests library.
+    """
 
     def __init__(self,
                  server,
@@ -27,26 +26,7 @@ class OAuthRequestsSyncSessionBase(OAuthSyncSessionBase):
                  client_class=oauth.Client):
         super().__init__(server, consumer_key, consumer_secret, signature_method=signature_method, client_class=client_class)
         self.verify = self.server.certificate
-    # __slots__ = 'consumer_key', 'consumer_secret', 'signature_method', '_oauth_token', '_oauth_token_secret', '_base_header', '_client', 'server'
-    # DEFAULT_CONTENT_TYPE = {
-    #     'Content-Type': 'application/x-www-form-urlencoded',
-    #     'User-Agent': 'WolframClientForPython/1.0'
-    # }
-
-    # def __init__(self,
-    #              server,
-    #              consumer_key,
-    #              consumer_secret,
-    #              signature_method=None,
-    #              client_class=self.client_class):
-    #     # self.consumer_key = consumer_key
-    #     # self.consumer_secret = consumer_secret
-    #     # self.signature_method = signature_method or oauth.SIGNATURE_HMAC
-    #     # self._client = None
-    #     # self._oauth_token = None
-    #     # self._oauth_token_secret = None
-    #     # self.server = server
-
+   
     def _check_response(self, response):
         msg = None
         if response.status_code == 200:
@@ -61,17 +41,6 @@ class OAuthRequestsSyncSessionBase(OAuthSyncSessionBase):
                 'Request failed with status %i' % response.status_code)
         raise AuthenticationException(response, msg)
 
-    # def _update_client(self):
-    #     self._client = self.client_class(
-    #         self.consumer_key,
-    #         client_secret=self.consumer_secret,
-    #         resource_owner_key=self._oauth_token,
-    #         resource_owner_secret=self._oauth_token_secret,
-    #         signature_type=oauth.SIGNATURE_TYPE_AUTH_HEADER,
-    #         realm=self.server.cloudbase,  # TODO should we have realm?
-    #         encoding='iso-8859-1')
-
-    # TODO Add a session and prepared requests?
     def signed_request(self, uri, headers={}, body={}, files={},
                        method='POST'):
         if not self.authorized():
@@ -124,16 +93,6 @@ class OAuthRequestsSyncSessionBase(OAuthSyncSessionBase):
             logger.debug('Signed header: %s', req_headers)
             logger.debug('Is body signed: %s', sign_body)
 
-            # s = requests.Session()
-            # req = requests.Request(method, uri,
-            #                  headers=req_headers,
-            #                  data=signed_body if sign_body else body,
-            #                  files=files,
-            #                  )
-            # prepared = req.prepare()
-            # logger.debug('Prepared request (generated only in debug)\nheaders: %s\nbody: %s', prepared.headers, prepared.body)
-            # return s.send(prepared, verify=self.server.verify)
-
         return requests.request(
             method,
             uri,
@@ -142,26 +101,8 @@ class OAuthRequestsSyncSessionBase(OAuthSyncSessionBase):
             files=files,
             verify=self.verify)
 
-    # @property
-    # def authorized(self):
-    #     return self._client is not None and bool(
-    #         self._client.client_secret) and bool(
-    #             self._client.resource_owner_key) and bool(
-    #                 self._client.resource_owner_secret)
-
-    # def _parse_oauth_response(self, response):
-    #     try:
-    #         token = response.json()
-    #         return token['oauth_token'], token['oauth_token_secret']
-    #     except:
-    #         token = urllib.parse_qs(response.text)
-    #         return (token.get('oauth_token')[0],
-    #                 token.get('oauth_token_secret')[0])
-
-        
-
 class OAuth1RequestsSyncSession(OAuthRequestsSyncSessionBase):
-
+    """ Oauth1 authentication using requests library and secured authentication key. """
     def authenticate(self):
         self.set_oauth_request_token()
         self.set_oauth_access_token()
@@ -206,6 +147,10 @@ class OAuth1RequestsSyncSession(OAuthRequestsSyncSessionBase):
 
 
 class XAuthRequestsSyncSession(OAuthRequestsSyncSessionBase):
+    """ XAuth authentication using requests library. 
+    
+    xauth authenticates with user and password, but requires a specific server
+    configuration. """
 
     def __init__(self, userid_password, server, consumer_key, consumer_secret, signature_method=None, client_class=oauth.Client):
         super().__init__(server, server.xauth_consumer_key,

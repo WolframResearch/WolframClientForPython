@@ -11,7 +11,7 @@ from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 
 
 __all__ = ['SecuredAuthenticationKey', 'UserIDPassword', 
-    'OAuthSessionBase', 'OAuthAsyncSessionBase', 'OAuthSyncSessionBase']
+    'OAuthSessionBase', 'OAuthAsyncSessionBase']
 
 
 class SecuredAuthenticationKey(object):
@@ -42,6 +42,7 @@ class UserIDPassword(object):
 
 
 class OAuthSessionBase(object):
+    """ A family of classes dealing with authentication with OAuth method."""
     DEFAULT_CONTENT_TYPE = {
         'Content-Type': 'application/x-www-form-urlencoded',
         'User-Agent': 'WolframClientForPython/1.0'
@@ -61,6 +62,14 @@ class OAuthSessionBase(object):
         self._oauth_token = None
         self._oauth_token_secret = None
         self.server = server
+
+    def authenticate(self):
+        """ Authenticate with a given server using the user credentials"""
+        raise NotImplementedError
+
+    def signed_request(self, uri, headers={}, data=None, method='POST'):
+        """ Sign a given request and issue it."""
+        raise NotImplementedError
 
     def authorized(self):
         """Return a reasonnably accurate state of the authentication status."""
@@ -89,18 +98,13 @@ class OAuthSessionBase(object):
             self._oauth_token = token[b'oauth_token'][0]
             self._oauth_token_secret = token[b'oauth_token_secret'][0]
 
-class OAuthSyncSessionBase(OAuthSessionBase):
-    def authenticate(self):
-        raise NotImplementedError
-
-    def signed_request(self, uri, headers={}, data=None, method='POST'):
-        raise NotImplementedError
-
 class OAuthAsyncSessionBase(OAuthSessionBase):
     async def authenticate(self):
+        """ Asynchronous OAuth authentication class dealing with various tokens and signing requests. """
         raise NotImplementedError
 
     async def signed_request(self, uri, headers={}, data=None, method='POST'):
+        """ Sign a given request and issue it asynchronously."""
         raise NotImplementedError
 
 class WolframAPICallBase(object):

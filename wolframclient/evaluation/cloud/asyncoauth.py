@@ -13,11 +13,7 @@ from wolframclient.evaluation.cloud.base import UserIDPassword, OAuthAsyncSessio
 logger = logging.getLogger(__name__)
 
 class OAuthAIOHttpAsyncSessionBase(OAuthAsyncSessionBase):
-    
-    # DEFAULT_CONTENT_TYPE = {
-    #     'Content-Type': 'application/x-www-form-urlencoded',
-    #     'User-Agent': 'WolframClientForPython/1.0'
-    # }
+    """ Asynchronous OAuth authentication class using aiohttp library for requests. """
 
     def __init__(self,
                  http_session,
@@ -27,15 +23,6 @@ class OAuthAIOHttpAsyncSessionBase(OAuthAsyncSessionBase):
                  signature_method=None,
                  client_class=oauth.Client,
                  ssl_context_class=ssl.SSLContext):
-        
-        # self.consumer_key = consumer_key
-        # self.consumer_secret = consumer_secret
-        # self.signature_method = signature_method or oauth.SIGNATURE_HMAC
-        # self.client_class = client_class
-        # self._client = None
-        # self._oauth_token = None
-        # self._oauth_token_secret = None
-        # self.server = server
         super().__init__(server,consumer_key,consumer_secret,signature_method=signature_method,
         client_class=client_class)
         self.http_session = http_session
@@ -44,25 +31,6 @@ class OAuthAIOHttpAsyncSessionBase(OAuthAsyncSessionBase):
             self._ssl_context = self.ssl_context_class(self.server.certificate)
         else:
             self._ssl_context = None
-
-    # def started(self):
-    #     return self._client is not None and bool(
-    #         self._client.client_secret) and bool(
-    #             self._client.resource_owner_key) and bool(
-    #                 self._client.resource_owner_secret)
-
-    # async def authenticate(self):
-    #     raise NotImplementedError
-
-    # def _update_client(self):
-    #     self._client = self.client_class(
-    #         self.consumer_key,
-    #         client_secret=self.consumer_secret,
-    #         resource_owner_key=self._oauth_token,
-    #         resource_owner_secret=self._oauth_token_secret,
-    #         signature_type=oauth.SIGNATURE_TYPE_AUTH_HEADER,
-    #         realm=self.server.cloudbase,
-    #         encoding='iso-8859-1')
 
     async def signed_request(self, uri, headers={}, data=None, method='POST'):
         """ Construct a signed request and send it."""
@@ -130,18 +98,10 @@ class OAuthAIOHttpAsyncSessionBase(OAuthAsyncSessionBase):
                 'Request failed with status %i' % response.status)
         raise AuthenticationException(response, msg)
 
-    # async def _parse_oauth_response(self, response):
-    #     try:
-    #         token = await response.json()
-    #         return token['oauth_token'], token['oauth_token_secret']
-    #     except:
-    #         token = urllib.parse_qs(await response.text())
-    #         return (token.get('oauth_token')[0],
-    #                 token.get('oauth_token_secret')[0])
-
 
 class OAuth1AIOHttpAsyncSession(OAuthAIOHttpAsyncSessionBase):
-
+    """ OAuth1 using aiohttp."""
+    
     async def set_oauth_request_token(self):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Fetching oauth request token from: %s',
@@ -181,6 +141,7 @@ class OAuth1AIOHttpAsyncSession(OAuthAIOHttpAsyncSessionBase):
 
 
 class XAuthAIOHttpAsyncSession(OAuthAIOHttpAsyncSessionBase):
+    """ XAuth using aiohttp."""
     def __init__(self,
                 userid_password,
                  http_session,
