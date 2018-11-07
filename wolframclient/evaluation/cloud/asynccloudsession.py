@@ -68,14 +68,6 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
             and (self.anonymous() or self.authorized())
             )
 
-    # @property
-    # def authorized(self):
-    #     return self.oauth_session is not None and self.oauth_session.started()
-    
-    # @property
-    # def anonymous(self):
-    #     return self.credentials is None
-        
     def stopped(self):
         return self._stopped
 
@@ -143,9 +135,9 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
 
             {'parameter name': ('filename', file_pointer, 'content-type')}
 
-        String can also be passed as files::
+        Bytes can also be passed as files::
 
-            {'parameter name': ('filename', '...string...data...', 'content-type')}
+            {'parameter name': ('filename', b'...binary...data...', 'content-type')}
 
         It's possible to pass a ``PermissionsKey`` to the server along side to the query,
         and get access to a given resource.
@@ -194,25 +186,6 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
                 headers=headers,
                 data=data,
                 ssl=self._ssl_context)
-
-    # def _user_api_url(self, api):
-    #     """Build an API URL from a user name and an API id. """
-    #     if isinstance(api, tuple) or isinstance(api, list):
-    #         if len(api) == 2:
-    #             return url_join(self.server.cloudbase, 'objects', api[0],
-    #                             api[1])
-    #         else:
-    #             raise ValueError(
-    #                 'Target api specified as a tuple must have two elements: the user name, the API name.'
-    #             )
-    #     elif isinstance(api, six.string_types):
-    #         return api
-    #     else:
-    #         raise ValueError(
-    #             'Invalid API specifications. Expecting string or tuple.')
-
-    # def evaluation_api_url(self):
-    #     return url_join(self.server.cloudbase,'evaluations?_responseform=json')
 
     def _normalize_input(self, expr, **kwargs):
         #TODO: for consistency maybe string and bytearray should be exported as well?
