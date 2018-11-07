@@ -20,7 +20,7 @@ from wolframclient.utils.api import futures, json, requests
 
 logger = logging.getLogger(__name__)
 
-__all__ = ['WolframCloudSession', 'WolframCloudSessionAsync', 'WolframAPICall']
+__all__ = ['WolframCloudSession', 'WolframCloudSessionFuture', 'WolframAPICall']
 
 
 class WolframCloudSession(WolframEvaluator):
@@ -113,11 +113,8 @@ class WolframCloudSession(WolframEvaluator):
 
     def _post(self, url, headers={}, body={}, files={}, params={}):
         """Do a POST request, signing the content only if authentication has been successful."""
+        self._ensure_started()
         headers['User-Agent'] = 'WolframClientForPython/1.0'
-        if not self.started():
-            self.start()
-        if self.stopped():
-            self.restart()
         if self.authorized():
             logger.info('Authenticated call to api %s', url)
             return self.oauth_session.signed_request(
@@ -131,6 +128,12 @@ class WolframCloudSession(WolframEvaluator):
                 data=body,
                 files=files,
                 verify=self.verify)
+
+    def _ensure_started(self):
+        if not self.started():
+            self.start()
+        if self.stopped():
+            self.restart()
 
     def call(self,
              api,
@@ -234,46 +237,39 @@ class WolframCloudSession(WolframEvaluator):
             self.__class__.__name__, self.server.cloudbase, self.authorized())
 
 
-class WolframCloudSessionAsync(WolframCloudSession):
-    """ A Wolfram cloud session that call issue asynchronous call.
-
-    Contrary to :class:`~wolframclient.evaluation.WolframCloudSession`, this
-    class must be terminated when no more used.
+class WolframCloudSessionFuture(WolframCloudSession):
+    """ Am asynchronous Wolfram cloud session wrapping API calls and cloud evaluations 
+    in future objects.
 
     `max_workers` can be specified and is passed to the ThreadPoolExecutor.
+    `kwargs` are parameters as expect by `~wolframclient.evaluation.WolframCloudSession`
     """
 
-    def __init__(self,
-                 credentials=None,
-                 server=WolframPublicCloudServer,
-                 max_workers=None):
-        super(WolframCloudSessionAsync, self).__init__(credentials, server)
-        self.thread_pool_exec = None
+    def __init__(self, max_workers=None, **kwargs):
+        super().__init__(**kwargs)
+        self._pool = None
         self._max_workers = max_workers
 
-    def __enter__(self):
-        return self
+    def started(self):
+        self._pool is not None and super().started()
 
-    def __exit__(self, type, value, traceback):
-        self.terminate()
+    def start(self):
+        super().start()
+        if self._pool is None:
+            self._pool = futures.ThreadPoolExecutor(max_workers=self._max_workers)
+
+    def stop(self):
+        if self._pool is not None:
+            self._pool.shutdown(wait=True)
+            self._pool=None
+        super.stop()
 
     def terminate(self):
-        if self.thread_pool_exec is not None:
-            self.thread_pool_exec.shutdown(wait=True)
+        if self._pool is not None:
+            self._pool.shutdown(wait=False)
+        super().terminate()
 
-    def _thread_pool_exec(self):
-        if self.thread_pool_exec is None:
-            try:
-                self.thread_pool_exec = futures.ThreadPoolExecutor(
-                    max_workers=self._max_workers)
-            except ImportError:
-                logger.fatal('Module concurrent.futures is missing.')
-                raise NotImplementedError(
-                    'Asynchronous evaluation is not available for this Python interpreter.'
-                )
-        return self.thread_pool_exec
-
-    def call_async(self,
+    def call(self,
                    api,
                    input_parameters={},
                    target_format='wl',
@@ -281,46 +277,27 @@ class WolframCloudSessionAsync(WolframCloudSession):
                    **kwargv):
         """Call a given API asynchronously. Returns a :class:`concurrent.futures.Future` object.
 
-        This method requires :mod:`concurrent.futures` which was introduced in `Python 3.2`.
         See :func:`WolframCloudSession.call` for more details about input parameters.
-
-        .. warning::
-            Asynchronous evaluation is only available for `Python 3.2` and above.
         """
-        return self._thread_pool_exec().submit(
-            self.call,
+        self._ensure_started()
+        return self._pool.submit(
+            super().call,
             api,
             input_parameters=input_parameters,
             target_format=target_format,
             permissions_key=permissions_key,
             **kwargv)
 
-    def evaluate_async(self, expr):
+    def evaluate(self, expr):
         """Send `expr` to the cloud for asynchronous evaluation.
 
-        Returns a
-        :class:`concurrent.futures.Future` object.
+        Returns a :class:`concurrent.futures.Future` object.
 
         `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export`,
         or a the string InputForm of an expression to evaluate.
-
-        .. warning::
-            Asynchronous evaluation is only available for `Python 3.2` and above.
         """
-        return self._thread_pool_exec().submit(self._call_evaluation_api,
-                                               self._normalize_input(expr))
-
-    def function(self, func, asynchronous=False):
-        """Return a `callable` cloud function.
-
-        The object returned can be applied on arguments as any other Python function, and
-        is evaluated in the cloud as a Wolfram Language expression using the current cloud
-        session.
-
-        .. warning::
-            Asynchronous evaluation is only available for `Python 3.2` and above.
-        """
-        return CloudFunction(self, func, asynchronous=asynchronous)
+        self._ensure_started()
+        return self._pool.submit(super().evaluate, expr)
 
 class WolframAPICall(WolframAPICallBase):
     """Perform an API call using a cloud session. """

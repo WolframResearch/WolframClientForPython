@@ -27,6 +27,8 @@ from aiohttp import ClientSession, StringPayload, BytesPayload, FormData
 
 logger = logging.getLogger(__name__)
 
+__all__ = ['WolframCloudAsyncSession', 'WolframAPICallAsync']
+
 class WolframCloudAsyncSession(WolframAsyncEvaluator):
     
     _stopped = True # avoid error in __del__ if __init__ failed.

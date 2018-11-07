@@ -8,7 +8,7 @@ import unittest
 
 from wolframclient.evaluation.cloud import WolframServer
 from wolframclient.evaluation.cloud.cloudsession import (
-    WolframAPICall, WolframCloudSession, WolframCloudSessionAsync, encode_api_inputs)
+    WolframAPICall, WolframCloudSession, WolframCloudSessionFuture, encode_api_inputs)
 
 from wolframclient.evaluation.cloud.base import (SecuredAuthenticationKey,
                                                   UserIDPassword)
@@ -41,7 +41,7 @@ class TestCaseSettings(BaseTestCase):
         cls.user_cred = user_configuration
         cls.server = server
         cls.cloud_session = WolframCloudSession(credentials=cls.sak)
-        cls.cloud_session_async = WolframCloudSessionAsync(
+        cls.cloud_session_future = WolframCloudSessionFuture(
             credentials=cls.sak)
 
     @classmethod
@@ -52,8 +52,8 @@ class TestCaseSettings(BaseTestCase):
     def tearDownCloudSession(cls):
         if cls.cloud_session is not None:
             cls.cloud_session.stop()
-        if cls.cloud_session_async is not None:
-            cls.cloud_session_async.terminate()
+        if cls.cloud_session_future is not None:
+            cls.cloud_session_future.terminate()
 
     def get_data_path(self, filename):
         """Return full path of a file in ./data/directory"""
@@ -203,15 +203,15 @@ class TestCase(TestCaseSettings):
             f([[1]], 1, Padding=1), '{{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}')
 
     def test_evaluate_string(self):
-        res1 = self.cloud_session_async.evaluate(wlexpr('Range[1]'))
-        res2 = self.cloud_session_async.evaluate(wlexpr('Range[2]'))
+        res1 = self.cloud_session_future.evaluate(wlexpr('Range[1]'))
+        res2 = self.cloud_session_future.evaluate(wlexpr('Range[2]'))
 
         self.assertEqual(res1.result(), '{1}')
         self.assertEqual(res2.result(), '{1, 2}')
 
     def test_evaluate_string(self):
-        res = self.cloud_session_async.evaluate(wlexpr('Range[3]'))
-        self.assertEqual(res, '{1, 2, 3}')
+        res = self.cloud_session_future.evaluate(wlexpr('Range[3]'))
+        self.assertEqual(res.result(), '{1, 2, 3}')
 
     # url_join
 

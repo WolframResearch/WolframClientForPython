@@ -309,7 +309,7 @@ class WolframAPIResponse(WolframResult):
     def __repr__(self):
         return '<%s:success=%s>' % (self.__class__.__name__, self.success)
 
-class WolframAPIAsyncResponse(WolframAPIResponse):
+class WolframAPIResponseAsync(WolframAPIResponse):
     async def get(self):
         await self._build()
         return super(WolframAPIResponse, self).get()
@@ -354,7 +354,7 @@ class WolframAPIFailureResponse(WolframAPIResponse):
         super().__init__(response, decoder=decoder)
         self.success = False
 
-class WolframAPIAsyncFailureResponse(WolframAPIAsyncResponse, WolframAPIFailureResponse):
+class WolframAPIFailureResponseAsync(WolframAPIResponseAsync, WolframAPIFailureResponse):
     pass
 
 class WolframAPIResponse200(WolframAPIResponse):
@@ -375,7 +375,7 @@ class WolframAPIResponse200(WolframAPIResponse):
         else:
             self.result = self.response.content()
 
-class WolframAPIAsyncResponse200(WolframAPIAsyncResponse, WolframAPIResponse200):
+class WolframAPIResponse200Async(WolframAPIResponseAsync, WolframAPIResponse200):
     async def _build(self):
         if self.decoder is not None:
             try:
@@ -408,7 +408,7 @@ class WolframAPIResponse301(WolframAPIResponseRedirect):
         self.failure = 'Resource permanently moved to new location {}'.format(
             self.location)
 
-class WolframAPIAsyncResponse301(WolframAPIResponse301, WolframAPIAsyncResponse):
+class WolframAPIResponse301Async(WolframAPIResponse301, WolframAPIResponseAsync):
     pass
 
 class WolframAPIResponse302(WolframAPIResponseRedirect):
@@ -420,7 +420,7 @@ class WolframAPIResponse302(WolframAPIResponseRedirect):
             self.failure = 'Resource moved to new location {}'.format(
                 self.location)
 
-class WolframAPIAsyncResponse302(WolframAPIResponse302, WolframAPIAsyncResponse):
+class WolframAPIResponse302Async(WolframAPIResponse302, WolframAPIResponseAsync):
     pass
 
 class WolframAPIResponse400(WolframAPIFailureResponse):
@@ -444,7 +444,7 @@ class WolframAPIResponse400(WolframAPIFailureResponse):
             self._fields_in_error = set(fields.keys())
             logger.warning('Fields in error: %s', self._fields_in_error)
 
-class WolframAPIAsyncResponse400(WolframAPIResponse400, WolframAPIAsyncResponse):
+class WolframAPIResponse400Async(WolframAPIResponse400, WolframAPIResponseAsync):
     async def _build(self):
         # ignoring content-type. Must be JSON. Make sure it's robust enough.
         try:
@@ -466,7 +466,7 @@ class WolframAPIResponse401(WolframAPIFailureResponse):
                        self.failure)
         self._built=True
 
-class WolframAPIAsyncResponse401(WolframAPIResponse401, WolframAPIAsyncResponse):
+class WolframAPIResponse401Async(WolframAPIResponse401, WolframAPIResponseAsync):
     async def _build(self):
         # ignoring content-type. Must be JSON. Make sure it's robust enough.
         self.failure = await self.response.text()
@@ -480,7 +480,7 @@ class WolframAPIResponse404(WolframAPIFailureResponse):
         logger.warning('Wolfram API error response: %s', self.failure)
         self._built=True
 
-class WolframAPIAsyncResponse404(WolframAPIResponse404, WolframAPIAsyncResponse):
+class WolframAPIResponse404Async(WolframAPIResponse404, WolframAPIResponseAsync):
     async def _build(self):
         WolframAPIResponse404._build(self)
 
@@ -490,7 +490,7 @@ class WolframAPIResponseGeneric(WolframAPIFailureResponse):
         self.failure = self.response.text()
         self._built=True
 
-class WolframAPIAsyncResponseGeneric(WolframAPIAsyncResponse):
+class WolframAPIResponseGenericAsync(WolframAPIResponseAsync):
     async def _build(self):
         self.failure = await self.response.text()
         self._built=True
@@ -500,7 +500,7 @@ class WolframAPIResponse500(WolframAPIResponseGeneric):
         super().__init__(response, decoder)
         logger.fatal('Internal server error occurred.')
 
-class WolframAPIAsyncResponse500(WolframAPIAsyncResponseGeneric):
+class WolframAPIResponse500Async(WolframAPIResponseGenericAsync):
     def __init__(self, response, decoder=None):
         super().__init__(response, decoder)
         logger.fatal('Internal server error occurred.')
@@ -520,13 +520,13 @@ class WolframAPIResponseBuilder(object):
         500: WolframAPIResponse500
     }
     async_response_mapper = {
-        200: WolframAPIAsyncResponse200,
-        301: WolframAPIAsyncResponse301,
-        302: WolframAPIAsyncResponse302,
-        400: WolframAPIAsyncResponse400,
-        401: WolframAPIAsyncResponse401,
-        404: WolframAPIAsyncResponse404,
-        500: WolframAPIAsyncResponse500
+        200: WolframAPIResponse200Async,
+        301: WolframAPIResponse301Async,
+        302: WolframAPIResponse302Async,
+        400: WolframAPIResponse400Async,
+        401: WolframAPIResponse401Async,
+        404: WolframAPIResponse404Async,
+        500: WolframAPIResponse500Async
     }
 
     @staticmethod
@@ -534,7 +534,7 @@ class WolframAPIResponseBuilder(object):
         adapter = wrap_response(response)
         if adapter.asynchronous:
             return WolframAPIResponseBuilder.async_response_mapper.get(
-                adapter.status(), WolframAPIAsyncResponseGeneric)(adapter, decoder=decoder)
+                adapter.status(), WolframAPIResponseGenericAsync)(adapter, decoder=decoder)
         else:
             return WolframAPIResponseBuilder.response_mapper.get(
                 adapter.status(), WolframAPIResponseGeneric)(adapter, decoder=decoder)

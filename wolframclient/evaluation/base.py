@@ -68,7 +68,7 @@ class WolframEvaluator(WolframEvaluatorBase):
         raise NotImplementedError
 
     def restart(self):
-        if self.started:
+        if self.started():
             self.stop()
         self.start()
 
@@ -83,12 +83,12 @@ class WolframEvaluator(WolframEvaluatorBase):
         return inner
 
     def __enter__(self):
-        if not self.started:
+        if not self.started():
             self.start()
         return self
 
     def __exit__(self, type, value, traceback):
-        if self.started:
+        if self.started():
             self.stop()
 
 class WolframAsyncEvaluator(WolframEvaluatorBase):
