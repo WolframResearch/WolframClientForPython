@@ -43,8 +43,6 @@ class WolframEvaluatorBase:
                 ResourceWarning,
                 **kwargs)
 
-#SYNC VERSION
-
 class WolframEvaluator(WolframEvaluatorBase):
 
     def evaluate(self, expr):
@@ -92,8 +90,6 @@ class WolframEvaluator(WolframEvaluatorBase):
     def __exit__(self, type, value, traceback):
         if self.started:
             self.stop()
-
-#ASYNC VERSION
 
 class WolframAsyncEvaluator(WolframEvaluatorBase):
 
@@ -152,71 +148,4 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
             context = {self.__class__.__name__: self,
                        'message': 'Unclosed evaluator.'}
             self._loop.call_exception_handler(context)
-
-class AsyncToSyncWolframEvalutor(WolframEvaluator, WolframAsyncEvaluator):
-    def __init__(self):
-        super(WolframAsyncEvaluator).__init__(loop=loop)
-        self.sync_loop = asyncio.new_event_loop()
-
-    def evaluate(self, expr):
-        task = asyncio.create_task(super(WolframAsyncEvaluator).evaluate(*args, **kwargs))
-        self._loop.wait(task)
-        return self.evaluate_wrap(expr).get()
-
-#     def evaluate_many(self, expr_list):
-#         return map(self.evaluate, expr_list)
-
-#     def evaluate_now(self, expr):
-#         raise NotImplementedError
-
-    def start(self):
-        self.executor = ThreadPoolExecutor(max_workers=self.max_pool_size)
-        raise NotImplementedError
-
-#     def started(self):
-#         raise NotImplementedError
-
-#     def stop(self):
-#         #Graceful stop
-#         raise NotImplementedError
-
-#     def terminate(self):
-#         raise NotImplementedError
-
-#     def restart(self):
-#         if self.started:
-#             self.stop()
-#         self.start()
-
-#     def function(self, expr):
-#         """Return a `callable` function from a Wolfram Language function `expr`.
-
-#         The object returned can be applied on arguments as any other Python function, and
-#         is evaluated using the underlying Wolfram evaluator.
-#         """
-#         def inner(self, *args, **opts):
-#             return self.evaluate(WLFunction(expr, *args, **opts))
-#         return inner
-
-#     def __enter__(self):
-#         if not self.started:
-#             self.start()
-#         return self
-
-#     def __exit__(self, type, value, traceback):
-#         if self.started:
-#             self.stop()
-
-
-
-# class WolframAsyncCloudKernel(WolframAsyncEvaluator):
-#     pass
-
-# class WolframCloudKernel(AsyncToSyncWolframEvalutor, WolframAsyncEvaluator):
-#     pass
-
-
-
-
-
 
