@@ -4,13 +4,17 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import json
 import logging
+
 from wolframclient.logger.utils import setup_logging_to_file
 from wolframclient.utils.api import os
 
 logger = logging.getLogger(__name__)
 
-__all__ = ['create_dir_if_missing', 'dir_test_data', 'json_config', 'secured_authentication_key', 
-'user_configuration' , 'server', 'kernel_path']
+__all__ = [
+    'create_dir_if_missing', 'dir_test_data', 'json_config',
+    'secured_authentication_key', 'user_configuration', 'server', 'kernel_path'
+]
+
 
 def create_dir_if_missing(path):
     ''' Create the directory structure represented by a `path`.
@@ -31,6 +35,7 @@ def dir_test_data():
     current_file_dir = os.dirname(__file__)
     return os.path_join(current_file_dir, 'data')
 
+
 def _parse_config(config):
     sak = None
     user_cred = None
@@ -42,15 +47,12 @@ def _parse_config(config):
             from wolframclient.evaluation import SecuredAuthenticationKey
             sak = SecuredAuthenticationKey(
                 cloud_config['SAK']['consumer_key'],
-                cloud_config['SAK']['consumer_secret']
-            )
+                cloud_config['SAK']['consumer_secret'])
         except KeyError as e:
             logger.warning('Failed to read SAK from json config.', e)
         from wolframclient.evaluation import UserIDPassword
-        user_cred = UserIDPassword(
-            cloud_config['User']['id'],
-            cloud_config['User']['password']
-        )
+        user_cred = UserIDPassword(cloud_config['User']['id'],
+                                   cloud_config['User']['password'])
     except KeyError as e:
         logger.warning('Failed to parse json config.', e)
     try:
@@ -70,6 +72,7 @@ def _parse_config(config):
         logger.warning('Failed to parse json config.', e)
     return sak, user_cred, server, kernel_path
 
+
 log_file = os.environ.get('WOLFRAMCLIENT_PY_LOG_FILE', None)
 if log_file is not None:
     create_dir_if_missing(log_file)
@@ -87,10 +90,10 @@ if _json_config_path is not None:
     try:
         with open(expended_path, 'r') as fp:
             json_config = json.load(fp)
-            secured_authentication_key, user_configuration, server, kernel_path = _parse_config(json_config)
+            secured_authentication_key, user_configuration, server, kernel_path = _parse_config(
+                json_config)
     except:
         raise ValueError(
             'Failed to find json configuration file %s' % _json_config_path)
 
 MSG_JSON_NOT_FOUND = "Environment variable WOLFRAMCLIENT_PY_JSON_CONFIG not set."
-

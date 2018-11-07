@@ -6,20 +6,22 @@ import logging
 import os
 import unittest
 
-from wolframclient.evaluation.cloud import WolframServer
-from wolframclient.evaluation.cloud.cloudsession import (
-    WolframAPICall, WolframCloudSession, WolframCloudSessionFuture, encode_api_inputs)
-
 from wolframclient.evaluation.cloud.base import (SecuredAuthenticationKey,
-                                                  UserIDPassword)
-from wolframclient.exception import AuthenticationException, WolframLanguageException
+                                                 UserIDPassword)
+from wolframclient.evaluation.cloud.cloudsession import (
+    WolframAPICall, WolframCloudSession, WolframCloudSessionFuture,
+    encode_api_inputs)
+from wolframclient.exception import (AuthenticationException,
+                                     WolframLanguageException)
 from wolframclient.language import wl, wlexpr
-from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config, user_configuration, secured_authentication_key, server
+from wolframclient.tests.configure import (MSG_JSON_NOT_FOUND, json_config,
+                                           secured_authentication_key, server,
+                                           user_configuration)
 from wolframclient.utils import six
 from wolframclient.utils.api import json
-from wolframclient.utils.url import url_join
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.tests import TestCase as BaseTestCase
+from wolframclient.utils.url import url_join
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -165,7 +167,13 @@ class TestCase(TestCaseSettings):
     def test_image_string_int(self):
         api = ('dorianb', 'api/private/str_image_int')
         with open(self.get_data_path('32x2.png'), 'rb') as fp:
-            response = self.cloud_session.call(api, input_parameters={'str':'abc', 'int' : 10}, files={'image': fp})
+            response = self.cloud_session.call(
+                api,
+                input_parameters={
+                    'str': 'abc',
+                    'int': 10
+                },
+                files={'image': fp})
             self.assertTrue(response.success)
             res = json.loads(response.get())
             self.assertListEqual(res, ['abc', [32, 2], 10])
@@ -285,6 +293,7 @@ class TestCase(TestCaseSettings):
                 'param1__wxf': b'8:A\x01-S\x01kf\x02s\x04ListC\x01C\x02',
                 'param2__wxf': b'8:S\x03foo'
             })
+
 
 class TestWolframAPI(TestCaseSettings):
     def test_wolfram_api_call_image(self):

@@ -3,8 +3,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
-from wolframclient.evaluation.cloud.base import (
-    UserIDPassword, OAuthSessionBase)
+
+from wolframclient.evaluation.cloud.base import (OAuthSessionBase,
+                                                 UserIDPassword)
 from wolframclient.exception import AuthenticationException
 from wolframclient.utils import six
 from wolframclient.utils.api import oauth, urllib
@@ -13,22 +14,28 @@ logger = logging.getLogger(__name__)
 
 __all__ = ['OAuth1RequestsSyncSession', 'XAuthRequestsSyncSession']
 
+
 class OAuthRequestsSyncSessionBase(OAuthSessionBase):
     """ A wrapper around the OAuth client taking care of fetching the various oauth tokens,
     preparing data as expected by the requests library.
     """
 
     def __init__(self,
-                http_session,
+                 http_session,
                  server,
                  consumer_key,
                  consumer_secret,
                  signature_method=None,
                  client_class=oauth.Client):
-        super().__init__(server, consumer_key, consumer_secret, signature_method=signature_method, client_class=client_class)
+        super().__init__(
+            server,
+            consumer_key,
+            consumer_secret,
+            signature_method=signature_method,
+            client_class=client_class)
         self.http_session = http_session
         self.verify = self.server.certificate
-   
+
     def _check_response(self, response):
         msg = None
         if response.status_code == 200:
@@ -47,7 +54,7 @@ class OAuthRequestsSyncSessionBase(OAuthSessionBase):
                        method='POST'):
         if not self.authorized():
             self.authenticate()
-        
+
         req_headers = {}
         for k, v in headers.items():
             req_headers[k] = v
@@ -103,13 +110,15 @@ class OAuthRequestsSyncSessionBase(OAuthSessionBase):
             files=files,
             verify=self.verify)
 
+
 class OAuth1RequestsSyncSession(OAuthRequestsSyncSessionBase):
     """ Oauth1 authentication using secured authentication key, as expected by the requests library. """
+
     def authenticate(self):
         self.set_oauth_request_token()
         self.set_oauth_access_token()
         self._update_client()
-    
+
     def set_oauth_request_token(self):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Fetching oauth request token from: %s',
@@ -143,7 +152,7 @@ class OAuth1RequestsSyncSession(OAuthRequestsSyncSessionBase):
             self.server.access_token_endpoint, "POST")
         access_response = self.http_session.post(
             uri, headers=headers, data=body, verify=self.verify)
-        
+
         self._check_response(access_response)
         self._update_token_from_request_body(access_response.content)
 
@@ -154,20 +163,34 @@ class XAuthRequestsSyncSession(OAuthRequestsSyncSessionBase):
     xauth authenticates with user and password, but requires a specific server
     configuration. """
 
-    def __init__(self, userid_password, http_session, server, consumer_key, consumer_secret, signature_method=None, client_class=oauth.Client):
-        super().__init__(http_session, server, server.xauth_consumer_key,
-            server.xauth_consumer_secret, 
-            signature_method=signature_method, client_class=client_class)
+    def __init__(self,
+                 userid_password,
+                 http_session,
+                 server,
+                 consumer_key,
+                 consumer_secret,
+                 signature_method=None,
+                 client_class=oauth.Client):
+        super().__init__(
+            http_session,
+            server,
+            server.xauth_consumer_key,
+            server.xauth_consumer_secret,
+            signature_method=signature_method,
+            client_class=client_class)
         if not self.server.is_xauth():
             raise AuthenticationException(
-                'XAuth is not configured for this server. Missing xauth consumer key and/or secret.')
+                'XAuth is not configured for this server. Missing xauth consumer key and/or secret.'
+            )
         if isinstance(userid_password, tuple) and len(userid_password) == 2:
             self.xauth_credentials = UserIDPassword(*userid_password)
         elif isinstance(userid_password, UserIDPassword):
             self.xauth_credentials = userid_password
         else:
-            raise ValueError('User ID and password must be specified as a tuple or a UserIDPassword instance.')
-        
+            raise ValueError(
+                'User ID and password must be specified as a tuple or a UserIDPassword instance.'
+            )
+
     def authenticate(self):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('xauth authentication of user %s', user)

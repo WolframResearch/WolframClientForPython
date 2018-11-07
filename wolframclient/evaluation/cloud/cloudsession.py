@@ -4,23 +4,27 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
 
-from wolframclient.evaluation.cloud.oauth import (
-    OAuth1RequestsSyncSession as OAuthSession,  XAuthRequestsSyncSession as XAuthSession)
-from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 from wolframclient.evaluation.base import WolframEvaluator
 from wolframclient.evaluation.cloud.base import WolframAPICallBase
+from wolframclient.evaluation.cloud.oauth import \
+    OAuth1RequestsSyncSession as OAuthSession
+from wolframclient.evaluation.cloud.oauth import \
+    XAuthRequestsSyncSession as XAuthSession
+from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 from wolframclient.evaluation.result import (WolframAPIResponseBuilder,
                                              WolframEvaluationJSONResponse)
 from wolframclient.exception import AuthenticationException
 from wolframclient.language import wl
 from wolframclient.serializers import export
-from wolframclient.utils.url import url_join, evaluation_api_url, user_api_url
 from wolframclient.utils import six
 from wolframclient.utils.api import futures, json, requests
+from wolframclient.utils.url import evaluation_api_url, user_api_url
 
 logger = logging.getLogger(__name__)
 
-__all__ = ['WolframCloudSession', 'WolframCloudSessionFuture', 'WolframAPICall']
+__all__ = [
+    'WolframCloudSession', 'WolframCloudSessionFuture', 'WolframAPICall'
+]
 
 
 class WolframCloudSession(WolframEvaluator):
@@ -43,10 +47,12 @@ class WolframCloudSession(WolframEvaluator):
     __slots__ = 'server', 'oauth', 'consumer', 'consumer_secret', 'user', 'password', 'evaluation_api_url', 'credentials'
     '_stopped'
 
-    def __init__(self, credentials=None, server=WolframPublicCloudServer,
-                    oauth_session_class=OAuthSession, 
-                    xauth_session_class=XAuthSession,
-                    http_sessionclass=requests.Session):
+    def __init__(self,
+                 credentials=None,
+                 server=WolframPublicCloudServer,
+                 oauth_session_class=OAuthSession,
+                 xauth_session_class=XAuthSession,
+                 http_sessionclass=requests.Session):
         self.server = server
         self.evaluation_api_url = evaluation_api_url(self.server)
         self.http_sessionclass = http_sessionclass
@@ -63,14 +69,17 @@ class WolframCloudSession(WolframEvaluator):
         self._stopped = False
 
     def started(self):
-        return self.http_session is not None and (self.anonymous() or self.authorized())
+        return self.http_session is not None and (self.anonymous()
+                                                  or self.authorized())
 
     def start(self):
         self._stopped = False
         if not self.started():
             if self.http_session is None:
                 self.http_session = self.http_sessionclass()
-                self.http_session.headers = {'User-Agent': 'WolframClientForPython/1.0'}
+                self.http_session.headers = {
+                    'User-Agent': 'WolframClientForPython/1.0'
+                }
             if not self.anonymous():
                 self._authenticate()
 
@@ -79,7 +88,7 @@ class WolframCloudSession(WolframEvaluator):
 
     def stop(self):
         self.terminate()
-    
+
     def terminate(self):
         self._stopped = True
         if self.http_session:
@@ -89,9 +98,10 @@ class WolframCloudSession(WolframEvaluator):
 
     def anonymous(self):
         return self.credentials is None
-    
+
     def authorized(self):
-        return self.oauth_session is not None and self.oauth_session.authorized()
+        return self.oauth_session is not None and self.oauth_session.authorized(
+        )
 
     def _authenticate(self):
         """Authenticate with the server using the credentials.
@@ -104,11 +114,13 @@ class WolframCloudSession(WolframEvaluator):
             raise AuthenticationException('Missing credentials.')
         if self.credentials.is_xauth:
             self.oauth_session = self.xauth_session_class(
-                self.credentials, self.http_session, self.server, self.server.xauth_consumer_key,
-                self.server.xauth_consumer_secret
-            )
+                self.credentials, self.http_session, self.server,
+                self.server.xauth_consumer_key,
+                self.server.xauth_consumer_secret)
         else:
-            self.oauth_session = self.oauth_session_class(self.http_session, self.server, self.credentials.consumer_key, self.credentials.consumer_secret)
+            self.oauth_session = self.oauth_session_class(
+                self.http_session, self.server, self.credentials.consumer_key,
+                self.credentials.consumer_secret)
         self.oauth_session.authenticate()
 
     def _post(self, url, headers={}, body={}, files={}, params={}):
@@ -233,8 +245,9 @@ class WolframCloudSession(WolframEvaluator):
         return WolframAPICall(self, api, **kwargs)
 
     def __repr__(self):
-        return '<{}:base={}, authorized={}>'.format(
-            self.__class__.__name__, self.server.cloudbase, self.authorized())
+        return '<{}:base={}, authorized={}>'.format(self.__class__.__name__,
+                                                    self.server.cloudbase,
+                                                    self.authorized())
 
 
 class WolframCloudSessionFuture(WolframCloudSession):
@@ -256,12 +269,13 @@ class WolframCloudSessionFuture(WolframCloudSession):
     def start(self):
         super().start()
         if self._pool is None:
-            self._pool = futures.ThreadPoolExecutor(max_workers=self._max_workers)
+            self._pool = futures.ThreadPoolExecutor(
+                max_workers=self._max_workers)
 
     def stop(self):
         if self._pool is not None:
             self._pool.shutdown(wait=True)
-            self._pool=None
+            self._pool = None
         super.stop()
 
     def terminate(self):
@@ -270,11 +284,11 @@ class WolframCloudSessionFuture(WolframCloudSession):
         super().terminate()
 
     def call(self,
-                   api,
-                   input_parameters={},
-                   target_format='wl',
-                   permissions_key=None,
-                   **kwargv):
+             api,
+             input_parameters={},
+             target_format='wl',
+             permissions_key=None,
+             **kwargv):
         """Call a given API asynchronously. Returns a :class:`concurrent.futures.Future` object.
 
         See :func:`WolframCloudSession.call` for more details about input parameters.
@@ -299,8 +313,10 @@ class WolframCloudSessionFuture(WolframCloudSession):
         self._ensure_started()
         return self._pool.submit(super().evaluate, expr)
 
+
 class WolframAPICall(WolframAPICallBase):
     """Perform an API call using a cloud session. """
+
     def perform(self, **kwargs):
         """Make the API call, return the result."""
         return self.target.call(
@@ -309,6 +325,7 @@ class WolframAPICall(WolframAPICallBase):
             files=self.files,
             permissions_key=self.permission_key,
             **kwargs)
+
 
 class CloudFunction(object):
 

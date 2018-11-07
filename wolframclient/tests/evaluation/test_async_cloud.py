@@ -2,31 +2,32 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import asyncio
 import logging
 import os
 import unittest
-import asyncio
-import numpy
-from wolframclient.evaluation.cloud import WolframServer
-from wolframclient.evaluation.cloud.asynccloudsession import (
-    WolframCloudAsyncSession, WolframAPICallAsync
-    )
 
+from wolframclient.evaluation.cloud.asynccloudsession import (
+    WolframAPICallAsync, WolframCloudAsyncSession)
 from wolframclient.evaluation.cloud.base import (SecuredAuthenticationKey,
-                                                  UserIDPassword)
-from wolframclient.exception import AuthenticationException, WolframLanguageException
+                                                 UserIDPassword)
+from wolframclient.exception import (AuthenticationException,
+                                     WolframLanguageException)
 from wolframclient.language import wl, wlexpr
-from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config, user_configuration, secured_authentication_key, server
+from wolframclient.tests.configure import (MSG_JSON_NOT_FOUND, json_config,
+                                           secured_authentication_key, server,
+                                           user_configuration)
 from wolframclient.utils import six
 from wolframclient.utils.api import json
+from wolframclient.utils.asyncio import get_event_loop, run_in_loop
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.tests import TestCase as BaseTestCase
-from wolframclient.utils.asyncio import run_in_loop, get_event_loop
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 LOOP = get_event_loop()
+
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestCaseSettings(BaseTestCase):
@@ -60,6 +61,7 @@ class TestCaseSettings(BaseTestCase):
         current_file_dir = os.path.dirname(__file__)
         return os.path.join(current_file_dir, '..', 'data', filename)
 
+
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 class TestCase(TestCaseSettings):
@@ -67,7 +69,7 @@ class TestCase(TestCaseSettings):
         session = WolframCloudAsyncSession()
         self.assertEqual(session.authorized(), False)
         self.assertEqual(session.anonymous(), True)
-    
+
     @run_in_loop
     async def test_section_authorized_oauth(self):
         cloud_session = WolframCloudAsyncSession(credentials=self.sak)
@@ -77,7 +79,8 @@ class TestCase(TestCaseSettings):
 
     @run_in_loop
     async def test_section_authorized_oauth_with(self):
-        async with WolframCloudAsyncSession(credentials=self.sak) as cloud_session:
+        async with WolframCloudAsyncSession(
+                credentials=self.sak) as cloud_session:
             self.assertEqual(cloud_session.authorized(), True)
             self.assertEqual(cloud_session.anonymous(), False)
 
@@ -91,12 +94,13 @@ class TestCase(TestCaseSettings):
             self.assertEqual(cloud_session.anonymous(), False)
         else:
             print('xauth not available. Test skipped.')
-        
+
     @run_in_loop
     async def test_section_authorized_xauth_with(self):
         if self.user_cred and self.server:
             async with WolframCloudAsyncSession(
-                credentials=self.user_cred, server=self.server) as cloud_session:
+                    credentials=self.user_cred,
+                    server=self.server) as cloud_session:
                 self.assertEqual(cloud_session.authorized(), True)
                 self.assertEqual(cloud_session.anonymous(), False)
         else:
@@ -113,7 +117,8 @@ class TestCase(TestCaseSettings):
     async def test_bad_sak_with(self):
         bad_sak = SecuredAuthenticationKey('foo', 'bar')
         with self.assertRaises(AuthenticationException):
-            async with WolframCloudAsyncSession(credentials=bad_sak) as cloud_session:
+            async with WolframCloudAsyncSession(
+                    credentials=bad_sak) as cloud_session:
                 cloud_session.authorized()
 
     @run_in_loop
@@ -125,8 +130,8 @@ class TestCase(TestCaseSettings):
     @run_in_loop
     async def test_section_api_call_one_param(self):
         url = 'api/private/stringreverse'
-        response = await self.cloud_session_async.call((self.api_owner, url),
-                                           input_parameters={'str': 'abcde'})
+        response = await self.cloud_session_async.call(
+            (self.api_owner, url), input_parameters={'str': 'abcde'})
         self.assertEqual('"edcba"', force_text(await response.get()))
 
     @run_in_loop
@@ -144,7 +149,7 @@ class TestCase(TestCaseSettings):
         self.assertFalse(cloud_session.authorized())
         self.assertTrue(cloud_session.anonymous())
         response = await cloud_session.call((self.api_owner, url),
-                                      input_parameters={'i': 5})
+                                            input_parameters={'i': 5})
         self.assertTrue(response.success)
         self.assertEqual(json.loads(await response.get()), list(range(1, 6)))
 
@@ -174,7 +179,8 @@ class TestCase(TestCaseSettings):
     async def test_section_wl_error(self):
         api = (self.api_owner, "api/private/range/wlerror")
         i = 1
-        response = await self.cloud_session_async.call(api, input_parameters={'i': i})
+        response = await self.cloud_session_async.call(
+            api, input_parameters={'i': i})
         self.assertFalse(response.success)
         self.assertEqual(response.status, 500)
 
@@ -182,7 +188,8 @@ class TestCase(TestCaseSettings):
     async def test_small_image_file(self):
         api = (self.api_owner, 'api/private/imagedimensions')
         with open(self.get_data_path('32x2.png'), 'rb') as fp:
-            response = await self.cloud_session_async.call(api, files={'image': fp})
+            response = await self.cloud_session_async.call(
+                api, files={'image': fp})
             self.assertTrue(response.success)
             res = json.loads(await response.get())
             self.assertListEqual(res, [32, 2])
@@ -191,7 +198,8 @@ class TestCase(TestCaseSettings):
     async def test_image_file(self):
         api = (self.api_owner, 'api/private/imagedimensions')
         with open(self.get_data_path('500x200.png'), 'rb') as fp:
-            response = await self.cloud_session_async.call(api, files={'image': fp})
+            response = await self.cloud_session_async.call(
+                api, files={'image': fp})
             self.assertTrue(response.success)
             res = json.loads(await response.get())
             self.assertListEqual(res, [500, 200])
@@ -200,13 +208,19 @@ class TestCase(TestCaseSettings):
     async def test_image_string_int(self):
         api = ('dorianb', 'api/private/str_image_int')
         with open(self.get_data_path('32x2.png'), 'rb') as fp:
-            response = await self.cloud_session_async.call(api, input_parameters={'str':'abc', 'int' : 10}, files={'image': fp})
+            response = await self.cloud_session_async.call(
+                api,
+                input_parameters={
+                    'str': 'abc',
+                    'int': 10
+                },
+                files={'image': fp})
             self.assertTrue(response.success)
             res = json.loads(await response.get())
             self.assertListEqual(res, ['abc', [32, 2], 10])
 
     ### Evaluation
-    
+
     @run_in_loop
     async def test_evaluate_string(self):
         res = await self.cloud_session_async.evaluate(wlexpr('Range[3]'))
@@ -219,7 +233,8 @@ class TestCase(TestCaseSettings):
 
     @run_in_loop
     async def test_evaluate_wl_expr_option(self):
-        res = await self.cloud_session_async.evaluate(wl.ArrayPad([[1]], 1, Padding=1))
+        res = await self.cloud_session_async.evaluate(
+            wl.ArrayPad([[1]], 1, Padding=1))
         self.assertEqual(res, '{{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}')
 
     @run_in_loop
@@ -241,8 +256,8 @@ class TestCase(TestCaseSettings):
     @run_in_loop
     async def test_evaluate_function_wl_option(self):
         f = self.cloud_session_async.function(wl.ArrayPad)
-        self.assertEqual(
-            await f([[1]], 1, Padding=1), '{{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}')
+        self.assertEqual(await f([[1]], 1, Padding=1),
+                         '{{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}')
 
     @run_in_loop
     async def test_evaluate_string(self):
@@ -254,13 +269,15 @@ class TestCase(TestCaseSettings):
 
     @run_in_loop
     async def test_evaluate_string_concurrently(self):
-        task1 = asyncio.ensure_future(self.cloud_session_async.evaluate(wlexpr('Range[1]')))
-        task2 = asyncio.ensure_future(self.cloud_session_async.evaluate_wrap(wlexpr('Range[2]')))
+        task1 = asyncio.ensure_future(
+            self.cloud_session_async.evaluate(wlexpr('Range[1]')))
+        task2 = asyncio.ensure_future(
+            self.cloud_session_async.evaluate_wrap(wlexpr('Range[2]')))
         res1, res2 = await asyncio.gather(task1, task2)
         self.assertEqual(res1, '{1}')
-        res2= await res2.result
+        res2 = await res2.result
         self.assertEqual(res2, '{1, 2}')
-    
+
     # @run_in_loop
     # async def test_big_expr(self):
     #     a=numpy.ndarray((1000,1000), dtype='uint64')

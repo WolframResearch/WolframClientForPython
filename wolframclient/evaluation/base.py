@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-import warnings
-from concurrent.futures import ThreadPoolExecutor
+
 import asyncio
-from wolframclient.utils.asyncio import wait_all, syncronous_wait_all
+import warnings
+
 from wolframclient.language.expression import WLFunction
-from wolframclient.utils.functional import first
+from wolframclient.utils.asyncio import wait_all
 from wolframclient.utils.six import PY_36
 """
 NOTES
@@ -25,6 +25,8 @@ NOTES
  - should terminated kernels restart automatically instead of raise an Exception?
 
 """
+
+
 class WolframEvaluatorBase:
     @property
     def stopped(self):
@@ -39,12 +41,12 @@ class WolframEvaluatorBase:
                 kwargs = {'source': self}
             else:
                 kwargs = {}
-            _warnings.warn("Unclosed instance of %s: %s" % (self.__class__.__name__, self),
-                ResourceWarning,
-                **kwargs)
+            _warnings.warn(
+                "Unclosed instance of %s: %s" %
+                (self.__class__.__name__, self), ResourceWarning, **kwargs)
+
 
 class WolframEvaluator(WolframEvaluatorBase):
-
     def evaluate(self, expr):
         return self.evaluate_wrap(expr).get()
 
@@ -78,8 +80,10 @@ class WolframEvaluator(WolframEvaluatorBase):
         The object returned can be applied on arguments as any other Python function, and
         is evaluated using the underlying Wolfram evaluator.
         """
+
         def inner(*args, **opts):
             return self.evaluate(WLFunction(expr, *args, **opts))
+
         return inner
 
     def __enter__(self):
@@ -91,9 +95,9 @@ class WolframEvaluator(WolframEvaluatorBase):
         if self.started():
             self.stop()
 
-class WolframAsyncEvaluator(WolframEvaluatorBase):
 
-    def __init__(self, loop = None):
+class WolframAsyncEvaluator(WolframEvaluatorBase):
+    def __init__(self, loop=None):
         if loop:
             self._loop = loop
         else:
@@ -104,7 +108,7 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
         return await result.get()
 
     async def evaluate_many(self, expr_list):
-        return await wait_all(map(self.evaluate, expr_list), loop = self._loop)
+        return await wait_all(map(self.evaluate, expr_list), loop=self._loop)
 
     async def evaluate_wrap(self, expr):
         raise NotImplementedError
@@ -131,6 +135,7 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
     def function(self, expr):
         async def inner(*args, **opts):
             return await self.evaluate(WLFunction(expr, *args, **opts))
+
         return inner
 
     async def __aenter__(self):
@@ -145,7 +150,8 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
     def __del__(self, _warnings=warnings):
         super().__del__(_warnings=warnings)
         if self._loop and not self.stopped and not self._loop.is_closed():
-            context = {self.__class__.__name__: self,
-                       'message': 'Unclosed evaluator.'}
+            context = {
+                self.__class__.__name__: self,
+                'message': 'Unclosed evaluator.'
+            }
             self._loop.call_exception_handler(context)
-

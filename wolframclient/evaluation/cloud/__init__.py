@@ -7,9 +7,8 @@ from wolframclient.evaluation.cloud.asynccloudsession import WolframAPICallAsync
 from wolframclient.evaluation.cloud.base import SecuredAuthenticationKey, UserIDPassword
 from wolframclient.evaluation.cloud.server import WolframServer
 
-
 __all__ = [
-    'WolframServer', 'WolframCloudSession', 'WolframCloudSessionFuture', 'WolframAPICall', 
-    'SecuredAuthenticationKey', 'UserIDPassword',
+    'WolframServer', 'WolframCloudSession', 'WolframCloudSessionFuture',
+    'WolframAPICall', 'SecuredAuthenticationKey', 'UserIDPassword',
     'WolframAPICallAsync', 'WolframCloudAsyncSession'
 ]

@@ -20,7 +20,6 @@ class RequestException(WolframLanguageException):
                 self.msg = response.text()
             except:
                 self.msg = None
-            
 
     def __str__(self):
         try:

@@ -94,6 +94,5 @@ class Normalizer(object):
 
         self.default_updater.update_dispatch()
 
-        return composition(
-            *map(safe_import_string,
-                 iterate(func or (), self.default_normalizer)))
+        return composition(*map(safe_import_string,
+                                iterate(func or (), self.default_normalizer)))

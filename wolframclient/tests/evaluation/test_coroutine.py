@@ -4,24 +4,23 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
 import unittest
-from functools import wraps
 
 from wolframclient.deserializers import binary_deserialize
-from wolframclient.evaluation import (
-    WolframKernelPool, WolframLanguageAsyncSession
-)
+from wolframclient.evaluation import (WolframKernelPool,
+                                      WolframLanguageAsyncSession)
 from wolframclient.language import wl
 from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config
 from wolframclient.tests.evaluation.test_kernel import \
     TestCaseSettings as TestKernelBase
 from wolframclient.utils.api import asyncio, time
+from wolframclient.utils.asyncio import get_event_loop, run_in_loop
 from wolframclient.utils.tests import TestCase as BaseTestCase
-from wolframclient.utils.asyncio import run_in_loop, get_event_loop
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 LOOP = get_event_loop()
+
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestCoroutineSession(BaseTestCase):

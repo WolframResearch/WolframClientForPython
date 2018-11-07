@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-import logging
-from io import IOBase
+
 import json
+from io import IOBase
+
 from wolframclient.utils import six
 from wolframclient.utils.api import oauth, urllib
-from wolframclient.utils.url import url_join
-from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 
-
-__all__ = ['SecuredAuthenticationKey', 'UserIDPassword', 
-    'OAuthSessionBase', 'OAuthAsyncSessionBase']
+__all__ = [
+    'SecuredAuthenticationKey', 'UserIDPassword', 'OAuthSessionBase',
+    'OAuthAsyncSessionBase'
+]
 
 
 class SecuredAuthenticationKey(object):
@@ -49,11 +49,11 @@ class OAuthSessionBase(object):
     }
 
     def __init__(self,
-                server,
-                consumer_key,
-                consumer_secret,
-                signature_method=None,
-                client_class=oauth.Client):
+                 server,
+                 consumer_key,
+                 consumer_secret,
+                 signature_method=None,
+                 client_class=oauth.Client):
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
         self.signature_method = signature_method or oauth.SIGNATURE_HMAC
@@ -87,7 +87,7 @@ class OAuthSessionBase(object):
             signature_type=oauth.SIGNATURE_TYPE_AUTH_HEADER,
             realm=self.server.cloudbase,
             encoding='iso-8859-1')
-    
+
     def _update_token_from_request_body(self, body):
         try:
             token = json.loads(body)
@@ -98,6 +98,7 @@ class OAuthSessionBase(object):
             self._oauth_token = token[b'oauth_token'][0]
             self._oauth_token_secret = token[b'oauth_token_secret'][0]
 
+
 class OAuthAsyncSessionBase(OAuthSessionBase):
     async def authenticate(self):
         """ Asynchronous OAuth authentication class dealing with various tokens and signing requests. """
@@ -106,6 +107,7 @@ class OAuthAsyncSessionBase(OAuthSessionBase):
     async def signed_request(self, uri, headers={}, data=None, method='POST'):
         """ Sign a given request and issue it asynchronously."""
         raise NotImplementedError
+
 
 class WolframAPICallBase(object):
     """Perform an API call to a given target.
@@ -146,13 +148,14 @@ class WolframAPICallBase(object):
                              content_type='application/octet-stream'):
         """Add a new API input parameter as a blob of binary data."""
         if isinstance(data, IOBase):
-            return self.add_file_parameter(name, data, filename=filename, content_type=content_type)
+            return self.add_file_parameter(
+                name, data, filename=filename, content_type=content_type)
         if isinstance(data, six.binary_type):
             fname = filename or 'tmp_%s' % name
             self.files[name] = (fname, data, content_type)
             return self
         else:
-            raise TypeError('Input data must be bytes or IOBase.')        
+            raise TypeError('Input data must be bytes or IOBase.')
 
     def add_image_data_parameter(self,
                                  name,
@@ -166,14 +169,18 @@ class WolframAPICallBase(object):
         type.
         e.g: *image/jpeg*, *image/gif*, etc.
         """
-        return self.add_binary_parameter(name, image_data, filename, content_type)
+        return self.add_binary_parameter(name, image_data, filename,
+                                         content_type)
 
     def perform(self, **kwargs):
         """Make the API call, return the result."""
         raise NotImplementedError
 
     def __repr__(self):
-        return '%s<api=%s>' % (self.__class__.__name__, self.api, )
+        return '%s<api=%s>' % (
+            self.__class__.__name__,
+            self.api,
+        )
 
     def __str__(self):
         return repr(self)

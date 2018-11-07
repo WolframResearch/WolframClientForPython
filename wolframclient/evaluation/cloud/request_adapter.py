@@ -1,10 +1,14 @@
-from requests import Response
+from __future__ import absolute_import, print_function, unicode_literals
+
 from aiohttp import ClientResponse
+from requests import Response
 
 __all__ = ['wrap_response']
 
+
 class HTTPResponseAdapterBase(object):
-    """ Unify various request classes as a unique API. """    
+    """ Unify various request classes as a unique API. """
+
     def __init__(self, httpresponse):
         self.response = httpresponse
 
@@ -22,11 +26,11 @@ class HTTPResponseAdapterBase(object):
     def text(self):
         """ Request body as decoded text. """
         raise NotImplementedError
-    
+
     def content(self):
         """ Request body as raw bytes """
         raise NotImplementedError
-    
+
     def url(self):
         """ String URL. """
         raise NotImplementedError
@@ -39,8 +43,8 @@ class HTTPResponseAdapterBase(object):
     def asynchronous(self):
         raise NotImplementedError
 
-class RequestsHTTPRequestAdapter(HTTPResponseAdapterBase):
 
+class RequestsHTTPRequestAdapter(HTTPResponseAdapterBase):
     def status(self):
         return self.response.status_code
 
@@ -49,13 +53,13 @@ class RequestsHTTPRequestAdapter(HTTPResponseAdapterBase):
 
     def text(self):
         return self.response.text
-    
+
     def content(self):
         return self.response.content
-    
+
     def url(self):
         return self.response.url
-    
+
     def headers(self):
         return self.response.headers
 
@@ -63,8 +67,8 @@ class RequestsHTTPRequestAdapter(HTTPResponseAdapterBase):
     def asynchronous(self):
         return False
 
-class AIOHttpHTTPRequestAdapter(HTTPResponseAdapterBase):
 
+class AIOHttpHTTPRequestAdapter(HTTPResponseAdapterBase):
     def status(self):
         return self.response.status
 
@@ -73,7 +77,7 @@ class AIOHttpHTTPRequestAdapter(HTTPResponseAdapterBase):
 
     async def text(self):
         return await self.response.text()
-    
+
     async def content(self):
         return await self.response.read()
 
@@ -87,10 +91,12 @@ class AIOHttpHTTPRequestAdapter(HTTPResponseAdapterBase):
     def asynchronous(self):
         return True
 
+
 def wrap_response(response):
     if isinstance(response, Response):
         return RequestsHTTPRequestAdapter(response)
     elif isinstance(response, ClientResponse):
         return AIOHttpHTTPRequestAdapter(response)
     else:
-        raise ValueError('No adapter found for HTTP response class %s' % response.__class__)
+        raise ValueError(
+            'No adapter found for HTTP response class %s' % response.__class__)
