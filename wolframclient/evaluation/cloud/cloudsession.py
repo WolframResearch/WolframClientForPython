@@ -14,7 +14,7 @@ from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 from wolframclient.evaluation.result import (WolframAPIResponseBuilder,
                                              WolframEvaluationJSONResponse)
 from wolframclient.exception import AuthenticationException
-from wolframclient.language import wl
+from wolframclient.language import wl,wlexpr
 from wolframclient.serializers import export
 from wolframclient.utils import six
 from wolframclient.utils.api import futures, json, requests
@@ -50,6 +50,7 @@ class WolframCloudSession(WolframEvaluator):
     def __init__(self,
                  credentials=None,
                  server=WolframPublicCloudServer,
+                 inputform_string_evaluation=True,
                  oauth_session_class=OAuthSession,
                  xauth_session_class=XAuthSession,
                  http_sessionclass=requests.Session):
@@ -66,6 +67,7 @@ class WolframCloudSession(WolframEvaluator):
                 self.oauth_session_class = oauth_session_class
         self.oauth_session = None
         self.verify = self.server.certificate
+        self.inputform_string_evaluation = inputform_string_evaluation
         self._stopped = False
 
     def started(self):
@@ -200,23 +202,19 @@ class WolframCloudSession(WolframEvaluator):
 
         return WolframAPIResponseBuilder.build(response)
 
-    def _call_evaluation_api(self, data):
+    def _call_evaluation_api(self, expr, **kwargs):
+        data = export(expr, target_format='wl', **kwargs)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(
                 'Sending expression to cloud server for evaluation: %s', data)
-        if not isinstance(data, six.string_types) and not isinstance(
-                data, six.binary_type):
-            raise ValueError('Expecting string input, unicode or binary.')
         response = self._post(self.evaluation_api_url, body=data)
         return WolframEvaluationJSONResponse(response)
 
-    def _normalize_input(self, expr, **kwargs):
-        if isinstance(expr, six.string_types) or isinstance(
-                expr, six.binary_type):
-            return expr
-        else:
-            return export(expr, **kwargs)
-
+    def _normalize_input(self, expr):
+        if self.inputform_string_evaluation and (isinstance(expr, six.string_types) or isinstance(expr, six.binary_type)):
+            expr = wlexpr(expr)
+        return expr
+    
     def evaluate(self, expr, **kwargs):
         """Send `expr` to the cloud for evaluation, return the result.
 
@@ -224,12 +222,12 @@ class WolframCloudSession(WolframEvaluator):
         or a the string InputForm of an expression to evaluate.
         """
         return self._call_evaluation_api(
-            self._normalize_input(expr, **kwargs)).get()
+            self._normalize_input(expr), **kwargs).get()
 
     def evaluate_wrap(self, expr, **kwargs):
         """ Similar to :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframEvaluationJSONResponse`.
         """
-        return self._call_evaluation_api(self._normalize_input(expr, **kwargs))
+        return self._call_evaluation_api(self._normalize_input(expr), **kwargs)
 
     def function(self, func):
         """Return a `callable` cloud function.
@@ -238,7 +236,7 @@ class WolframCloudSession(WolframEvaluator):
         is evaluated in the cloud as a Wolfram Language expression using the current cloud
         session.
         """
-        return CloudFunction(self, func)
+        return super().function(self._normalize_input(func))
 
     def wolfram_api_call(self, api, **kwargs):
         """ Build an helper class instance to call a given API. """
@@ -315,7 +313,7 @@ class WolframCloudSessionFuture(WolframCloudSession):
 
 
 class WolframAPICall(WolframAPICallBase):
-    """Perform an API call using a cloud session. """
+    """Helper class to perform an API call using a cloud session. """
 
     def perform(self, **kwargs):
         """Make the API call, return the result."""
@@ -325,30 +323,6 @@ class WolframAPICall(WolframAPICallBase):
             files=self.files,
             permissions_key=self.permission_key,
             **kwargs)
-
-
-class CloudFunction(object):
-
-    __slots__ = 'session', 'wlfunc', 'evaluation_func'
-
-    def __init__(self, session, func, asynchronous=False):
-        self.session = session
-        if isinstance(func, six.string_types) or isinstance(
-                func, six.binary_type):
-            self.wlfunc = wl.ToExpression(func)
-        else:
-            self.wlfunc = func
-        if asynchronous:
-            self.evaluation_func = session.__class__.evaluate_async
-        else:
-            self.evaluation_func = session.__class__.evaluate
-
-    def __call__(self, *args, **kwargs):
-        return self.evaluation_func(self.session,
-                                    wl.Construct(self.wlfunc, *args, **kwargs))
-
-    def __repr__(self):
-        return 'CloudFunction<function=%s>' % (self.wlfunc)
 
 
 def _encode_inputs_as_wxf(inputs, multipart, **kwargs):

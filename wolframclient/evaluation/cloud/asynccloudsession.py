@@ -18,6 +18,7 @@ from wolframclient.evaluation.result import (
     WolframAPIResponseBuilder, WolframEvaluationJSONResponseAsync)
 from wolframclient.exception import AuthenticationException
 from wolframclient.serializers import export
+from wolframclient.language import wlexpr
 from wolframclient.utils import six
 from wolframclient.utils.url import evaluation_api_url, user_api_url
 
@@ -34,12 +35,14 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
                  credentials=None,
                  server=WolframPublicCloudServer,
                  loop=None,
+                 inputform_string_evaluation=True,
                  oauth_session_class=OAuthAsyncSession,
                  xauth_session_class=XAuthAsyncSession,
                  http_sessionclass=ClientSession,
                  ssl_context_class=ssl.SSLContext):
         super().__init__(loop)
         self.server = server
+        self.inputform_string_evaluation = inputform_string_evaluation
         self.http_session = None
         self.http_sessionclass = http_sessionclass
         self.credentials = credentials
@@ -163,13 +166,6 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
 
         return WolframAPIResponseBuilder.build(response)
 
-    async def _call_evaluation_api(self, data):
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(
-                'Sending expression to cloud server for evaluation: %s', data)
-        response = await self._post(self.evaluation_api_url, data=data)
-        return WolframEvaluationJSONResponseAsync(response)
-
     async def _post(self, url, headers={}, data=None, params={}):
         """Do a POST request, signing the content only if authentication has been successful."""
         if not self.started:
@@ -190,14 +186,18 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
                 data=data,
                 ssl=self._ssl_context)
 
-    def _normalize_input(self, expr, **kwargs):
-        #TODO: for consistency maybe string and bytearray should be exported as well?
-        if isinstance(expr, six.string_types):
-            return StringPayload(expr)
-        elif isinstance(expr, six.binary_type):
-            return BytesPayload(expr)
-        else:
-            return BytesPayload(export(expr, **kwargs))
+    async def _call_evaluation_api(self, expr, **kwargs):
+        data = BytesPayload(export(expr, target_format='wl', **kwargs))
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(
+                'Sending expression to cloud server for evaluation: %s', data)
+        response = await self._post(self.evaluation_api_url, data=data)
+        return WolframEvaluationJSONResponseAsync(response)
+
+    def _normalize_input(self, expr):
+        if self.inputform_string_evaluation and (isinstance(expr, six.string_types) or isinstance(expr, six.binary_type)):
+            expr = wlexpr(expr)
+        return expr
 
     async def evaluate(self, expr, **kwargs):
         """Send `expr` to the cloud for evaluation, return the result.
@@ -206,14 +206,17 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
         or a the string InputForm of an expression to evaluate.
         """
         response = await self._call_evaluation_api(
-            self._normalize_input(expr, **kwargs))
+            self._normalize_input(expr), **kwargs)
         return await response.get()
 
     async def evaluate_wrap(self, expr, **kwargs):
         """ Similar to :func:`~wolframclient.evaluation.cloud.asynccloudsession.WolframCloudAsyncSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframEvaluationJSONResponseAsync`.
         """
         return await self._call_evaluation_api(
-            self._normalize_input(expr, **kwargs))
+            self._normalize_input(expr), **kwargs)
+    
+    def function(self, func):
+        return super().function(self._normalize_input(func))
 
     def wolfram_api_call(self, api, **kwargs):
         """ Build an helper class instance to call a given API. """

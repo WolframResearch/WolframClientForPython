@@ -181,7 +181,7 @@ class TestCase(TestCaseSettings):
     ### Evaluation
 
     def test_evaluate_string(self):
-        res = self.cloud_session.evaluate(wlexpr('Range[3]'))
+        res = self.cloud_session.evaluate('Range[3]')
         self.assertEqual(res, '{1, 2, 3}')
 
     def test_evaluate_wl_expr(self):
@@ -198,7 +198,7 @@ class TestCase(TestCaseSettings):
         self.assertEqual(res.get(), '{1, 2}')
 
     def test_evaluate_function(self):
-        f = self.cloud_session.function(wlexpr('Range'))
+        f = self.cloud_session.function('Range')
         self.assertEqual(f(3), '{1, 2, 3}')
 
     def test_evaluate_function_wl(self):
@@ -211,15 +211,32 @@ class TestCase(TestCaseSettings):
             f([[1]], 1, Padding=1), '{{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}')
 
     def test_evaluate_string(self):
-        res1 = self.cloud_session_future.evaluate(wlexpr('Range[1]'))
-        res2 = self.cloud_session_future.evaluate(wlexpr('Range[2]'))
+        res1 = self.cloud_session_future.evaluate('Range[1]')
+        res2 = self.cloud_session_future.evaluate('Range[2]')
 
         self.assertEqual(res1.result(), '{1}')
         self.assertEqual(res2.result(), '{1, 2}')
 
     def test_evaluate_string(self):
-        res = self.cloud_session_future.evaluate(wlexpr('Range[3]'))
+        res = self.cloud_session_future.evaluate('Range[3]')
         self.assertEqual(res.result(), '{1, 2, 3}')
+
+# inputform evaluation option disabled
+    def test_evaluate_string_disable(self):
+        with WolframCloudSession(credentials=self.sak, inputform_string_evaluation=False) as session:
+            res = session.evaluate('Range[3]')
+            self.assertEqual(res, '"Range[3]"')
+            func = session.function('f')
+            res = func('abc')
+            self.assertEqual(res, '"f"["abc"]')
+    
+    def test_evaluate_future_string_disable(self):
+        with WolframCloudSessionFuture(credentials=self.sak,inputform_string_evaluation=False) as session:
+            res = session.evaluate('Range[3]')
+            self.assertEqual(res.result(), '"Range[3]"')
+            func = session.function('f')
+            res = func('abc')
+            self.assertEqual(res.result(), '"f"["abc"]')
 
     # url_join
 

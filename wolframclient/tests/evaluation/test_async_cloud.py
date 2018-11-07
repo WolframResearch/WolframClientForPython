@@ -219,11 +219,20 @@ class TestCase(TestCaseSettings):
             res = json.loads(await response.get())
             self.assertListEqual(res, ['abc', [32, 2], 10])
 
+    @run_in_loop
+    async def test_evaluate_string_disable(self):
+        async with WolframCloudAsyncSession(credentials=self.sak, inputform_string_evaluation=False) as session:
+            res = await session.evaluate('Range[3]')
+            self.assertEqual(res, '"Range[3]"')
+            cor = session.function('f')
+            res = await cor('abc')
+            self.assertEqual(res, '"f"["abc"]')
+
     ### Evaluation
 
     @run_in_loop
     async def test_evaluate_string(self):
-        res = await self.cloud_session_async.evaluate(wlexpr('Range[3]'))
+        res = await self.cloud_session_async.evaluate('Range[3]')
         self.assertEqual(res, '{1, 2, 3}')
 
     @run_in_loop
@@ -245,7 +254,7 @@ class TestCase(TestCaseSettings):
 
     @run_in_loop
     async def test_evaluate_function(self):
-        f = self.cloud_session_async.function(wlexpr('Range'))
+        f = self.cloud_session_async.function('Range')
         self.assertEqual(await f(3), '{1, 2, 3}')
 
     @run_in_loop
@@ -261,8 +270,8 @@ class TestCase(TestCaseSettings):
 
     @run_in_loop
     async def test_evaluate_string(self):
-        res1 = await self.cloud_session_async.evaluate(wlexpr('Range[1]'))
-        res2 = await self.cloud_session_async.evaluate(wlexpr('Range[2]'))
+        res1 = await self.cloud_session_async.evaluate('Range[1]')
+        res2 = await self.cloud_session_async.evaluate('Range[2]')
 
         self.assertEqual(res1, '{1}')
         self.assertEqual(res2, '{1, 2}')
@@ -270,9 +279,9 @@ class TestCase(TestCaseSettings):
     @run_in_loop
     async def test_evaluate_string_concurrently(self):
         task1 = asyncio.ensure_future(
-            self.cloud_session_async.evaluate(wlexpr('Range[1]')))
+            self.cloud_session_async.evaluate('Range[1]'))
         task2 = asyncio.ensure_future(
-            self.cloud_session_async.evaluate_wrap(wlexpr('Range[2]')))
+            self.cloud_session_async.evaluate_wrap('Range[2]'))
         res1, res2 = await asyncio.gather(task1, task2)
         self.assertEqual(res1, '{1}')
         res2 = await res2.result
