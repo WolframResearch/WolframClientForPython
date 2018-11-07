@@ -89,7 +89,7 @@ class TestCase(TestCaseSettings):
         bad_sak = SecuredAuthenticationKey('foo', 'bar')
         with self.assertRaises(AuthenticationException):
             cloud_session = WolframCloudSession(credentials=bad_sak)
-            cloud_session.authenticate()
+            cloud_session.start()
 
     def test_section_api_call_no_param(self):
         url = 'api/private/requesterid'

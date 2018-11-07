@@ -7,7 +7,7 @@ from wolframclient.evaluation.cloud.base import (
     UserIDPassword, OAuthSessionBase)
 from wolframclient.exception import AuthenticationException
 from wolframclient.utils import six
-from wolframclient.utils.api import oauth, requests, urllib
+from wolframclient.utils.api import oauth, urllib
 
 logger = logging.getLogger(__name__)
 
@@ -15,16 +15,18 @@ __all__ = ['OAuth1RequestsSyncSession', 'XAuthRequestsSyncSession']
 
 class OAuthRequestsSyncSessionBase(OAuthSessionBase):
     """ A wrapper around the OAuth client taking care of fetching the various oauth tokens,
-    using the requests library.
+    preparing data as expected by the requests library.
     """
 
     def __init__(self,
+                http_session,
                  server,
                  consumer_key,
                  consumer_secret,
                  signature_method=None,
                  client_class=oauth.Client):
         super().__init__(server, consumer_key, consumer_secret, signature_method=signature_method, client_class=client_class)
+        self.http_session = http_session
         self.verify = self.server.certificate
    
     def _check_response(self, response):
@@ -93,7 +95,7 @@ class OAuthRequestsSyncSessionBase(OAuthSessionBase):
             logger.debug('Signed header: %s', req_headers)
             logger.debug('Is body signed: %s', sign_body)
 
-        return requests.request(
+        return self.http_session.request(
             method,
             uri,
             headers=req_headers,
@@ -102,7 +104,7 @@ class OAuthRequestsSyncSessionBase(OAuthSessionBase):
             verify=self.verify)
 
 class OAuth1RequestsSyncSession(OAuthRequestsSyncSessionBase):
-    """ Oauth1 authentication using requests library and secured authentication key. """
+    """ Oauth1 authentication using secured authentication key, as expected by the requests library. """
     def authenticate(self):
         self.set_oauth_request_token()
         self.set_oauth_access_token()
@@ -119,7 +121,7 @@ class OAuth1RequestsSyncSession(OAuthRequestsSyncSessionBase):
             self.consumer_key, client_secret=self.consumer_secret)
         uri, headers, body = token_client.sign(
             self.server.request_token_endpoint, "POST")
-        response = requests.post(
+        response = self.http_session.post(
             uri, headers=headers, data=body, verify=self.verify)
 
         logging.disable(logging.NOTSET)
@@ -139,7 +141,7 @@ class OAuth1RequestsSyncSession(OAuthRequestsSyncSessionBase):
 
         uri, headers, body = access_client.sign(
             self.server.access_token_endpoint, "POST")
-        access_response = requests.post(
+        access_response = self.http_session.post(
             uri, headers=headers, data=body, verify=self.verify)
         
         self._check_response(access_response)
@@ -147,13 +149,13 @@ class OAuth1RequestsSyncSession(OAuthRequestsSyncSessionBase):
 
 
 class XAuthRequestsSyncSession(OAuthRequestsSyncSessionBase):
-    """ XAuth authentication using requests library. 
+    """ XAuth authentication as expected by the requests library. 
     
     xauth authenticates with user and password, but requires a specific server
     configuration. """
 
-    def __init__(self, userid_password, server, consumer_key, consumer_secret, signature_method=None, client_class=oauth.Client):
-        super().__init__(server, server.xauth_consumer_key,
+    def __init__(self, userid_password, http_session, server, consumer_key, consumer_secret, signature_method=None, client_class=oauth.Client):
+        super().__init__(http_session, server, server.xauth_consumer_key,
             server.xauth_consumer_secret, 
             signature_method=signature_method, client_class=client_class)
         if not self.server.is_xauth():
@@ -188,7 +190,7 @@ class XAuthRequestsSyncSession(OAuthRequestsSyncSessionBase):
             headers=self.DEFAULT_CONTENT_TYPE,
             body=params)
 
-        response = requests.post(
+        response = self.http_session.post(
             uri, headers=headers, data=body, verify=self.verify)
 
         logging.disable(logging.NOTSET)

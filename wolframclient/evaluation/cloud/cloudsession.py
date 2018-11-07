@@ -45,10 +45,12 @@ class WolframCloudSession(WolframEvaluator):
 
     def __init__(self, credentials=None, server=WolframPublicCloudServer,
                     oauth_session_class=OAuthSession, 
-                    xauth_session_class=XAuthSession):
+                    xauth_session_class=XAuthSession,
+                    http_sessionclass=requests.Session):
         self.server = server
         self.evaluation_api_url = evaluation_api_url(self.server)
-        self._stopped = False
+        self.http_sessionclass = http_sessionclass
+        self.http_session = None
         self.credentials = credentials
         self.evaluation_api_url = evaluation_api_url(self.server)
         if self.credentials:
@@ -58,23 +60,31 @@ class WolframCloudSession(WolframEvaluator):
                 self.oauth_session_class = oauth_session_class
         self.oauth_session = None
         self.verify = self.server.certificate
+        self._stopped = False
 
     def started(self):
-        return (self.anonymous() or self.authorized())
+        return self.http_session is not None and (self.anonymous() or self.authorized())
 
     def start(self):
         self._stopped = False
         if not self.started():
-            self.authenticate()
+            if self.http_session is None:
+                self.http_session = self.http_sessionclass()
+                self.http_session.headers = {'User-Agent': 'WolframClientForPython/1.0'}
+            if not self.anonymous():
+                self._authenticate()
 
     def stopped(self):
-        return self._stopped    
+        return self._stopped
 
     def stop(self):
         self.terminate()
     
     def terminate(self):
         self._stopped = True
+        if self.http_session:
+            self.http_session.close()
+            self.http_session = None
         self.oauth_session = None
 
     def anonymous(self):
@@ -83,7 +93,7 @@ class WolframCloudSession(WolframEvaluator):
     def authorized(self):
         return self.oauth_session is not None and self.oauth_session.authorized()
 
-    def authenticate(self):
+    def _authenticate(self):
         """Authenticate with the server using the credentials.
 
         This method supports both oauth and xauth methods. It is not necessary
@@ -94,11 +104,11 @@ class WolframCloudSession(WolframEvaluator):
             raise AuthenticationException('Missing credentials.')
         if self.credentials.is_xauth:
             self.oauth_session = self.xauth_session_class(
-                self.credentials, self.server, self.server.xauth_consumer_key,
+                self.credentials, self.http_session, self.server, self.server.xauth_consumer_key,
                 self.server.xauth_consumer_secret
             )
         else:
-            self.oauth_session = self.oauth_session_class(self.server, self.credentials.consumer_key, self.credentials.consumer_secret)
+            self.oauth_session = self.oauth_session_class(self.http_session, self.server, self.credentials.consumer_key, self.credentials.consumer_secret)
         self.oauth_session.authenticate()
 
     def _post(self, url, headers={}, body={}, files={}, params={}):
@@ -114,7 +124,7 @@ class WolframCloudSession(WolframEvaluator):
                 url, headers=headers, body=body, files=files)
         else:
             logger.info('Anonymous call to api %s', url)
-            return requests.post(
+            return self.http_session.post(
                 url,
                 params=params,
                 headers=headers,

@@ -61,12 +61,10 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
                     headers={'User-Agent': 'WolframClientForPython/1.0'}, 
                     loop=self._loop)
             if not self.anonymous():
-                await self.authenticate()
+                await self._authenticate()
 
     async def started(self):
-        return (self.http_session is not None 
-            and (self.anonymous() or self.authorized())
-            )
+        return self.http_session is not None and (self.anonymous() or self.authorized())
 
     def stopped(self):
         return self._stopped
@@ -77,7 +75,7 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
 
     async def terminate(self):
         self._stopped = True
-        if self.http_session and not self.http_session.closed:
+        if self.http_session:
             await self.http_session.close()
         self.http_session = None
         self.oauth_session = None
@@ -89,7 +87,7 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
         return self.oauth_session is not None and self.oauth_session.authorized()
 
 
-    async def authenticate(self):
+    async def _authenticate(self):
         """Authenticate with the server using the credentials.
 
         This method supports both oauth and xauth methods. It is not necessary

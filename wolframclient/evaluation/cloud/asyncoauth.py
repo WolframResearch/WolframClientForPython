@@ -26,7 +26,6 @@ class OAuthAIOHttpAsyncSessionBase(OAuthAsyncSessionBase):
         super().__init__(server,consumer_key,consumer_secret,signature_method=signature_method,
         client_class=client_class)
         self.http_session = http_session
-        self._session = None
         if self.server.certificate is not None:
             self._ssl_context = self.ssl_context_class(self.server.certificate)
         else:
@@ -69,18 +68,14 @@ class OAuthAIOHttpAsyncSessionBase(OAuthAsyncSessionBase):
             logger.debug('Signed header: %s', req_headers)
             logger.debug('Is body signed: %s', form_encoded)
         
-        if multipart:
-            return await self.http_session.request(
-                    method,
-                    uri,
-                    data = data,
-                    headers = req_headers,
-                    ssl = self._ssl_context)
+        if multipart or not form_encoded:
+            body = data
         else:
-            return await self.http_session.request(
+            body = StringPayload(signed_body)
+        return await self.http_session.request(
                 method,
                 uri,
-                data = StringPayload(signed_body) if form_encoded else data,
+                data = body,
                 headers = req_headers,
                 ssl = self._ssl_context)
 
@@ -101,7 +96,7 @@ class OAuthAIOHttpAsyncSessionBase(OAuthAsyncSessionBase):
 
 class OAuth1AIOHttpAsyncSession(OAuthAIOHttpAsyncSessionBase):
     """ OAuth1 using aiohttp."""
-    
+
     async def set_oauth_request_token(self):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Fetching oauth request token from: %s',
