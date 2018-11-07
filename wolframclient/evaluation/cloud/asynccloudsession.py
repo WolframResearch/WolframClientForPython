@@ -21,6 +21,7 @@ from wolframclient.utils.url import evaluation_api_url, user_api_url
 from wolframclient.utils.api import urllib, oauth
 
 from wolframclient.evaluation.base import WolframAsyncEvaluator
+from wolframclient.evaluation.cloud.base import WolframAPICallBase
 
 from aiohttp import ClientSession, StringPayload, BytesPayload, FormData
 
@@ -236,9 +237,26 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
         """
         return await self._call_evaluation_api(self._normalize_input(expr, **kwargs))
 
+    def wolfram_api_call(self, api, **kwargs):
+        """ Build an helper class instance to call a given API. """
+        return WolframAPICallAsync(self, api, **kwargs)
 
     def __repr__(self):
-        return '<{}:base={}, anonymous={}, autorized={}>'.format(self.__class__.__name__, self.server.cloudbase, self.anonymous, self.authorized())
+        return '<{}:base={}, anonymous={}, autorized={}>'.format(
+            self.__class__.__name__, self.server.cloudbase, 
+            self.anonymous(), self.authorized())
+
+
+class WolframAPICallAsync(WolframAPICallBase):
+    """Perform an API call using an asynchronous cloud session. """
+    async def perform(self, **kwargs):
+        """Make the API call, return the result."""
+        return await self.target.call(
+            self.api,
+            input_parameters=self.parameters,
+            files=self.files,
+            permissions_key=self.permission_key,
+            **kwargs)
 
 
 ### Some internal utilities focused on cloud data manipulation and 
@@ -262,20 +280,12 @@ def _encode_inputs_as_wl(form_data, inputs, **kwargs):
                 name,
                 export(value, target_format='wl', **kwargs))
 
-def update_parameter_list(parameters, name, value, multipart=False):
-    """ Update the given :class:`~parameters` with a new inputs using the appropriate form based on `multipart`.
-    """
-    if multipart:
-        parameters[name] = ('tmp_file_%s' % name, value)
-    else:
-        parameters[name] = value
 
 SUPPORTED_ENCODING_FORMATS = {
     'json': _encode_inputs_as_json,
     'wxf': _encode_inputs_as_wxf,
     'wl': _encode_inputs_as_wl
 }
-
 
 def encode_api_inputs(inputs, files={}, target_format='wl', **kwargs):
     if inputs == {} and files == {}:
@@ -287,85 +297,13 @@ def encode_api_inputs(inputs, files={}, target_format='wl', **kwargs):
             'Invalid encoding format %s. Choices are: %s' %
             (target_format, ', '.join(SUPPORTED_ENCODING_FORMATS.keys())))
     form_data = FormData()
+    # files are specified by file pointer or bytes, or a tuple.
     for name, file_info in files.items():
-        if isinstance(file_info, six.string_types) or isinstance(file_info, six.binary_type) or isinstance(file_info, IOBase):
-            form_data.add_field(name, file_info)
-        elif isinstance(file_info, tuple) and len(file_info) == 3:
-            form_data.add_field(name, file_info[0], filename=file_info[1], content_type=file_info[2])
+        # tuple must contain: the filename, the data as bytes, the content type.
+        if isinstance(file_info, tuple) and len(file_info) == 3:
+            form_data.add_field(name, file_info[1], filename=file_info[0], content_type=file_info[2])
+        # otherwise it must be the filename. Delegate input validation to FormData:
         else:
-            raise ValueError('File parameter must be represented by a string or a triple with the file descriptor, the file name, and the content type.')
+            form_data.add_field(name, file_info)
     encoder(form_data, inputs, **kwargs)
     return form_data
-
-
-
-# Test
-
-async def main():
-    from wolframclient.evaluation import SecuredAuthenticationKey
-    from wolframclient.tests.configure import secured_authentication_key, user_configuration,server
-    print('oauth')
-    session = None
-    try:
-        session = WolframCloudAsyncSession(
-            credentials=secured_authentication_key
-        )
-        await session.start()
-        print('start', session.oauth_session._oauth_token, session.oauth_session._oauth_token_secret, await session.started())
-        await session.restart()
-        print('restart on started', session.oauth_session._oauth_token, session.oauth_session._oauth_token_secret, await session.started())
-        await session.stop()
-        print('after stop, started?', await session.started())
-        await session.restart()
-        print('restart after stop', session.oauth_session._oauth_token, session.oauth_session._oauth_token_secret, await session.started())
-        await session.restart()
-        print('restart on started.', session.oauth_session._oauth_token, session.oauth_session._oauth_token_secret, await session.started())
-    except Exception as e:
-        raise e
-    finally:
-        if session:
-            await session.stop()
-    print('xauth')
-    try:
-        session = WolframCloudAsyncSession(
-            credentials=user_configuration,
-            server=server
-        )
-        await session.start()
-        print('start', session.oauth_session._oauth_token, session.oauth_session._oauth_token_secret, await session.started())
-        await session.restart()
-        print('restart on started', session.oauth_session._oauth_token, session.oauth_session._oauth_token_secret, await session.started())
-        await session.stop()
-        print('after stop, started?', await session.started())
-        await session.restart()
-        print('restart after stop', session.oauth_session._oauth_token, session.oauth_session._oauth_token_secret, await session.started())
-        await session.restart()
-        print('restart on started.', session.oauth_session._oauth_token, session.oauth_session._oauth_token_secret, await session.started())
-    except Exception as e:
-        raise e
-    finally:
-        await session.stop()
-        await asyncio.sleep(0) #close http session
-    
-    
-    async with WolframCloudAsyncSession(
-            credentials=user_configuration,
-            server=server,
-            loop=asyncio.get_running_loop()
-        ) as session:
-        await session.start()
-        res = await session.evaluate('Range[3]')
-        print(res)
-        api = ('dorianb', 'api/private/str_image_int')
-        with open('/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/tests/data/32x2.png', 'rb') as fp:
-            response = await session.call(api, input_parameters={'str':'abc', 'int' : 10}, files={'image': fp})
-            import json
-            res = json.loads(await response.get())
-        print(res)
-    
-if __name__ == '__main__':
-    from wolframclient.logger.utils import setup_logging_to_file
-    setup_logging_to_file('/tmp/python.log', level=logging.DEBUG)
-    print('start')
-    asyncio.run(main())
-    print('stop')

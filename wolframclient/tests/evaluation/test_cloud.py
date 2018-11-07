@@ -297,6 +297,26 @@ class TestWolframAPI(TestCaseSettings):
             res = json.loads(res.get())
             self.assertListEqual(res, [32, 2])
 
+    def test_wolfram_api_call_named_image(self):
+        api = (self.api_owner, 'api/private/imagedimensions')
+        apicall = WolframAPICall(self.cloud_session, api)
+        with open(self.get_data_path('32x2.png'), 'rb') as fp:
+            apicall.add_file_parameter('image', fp, filename='testimage')
+            res = apicall.perform()
+            self.assertTrue(res.success)
+            res = json.loads(res.get())
+            self.assertListEqual(res, [32, 2])
+
+    def test_wolfram_api_from_session(self):
+        api = (self.api_owner, 'api/private/imagedimensions')
+        apicall = self.cloud_session.wolfram_api_call(api)
+        with open(self.get_data_path('32x2.png'), 'rb') as fp:
+            apicall.add_file_parameter('image', fp)
+            res = apicall.perform()
+            self.assertTrue(res.success)
+            res = json.loads(res.get())
+            self.assertListEqual(res, [32, 2])
+
     def test_wolfram_api_call_str(self):
         api = (self.api_owner, 'api/private/stringreverse')
         apicall = WolframAPICall(self.cloud_session, api)
@@ -306,11 +326,13 @@ class TestWolframAPI(TestCaseSettings):
 
     def test_wolfram_api_image_string_int(self):
         api = ('dorianb', 'api/private/str_image_int')
+        buffer = None
         with open(self.get_data_path('32x2.png'), 'rb') as fp:
-            apicall = WolframAPICall(self.cloud_session, api)
-            apicall.add_parameter('str', 'abc')
-            apicall.add_parameter('int', 10)
-            apicall.add_file_parameter('image', fp)
-            result = apicall.perform().get()
-            res = json.loads(result)
-            self.assertListEqual(res, ['abc', [32, 2], 10])
+            buffer = fp.read()
+        apicall = WolframAPICall(self.cloud_session, api)
+        apicall.add_parameter('str', 'abc')
+        apicall.add_parameter('int', 10)
+        apicall.add_image_data_parameter('image', buffer)
+        result = apicall.perform().get()
+        res = json.loads(result)
+        self.assertListEqual(res, ['abc', [32, 2], 10])

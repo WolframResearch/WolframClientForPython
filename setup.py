@@ -59,9 +59,9 @@ setup(
         'numpy',
         'pytz',
         'requests',
+        'aiohttp',
         'oauthlib',
         'zmq',
-        'aiohttp'
     ],
     project_urls={
         'Source code': 'https://github.com/WolframResearch/WolframClientForPython',

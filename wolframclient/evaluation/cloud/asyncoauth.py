@@ -3,9 +3,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
-from aiohttp import FormData, Payload
+from aiohttp import FormData, Payload, StringPayload
 import ssl
-
 from wolframclient.utils.api import urllib, oauth, asyncio
 from wolframclient.utils import six
 from wolframclient.utils.url import url_join
@@ -113,7 +112,7 @@ class OAuthAIOHttpAsyncSessionBase(OAuthAsyncSessionBase):
             return await self.http_session.request(
                 method,
                 uri,
-                data = signed_body if form_encoded else data,
+                data = StringPayload(signed_body) if form_encoded else data,
                 headers = req_headers,
                 ssl = self._ssl_context)
 

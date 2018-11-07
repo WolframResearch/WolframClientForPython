@@ -6,9 +6,10 @@ import logging
 import os
 import unittest
 import asyncio
+import numpy
 from wolframclient.evaluation.cloud import WolframServer
 from wolframclient.evaluation.cloud.asynccloudsession import (
-    WolframCloudAsyncSession
+    WolframCloudAsyncSession, WolframAPICallAsync
     )
 
 from wolframclient.evaluation.cloud.base import (SecuredAuthenticationKey,
@@ -259,72 +260,79 @@ class TestCase(TestCaseSettings):
         self.assertEqual(res1, '{1}')
         res2= await res2.result
         self.assertEqual(res2, '{1, 2}')
-
-#     # encode input parameters
-
-#     def test_encode_wl(self):
-#         encoded = encode_api_inputs({'param1': {'k': [1, 2]}, 'param2': 'foo'})
-#         self.assertEqual(encoded, {
-#             'param1': b'<|"k" -> {1, 2}|>',
-#             'param2': 'foo'
-#         })
-
-#     def test_encode_empty_dict(self):
-#         self.assertEqual(encode_api_inputs({}, target_format='json'), {})
-
-#     def test_encode_json_dict(self):
-#         encoded = encode_api_inputs({
-#             'param1': {
-#                 'k': [1, 2]
-#             },
-#             'param2': 'foo'
-#         },
-#                                     target_format='json')
-#         self.assertEqual(encoded, {
-#             'param1__json': '{"k": [1, 2]}',
-#             'param2__json': '"foo"'
-#         })
-
-#     def test_encode_wxf_dict(self):
-#         encoded = encode_api_inputs({
-#             'param1': {
-#                 'k': [1, 2]
-#             },
-#             'param2': 'foo'
-#         },
-#                                     target_format='wxf')
-#         self.assertEqual(
-#             encoded, {
-#                 'param1__wxf': b'8:A\x01-S\x01kf\x02s\x04ListC\x01C\x02',
-#                 'param2__wxf': b'8:S\x03foo'
-#             })
+    
+    # @run_in_loop
+    # async def test_big_expr(self):
+    #     a=numpy.ndarray((1000,1000), dtype='uint64')
+    #     a.fill(1)
+    #     total = await self.cloud_session_async.evaluate(wl.Total(a))
+    #     self.assertEqual(total, 1000 * 1000)
 
 
-# class TestWolframAPI(TestCaseSettings):
-#     def test_wolfram_api_call_image(self):
-#         api = (self.api_owner, 'api/private/imagedimensions')
-#         apicall = WolframAPICall(self.cloud_session, api)
-#         with open(self.get_data_path('32x2.png'), 'rb') as fp:
-#             apicall.add_file_parameter('image', fp)
-#             res = apicall.perform()
-#             self.assertTrue(res.success)
-#             res = json.loads(res.get())
-#             self.assertListEqual(res, [32, 2])
+class TestWolframAPI(TestCaseSettings):
+    @run_in_loop
+    async def test_wolfram_api_call_image(self):
+        api = (self.api_owner, 'api/private/imagedimensions')
+        apicall = WolframAPICallAsync(self.cloud_session_async, api)
+        with open(self.get_data_path('32x2.png'), 'rb') as fp:
+            apicall.add_file_parameter('image', fp)
+            res = await apicall.perform()
+            self.assertTrue(res.success)
+            res = json.loads(await res.get())
+            self.assertListEqual(res, [32, 2])
 
-#     def test_wolfram_api_call_str(self):
-#         api = (self.api_owner, 'api/private/stringreverse')
-#         apicall = WolframAPICall(self.cloud_session, api)
-#         apicall.add_parameter('str', 'abcde')
-#         res = apicall.perform().get()
-#         self.assertEqual('"edcba"', force_text(res))
+    @run_in_loop
+    async def test_wolfram_api_call_named_image(self):
+        api = (self.api_owner, 'api/private/imagedimensions')
+        apicall = WolframAPICallAsync(self.cloud_session_async, api)
+        with open(self.get_data_path('32x2.png'), 'rb') as fp:
+            apicall.add_file_parameter('image', fp, filename='testimage')
+            res = await apicall.perform()
+            self.assertTrue(res.success)
+            res = json.loads(await res.get())
+            self.assertListEqual(res, [32, 2])
 
-#     def test_wolfram_api_image_string_int(self):
-#         api = ('dorianb', 'api/private/str_image_int')
-#         with open(self.get_data_path('32x2.png'), 'rb') as fp:
-#             apicall = WolframAPICall(self.cloud_session, api)
-#             apicall.add_parameter('str', 'abc')
-#             apicall.add_parameter('int', 10)
-#             apicall.add_image_data_parameter('image', fp)
-#             result = apicall.perform().get()
-#             res = json.loads(result)
-#             self.assertListEqual(res, ['abc', [32, 2], 10])
+    @run_in_loop
+    async def test_wolfram_api_from_session(self):
+        api = (self.api_owner, 'api/private/imagedimensions')
+        apicall = self.cloud_session_async.wolfram_api_call(api)
+        with open(self.get_data_path('32x2.png'), 'rb') as fp:
+            apicall.add_file_parameter('image', fp)
+            res = await apicall.perform()
+            self.assertTrue(res.success)
+            res = json.loads(await res.get())
+            self.assertListEqual(res, [32, 2])
+
+    @run_in_loop
+    async def test_wolfram_api_call_str(self):
+        api = (self.api_owner, 'api/private/stringreverse')
+        apicall = WolframAPICallAsync(self.cloud_session_async, api)
+        apicall.add_parameter('str', 'abcde')
+        res = await apicall.perform()
+        self.assertEqual('"edcba"', force_text(await res.get()))
+
+    @run_in_loop
+    async def test_wolfram_api_image_string_int(self):
+        api = ('dorianb', 'api/private/str_image_int')
+        with open(self.get_data_path('32x2.png'), 'rb') as fp:
+            apicall = WolframAPICallAsync(self.cloud_session_async, api)
+            apicall.add_parameter('str', 'abc')
+            apicall.add_parameter('int', 10)
+            apicall.add_file_parameter('image', fp)
+            result = await apicall.perform()
+            res = json.loads(await result.get())
+            self.assertListEqual(res, ['abc', [32, 2], 10])
+
+    @run_in_loop
+    async def test_wolfram_api_imagebytes_string_int(self):
+        api = ('dorianb', 'api/private/str_image_int')
+        buffer = None
+        with open(self.get_data_path('32x2.png'), 'rb') as fp:
+            buffer = fp.read()
+        apicall = WolframAPICallAsync(self.cloud_session_async, api)
+        apicall.add_parameter('str', 'abc')
+        apicall.add_parameter('int', 10)
+        apicall.add_image_data_parameter('image', buffer)
+        result = await apicall.perform()
+        res = json.loads(await result.get())
+        self.assertListEqual(res, ['abc', [32, 2], 10])
