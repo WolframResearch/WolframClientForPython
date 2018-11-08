@@ -38,20 +38,6 @@ def synchronized(lock):
     return wrap
 
 
-def silence(*exceptions):
-    def wrap(fn):
-        @functools.wraps(fn)
-        def wrapper(*args, **kwargs):
-            try:
-                return fn(*args, **kwargs)
-            except tuple(exceptions):
-                pass
-
-        return wrapper
-
-    return wrap
-
-
 class cached_property(object):
     """
     Decorator that converts a method with a single self argument into a
