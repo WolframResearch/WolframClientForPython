@@ -20,12 +20,9 @@ async def wait_all(args, **opts):
 
 
 def run_in_loop(cor, loop=None):
-    loop = get_event_loop(loop)
-
     @functools.wraps(cor)
     def wrapped(*args, **kwargs):
-        loop.run_until_complete(cor(*args, **kwargs))
-
+        return syncronous_wait_all(cor(*args, **kwargs), loop = loop)
     return wrapped
 
 
@@ -56,8 +53,7 @@ def to_sync(timeout=None):
     def wrap(cor):
         @functools.wraps(cor)
         def wrapper(*args, **kwargs):
-            task = asyncio.create_task(cor(*args, **kwargs))
-
+            return asyncio.create_task(cor(*args, **kwargs))
         return wrapper
 
     return wrap
