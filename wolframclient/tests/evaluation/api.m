@@ -51,7 +51,14 @@ CloudDeploy[APIFunction[
  co
  ];
 
- CloudDeploy[
+CloudDeploy[
 	APIFunction[{"image" -> "Image"}, ImageDimensions[#image] &], 
  	CloudObject["api/private/imagedimensions"]
 ];
+
+api = APIFunction[{"str" -> "String", "image" -> "Image", 
+   "int" -> "Integer"},
+  {#str, ImageDimensions[#image], #int} &,
+  "JSON"
+];
+CloudDeploy[api, CloudObject["api/private/str_image_int"]];

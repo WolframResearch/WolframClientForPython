@@ -6,19 +6,22 @@ import logging
 import os
 import unittest
 
-from wolframclient.evaluation.cloud import WolframServer
+from wolframclient.evaluation.cloud.base import (SecuredAuthenticationKey,
+                                                 UserIDPassword)
 from wolframclient.evaluation.cloud.cloudsession import (
-    WolframAPICall, WolframCloudSession, WolframCloudSessionAsync,
-    encode_api_inputs, url_join)
-from wolframclient.evaluation.cloud.oauth import (SecuredAuthenticationKey,
-                                                  UserIDPassword)
-from wolframclient.exception import AuthenticationException
+    WolframAPICall, WolframCloudSession, WolframCloudSessionFuture,
+    encode_api_inputs)
+from wolframclient.exception import (AuthenticationException,
+                                     WolframLanguageException)
 from wolframclient.language import wl
-from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config
+from wolframclient.tests.configure import (MSG_JSON_NOT_FOUND, json_config,
+                                           secured_authentication_key, server,
+                                           user_configuration)
 from wolframclient.utils import six
 from wolframclient.utils.api import json
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.tests import TestCase as BaseTestCase
+from wolframclient.utils.url import url_join
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -35,29 +38,13 @@ class TestCaseSettings(BaseTestCase):
 
     @classmethod
     def setupCloudSession(cls):
-        cloud_config = json_config['cloud_credentials']
-        cls.sak = SecuredAuthenticationKey(
-            cloud_config['SAK']['consumer_key'],
-            cloud_config['SAK']['consumer_secret'])
-        cls.api_owner = cloud_config.get('ApiOwner', 'dorianb')
-        try:
-            cls.user_cred = UserIDPassword(cloud_config['User']['id'],
-                                           cloud_config['User']['password'])
-            server_json = json_config['server']
-            cls.server = WolframServer(
-                server_json['host'],
-                server_json['request_token_endpoint'],
-                server_json['access_token_endpoint'],
-                xauth_consumer_key=server_json['xauth_consumer_key'],
-                xauth_consumer_secret=server_json['xauth_consumer_secret'])
-        except KeyError as e:
-            print(e)
-            cls.user_cred = None
-            cls.server = None
-
-        cls.cloud_session = WolframCloudSession(authentication=cls.sak)
-        cls.cloud_session_async = WolframCloudSessionAsync(
-            authentication=cls.sak)
+        cls.sak = secured_authentication_key
+        cls.api_owner = json_config.get('ApiOwner', 'dorianb')
+        cls.user_cred = user_configuration
+        cls.server = server
+        cls.cloud_session = WolframCloudSession(credentials=cls.sak)
+        cls.cloud_session_future = WolframCloudSessionFuture(
+            credentials=cls.sak)
 
     @classmethod
     def tearDownClass(cls):
@@ -65,8 +52,10 @@ class TestCaseSettings(BaseTestCase):
 
     @classmethod
     def tearDownCloudSession(cls):
-        if cls.cloud_session_async is not None:
-            cls.cloud_session_async.terminate()
+        if cls.cloud_session is not None:
+            cls.cloud_session.stop()
+        if cls.cloud_session_future is not None:
+            cls.cloud_session_future.terminate()
 
     def get_data_path(self, filename):
         """Return full path of a file in ./data/directory"""
@@ -79,28 +68,30 @@ class TestCaseSettings(BaseTestCase):
 class TestCase(TestCaseSettings):
     def test_section_not_authorized(self):
         cloud_session = WolframCloudSession()
-        self.assertEqual(cloud_session.authorized, False)
-        self.assertEqual(cloud_session.is_xauth, None)
+        self.assertEqual(cloud_session.authorized(), False)
+        self.assertEqual(cloud_session.anonymous(), True)
 
     def test_section_authorized_oauth(self):
-        cloud_session = WolframCloudSession(authentication=self.sak)
-        self.assertEqual(cloud_session.authorized, True)
-        self.assertEqual(cloud_session.is_xauth, False)
+        cloud_session = WolframCloudSession(credentials=self.sak)
+        cloud_session.start()
+        self.assertEqual(cloud_session.authorized(), True)
+        self.assertEqual(cloud_session.anonymous(), False)
 
     def test_section_authorized_xauth(self):
-        if TestCaseSettings.user_cred and TestCaseSettings.server:
+        if self.user_cred and self.server:
             cloud_session = WolframCloudSession(
-                authentication=self.user_cred, server=self.server)
-            self.assertEqual(cloud_session.authorized, True)
-            self.assertEqual(cloud_session.is_xauth, True)
+                credentials=self.user_cred, server=self.server)
+            cloud_session.start()
+            self.assertEqual(cloud_session.authorized(), True)
+            self.assertEqual(cloud_session.anonymous(), False)
         else:
             print('xauth not available. Test skipped.')
 
     def test_bad_sak(self):
         bad_sak = SecuredAuthenticationKey('foo', 'bar')
         with self.assertRaises(AuthenticationException):
-            cloud_session = WolframCloudSession(authentication=bad_sak)
-            cloud_session.authorized
+            cloud_session = WolframCloudSession(credentials=bad_sak)
+            cloud_session.start()
 
     def test_section_api_call_no_param(self):
         url = 'api/private/requesterid'
@@ -123,7 +114,8 @@ class TestCase(TestCaseSettings):
     def test_public_api_call(self):
         url = "api/public/jsonrange"
         cloud_session = WolframCloudSession()
-        self.assertFalse(cloud_session.authorized)
+        self.assertFalse(cloud_session.authorized())
+        self.assertTrue(cloud_session.anonymous())
         response = cloud_session.call((self.api_owner, url),
                                       input_parameters={'i': 5})
         self.assertTrue(response.success)
@@ -143,12 +135,18 @@ class TestCase(TestCaseSettings):
         expected = list(range(v_min, v_max, step))
         self.assertListEqual(expected, json.loads(response.get()))
 
+    def test_section_invalid_api_path(self):
+        with self.assertRaises(WolframLanguageException):
+            api = (self.api_owner, 'invalid/api/path/no/resource')
+            res = self.cloud_session.call(api)
+            res.get()
+
     def test_section_wl_error(self):
         api = (self.api_owner, "api/private/range/wlerror")
         i = 1
         response = self.cloud_session.call(api, input_parameters={'i': i})
         self.assertFalse(response.success)
-        self.assertEqual(response.response.status_code, 500)
+        self.assertEqual(response.status, 500)
 
     def test_small_image_file(self):
         api = (self.api_owner, 'api/private/imagedimensions')
@@ -165,6 +163,20 @@ class TestCase(TestCaseSettings):
             self.assertTrue(response.success)
             res = json.loads(response.get())
             self.assertListEqual(res, [500, 200])
+
+    def test_image_string_int(self):
+        api = ('dorianb', 'api/private/str_image_int')
+        with open(self.get_data_path('32x2.png'), 'rb') as fp:
+            response = self.cloud_session.call(
+                api,
+                input_parameters={
+                    'str': 'abc',
+                    'int': 10
+                },
+                files={'image': fp})
+            self.assertTrue(response.success)
+            res = json.loads(response.get())
+            self.assertListEqual(res, ['abc', [32, 2], 10])
 
     ### Evaluation
 
@@ -199,15 +211,38 @@ class TestCase(TestCaseSettings):
             f([[1]], 1, Padding=1), '{{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}')
 
     def test_evaluate_string(self):
-        res1 = self.cloud_session_async.evaluate('Range[1]')
-        res2 = self.cloud_session_async.evaluate('Range[2]')
+        res1 = self.cloud_session_future.evaluate('Range[1]')
+        res2 = self.cloud_session_future.evaluate('Range[2]')
 
         self.assertEqual(res1.result(), '{1}')
         self.assertEqual(res2.result(), '{1, 2}')
 
     def test_evaluate_string(self):
-        res = self.cloud_session_async.evaluate('Range[3]')
-        self.assertEqual(res, '{1, 2, 3}')
+        res = self.cloud_session_future.evaluate('Range[3]')
+        self.assertEqual(res.result(), '{1, 2, 3}')
+
+
+# inputform evaluation option disabled
+
+    def test_evaluate_string_disable(self):
+        with WolframCloudSession(
+                credentials=self.sak,
+                inputform_string_evaluation=False) as session:
+            res = session.evaluate('Range[3]')
+            self.assertEqual(res, '"Range[3]"')
+            func = session.function('f')
+            res = func('abc')
+            self.assertEqual(res, '"f"["abc"]')
+
+    def test_evaluate_future_string_disable(self):
+        with WolframCloudSessionFuture(
+                credentials=self.sak,
+                inputform_string_evaluation=False) as session:
+            res = session.evaluate('Range[3]')
+            self.assertEqual(res.result(), '"Range[3]"')
+            func = session.function('f')
+            res = func('abc')
+            self.assertEqual(res.result(), '"f"["abc"]')
 
     # url_join
 
@@ -294,9 +329,42 @@ class TestWolframAPI(TestCaseSettings):
             res = json.loads(res.get())
             self.assertListEqual(res, [32, 2])
 
+    def test_wolfram_api_call_named_image(self):
+        api = (self.api_owner, 'api/private/imagedimensions')
+        apicall = WolframAPICall(self.cloud_session, api)
+        with open(self.get_data_path('32x2.png'), 'rb') as fp:
+            apicall.add_file_parameter('image', fp, filename='testimage')
+            res = apicall.perform()
+            self.assertTrue(res.success)
+            res = json.loads(res.get())
+            self.assertListEqual(res, [32, 2])
+
+    def test_wolfram_api_from_session(self):
+        api = (self.api_owner, 'api/private/imagedimensions')
+        apicall = self.cloud_session.wolfram_api_call(api)
+        with open(self.get_data_path('32x2.png'), 'rb') as fp:
+            apicall.add_file_parameter('image', fp)
+            res = apicall.perform()
+            self.assertTrue(res.success)
+            res = json.loads(res.get())
+            self.assertListEqual(res, [32, 2])
+
     def test_wolfram_api_call_str(self):
         api = (self.api_owner, 'api/private/stringreverse')
         apicall = WolframAPICall(self.cloud_session, api)
         apicall.add_parameter('str', 'abcde')
         res = apicall.perform().get()
         self.assertEqual('"edcba"', force_text(res))
+
+    def test_wolfram_api_image_string_int(self):
+        api = ('dorianb', 'api/private/str_image_int')
+        buffer = None
+        with open(self.get_data_path('32x2.png'), 'rb') as fp:
+            buffer = fp.read()
+        apicall = WolframAPICall(self.cloud_session, api)
+        apicall.add_parameter('str', 'abc')
+        apicall.add_parameter('int', 10)
+        apicall.add_image_data_parameter('image', buffer)
+        result = apicall.perform().get()
+        res = json.loads(result)
+        self.assertListEqual(res, ['abc', [32, 2], 10])

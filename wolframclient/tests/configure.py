@@ -3,11 +3,17 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import json
+import logging
 
 from wolframclient.logger.utils import setup_logging_to_file
 from wolframclient.utils.api import os
 
-__all__ = ['create_dir_if_missing', 'dir_test_data', 'json_config']
+logger = logging.getLogger(__name__)
+
+__all__ = [
+    'create_dir_if_missing', 'dir_test_data', 'json_config',
+    'secured_authentication_key', 'user_configuration', 'server', 'kernel_path'
+]
 
 
 def create_dir_if_missing(path):
@@ -30,18 +36,62 @@ def dir_test_data():
     return os.path_join(current_file_dir, 'data')
 
 
+def _parse_config(config):
+    sak = None
+    user_cred = None
+    server = None
+    kernel_path = None
+    try:
+        cloud_config = config['cloud_credentials']
+        try:
+            from wolframclient.evaluation import SecuredAuthenticationKey
+            sak = SecuredAuthenticationKey(
+                cloud_config['SAK']['consumer_key'],
+                cloud_config['SAK']['consumer_secret'])
+        except KeyError as e:
+            logger.warning('Failed to read SAK from json config.', e)
+        from wolframclient.evaluation import UserIDPassword
+        user_cred = UserIDPassword(cloud_config['User']['id'],
+                                   cloud_config['User']['password'])
+    except KeyError as e:
+        logger.warning('Failed to parse json config.', e)
+    try:
+        from wolframclient.evaluation import WolframServer
+        server_json = config['server']
+        server = WolframServer(
+            server_json['host'],
+            server_json['request_token_endpoint'],
+            server_json['access_token_endpoint'],
+            xauth_consumer_key=server_json['xauth_consumer_key'],
+            xauth_consumer_secret=server_json['xauth_consumer_secret'])
+    except KeyError as e:
+        logger.warning('Failed to parse json config.', e)
+    try:
+        kernel_path = json_config['kernel']
+    except KeyError as e:
+        logger.warning('Failed to parse json config.', e)
+    return sak, user_cred, server, kernel_path
+
+
 log_file = os.environ.get('WOLFRAMCLIENT_PY_LOG_FILE', None)
 if log_file is not None:
     create_dir_if_missing(log_file)
     setup_logging_to_file(log_file)
 
 json_config = None
+secured_authentication_key = None
+user_configuration = None
+server = None
+kernel_path = None
+
 _json_config_path = os.environ.get('WOLFRAMCLIENT_PY_JSON_CONFIG', None)
 if _json_config_path is not None:
     expended_path = os.expanduser(os.expandvars(_json_config_path))
     try:
         with open(expended_path, 'r') as fp:
             json_config = json.load(fp)
+            secured_authentication_key, user_configuration, server, kernel_path = _parse_config(
+                json_config)
     except:
         raise ValueError(
             'Failed to find json configuration file %s' % _json_config_path)
