@@ -498,7 +498,7 @@ class WolframLanguageSession(object):
         `kwargs` are passed to :func:`~wolframclient.serializers.export` during serialization step of
         non-string inputs.
         """
-        result = self._evaluate(expr, kwargs)
+        result = self._evaluate(expr, **kwargs)
         if not result.success:
             for msg in result.messages:
                 logger.warning(msg[1])
