@@ -49,16 +49,6 @@ def syncronous_wait_all(*args, loop=None):
     yield from (loop or get_event_loop()).run_until_complete(wait_all(*args))
 
 
-def to_sync(timeout=None):
-    def wrap(cor):
-        @functools.wraps(cor)
-        def wrapper(*args, **kwargs):
-            return asyncio.create_task(cor(*args, **kwargs))
-        return wrapper
-
-    return wrap
-
-
 def silence(*exceptions):
     def wrap(fn):
         @functools.wraps(fn)
