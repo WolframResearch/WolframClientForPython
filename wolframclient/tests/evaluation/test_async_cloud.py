@@ -12,7 +12,8 @@ from wolframclient.evaluation.cloud.asynccloudsession import (
 from wolframclient.evaluation.cloud.base import (SecuredAuthenticationKey,
                                                  UserIDPassword)
 from wolframclient.exception import (AuthenticationException,
-                                     WolframLanguageException)
+                                     WolframLanguageException,
+                                     RequestException)
 from wolframclient.language import wl
 from wolframclient.tests.configure import (MSG_JSON_NOT_FOUND, json_config,
                                            secured_authentication_key, server,
@@ -112,6 +113,13 @@ class TestCase(TestCaseSettings):
         with self.assertRaises(AuthenticationException):
             cloud_session = WolframCloudAsyncSession(credentials=bad_sak)
             await cloud_session.start()
+
+    @run_in_loop
+    async def test_need_auth_err(self):
+        bad_sak = SecuredAuthenticationKey('foo', 'bar')
+        with self.assertRaises(RequestException):
+            async with WolframCloudAsyncSession() as cloud_session:
+                await cloud_session.evaluate('1+1')
 
     @run_in_loop
     async def test_bad_sak_with(self):
@@ -229,6 +237,29 @@ class TestCase(TestCaseSettings):
             cor = session.function('f')
             res = await cor('abc')
             self.assertEqual(res, '"f"["abc"]')
+
+    @run_in_loop
+    async def test_stop_start_restart_status(self):
+        session = None
+        try:
+            session = WolframCloudAsyncSession(credentials=self.sak)
+            self.assertFalse(session.started)
+            self.assertTrue(session.stopped)
+            await session.start()
+            self.assertTrue(session.started)
+            self.assertFalse(session.stopped)
+            await session.stop()
+            self.assertFalse(session.started)
+            self.assertTrue(session.stopped)
+            await session.restart()
+            self.assertTrue(session.started)
+            self.assertFalse(session.stopped)
+            await session.terminate()
+            self.assertFalse(session.started)
+            self.assertTrue(session.stopped)
+        finally:
+            if session:
+                await session.terminate()
 
     ### Evaluation
 

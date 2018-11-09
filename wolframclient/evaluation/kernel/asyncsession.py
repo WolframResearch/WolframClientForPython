@@ -53,8 +53,10 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
                  stdin=PIPE,
                  stdout=PIPE,
                  stderr=PIPE,
+                 inputform_string_evaluation=True,
+                 wxf_bytes_evaluation=True,
                  **kwargs):
-        super(WolframLanguageAsyncSession, self).__init__(
+        super().__init__(
             kernel,
             consumer=consumer,
             initfile=initfile,
@@ -64,6 +66,8 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
             stdin=stdin,
             stdout=stdout,
             stderr=stderr,
+            inputform_string_evaluation=inputform_string_evaluation,
+            wxf_bytes_evaluation=wxf_bytes_evaluation,
             **kwargs)
         self.thread_pool_exec = None
         self._loop = loop or asyncio.get_event_loop()

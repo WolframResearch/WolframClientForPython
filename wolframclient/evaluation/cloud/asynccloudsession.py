@@ -7,7 +7,7 @@ import ssl
 
 from aiohttp import BytesPayload, ClientSession, FormData
 
-from wolframclient.evaluation.base import WolframAsyncEvaluator
+from wolframclient.evaluation.base import WolframAsyncEvaluator, normalize_input
 from wolframclient.evaluation.cloud.asyncoauth import \
     OAuth1AIOHttpAsyncSession as OAuthAsyncSession
 from wolframclient.evaluation.cloud.asyncoauth import \
@@ -28,9 +28,6 @@ __all__ = ['WolframCloudAsyncSession', 'WolframAPICallAsync']
 
 
 class WolframCloudAsyncSession(WolframAsyncEvaluator):
-
-    _stopped = True  # avoid error in __del__ if __init__ failed.
-
     def __init__(self,
                  credentials=None,
                  server=WolframPublicCloudServer,
@@ -59,8 +56,8 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
             self._ssl_context = None
 
     async def start(self):
-        self._stopped = False
-        if not await self.started():
+        self.stopped = False
+        if not self.started:
             if self.http_session is None or self.http_session.closed:
                 self.http_session = self.http_sessionclass(
                     headers={'User-Agent': 'WolframClientForPython/1.0'},
@@ -68,12 +65,10 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
             if not self.anonymous():
                 await self._authenticate()
 
-    async def started(self):
+    @property
+    def started(self):
         return self.http_session is not None and (self.anonymous()
                                                   or self.authorized())
-
-    def stopped(self):
-        return self._stopped
 
     """ Terminate gracefully stops. """
 
@@ -81,7 +76,7 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
         await self.terminate()
 
     async def terminate(self):
-        self._stopped = True
+        self.stopped = True
         if self.http_session:
             await self.http_session.close()
         self.http_session = None
@@ -170,7 +165,7 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
         """Do a POST request, signing the content only if authentication has been successful."""
         if not self.started:
             await self.start()
-        if self.stopped():
+        if self.stopped:
             await self.restart()
         headers['User-Agent'] = 'WolframClientForPython/1.0'
         if self.authorized():
@@ -194,12 +189,6 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
         response = await self._post(self.evaluation_api_url, data=data)
         return WolframEvaluationJSONResponseAsync(response)
 
-    def _normalize_input(self, expr):
-        if self.inputform_string_evaluation and (isinstance(
-                expr, six.string_types) or isinstance(expr, six.binary_type)):
-            expr = wlexpr(expr)
-        return expr
-
     async def evaluate(self, expr, **kwargs):
         """Send `expr` to the cloud for evaluation, return the result.
 
@@ -207,17 +196,17 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
         or a the string InputForm of an expression to evaluate.
         """
         response = await self._call_evaluation_api(
-            self._normalize_input(expr), **kwargs)
+            normalize_input(expr, string_as_inputform=self.inputform_string_evaluation), **kwargs)
         return await response.get()
 
     async def evaluate_wrap(self, expr, **kwargs):
         """ Similar to :func:`~wolframclient.evaluation.cloud.asynccloudsession.WolframCloudAsyncSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframEvaluationJSONResponseAsync`.
         """
         return await self._call_evaluation_api(
-            self._normalize_input(expr), **kwargs)
+            normalize_input(expr, self.inputform_string_evaluation), **kwargs)
 
     def function(self, func):
-        return super().function(self._normalize_input(func))
+        return super().function(normalize_input(func, string_as_inputform=self.inputform_string_evaluation))
 
     def wolfram_api_call(self, api, **kwargs):
         """ Build an helper class instance to call a given API. """

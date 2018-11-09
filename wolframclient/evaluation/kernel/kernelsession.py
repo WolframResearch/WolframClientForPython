@@ -6,9 +6,10 @@ import logging
 from subprocess import PIPE, Popen
 from threading import Event, Thread
 
+from wolframclient.evaluation.base import WolframEvaluator, normalize_input
 from wolframclient.evaluation.result import WolframKernelEvaluationResult
 from wolframclient.exception import WolframKernelException
-from wolframclient.language import wl
+from wolframclient.language import wl, wlexpr
 from wolframclient.serializers import export
 from wolframclient.utils import six
 from wolframclient.utils.api import json, os, time, zmq
@@ -82,7 +83,7 @@ class KernelLogger(Thread):
                 logger.fatal('Failed to close ZMQ logging socket.')
 
 
-class WolframLanguageSession(object):
+class WolframLanguageSession(WolframEvaluator):
     """A session to a Wolfram Kernel enabling evaluation of Wolfram Language expressions.
 
     Start a new session and send an expression for evaluation::
@@ -136,6 +137,8 @@ class WolframLanguageSession(object):
                  stdin=PIPE,
                  stdout=PIPE,
                  stderr=PIPE,
+                 inputform_string_evaluation=True,
+                 wxf_bytes_evaluation=True,
                  **kwargs):
         if isinstance(kernel, six.string_types):
             if not os.isfile(kernel):
@@ -160,29 +163,16 @@ class WolframLanguageSession(object):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Initializing kernel %s using script: %s' %
                          (self.kernel, self.initfile))
-        # Socket to which we push new expressions to evaluate.
-        if in_socket is None:
-            self.in_socket = Socket(zmq_type=zmq.PUSH)
-        elif not isinstance(in_socket, Socket):
+        if in_socket is not None and not isinstance(in_socket, Socket):
             raise ValueError(
                 'Expecting kernel input socket to be a Socket instance.')
-        else:
-            in_socket.zmq_type = zmq.PUSH
-            self.in_socket = in_socket
-
-        if out_socket is None:
-            self.out_socket = Socket(zmq_type=zmq.PULL)
-        elif not isinstance(out_socket, Socket):
-            raise ValueError(
-                'Expecting kernel output socket to be a Socket instance.')
-        else:
-            out_socket.zmq_type = zmq.PULL
-            self.out_socket = out_socket
-
+        if out_socket is not None and not isinstance(out_socket, Socket):
+                raise ValueError(
+                    'Expecting kernel output socket to be a Socket instance.')
+        self.out_socket = out_socket
+        self.in_socket = in_socket
         self.consumer = consumer
         self.kernel_proc = None
-        self.started = False
-        self.terminated = False
         self.loglevel = kernel_loglevel
         self.kernel_logger = None
         self.evaluation_count = 0
@@ -190,7 +180,8 @@ class WolframLanguageSession(object):
         self._stdin = stdin
         self._stdout = stdout
         self._stderr = stderr
-
+        self.inputform_string_evaluation = inputform_string_evaluation
+        self.wxf_bytes_evaluation = wxf_bytes_evaluation
         # some parameters may be passed as kwargs
         for k, v in kwargs.items():
             self.set_parameter(k, v)
@@ -234,17 +225,15 @@ class WolframLanguageSession(object):
                 (parameter_name, ', '.join(self._DEFAULT_PARAMETERS.keys())))
         self.parameters[parameter_name] = parameter_value
 
-    def __enter__(self):
-        """Start the session."""
-        self.start()
-        return self
-
-    def __exit__(self, type, value, traceback):
-        """Terminate the kernel process and close sockets."""
-        self.terminate()
-
     def terminate(self):
-        """Terminate the kernel process and close sockets.
+        """Immediatly stop the current session."""
+        self._stop(gracefully=False)
+
+    def stop(self):
+        self._stop(gracefully=True)
+
+    def _stop(self, gracefully=True):
+        """Stop the kernel process and close sockets.
 
         This function must be called when a given session is no more useful
         to prevent orfan processes and sockets from being generated.
@@ -256,42 +245,31 @@ class WolframLanguageSession(object):
             unexpected start-up errors.
         """
         logger.info('Start termination on kernel %s', self)
+        self.stopped = True
         if self.kernel_proc is not None:
             error = False
-            # first send a Quit command to the kernel.
-            try:
-                self.in_socket.zmq_socket.send(
-                    b'8:f\x00s\x04Quit', flags=zmq.NOBLOCK)
-            except:
-                logger.info('Failed to send Quit[] command to the kernel.')
-                error = True
-            # Kill process if not already terminated.
-            # Wait for it to cleanly stop if the Quit command was succesfully sent,
-            # otherwise the kernel is likely in a bad state so we kill it immediatly.
-            if six.PY2:
+            if gracefully:
+                # Graceful stop: first send a Quit command to the kernel.
                 try:
-                    if error:
-                        self.kernel_proc.kill()
-                    else:
-                        self.kernel_proc.wait()
+                    self.in_socket.zmq_socket.send(
+                        b'8:f\x00s\x04Quit', flags=zmq.NOBLOCK)
                 except:
-                    logger.info(
-                        'Failed to cleanly stop the kernel process. Killing it.'
-                    )
+                    logger.info('Failed to send Quit[] command to the kernel.')
                     error = True
-            if six.PY3:
                 try:
-                    if error:
-                        self.kernel_proc.kill()
-                    else:
-                        self.kernel_proc.wait(
-                            timeout=self.get_parameter(
-                                'TERMINATE_READ_TIMEOUT'))
+                    self.kernel_proc.wait(timeout=self.get_parameter('TERMINATE_READ_TIMEOUT'))
                 except:
                     logger.info(
-                        'Failed to cleanly stop the kernel process after %.02f seconds. Killing it.'
+                        'Kernel process failed to stop after %.02f seconds. Killing it.'
                         % self.get_parameter('TERMINATE_READ_TIMEOUT'))
                     error = True
+                # Kill process if not already terminated.
+                # Wait for it to cleanly stop if the Quit command was succesfully sent,
+                # otherwise the kernel is likely in a bad state so we kill it immediatly.
+                if error:
+                    self.kernel_proc.kill()
+            else:
+                self.kernel_proc.kill()
             if self._stdin == PIPE:
                 try:
                     self.kernel_proc.stdin.close()
@@ -314,36 +292,59 @@ class WolframLanguageSession(object):
                 logger.info(
                     'Killing kernel process: %i' % self.kernel_proc.pid)
                 self.kernel_proc.kill()
-                self.kernel_proc = None
-            self.terminated = True
+            self.kernel_proc = None
         if self.in_socket is not None:
             try:
                 self.in_socket.close()
             except Exception as e:
                 logger.fatal(e)
+            finally:
+                self.in_socket = None
         if self.out_socket is not None:
             try:
                 self.out_socket.close()
             except Exception as e:
                 logger.fatal(e)
+            finally:
+                self.out_socket = None
         if self.kernel_logger is not None:
             try:
                 self.kernel_logger.stopped.set()
                 self.kernel_logger.join()
             except Exception as e:
                 logger.fatal(e)
+            finally:
+                self.kernel_logger = None
+        assert(self.kernel_proc is None)
+        assert(self.out_socket is None)
+        assert(self.in_socket is None)
+        assert(self.kernel_logger is None)
+
 
     _socket_read_sleep_func = time.sleep
 
     _KERNEL_OK = b'OK'
 
+    @property
+    def started(self):
+        return (self.kernel_proc is not None 
+            and self.in_socket.bound
+            and self.out_socket.bound)
+
     def start(self):
         """Start a new kernel process and open sockets to communicate with it."""
-        if self.terminated:
-            raise WolframKernelException('Session has been terminated.')
+        self.stopped = False
         if self.started:
-            logger.warning('Session was already started.')
             return
+        # Socket to which we push new expressions for evaluation.
+        if self.in_socket is None:
+            self.in_socket = Socket(zmq_type=zmq.PUSH)
+        else:
+            self.in_socket.zmq_type = zmq.PUSH
+        if self.out_socket is None:
+            self.out_socket = Socket(zmq_type=zmq.PULL)
+        else:
+            self.out_socket.zmq_type = zmq.PULL
         # start the evaluation zmq sockets
         self.in_socket.bind()
         self.out_socket.bind()
@@ -415,7 +416,12 @@ class WolframLanguageSession(object):
             raise WolframKernelException(
                 'Failed to communicate with the kernel %s. Could not read from ZMQ socket.'
                 % self.kernel)
-        self.started = True
+
+    def _ensure_started(self):
+        if not self.started:
+            self.start()
+        if self.stopped:
+            self.restart()
 
     @property
     def pid(self):
@@ -425,27 +431,16 @@ class WolframLanguageSession(object):
         else:
             return None
 
-    # @property
-    # def started(self):
-    #     """Indicate if the current kernel session has started with reasonable accuracy."""
-    #     return self.kernel_proc is not None
-
     def _evaluate(self, expr, **kwargs):
         """Send an expression to the kernel for evaluation. Return a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.
         """
-        if self.terminated:
-            raise WolframKernelException('Session has been terminated.')
-        if not self.started:
-            self.start()
+        self._ensure_started()
         start = time.perf_counter()
-        if isinstance(expr, six.binary_type):
-            logger.info('Expression is already serialized in WXF.')
-            self.in_socket.zmq_socket.send(expr)
+        if self.wxf_bytes_evaluation and isinstance(expr, six.binary_type):
+            data = expr
         else:
-            if isinstance(expr, six.string_types):
-                expr = wl.ToExpression(expr)
-            self.in_socket.zmq_socket.send(
-                export(expr, target_format='wxf', **kwargs))
+            data = export(expr, target_format='wxf', **kwargs)
+        self.in_socket.zmq_socket.send(data)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Expression sent to kernel in %.06fsec',
                          time.perf_counter() - start)
@@ -475,7 +470,7 @@ class WolframLanguageSession(object):
     def evaluate_wxf(self, expr, **kwargs):
         """Send an expression to the kernel for evaluation and return the raw result still encoded as WXF.
         """
-        result = self._evaluate(expr, **kwargs)
+        result = self._evaluate(normalize_input(expr, string_as_inputform=self.inputform_string_evaluation), **kwargs)
         if not result.success:
             for msg in result.messages:
                 logger.warning(msg[1])
@@ -484,7 +479,7 @@ class WolframLanguageSession(object):
     def evaluate_wrap(self, expr, **kwargs):
         """ Similar to :func:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.
         """
-        return self._evaluate(expr, **kwargs)
+        return self._evaluate(normalize_input(expr, string_as_inputform=self.inputform_string_evaluation), **kwargs)
 
     def evaluate(self, expr, **kwargs):
         """Send an expression to the kernel for evaluation.
@@ -498,49 +493,25 @@ class WolframLanguageSession(object):
         `kwargs` are passed to :func:`~wolframclient.serializers.export` during serialization step of
         non-string inputs.
         """
-        result = self._evaluate(expr, **kwargs)
+        result = self._evaluate(
+            normalize_input(expr, 
+                string_as_inputform=self.inputform_string_evaluation), **kwargs)
         if not result.success:
             for msg in result.messages:
                 logger.warning(msg[1])
         return result.get()
 
     def function(self, expr):
-        return WolframFunction(self, expr)
+        return super().function(normalize_input(expr, string_as_inputform=self.inputform_string_evaluation))
 
     def __repr__(self):
-        if self.terminated:
-            return '<%s: terminated>' % self.__class__.__name__
-        elif self.started:
+        if self.started:
             return '<%s: pid:%i, kernel sockets: (in:%s, out:%s)>' % (
                 self.__class__.__name__, self.kernel_proc.pid,
                 self.in_socket.uri, self.out_socket.uri)
         else:
             return '<%s: not started>' % self.__class__.__name__
 
-
-class WolframFunction(object):
-
-    __slots__ = 'session', 'wlfunc'
-
-    def __init__(self, session, expr):
-        if isinstance(expr, six.string_types) or isinstance(
-                expr, six.binary_type):
-            self.wlfunc = wl.ToExpression(expr)
-        else:
-            self.wlfunc = expr
-        self.session = session
-
-    def __call__(self, *args, **kwargs):
-        return self.session.evaluate(
-            wl.Construct(self.wlfunc, *args, **kwargs))
-
-    def __repr__(self):
-        if self.session.kernel_proc is not None:
-            kernel = force_text(self.session.kernel_proc.pid)
-        else:
-            kernel = 'N/A'
-        return 'WolframFunction<function=%s, kernel=%s>' % (self.wlfunc,
-                                                            kernel)
 
 
 class SocketException(Exception):
@@ -551,13 +522,14 @@ class Socket(object):
     def __init__(self, host='127.0.0.1', port=None, zmq_type=zmq.PAIR):
         self.host = host
         self.port = port
+        self._use_random_port = port is None
         if self.port is None:
             self.uri = 'tcp://' + self.host
         else:
             self.uri = 'tcp://%s:%s' % (self.host, self.port)
         self.zmq_type = zmq_type
         self.bound = False
-        self.zmq_socket = self.zmq_socket = zmq.Context.instance().socket(
+        self.zmq_socket = zmq.Context.instance().socket(
             zmq_type)
         self.closed = False
 
@@ -567,7 +539,7 @@ class Socket(object):
         if self.closed:
             raise SocketException('Socket has been closed.')
         self.zmq_socket = zmq.Context.instance().socket(self.zmq_type)
-        if self.port is None:
+        if self._use_random_port:
             logger.debug('Binding socket using random port.')
             self.port = self.zmq_socket.bind_to_random_port(self.uri)
             self.uri = 'tcp://%s:%s' % (self.host, self.port)
@@ -606,6 +578,7 @@ class Socket(object):
     def close(self):
         self.zmq_socket.close()
         self.closed = True
+        self.bound = False
 
     def __repr__(self):
         if self.bound:

@@ -11,18 +11,16 @@ from wolframclient.language import wl, wlexpr
 from wolframclient.language.expression import WLFunction, WLSymbol
 from wolframclient.serializers import export
 from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config
-from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
-if not six.JYTHON:
-    from wolframclient.evaluation import WolframLanguageSession, WolframLanguageFutureSession
+
+from wolframclient.evaluation import WolframLanguageSession, WolframLanguageFutureSession, WolframCloudSession, WolframCloudSessionFuture
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
-@unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 class TestCaseSettings(BaseTestCase):
 
     if json_config:
@@ -181,12 +179,14 @@ class TestCase(TestCaseSettings):
         self.assertEqual(result, WLSymbol('$Failed'))
 
     def test_auto_start_session(self):
-        session = WolframLanguageSession(self.KERNEL_PATH)
+        session = None
         try:
+            session = WolframLanguageSession(self.KERNEL_PATH)
             res = session.evaluate('1+1')
             self.assertEqual(res, 2)
         finally:
-            session.terminate()
+            if session:
+                session.terminate()
 
     def test_pure_function_inputform(self):
         f = self.kernel_session.function('#+1&')
@@ -237,7 +237,32 @@ class TestCase(TestCaseSettings):
                                                      WolframLanguageSession)
 
 
-@unittest.skipIf(six.PY2, "Module future is not available.")
+    def test_stop_start_restart_status(self):
+        self._stop_start_restart_status(WolframLanguageSession)
+        self._stop_start_restart_status(WolframLanguageFutureSession)
+
+    def _stop_start_restart_status(self, eval_class):
+        session = None
+        try:
+            session = eval_class(self.KERNEL_PATH)
+            self.assertFalse(session.started)
+            self.assertTrue(session.stopped)
+            session.start()
+            self.assertTrue(session.started)
+            self.assertFalse(session.stopped)
+            session.stop()
+            self.assertFalse(session.started)
+            self.assertTrue(session.stopped)
+            session.restart()
+            self.assertTrue(session.started)
+            self.assertFalse(session.stopped)
+            session.terminate()
+            self.assertFalse(session.started)
+            self.assertTrue(session.stopped)
+        finally:
+            if session:
+                session.terminate()
+
 class TestFutureSession(TestCaseSettings):
     @classmethod
     def tearDownKernelSession(cls):
@@ -314,12 +339,17 @@ class TestCaseSession(TestCaseSettings):
         with self.assertRaises(ValueError):
             WolframLanguageSession(None)
 
-    def test_terminated_session(self):
-        session = WolframLanguageSession(self.KERNEL_PATH)
-        session.start()
-        session.terminate()
-        with self.assertRaises(WolframKernelException):
-            session.evaluate('1+1')
+    def test_terminated_session_autorestart(self):
+        session = None
+        try:
+            session = WolframLanguageSession(self.KERNEL_PATH)
+            session.start()
+            session.stop()
+            res=session.evaluate('1+1')
+            self.assertEqual(res, 2)
+        finally:
+            if session:
+                session.terminate()
 
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)

@@ -5,9 +5,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 import asyncio
 import warnings
 
+from wolframclient.language import wlexpr
 from wolframclient.language.expression import WLFunction
 from wolframclient.utils.asyncio import wait_all
-from wolframclient.utils.six import PY_36
+from wolframclient.utils.six import PY_36, string_types
 """
 NOTES
 
@@ -27,12 +28,12 @@ NOTES
 """
 
 
-class WolframEvaluatorBase:
+class WolframEvaluatorBase(object):
+    stopped = True # avoid error in __del__ if __init__ failed.
+    # started = False # all evaluators should be in this state at init.
+    
     @property
-    def stopped(self):
-        """A boolean indicated that the evaluator stop function has started.
-        
-        Always synchronous to avoid multiple concurrent stops."""
+    def started(self):
         raise NotImplementedError
 
     def __del__(self, _warnings=warnings):
@@ -59,9 +60,6 @@ class WolframEvaluator(WolframEvaluatorBase):
     def start(self):
         raise NotImplementedError
 
-    def started(self):
-        raise NotImplementedError
-
     def stop(self):
         #Graceful stop
         raise NotImplementedError
@@ -70,7 +68,7 @@ class WolframEvaluator(WolframEvaluatorBase):
         raise NotImplementedError
 
     def restart(self):
-        if self.started():
+        if self.started:
             self.stop()
         self.start()
 
@@ -87,12 +85,14 @@ class WolframEvaluator(WolframEvaluatorBase):
         return inner
 
     def __enter__(self):
-        if not self.started():
+        """Start the evaluator."""
+        if not self.started:
             self.start()
         return self
 
     def __exit__(self, type, value, traceback):
-        if self.started():
+        """Stop the evaluator."""
+        if self.started:
             self.stop()
 
 
@@ -116,10 +116,6 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
     async def start(self):
         raise NotImplementedError
 
-    async def started(self):
-        """Indicate that the evaluator is fully started."""
-        raise NotImplementedError
-
     async def stop(self):
         #Graceful stop
         raise NotImplementedError
@@ -128,7 +124,7 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
         raise NotImplementedError
 
     async def restart(self):
-        if await self.started():
+        if self.started:
             await self.stop()
         await self.start()
 
@@ -139,12 +135,12 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
         return inner
 
     async def __aenter__(self):
-        if not await self.started():
+        if not self.started:
             await self.start()
         return self
 
     async def __aexit__(self, type, value, traceback):
-        if await self.started():
+        if self.started:
             await self.stop()
 
     def __del__(self, _warnings=warnings):
@@ -155,3 +151,15 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
                 'message': 'Unclosed evaluator.'
             }
             self._loop.call_exception_handler(context)
+
+def normalize_input(expr, string_as_inputform=True):
+    """ Normalize a given python object representing an expr to as object
+    as expected by evaluators.
+
+    Option `string_as_inputform` specifies if strings should be treated
+    as input form strings and wrapped into wlexpr.
+    """
+    if string_as_inputform and isinstance(expr, string_types):
+        return wlexpr(expr)
+    else:
+        return expr

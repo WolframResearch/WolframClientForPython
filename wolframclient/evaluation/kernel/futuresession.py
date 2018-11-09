@@ -37,8 +37,10 @@ class WolframLanguageFutureSession(WolframLanguageSession):
                  stdin=PIPE,
                  stdout=PIPE,
                  stderr=PIPE,
+                 inputform_string_evaluation=True,
+                 wxf_bytes_evaluation=True,
                  **kwargs):
-        super(WolframLanguageFutureSession, self).__init__(
+        super().__init__(
             kernel,
             consumer=consumer,
             initfile=initfile,
@@ -48,6 +50,8 @@ class WolframLanguageFutureSession(WolframLanguageSession):
             stdin=stdin,
             stdout=stdout,
             stderr=stderr,
+            inputform_string_evaluation=inputform_string_evaluation,
+            wxf_bytes_evaluation=wxf_bytes_evaluation,
             **kwargs)
         self.thread_pool_exec = None
 

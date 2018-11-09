@@ -244,6 +244,33 @@ class TestCase(TestCaseSettings):
             res = func('abc')
             self.assertEqual(res.result(), '"f"["abc"]')
 
+    def test_stop_start_restart_status(self):
+        self._stop_start_restart_status(WolframCloudSession)
+        self._stop_start_restart_status(WolframCloudSessionFuture)
+    
+    def _stop_start_restart_status(self, eval_class):
+        session = None
+        try:
+            session = eval_class(credentials=self.sak)
+            self.assertFalse(session.started)
+            self.assertTrue(session.stopped)
+            session.start()
+            self.assertTrue(session.started)
+            self.assertFalse(session.stopped)
+            session.stop()
+            self.assertFalse(session.started)
+            self.assertTrue(session.stopped)
+            session.restart()
+            self.assertTrue(session.started)
+            self.assertFalse(session.stopped)
+            session.terminate()
+            self.assertFalse(session.started)
+            self.assertTrue(session.stopped)
+        finally:
+            if session:
+                session.terminate()
+
+
     # url_join
 
     def test_append_no_base(self):

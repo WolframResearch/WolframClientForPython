@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
 
-from wolframclient.evaluation.base import WolframEvaluator
+from wolframclient.evaluation.base import WolframEvaluator, normalize_input
 from wolframclient.evaluation.cloud.base import WolframAPICallBase
 from wolframclient.evaluation.cloud.oauth import \
     OAuth1RequestsSyncSession as OAuthSession
@@ -45,7 +45,6 @@ class WolframCloudSession(WolframEvaluator):
     """
 
     __slots__ = 'server', 'oauth', 'consumer', 'consumer_secret', 'user', 'password', 'evaluation_api_url', 'credentials'
-    '_stopped'
 
     def __init__(self,
                  credentials=None,
@@ -68,15 +67,15 @@ class WolframCloudSession(WolframEvaluator):
         self.oauth_session = None
         self.verify = self.server.certificate
         self.inputform_string_evaluation = inputform_string_evaluation
-        self._stopped = False
 
+    @property
     def started(self):
         return self.http_session is not None and (self.anonymous()
                                                   or self.authorized())
 
     def start(self):
-        self._stopped = False
-        if not self.started():
+        self.stopped = False
+        if not self.started:
             if self.http_session is None:
                 self.http_session = self.http_sessionclass()
                 self.http_session.headers = {
@@ -85,14 +84,11 @@ class WolframCloudSession(WolframEvaluator):
             if not self.anonymous():
                 self._authenticate()
 
-    def stopped(self):
-        return self._stopped
-
     def stop(self):
         self.terminate()
 
     def terminate(self):
-        self._stopped = True
+        self.stopped = True
         if self.http_session:
             self.http_session.close()
             self.http_session = None
@@ -144,9 +140,9 @@ class WolframCloudSession(WolframEvaluator):
                 verify=self.verify)
 
     def _ensure_started(self):
-        if not self.started():
+        if not self.started:
             self.start()
-        if self.stopped():
+        if self.stopped:
             self.restart()
 
     def call(self,
@@ -210,12 +206,6 @@ class WolframCloudSession(WolframEvaluator):
         response = self._post(self.evaluation_api_url, body=data)
         return WolframEvaluationJSONResponse(response)
 
-    def _normalize_input(self, expr):
-        if self.inputform_string_evaluation and (isinstance(
-                expr, six.string_types) or isinstance(expr, six.binary_type)):
-            expr = wlexpr(expr)
-        return expr
-
     def evaluate(self, expr, **kwargs):
         """Send `expr` to the cloud for evaluation, return the result.
 
@@ -223,12 +213,12 @@ class WolframCloudSession(WolframEvaluator):
         or a the string InputForm of an expression to evaluate.
         """
         return self._call_evaluation_api(
-            self._normalize_input(expr), **kwargs).get()
+            normalize_input(expr,string_as_inputform=self.inputform_string_evaluation), **kwargs).get()
 
     def evaluate_wrap(self, expr, **kwargs):
         """ Similar to :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframEvaluationJSONResponse`.
         """
-        return self._call_evaluation_api(self._normalize_input(expr), **kwargs)
+        return self._call_evaluation_api(normalize_input(expr,string_as_inputform=self.inputform_string_evaluation), **kwargs)
 
     def function(self, func):
         """Return a `callable` cloud function.
@@ -237,7 +227,7 @@ class WolframCloudSession(WolframEvaluator):
         is evaluated in the cloud as a Wolfram Language expression using the current cloud
         session.
         """
-        return super().function(self._normalize_input(func))
+        return super().function(normalize_input(func, string_as_inputform=self.inputform_string_evaluation))
 
     def wolfram_api_call(self, api, **kwargs):
         """ Build an helper class instance to call a given API. """
@@ -257,13 +247,25 @@ class WolframCloudSessionFuture(WolframCloudSession):
     `kwargs` are parameters as expect by `~wolframclient.evaluation.WolframCloudSession`
     """
 
-    def __init__(self, max_workers=None, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, credentials=None,
+                 server=WolframPublicCloudServer,
+                 max_workers=None,
+                 inputform_string_evaluation=True,
+                 oauth_session_class=OAuthSession,
+                 xauth_session_class=XAuthSession,
+                 http_sessionclass=requests.Session):
+        super().__init__(credentials=credentials,
+                 server=server,
+                 inputform_string_evaluation=inputform_string_evaluation,
+                 oauth_session_class=oauth_session_class,
+                 xauth_session_class=xauth_session_class,
+                 http_sessionclass=http_sessionclass)
         self._pool = None
         self._max_workers = max_workers
 
+    @property
     def started(self):
-        self._pool is not None and super().started()
+        return self._pool is not None and super().started
 
     def start(self):
         super().start()
@@ -275,11 +277,12 @@ class WolframCloudSessionFuture(WolframCloudSession):
         if self._pool is not None:
             self._pool.shutdown(wait=True)
             self._pool = None
-        super.stop()
+        super().stop()
 
     def terminate(self):
         if self._pool is not None:
             self._pool.shutdown(wait=False)
+            self._pool = None
         super().terminate()
 
     def call(self,
