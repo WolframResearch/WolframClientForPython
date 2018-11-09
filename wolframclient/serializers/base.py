@@ -108,7 +108,7 @@ class FormatSerializer(Normalizer):
                          name_match=re.compile('^[A-Za-z]+(/[A-Za-z]+)?$')):
 
         if date.tzinfo is None:
-            return self.serialize_symbol(b"$TimeZone")
+            return self.serialize_symbol(self.target_kernel_version >= 12 and b"None" or b"$TimeZone")
 
         if name_match:
             name = date.tzinfo.tzname(None)
