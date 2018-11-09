@@ -205,11 +205,11 @@ class WolframEvaluationJSONResponseAsync(WolframEvaluationJSONResponse):
             self.parse_valid_json()
             self._built = True
         else:
+            msg = await self.http_response.text()
             logger.fatal('Server invalid response %i: %s',
-                         self.http_response.status(), await
-                         self.http_response.text())
+                         self.http_response.status(), msg)
             self._built = True
-            raise RequestException(self.http_response)
+            raise RequestException(self.http_response, msg=msg)
 
     @property
     async def success(self):
