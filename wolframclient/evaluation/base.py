@@ -128,6 +128,10 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
             await self.stop()
         await self.start()
 
+    def duplicate(self):
+        """ Build a new object using the same configuration of the current one. """
+        raise NotImplementedError
+
     def function(self, expr):
         async def inner(*args, **opts):
             return await self.evaluate(WLFunction(expr, *args, **opts))

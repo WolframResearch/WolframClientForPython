@@ -34,6 +34,7 @@ class OAuthAIOHttpAsyncSessionBase(OAuthAsyncSessionBase):
             signature_method=signature_method,
             client_class=client_class)
         self.http_session = http_session
+        self.ssl_context_class = ssl_context_class
         if self.server.certificate is not None:
             self._ssl_context = self.ssl_context_class(self.server.certificate)
         else:

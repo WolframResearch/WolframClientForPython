@@ -184,6 +184,21 @@ class WolframLanguageSession(WolframEvaluator):
         # some parameters may be passed as kwargs
         for k, v in kwargs.items():
             self.set_parameter(k, v)
+    
+    def duplicate(self, session):
+        """ Build a new object using the same configuration of the current one. """
+        return WolframLanguageSession(self.kernel,
+                 consumer=self.consumer,
+                 initfile=self.initfile,
+                 in_socket=self.in_socket,
+                 out_socket=self.out_socket,
+                 kernel_loglevel=self.loglevel,
+                 stdin=self._stdin,
+                 stdout=self._stdout,
+                 stderr=self._stderr,
+                 inputform_string_evaluation=self.inputform_string_evaluation,
+                 wxf_bytes_evaluation=self.wxf_bytes_evaluation,
+                 **self.parameters)
 
     _DEFAULT_PARAMETERS = {
         'STARTUP_READ_TIMEOUT': 20,
@@ -327,8 +342,8 @@ class WolframLanguageSession(WolframEvaluator):
     @property
     def started(self):
         return (self.kernel_proc is not None 
-            and self.in_socket.bound
-            and self.out_socket.bound)
+            and self.in_socket and self.in_socket.bound
+            and self.out_socket and self.out_socket.bound)
 
     def start(self):
         try:
@@ -448,6 +463,8 @@ class WolframLanguageSession(WolframEvaluator):
             logger.debug('Expression sent to kernel in %.06fsec',
                          time.perf_counter() - start)
             start = time.perf_counter()
+
+
         # read the message as bytes.
         msg_count = self.out_socket.zmq_socket.recv()
         if logger.isEnabledFor(logging.DEBUG):

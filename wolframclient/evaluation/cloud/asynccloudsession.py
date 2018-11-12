@@ -44,16 +44,26 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
         self.http_sessionclass = http_sessionclass
         self.credentials = credentials
         self.evaluation_api_url = evaluation_api_url(self.server)
-        if self.credentials:
-            if self.credentials.is_xauth:
-                self.xauth_session_class = xauth_session_class
-            else:
-                self.oauth_session_class = oauth_session_class
+        self.xauth_session_class = xauth_session_class
+        self.oauth_session_class = oauth_session_class
+        self.ssl_context_class = ssl_context_class
         self.oauth_session = None
         if self.server.certificate is not None:
             self._ssl_context = self.ssl_context_class(self.server.certificate)
         else:
             self._ssl_context = None
+
+    def duplicate(self):
+        return WolframCloudAsyncSession(
+            credentials=self.credentials,
+            server=self.server,
+            loop=self._loop,
+            inputform_string_evaluation=self.inputform_string_evaluation,
+            oauth_session_class=self.oauth_session_class,
+            xauth_session_class=self.xauth_session_class,
+            http_sessionclass=self.http_sessionclass,
+            ssl_context_class=self.ssl_context_class
+        )
 
     async def start(self):
         self.stopped = False

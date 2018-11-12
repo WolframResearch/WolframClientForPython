@@ -7,11 +7,12 @@ import unittest
 
 from wolframclient.deserializers import binary_deserialize
 from wolframclient.evaluation import (WolframKernelPool,
-                                      WolframLanguageAsyncSession)
+                                      WolframLanguageAsyncSession, WolframCloudAsyncSession)
 from wolframclient.language import wl
-from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config
+from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config, secured_authentication_key
 from wolframclient.tests.evaluation.test_kernel import \
     TestCaseSettings as TestKernelBase
+from wolframclient.utils.six import string_types
 from wolframclient.utils.api import asyncio, time
 from wolframclient.utils.asyncio import get_event_loop, run_in_loop
 from wolframclient.utils.tests import TestCase as BaseTestCase
@@ -174,3 +175,56 @@ class TestKernelPool(BaseTestCase):
         ]
         res = await asyncio.gather(*tasks)
         self.assertEqual(res, [wl.DirectedInfinity() for _ in range(1, 10)])
+
+    @run_in_loop
+    async def test_pool_from_one_kernel(self):
+        session = WolframLanguageAsyncSession(self.KERNEL_PATH)
+        async with WolframKernelPool(
+            session,
+            kernel_loglevel=logging.INFO,
+            STARTUP_READ_TIMEOUT=5,
+            TERMINATE_READ_TIMEOUT=3) as pool:
+            await self._pool_evaluation_check(pool)
+        self.assertFalse(session.started)
+        self.assertTrue(session.stopped)
+            
+    @run_in_loop
+    async def test_pool_from_one_cloud(self):
+        session = WolframCloudAsyncSession(credentials=secured_authentication_key)
+        async with WolframKernelPool(
+            session,
+            kernel_loglevel=logging.INFO,
+            STARTUP_READ_TIMEOUT=5,
+            TERMINATE_READ_TIMEOUT=3) as pool:
+            await self._pool_evaluation_check(pool)
+        self.assertFalse(session.started)
+        self.assertTrue(session.stopped)
+
+    @run_in_loop
+    async def test_pool_from_mixed_kernel_cloud_path(self):
+        sessions = (WolframCloudAsyncSession(credentials=secured_authentication_key), 
+            WolframLanguageAsyncSession(self.KERNEL_PATH), self.KERNEL_PATH)
+        async with WolframKernelPool(
+            sessions,
+            kernel_loglevel=logging.INFO,
+            STARTUP_READ_TIMEOUT=5,
+            TERMINATE_READ_TIMEOUT=3) as pool:
+            await self._pool_evaluation_check(pool)
+        for session in sessions:
+            if not isinstance(session, string_types):
+                self.assertFalse(session.started)
+                self.assertTrue(session.stopped)
+
+
+    async def _pool_evaluation_check(self, pool):
+        tasks = [
+            asyncio.create_task(pool.evaluate(wl.FromLetterNumber(i)))
+            for i in range(1, 11)
+        ]
+        res = await asyncio.gather(*tasks)
+        #  TODO: update this later when cloud evaluate wxf properly.
+        # self.assertEqual({*res},
+        #                  {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"})
+        self.assertEqual(len(res), 10)
+        for elem in res:
+            self.assertTrue(isinstance(elem, string_types))

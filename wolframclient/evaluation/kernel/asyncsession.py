@@ -5,7 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import logging
 from subprocess import PIPE
 from threading import Event
-
+from wolframclient.evaluation.base import WolframAsyncEvaluator
 from wolframclient.evaluation.kernel.kernelsession import (
     WolframLanguageSession)
 from wolframclient.utils.api import asyncio, futures
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 __all__ = ['WolframLanguageAsyncSession']
 
 
-class WolframLanguageAsyncSession(WolframLanguageSession):
+class WolframLanguageAsyncSession(WolframLanguageSession, WolframAsyncEvaluator):
     """Evaluate expressions asynchronously using coroutines.
 
     Asynchronous evaluations are provided through coroutines and the :mod:`asyncio` modules.
@@ -56,6 +56,7 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
                  inputform_string_evaluation=True,
                  wxf_bytes_evaluation=True,
                  **kwargs):
+        self._loop = loop or asyncio.get_event_loop()
         super().__init__(
             kernel,
             consumer=consumer,
@@ -70,20 +71,30 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
             wxf_bytes_evaluation=wxf_bytes_evaluation,
             **kwargs)
         self.thread_pool_exec = None
-        self._loop = loop or asyncio.get_event_loop()
         # event shared with timed out socket read function, to cancel
         # zmq operation at startup.
         self.event_abort = Event()
+
+    def duplicate(self):
+        return WolframLanguageAsyncSession(self.kernel,
+                 loop=self._loop,
+                 consumer=self.consumer,
+                 initfile=self.initfile,
+                 in_socket=self.in_socket,
+                 out_socket=self.out_socket,
+                 kernel_loglevel=self.loglevel,
+                 stdin=self._stdin,
+                 stdout=self._stdout,
+                 stderr=self._stderr,
+                 inputform_string_evaluation=self.inputform_string_evaluation,
+                 wxf_bytes_evaluation=self.wxf_bytes_evaluation,
+                 **self.parameters)
 
     def _socket_read_sleep_func(self, duration):
         if not self.event_abort.is_set():
             self.event_abort.wait(timeout=duration)
         else:
             raise TimeoutError
-
-    def _abort(self):
-        if not self.started:
-            self.event_abort.set()
 
     def _get_exec_pool(self):
         if self.thread_pool_exec is None:
@@ -128,6 +139,8 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
 
 
     async def stop(self):
+        # signal socket read with timeout function to abort current operation.
+        self.event_abort.set()
         await self._async_terminate(super().stop, True)
     
     async def terminate(self):
