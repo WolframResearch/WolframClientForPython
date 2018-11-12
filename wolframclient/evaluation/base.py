@@ -134,6 +134,15 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
 
         return inner
 
+    def __enter__(self):
+        """ A user friendly message when 'async with' is not used. """
+        raise NotImplementedError("%s must be used in a 'async with' block." %
+                                  self.__class__.__name__)
+
+    def __exit__(self, type, value, traceback):
+        """ Let the __enter__ method fail and propagate doing nothing. """
+        pass
+
     async def __aenter__(self):
         if not self.started:
             await self.start()

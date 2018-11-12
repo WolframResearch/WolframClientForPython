@@ -36,7 +36,7 @@ class TestCoroutineSession(BaseTestCase):
     @classmethod
     def tearDownKernelSession(cls):
         if cls.async_session is not None:
-            cls.async_session.terminate()
+            LOOP.run_until_complete(cls.async_session.stop())
 
     @classmethod
     def setupKernelSession(cls):
@@ -44,12 +44,12 @@ class TestCoroutineSession(BaseTestCase):
             cls.KERNEL_PATH, kernel_loglevel=logging.INFO)
         cls.async_session.set_parameter('STARTUP_READ_TIMEOUT', 5)
         cls.async_session.set_parameter('TERMINATE_READ_TIMEOUT', 3)
-        cls.async_session.start()
+        LOOP.run_until_complete(cls.async_session.start())
 
     @run_in_loop
     async def test_eval_inputform(self):
         start = time.perf_counter()
-        task = asyncio.ensure_task(
+        task = asyncio.create_task(
             self.async_session.evaluate('Pause[.1]; Range[3]'))
         timer = time.perf_counter() - start
         self.assertTrue(timer < .1)
@@ -59,7 +59,7 @@ class TestCoroutineSession(BaseTestCase):
     @run_in_loop
     async def test_eval_wlsymbol(self):
         start = time.perf_counter()
-        task = asyncio.ensure_task(
+        task = asyncio.create_task(
             self.async_session.evaluate(
                 wl.CompoundExpression(wl.Pause(.1), wl.Range(2))))
         timer = time.perf_counter() - start
@@ -70,7 +70,7 @@ class TestCoroutineSession(BaseTestCase):
     @run_in_loop
     async def test_eval_wxf(self):
         start = time.perf_counter()
-        task = asyncio.ensure_task(
+        task = asyncio.create_task(
             self.async_session.evaluate_wxf('Pause[.1]; Range[3]'))
         timer = time.perf_counter() - start
         self.assertTrue(timer < .1)
@@ -80,7 +80,7 @@ class TestCoroutineSession(BaseTestCase):
     @run_in_loop
     async def test_eval_wrap(self):
         start = time.perf_counter()
-        task = asyncio.ensure_task(
+        task = asyncio.create_task(
             self.async_session.evaluate_wrap('Pause[.1]; Range[3]'))
         timer = time.perf_counter() - start
         self.assertTrue(timer < .1)
@@ -90,7 +90,7 @@ class TestCoroutineSession(BaseTestCase):
     @run_in_loop
     async def test_eval_parallel(self):
         tasks = [
-            asyncio.ensure_task(self.async_session.evaluate(i + 1))
+            asyncio.create_task(self.async_session.evaluate(i + 1))
             for i in range(10)
         ]
         res = await asyncio.gather(*tasks)
@@ -136,7 +136,7 @@ class TestKernelPool(BaseTestCase):
     @run_in_loop
     async def test_eval_wlsymbol(self):
         tasks = [
-            asyncio.ensure_task(self.pool.evaluate(wl.FromLetterNumber(i)))
+            asyncio.create_task(self.pool.evaluate(wl.FromLetterNumber(i)))
             for i in range(1, 11)
         ]
         res = await asyncio.gather(*tasks)
@@ -146,7 +146,7 @@ class TestKernelPool(BaseTestCase):
     @run_in_loop
     async def test_eval_inputform(self):
         tasks = [
-            asyncio.ensure_task(
+            asyncio.create_task(
                 self.pool.evaluate('FromLetterNumber[%i]' % i))
             for i in range(1, 11)
         ]
@@ -157,7 +157,7 @@ class TestKernelPool(BaseTestCase):
     @run_in_loop
     async def test_eval_wxf(self):
         tasks = [
-            asyncio.ensure_task(
+            asyncio.create_task(
                 self.pool.evaluate_wxf('FromLetterNumber[%i]' % i))
             for i in range(1, 11)
         ]
@@ -169,7 +169,7 @@ class TestKernelPool(BaseTestCase):
     @run_in_loop
     async def test_failed_expr(self):
         tasks = [
-            asyncio.ensure_task(self.pool.evaluate('Pause[.1]; 1/0'))
+            asyncio.create_task(self.pool.evaluate('Pause[.1]; 1/0'))
             for i in range(1, 10)
         ]
         res = await asyncio.gather(*tasks)

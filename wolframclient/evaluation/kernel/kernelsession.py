@@ -5,7 +5,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 import logging
 from subprocess import PIPE, Popen
 from threading import Event, Thread
-
 from wolframclient.evaluation.base import WolframEvaluator, normalize_input
 from wolframclient.evaluation.result import WolframKernelEvaluationResult
 from wolframclient.exception import WolframKernelException
@@ -332,6 +331,13 @@ class WolframLanguageSession(WolframEvaluator):
             and self.out_socket.bound)
 
     def start(self):
+        try:
+            self._start()
+        except Exception as e:
+            self.terminate()
+            raise e
+
+    def _start(self):
         """Start a new kernel process and open sockets to communicate with it."""
         self.stopped = False
         if self.started:
@@ -391,8 +397,7 @@ class WolframLanguageSession(WolframEvaluator):
                 t_start = time.perf_counter()
         except Exception as e:
             logger.exception(e)
-            self.terminate()
-            raise e
+            raise WolframKernelException('Failed to start kernel process.')
         try:
             # First message must be "OK", acknowledging everything is up and running
             # on the kernel side.
@@ -407,12 +412,10 @@ class WolframLanguageSession(WolframEvaluator):
                         'Kernel %s is ready. Startup took %.2f seconds.' %
                         (self.pid, time.perf_counter() - t_start))
             else:
-                self.terminate()
                 raise WolframKernelException(
                     'Kernel %s failed to start properly.' % self.kernel)
         except SocketException as se:
             logger.info(se)
-            self.terminate()
             raise WolframKernelException(
                 'Failed to communicate with the kernel %s. Could not read from ZMQ socket.'
                 % self.kernel)

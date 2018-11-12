@@ -71,6 +71,8 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
             **kwargs)
         self.thread_pool_exec = None
         self._loop = loop or asyncio.get_event_loop()
+        # event shared with timed out socket read function, to cancel
+        # zmq operation at startup.
         self.event_abort = Event()
 
     def _socket_read_sleep_func(self, duration):
@@ -114,20 +116,24 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
         return await self._loop.run_in_executor(self._get_exec_pool(), func,
                                                 expr, **kwargs)
 
-    async def __aenter__(self):
-        await self.async_start()
-        return self
-
-    async def __aexit__(self, type, value, traceback):
-        await self.async_terminate()
-
-    async def async_start(self):
+    async def start(self):
         """Asynchronously start the session.
         
         This method is a coroutine."""
-        await self._loop.run_in_executor(self._get_exec_pool(), super().start)
+        try:
+            await self._loop.run_in_executor(self._get_exec_pool(), super()._start)
+        except Exception as e:
+            await self.terminate()
+            raise e
 
-    async def async_terminate(self):
+
+    async def stop(self):
+        await self._async_terminate(super().stop, True)
+    
+    async def terminate(self):
+        await self._async_terminate(super().terminate, False)
+
+    async def _async_terminate(self, sync_stop_func, wait):
         """Asynchronously terminate the session.
         
         This method is a coroutine."""
@@ -135,9 +141,8 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
         # that was never started, and use it to asynchronously stop the kernel.
         if self.thread_pool_exec:
             try:
-                logger.info('Call terminate from asyncsession')
-                await self._loop.run_in_executor(self._get_exec_pool(),
-                                                 super().terminate)
+                logger.info('Terminating asynchronous kernel session.')
+                await self._loop.run_in_executor(self._get_exec_pool(), sync_stop_func)
             except asyncio.CancelledError:
                 logger.info('Cancelled terminate task.')
             except Exception as e:
@@ -145,21 +150,10 @@ class WolframLanguageAsyncSession(WolframLanguageSession):
                     'Failed to terminate kernel asynchronously: %s' % e)
             # kernel stopped. Joining thread.
             try:
-                self.thread_pool_exec.shutdown(wait=True)
+                self.thread_pool_exec.shutdown(wait=wait)
                 self.thread_pool_exec = None
             except Exception as e:
                 logger.info('Thread pool executor error on shutdown: %s', e)
         # synchronous termination required if the kernel is still not terminated.
-        if self.started and not self.terminated:
-            self.terminate()
-
-    def terminate(self):
-        """Terminate the current session. This is a synchronous method."""
-        # First terminate all executions.
-        # Then use the socket to actually quit. Avoid crashes when freeing zmq resources still in use.
-        if self.thread_pool_exec:
-            try:
-                self.thread_pool_exec.shutdown(wait=True)
-            except Exception as e:
-                logger.info('Failed to stop thread pool executor: %s' % e)
-        super().terminate()
+        if self.started:
+            sync_stop_func()
