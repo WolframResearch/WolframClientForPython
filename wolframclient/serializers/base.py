@@ -2,8 +2,8 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import inspect
 import datetime
+import inspect
 import re
 
 from wolframclient.serializers.normalizer import Normalizer
@@ -106,11 +106,12 @@ class FormatSerializer(Normalizer):
 
     def serialize_tzinfo(self,
                          tzinfo,
-                         date = None,
+                         date=None,
                          name_match=re.compile('^[A-Za-z]+/[A-Za-z]+?$')):
 
         if tzinfo is None:
-            return self.serialize_symbol(self.target_kernel_version >= 12 and b"None" or b"$TimeZone")
+            return self.serialize_symbol(
+                self.target_kernel_version >= 12 and b"None" or b"$TimeZone")
 
         if name_match:
             name = tzinfo.tzname(None)
@@ -118,7 +119,8 @@ class FormatSerializer(Normalizer):
                 return self.serialize_string(name)
 
         return self.serialize_float(
-            tzinfo.utcoffset(date or datetime.datetime.utcnow()).total_seconds() / 3600)
+            tzinfo.utcoffset(
+                date or datetime.datetime.utcnow()).total_seconds() / 3600)
 
     def _serialize_external_object(self, o):
 
