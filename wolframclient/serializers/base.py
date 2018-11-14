@@ -118,7 +118,7 @@ class FormatSerializer(Normalizer):
                 return self.serialize_string(name)
 
         return self.serialize_float(
-            tzinfo.utcoffset(date or datetime.datetime.now()).total_seconds() / 3600)
+            tzinfo.utcoffset(date or datetime.datetime.utcnow()).total_seconds() / 3600)
 
     def _serialize_external_object(self, o):
 
