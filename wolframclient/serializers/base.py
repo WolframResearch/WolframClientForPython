@@ -107,7 +107,7 @@ class FormatSerializer(Normalizer):
     def serialize_tzinfo(self,
                          tzinfo,
                          date=None,
-                         name_match=re.compile('^[A-Za-z]+/[A-Za-z]+?$')):
+                         name_match=re.compile('^([A-Za-z]+/[A-Za-z]+?|UTC)$')):
 
         if tzinfo is None:
             return self.serialize_symbol(
