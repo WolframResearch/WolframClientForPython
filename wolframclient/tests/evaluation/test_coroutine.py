@@ -178,6 +178,7 @@ class TestKernelPool(BaseTestCase):
 
     @run_in_loop
     async def test_pool_from_one_kernel(self):
+        await self.pool.terminate()
         session = WolframLanguageAsyncSession(self.KERNEL_PATH)
         async with WolframKernelPool(
             session,
@@ -202,6 +203,7 @@ class TestKernelPool(BaseTestCase):
 
     @run_in_loop
     async def test_pool_from_mixed_kernel_cloud_path(self):
+        await self.pool.terminate()
         sessions = (WolframCloudAsyncSession(credentials=secured_authentication_key), 
             WolframLanguageAsyncSession(self.KERNEL_PATH), self.KERNEL_PATH)
         async with WolframKernelPool(

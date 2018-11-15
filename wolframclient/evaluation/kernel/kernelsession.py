@@ -270,20 +270,17 @@ class WolframLanguageSession(WolframEvaluator):
                 except:
                     logger.info('Failed to send Quit[] command to the kernel.')
                     error = True
-                try:
-                    self.kernel_proc.wait(timeout=self.get_parameter('TERMINATE_READ_TIMEOUT'))
-                except:
-                    logger.info(
-                        'Kernel process failed to stop after %.02f seconds. Killing it.'
-                        % self.get_parameter('TERMINATE_READ_TIMEOUT'))
-                    error = True
+                if not error:
+                    try:
+                        self.kernel_proc.wait(timeout=self.get_parameter('TERMINATE_READ_TIMEOUT'))
+                    except:
+                        logger.info(
+                            'Kernel process failed to stop after %.02f seconds. Killing it.'
+                            % self.get_parameter('TERMINATE_READ_TIMEOUT'))
+                        error = True
                 # Kill process if not already terminated.
                 # Wait for it to cleanly stop if the Quit command was succesfully sent,
                 # otherwise the kernel is likely in a bad state so we kill it immediatly.
-                if error:
-                    self.kernel_proc.kill()
-            else:
-                self.kernel_proc.kill()
             if self._stdin == PIPE:
                 try:
                     self.kernel_proc.stdin.close()
@@ -302,7 +299,7 @@ class WolframLanguageSession(WolframEvaluator):
                 except:
                     logger.warning('Failed to close kernel process stderr')
                     error = True
-            if error:
+            if error or not gracefully:
                 logger.info(
                     'Killing kernel process: %i' % self.kernel_proc.pid)
                 self.kernel_proc.kill()
@@ -349,8 +346,12 @@ class WolframLanguageSession(WolframEvaluator):
         try:
             self._start()
         except Exception as e:
-            self.terminate()
-            raise e
+            try:
+                self.terminate()
+            finally:
+                assert(self.stopped)
+                assert(not self.started)
+                raise e
 
     def _start(self):
         """Start a new kernel process and open sockets to communicate with it."""
@@ -453,6 +454,7 @@ class WolframLanguageSession(WolframEvaluator):
         """Send an expression to the kernel for evaluation. Return a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.
         """
         self._ensure_started()
+        assert(self.started)
         start = time.perf_counter()
         if self.wxf_bytes_evaluation and isinstance(expr, six.binary_type):
             data = expr
@@ -543,10 +545,10 @@ class Socket(object):
         self.host = host
         self.port = port
         self._use_random_port = port is None
-        if self.port is None:
-            self.uri = 'tcp://' + self.host
-        else:
+        if self.port:
             self.uri = 'tcp://%s:%s' % (self.host, self.port)
+        else:
+            self.uri = 'tcp://' + self.host
         self.zmq_type = zmq_type
         self.bound = False
         self.zmq_socket = zmq.Context.instance().socket(

@@ -67,13 +67,20 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
 
     async def start(self):
         self.stopped = False
-        if not self.started:
-            if self.http_session is None or self.http_session.closed:
-                self.http_session = self.http_sessionclass(
-                    headers={'User-Agent': 'WolframClientForPython/1.0'},
-                    loop=self._loop)
-            if not self.anonymous():
-                await self._authenticate()
+        try:
+            if not self.started:
+                if self.http_session is None or self.http_session.closed:
+                    self.http_session = self.http_sessionclass(
+                        headers={'User-Agent': 'WolframClientForPython/1.0'},
+                        loop=self._loop)
+                if not self.anonymous():
+                    await self._authenticate()
+        except Exception as e:
+            try:
+                await self.terminate()
+            finally:
+                raise e
+
 
     @property
     def started(self):

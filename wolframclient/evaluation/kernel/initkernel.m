@@ -14,6 +14,7 @@ debug;
 info;
 warn;
 error;
+disconnect;
 
 Begin["`Private`"];
 
@@ -54,14 +55,15 @@ setLogLevel[$NOTSET] := ($LogLevel = $NOTSET);
 
 
 log[level_Integer, msg_String] /; level >= $LogLevel  := If[$LoggerSocket =!= None, 
-   	SocketWriteByteArrayFunc[
+   SocketWriteByteArrayFunc[
 		$LoggerSocket,
 		StringToByteArray[
 			Developer`WriteRawJSONString[<|"msg" -> msg, "level" -> level|>, 
 			"ToByteString" -> True, "Compact" -> True],
 			"ISOLatin1"
 		]
-	]
+	];
+	Print[msg]
 ];
 
 log[level_Integer, args__] /; level >= $LogLevel := log[
@@ -174,9 +176,68 @@ socketEventHandler[data_] := Block[
 		$OutputSocket,
 		serialize[expr]
 	];
-	If[$LogLevel >= $DEBUG, ClientLibrary`debug["End of evaluation."]]
+	ClientLibrary`debug["End of evaluation."];
 ];
 
+SendAck[] := WriteString[$OutputSocket, "OK"]
+
+$MaxIdlePause=.001;
+$MinIdlePause=0.0001;
+$PauseIncrement=0.0001;
+$TaskSupportMinVersion = Infinity;
+
+If[$VersionNumber < $TaskSupportMinVersion,
+(* Before 12 need synchronous loop with Pause. *)
+evaluationLoop[uuidIn_String]:= With[
+	{maxPause=$MaxIdlePause, minPause=$MinIdlePause, incr=$PauseIncrement},
+	Block[{pause=0.001, msg},
+		SendAck[];
+		While[True,
+			msg = SocketReadByteArrayFunc[uuidIn, 1];
+			If[Length[msg]>3, 
+				socketEventHandler[msg[[4;;]]];
+				pause=minPause,
+				pause=Min[maxPause, pause+incr];
+				Pause[pause];
+			]
+		]
+	]
+];
+,
+(* Version 12+ with fixed asynchronous tasks *)
+evaluationLoop[uuidIn_String]:= With[
+	{maxPause=$MaxIdlePause, minPause=$MinIdlePause, incr=$PauseIncrement}, 
+	Block[{pause=0.001, msg},
+		$Task = SessionSubmit[ScheduledTask[
+			(
+				msg = SocketReadByteArrayFunc[uuidIn, 1 (* NOWAIT *)];
+				If[Length[msg]>3, 
+					socketEventHandler[msg[[4;;]]];
+					pause=minPause,
+					pause=Min[maxPause, pause+incr];
+					Pause[pause];
+				]
+			),
+			0.0001 (*negligeable compared to IO operations ~1ms. We basically need 0 but can't use this value. *)
+		],
+		Method->"Idle",
+		HandlerFunctions-><|"TaskStarted"->SendAck[]|>
+		];
+	];
+];
+];
+
+(* can be useful for loopback connections which are available only if a task can be used. 
+Does not kill the kernel *)
+ClientLibrary`disconnect[] := Quit[];
+ClientLibrary`disconnect[] /; ($Task =!= None) := (
+	TaskRemove[$Task];
+	Scan[
+		If[# =!= None, Close[#]] &,
+		{$LoggerSocket, $OutputSocket, $InputSocket}
+	]
+);
+$Task = None;
 $LoggerSocket=None;
 $OutputSocket=None;
 $InputSocket=None;
@@ -209,19 +270,7 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 		Quit[]
 	];
 	If[$LoggerSocket==None, ClientLibrary`DisableKernelLogging[]];
-	WriteString[
-		$OutputSocket,
-		"OK"
-	];
-	With[{uuidIn = First[$InputSocket]},
-		While[True,
-			msg = SocketReadByteArrayFunc[uuidIn, 1];
-			If[Length[msg] <= 3,
-				Pause[.001],
-				socketEventHandler[msg[[4;;]]]
-			]
-		]
-	];
+	evaluationLoop[First@$InputSocket];
 ]
 
 End[];

@@ -74,9 +74,12 @@ class TestCase(TestCaseSettings):
     @run_in_loop
     async def test_section_authorized_oauth(self):
         cloud_session = WolframCloudAsyncSession(credentials=self.sak)
-        await cloud_session.start()
-        self.assertEqual(cloud_session.authorized(), True)
-        self.assertEqual(cloud_session.anonymous(), False)
+        try:
+            await cloud_session.start()
+            self.assertEqual(cloud_session.authorized(), True)
+            self.assertEqual(cloud_session.anonymous(), False)
+        finally:
+            await cloud_session.terminate()
 
     @run_in_loop
     async def test_section_authorized_oauth_with(self):
@@ -90,9 +93,12 @@ class TestCase(TestCaseSettings):
         if self.user_cred and self.server:
             cloud_session = WolframCloudAsyncSession(
                 credentials=self.user_cred, server=self.server)
-            await cloud_session.start()
-            self.assertEqual(cloud_session.authorized(), True)
-            self.assertEqual(cloud_session.anonymous(), False)
+            try:
+                await cloud_session.start()
+                self.assertEqual(cloud_session.authorized(), True)
+                self.assertEqual(cloud_session.anonymous(), False)
+            finally:
+                await cloud_session.terminate()
         else:
             print('xauth not available. Test skipped.')
 
@@ -124,7 +130,7 @@ class TestCase(TestCaseSettings):
     @run_in_loop
     async def test_bad_sak_with(self):
         bad_sak = SecuredAuthenticationKey('foo', 'bar')
-        with self.assertRaises(AuthenticationException):
+        with self.assertRaises(RequestException):
             async with WolframCloudAsyncSession(
                     credentials=bad_sak) as cloud_session:
                 cloud_session.authorized()
@@ -154,12 +160,15 @@ class TestCase(TestCaseSettings):
     async def test_public_api_call(self):
         url = "api/public/jsonrange"
         cloud_session = WolframCloudAsyncSession()
-        self.assertFalse(cloud_session.authorized())
-        self.assertTrue(cloud_session.anonymous())
-        response = await cloud_session.call((self.api_owner, url),
-                                            input_parameters={'i': 5})
-        self.assertTrue(response.success)
-        self.assertEqual(json.loads(await response.get()), list(range(1, 6)))
+        try:
+            self.assertFalse(cloud_session.authorized())
+            self.assertTrue(cloud_session.anonymous())
+            response = await cloud_session.call((self.api_owner, url),
+                                                input_parameters={'i': 5})
+            self.assertTrue(response.success)
+            self.assertEqual(json.loads(await response.get()), list(range(1, 6)))
+        finally:
+            await cloud_session.terminate()
 
     @run_in_loop
     async def test_section_api_call_two_param(self):
@@ -240,9 +249,8 @@ class TestCase(TestCaseSettings):
 
     @run_in_loop
     async def test_stop_start_restart_status(self):
-        session = None
+        session = WolframCloudAsyncSession(credentials=self.sak)
         try:
-            session = WolframCloudAsyncSession(credentials=self.sak)
             self.assertFalse(session.started)
             self.assertTrue(session.stopped)
             await session.start()
@@ -258,8 +266,7 @@ class TestCase(TestCaseSettings):
             self.assertFalse(session.started)
             self.assertTrue(session.stopped)
         finally:
-            if session:
-                await session.terminate()
+            await session.terminate()
 
     ### Evaluation
 

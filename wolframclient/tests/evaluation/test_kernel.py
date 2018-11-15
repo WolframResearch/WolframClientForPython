@@ -179,14 +179,15 @@ class TestCase(TestCaseSettings):
         self.assertEqual(result, WLSymbol('$Failed'))
 
     def test_auto_start_session(self):
-        session = None
         try:
             session = WolframLanguageSession(self.KERNEL_PATH)
             res = session.evaluate('1+1')
             self.assertEqual(res, 2)
+        except Exception as e:
+            logger.exception(e)
         finally:
-            if session:
-                session.terminate()
+            session.terminate()
+            self.assertTrue(session.stopped)
 
     def test_pure_function_inputform(self):
         f = self.kernel_session.function('#+1&')
@@ -210,8 +211,8 @@ class TestCase(TestCaseSettings):
         self.assertEqual(res, [2, 3, 4])
 
     def test_built_in_symbols(self):
-        self.assertEqual(self.kernel_session.evaluate(None), None)
         self.assertEqual(self.kernel_session.evaluate(wl.Null), None)
+        self.assertEqual(self.kernel_session.evaluate(None), None)
         self.assertEqual(self.kernel_session.evaluate(wlexpr('True')), True)
         self.assertEqual(self.kernel_session.evaluate(True), True)
         self.assertEqual(self.kernel_session.evaluate(wlexpr('False')), False)
@@ -233,7 +234,7 @@ class TestCase(TestCaseSettings):
         TestCaseSettings.class_kwargs_parameters(self, WolframLanguageSession)
 
     def test_bad_kwargs_parameters(self):
-        TestCaseSettings.class_bad_kwargs_parameters(self,
+        self.class_bad_kwargs_parameters(self,
                                                      WolframLanguageSession)
 
 
@@ -325,7 +326,7 @@ class TestFutureSession(TestCaseSettings):
                                                  WolframLanguageFutureSession)
 
     def test_bad_kwargs_parameters(self):
-        TestCaseSettings.class_bad_kwargs_parameters(
+        self.class_bad_kwargs_parameters(
             self, WolframLanguageFutureSession)
 
 
