@@ -64,7 +64,7 @@ def silence(*exceptions):
 if hasattr(asyncio, 'create_task'):
     create_task = asyncio.create_task
 else:
-    def create_task(self, coro):
+    def create_task(coro):
         """ ensure_future using get_event_loop, so that it behaves similarly to
         create_task, and gets the same signature.
         """
