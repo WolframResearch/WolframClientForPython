@@ -20,26 +20,13 @@ class WolframLanguageAsyncSession(WolframLanguageSession, WolframAsyncEvaluator)
 
     Asynchronous evaluations are provided through coroutines and the :mod:`asyncio` modules.
 
-    Instance of this class can be started using both with a synchronous context manager::
-
-        async def coroutine1(kernelpath): 
-            with WolframLanguageAsyncSession(kernelpath) as session:
-                await session.evaluate('Now')
-
-    or with an asynchronous context manager::
+    Instance of this class can be started using with asynchronous context manager::
         
-        async def coroutine2(kernelpath): 
-            async with WolframLanguageAsyncSession(kernelpath) as session:
-                await session.evaluate('Now')
+        async with WolframLanguageAsyncSession(kernelpath) as session:
+            await session.evaluate('Now')
 
-
-    Evaluation methods herited from :class:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession` 
-    are coroutines, namely: 
-    :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageAsyncSession.evaluate`,
-    :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageAsyncSession.evaluate_wxf`, and
-    :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageAsyncSession.evaluate_wrap`. 
-
-    An event loop can be provided as `loop`, otherwise :meth:`asynchio.get_event_loop` is called.
+    An event loop can be explicitly passed using the named parameter `loop`, otherwise the one 
+    returned by :func:`~asyncio.get_event_loop` is used.
     """
 
     def __init__(self,
@@ -102,21 +89,21 @@ class WolframLanguageAsyncSession(WolframLanguageSession, WolframAsyncEvaluator)
         return self.thread_pool_exec
 
     async def evaluate(self, expr, **kwargs):
-        """Evaluate :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate`
+        """Evaluate :meth:`~wolframclient.evaluation.WolframLanguageSession.evaluate`
         asynchronously.
 
         This method is a coroutine."""
         return await self._async_evaluate(super().evaluate, expr, **kwargs)
 
     async def evaluate_wxf(self, expr, **kwargs):
-        """Evaluate :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate_wxf`
+        """Evaluate :meth:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wxf`
         asynchronously.
 
         This method is a coroutine."""
         return await self._async_evaluate(super().evaluate_wxf, expr, **kwargs)
 
     async def evaluate_wrap(self, expr, **kwargs):
-        """Evaluate :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate_wrap`
+        """Evaluate :meth:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wrap`
         asynchronously.
 
         This method is a coroutine."""

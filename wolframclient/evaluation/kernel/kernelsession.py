@@ -31,7 +31,11 @@ FROM_PY_LOG_LEVEL = dict((v, k) for k, v in TO_PY_LOG_LEVEL.items())
 
 
 class KernelLogger(Thread):
-
+    """ Asynchronous logger for kernel messages. 
+    
+    A consumer of messages read from a PUB/SUB socket that turn them into log messages as expected
+    by the :mod:`logging` module.
+    """
     MAX_MESSAGE_BEFORE_QUIT = 32
 
     def __init__(self, level=logging.WARN):
@@ -111,18 +115,18 @@ class WolframLanguageSession(WolframEvaluator):
     * ``ClientLibrary`info`` corresponding to :py:meth:`logging.Logger.info`
     * ``ClientLibrary`warn`` corresponding to :py:meth:`logging.Logger.warning`
     * ``ClientLibrary`error`` corresponding to :py:meth:`logging.Logger.error`
-    * ``ClientLibrary`SetDebugLogLevel[]`` send debug messages and above``
-    * ``ClientLibrary`SetInfoLogLevel[]`` send info messages and above``
-    * ``ClientLibrary`SetWarnLogLevel[]`` send warning messages and above``
-    * ``ClientLibrary`SetErrorLogLevel[]`` only send error messages``
-    * ``ClientLibrary`DisableKernelLogging[]`` stop sending error message to the logging socket``
+    * ``ClientLibrary`SetDebugLogLevel[]`` send debug messages and above
+    * ``ClientLibrary`SetInfoLogLevel[]`` send info messages and above
+    * ``ClientLibrary`SetWarnLogLevel[]`` send warning messages and above
+    * ``ClientLibrary`SetErrorLogLevel[]`` only send error messages
+    * ``ClientLibrary`DisableKernelLogging[]`` stop sending error message to the logging socket
 
-    The standart input, output and error file handles can be specified with stdin, stdout and stderr
-    named parameters. Valid values are those of subprocess.Popen. Those parameters should be handled
+    The standart input, output and error file handles can be specified with `stdin`, `stdout` and `stderr`
+    named parameters. Valid values are those accepted by subprocess.Popen (e.g :data:`sys.stdout`). Those parameters should be handled
     with care as deadlocks can arise from misconfiguration.
 
     .. note ::
-        Wolfram Language sessions are **not thread-safe**, each thread must have its own instance.
+        Wolfram Language sessions are **not thread-safe**, each thread must run its own instance.
 
     """
 

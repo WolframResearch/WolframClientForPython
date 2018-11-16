@@ -6,7 +6,7 @@ import logging
 import unittest
 
 from wolframclient.deserializers import binary_deserialize
-from wolframclient.evaluation import (WolframKernelPool,
+from wolframclient.evaluation import (WolframEvaluatorPool,
                                       WolframLanguageAsyncSession, WolframCloudAsyncSession)
 from wolframclient.language import wl
 from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config, secured_authentication_key
@@ -127,7 +127,7 @@ class TestKernelPool(BaseTestCase):
 
     @classmethod
     def setupKernelSession(cls):
-        cls.pool = WolframKernelPool(
+        cls.pool = WolframEvaluatorPool(
             cls.KERNEL_PATH,
             kernel_loglevel=logging.INFO,
             STARTUP_READ_TIMEOUT=5,
@@ -180,7 +180,7 @@ class TestKernelPool(BaseTestCase):
     async def test_pool_from_one_kernel(self):
         await self.pool.terminate()
         session = WolframLanguageAsyncSession(self.KERNEL_PATH)
-        async with WolframKernelPool(
+        async with WolframEvaluatorPool(
             session,
             kernel_loglevel=logging.INFO,
             STARTUP_READ_TIMEOUT=5,
@@ -192,7 +192,7 @@ class TestKernelPool(BaseTestCase):
     @run_in_loop
     async def test_pool_from_one_cloud(self):
         session = WolframCloudAsyncSession(credentials=secured_authentication_key)
-        async with WolframKernelPool(
+        async with WolframEvaluatorPool(
             session,
             kernel_loglevel=logging.INFO,
             STARTUP_READ_TIMEOUT=5,
@@ -206,7 +206,7 @@ class TestKernelPool(BaseTestCase):
         await self.pool.terminate()
         sessions = (WolframCloudAsyncSession(credentials=secured_authentication_key), 
             WolframLanguageAsyncSession(self.KERNEL_PATH), self.KERNEL_PATH)
-        async with WolframKernelPool(
+        async with WolframEvaluatorPool(
             sessions,
             kernel_loglevel=logging.INFO,
             STARTUP_READ_TIMEOUT=5,

@@ -13,7 +13,7 @@ from wolframclient.evaluation.result import (
 
 from wolframclient.evaluation.kernel import WolframLanguageSession, WolframLanguageFutureSession
 from wolframclient.evaluation.kernel import WolframLanguageAsyncSession
-from wolframclient.evaluation.kernel import WolframKernelPool, parallel_evaluate
+from wolframclient.evaluation.pool import WolframEvaluatorPool, parallel_evaluate
 
 __all__ = [
     'WolframAPICall', 'WolframServer', 'WolframCloudSession',
@@ -21,5 +21,5 @@ __all__ = [
     'UserIDPassword', 'WolframLanguageSession', 'WolframLanguageFutureSession',
     'WolframResult', 'WolframKernelEvaluationResult', 'WolframAPIResponse',
     'WolframEvaluationJSONResponse', 'WolframLanguageAsyncSession',
-    'WolframKernelPool', 'parallel_evaluate'
+    'WolframEvaluatorPool', 'parallel_evaluate'
 ]

@@ -21,7 +21,7 @@ NOTES
 
 
 
- - WolframKernelPool should be constructed using a generator of other kernels class
+ - WolframEvaluatorPool should be constructed using a generator of other kernels class
  - WolframKernal should have a copy method
  - should terminated kernels restart automatically instead of raise an Exception?
 
@@ -29,6 +29,7 @@ NOTES
 
 
 class WolframEvaluatorBase(object):
+    """ All evaluators should inherit from thos base class. """
     stopped = True # avoid error in __del__ if __init__ failed.
     # started = False # all evaluators should be in this state at init.
     
@@ -48,55 +49,76 @@ class WolframEvaluatorBase(object):
 
 
 class WolframEvaluator(WolframEvaluatorBase):
+    """ Synchronous evaluator abstract class. """
     def evaluate(self, expr):
+        """ Evaluate a given Wolfram Language expression. """
         return self.evaluate_wrap(expr).get()
 
     def evaluate_many(self, expr_list):
+        """ Evaluate a given list of Wolfram Language expression.
+        
+        The list is provided as an iterable object. 
+        """
         return map(self.evaluate, expr_list)
 
-    def evaluate_now(self, expr):
+    def evaluate_wrap(self, expr):
+        """ Evaluate a given Wolfram Language expression and return a result object with the result and meta information. """
         raise NotImplementedError
 
     def start(self):
+        """ Start the evaluator. 
+        
+        Once this function was called, the evaluator must be ready to evaluate incoming expressions. 
+        """
         raise NotImplementedError
 
     def stop(self):
-        #Graceful stop
+        """ Gracefully stop the evaluator. Try to stop the evaluator, but wait for current evaluation to finish first. """
         raise NotImplementedError
 
     def terminate(self):
+        """ Immediatly stop the evaluator, eventually killing running jobs resulting in cancelled evaluations. """
         raise NotImplementedError
 
     def restart(self):
+        """ Restart a given evaluator by stopping it in case it was already started. """
         if self.started:
             self.stop()
         self.start()
 
     def function(self, expr):
-        """Return a `callable` function from a Wolfram Language function `expr`.
+        """Return a python function from a Wolfram Language function `expr`.
 
         The object returned can be applied on arguments as any other Python function, and
         is evaluated using the underlying Wolfram evaluator.
         """
-
         def inner(*args, **opts):
             return self.evaluate(WLFunction(expr, *args, **opts))
 
         return inner
 
+    def duplicate(self):
+        """ Build a new instance using the same configuration as the one being duplicated. """
+        raise NotImplementedError
+
     def __enter__(self):
-        """Start the evaluator."""
+        """Evaluator must be usable with context managers."""
         if not self.started:
             self.start()
         return self
 
     def __exit__(self, type, value, traceback):
-        """Stop the evaluator."""
+        """Context manager stop function."""
         if self.started:
             self.stop()
 
 
 class WolframAsyncEvaluator(WolframEvaluatorBase):
+    """ Asynchronous evaluators are similar to synchronous ones except that they make heavy use of coroutines
+    and need an event loop. 
+    
+    Most methods from this class are similar to their counterpart from :class:`~wolframclient.evaluation.base.WolframEvaluator`,
+    except that they are coroutines. """
     def __init__(self, loop=None):
         if loop:
             self._loop = loop
@@ -129,30 +151,36 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
         await self.start()
 
     def duplicate(self):
-        """ Build a new object using the same configuration of the current one. """
         raise NotImplementedError
 
     def function(self, expr):
+        """ Return a coroutine from a Wolfram Language function. """
         async def inner(*args, **opts):
             return await self.evaluate(WLFunction(expr, *args, **opts))
 
         return inner
 
     def __enter__(self):
-        """ A user friendly message when 'async with' is not used. """
+        """ A user friendly message when 'async with' is not used. 
+        
+        This method should not be implemented in child classes."""
         raise NotImplementedError("%s must be used in a 'async with' block." %
                                   self.__class__.__name__)
 
     def __exit__(self, type, value, traceback):
-        """ Let the __enter__ method fail and propagate doing nothing. """
+        """ Let the __enter__ method fail and propagate doing nothing. 
+        
+        This method should not be implemented in child classes."""
         pass
 
     async def __aenter__(self):
+        """ Asynchronous context management start function. """
         if not self.started:
             await self.start()
         return self
 
     async def __aexit__(self, type, value, traceback):
+        """ Asynchronous context management stop function. """
         if self.started:
             await self.stop()
 

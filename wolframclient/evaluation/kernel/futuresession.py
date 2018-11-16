@@ -17,14 +17,11 @@ __all__ = ['WolframLanguageFutureSession']
 class WolframLanguageFutureSession(WolframLanguageSession):
     """Evaluate expressions asynchronously and return Future instances.
 
-    Asynchronous evaluations are provided through the :mod:`~concurrent` module and the :class:`~concurrent.futures.Future` class. 
+    Asynchronous evaluations are backed by the :mod:`concurrent.futures` module, especially the :class:`~concurrent.futures.Future` class. 
 
-    Contrary to :class:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageAsyncSession`, none of the methods of this class
-    is a coroutine. Evaluation methods herited from :class:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession`,
-    namely :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageAsyncSession.evaluate`,
-    :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageAsyncSession.evaluate_wxf`, and 
-    :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageAsyncSession.evaluate_wrap`,
-    run asynchronously in a thread and return :class:`~concurrent.futures.Future` objects.
+    Contrary to :class:`~wolframclient.evaluation.WolframLanguageAsyncSession`, none of the methods of this class
+    is a coroutine. Evaluation methods are synchronous; they start the evaluation as a background task in a thread, and immediatly return
+    a :class:`~concurrent.futures.Future` objects, that can later be awaited.
     """
 
     def __init__(self,

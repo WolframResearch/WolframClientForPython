@@ -17,19 +17,41 @@ from wolframclient.utils.api import asyncio
 
 logger = logging.getLogger(__name__)
 
-__all__ = ['WolframKernelPool', 'parallel_evaluate']
+__all__ = ['WolframEvaluatorPool', 'parallel_evaluate']
 
 
-class WolframKernelPool(WolframAsyncEvaluator):
+class WolframEvaluatorPool(WolframAsyncEvaluator):
     """ A pool of kernels to dispatch one-shot evaluations asynchronously.
 
-    Kernel can be specified in various ways. A string representing the path to a local kernel and used to
-    instanciante an instance of :class:`wolframclient.evaluation.WolframLanguageAsyncSession`, a :class:`wolframclient.evaluation.WolframCloudAsyncSession`,
-    an instance of :class:`wolframclient.evaluation.WolframLanguageAsyncSession`. It is also possible to provide an iterable object yielding those specifications.
-    If the number of element is less than the requested pool size (`poolsize`), the element are duplicated until the requested size is reached.
+    Evaluators can be specified in various ways: as a string representing the path to a local kernel,
+    a :class:`~wolframclient.evaluation.WolframCloudAsyncSession`, or
+    an instance of :class:`~wolframclient.evaluation.WolframLanguageAsyncSession`. More than one evaluator specification can be provided
+    in the form of an iterable object, yielding above mentioned specification.
+    If the number of evaluators is less than the requested pool size (`poolsize`), elements are duplicated until the requested number of 
+    evaluators is reached.
 
-    `poolsize` is the number of kernel instances. Beware of licencing limits and choose this parameter accordingly.
-    `load_factor` indicate how many workloads are queued per kernel before put operation blocks. Values below or equal to 0 means infinite queue size.
+    Create a pool from a kernel path::
+
+        async with WolframEvaluatorPool('/path/to/local/kernel') as pool:
+            await pool.evaluate('1+1')
+
+    Create a pool from an cloud evaluator::
+
+        cloud_session = WolframCloudAsyncSession(credentials=myCredentials)
+        async with WolframEvaluatorPool(cloud_session) as pool:
+            await pool.evaluate('$MachineName')
+
+    Create a pool from a list of specifications::
+
+        evaluators = [
+            WolframCloudAsyncSession(credentials=myCredentials),
+            '/path/to/local/kernel'
+            ]
+        async with WolframEvaluatorPool(evaluators) as pool:
+            await pool.evaluate('$MachineName')
+
+    `poolsize` is the number of kernel instances. The requested size may not be reached due to licencing restrictions.
+    `load_factor` indicate how many workloads are queued per kernel before new evaluation becomes blocking operation. Values below or equal to 0 means infinite queue size.
     `loop` event loop to use.
     `kwargs` are passed to :class:`wolframclient.evaluation.WolframLanguageAsyncSession` during initialization.
     """
@@ -254,7 +276,7 @@ class WolframKernelPool(WolframAsyncEvaluator):
         return await asyncio.gather(*tasks)
 
     def __repr__(self):
-        return 'WolframKernelPool<%i/%i started evaluators, cummulating %i evaluations>' % (
+        return 'WolframEvaluatorPool<%i/%i started evaluators, cummulating %i evaluations>' % (
             len(self._started_tasks), self.requestedsize, self.eval_count)
 
     def __len__(self):
@@ -272,7 +294,7 @@ def parallel_evaluate(evaluator_spec, expressions, max_kernels=4, loop=None):
     loop = loop or asyncio.get_event_loop()
     pool = None
     try:
-        pool = WolframKernelPool(evaluator_spec, poolsize=max_kernels, loop=loop)
+        pool = WolframEvaluatorPool(evaluator_spec, poolsize=max_kernels, loop=loop)
         loop.run_until_complete(pool.start())
         return pool.evaluate_all(expressions)
     finally:
