@@ -11,7 +11,7 @@ The library source code is available in various repositories:
 * bundled with Wolfram Desktop 12+
 
 .. note::
-    even though most of the features were built to work on Python 2.7, it is recommended to use the library with Python 3.5 or greater.
+    even though some features were built to work on Python 2.7, it is recommended to use the library with Python 3.5 or greater.
 
 Install with pip
 ^^^^^^^^^^^^^^^^^^^

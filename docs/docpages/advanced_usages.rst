@@ -189,10 +189,6 @@ The total evaluation took roughly one second, indicating that both delayed corou
 
 In the examples shown, only one Wolfram kernel was used, which is a single-threaded process. Evaluating two computation-heavy Wolfram Language expressions in parallel will have no impact on performances. This requires more than one kernel, which is exactly what kernel pool was designed for.
 
-.. note :: 
-
-    require on Python 3.5+
-
 Kernel Pool
 ^^^^^^^^^^^
 
@@ -209,8 +205,6 @@ Evaluation output shows that if more than one kernel was started, the total time
 
     Done after 3.04s, using up to 4 kernels.
 
-.. note :: 
-    require on Python 3.5+
 
 parallel_evaluate
 ^^^^^^^^^^^^^^^^^
@@ -236,8 +230,6 @@ Evaluate in parallel and get back a list of ten values `pid`::
 
 The result varies but the pattern remains the same – namely, at least one process was started, and each process is eventually used more than once.
 
-.. note :: 
-    require on Python 3.5+
 
 Logging
 ========
