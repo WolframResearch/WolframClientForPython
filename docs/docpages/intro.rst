@@ -183,7 +183,7 @@ Create Python Function
 From a Wolfram Language expression, it is possible to create a Python function that directly evaluates when called using :func:`~wolframclient.evaluation.WolframLanguageSession.function`::
 
     >>> str_reverse = session.function('StringReverse')
-    >>> str_reverse('abc', 'def', 'ghi')
+    >>> str_reverse('abc')
     'cba'
 
 Define a Wolfram Language function that takes a list or a sequence of integers and only returns the primes::

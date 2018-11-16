@@ -15,4 +15,5 @@ with WolframLanguageSession(kernel_path) as session:
     # expression to evaluate
     expr = wl.Eigenvalues(array)
     # send expression to the kernel for evaluation.
+    res = session.evaluate(expr)
     print(res)  # [-2, -2, 1]
