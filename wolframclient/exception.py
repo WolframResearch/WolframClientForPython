@@ -9,8 +9,6 @@ from wolframclient.logger.utils import str_trim
 class RequestException(WolframLanguageException):
     """Error in HTTP request."""
 
-    __slots__ = 'response'
-
     def __init__(self, response, msg=None):
         self.response = response
         if msg:
