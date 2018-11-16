@@ -32,8 +32,6 @@ class WolframResult(WolframResultBase):
     likely contains an error message.
     """
 
-    __slots__ = 'success', 'failure', 'result'
-
     def __init__(self, result=None, failure=None):
         self.success = failure is None
         self.failure = failure
@@ -106,8 +104,6 @@ class WolframEvaluationJSONResponse(WolframResultBase):
     Other fields provide additionnal information. The HTTP response object is
     stored as `http_response` and when HTTP error occured it is stored in `request_error`.
     """
-
-    __slots__ = 'http_response', 'json', 'request_error', 'is_kernel_message', '_built'
 
     def __init__(self, response):
         self.http_response = wrap_response(response)
@@ -258,8 +254,7 @@ class WolframEvaluationJSONResponseAsync(WolframEvaluationJSONResponse):
 
 class WolframAPIResponse(WolframResult):
     """Generic API response."""
-    __slots__ = 'response', 'decoder', 'json', '_fields_in_error', 'content_type', 'exception'
-
+    
     def __init__(self, response, decoder=None):
         self.response = response
         self.decoder = decoder

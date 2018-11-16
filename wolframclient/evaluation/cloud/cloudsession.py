@@ -44,8 +44,6 @@ class WolframCloudSession(WolframEvaluator):
     It is strongly advised to re-use a session to make multiple calls to mitigate the cost of initialization.
     """
 
-    __slots__ = 'server', 'oauth', 'consumer', 'consumer_secret', 'user', 'password', 'evaluation_api_url', 'credentials'
-
     def __init__(self,
                  credentials=None,
                  server=WolframPublicCloudServer,

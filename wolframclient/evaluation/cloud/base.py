@@ -20,7 +20,6 @@ class SecuredAuthenticationKey(object):
 
     It is used as an input when authenticating a cloud session.
     '''
-    __slots__ = 'consumer_key', 'consumer_secret'
     is_xauth = False
 
     def __init__(self, consumer_key, consumer_secret):
@@ -33,7 +32,6 @@ class UserIDPassword(object):
 
     It is used as an input when authenticating a cloud session.
     '''
-    __slots__ = 'user', 'password'
     is_xauth = True
 
     def __init__(self, user, password):

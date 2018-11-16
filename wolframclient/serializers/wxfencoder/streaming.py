@@ -9,8 +9,6 @@ from wolframclient.utils.encoding import force_bytes
 
 class ZipCompressedWriter(object):
 
-    __slots__ = '_compressor', '_writer'
-
     def __init__(self, writer):
         """ Write zip compressed data to a given buffer writer. """
         self._compressor = zlib.compressobj()
@@ -67,9 +65,6 @@ class ZipCompressedReader(object):
 
     This class is instanciated from a reader, any object implementing a :meth:`~io.BufferedIOBase.read` method.
     """
-
-    __slots__ = '_compressor', '_reader', '_buffer', '_index'
-
     CHUNK_SIZE = 8192
 
     def __init__(self, reader):

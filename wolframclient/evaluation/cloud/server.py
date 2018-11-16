@@ -17,7 +17,6 @@ class WolframServer(object):
     For conveniency this class exposes static methods to build instances from
     a `Configuration` or from a file path.
     '''
-    __slots__ = 'cloudbase', 'request_token_endpoint', 'access_token_endpoint', 'xauth_consumer_key', 'xauth_consumer_secret', 'certificate'
 
     def __init__(self,
                  cloudbase,

@@ -31,9 +31,7 @@ class NumPyWXFEncoder(WXFEncoder):
     >>> NumPyWXFEncoder(packed_array_support=False, rawarray_support=True)
 
     '''
-
-    __slots__ = 'packed_array_support', 'rawarray_support'
-
+    
     def __init__(self, packed_array_support=True, rawarray_support=False):
         if not packed_array_support and not rawarray_support:
             raise ValueError(
