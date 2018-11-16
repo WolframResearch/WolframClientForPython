@@ -18,15 +18,11 @@ class RequestException(WolframLanguageException):
         else:
             try:
                 self.msg = response.text()
-            except:
-                self.msg = None
+            except UnicodeDecodeErrors:
+                self.msg = 'Failed to decode request body.'
 
     def __str__(self):
-        try:
-            status = '<%s>: ' % self.response.status()
-        except:
-            status = ''
-        return '%s%s' % (status, self.msg or '')
+        return '<%s>: %s' % (self.response.status(), self.msg or '')
 
 
 class AuthenticationException(RequestException):

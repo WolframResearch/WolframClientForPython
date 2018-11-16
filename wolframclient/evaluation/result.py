@@ -453,7 +453,7 @@ class WolframAPIResponse400(WolframAPIFailureResponse):
             logger.fatal('Failed to parse server response as json:\n%s',
                          self.response.content())
             raise RequestException(self.response,
-                                   'Failed to parse server response as json.')
+                                   msg='Failed to parse server response as json.')
         self._update_from_json()
         self._built = True
 
@@ -476,7 +476,7 @@ class WolframAPIResponse400Async(WolframAPIResponse400,
             logger.fatal('Failed to parse server response as json:\n%s', await
                          self.response.content)
             raise RequestException(self.response,
-                                   'Failed to parse server response as json.')
+                                   msg='Failed to parse server response as json.')
         self._update_from_json()
         self._built = True
 
