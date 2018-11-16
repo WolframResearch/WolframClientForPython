@@ -283,7 +283,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         return len(self._started_tasks)
 
 
-def parallel_evaluate(evaluator_spec, expressions, max_kernels=4, loop=None):
+def parallel_evaluate(evaluator_spec, expressions, max_evaluators=4, loop=None):
     """ Start a kernel pool using `evaluator_spec` and evaluate the expressions on the created
     pool, then terminate it and returns the results.
 
@@ -294,7 +294,7 @@ def parallel_evaluate(evaluator_spec, expressions, max_kernels=4, loop=None):
     loop = loop or asyncio.get_event_loop()
     pool = None
     try:
-        pool = WolframEvaluatorPool(evaluator_spec, poolsize=max_kernels, loop=loop)
+        pool = WolframEvaluatorPool(evaluator_spec, poolsize=max_evaluators, loop=loop)
         loop.run_until_complete(pool.start())
         return pool.evaluate_all(expressions)
     finally:

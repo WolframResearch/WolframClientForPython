@@ -7,7 +7,8 @@ import unittest
 
 from wolframclient.deserializers import binary_deserialize
 from wolframclient.evaluation import (WolframEvaluatorPool,
-                                      WolframLanguageAsyncSession, WolframCloudAsyncSession)
+                                      WolframLanguageAsyncSession, WolframCloudAsyncSession,
+                                      parallel_evaluate)
 from wolframclient.language import wl
 from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config, secured_authentication_key
 from wolframclient.tests.evaluation.test_kernel import \
@@ -227,6 +228,45 @@ class TestKernelPool(BaseTestCase):
         #  TODO: update this later when cloud evaluate wxf properly.
         # self.assertEqual({*res},
         #                  {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"})
+        self.assertEqual(len(res), 10)
+        for elem in res:
+            self.assertTrue(isinstance(elem, string_types))
+
+@unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
+class TestParalleleEvaluate(BaseTestCase):
+        
+    KERNEL_PATH = json_config['kernel']
+
+    def test_parallel_evaluate_local(self):
+        exprs = [wl.FromLetterNumber(i) for i in range(1,11)]
+        res = parallel_evaluate(self.KERNEL_PATH, exprs)
+        self.assertEqual(res,
+                         ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"])
+
+    def test_parallel_evaluate_sizeone(self):
+        exprs = [wl.FromLetterNumber(i) for i in range(1,11)]
+        res = parallel_evaluate(self.KERNEL_PATH, exprs, max_evaluators=1)
+        self.assertEqual(res,
+                         ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"])
+
+    def test_parallel_evaluate_sizeone(self):
+        exprs = [wl.FromLetterNumber(i) for i in range(1,11)]
+        res = parallel_evaluate([self.KERNEL_PATH, self.KERNEL_PATH,self.KERNEL_PATH], exprs, max_evaluators=1)
+        self.assertEqual(res,
+                         ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"])
+
+    def test_parallel_evaluate_cloud(self):
+        cloud = WolframCloudAsyncSession(credentials=secured_authentication_key)
+        exprs = [wl.FromLetterNumber(i) for i in range(1,11)]
+        res = parallel_evaluate(cloud, exprs)
+        self.assertEqual(len(res), 10)
+        for elem in res:
+            self.assertTrue(isinstance(elem, string_types))
+
+    def test_parallel_evaluate_mixed(self):
+        cloud = WolframCloudAsyncSession(credentials=secured_authentication_key)
+        exprs = [wl.FromLetterNumber(i) for i in range(1,11)]
+        res = parallel_evaluate([cloud, self.KERNEL_PATH, cloud], exprs)
         self.assertEqual(len(res), 10)
         for elem in res:
             self.assertTrue(isinstance(elem, string_types))
