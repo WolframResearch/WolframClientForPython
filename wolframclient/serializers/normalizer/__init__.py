@@ -86,14 +86,17 @@ class Normalizer(object):
     default_normalizer = normalizer
     default_updater = updater
 
-    def __init__(self, normalizer=None, allow_external_objects=False):
+    def __init__(self,
+                 normalizer=None,
+                 allow_external_objects=False,
+                 target_kernel_version=None):
         self.normalize = self.chain_normalizers(normalizer)
         self.allow_external_objects = allow_external_objects
+        self.target_kernel_version = target_kernel_version or 11.3
 
     def chain_normalizers(self, func):
 
         self.default_updater.update_dispatch()
 
-        return composition(
-            *map(safe_import_string,
-                 iterate(func or (), self.default_normalizer)))
+        return composition(*map(safe_import_string,
+                                iterate(func or (), self.default_normalizer)))

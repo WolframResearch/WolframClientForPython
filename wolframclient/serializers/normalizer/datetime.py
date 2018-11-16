@@ -16,7 +16,12 @@ def update_dispatch(dispatch):
                  self.serialize_int(o.minute),
                  self.serialize_float(o.second + o.microsecond / 1000000.))),
              self.serialize_string("Instant"),
-             self.serialize_string("Gregorian"), self.serialize_tzinfo(o)))
+             self.serialize_string("Gregorian"),
+             self.serialize_tzinfo(o.tzinfo, o)))
+
+    @dispatch.multi(datetime.tzinfo)
+    def normalizer(self, o):
+        return self.serialize_tzinfo(o)
 
     @dispatch.multi(datetime.timedelta)
     def normalizer(self, o):
