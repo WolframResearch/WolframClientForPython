@@ -204,7 +204,7 @@ Kernel evaluation
     :noindex:
     :members:
 
-.. autoclass:: wolframclient.evaluation.WolframKernelPool
+.. autoclass:: wolframclient.evaluation.WolframEvaluatorPool
     :noindex:
     :members:
 
