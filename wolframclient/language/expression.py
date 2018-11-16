@@ -41,7 +41,7 @@ class WLSymbol(WLExpressionMeta):
                 (six.text_type.__name__, name.__class__.__name__, name))
 
     def __hash__(self):
-        return hash((self.__class__.__name__, self.name))
+        return hash((WLSymbol.__class__.__name__, self.name))
 
     def __len__(self):
         return 0  #consistent with Length(x)
