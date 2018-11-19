@@ -266,7 +266,7 @@ class WolframAPIResponse(WolframResult):
 
     def _iter_error(self):
         if self.success or self.json is None:
-            raise StopIteration
+            return
         else:
             for field, err in self.json.get('Fields', {}).items():
                 failure = err.get('Failure', None)
