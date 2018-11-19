@@ -49,11 +49,7 @@ class OAuthAIOHttpAsyncSessionBase(OAuthAsyncSessionBase):
         for k, v in headers.items():
             req_headers[k] = v
         sign_body = False
-        # debug test. TODO: remove.
-        if data and not isinstance(data, FormData) and not isinstance(
-                data, Payload):
-            raise ValueError('Invalid http data: %s' % data)
-
+        
         # Payload Instances are not encoded (e.g: octet stream). Only FormData are.
         form_encoded = isinstance(data, FormData) and not data.is_multipart
         multipart = isinstance(data, FormData) and data.is_multipart

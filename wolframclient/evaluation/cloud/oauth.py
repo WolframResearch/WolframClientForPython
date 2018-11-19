@@ -95,7 +95,7 @@ class OAuthRequestsSyncSessionBase(OAuthSessionBase):
             method,
             body=encoded_body if sign_body else None,
             headers=req_headers,
-            realm=self.server.cloudbase  # TODO should we have realm?
+            realm=self.server.cloudbase
         )
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Signed uri: %s', uri)
