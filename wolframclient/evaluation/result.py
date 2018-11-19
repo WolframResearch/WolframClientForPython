@@ -265,20 +265,15 @@ class WolframAPIResponse(WolframResult):
         self._built = False
 
     def _iter_error(self):
-        if self.success or self.json is None:
-            return
-        else:
+        if not self.success and self.json:
             for field, err in self.json.get('Fields', {}).items():
                 failure = err.get('Failure', None)
                 if failure is not None:
                     yield (field, failure)
 
     def _iter_full_error_report(self):
-        if self.success or self.json is None:
-            raise StopIteration
-        else:
-            for field, err in self.json.get('Fields', {}).items():
-                yield field, err
+        if not self.success and self.json:
+            yield from self.json.get('Fields', {})
 
     def _build(self):
         raise NotImplementedError
