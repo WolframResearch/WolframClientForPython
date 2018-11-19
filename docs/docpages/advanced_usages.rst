@@ -192,7 +192,7 @@ In the examples shown, only one Wolfram kernel was used, which is a single-threa
 Kernel Pool
 ^^^^^^^^^^^
 
-A :class:`~wolframclient.evaluation.WolframEvaluatorPool` starts up a certain amount of evaluators and dispatch work load on them asynchronously. The pool is usable right after the first evaluator has successfully started. Some may take more time to start and become available after a delay.
+A :class:`~wolframclient.evaluation.WolframEvaluatorPool` starts up a certain amount of evaluators and dispatch work load on them asynchronously. The pool is usable right after the first one has successfully started. Some may take more time to start and become available after a delay.
 
 .. literalinclude:: /examples/python/asynchronous4.py
     :linenos:
