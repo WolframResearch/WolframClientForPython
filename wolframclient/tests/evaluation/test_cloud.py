@@ -39,7 +39,7 @@ class TestCaseSettings(BaseTestCase):
     @classmethod
     def setupCloudSession(cls):
         cls.sak = secured_authentication_key
-        cls.api_owner = json_config.get('ApiOwner', 'dorianb')
+        cls.api_owner = json_config['ApiOwner']
         cls.user_cred = user_configuration
         cls.server = server
         cls.cloud_session = WolframCloudSession(credentials=cls.sak)
@@ -165,7 +165,7 @@ class TestCase(TestCaseSettings):
             self.assertListEqual(res, [500, 200])
 
     def test_image_string_int(self):
-        api = ('dorianb', 'api/private/str_image_int')
+        api = (self.api_owner, 'api/private/str_image_int')
         with open(self.get_data_path('32x2.png'), 'rb') as fp:
             response = self.cloud_session.call(
                 api,
@@ -384,7 +384,7 @@ class TestWolframAPI(TestCaseSettings):
         self.assertEqual('"edcba"', force_text(res))
 
     def test_wolfram_api_image_string_int(self):
-        api = ('dorianb', 'api/private/str_image_int')
+        api = (self.api_owner, 'api/private/str_image_int')
         buffer = None
         with open(self.get_data_path('32x2.png'), 'rb') as fp:
             buffer = fp.read()
