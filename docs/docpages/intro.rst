@@ -10,11 +10,11 @@ The Wolfram Client Library is structured in submodules all located in :mod:`wolf
 
 * :mod:`~wolframclient.evaluation` provides convenient methods to evaluate Wolfram Language expressions directly from Python. There are many ways to evaluate code including: evaluation by a local kernel, direct evaluation by a public or private Wolfram Cloud, calling a deployed API.
 
+* :mod:`~wolframclient.language` provides a Python representation of Wolfram Language symbols and functions.
+
 * :mod:`~wolframclient.serializers` provides serialization methods to various formats such as string :wl:`InputForm` and binary :wl:`WXF` format.
 
 * :mod:`~wolframclient.deserializers` contains a parser for :wl:`WXF`.
-
-* :mod:`~wolframclient.language` provides a Python representation of Wolfram Language symbols and functions.
 
 * :mod:`~wolframclient.exception` regroups the exceptions and errors that the library may raise.
 
@@ -24,7 +24,7 @@ The Wolfram Client Library is structured in submodules all located in :mod:`wolf
 Wolfram Language Expression Representation
 ==========================================
 
-The library exposes many kinds of interactions with the Wolfram Language, many of which require representation of Wolfram Language expressions as Python objects. A straightforward way to construct Python objects representing expressions is to call attributes of :func:`~wolframclient.language.wl`.
+The library exposes many kinds of interactions with the Wolfram Language, many of which require representation of Wolfram Language expressions as Python objects. A straightforward way to construct Python objects representing expressions is to call attributes of :data:`~wolframclient.language.wl`.
 
 Import the factory::
 
@@ -83,7 +83,7 @@ Note that sessions are also automatically started when the first evaluation occu
 Expression Evaluation
 ++++++++++++++++++++++++++
 
-Functions are conveniently represented using :func:`~wolframclient.language.wl`. First import it::
+Functions are conveniently represented using :data:`~wolframclient.language.wl`. First import it::
 
     >>> from wolframclient.language import wl
 

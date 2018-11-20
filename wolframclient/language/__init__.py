@@ -27,13 +27,13 @@ It is possible to specify context using the syntax::
 System = wl.System
 """A factory of :class:`~wolframclient.language.expression.WLSymbol` instances having ``System``` context.
 
-See :func:`~wolframclient.language.expression.WLSymbolFactory` and
+See :class:`~wolframclient.language.expression.WLSymbolFactory` and
 :class:`~wolframclient.language.expression.WLSymbolFactory` for more details."""
 
 Global = wl.Global
 """A factory of :class:`~wolframclient.language.expression.WLSymbol` instances having ``Global``` context.
 
-See :func:`~wolframclient.language.expression.WLSymbolFactory` and
+See :class:`~wolframclient.language.expression.WLSymbolFactory` and
 :class:`~wolframclient.language.expression.WLSymbolFactory` for more details."""
 
 wlexpr = wl.ToExpression

@@ -1,20 +1,32 @@
 .. toctree::
     :maxdepth: 4
 
-Installation of the Library
-============================
+Installation and prerequisites
+******************************
 
 The library source code is available in various repositories:
 
-* hosted on *PyPi.org* and available in `pip`
-* in a public repository on `GitHub`
-* bundled with Wolfram Desktop 12+
+* hosted on `PyPi <https://pypi.org/project/wolframclient/>`_ and available in `pip`
+* in a public repository on `GitHub <https://github.com/WolframResearch/WolframClientForPython>`_
+* bundled with Wolfram Language 12+
 
-.. note::
-    even though some features were built to work on Python 2.7, it is recommended to use the library with Python 3.5 or greater.
+Prerequisites
+===============
 
-Install with pip
-^^^^^^^^^^^^^^^^^^^
+    - Python 3.5 or higher
+    - Wolfram Language 11.3 or higher
+    - Git (optional)
+
+
+Installation
+============================
+
+There are three methods for installing the library.
+
+Install using pip (recommended)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Recommended for most users. It installs the latest stable version released by Wolfram Research.
 
 Evaluate the following command in a terminal:
 
@@ -22,8 +34,10 @@ Evaluate the following command in a terminal:
 
     $ pip install wolframclient
 
-Install from GitHub
+Install using Git
 ^^^^^^^^^^^^^^^^^^^^^
+
+Recommended for developers who want to install the library along with the full source code.
 
 Clone the library's repository:
 
@@ -31,16 +45,16 @@ Clone the library's repository:
 
     $ git clone git://github.com/WolframResearch/WolframClientForPython
 
-Install the library:
+Install the library in your site-package directory:
 
 .. code-block:: shell
 
     $ pip install .
 
-Install from the Wolfram Desktop
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Install from Wolfram Language based products
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The library is bundled with the Wolfram Desktop. The library location depends on your OS. Here are the usual locations:
+Future release of the Wolfram Language will include a stable version of the client library. The library location depends on your OS. Here are the usual locations:
 
 +-----------+-------------------------------------------------------------------------------------------------------------------+
 | OS        | Library path                                                                                                      |

@@ -17,15 +17,15 @@ Expression Representation
 Contexts
 ========
 
-In the Wolfram Language, expressions live in :wl:`Context`, which serves as a namespace mechanism. Built-in functions belong to the ``System``` context. By default, the context called ``Global``` is associated to user-defined functions and new variables. More information about contexts can be found at `tutorial/Contexts <http://reference.wolfram.com/language/tutorial/Contexts.html>`_.
+In the Wolfram Language, symbols live in :wl:`Context`, which serves as a namespace mechanism. Built-in functions belong to the ``System``` context. By default, the context called ``Global``` is associated to user-defined functions and new variables. More information about contexts can be found at `tutorial/Contexts <http://reference.wolfram.com/language/tutorial/Contexts.html>`_.
 
-Wolfram Language expressions are conveniently represented in Python using the attributes of the factory :func:`~wolframclient.language.wl`::
+Wolfram Language expressions are conveniently represented in Python using the attributes of the factory :data:`~wolframclient.language.wl`::
 
     >>> from wolframclient.language import wl
     >>> wl.Range(3)
     Range[3]
 
-These attributes of the factory :func:`~wolframclient.language.wl` do not have a context attached::
+These attributes of the factory :data:`~wolframclient.language.wl` do not have a context attached::
 
     >>> wl.myFunction(1)
     myFunction[1]
@@ -42,7 +42,7 @@ The method :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguage
 ``System``` Context
 --------------------
 
-In order to explicitly represent a system symbol in Python, the factory :func:`~wolframclient.language.System` can be used. First import it::
+In order to explicitly represent a system symbol in Python, the factory :data:`~wolframclient.language.System` can be used. First import it::
 
     >>> from wolframclient.language import System
 
@@ -54,15 +54,16 @@ Create a Python object representing the built-in function :wl:`Classify`::
 ``Global``` Context
 ---------------------
 
-User-defined functions and variables are associated to the ``Global``` context by default. The factory :func:`~wolframclient.language.Global` can be used to represent those symbols::
+User-defined functions and variables are associated to the ``Global``` context by default. The factory :data:`~wolframclient.language.Global` can be used to represent those symbols::
 
     >>> from wolframclient.language import Global
-    >>> Global`f
+    >>> Global.f
+    Global`f
 
 Arbitrary Contexts
 ------------------
 
-The factory :func:`~wolframclient.language.wl` can be used to build symbols with arbitrary context, as well as subcontexts::
+The factory :data:`~wolframclient.language.wl` can be used to build symbols with arbitrary context, as well as subcontexts::
 
     >>> wl.Developer.PackedArrayQ
     Developer`PackedArrayQ
