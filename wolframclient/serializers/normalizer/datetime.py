@@ -53,7 +53,7 @@ def update_dispatch(dispatch):
             inner.append(
                 self.serialize_rule(
                     self.serialize_symbol(b"TimeZone"),
-                    self.serialize_tzinfo(o, name_match=None)))
+                    self.serialize_tzinfo(o.tzinfo, o, name_match=None)))
 
         return self.serialize_function(
             self.serialize_symbol(b"TimeObject"), inner)
