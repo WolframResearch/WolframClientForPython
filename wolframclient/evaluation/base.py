@@ -5,10 +5,11 @@ from __future__ import absolute_import, print_function, unicode_literals
 import asyncio
 import warnings
 
+from wolframclient.utils import six
 from wolframclient.language import wlexpr
 from wolframclient.language.expression import WLFunction
 from wolframclient.utils.asyncio import wait_all
-from wolframclient.utils.six import PY_36, string_types
+
 """
 NOTES
 
@@ -39,7 +40,7 @@ class WolframEvaluatorBase(object):
 
     def __del__(self, _warnings=warnings):
         if not self.stopped:
-            if PY_36:
+            if six.PY_36:
                 kwargs = {'source': self}
             else:
                 kwargs = {}
@@ -200,7 +201,7 @@ def normalize_input(expr, string_as_inputform=True):
     Option `string_as_inputform` specifies if strings should be treated
     as input form strings and wrapped into wlexpr.
     """
-    if string_as_inputform and isinstance(expr, string_types):
+    if string_as_inputform and isinstance(expr, six.string_types):
         return wlexpr(expr)
     else:
         return expr

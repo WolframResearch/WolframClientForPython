@@ -6,12 +6,11 @@ import logging
 import itertools
 from asyncio import CancelledError
 
-
+from wolframclient.utils import six
 from wolframclient.evaluation.kernel.asyncsession import (
     WolframLanguageAsyncSession)
 from wolframclient.exception import WolframKernelException
 from wolframclient.evaluation.base import WolframAsyncEvaluator
-from wolframclient.utils.six import iterable_types, string_types
 from wolframclient.utils.functional import is_iterable
 from wolframclient.utils.api import asyncio
 
@@ -71,7 +70,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         self._queue = asyncio.Queue(load_factor * poolsize, loop=self._loop)
         self.async_language_session_class = async_language_session_class
         self._evaluators = set()
-        if isinstance(async_evaluators, string_types):
+        if isinstance(async_evaluators, six.string_types):
             for _ in range(poolsize):
                 self._add_evaluator(async_evaluators, **kwargs)
         else:
@@ -89,7 +88,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         self.requestedsize = poolsize        
 
     def _add_evaluator(self, evaluator, **kwargs):
-        if isinstance(evaluator, string_types):
+        if isinstance(evaluator, six.string_types):
             self._evaluators.add(self.async_language_session_class(evaluator, loop=self._loop, **kwargs))
         elif isinstance(evaluator, WolframAsyncEvaluator):
             if evaluator in self._evaluators:

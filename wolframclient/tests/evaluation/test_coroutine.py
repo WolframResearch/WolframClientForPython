@@ -13,7 +13,7 @@ from wolframclient.language import wl
 from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config, secured_authentication_key
 from wolframclient.tests.evaluation.test_kernel import \
     TestCaseSettings as TestKernelBase
-from wolframclient.utils.six import string_types
+from wolframclient.utils import six
 from wolframclient.utils.api import asyncio, time
 from wolframclient.utils.asyncio import get_event_loop, run_in_loop
 from wolframclient.utils.tests import TestCase as BaseTestCase
@@ -214,7 +214,7 @@ class TestKernelPool(BaseTestCase):
             TERMINATE_READ_TIMEOUT=3) as pool:
             await self._pool_evaluation_check(pool)
         for session in sessions:
-            if not isinstance(session, string_types):
+            if not isinstance(session, six.string_types):
                 self.assertFalse(session.started)
                 self.assertTrue(session.stopped)
 
@@ -230,7 +230,7 @@ class TestKernelPool(BaseTestCase):
         #                  {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"})
         self.assertEqual(len(res), 10)
         for elem in res:
-            self.assertTrue(isinstance(elem, string_types))
+            self.assertTrue(isinstance(elem, six.string_types))
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestParalleleEvaluate(BaseTestCase):
@@ -261,7 +261,7 @@ class TestParalleleEvaluate(BaseTestCase):
         res = parallel_evaluate(cloud, exprs)
         self.assertEqual(len(res), 10)
         for elem in res:
-            self.assertTrue(isinstance(elem, string_types))
+            self.assertTrue(isinstance(elem, six.string_types))
 
     def test_parallel_evaluate_mixed(self):
         cloud = WolframCloudAsyncSession(credentials=secured_authentication_key)
@@ -269,4 +269,4 @@ class TestParalleleEvaluate(BaseTestCase):
         res = parallel_evaluate([cloud, self.KERNEL_PATH, cloud], exprs)
         self.assertEqual(len(res), 10)
         for elem in res:
-            self.assertTrue(isinstance(elem, string_types))
+            self.assertTrue(isinstance(elem, six.string_types))
