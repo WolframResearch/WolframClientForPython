@@ -46,7 +46,7 @@ class TestCase(BaseTestCase):
     def init(pa, ra):
         expr_provider = WXFExprProvider()
         numpy_encoder = NumPyWXFEncoder(
-            packed_array_support=pa, rawarray_support=ra)
+            packed_array_support=pa, numeric_array_support=ra)
 
         expr_provider.add_encoder(numpy_encoder)
         expr_provider.add_encoder(DefaultWXFEncoder())
@@ -164,4 +164,4 @@ class TestCase(BaseTestCase):
 
     def test_bad_options(self):
         with self.assertRaises(ValueError):
-            NumPyWXFEncoder(packed_array_support=False, rawarray_support=False)
+            NumPyWXFEncoder(packed_array_support=False, numeric_array_support=False)

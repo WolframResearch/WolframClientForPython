@@ -48,7 +48,7 @@ class WXFParser(object):
         constants.WXF_CONSTANTS.Integer64: 'token_for_integer64',
         constants.WXF_CONSTANTS.Real64: 'token_for_real64',
         constants.WXF_CONSTANTS.PackedArray: 'token_for_packed_array',
-        constants.WXF_CONSTANTS.RawArray: 'token_for_raw_array',
+        constants.WXF_CONSTANTS.NumericArray: 'token_for_numeric_array',
         constants.WXF_CONSTANTS.Association: 'token_for_association',
         constants.WXF_CONSTANTS.Rule: 'token_for_rule',
         constants.WXF_CONSTANTS.RuleDelayed: 'token_for_rule'
@@ -172,12 +172,12 @@ class WXFParser(object):
         self.parse_array(token)
         return token
 
-    def token_for_raw_array(self, token):
+    def token_for_numeric_array(self, token):
         self.context.add_part()
         token.array_type = self.reader.read(1)
         if token.array_type not in constants.ARRAY_TYPES_ELEM_SIZE:
             raise WolframParserException(
-                'Invalid RawArray value type: %s' % token.array_type)
+                'Invalid NumericArray value type: %s' % token.array_type)
         self.parse_array(token)
         return token
 

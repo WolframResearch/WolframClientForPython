@@ -120,7 +120,7 @@ class WXFSerializer(FormatSerializer):
                          for key, value in iterable))
 
     def serialize_numeric_array(self, data, dimensions, wl_type):
-        yield WXF_CONSTANTS.RawArray
+        yield WXF_CONSTANTS.NumericArray
         yield ARRAY_TYPES[wl_type]
         yield varint_bytes(len(dimensions))
         for dim in dimensions:
