@@ -237,12 +237,12 @@ class WXFExprPackedArray(_WXFExprArray):
                                                  dimensions, value_type, data)
 
 
-class WXFExprRawArray(_WXFExprArray):
+class WXFExprNumericArray(_WXFExprArray):
     ''' Raw array is an array that supports many type of values:
     signed and unsigned integers, reals, complexes. See `ARRAY_TYPES`.'''
 
     def __init__(self, dimensions, value_type, data=None):
-        super(WXFExprRawArray, self).__init__(WXF_CONSTANTS.RawArray,
+        super(WXFExprNumericArray, self).__init__(WXF_CONSTANTS.NumericArray,
                                               dimensions, value_type, data)
 
 
