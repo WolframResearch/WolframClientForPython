@@ -55,12 +55,21 @@ class FormatSerializer(Normalizer):
         raise NotImplementedError
 
     def serialize_numeric_array(self, data, shape, wl_type):
+
+        if self.target_kernel_version < 12:
+            array = self.serialize_function(
+                self.serialize_symbol(b'RawArray'),
+                (self.serialize_string(wl_type), self.serialize_bytes(data))
+            )
+        else:
+            array = self.serialize_function(
+                self.serialize_symbol(b'NumericArray'),
+                (self.serialize_bytes(data), self.serialize_string(wl_type))
+            )            
+
         return self.serialize_function(
             self.serialize_symbol('ArrayReshape'),
-            (self.serialize_function(
-                self.serialize_symbol(self.target_kernel_version < 12 and b'RawArray' or b'NumericArray'),
-                (self.serialize_string(wl_type), self.serialize_bytes(data))
-            ),
+            (array,
             self.serialize_iterable(map(self.serialize_int, shape)))
         )
 
