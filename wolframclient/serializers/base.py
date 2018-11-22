@@ -58,7 +58,7 @@ class FormatSerializer(Normalizer):
         return self.serialize_function(
             self.serialize_symbol('ArrayReshape'),
             (self.serialize_function(
-                self.serialize_symbol(self.kernel_target_version < 12 and b'RawArray' or b'NumericArray'),
+                self.serialize_symbol(self.target_kernel_version < 12 and b'RawArray' or b'NumericArray'),
                 (self.serialize_string(wl_type), self.serialize_bytes(data))
             ),
             self.serialize_iterable(map(self.serialize_int, shape)))
