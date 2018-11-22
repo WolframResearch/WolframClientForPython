@@ -55,18 +55,18 @@ class FormatSerializer(Normalizer):
         raise NotImplementedError
 
     def serialize_raw_array(self, data, shape, wl_type):
-
+        if self.kernel_target_version < 12:
+            array_head = b'RawArray'
+        else:
+            array_head = b'NumericArray'
         return self.serialize_function(
             self.serialize_symbol('ArrayReshape'),
             (self.serialize_function(
-                self.serialize_symbol(b'NumericArray'),
-                (self.serialize_string(wl_type),
-                 self.serialize_function(
-                     self.serialize_symbol(b'ImportByteArray'), (
-                         self.serialize_bytes(data),
-                         self.serialize_string(wl_type),
-                     )))),
-             self.serialize_iterable(map(self.serialize_int, shape))))
+                self.serialize_symbol(array_head),
+                (self.serialize_string(wl_type), self.serialize_bytes(data))
+            ),
+            self.serialize_iterable(map(self.serialize_int, shape)))
+        )
 
     def serialize_iterable(self, iterable, **opts):
         return self.serialize_function(
