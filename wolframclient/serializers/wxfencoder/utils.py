@@ -3,7 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.serializers.wxfencoder.constants import (
-    VALID_PACKED_ARRAY_TYPES, WXF_CONSTANTS, StructDouble, StructInt8LE,
+    ARRAY_TYPES, VALID_PACKED_ARRAY_TYPES, WXF_CONSTANTS, StructDouble, StructInt8LE,
     StructInt16LE, StructInt32LE, StructInt64LE)
 from wolframclient.utils import six
 
@@ -99,3 +99,12 @@ else:
         buffer = bytearray(8)
         StructDouble.pack_into(buffer, 0, value)
         return buffer
+
+
+def numeric_array_to_wxf(data, dimensions, wl_type):
+    yield WXF_CONSTANTS.NumericArray
+    yield ARRAY_TYPES[wl_type]
+    yield varint_bytes(len(dimensions))
+    for dim in dimensions:
+        yield varint_bytes(dim)
+    yield data

@@ -11,7 +11,8 @@ from wolframclient.serializers.wxfencoder.constants import (
     WXF_VERSION)
 from wolframclient.serializers.wxfencoder.streaming import ZipCompressedWriter
 from wolframclient.serializers.wxfencoder.utils import (
-    float_to_bytes, integer_size, integer_to_bytes, varint_bytes, write_varint)
+    float_to_bytes, integer_size, integer_to_bytes, numeric_array_to_wxf,
+    varint_bytes, write_varint)
 from wolframclient.utils.encoding import force_bytes
 
 
@@ -120,9 +121,4 @@ class WXFSerializer(FormatSerializer):
                          for key, value in iterable))
 
     def serialize_numeric_array(self, data, dimensions, wl_type):
-        yield WXF_CONSTANTS.NumericArray
-        yield ARRAY_TYPES[wl_type]
-        yield varint_bytes(len(dimensions))
-        for dim in dimensions:
-            yield varint_bytes(dim)
-        yield data
+        return numeric_array_to_wxf(data, dimensions, wl_type)
