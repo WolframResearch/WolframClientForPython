@@ -45,4 +45,4 @@ def update_dispatch(dispatch):
         else:
             data = o.tostring()
 
-        return self.serialize_raw_array(data, o.shape, wl_type)
+        return self.serialize_numeric_array(data, o.shape, wl_type)
