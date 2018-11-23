@@ -5,8 +5,12 @@ from __future__ import absolute_import, print_function, unicode_literals
 import datetime
 import inspect
 import re
+from itertools import chain
 
 from wolframclient.serializers.normalizer import Normalizer
+from wolframclient.serializers.wxfencoder.constants import (
+    WXF_HEADER_SEPARATOR, WXF_VERSION)
+from wolframclient.serializers.wxfencoder.utils import numeric_array_to_wxf
 from wolframclient.utils import six
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import first
@@ -54,19 +58,15 @@ class FormatSerializer(Normalizer):
     def serialize_int(self, obj):
         raise NotImplementedError
 
-    def serialize_raw_array(self, data, shape, wl_type):
+    def serialize_numeric_array(self, data, shape, wl_type):
+
+        payload = b''.join(
+            chain((WXF_VERSION, WXF_HEADER_SEPARATOR),
+                  numeric_array_to_wxf(data, shape, wl_type)))
 
         return self.serialize_function(
-            self.serialize_symbol('ArrayReshape'),
-            (self.serialize_function(
-                self.serialize_symbol(b'NumericArray'),
-                (self.serialize_string(wl_type),
-                 self.serialize_function(
-                     self.serialize_symbol(b'ImportByteArray'), (
-                         self.serialize_bytes(data),
-                         self.serialize_string(wl_type),
-                     )))),
-             self.serialize_iterable(map(self.serialize_int, shape))))
+            self.serialize_symbol(b'BinaryDeserialize'),
+            (self.serialize_bytes(payload, ), ))
 
     def serialize_iterable(self, iterable, **opts):
         return self.serialize_function(
@@ -104,10 +104,11 @@ class FormatSerializer(Normalizer):
         return self.serialize_function(
             self.serialize_symbol(b'RuleDelayed'), (lhs, rhs))
 
-    def serialize_tzinfo(self,
-                         tzinfo,
-                         date=None,
-                         name_match=re.compile('^([A-Za-z]+/[A-Za-z]+?|UTC)$')):
+    def serialize_tzinfo(
+            self,
+            tzinfo,
+            date=None,
+            name_match=re.compile('^([A-Za-z]+/[A-Za-z]+?|UTC)$')):
 
         if tzinfo is None:
             return self.serialize_symbol(

@@ -64,7 +64,7 @@ class WXFConsumer(object):
         constants.WXF_CONSTANTS.BigInteger: 'consume_bigint',
         constants.WXF_CONSTANTS.BigReal: 'consume_bigreal',
         constants.WXF_CONSTANTS.PackedArray: 'consume_packed_array',
-        constants.WXF_CONSTANTS.RawArray: 'consume_raw_array',
+        constants.WXF_CONSTANTS.NumericArray: 'consume_numeric_array',
         constants.WXF_CONSTANTS.Association: 'consume_association',
         constants.WXF_CONSTANTS.Rule: 'consume_rule',
         constants.WXF_CONSTANTS.RuleDelayed: 'consume_rule_delayed'
@@ -215,7 +215,7 @@ class WXFConsumer(object):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *real* as a :class:`float`."""
         return current_token.data
 
-    def consume_raw_array(self, current_token, tokens, **kwargs):
+    def consume_numeric_array(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *raw array*.
 
         This method return :class:`list`, and made the assumption that system is little endian.
@@ -335,8 +335,8 @@ class WXFConsumerNumpy(WXFConsumer):
 
     """Build a numpy array from a PackedArray."""
     consume_packed_array = consume_array
-    """Build a numpy array from a RawArray."""
-    consume_raw_array = consume_array
+    """Build a numpy array from a NumericArray."""
+    consume_numeric_array = consume_array
 
     WXF_TYPE_TO_DTYPE = {
         constants.ARRAY_TYPES.Integer8: 'int8',

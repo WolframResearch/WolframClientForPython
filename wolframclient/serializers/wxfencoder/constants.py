@@ -38,7 +38,7 @@ WXF_CONSTANTS = Settings(
     BigInteger=b'I',
     BigReal=b'R',
     PackedArray=_bytes(0xC1),
-    RawArray=_bytes(0xC2),
+    NumericArray=_bytes(0xC2),
     Association=b'A',
     Rule=b'-',
     RuleDelayed=b':',
@@ -75,7 +75,7 @@ ARRAY_TYPES_ELEM_SIZE = {
     ARRAY_TYPES.ComplexReal64: 16,
 }
 ''' A set of all valid value type tokens for PackedArray.
-There is no restriction for RawArray value types. '''
+There is no restriction for NumericArray value types. '''
 VALID_PACKED_ARRAY_TYPES = frozenset((
     ARRAY_TYPES.Integer8,
     ARRAY_TYPES.Integer16,
