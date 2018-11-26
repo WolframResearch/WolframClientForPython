@@ -13,7 +13,8 @@ from wolframclient.language import wl, wlexpr
 from wolframclient.language.expression import WLFunction, WLSymbol
 from wolframclient.serializers import export
 from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config
-from wolframclient.utils.tests import TestCase as BaseTestCase, path_to_file_in_data_dir
+from wolframclient.utils.tests import TestCase as BaseTestCase
+from wolframclient.utils.tests import path_to_file_in_data_dir
 
 try:
     import PIL.Image
@@ -242,20 +243,19 @@ class TestCase(TestCaseSettings):
         self.class_bad_kwargs_parameters(self, WolframLanguageSession)
 
     IMAGE_FILES_DIMS = {
-        "10ct_32bit_128.tiff":[128,128],
-        "16_bit_binary_pgm.png":[20,100],
-        "hopper.ppm":[128,128],
-        "pal1wb.bmp":[127,64],
-        "pil_sample_cmyk.jpg":[100,100],
-        "umbrellaRGBA.png":[1789,1920]
+        "10ct_32bit_128.tiff": [128, 128],
+        "16_bit_binary_pgm.png": [20, 100],
+        "hopper.ppm": [128, 128],
+        "pal1wb.bmp": [127, 64],
+        "pil_sample_cmyk.jpg": [100, 100],
+        "umbrellaRGBA.png": [1789, 1920]
     }
+
     @unittest.skipIf(not has_pil, "PIL not found skipping image test.")
     def test_images_serialization(self):
         for path, dimensions in self.IMAGE_FILES_DIMS.items():
             with PIL.Image.open(path_to_file_in_data_dir(path)) as img:
-                res = self.kernel_session.evaluate(
-                    wl.ImageDimensions(img)
-                )
+                res = self.kernel_session.evaluate(wl.ImageDimensions(img))
                 self.assertEqual(res, dimensions)
 
     @unittest.skipIf(not has_pil, "PIL not found skipping image test.")
@@ -264,14 +264,16 @@ class TestCase(TestCaseSettings):
         img2_path = "pal1wb.bmp"
         with PIL.Image.open(path_to_file_in_data_dir(img1_path)) as img1:
             with PIL.Image.open(path_to_file_in_data_dir(img2_path)) as img2:
-                res = self.kernel_session.evaluate(wl.Map(
-                    wl.ImageDimensions,
-                    {
-                        'img1' : img1,
-                        'img2' : img2
-                    }
-                ))
-                self.assertEqual(res, {'img1':self.IMAGE_FILES_DIMS[img1_path], 'img2':self.IMAGE_FILES_DIMS[img2_path]})
+                res = self.kernel_session.evaluate(
+                    wl.Map(wl.ImageDimensions, {
+                        'img1': img1,
+                        'img2': img2
+                    }))
+                self.assertEqual(
+                    res, {
+                        'img1': self.IMAGE_FILES_DIMS[img1_path],
+                        'img2': self.IMAGE_FILES_DIMS[img2_path]
+                    })
 
     def test_stop_start_restart_status(self):
         self._stop_start_restart_status(WolframLanguageSession)

@@ -36,7 +36,8 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
                  xauth_session_class=XAuthAsyncSession,
                  http_sessionclass=ClientSession,
                  ssl_context_class=ssl.SSLContext):
-        super().__init__(loop, inputform_string_evaluation=inputform_string_evaluation)
+        super().__init__(
+            loop, inputform_string_evaluation=inputform_string_evaluation)
         self.server = server
         self.http_session = None
         self.http_sessionclass = http_sessionclass
@@ -209,8 +210,7 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
         or a the string InputForm of an expression to evaluate.
         """
         response = await self._call_evaluation_api(
-            self.normalize_input(expr),
-            **kwargs)
+            self.normalize_input(expr), **kwargs)
         return await response.get()
 
     async def evaluate_wrap(self, expr, **kwargs):

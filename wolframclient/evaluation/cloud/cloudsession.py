@@ -50,7 +50,8 @@ class WolframCloudSession(WolframEvaluator):
                  oauth_session_class=OAuthSession,
                  xauth_session_class=XAuthSession,
                  http_sessionclass=requests.Session):
-        super().__init__(inputform_string_evaluation=inputform_string_evaluation)
+        super().__init__(
+            inputform_string_evaluation=inputform_string_evaluation)
         self.server = server
         self.evaluation_api_url = evaluation_api_url(self.server)
         self.http_sessionclass = http_sessionclass
@@ -209,14 +210,13 @@ class WolframCloudSession(WolframEvaluator):
         `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export`,
         or a the string InputForm of an expression to evaluate.
         """
-        return self._call_evaluation_api(
-            self.normalize_input(expr), **kwargs).get()
+        return self._call_evaluation_api(self.normalize_input(expr),
+                                         **kwargs).get()
 
     def evaluate_wrap(self, expr, **kwargs):
         """ Similar to :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframEvaluationJSONResponse`.
         """
-        return self._call_evaluation_api(
-            self.normalize_input(expr), **kwargs)
+        return self._call_evaluation_api(self.normalize_input(expr), **kwargs)
 
     def wolfram_api_call(self, api, **kwargs):
         """ Build an helper class instance to call a given API. """

@@ -35,7 +35,7 @@ class WolframEvaluatorBase(object):
         as input form strings and wrapped into :func:`~wolframclient.language.wlexpr`
     """
     stopped = True  # avoid error in __del__ if __init__ failed.
-    
+
     def __init__(self, inputform_string_evaluation=True, **kwargs):
         self.inputform_string_evaluation = inputform_string_evaluation
 
@@ -57,10 +57,12 @@ class WolframEvaluatorBase(object):
         """ Normalize a given python object representing an expr to as object
         as expected by evaluators.
         """
-        if self.inputform_string_evaluation and isinstance(expr, six.string_types):
+        if self.inputform_string_evaluation and isinstance(
+                expr, six.string_types):
             return wlexpr(expr)
         else:
             return expr
+
 
 class WolframEvaluator(WolframEvaluatorBase):
     """ Synchronous evaluator abstract class. """
@@ -108,6 +110,7 @@ class WolframEvaluator(WolframEvaluatorBase):
         is evaluated using the underlying Wolfram evaluator.
         """
         normalized_expr = self.normalize_input(expr)
+
         def inner(*args, **opts):
             return self.evaluate(WLFunction(normalized_expr, *args, **opts))
 
@@ -174,8 +177,10 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
         The coroutine returned is attached to a given asynchronous evaluator.
         """
         normalized_expr = self.normalize_input(expr)
+
         async def inner(*args, **opts):
-            return await self.evaluate(WLFunction(normalized_expr, *args, **opts))
+            return await self.evaluate(
+                WLFunction(normalized_expr, *args, **opts))
 
         return inner
 

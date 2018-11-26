@@ -143,7 +143,8 @@ class WolframLanguageSession(WolframEvaluator):
                  inputform_string_evaluation=True,
                  wxf_bytes_evaluation=True,
                  **kwargs):
-        super().__init__(inputform_string_evaluation=inputform_string_evaluation)
+        super().__init__(
+            inputform_string_evaluation=inputform_string_evaluation)
         if isinstance(kernel, six.string_types):
             if not os.isfile(kernel):
                 raise WolframKernelException(
@@ -497,8 +498,7 @@ class WolframLanguageSession(WolframEvaluator):
     def evaluate_wxf(self, expr, **kwargs):
         """Send an expression to the kernel for evaluation and return the raw result still encoded as WXF.
         """
-        result = self._evaluate(
-            self.normalize_input(expr), **kwargs)
+        result = self._evaluate(self.normalize_input(expr), **kwargs)
         if not result.success:
             for msg in result.messages:
                 logger.warning(msg[1])
@@ -507,8 +507,7 @@ class WolframLanguageSession(WolframEvaluator):
     def evaluate_wrap(self, expr, **kwargs):
         """ Similar to :func:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.
         """
-        return self._evaluate(
-            self.normalize_input(expr), **kwargs)
+        return self._evaluate(self.normalize_input(expr), **kwargs)
 
     def evaluate(self, expr, **kwargs):
         """Send an expression to the kernel for evaluation.
@@ -522,9 +521,7 @@ class WolframLanguageSession(WolframEvaluator):
         `kwargs` are passed to :func:`~wolframclient.serializers.export` during serialization step of
         non-string inputs.
         """
-        result = self._evaluate(
-            self.normalize_input(expr),
-            **kwargs)
+        result = self._evaluate(self.normalize_input(expr), **kwargs)
         if not result.success:
             for msg in result.messages:
                 logger.warning(msg[1])
