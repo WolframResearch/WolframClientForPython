@@ -57,10 +57,9 @@ def update_dispatch(dispatch):
         if mode in MODE_MAPPING:
             data=normalize_array(numpy.array(img))
             wl_data_type, colorspace, interleaving = MODE_MAPPING[mode]
-            if not colorspace:
-                colorspace = wl.Automatic
+
             return self.normalize(
-                wl.Image(data, wl_data_type, ColorSpace=colorspace, Interleaving=interleaving)
+                wl.Image(data, wl_data_type, ColorSpace=colorspace or wl.Automatic, Interleaving=interleaving)
             )
         else:
             # try to use format and import/export, may fail during save() and raise exception.
