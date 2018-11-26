@@ -243,7 +243,7 @@ class TestCase(TestCaseSettings):
                                                      WolframLanguageSession)
 
 
-    IMAGE_FILES = {
+    IMAGE_FILES_DIMS = {
         "10ct_32bit_128.tiff":[128,128],
         "16_bit_binary_pgm.png":[20,100],
         "hopper.ppm":[128,128],
@@ -253,13 +253,27 @@ class TestCase(TestCaseSettings):
     }
     @unittest.skipIf(not has_pil, "PIL not found skipping image test.")
     def test_images_serialization(self):
-        for path, dimensions in self.IMAGE_FILES.items():
+        for path, dimensions in self.IMAGE_FILES_DIMS.items():
             with PIL.Image.open(path_to_file_in_data_dir(path)) as img:
                 res = self.kernel_session.evaluate(
                     wl.ImageDimensions(img)
                 )
                 self.assertEqual(res, dimensions)
 
+    @unittest.skipIf(not has_pil, "PIL not found skipping image test.")
+    def test_images_in_expr(self):
+        img1_path = "hopper.ppm"
+        img2_path = "pal1wb.bmp"
+        with PIL.Image.open(path_to_file_in_data_dir(img1_path)) as img1:
+            with PIL.Image.open(path_to_file_in_data_dir(img2_path)) as img2:
+                res = self.kernel_session.evaluate(wl.Map(
+                    wl.ImageDimensions,
+                    {
+                        'img1' : img1,
+                        'img2' : img2
+                    }
+                ))
+                self.assertEqual(res, {'img1':self.IMAGE_FILES_DIMS[img1_path], 'img2':self.IMAGE_FILES_DIMS[img2_path]})
 
 @unittest.skipIf(six.PY2, "Module future is not available.")
 class TestFutureSession(TestCaseSettings):
