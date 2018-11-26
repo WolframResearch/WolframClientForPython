@@ -3,7 +3,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import sys
-import io
 from wolframclient.utils import six 
 from wolframclient.utils.api import PIL, numpy
 from wolframclient.language import wl
@@ -65,7 +64,7 @@ def update_dispatch(dispatch):
             )
         else:
             # try to use format and import/export, may fail during save() and raise exception.
-            stream = io.BytesIO()
+            stream = six.BytesIO()
             img_format=img.format or "PNG"
             try:
                 img.save(stream, format=img_format)
