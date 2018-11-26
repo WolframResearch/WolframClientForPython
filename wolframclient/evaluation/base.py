@@ -121,10 +121,7 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
     Most methods from this class are similar to their counterpart from :class:`~wolframclient.evaluation.base.WolframEvaluator`,
     except that they are coroutines. """
     def __init__(self, loop=None):
-        if loop:
-            self._loop = loop
-        else:
-            self._loop = asyncio.get_event_loop()
+        self._loop = loop or asyncio.get_event_loop()
 
     async def evaluate(self, expr):
         result = await self.evaluate_wrap(expr)
