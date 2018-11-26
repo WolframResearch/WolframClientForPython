@@ -63,20 +63,6 @@ def update_dispatch(dispatch):
             return self.normalize(
                 wl.Image(data, wl_data_type, ColorSpace=colorspace, Interleaving=interleaving)
             )
-            # self.serialize_function(
-            #     self.serialize_symbol(b'Image'),
-            #     (
-            #         self.serialize_numeric_array(data),
-            #         self.serialize_rule(
-            #             self.serialize_symbol(b'ColorSpace'),
-            #             colorspace or self.serialize_symbol(b'Automatic')
-            #         ),
-            #         self.serialize_rule(
-            #             self.serialize_symbol(b'Interleaving'),
-            #             self.serialize_symbol(six.force_bytes(interleaving))
-            #         )
-            #     )
-            # )
         else:
             # try to use format and import/export, may fail during save() and raise exception.
             stream = io.BytesIO()
