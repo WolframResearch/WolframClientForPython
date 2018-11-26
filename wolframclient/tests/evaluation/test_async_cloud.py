@@ -11,9 +11,8 @@ from wolframclient.evaluation.cloud.asynccloudsession import (
     WolframAPICallAsync, WolframCloudAsyncSession)
 from wolframclient.evaluation.cloud.base import (SecuredAuthenticationKey,
                                                  UserIDPassword)
-from wolframclient.exception import (AuthenticationException,
-                                     WolframLanguageException,
-                                     RequestException)
+from wolframclient.exception import (AuthenticationException, RequestException,
+                                     WolframLanguageException)
 from wolframclient.language import wl
 from wolframclient.tests.configure import (MSG_JSON_NOT_FOUND, json_config,
                                            secured_authentication_key, server,
@@ -166,7 +165,8 @@ class TestCase(TestCaseSettings):
             response = await cloud_session.call((self.api_owner, url),
                                                 input_parameters={'i': 5})
             self.assertTrue(response.success)
-            self.assertEqual(json.loads(await response.get()), list(range(1, 6)))
+            self.assertEqual(
+                json.loads(await response.get()), list(range(1, 6)))
         finally:
             await cloud_session.terminate()
 

@@ -6,11 +6,12 @@ import logging
 import unittest
 
 from wolframclient.deserializers import binary_deserialize
-from wolframclient.evaluation import (WolframEvaluatorPool,
-                                      WolframLanguageAsyncSession, WolframCloudAsyncSession,
-                                      parallel_evaluate)
+from wolframclient.evaluation import (
+    WolframCloudAsyncSession, WolframEvaluatorPool,
+    WolframLanguageAsyncSession, parallel_evaluate)
 from wolframclient.language import wl
-from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config, secured_authentication_key
+from wolframclient.tests.configure import (MSG_JSON_NOT_FOUND, json_config,
+                                           secured_authentication_key)
 from wolframclient.tests.evaluation.test_kernel import \
     TestCaseSettings as TestKernelBase
 from wolframclient.utils import six
@@ -182,22 +183,23 @@ class TestKernelPool(BaseTestCase):
         await self.pool.terminate()
         session = WolframLanguageAsyncSession(self.KERNEL_PATH)
         async with WolframEvaluatorPool(
-            session,
-            kernel_loglevel=logging.INFO,
-            STARTUP_READ_TIMEOUT=5,
-            TERMINATE_READ_TIMEOUT=3) as pool:
+                session,
+                kernel_loglevel=logging.INFO,
+                STARTUP_READ_TIMEOUT=5,
+                TERMINATE_READ_TIMEOUT=3) as pool:
             await self._pool_evaluation_check(pool)
         self.assertFalse(session.started)
         self.assertTrue(session.stopped)
-            
+
     @run_in_loop
     async def test_pool_from_one_cloud(self):
-        session = WolframCloudAsyncSession(credentials=secured_authentication_key)
+        session = WolframCloudAsyncSession(
+            credentials=secured_authentication_key)
         async with WolframEvaluatorPool(
-            session,
-            kernel_loglevel=logging.INFO,
-            STARTUP_READ_TIMEOUT=5,
-            TERMINATE_READ_TIMEOUT=3) as pool:
+                session,
+                kernel_loglevel=logging.INFO,
+                STARTUP_READ_TIMEOUT=5,
+                TERMINATE_READ_TIMEOUT=3) as pool:
             await self._pool_evaluation_check(pool)
         self.assertFalse(session.started)
         self.assertTrue(session.stopped)
@@ -205,19 +207,20 @@ class TestKernelPool(BaseTestCase):
     @run_in_loop
     async def test_pool_from_mixed_kernel_cloud_path(self):
         await self.pool.terminate()
-        sessions = (WolframCloudAsyncSession(credentials=secured_authentication_key), 
-            WolframLanguageAsyncSession(self.KERNEL_PATH), self.KERNEL_PATH)
+        sessions = (WolframCloudAsyncSession(
+            credentials=secured_authentication_key),
+                    WolframLanguageAsyncSession(self.KERNEL_PATH),
+                    self.KERNEL_PATH)
         async with WolframEvaluatorPool(
-            sessions,
-            kernel_loglevel=logging.INFO,
-            STARTUP_READ_TIMEOUT=5,
-            TERMINATE_READ_TIMEOUT=3) as pool:
+                sessions,
+                kernel_loglevel=logging.INFO,
+                STARTUP_READ_TIMEOUT=5,
+                TERMINATE_READ_TIMEOUT=3) as pool:
             await self._pool_evaluation_check(pool)
         for session in sessions:
             if not isinstance(session, six.string_types):
                 self.assertFalse(session.started)
                 self.assertTrue(session.stopped)
-
 
     async def _pool_evaluation_check(self, pool):
         tasks = [
@@ -232,40 +235,46 @@ class TestKernelPool(BaseTestCase):
         for elem in res:
             self.assertTrue(isinstance(elem, six.string_types))
 
+
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestParalleleEvaluate(BaseTestCase):
-        
+
     KERNEL_PATH = json_config['kernel']
 
     def test_parallel_evaluate_local(self):
-        exprs = [wl.FromLetterNumber(i) for i in range(1,11)]
+        exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
         res = parallel_evaluate(self.KERNEL_PATH, exprs)
         self.assertEqual(res,
                          ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"])
 
     def test_parallel_evaluate_sizeone(self):
-        exprs = [wl.FromLetterNumber(i) for i in range(1,11)]
+        exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
         res = parallel_evaluate(self.KERNEL_PATH, exprs, max_evaluators=1)
         self.assertEqual(res,
                          ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"])
 
     def test_parallel_evaluate_sizeone(self):
-        exprs = [wl.FromLetterNumber(i) for i in range(1,11)]
-        res = parallel_evaluate([self.KERNEL_PATH, self.KERNEL_PATH,self.KERNEL_PATH], exprs, max_evaluators=1)
+        exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
+        res = parallel_evaluate(
+            [self.KERNEL_PATH, self.KERNEL_PATH, self.KERNEL_PATH],
+            exprs,
+            max_evaluators=1)
         self.assertEqual(res,
                          ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"])
 
     def test_parallel_evaluate_cloud(self):
-        cloud = WolframCloudAsyncSession(credentials=secured_authentication_key)
-        exprs = [wl.FromLetterNumber(i) for i in range(1,11)]
+        cloud = WolframCloudAsyncSession(
+            credentials=secured_authentication_key)
+        exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
         res = parallel_evaluate(cloud, exprs)
         self.assertEqual(len(res), 10)
         for elem in res:
             self.assertTrue(isinstance(elem, six.string_types))
 
     def test_parallel_evaluate_mixed(self):
-        cloud = WolframCloudAsyncSession(credentials=secured_authentication_key)
-        exprs = [wl.FromLetterNumber(i) for i in range(1,11)]
+        cloud = WolframCloudAsyncSession(
+            credentials=secured_authentication_key)
+        exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
         res = parallel_evaluate([cloud, self.KERNEL_PATH, cloud], exprs)
         self.assertEqual(len(res), 10)
         for elem in res:

@@ -27,7 +27,6 @@ def normalizer(self, o):
 
 
 class DispatchUpdater(object):
-
     def __init__(self, dispatch):
         self.registry = defaultdict(list)
         self.modules = set()

@@ -2,17 +2,17 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import logging
 import itertools
+import logging
 from asyncio import CancelledError
 
-from wolframclient.utils import six
+from wolframclient.evaluation.base import WolframAsyncEvaluator
 from wolframclient.evaluation.kernel.asyncsession import (
     WolframLanguageAsyncSession)
 from wolframclient.exception import WolframKernelException
-from wolframclient.evaluation.base import WolframAsyncEvaluator
-from wolframclient.utils.functional import is_iterable
+from wolframclient.utils import six
 from wolframclient.utils.api import asyncio
+from wolframclient.utils.functional import is_iterable
 
 logger = logging.getLogger(__name__)
 
@@ -80,23 +80,27 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
                 if len(self._evaluators) >= poolsize:
                     break
                 self._add_evaluator(evaluator)
-            
+
         self._started_tasks = []
         self._pending_init_tasks = None
         self.last = 0
         self.eval_count = 0
-        self.requestedsize = poolsize        
+        self.requestedsize = poolsize
 
     def _add_evaluator(self, evaluator, **kwargs):
         if isinstance(evaluator, six.string_types):
-            self._evaluators.add(self.async_language_session_class(evaluator, loop=self._loop, **kwargs))
+            self._evaluators.add(
+                self.async_language_session_class(
+                    evaluator, loop=self._loop, **kwargs))
         elif isinstance(evaluator, WolframAsyncEvaluator):
             if evaluator in self._evaluators:
                 self._evaluators.add(evaluator.duplicate())
             else:
                 self._evaluators.add(evaluator)
         else:
-            raise ValueError('Invalid asynchronous evaluator specifications. %s is neither a string nor a WolframAsyncEvaluator instance.' % evaluator)
+            raise ValueError(
+                'Invalid asynchronous evaluator specifications. %s is neither a string nor a WolframAsyncEvaluator instance.'
+                % evaluator)
 
     async def _kernel_loop(self, kernel):
         while True:
@@ -114,8 +118,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
                 # those method can't be canceled since the kernel is evaluating anyway.
                 try:
                     func = getattr(kernel, func)
-                    result = await asyncio.shield(
-                        func(*args, **kwargs))
+                    result = await asyncio.shield(func(*args, **kwargs))
                     future.set_result(result)
                 except Exception as e:
                     future.set_exception(e)
@@ -171,8 +174,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
 
         if kernel_started:
             # shedule the infinite evaluation loop
-            task = asyncio.create_task(
-                self._kernel_loop(kernel))
+            task = asyncio.create_task(self._kernel_loop(kernel))
             if logger.isEnabledFor(logging.INFO):
                 logger.info('New kernel started in pool: %s.', kernel)
             # register the task. The loop is not always started at this point.
@@ -251,20 +253,18 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
 
     async def evaluate(self, expr, **kwargs):
         future = asyncio.Future(loop=self._loop)
-        await self._put_evaluation_task(
-            future, 'evaluate', expr, **kwargs)
+        await self._put_evaluation_task(future, 'evaluate', expr, **kwargs)
         return await future
 
     async def evaluate_wxf(self, expr, **kwargs):
         future = asyncio.Future(loop=self._loop)
-        await self._put_evaluation_task(
-            future, 'evaluate_wxf', expr, **kwargs)
+        await self._put_evaluation_task(future, 'evaluate_wxf', expr, **kwargs)
         return await future
 
     async def evaluate_wrap(self, expr, **kwargs):
         future = asyncio.Future(loop=self._loop)
-        await self._put_evaluation_task(
-            future, 'evaluate_wrap', expr, **kwargs)
+        await self._put_evaluation_task(future, 'evaluate_wrap', expr,
+                                        **kwargs)
         return await future
 
     def evaluate_all(self, iterable):
@@ -282,7 +282,8 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         return len(self._started_tasks)
 
 
-def parallel_evaluate(evaluator_spec, expressions, max_evaluators=4, loop=None):
+def parallel_evaluate(evaluator_spec, expressions, max_evaluators=4,
+                      loop=None):
     """ Start a kernel pool using `evaluator_spec` and evaluate the expressions on the created
     pool, then terminate it and returns the results.
 
@@ -293,7 +294,8 @@ def parallel_evaluate(evaluator_spec, expressions, max_evaluators=4, loop=None):
     loop = loop or asyncio.get_event_loop()
     pool = None
     try:
-        pool = WolframEvaluatorPool(evaluator_spec, poolsize=max_evaluators, loop=loop)
+        pool = WolframEvaluatorPool(
+            evaluator_spec, poolsize=max_evaluators, loop=loop)
         loop.run_until_complete(pool.start())
         return pool.evaluate_all(expressions)
     finally:

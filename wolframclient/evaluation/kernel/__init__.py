@@ -7,7 +7,7 @@ from wolframclient.evaluation.kernel.futuresession import WolframLanguageFutureS
 from wolframclient.evaluation.kernel.asyncsession import WolframLanguageAsyncSession
 
 __all__ = [
-    'WolframLanguageSession', 
+    'WolframLanguageSession',
     'WolframLanguageFutureSession',
     'WolframLanguageAsyncSession',
-    ]
+]

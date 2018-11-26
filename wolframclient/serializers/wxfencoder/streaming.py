@@ -8,7 +8,6 @@ from wolframclient.utils.encoding import force_bytes
 
 
 class ZipCompressedWriter(object):
-
     def __init__(self, writer):
         """ Write zip compressed data to a given buffer writer. """
         self._compressor = zlib.compressobj()

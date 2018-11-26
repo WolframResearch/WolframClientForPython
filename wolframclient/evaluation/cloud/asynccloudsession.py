@@ -7,7 +7,7 @@ import ssl
 
 from aiohttp import BytesPayload, ClientSession, FormData
 
-from wolframclient.evaluation.base import WolframAsyncEvaluator, normalize_input
+from wolframclient.evaluation.base import WolframAsyncEvaluator
 from wolframclient.evaluation.cloud.asyncoauth import \
     OAuth1AIOHttpAsyncSession as OAuthAsyncSession
 from wolframclient.evaluation.cloud.asyncoauth import \
@@ -17,7 +17,6 @@ from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 from wolframclient.evaluation.result import (
     WolframAPIResponseBuilder, WolframEvaluationJSONResponseAsync)
 from wolframclient.exception import AuthenticationException
-from wolframclient.language import wlexpr
 from wolframclient.serializers import export
 from wolframclient.utils import six
 from wolframclient.utils.url import evaluation_api_url, user_api_url
@@ -37,9 +36,8 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
                  xauth_session_class=XAuthAsyncSession,
                  http_sessionclass=ClientSession,
                  ssl_context_class=ssl.SSLContext):
-        super().__init__(loop)
+        super().__init__(loop, inputform_string_evaluation=inputform_string_evaluation)
         self.server = server
-        self.inputform_string_evaluation = inputform_string_evaluation
         self.http_session = None
         self.http_sessionclass = http_sessionclass
         self.credentials = credentials
@@ -62,8 +60,7 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
             oauth_session_class=self.oauth_session_class,
             xauth_session_class=self.xauth_session_class,
             http_sessionclass=self.http_sessionclass,
-            ssl_context_class=self.ssl_context_class
-        )
+            ssl_context_class=self.ssl_context_class)
 
     async def start(self):
         self.stopped = False
@@ -80,7 +77,6 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
                 await self.terminate()
             finally:
                 raise e
-
 
     @property
     def started(self):
@@ -213,17 +209,15 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
         or a the string InputForm of an expression to evaluate.
         """
         response = await self._call_evaluation_api(
-            normalize_input(expr, string_as_inputform=self.inputform_string_evaluation), **kwargs)
+            self.normalize_input(expr),
+            **kwargs)
         return await response.get()
 
     async def evaluate_wrap(self, expr, **kwargs):
         """ Similar to :func:`~wolframclient.evaluation.cloud.asynccloudsession.WolframCloudAsyncSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframEvaluationJSONResponseAsync`.
         """
         return await self._call_evaluation_api(
-            normalize_input(expr, self.inputform_string_evaluation), **kwargs)
-
-    def function(self, func):
-        return super().function(normalize_input(func, string_as_inputform=self.inputform_string_evaluation))
+            self.normalize_input(expr), **kwargs)
 
     def wolfram_api_call(self, api, **kwargs):
         """ Build an helper class instance to call a given API. """

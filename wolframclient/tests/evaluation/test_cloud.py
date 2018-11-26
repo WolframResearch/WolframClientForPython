@@ -247,7 +247,7 @@ class TestCase(TestCaseSettings):
     def test_stop_start_restart_status(self):
         self._stop_start_restart_status(WolframCloudSession)
         self._stop_start_restart_status(WolframCloudSessionFuture)
-    
+
     def _stop_start_restart_status(self, eval_class):
         session = None
         try:
@@ -269,7 +269,6 @@ class TestCase(TestCaseSettings):
         finally:
             if session:
                 session.terminate()
-
 
     # url_join
 

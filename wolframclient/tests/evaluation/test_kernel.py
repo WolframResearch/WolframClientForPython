@@ -6,15 +6,14 @@ import logging
 import unittest
 
 from wolframclient.deserializers import binary_deserialize
+from wolframclient.evaluation import (WolframLanguageFutureSession,
+                                      WolframLanguageSession)
 from wolframclient.exception import WolframKernelException
 from wolframclient.language import wl, wlexpr
 from wolframclient.language.expression import WLFunction, WLSymbol
 from wolframclient.serializers import export
 from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config
 from wolframclient.utils.tests import TestCase as BaseTestCase
-
-
-from wolframclient.evaluation import WolframLanguageSession, WolframLanguageFutureSession, WolframCloudSession, WolframCloudSessionFuture
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -234,9 +233,7 @@ class TestCase(TestCaseSettings):
         TestCaseSettings.class_kwargs_parameters(self, WolframLanguageSession)
 
     def test_bad_kwargs_parameters(self):
-        self.class_bad_kwargs_parameters(self,
-                                                     WolframLanguageSession)
-
+        self.class_bad_kwargs_parameters(self, WolframLanguageSession)
 
     def test_stop_start_restart_status(self):
         self._stop_start_restart_status(WolframLanguageSession)
@@ -263,6 +260,7 @@ class TestCase(TestCaseSettings):
         finally:
             if session:
                 session.terminate()
+
 
 class TestFutureSession(TestCaseSettings):
     @classmethod
@@ -326,8 +324,7 @@ class TestFutureSession(TestCaseSettings):
                                                  WolframLanguageFutureSession)
 
     def test_bad_kwargs_parameters(self):
-        self.class_bad_kwargs_parameters(
-            self, WolframLanguageFutureSession)
+        self.class_bad_kwargs_parameters(self, WolframLanguageFutureSession)
 
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
@@ -346,7 +343,7 @@ class TestCaseSession(TestCaseSettings):
             session = WolframLanguageSession(self.KERNEL_PATH)
             session.start()
             session.stop()
-            res=session.evaluate('1+1')
+            res = session.evaluate('1+1')
             self.assertEqual(res, 2)
         finally:
             if session:

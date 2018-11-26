@@ -6,8 +6,8 @@ from wolframclient.serializers.wxfencoder.constants import (
     ARRAY_TYPES, WXF_CONSTANTS, WXF_HEADER_COMPRESS, WXF_HEADER_SEPARATOR,
     WXF_VERSION)
 from wolframclient.serializers.wxfencoder.wxfencoder import WXFEncoder
-from wolframclient.serializers.wxfencoder.wxfexpr import (WXFExprPackedArray,
-                                                          WXFExprNumericArray)
+from wolframclient.serializers.wxfencoder.wxfexpr import (WXFExprNumericArray,
+                                                          WXFExprPackedArray)
 from wolframclient.utils.api import numpy
 
 __all__ = [

@@ -5,7 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import logging
 import ssl
 
-from aiohttp import FormData, Payload, StringPayload
+from aiohttp import FormData, StringPayload
 
 from wolframclient.evaluation.cloud.base import (OAuthAsyncSessionBase,
                                                  UserIDPassword)
@@ -49,7 +49,7 @@ class OAuthAIOHttpAsyncSessionBase(OAuthAsyncSessionBase):
         for k, v in headers.items():
             req_headers[k] = v
         sign_body = False
-        
+
         # Payload Instances are not encoded (e.g: octet stream). Only FormData are.
         form_encoded = isinstance(data, FormData) and not data.is_multipart
         multipart = isinstance(data, FormData) and data.is_multipart

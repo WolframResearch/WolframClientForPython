@@ -254,7 +254,7 @@ class WolframEvaluationJSONResponseAsync(WolframEvaluationJSONResponse):
 
 class WolframAPIResponse(WolframResult):
     """Generic API response."""
-    
+
     def __init__(self, response, decoder=None):
         self.response = response
         self.decoder = decoder
@@ -442,8 +442,8 @@ class WolframAPIResponse400(WolframAPIFailureResponse):
         except json.JSONDecodeError as e:
             logger.fatal('Failed to parse server response as json:\n%s',
                          self.response.content())
-            raise RequestException(self.response,
-                                   msg='Failed to parse server response as json.')
+            raise RequestException(
+                self.response, msg='Failed to parse server response as json.')
         self._update_from_json()
         self._built = True
 
@@ -465,8 +465,8 @@ class WolframAPIResponse400Async(WolframAPIResponse400,
         except json.JSONDecodeError as e:
             logger.fatal('Failed to parse server response as json:\n%s', await
                          self.response.content)
-            raise RequestException(self.response,
-                                   msg='Failed to parse server response as json.')
+            raise RequestException(
+                self.response, msg='Failed to parse server response as json.')
         self._update_from_json()
         self._built = True
 

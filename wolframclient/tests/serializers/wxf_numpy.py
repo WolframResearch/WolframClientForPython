@@ -164,4 +164,5 @@ class TestCase(BaseTestCase):
 
     def test_bad_options(self):
         with self.assertRaises(ValueError):
-            NumPyWXFEncoder(packed_array_support=False, numeric_array_support=False)
+            NumPyWXFEncoder(
+                packed_array_support=False, numeric_array_support=False)

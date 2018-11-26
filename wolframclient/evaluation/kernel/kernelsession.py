@@ -5,10 +5,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 import logging
 from subprocess import PIPE, Popen
 from threading import Event, Thread
-from wolframclient.evaluation.base import WolframEvaluator, normalize_input
+
+from wolframclient.evaluation.base import WolframEvaluator
 from wolframclient.evaluation.result import WolframKernelEvaluationResult
 from wolframclient.exception import WolframKernelException
-from wolframclient.language import wl, wlexpr
 from wolframclient.serializers import export
 from wolframclient.utils import six
 from wolframclient.utils.api import json, os, time, zmq
@@ -143,6 +143,7 @@ class WolframLanguageSession(WolframEvaluator):
                  inputform_string_evaluation=True,
                  wxf_bytes_evaluation=True,
                  **kwargs):
+        super().__init__(inputform_string_evaluation=inputform_string_evaluation)
         if isinstance(kernel, six.string_types):
             if not os.isfile(kernel):
                 raise WolframKernelException(
@@ -170,8 +171,8 @@ class WolframLanguageSession(WolframEvaluator):
             raise ValueError(
                 'Expecting kernel input socket to be a Socket instance.')
         if out_socket is not None and not isinstance(out_socket, Socket):
-                raise ValueError(
-                    'Expecting kernel output socket to be a Socket instance.')
+            raise ValueError(
+                'Expecting kernel output socket to be a Socket instance.')
         self.out_socket = out_socket
         self.in_socket = in_socket
         self.consumer = consumer
@@ -183,26 +184,26 @@ class WolframLanguageSession(WolframEvaluator):
         self._stdin = stdin
         self._stdout = stdout
         self._stderr = stderr
-        self.inputform_string_evaluation = inputform_string_evaluation
         self.wxf_bytes_evaluation = wxf_bytes_evaluation
         # some parameters may be passed as kwargs
         for k, v in kwargs.items():
             self.set_parameter(k, v)
-    
+
     def duplicate(self, session):
         """ Build a new object using the same configuration of the current one. """
-        return WolframLanguageSession(self.kernel,
-                 consumer=self.consumer,
-                 initfile=self.initfile,
-                 in_socket=self.in_socket,
-                 out_socket=self.out_socket,
-                 kernel_loglevel=self.loglevel,
-                 stdin=self._stdin,
-                 stdout=self._stdout,
-                 stderr=self._stderr,
-                 inputform_string_evaluation=self.inputform_string_evaluation,
-                 wxf_bytes_evaluation=self.wxf_bytes_evaluation,
-                 **self.parameters)
+        return WolframLanguageSession(
+            self.kernel,
+            consumer=self.consumer,
+            initfile=self.initfile,
+            in_socket=self.in_socket,
+            out_socket=self.out_socket,
+            kernel_loglevel=self.loglevel,
+            stdin=self._stdin,
+            stdout=self._stdout,
+            stderr=self._stderr,
+            inputform_string_evaluation=self.inputform_string_evaluation,
+            wxf_bytes_evaluation=self.wxf_bytes_evaluation,
+            **self.parameters)
 
     _DEFAULT_PARAMETERS = {
         'STARTUP_READ_TIMEOUT': 20,
@@ -276,7 +277,9 @@ class WolframLanguageSession(WolframEvaluator):
                     error = True
                 if not error:
                     try:
-                        self.kernel_proc.wait(timeout=self.get_parameter('TERMINATE_READ_TIMEOUT'))
+                        self.kernel_proc.wait(
+                            timeout=self.get_parameter(
+                                'TERMINATE_READ_TIMEOUT'))
                     except:
                         logger.info(
                             'Kernel process failed to stop after %.02f seconds. Killing it.'
@@ -330,11 +333,10 @@ class WolframLanguageSession(WolframEvaluator):
                 logger.fatal(e)
             finally:
                 self.kernel_logger = None
-        assert(self.kernel_proc is None)
-        assert(self.out_socket is None)
-        assert(self.in_socket is None)
-        assert(self.kernel_logger is None)
-
+        assert (self.kernel_proc is None)
+        assert (self.out_socket is None)
+        assert (self.in_socket is None)
+        assert (self.kernel_logger is None)
 
     _socket_read_sleep_func = time.sleep
 
@@ -342,9 +344,9 @@ class WolframLanguageSession(WolframEvaluator):
 
     @property
     def started(self):
-        return (self.kernel_proc is not None 
-            and self.in_socket and self.in_socket.bound
-            and self.out_socket and self.out_socket.bound)
+        return (self.kernel_proc is not None and self.in_socket
+                and self.in_socket.bound and self.out_socket
+                and self.out_socket.bound)
 
     def start(self):
         try:
@@ -353,8 +355,8 @@ class WolframLanguageSession(WolframEvaluator):
             try:
                 self.terminate()
             finally:
-                assert(self.stopped)
-                assert(not self.started)
+                assert (self.stopped)
+                assert (not self.started)
                 raise e
 
     def _start(self):
@@ -458,7 +460,7 @@ class WolframLanguageSession(WolframEvaluator):
         """Send an expression to the kernel for evaluation. Return a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.
         """
         self._ensure_started()
-        assert(self.started)
+        assert (self.started)
         start = time.perf_counter()
         if self.wxf_bytes_evaluation and isinstance(expr, six.binary_type):
             data = expr
@@ -469,7 +471,6 @@ class WolframLanguageSession(WolframEvaluator):
             logger.debug('Expression sent to kernel in %.06fsec',
                          time.perf_counter() - start)
             start = time.perf_counter()
-
 
         # read the message as bytes.
         msg_count = self.out_socket.zmq_socket.recv()
@@ -496,7 +497,8 @@ class WolframLanguageSession(WolframEvaluator):
     def evaluate_wxf(self, expr, **kwargs):
         """Send an expression to the kernel for evaluation and return the raw result still encoded as WXF.
         """
-        result = self._evaluate(normalize_input(expr, string_as_inputform=self.inputform_string_evaluation), **kwargs)
+        result = self._evaluate(
+            self.normalize_input(expr), **kwargs)
         if not result.success:
             for msg in result.messages:
                 logger.warning(msg[1])
@@ -505,7 +507,8 @@ class WolframLanguageSession(WolframEvaluator):
     def evaluate_wrap(self, expr, **kwargs):
         """ Similar to :func:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.
         """
-        return self._evaluate(normalize_input(expr, string_as_inputform=self.inputform_string_evaluation), **kwargs)
+        return self._evaluate(
+            self.normalize_input(expr), **kwargs)
 
     def evaluate(self, expr, **kwargs):
         """Send an expression to the kernel for evaluation.
@@ -520,15 +523,12 @@ class WolframLanguageSession(WolframEvaluator):
         non-string inputs.
         """
         result = self._evaluate(
-            normalize_input(expr, 
-                string_as_inputform=self.inputform_string_evaluation), **kwargs)
+            self.normalize_input(expr),
+            **kwargs)
         if not result.success:
             for msg in result.messages:
                 logger.warning(msg[1])
         return result.get()
-
-    def function(self, expr):
-        return super().function(normalize_input(expr, string_as_inputform=self.inputform_string_evaluation))
 
     def __repr__(self):
         if self.started:
@@ -537,7 +537,6 @@ class WolframLanguageSession(WolframEvaluator):
                 self.in_socket.uri, self.out_socket.uri)
         else:
             return '<%s: not started>' % self.__class__.__name__
-
 
 
 class SocketException(Exception):
@@ -555,8 +554,7 @@ class Socket(object):
             self.uri = 'tcp://' + self.host
         self.zmq_type = zmq_type
         self.bound = False
-        self.zmq_socket = zmq.Context.instance().socket(
-            zmq_type)
+        self.zmq_socket = zmq.Context.instance().socket(zmq_type)
         self.closed = False
 
     def bind(self):

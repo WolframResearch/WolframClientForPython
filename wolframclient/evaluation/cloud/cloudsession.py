@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
 
-from wolframclient.evaluation.base import WolframEvaluator, normalize_input
+from wolframclient.evaluation.base import WolframEvaluator
 from wolframclient.evaluation.cloud.base import WolframAPICallBase
 from wolframclient.evaluation.cloud.oauth import \
     OAuth1RequestsSyncSession as OAuthSession
@@ -14,7 +14,6 @@ from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
 from wolframclient.evaluation.result import (WolframAPIResponseBuilder,
                                              WolframEvaluationJSONResponse)
 from wolframclient.exception import AuthenticationException
-from wolframclient.language import wlexpr
 from wolframclient.serializers import export
 from wolframclient.utils import six
 from wolframclient.utils.api import futures, json, requests
@@ -51,6 +50,7 @@ class WolframCloudSession(WolframEvaluator):
                  oauth_session_class=OAuthSession,
                  xauth_session_class=XAuthSession,
                  http_sessionclass=requests.Session):
+        super().__init__(inputform_string_evaluation=inputform_string_evaluation)
         self.server = server
         self.evaluation_api_url = evaluation_api_url(self.server)
         self.http_sessionclass = http_sessionclass
@@ -64,7 +64,6 @@ class WolframCloudSession(WolframEvaluator):
                 self.oauth_session_class = oauth_session_class
         self.oauth_session = None
         self.verify = self.server.certificate
-        self.inputform_string_evaluation = inputform_string_evaluation
 
     @property
     def started(self):
@@ -211,21 +210,13 @@ class WolframCloudSession(WolframEvaluator):
         or a the string InputForm of an expression to evaluate.
         """
         return self._call_evaluation_api(
-            normalize_input(expr,string_as_inputform=self.inputform_string_evaluation), **kwargs).get()
+            self.normalize_input(expr), **kwargs).get()
 
     def evaluate_wrap(self, expr, **kwargs):
         """ Similar to :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframEvaluationJSONResponse`.
         """
-        return self._call_evaluation_api(normalize_input(expr,string_as_inputform=self.inputform_string_evaluation), **kwargs)
-
-    def function(self, func):
-        """Return a `callable` cloud function.
-
-        The object returned can be applied on arguments as any other Python function, and
-        is evaluated in the cloud as a Wolfram Language expression using the current cloud
-        session.
-        """
-        return super().function(normalize_input(func, string_as_inputform=self.inputform_string_evaluation))
+        return self._call_evaluation_api(
+            self.normalize_input(expr), **kwargs)
 
     def wolfram_api_call(self, api, **kwargs):
         """ Build an helper class instance to call a given API. """
@@ -245,19 +236,21 @@ class WolframCloudSessionFuture(WolframCloudSession):
     `kwargs` are parameters as expect by `~wolframclient.evaluation.WolframCloudSession`
     """
 
-    def __init__(self, credentials=None,
+    def __init__(self,
+                 credentials=None,
                  server=WolframPublicCloudServer,
                  max_workers=None,
                  inputform_string_evaluation=True,
                  oauth_session_class=OAuthSession,
                  xauth_session_class=XAuthSession,
                  http_sessionclass=requests.Session):
-        super().__init__(credentials=credentials,
-                 server=server,
-                 inputform_string_evaluation=inputform_string_evaluation,
-                 oauth_session_class=oauth_session_class,
-                 xauth_session_class=xauth_session_class,
-                 http_sessionclass=http_sessionclass)
+        super().__init__(
+            credentials=credentials,
+            server=server,
+            inputform_string_evaluation=inputform_string_evaluation,
+            oauth_session_class=oauth_session_class,
+            xauth_session_class=xauth_session_class,
+            http_sessionclass=http_sessionclass)
         self._pool = None
         self._max_workers = max_workers
 

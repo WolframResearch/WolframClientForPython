@@ -5,11 +5,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 import asyncio
 import warnings
 
-from wolframclient.utils import six
 from wolframclient.language import wlexpr
 from wolframclient.language.expression import WLFunction
+from wolframclient.utils import six
 from wolframclient.utils.asyncio import wait_all
-
 """
 NOTES
 
@@ -30,10 +29,16 @@ NOTES
 
 
 class WolframEvaluatorBase(object):
-    """ All evaluators should inherit from thos base class. """
-    stopped = True # avoid error in __del__ if __init__ failed.
-    # started = False # all evaluators should be in this state at init.
+    """ All evaluators should inherit from this base class. 
     
+    `string_as_inputform` specifies if strings should be treated
+        as input form strings and wrapped into :func:`~wolframclient.language.wlexpr`
+    """
+    stopped = True  # avoid error in __del__ if __init__ failed.
+    
+    def __init__(self, inputform_string_evaluation=True, **kwargs):
+        self.inputform_string_evaluation = inputform_string_evaluation
+
     @property
     def started(self):
         raise NotImplementedError
@@ -48,9 +53,18 @@ class WolframEvaluatorBase(object):
                 "Unclosed instance of %s: %s" %
                 (self.__class__.__name__, self), ResourceWarning, **kwargs)
 
+    def normalize_input(self, expr):
+        """ Normalize a given python object representing an expr to as object
+        as expected by evaluators.
+        """
+        if self.inputform_string_evaluation and isinstance(expr, six.string_types):
+            return wlexpr(expr)
+        else:
+            return expr
 
 class WolframEvaluator(WolframEvaluatorBase):
     """ Synchronous evaluator abstract class. """
+
     def evaluate(self, expr):
         """ Evaluate a given Wolfram Language expression. """
         return self.evaluate_wrap(expr).get()
@@ -93,8 +107,9 @@ class WolframEvaluator(WolframEvaluatorBase):
         The object returned can be applied on arguments as any other Python function, and
         is evaluated using the underlying Wolfram evaluator.
         """
+        normalized_expr = self.normalize_input(expr)
         def inner(*args, **opts):
-            return self.evaluate(WLFunction(expr, *args, **opts))
+            return self.evaluate(WLFunction(normalized_expr, *args, **opts))
 
         return inner
 
@@ -120,7 +135,9 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
     
     Most methods from this class are similar to their counterpart from :class:`~wolframclient.evaluation.base.WolframEvaluator`,
     except that they are coroutines. """
-    def __init__(self, loop=None):
+
+    def __init__(self, loop=None, **kwargs):
+        super().__init__(**kwargs)
         self._loop = loop or asyncio.get_event_loop()
 
     async def evaluate(self, expr):
@@ -152,9 +169,13 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
         raise NotImplementedError
 
     def function(self, expr):
-        """ Return a coroutine from a Wolfram Language function. """
+        """ Return a coroutine from a Wolfram Language function. 
+        
+        The coroutine returned is attached to a given asynchronous evaluator.
+        """
+        normalized_expr = self.normalize_input(expr)
         async def inner(*args, **opts):
-            return await self.evaluate(WLFunction(expr, *args, **opts))
+            return await self.evaluate(WLFunction(normalized_expr, *args, **opts))
 
         return inner
 
@@ -169,7 +190,6 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
         """ Let the __enter__ method fail and propagate doing nothing. 
         
         This method should not be implemented in child classes."""
-        pass
 
     async def __aenter__(self):
         """ Asynchronous context management start function. """
@@ -190,15 +210,3 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
                 'message': 'Unclosed evaluator.'
             }
             self._loop.call_exception_handler(context)
-
-def normalize_input(expr, string_as_inputform=True):
-    """ Normalize a given python object representing an expr to as object
-    as expected by evaluators.
-
-    Option `string_as_inputform` specifies if strings should be treated
-    as input form strings and wrapped into wlexpr.
-    """
-    if string_as_inputform and isinstance(expr, six.string_types):
-        return wlexpr(expr)
-    else:
-        return expr

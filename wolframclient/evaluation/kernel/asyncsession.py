@@ -5,6 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import logging
 from subprocess import PIPE
 from threading import Event
+
 from wolframclient.evaluation.base import WolframAsyncEvaluator
 from wolframclient.evaluation.kernel.kernelsession import (
     WolframLanguageSession)
@@ -15,7 +16,8 @@ logger = logging.getLogger(__name__)
 __all__ = ['WolframLanguageAsyncSession']
 
 
-class WolframLanguageAsyncSession(WolframLanguageSession, WolframAsyncEvaluator):
+class WolframLanguageAsyncSession(WolframLanguageSession,
+                                  WolframAsyncEvaluator):
     """Evaluate expressions asynchronously using coroutines.
 
     Asynchronous evaluations are provided through coroutines and the :mod:`asyncio` modules.
@@ -63,19 +65,20 @@ class WolframLanguageAsyncSession(WolframLanguageSession, WolframAsyncEvaluator)
         self.event_abort = Event()
 
     def duplicate(self):
-        return WolframLanguageAsyncSession(self.kernel,
-                 loop=self._loop,
-                 consumer=self.consumer,
-                 initfile=self.initfile,
-                 in_socket=self.in_socket,
-                 out_socket=self.out_socket,
-                 kernel_loglevel=self.loglevel,
-                 stdin=self._stdin,
-                 stdout=self._stdout,
-                 stderr=self._stderr,
-                 inputform_string_evaluation=self.inputform_string_evaluation,
-                 wxf_bytes_evaluation=self.wxf_bytes_evaluation,
-                 **self.parameters)
+        return WolframLanguageAsyncSession(
+            self.kernel,
+            loop=self._loop,
+            consumer=self.consumer,
+            initfile=self.initfile,
+            in_socket=self.in_socket,
+            out_socket=self.out_socket,
+            kernel_loglevel=self.loglevel,
+            stdin=self._stdin,
+            stdout=self._stdout,
+            stderr=self._stderr,
+            inputform_string_evaluation=self.inputform_string_evaluation,
+            wxf_bytes_evaluation=self.wxf_bytes_evaluation,
+            **self.parameters)
 
     def _socket_read_sleep_func(self, duration):
         if not self.event_abort.is_set():
@@ -119,17 +122,17 @@ class WolframLanguageAsyncSession(WolframLanguageSession, WolframAsyncEvaluator)
         
         This method is a coroutine."""
         try:
-            await self._loop.run_in_executor(self._get_exec_pool(), super()._start)
+            await self._loop.run_in_executor(self._get_exec_pool(),
+                                             super()._start)
         except Exception as e:
             await self.terminate()
             raise e
-
 
     async def stop(self):
         # signal socket read with timeout function to abort current operation.
         self.event_abort.set()
         await self._async_terminate(super().stop, True)
-    
+
     async def terminate(self):
         await self._async_terminate(super().terminate, False)
 
@@ -142,7 +145,8 @@ class WolframLanguageAsyncSession(WolframLanguageSession, WolframAsyncEvaluator)
         if self.thread_pool_exec:
             try:
                 logger.info('Terminating asynchronous kernel session.')
-                await self._loop.run_in_executor(self._get_exec_pool(), sync_stop_func)
+                await self._loop.run_in_executor(self._get_exec_pool(),
+                                                 sync_stop_func)
             except asyncio.CancelledError:
                 logger.info('Cancelled terminate task.')
             except Exception as e:
