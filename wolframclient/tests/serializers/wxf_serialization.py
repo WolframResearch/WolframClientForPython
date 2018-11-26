@@ -18,7 +18,7 @@ from wolframclient.serializers.wxfencoder.wxfexprprovider import (
     WXFExprProvider)
 from wolframclient.utils import six
 from wolframclient.utils.datastructures import Association
-from wolframclient.utils.tests import TestCase as BaseTestCase
+from wolframclient.utils.tests import TestCase as BaseTestCase, path_to_file_in_data_dir
 
 
 def init(compress=False, enforce=True):
@@ -38,11 +38,6 @@ class SerializeTest(BaseTestCase):
         serializer, stream = init(compress=compress)
         serializer.serialize(pythonExpr)
         self.assertSequenceEqual(stream.getvalue(), expected_wxf)
-
-    def path_to_file_in_data_dir(self, file_name):
-        current_file_dir = os.path.dirname(__file__)
-        return os.path.join(current_file_dir, '..', 'data', file_name)
-
 
 class TestCase(SerializeTest):
     def test_zero(self):
@@ -272,7 +267,7 @@ class TestCase(SerializeTest):
             else:
                 all_char += chr(i)
 
-        with open(self.path_to_file_in_data_dir('allchars.wxf'),
+        with open(path_to_file_in_data_dir('allchars.wxf'),
                   'rb') as r_file:
             ba = bytearray(r_file.read())
         self.serialize_compare(all_char, ba)
