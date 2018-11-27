@@ -100,6 +100,7 @@ atexit = API(register='atexit.register', unregister=('atexit.unregister', ))
 numpy = API(
     array='numpy.array',
     ndarray='numpy.ndarray',
+    arange='numpy.arange',
     int8='numpy.int8',
     int16='numpy.int16',
     int32='numpy.int32',
@@ -120,6 +121,7 @@ multiprocessing = API(Lock='multiprocessing.Lock')
 
 PIL = API(
     Image='PIL.Image.Image',
+    fromarray='PIL.Image.fromarray',
     open='PIL.Image.open',
 )
 
