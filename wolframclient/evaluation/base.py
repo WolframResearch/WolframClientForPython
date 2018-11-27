@@ -9,24 +9,6 @@ from wolframclient.language import wlexpr
 from wolframclient.language.expression import WLFunction
 from wolframclient.utils import six
 from wolframclient.utils.asyncio import wait_all
-"""
-NOTES
-
- - wolfram.evaluation.__init__ contains a bare try except.
-
- - CloudFunction is implemented only for cloud kernels
- - hardcoded class calls should be class attributes
- - all classes should have evaluate, evaluate_many (we should not hardcode ToExpression behaviour in evaluate)
- - you are always checking the input type, while this can help some users it's really preventing users from doing duck typing
-
-
-
- - WolframEvaluatorPool should be constructed using a generator of other kernels class
- - WolframKernal should have a copy method
- - should terminated kernels restart automatically instead of raise an Exception?
-
-"""
-
 
 class WolframEvaluatorBase(object):
     """ All evaluators should inherit from this base class. 
