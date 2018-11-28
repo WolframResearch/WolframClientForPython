@@ -239,7 +239,8 @@ class TestKernelPool(BaseTestCase):
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestParalleleEvaluate(BaseTestCase):
 
-    KERNEL_PATH = json_config['kernel']
+    if json_config:
+        KERNEL_PATH = json_config['kernel']
 
     def test_parallel_evaluate_local(self):
         exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
