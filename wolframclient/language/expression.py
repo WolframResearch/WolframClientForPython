@@ -7,7 +7,7 @@ from itertools import chain
 from wolframclient.utils import six
 from wolframclient.utils.encoding import force_text
 
-__all__ = ['WLSymbol', 'WLFunction', 'WLSymbolFactory']
+__all__ = ['WLSymbol', 'WLFunction', 'WLSymbolFactory', 'WLInputExpression']
 
 
 class WLExpressionMeta(object):
@@ -126,6 +126,7 @@ class WLSymbolFactory(WLSymbol):
                               or attr)
 
 class WLInputExpression(WLExpressionMeta):
+    """ Represent a string input form expression. """
 
     def __init__(self, input):
         if isinstance(input, (six.binary_type, six.text_type)):

@@ -37,3 +37,7 @@ See :class:`~wolframclient.language.expression.WLSymbolFactory` and
 :class:`~wolframclient.language.expression.WLSymbolFactory` for more details."""
 
 wlexpr = WLInputExpression
+""" A string wrapper for input string expressions.
+
+Convenient alias for :class:`~wolframclient.language.expression.WLInputExpression`.
+"""
