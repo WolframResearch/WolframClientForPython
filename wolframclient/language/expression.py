@@ -132,3 +132,9 @@ class WLInputExpression(WLExpressionMeta):
             self.input = input
         else:
             raise ValueError('input must be string or bytes')
+
+    def __repr__(self):
+        return '(%s)' % self.input
+
+    def __str__(self):
+        return '(%s)' % self.input
