@@ -124,3 +124,11 @@ class WLSymbolFactory(WLSymbol):
         #summing a tuple with another tuple is returning a new immutable tuple, this operation is always creating a new immutable symbol factory
         return self.__class__(self.name and '%s`%s' % (self.name, attr)
                               or attr)
+
+class WLInputExpression(WLExpressionMeta):
+
+    def __init__(self, input):
+        if isinstance(input, (six.binary_type, six.text_type)):
+            self.input = input
+        else:
+            raise ValueError('input must be string or bytes')

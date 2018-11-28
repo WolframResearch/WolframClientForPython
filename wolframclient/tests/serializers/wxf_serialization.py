@@ -6,7 +6,7 @@ import decimal
 import unittest
 from collections import OrderedDict
 
-from wolframclient.language import wl
+from wolframclient.language import wl, wlexpr
 from wolframclient.serializers import export
 from wolframclient.serializers.wxfencoder.serializer import WXFExprSerializer
 from wolframclient.serializers.wxfencoder.utils import (
@@ -294,6 +294,17 @@ class TestCase(SerializeTest):
                 wl.Association(*(wl.Rule(i, v) for i, v in enumerate('abc'))),
                 target_format='wxf'),
         )
+
+        self.assertEqual(
+            export(wlexpr("2+2"), target_format='wxf'),
+            export(wl.ToExpression("2+2"), target_format='wxf'),
+        )
+
+        self.assertEqual(
+            export(wl.Foo(wlexpr("2+2"), 1, 2), target_format='wxf'),
+            export(wl.Foo(wl.ToExpression("2+2"), 1, 2), target_format='wxf'),
+        )
+
 
     def test_small_compression(self):
         wxf = b'\x38\x3a\x43\x01'

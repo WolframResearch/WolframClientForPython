@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.language.expression import WLSymbolFactory
+from wolframclient.language.expression import WLSymbolFactory, WLInputExpression
 
 __all__ = ['wl', 'System', 'Global', 'wlexpr']
 
@@ -36,4 +36,4 @@ Global = wl.Global
 See :class:`~wolframclient.language.expression.WLSymbolFactory` and
 :class:`~wolframclient.language.expression.WLSymbolFactory` for more details."""
 
-wlexpr = wl.ToExpression
+wlexpr = WLInputExpression
