@@ -88,13 +88,13 @@ class WLFunction(WLExpressionMeta):
 
     def __repr__(self):
         if len(self) > 4:
-            return '%s[%s, << %i >>, %s]' % (self.head, ', '.join(
-                force_text(x)
+            return '%s[%s, << %i >>, %s]' % (repr(self.head), ', '.join(
+                repr(x)
                  for x in self.args[:2]), len(self) - 4, ', '.join(
-                     force_text(x) for x in self.args[-2:]))
+                     repr(x) for x in self.args[-2:]))
         else:
             return '%s[%s]' % (repr(self.head), ', '.join(
-                force_text(x) for x in self.args))
+                repr(x) for x in self.args))
 
 
 class WLSymbolFactory(WLSymbol):
