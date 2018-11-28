@@ -7,7 +7,7 @@ from itertools import chain
 from wolframclient.utils import six
 from wolframclient.utils.encoding import force_text
 
-__all__ = ['WLSymbol', 'WLFunction', 'WLSymbolFactory']
+__all__ = ['WLSymbol', 'WLFunction', 'WLSymbolFactory', 'WLInputExpression']
 
 
 class WLExpressionMeta(object):
@@ -124,3 +124,18 @@ class WLSymbolFactory(WLSymbol):
         #summing a tuple with another tuple is returning a new immutable tuple, this operation is always creating a new immutable symbol factory
         return self.__class__(self.name and '%s`%s' % (self.name, attr)
                               or attr)
+
+class WLInputExpression(WLExpressionMeta):
+    """ Represent a string input form expression. """
+
+    def __init__(self, input):
+        if isinstance(input, (six.binary_type, six.text_type)):
+            self.input = input
+        else:
+            raise ValueError('input must be string or bytes')
+
+    def __repr__(self):
+        return '(%s)' % self.input
+
+    def __str__(self):
+        return '(%s)' % self.input

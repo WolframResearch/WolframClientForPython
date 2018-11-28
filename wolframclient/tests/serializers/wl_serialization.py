@@ -7,7 +7,7 @@ import decimal
 import fractions
 from collections import OrderedDict
 
-from wolframclient.language import Global, System, wl
+from wolframclient.language import Global, System, wl, wlexpr
 from wolframclient.serializers import export
 from wolframclient.utils import six
 from wolframclient.utils.api import pytz
@@ -188,3 +188,15 @@ class TestCase(BaseTestCase):
         self.assertEqual(wl.a == wl.a, True)
         self.assertEqual(wl.a(2) == wl.a(2), True)
         self.assertEqual(wl.a(2, wl.b) == wl.a(2, wl.b), True)
+
+    def test_input_form(self):
+
+        self.compare(
+            wlexpr('<|"2" -> 2|>'),
+            b'(<|"2" -> 2|>)'
+        )
+
+        self.compare(
+            wl.Foo(2, wlexpr('#foo &')(wlexpr('<|"foo" -> 2|>'))),
+            b'Foo[2, (#foo &)[(<|"foo" -> 2|>)]]'
+        )

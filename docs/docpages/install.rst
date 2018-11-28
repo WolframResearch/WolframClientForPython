@@ -54,7 +54,7 @@ Install the library in your site-package directory:
 Install from Wolfram Language based products
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Future release of the Wolfram Language will include a stable version of the client library. The library location depends on your OS. Here are the usual locations:
+Future releases of the Wolfram Language will include a stable version of the client library. The library location depends on your OS. Here are the usual locations:
 
 +-----------+-------------------------------------------------------------------------------------------------------------------+
 | OS        | Library path                                                                                                      |
