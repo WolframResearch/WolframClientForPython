@@ -22,13 +22,20 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
 
     Asynchronous evaluations are provided through coroutines and the :mod:`asyncio` modules.
 
-    Instance of this class can be started using with asynchronous context manager::
+    Instance of this class can be managed with an asynchronous context manager::
         
         async with WolframLanguageAsyncSession(kernelpath) as session:
             await session.evaluate('Now')
 
     An event loop can be explicitly passed using the named parameter `loop`, otherwise the one 
     returned by :func:`~asyncio.get_event_loop` is used.
+
+    Coroutine all run in a unique thread. Since a Wolfram Kernel is single threaded, there can
+    be only one evaluation at a time. In a sense, from the event loop point of view, evaluations 
+    are atomic operations. Even when many asynchronous sessions are started, the number of 
+    threads equals the number of kernel instances running and should not be problematic. Ensuring 
+    that only one thread run all operations of a given Wolfram kernel significantly reduce the 
+    complexity of the code without any real drawback.
     """
 
     def __init__(self,

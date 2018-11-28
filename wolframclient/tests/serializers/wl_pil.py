@@ -3,16 +3,15 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.serializers import export
-from wolframclient.utils.api import numpy, PIL
-from wolframclient.utils.tests import path_to_file_in_data_dir
+from wolframclient.utils.api import PIL, numpy
 from wolframclient.utils.tests import TestCase as BaseTestCase
+from wolframclient.utils.tests import path_to_file_in_data_dir
 
 
 class TestCase(BaseTestCase):
     def test_png_mode_I(self):
 
-        with PIL.open(
-                path_to_file_in_data_dir('5x2.png')) as image:
+        with PIL.open(path_to_file_in_data_dir('5x2.png')) as image:
 
             self.assertEqual(
                 export(image, target_format='wl'),
@@ -20,16 +19,16 @@ class TestCase(BaseTestCase):
             )
 
     def test_mode_L(self):
-        a=numpy.arange(10).reshape((2,5))
-        img=PIL.fromarray(a, mode='L')
+        a = numpy.arange(10).reshape((2, 5))
+        img = PIL.fromarray(a, mode='L')
         self.assertEqual(
             export(img, target_format='wl'),
             b'Image[BinaryDeserialize[ByteArray["ODrCEAICBQAAAAAAAAAAAQA="]], "Byte", Rule[ColorSpace, "Grayscale"], Rule[Interleaving, True]]'
         )
 
     def test_mode_L(self):
-        a=numpy.array([[1,0],[0,1]], dtype='bool')
-        img=PIL.fromarray(a)
+        a = numpy.array([[1, 0], [0, 1]], dtype='bool')
+        img = PIL.fromarray(a)
         self.assertEqual(
             export(img, target_format='wl'),
             b'Image[BinaryDeserialize[ByteArray["ODrCEAICAgEAAAA="]], "Bit", Rule[ColorSpace, Automatic], Rule[Interleaving, True]]'

@@ -10,6 +10,7 @@ from wolframclient.language.expression import WLFunction
 from wolframclient.utils import six
 from wolframclient.utils.asyncio import wait_all
 
+
 class WolframEvaluatorBase(object):
     """ All evaluators should inherit from this base class. 
     
