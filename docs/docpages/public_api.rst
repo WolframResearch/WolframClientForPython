@@ -204,7 +204,7 @@ Kernel evaluation
     :noindex:
     :members:
 
-.. autoclass:: wolframclient.evaluation.WolframKernelPool
+.. autoclass:: wolframclient.evaluation.WolframEvaluatorPool
     :noindex:
     :members:
 
@@ -234,7 +234,7 @@ API call
     :noindex:
     :members:
 
-.. autoclass:: wolframclient.evaluation.WolframCloudSessionAsync
+.. autoclass:: wolframclient.evaluation.WolframCloudAsyncSession
     :noindex:
     :members:
 

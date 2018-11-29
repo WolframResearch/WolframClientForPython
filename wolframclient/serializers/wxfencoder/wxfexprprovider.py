@@ -24,7 +24,6 @@ class WXFExprProvider(object):
 
     One must carefully design the `default` function to avoid stack overflow.
     '''
-    __slots__ = 'encoders', 'default'
 
     def __init__(self, encoder=None, default=None):
         self.encoders = []

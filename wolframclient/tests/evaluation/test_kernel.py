@@ -6,13 +6,15 @@ import logging
 import unittest
 
 from wolframclient.deserializers import binary_deserialize
+from wolframclient.evaluation import (WolframLanguageFutureSession,
+                                      WolframLanguageSession)
 from wolframclient.exception import WolframKernelException
 from wolframclient.language import wl, wlexpr
 from wolframclient.language.expression import WLFunction, WLSymbol
 from wolframclient.serializers import export
 from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config
-from wolframclient.utils import six
-from wolframclient.utils.tests import TestCase as BaseTestCase, path_to_file_in_data_dir
+from wolframclient.utils.tests import TestCase as BaseTestCase
+from wolframclient.utils.tests import path_to_file_in_data_dir
 
 try:
     import PIL.Image
@@ -20,15 +22,11 @@ try:
 except ImportError:
     has_pil = False
 
-if not six.JYTHON:
-    from wolframclient.evaluation import WolframLanguageSession, WolframLanguageFutureSession
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
-@unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 class TestCaseSettings(BaseTestCase):
 
     if json_config:
@@ -187,12 +185,15 @@ class TestCase(TestCaseSettings):
         self.assertEqual(result, WLSymbol('$Failed'))
 
     def test_auto_start_session(self):
-        session = WolframLanguageSession(self.KERNEL_PATH)
         try:
+            session = WolframLanguageSession(self.KERNEL_PATH)
             res = session.evaluate('1+1')
             self.assertEqual(res, 2)
+        except Exception as e:
+            logger.exception(e)
         finally:
             session.terminate()
+            self.assertTrue(session.stopped)
 
     def test_pure_function_inputform(self):
         f = self.kernel_session.function('#+1&')
@@ -216,8 +217,8 @@ class TestCase(TestCaseSettings):
         self.assertEqual(res, [2, 3, 4])
 
     def test_built_in_symbols(self):
-        self.assertEqual(self.kernel_session.evaluate(None), None)
         self.assertEqual(self.kernel_session.evaluate(wl.Null), None)
+        self.assertEqual(self.kernel_session.evaluate(None), None)
         self.assertEqual(self.kernel_session.evaluate(wlexpr('True')), True)
         self.assertEqual(self.kernel_session.evaluate(True), True)
         self.assertEqual(self.kernel_session.evaluate(wlexpr('False')), False)
@@ -239,25 +240,22 @@ class TestCase(TestCaseSettings):
         TestCaseSettings.class_kwargs_parameters(self, WolframLanguageSession)
 
     def test_bad_kwargs_parameters(self):
-        TestCaseSettings.class_bad_kwargs_parameters(self,
-                                                     WolframLanguageSession)
-
+        self.class_bad_kwargs_parameters(self, WolframLanguageSession)
 
     IMAGE_FILES_DIMS = {
-        "10ct_32bit_128.tiff":[128,128],
-        "16_bit_binary_pgm.png":[20,100],
-        "hopper.ppm":[128,128],
-        "pal1wb.bmp":[127,64],
-        "pil_sample_cmyk.jpg":[100,100],
-        "umbrellaRGBA.png":[1789,1920]
+        "10ct_32bit_128.tiff": [128, 128],
+        "16_bit_binary_pgm.png": [20, 100],
+        "hopper.ppm": [128, 128],
+        "pal1wb.bmp": [127, 64],
+        "pil_sample_cmyk.jpg": [100, 100],
+        "umbrellaRGBA.png": [1789, 1920]
     }
+
     @unittest.skipIf(not has_pil, "PIL not found skipping image test.")
     def test_images_serialization(self):
         for path, dimensions in self.IMAGE_FILES_DIMS.items():
             with PIL.Image.open(path_to_file_in_data_dir(path)) as img:
-                res = self.kernel_session.evaluate(
-                    wl.ImageDimensions(img)
-                )
+                res = self.kernel_session.evaluate(wl.ImageDimensions(img))
                 self.assertEqual(res, dimensions)
 
     @unittest.skipIf(not has_pil, "PIL not found skipping image test.")
@@ -266,16 +264,44 @@ class TestCase(TestCaseSettings):
         img2_path = "pal1wb.bmp"
         with PIL.Image.open(path_to_file_in_data_dir(img1_path)) as img1:
             with PIL.Image.open(path_to_file_in_data_dir(img2_path)) as img2:
-                res = self.kernel_session.evaluate(wl.Map(
-                    wl.ImageDimensions,
-                    {
-                        'img1' : img1,
-                        'img2' : img2
-                    }
-                ))
-                self.assertEqual(res, {'img1':self.IMAGE_FILES_DIMS[img1_path], 'img2':self.IMAGE_FILES_DIMS[img2_path]})
+                res = self.kernel_session.evaluate(
+                    wl.Map(wl.ImageDimensions, {
+                        'img1': img1,
+                        'img2': img2
+                    }))
+                self.assertEqual(
+                    res, {
+                        'img1': self.IMAGE_FILES_DIMS[img1_path],
+                        'img2': self.IMAGE_FILES_DIMS[img2_path]
+                    })
 
-@unittest.skipIf(six.PY2, "Module future is not available.")
+    def test_stop_start_restart_status(self):
+        self._stop_start_restart_status(WolframLanguageSession)
+        self._stop_start_restart_status(WolframLanguageFutureSession)
+
+    def _stop_start_restart_status(self, eval_class):
+        session = None
+        try:
+            session = eval_class(self.KERNEL_PATH)
+            self.assertFalse(session.started)
+            self.assertTrue(session.stopped)
+            session.start()
+            self.assertTrue(session.started)
+            self.assertFalse(session.stopped)
+            session.stop()
+            self.assertFalse(session.started)
+            self.assertTrue(session.stopped)
+            session.restart()
+            self.assertTrue(session.started)
+            self.assertFalse(session.stopped)
+            session.terminate()
+            self.assertFalse(session.started)
+            self.assertTrue(session.stopped)
+        finally:
+            if session:
+                session.terminate()
+
+
 class TestFutureSession(TestCaseSettings):
     @classmethod
     def tearDownKernelSession(cls):
@@ -338,8 +364,7 @@ class TestFutureSession(TestCaseSettings):
                                                  WolframLanguageFutureSession)
 
     def test_bad_kwargs_parameters(self):
-        TestCaseSettings.class_bad_kwargs_parameters(
-            self, WolframLanguageFutureSession)
+        self.class_bad_kwargs_parameters(self, WolframLanguageFutureSession)
 
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
@@ -352,12 +377,17 @@ class TestCaseSession(TestCaseSettings):
         with self.assertRaises(ValueError):
             WolframLanguageSession(None)
 
-    def test_terminated_session(self):
-        session = WolframLanguageSession(self.KERNEL_PATH)
-        session.start()
-        session.terminate()
-        with self.assertRaises(WolframKernelException):
-            session.evaluate('1+1')
+    def test_terminated_session_autorestart(self):
+        session = None
+        try:
+            session = WolframLanguageSession(self.KERNEL_PATH)
+            session.start()
+            session.stop()
+            res = session.evaluate('1+1')
+            self.assertEqual(res, 2)
+        finally:
+            if session:
+                session.terminate()
 
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)

@@ -6,8 +6,8 @@ from wolframclient.serializers.wxfencoder.constants import (
     ARRAY_TYPES, WXF_CONSTANTS, WXF_HEADER_COMPRESS, WXF_HEADER_SEPARATOR,
     WXF_VERSION)
 from wolframclient.serializers.wxfencoder.wxfencoder import WXFEncoder
-from wolframclient.serializers.wxfencoder.wxfexpr import (WXFExprPackedArray,
-                                                          WXFExprNumericArray)
+from wolframclient.serializers.wxfencoder.wxfexpr import (WXFExprNumericArray,
+                                                          WXFExprPackedArray)
 from wolframclient.utils.api import numpy
 
 __all__ = [
@@ -31,8 +31,6 @@ class NumPyWXFEncoder(WXFEncoder):
     >>> NumPyWXFEncoder(packed_array_support=False, numeric_array_support=True)
 
     '''
-
-    __slots__ = 'packed_array_support', 'numeric_array_support'
 
     def __init__(self, packed_array_support=True, numeric_array_support=False):
         if not packed_array_support and not numeric_array_support:

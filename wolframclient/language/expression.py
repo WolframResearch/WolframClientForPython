@@ -7,7 +7,7 @@ from itertools import chain
 from wolframclient.utils import six
 from wolframclient.utils.encoding import force_text
 
-__all__ = ['WLSymbol', 'WLFunction', 'WLSymbolFactory']
+__all__ = ['WLSymbol', 'WLFunction', 'WLSymbolFactory', 'WLInputExpression']
 
 
 class WLExpressionMeta(object):
@@ -41,7 +41,7 @@ class WLSymbol(WLExpressionMeta):
                 (six.text_type.__name__, name.__class__.__name__, name))
 
     def __hash__(self):
-        return hash((self.__class__.__name__, self.name))
+        return hash((WLSymbol.__name__, self.name))
 
     def __len__(self):
         return 0  #consistent with Length(x)
@@ -88,13 +88,13 @@ class WLFunction(WLExpressionMeta):
 
     def __repr__(self):
         if len(self) > 4:
-            return '%s[%s, << %i >>, %s]' % (self.head, ', '.join(
-                [force_text(x)
-                 for x in self.args[:2]]), len(self) - 4, ', '.join(
-                     [force_text(x) for x in self.args[-2:]]))
+            return '%s[%s, << %i >>, %s]' % (repr(self.head), ', '.join(
+                repr(x)
+                 for x in self.args[:2]), len(self) - 4, ', '.join(
+                     repr(x) for x in self.args[-2:]))
         else:
             return '%s[%s]' % (repr(self.head), ', '.join(
-                [force_text(x) for x in self.args]))
+                repr(x) for x in self.args))
 
 
 class WLSymbolFactory(WLSymbol):
@@ -124,3 +124,18 @@ class WLSymbolFactory(WLSymbol):
         #summing a tuple with another tuple is returning a new immutable tuple, this operation is always creating a new immutable symbol factory
         return self.__class__(self.name and '%s`%s' % (self.name, attr)
                               or attr)
+
+class WLInputExpression(WLExpressionMeta):
+    """ Represent a string input form expression. """
+
+    def __init__(self, input):
+        if isinstance(input, (six.binary_type, six.text_type)):
+            self.input = input
+        else:
+            raise ValueError('input must be string or bytes')
+
+    def __repr__(self):
+        return '(%s)' % self.input
+
+    def __str__(self):
+        return '(%s)' % self.input

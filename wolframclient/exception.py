@@ -9,18 +9,18 @@ from wolframclient.logger.utils import str_trim
 class RequestException(WolframLanguageException):
     """Error in HTTP request."""
 
-    __slots__ = 'response'
-
     def __init__(self, response, msg=None):
         self.response = response
-        self.msg = msg
+        if msg:
+            self.msg = msg
+        else:
+            try:
+                self.msg = response.text()
+            except UnicodeDecodeErrors:
+                self.msg = 'Failed to decode request body.'
 
     def __str__(self):
-        if self.response is not None and hasattr(self.response, 'status'):
-            status = '<%s>: ' % self.response.status
-        else:
-            status = ''
-        return '%s%s' % (status, self.msg)
+        return '<%s>: %s' % (self.response.status(), self.msg or '')
 
 
 class AuthenticationException(RequestException):

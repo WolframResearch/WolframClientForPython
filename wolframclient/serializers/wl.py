@@ -72,3 +72,8 @@ class WLSerializer(FormatSerializer):
 
     def serialize_iterable(self, iterable, **opts):
         return yield_with_separators(iterable, first=b'{', last=b'}')
+
+    def serialize_input_form(self, string):
+        yield b'('
+        yield force_bytes(string)
+        yield b')'
