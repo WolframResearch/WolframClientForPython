@@ -12,6 +12,22 @@ Subpackages
 Submodules
 ----------
 
+wolframclient.evaluation.base module
+------------------------------------
+
+.. automodule:: wolframclient.evaluation.base
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.evaluation.pool module
+------------------------------------
+
+.. automodule:: wolframclient.evaluation.pool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 wolframclient.evaluation.result module
 --------------------------------------
 

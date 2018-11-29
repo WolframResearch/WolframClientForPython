@@ -1,0 +1,392 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>wolframclient.evaluation.pool &#8212; Wolfram Client Library for Python 1.0.0.dev3 documentation</title>
+    <link rel="stylesheet" href="../../../_static/wri.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css">
+ 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for wolframclient.evaluation.pool</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">asyncio</span> <span class="k">import</span> <span class="n">CancelledError</span>
+
+<span class="kn">from</span> <span class="nn">wolframclient.evaluation.base</span> <span class="k">import</span> <span class="n">WolframAsyncEvaluator</span>
+<span class="kn">from</span> <span class="nn">wolframclient.evaluation.kernel.asyncsession</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">WolframLanguageAsyncSession</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">wolframclient.exception</span> <span class="k">import</span> <span class="n">WolframKernelException</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils</span> <span class="k">import</span> <span class="n">six</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils.api</span> <span class="k">import</span> <span class="n">asyncio</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils.functional</span> <span class="k">import</span> <span class="n">is_iterable</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;WolframEvaluatorPool&#39;</span><span class="p">,</span> <span class="s1">&#39;parallel_evaluate&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="WolframEvaluatorPool"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.pool.WolframEvaluatorPool">[docs]</a><span class="k">class</span> <span class="nc">WolframEvaluatorPool</span><span class="p">(</span><span class="n">WolframAsyncEvaluator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A pool of kernels to dispatch one-shot evaluations asynchronously.</span>
+
+<span class="sd">    Evaluators can be specified in various ways: as a string representing the path to a local kernel,</span>
+<span class="sd">    a :class:`~wolframclient.evaluation.WolframCloudAsyncSession`, or</span>
+<span class="sd">    an instance of :class:`~wolframclient.evaluation.WolframLanguageAsyncSession`. More than one evaluator specification can be provided</span>
+<span class="sd">    in the form of an iterable object, yielding above mentioned specification.</span>
+<span class="sd">    If the number of evaluators is less than the requested pool size (`poolsize`), elements are duplicated until the requested number of </span>
+<span class="sd">    evaluators is reached.</span>
+
+<span class="sd">    Create a pool from a kernel path::</span>
+
+<span class="sd">        async with WolframEvaluatorPool(&#39;/path/to/local/kernel&#39;) as pool:</span>
+<span class="sd">            await pool.evaluate(&#39;1+1&#39;)</span>
+
+<span class="sd">    Create a pool from an cloud evaluator::</span>
+
+<span class="sd">        cloud_session = WolframCloudAsyncSession(credentials=myCredentials)</span>
+<span class="sd">        async with WolframEvaluatorPool(cloud_session) as pool:</span>
+<span class="sd">            await pool.evaluate(&#39;$MachineName&#39;)</span>
+
+<span class="sd">    Create a pool from a list of specifications::</span>
+
+<span class="sd">        evaluators = [</span>
+<span class="sd">            WolframCloudAsyncSession(credentials=myCredentials),</span>
+<span class="sd">            &#39;/path/to/local/kernel&#39;</span>
+<span class="sd">            ]</span>
+<span class="sd">        async with WolframEvaluatorPool(evaluators) as pool:</span>
+<span class="sd">            await pool.evaluate(&#39;$MachineName&#39;)</span>
+
+<span class="sd">    `poolsize` is the number of kernel instances. The requested size may not be reached due to licencing restrictions.</span>
+<span class="sd">    `load_factor` indicate how many workloads are queued per kernel before new evaluation becomes blocking operation. Values below or equal to 0 means infinite queue size.</span>
+<span class="sd">    `loop` event loop to use.</span>
+<span class="sd">    `kwargs` are passed to :class:`wolframclient.evaluation.WolframLanguageAsyncSession` during initialization.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">async_evaluators</span><span class="p">,</span>
+                 <span class="n">poolsize</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                 <span class="n">load_factor</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">async_language_session_class</span><span class="o">=</span><span class="n">WolframLanguageAsyncSession</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">loop</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">poolsize</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Invalid pool size value </span><span class="si">%i</span><span class="s1">. Expecting a positive integer.&#39;</span> <span class="o">%</span>
+                <span class="n">i</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_queue</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Queue</span><span class="p">(</span><span class="n">load_factor</span> <span class="o">*</span> <span class="n">poolsize</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">async_language_session_class</span> <span class="o">=</span> <span class="n">async_language_session_class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_evaluators</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">async_evaluators</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">poolsize</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_add_evaluator</span><span class="p">(</span><span class="n">async_evaluators</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_iterable</span><span class="p">(</span><span class="n">async_evaluators</span><span class="p">):</span>
+                <span class="n">async_evaluators</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">async_evaluators</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">evaluator</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">cycle</span><span class="p">(</span><span class="n">async_evaluators</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_evaluators</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">poolsize</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_add_evaluator</span><span class="p">(</span><span class="n">evaluator</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_started_tasks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pending_init_tasks</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eval_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">requestedsize</span> <span class="o">=</span> <span class="n">poolsize</span>
+
+    <span class="k">def</span> <span class="nf">_add_evaluator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evaluator</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">evaluator</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_evaluators</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">async_language_session_class</span><span class="p">(</span>
+                    <span class="n">evaluator</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">evaluator</span><span class="p">,</span> <span class="n">WolframAsyncEvaluator</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">evaluator</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluators</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_evaluators</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">evaluator</span><span class="o">.</span><span class="n">duplicate</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_evaluators</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">evaluator</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Invalid asynchronous evaluator specifications. </span><span class="si">%s</span><span class="s1"> is neither a string nor a WolframAsyncEvaluator instance.&#39;</span>
+                <span class="o">%</span> <span class="n">evaluator</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_kernel_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel</span><span class="p">):</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">future</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">task</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Wait for a new queue entry.&#39;</span><span class="p">)</span>
+                <span class="n">task</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">task</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="s1">&#39;Termination requested for kernel: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="n">kernel</span><span class="p">)</span>
+                    <span class="k">break</span>
+                <span class="c1"># func is one of the evaluate* methods from WolframAsyncEvaluator.</span>
+                <span class="n">future</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">task</span>
+                <span class="c1"># those method can&#39;t be canceled since the kernel is evaluating anyway.</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">shield</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+                    <span class="n">future</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">future</span><span class="o">.</span><span class="n">set_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="c1"># First exceptions are those we can&#39;t recover from.</span>
+            <span class="k">except</span> <span class="ne">KeyboardInterrupt</span> <span class="k">as</span> <span class="n">interrupt</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="s1">&#39;Loop associated to kernel </span><span class="si">%s</span><span class="s1"> interrupted by user.&#39;</span><span class="p">,</span>
+                    <span class="n">kernel</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">interrupt</span>
+            <span class="k">except</span> <span class="n">CancelledError</span> <span class="k">as</span> <span class="n">cancel</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Loop associated to kernel </span><span class="si">%s</span><span class="s1"> cancelled.&#39;</span><span class="p">,</span>
+                               <span class="n">kernel</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">cancel</span>
+            <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">runtime</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Unexpected runtime error: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">runtime</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">runtime</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">future</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s1">&#39;Exception raised in loop returned in future object. Exception was: </span><span class="si">%s</span><span class="s1">&#39;</span>
+                        <span class="o">%</span> <span class="n">e</span><span class="p">)</span>
+                    <span class="n">future</span><span class="o">.</span><span class="n">set_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s1">&#39;No future object. Exception raised in loop was: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
+                        <span class="n">e</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">e</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">task</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_queue</span><span class="o">.</span><span class="n">task_done</span><span class="p">()</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_async_start_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel</span><span class="p">):</span>
+        <span class="n">kernel_started</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># start the kernel</span>
+            <span class="k">await</span> <span class="n">kernel</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="n">kernel_started</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">CancelledError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Cancelled signal during kernel start.&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="s1">&#39;A kernel from pool failed to start: </span><span class="si">%s</span><span class="s1">. Reason is </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="n">kernel</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+                <span class="k">await</span> <span class="n">kernel</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+            <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">CancelledError</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Cancelled signal.&#39;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e2</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s1">&#39;Exception raised during clean-up after failed start: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="n">e2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">kernel_started</span><span class="p">:</span>
+            <span class="c1"># shedule the infinite evaluation loop</span>
+            <span class="n">task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kernel_loop</span><span class="p">(</span><span class="n">kernel</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;New kernel started in pool: </span><span class="si">%s</span><span class="s1">.&#39;</span><span class="p">,</span> <span class="n">kernel</span><span class="p">)</span>
+            <span class="c1"># register the task. The loop is not always started at this point.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_started_tasks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">started</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_started_tasks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="WolframEvaluatorPool.start"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.pool.WolframEvaluatorPool.start">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Start a pool of kernels and wait for at least one of them to </span>
+<span class="sd">        be ready for evaluation.</span>
+
+<span class="sd">        This method is a coroutine.</span>
+<span class="sd">        If not all the kernels were able to start fails and terminate the pool.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># keep track of the init tasks. We have to wait before terminating.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pending_init_tasks</span> <span class="o">=</span> <span class="p">{(</span><span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_async_start_kernel</span><span class="p">(</span><span class="n">kernel</span><span class="p">)))</span>
+                                    <span class="k">for</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluators</span><span class="p">}</span>
+        <span class="c1"># uninitialized kernels are removed if they failed to start</span>
+        <span class="c1"># if they do start the task (the loop) is added to _started_tasks.</span>
+        <span class="c1"># we need at least one working kernel.</span>
+        <span class="c1"># we also need to keep track of start kernel tasks in case of early termination.</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_started_tasks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pending_init_tasks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">WolframKernelException</span><span class="p">(</span><span class="s1">&#39;Failed to start any kernel.&#39;</span><span class="p">)</span>
+            <span class="n">_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending_init_tasks</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pending_init_tasks</span><span class="p">,</span> <span class="n">return_when</span><span class="o">=</span><span class="n">asyncio</span><span class="o">.</span><span class="n">FIRST_COMPLETED</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Pool initialized with </span><span class="si">%i</span><span class="s1"> running kernels&#39;</span><span class="p">,</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_started_tasks</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="WolframEvaluatorPool.stop"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.pool.WolframEvaluatorPool.stop">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1">#  todo cancel with self.event_abort.set() ???</span>
+
+        <span class="c1"># make sure all init tasks are finished.</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pending_init_tasks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending_init_tasks</span><span class="p">:</span>
+                <span class="n">task</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pending_init_tasks</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_started_tasks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># request for loop termination.</span>
+                <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_started_tasks</span><span class="p">)):</span>
+                    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="c1"># wait for loop to finish before terminating the kernels</span>
+                <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_started_tasks</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">CancelledError</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Exception raised while terminating loop: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
+                               <span class="n">e</span><span class="p">)</span>
+        <span class="c1"># terminate the kernel instances, if any started.</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">kernel</span><span class="o">.</span><span class="n">stop</span><span class="p">())</span>
+            <span class="k">for</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluators</span>
+        <span class="p">}</span>
+        <span class="c1"># `wait` raises the first exception, but wait for all tasks to finish.</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WolframEvaluatorPool.terminate"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.pool.WolframEvaluatorPool.terminate">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_ensure_started</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">()</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_put_evaluation_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">future</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_started</span><span class="p">()</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_queue</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="n">future</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="p">),</span> <span class="n">kwargs</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eval_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<div class="viewcode-block" id="WolframEvaluatorPool.evaluate"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.pool.WolframEvaluatorPool.evaluate">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">future</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">(</span><span class="n">loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_put_evaluation_task</span><span class="p">(</span><span class="n">future</span><span class="p">,</span> <span class="s1">&#39;evaluate&#39;</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">future</span></div>
+
+<div class="viewcode-block" id="WolframEvaluatorPool.evaluate_wxf"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.pool.WolframEvaluatorPool.evaluate_wxf">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">evaluate_wxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">future</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">(</span><span class="n">loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_put_evaluation_task</span><span class="p">(</span><span class="n">future</span><span class="p">,</span> <span class="s1">&#39;evaluate_wxf&#39;</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">future</span></div>
+
+<div class="viewcode-block" id="WolframEvaluatorPool.evaluate_wrap"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.pool.WolframEvaluatorPool.evaluate_wrap">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">evaluate_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">future</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">(</span><span class="n">loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_put_evaluation_task</span><span class="p">(</span><span class="n">future</span><span class="p">,</span> <span class="s1">&#39;evaluate_wrap&#39;</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span>
+                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">future</span></div>
+
+<div class="viewcode-block" id="WolframEvaluatorPool.evaluate_all"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.pool.WolframEvaluatorPool.evaluate_all">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_all</span><span class="p">(</span><span class="n">iterable</span><span class="p">))</span></div>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_evaluate_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">):</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span><span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">expr</span><span class="p">))</span> <span class="k">for</span> <span class="n">expr</span> <span class="ow">in</span> <span class="n">iterable</span><span class="p">]</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">tasks</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;WolframEvaluatorPool&lt;</span><span class="si">%i</span><span class="s1">/</span><span class="si">%i</span><span class="s1"> started evaluators, cummulating </span><span class="si">%i</span><span class="s1"> evaluations&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_started_tasks</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">requestedsize</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_count</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_started_tasks</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="parallel_evaluate"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.pool.parallel_evaluate">[docs]</a><span class="k">def</span> <span class="nf">parallel_evaluate</span><span class="p">(</span><span class="n">evaluator_spec</span><span class="p">,</span> <span class="n">expressions</span><span class="p">,</span> <span class="n">max_evaluators</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                      <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Start a kernel pool using `evaluator_spec` and evaluate the expressions on the created</span>
+<span class="sd">    pool, then terminate it and returns the results.</span>
+
+<span class="sd">    Note that each evaluation should be independent and not rely on any previous one, since</span>
+<span class="sd">    there is no guarantee that two given expr evaluates on the same kernel, and scoped to </span>
+<span class="sd">    avoid side effects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">loop</span> <span class="o">=</span> <span class="n">loop</span> <span class="ow">or</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">WolframEvaluatorPool</span><span class="p">(</span>
+            <span class="n">evaluator_spec</span><span class="p">,</span> <span class="n">poolsize</span><span class="o">=</span><span class="n">max_evaluators</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="n">loop</span><span class="p">)</span>
+        <span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">start</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">pool</span><span class="o">.</span><span class="n">evaluate_all</span><span class="p">(</span><span class="n">expressions</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">pool</span><span class="p">:</span>
+            <span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">terminate</span><span class="p">())</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+    <a href="../../../index.html">
+        <img class="logo" src="../../../_static/python-client-library-logo.png" title="https://www.wolfram.com/" />
+    </a>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Wolfram Research.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

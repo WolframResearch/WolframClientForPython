@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Installation of the Library &#8212; Wolfram Client Library for Python 1.0 documentation</title>
+    <title>Installation and prerequisites &#8212; Wolfram Client Library for Python 1.0.0.dev3 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -34,7 +34,7 @@
         <li class="right" >
           <a href="../index.html" title="Wolfram Client Library for Python’s Documentation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -45,39 +45,50 @@
             
   <div class="toctree-wrapper compound">
 </div>
-<div class="section" id="installation-of-the-library">
-<h1>Installation of the Library<a class="headerlink" href="#installation-of-the-library" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="installation-and-prerequisites">
+<h1>Installation and prerequisites<a class="headerlink" href="#installation-and-prerequisites" title="Permalink to this headline">¶</a></h1>
 <p>The library source code is available in various repositories:</p>
 <ul class="simple">
-<li>hosted on <em>PyPi.org</em> and available in <cite>pip</cite></li>
-<li>in a public repository on <cite>GitHub</cite></li>
-<li>bundled with Wolfram Desktop 12+</li>
+<li>hosted on <a class="reference external" href="https://pypi.org/project/wolframclient/">PyPi</a> and available in <cite>pip</cite></li>
+<li>in a public repository on <a class="reference external" href="https://github.com/WolframResearch/WolframClientForPython">GitHub</a></li>
+<li>bundled with Wolfram Language 12+</li>
 </ul>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">even though most of the features were built to work on Python 2.7, it is recommended to use the library with Python 3.5 or greater.</p>
+<div class="section" id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Python 3.5 or higher</li>
+<li>Wolfram Language 11.3 or higher</li>
+<li>Git (optional)</li>
+</ul>
+</div></blockquote>
 </div>
-<div class="section" id="install-with-pip">
-<h2>Install with pip<a class="headerlink" href="#install-with-pip" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>There are three methods for installing the library.</p>
+<div class="section" id="install-using-pip-recommended">
+<h3>Install using pip (recommended)<a class="headerlink" href="#install-using-pip-recommended" title="Permalink to this headline">¶</a></h3>
+<p>Recommended for most users. It installs the latest stable version released by Wolfram Research.</p>
 <p>Evaluate the following command in a terminal:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ pip install wolframclient
 </pre></div>
 </div>
 </div>
-<div class="section" id="install-from-github">
-<h2>Install from GitHub<a class="headerlink" href="#install-from-github" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="install-using-git">
+<h3>Install using Git<a class="headerlink" href="#install-using-git" title="Permalink to this headline">¶</a></h3>
+<p>Recommended for developers who want to install the library along with the full source code.</p>
 <p>Clone the library’s repository:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ git clone git://github.com/WolframResearch/WolframClientForPython
 </pre></div>
 </div>
-<p>Install the library:</p>
+<p>Install the library in your site-package directory:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ pip install .
 </pre></div>
 </div>
 </div>
-<div class="section" id="install-from-the-wolfram-desktop">
-<h2>Install from the Wolfram Desktop<a class="headerlink" href="#install-from-the-wolfram-desktop" title="Permalink to this headline">¶</a></h2>
-<p>The library is bundled with the Wolfram Desktop. The library location depends on your OS. Here are the usual locations:</p>
+<div class="section" id="install-from-wolfram-language-based-products">
+<h3>Install from Wolfram Language based products<a class="headerlink" href="#install-from-wolfram-language-based-products" title="Permalink to this headline">¶</a></h3>
+<p>Future releases of the Wolfram Language will include a stable version of the client library. The library location depends on your OS. Here are the usual locations:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="9%" />
@@ -107,6 +118,7 @@ $ pip install .
 </div>
 </div>
 </div>
+</div>
 
 
           </div>
@@ -122,10 +134,14 @@ $ pip install .
 
   <h3><a href="../index.html">Table of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Installation of the Library</a><ul>
-<li><a class="reference internal" href="#install-with-pip">Install with pip</a></li>
-<li><a class="reference internal" href="#install-from-github">Install from GitHub</a></li>
-<li><a class="reference internal" href="#install-from-the-wolfram-desktop">Install from the Wolfram Desktop</a></li>
+<li><a class="reference internal" href="#">Installation and prerequisites</a><ul>
+<li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+<li><a class="reference internal" href="#install-using-pip-recommended">Install using pip (recommended)</a></li>
+<li><a class="reference internal" href="#install-using-git">Install using Git</a></li>
+<li><a class="reference internal" href="#install-from-wolfram-language-based-products">Install from Wolfram Language based products</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -174,7 +190,7 @@ $ pip install .
         <li class="right" >
           <a href="../index.html" title="Wolfram Client Library for Python’s Documentation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

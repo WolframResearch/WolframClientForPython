@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.serializers package &#8212; Wolfram Client Library for Python 1.0 documentation</title>
+    <title>wolframclient.serializers package &#8212; Wolfram Client Library for Python 1.0.0.dev3 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -50,7 +50,7 @@
 <li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer.decimal">wolframclient.serializers.normalizer.decimal module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer.fractions">wolframclient.serializers.normalizer.fractions module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer.numpy">wolframclient.serializers.normalizer.numpy module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.normalizer.html#wolframclient-serializers-normalizer-pil-module">wolframclient.serializers.normalizer.pil module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer.pil">wolframclient.serializers.normalizer.pil module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer.wolfram">wolframclient.serializers.normalizer.wolfram module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer">Module contents</a></li>
 </ul>
@@ -78,7 +78,7 @@
 <span id="wolframclient-serializers-base-module"></span><h2>wolframclient.serializers.base module<a class="headerlink" href="#module-wolframclient.serializers.base" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="wolframclient.serializers.base.FormatSerializer">
-<em class="property">class </em><code class="descclassname">wolframclient.serializers.base.</code><code class="descname">FormatSerializer</code><span class="sig-paren">(</span><em>normalizer=None</em>, <em>allow_external_objects=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/base.html#FormatSerializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.base.FormatSerializer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">wolframclient.serializers.base.</code><code class="descname">FormatSerializer</code><span class="sig-paren">(</span><em>normalizer=None</em>, <em>allow_external_objects=False</em>, <em>target_kernel_version=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/base.html#FormatSerializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.base.FormatSerializer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="wolframclient.serializers.normalizer.html#wolframclient.serializers.normalizer.Normalizer" title="wolframclient.serializers.normalizer.Normalizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.serializers.normalizer.Normalizer</span></code></a></p>
 <dl class="method">
 <dt id="wolframclient.serializers.base.FormatSerializer.dump">
@@ -131,6 +131,11 @@
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="wolframclient.serializers.base.FormatSerializer.serialize_input_form">
+<code class="descname">serialize_input_form</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/base.html#FormatSerializer.serialize_input_form"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.base.FormatSerializer.serialize_input_form" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="wolframclient.serializers.base.FormatSerializer.serialize_int">
 <code class="descname">serialize_int</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/base.html#FormatSerializer.serialize_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.base.FormatSerializer.serialize_int" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -146,8 +151,8 @@
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="wolframclient.serializers.base.FormatSerializer.serialize_raw_array">
-<code class="descname">serialize_raw_array</code><span class="sig-paren">(</span><em>data</em>, <em>shape</em>, <em>wl_type</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/base.html#FormatSerializer.serialize_raw_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.base.FormatSerializer.serialize_raw_array" title="Permalink to this definition">¶</a></dt>
+<dt id="wolframclient.serializers.base.FormatSerializer.serialize_numeric_array">
+<code class="descname">serialize_numeric_array</code><span class="sig-paren">(</span><em>data</em>, <em>shape</em>, <em>wl_type</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/base.html#FormatSerializer.serialize_numeric_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.base.FormatSerializer.serialize_numeric_array" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -172,7 +177,7 @@
 
 <dl class="method">
 <dt id="wolframclient.serializers.base.FormatSerializer.serialize_tzinfo">
-<code class="descname">serialize_tzinfo</code><span class="sig-paren">(</span><em>date</em>, <em>name_match=re.compile('^[A-Za-z]+(/[A-Za-z]+)?$')</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/base.html#FormatSerializer.serialize_tzinfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.base.FormatSerializer.serialize_tzinfo" title="Permalink to this definition">¶</a></dt>
+<code class="descname">serialize_tzinfo</code><span class="sig-paren">(</span><em>tzinfo</em>, <em>date=None</em>, <em>name_match=re.compile('^([A-Za-z]+/[A-Za-z]+?|UTC)$')</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/base.html#FormatSerializer.serialize_tzinfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.base.FormatSerializer.serialize_tzinfo" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -271,6 +276,11 @@
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="wolframclient.serializers.wl.WLSerializer.serialize_input_form">
+<code class="descname">serialize_input_form</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wl.html#WLSerializer.serialize_input_form"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wl.WLSerializer.serialize_input_form" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="wolframclient.serializers.wl.WLSerializer.serialize_int">
 <code class="descname">serialize_int</code><span class="sig-paren">(</span><em>number</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wl.html#WLSerializer.serialize_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wl.WLSerializer.serialize_int" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -319,7 +329,7 @@
 <dt id="wolframclient.serializers.wxf.WXFSerializer">
 <em class="property">class </em><code class="descclassname">wolframclient.serializers.wxf.</code><code class="descname">WXFSerializer</code><span class="sig-paren">(</span><em>normalizer=None</em>, <em>compress=False</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxf.html#WXFSerializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxf.WXFSerializer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#wolframclient.serializers.base.FormatSerializer" title="wolframclient.serializers.base.FormatSerializer"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.serializers.base.FormatSerializer</span></code></a></p>
-<p>TODO</p>
+<p>Serialize python objects to WXF.</p>
 <dl class="method">
 <dt id="wolframclient.serializers.wxf.WXFSerializer.dump">
 <code class="descname">dump</code><span class="sig-paren">(</span><em>data</em>, <em>stream</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxf.html#WXFSerializer.dump"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxf.WXFSerializer.dump" title="Permalink to this definition">¶</a></dt>
@@ -356,8 +366,8 @@
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="wolframclient.serializers.wxf.WXFSerializer.serialize_raw_array">
-<code class="descname">serialize_raw_array</code><span class="sig-paren">(</span><em>data</em>, <em>dimensions</em>, <em>wl_type</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxf.html#WXFSerializer.serialize_raw_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxf.WXFSerializer.serialize_raw_array" title="Permalink to this definition">¶</a></dt>
+<dt id="wolframclient.serializers.wxf.WXFSerializer.serialize_numeric_array">
+<code class="descname">serialize_numeric_array</code><span class="sig-paren">(</span><em>data</em>, <em>dimensions</em>, <em>wl_type</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxf.html#WXFSerializer.serialize_numeric_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxf.WXFSerializer.serialize_numeric_array" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -511,7 +521,7 @@ or <a class="reference external" href="https://docs.python.org/3/library/io.html
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

@@ -20,14 +20,6 @@ wolframclient.evaluation.kernel.futuresession module
     :undoc-members:
     :show-inheritance:
 
-wolframclient.evaluation.kernel.kernelpool module
--------------------------------------------------
-
-.. automodule:: wolframclient.evaluation.kernel.kernelpool
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 wolframclient.evaluation.kernel.kernelsession module
 ----------------------------------------------------
 

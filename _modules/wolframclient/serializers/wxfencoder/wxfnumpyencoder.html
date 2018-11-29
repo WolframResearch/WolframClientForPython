@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.serializers.wxfencoder.wxfnumpyencoder &#8212; Wolfram Client Library for Python 1.0 documentation</title>
+    <title>wolframclient.serializers.wxfencoder.wxfnumpyencoder &#8212; Wolfram Client Library for Python 1.0.0.dev3 documentation</title>
     <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../serializers.html" accesskey="U">wolframclient.serializers</a> &#187;</li> 
       </ul>
@@ -48,8 +48,8 @@
     <span class="n">ARRAY_TYPES</span><span class="p">,</span> <span class="n">WXF_CONSTANTS</span><span class="p">,</span> <span class="n">WXF_HEADER_COMPRESS</span><span class="p">,</span> <span class="n">WXF_HEADER_SEPARATOR</span><span class="p">,</span>
     <span class="n">WXF_VERSION</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">wolframclient.serializers.wxfencoder.wxfencoder</span> <span class="k">import</span> <span class="n">WXFEncoder</span>
-<span class="kn">from</span> <span class="nn">wolframclient.serializers.wxfencoder.wxfexpr</span> <span class="k">import</span> <span class="p">(</span><span class="n">WXFExprPackedArray</span><span class="p">,</span>
-                                                          <span class="n">WXFExprRawArray</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">wolframclient.serializers.wxfencoder.wxfexpr</span> <span class="k">import</span> <span class="p">(</span><span class="n">WXFExprNumericArray</span><span class="p">,</span>
+                                                          <span class="n">WXFExprPackedArray</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">wolframclient.utils.api</span> <span class="k">import</span> <span class="n">numpy</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
@@ -64,32 +64,30 @@
 <span class="sd">    can fit the maximum value.</span>
 
 <span class="sd">    It&#39;s possible to add support for raw arrays only for unsigned data, in which case both</span>
-<span class="sd">    `packed_array_support` and `rawarray_support` must be true.</span>
+<span class="sd">    `packed_array_support` and `numeric_array_support` must be true.</span>
 
-<span class="sd">    &gt;&gt;&gt; NumPyWXFEncoder(packed_array_support=True, rawarray_support=True)</span>
+<span class="sd">    &gt;&gt;&gt; NumPyWXFEncoder(packed_array_support=True, numeric_array_support=True)</span>
 
 <span class="sd">    Finally it&#39;s possible to only output raw arrays with:</span>
 
-<span class="sd">    &gt;&gt;&gt; NumPyWXFEncoder(packed_array_support=False, rawarray_support=True)</span>
+<span class="sd">    &gt;&gt;&gt; NumPyWXFEncoder(packed_array_support=False, numeric_array_support=True)</span>
 
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;packed_array_support&#39;</span><span class="p">,</span> <span class="s1">&#39;rawarray_support&#39;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">packed_array_support</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rawarray_support</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">packed_array_support</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">rawarray_support</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">packed_array_support</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">numeric_array_support</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">packed_array_support</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">numeric_array_support</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s1">&#39;At least one of the two parameters packed_array_support or rawarray_support must be True.&#39;</span>
+                <span class="s1">&#39;At least one of the two parameters packed_array_support or numeric_array_support must be True.&#39;</span>
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">packed_array_support</span> <span class="o">=</span> <span class="n">packed_array_support</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rawarray_support</span> <span class="o">=</span> <span class="n">rawarray_support</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numeric_array_support</span> <span class="o">=</span> <span class="n">numeric_array_support</span>
 
 <div class="viewcode-block" id="NumPyWXFEncoder.encode"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.wxfnumpyencoder.NumPyWXFEncoder.encode">[docs]</a>    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">python_expr</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">python_expr</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">packed_array_support</span><span class="p">:</span>
                 <span class="n">array_class</span> <span class="o">=</span> <span class="n">WXFExprPackedArray</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">array_class</span> <span class="o">=</span> <span class="n">WXFExprRawArray</span>
+                <span class="n">array_class</span> <span class="o">=</span> <span class="n">WXFExprNumericArray</span>
 
             <span class="k">if</span> <span class="n">python_expr</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int8</span><span class="p">:</span>
                 <span class="n">value_type</span> <span class="o">=</span> <span class="n">ARRAY_TYPES</span><span class="o">.</span><span class="n">Integer8</span>
@@ -104,36 +102,36 @@
                 <span class="n">data</span> <span class="o">=</span> <span class="n">python_expr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;&lt;i8&#39;</span><span class="p">)</span>
                 <span class="n">value_type</span> <span class="o">=</span> <span class="n">ARRAY_TYPES</span><span class="o">.</span><span class="n">Integer64</span>
             <span class="k">elif</span> <span class="n">python_expr</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint8</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rawarray_support</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">numeric_array_support</span><span class="p">:</span>
                     <span class="n">value_type</span> <span class="o">=</span> <span class="n">ARRAY_TYPES</span><span class="o">.</span><span class="n">UnsignedInteger8</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">python_expr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;&lt;u1&#39;</span><span class="p">)</span>
-                    <span class="n">array_class</span> <span class="o">=</span> <span class="n">WXFExprRawArray</span>
+                    <span class="n">array_class</span> <span class="o">=</span> <span class="n">WXFExprNumericArray</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">value_type</span> <span class="o">=</span> <span class="n">ARRAY_TYPES</span><span class="o">.</span><span class="n">Integer16</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">python_expr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;&lt;i2&#39;</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">python_expr</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint16</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rawarray_support</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">numeric_array_support</span><span class="p">:</span>
                     <span class="n">value_type</span> <span class="o">=</span> <span class="n">ARRAY_TYPES</span><span class="o">.</span><span class="n">UnsignedInteger16</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">python_expr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;&lt;u2&#39;</span><span class="p">)</span>
-                    <span class="n">array_class</span> <span class="o">=</span> <span class="n">WXFExprRawArray</span>
+                    <span class="n">array_class</span> <span class="o">=</span> <span class="n">WXFExprNumericArray</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">value_type</span> <span class="o">=</span> <span class="n">ARRAY_TYPES</span><span class="o">.</span><span class="n">Integer32</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">python_expr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;&lt;i4&#39;</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">python_expr</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint32</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rawarray_support</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">numeric_array_support</span><span class="p">:</span>
                     <span class="n">value_type</span> <span class="o">=</span> <span class="n">ARRAY_TYPES</span><span class="o">.</span><span class="n">UnsignedInteger32</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">python_expr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;&lt;u4&#39;</span><span class="p">)</span>
-                    <span class="n">array_class</span> <span class="o">=</span> <span class="n">WXFExprRawArray</span>
+                    <span class="n">array_class</span> <span class="o">=</span> <span class="n">WXFExprNumericArray</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">value_type</span> <span class="o">=</span> <span class="n">ARRAY_TYPES</span><span class="o">.</span><span class="n">Integer64</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">python_expr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;&lt;i8&#39;</span><span class="p">)</span>
             <span class="c1"># no one to one mapping to signed values, even if most of the time</span>
             <span class="c1"># the values would fit</span>
             <span class="k">elif</span> <span class="n">python_expr</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint64</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rawarray_support</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">numeric_array_support</span><span class="p">:</span>
                     <span class="n">value_type</span> <span class="o">=</span> <span class="n">ARRAY_TYPES</span><span class="o">.</span><span class="n">UnsignedInteger64</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">python_expr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;&lt;u8&#39;</span><span class="p">)</span>
-                    <span class="n">array_class</span> <span class="o">=</span> <span class="n">WXFExprRawArray</span>
+                    <span class="n">array_class</span> <span class="o">=</span> <span class="n">WXFExprNumericArray</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="ne">TypeError</span><span class="p">(</span>
                         <span class="s1">&#39;Cannot represent data of type uint64 as signed int64&#39;</span><span class="p">)</span>
@@ -199,7 +197,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../serializers.html" >wolframclient.serializers</a> &#187;</li> 
       </ul>

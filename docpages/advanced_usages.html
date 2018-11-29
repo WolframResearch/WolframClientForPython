@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Advanced Usage and Code Examples &#8212; Wolfram Client Library for Python 1.0 documentation</title>
+    <title>Advanced Usage and Code Examples &#8212; Wolfram Client Library for Python 1.0.0.dev3 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -34,7 +34,7 @@
         <li class="right" >
           <a href="intro.html" title="Introduction to the Wolfram Client Library"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -55,14 +55,14 @@
 <span id="adv-expression-representation"></span><h2>Expression Representation<a class="headerlink" href="#expression-representation" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="contexts">
 <h3>Contexts<a class="headerlink" href="#contexts" title="Permalink to this headline">¶</a></h3>
-<p>In the Wolfram Language, expressions live in <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Context.html" target="_blank">Context</a>, which serves as a namespace mechanism. Built-in functions belong to the <code class="docutils literal notranslate"><span class="pre">System`</span></code> context. By default, the context called <code class="docutils literal notranslate"><span class="pre">Global`</span></code> is associated to user-defined functions and new variables. More information about contexts can be found at <a class="reference external" href="http://reference.wolfram.com/language/tutorial/Contexts.html">tutorial/Contexts</a>.</p>
-<p>Wolfram Language expressions are conveniently represented in Python using the attributes of the factory <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-func docutils literal notranslate"><span class="pre">wl()</span></code></a>:</p>
+<p>In the Wolfram Language, symbols live in <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Context.html" target="_blank">Context</a>, which serves as a namespace mechanism. Built-in functions belong to the <code class="docutils literal notranslate"><span class="pre">System`</span></code> context. By default, the context called <code class="docutils literal notranslate"><span class="pre">Global`</span></code> is associated to user-defined functions and new variables. More information about contexts can be found at <a class="reference external" href="http://reference.wolfram.com/language/tutorial/Contexts.html">tutorial/Contexts</a>.</p>
+<p>Wolfram Language expressions are conveniently represented in Python using the attributes of the factory <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-data docutils literal notranslate"><span class="pre">wl</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="k">import</span> <span class="n">wl</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">Range</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 <span class="go">Range[3]</span>
 </pre></div>
 </div>
-<p>These attributes of the factory <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-func docutils literal notranslate"><span class="pre">wl()</span></code></a> do not have a context attached:</p>
+<p>These attributes of the factory <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-data docutils literal notranslate"><span class="pre">wl</span></code></a> do not have a context attached:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">myFunction</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">myFunction[1]</span>
 </pre></div>
@@ -76,7 +76,7 @@
 </ul>
 <div class="section" id="system-context">
 <h4><code class="docutils literal notranslate"><span class="pre">System`</span></code> Context<a class="headerlink" href="#system-context" title="Permalink to this headline">¶</a></h4>
-<p>In order to explicitly represent a system symbol in Python, the factory <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.System" title="wolframclient.language.System"><code class="xref py py-func docutils literal notranslate"><span class="pre">System()</span></code></a> can be used. First import it:</p>
+<p>In order to explicitly represent a system symbol in Python, the factory <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.System" title="wolframclient.language.System"><code class="xref py py-data docutils literal notranslate"><span class="pre">System</span></code></a> can be used. First import it:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="k">import</span> <span class="n">System</span>
 </pre></div>
 </div>
@@ -88,15 +88,16 @@
 </div>
 <div class="section" id="global-context">
 <h4><code class="docutils literal notranslate"><span class="pre">Global`</span></code> Context<a class="headerlink" href="#global-context" title="Permalink to this headline">¶</a></h4>
-<p>User-defined functions and variables are associated to the <code class="docutils literal notranslate"><span class="pre">Global`</span></code> context by default. The factory <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.Global" title="wolframclient.language.Global"><code class="xref py py-func docutils literal notranslate"><span class="pre">Global()</span></code></a> can be used to represent those symbols:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt; from wolframclient.language import Global
-&gt;&gt;&gt; Global`f
+<p>User-defined functions and variables are associated to the <code class="docutils literal notranslate"><span class="pre">Global`</span></code> context by default. The factory <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.Global" title="wolframclient.language.Global"><code class="xref py py-data docutils literal notranslate"><span class="pre">Global</span></code></a> can be used to represent those symbols:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="k">import</span> <span class="n">Global</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Global</span><span class="o">.</span><span class="n">f</span>
+<span class="go">Global`f</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="arbitrary-contexts">
 <h4>Arbitrary Contexts<a class="headerlink" href="#arbitrary-contexts" title="Permalink to this headline">¶</a></h4>
-<p>The factory <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-func docutils literal notranslate"><span class="pre">wl()</span></code></a> can be used to build symbols with arbitrary context, as well as subcontexts:</p>
+<p>The factory <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-data docutils literal notranslate"><span class="pre">wl</span></code></a> can be used to build symbols with arbitrary context, as well as subcontexts:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">Developer</span><span class="o">.</span><span class="n">PackedArrayQ</span>
 <span class="go">Developer`PackedArrayQ</span>
 
@@ -380,14 +381,10 @@ After 1.03s, both evaluations finished returning: hello, world!
 </pre></div>
 </div>
 <p>In the examples shown, only one Wolfram kernel was used, which is a single-threaded process. Evaluating two computation-heavy Wolfram Language expressions in parallel will have no impact on performances. This requires more than one kernel, which is exactly what kernel pool was designed for.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">require on Python 3.5+</p>
-</div>
 </div>
 <div class="section" id="kernel-pool">
 <h5>Kernel Pool<a class="headerlink" href="#kernel-pool" title="Permalink to this headline">¶</a></h5>
-<p>A <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframKernelPool" title="wolframclient.evaluation.WolframKernelPool"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframKernelPool</span></code></a> starts up a certain amount of kernels and dispatch work load on them asynchronously. The pool is usable right after the first kernel has successfully started. Some kernels may take more time to start and become available after a delay.</p>
+<p>A <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframEvaluatorPool" title="wolframclient.evaluation.WolframEvaluatorPool"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframEvaluatorPool</span></code></a> starts up a certain amount of evaluators and dispatch work load on them asynchronously. The pool is usable right after the first one has successfully started. Some may take more time to start and become available after a delay.</p>
 <div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -414,14 +411,14 @@ After 1.03s, both evaluations finished returning: hello, world!
 24
 25</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="kn">import</span> <span class="nn">asyncio</span>
-<span class="hll"><span class="kn">from</span> <span class="nn">wolframclient.evaluation</span> <span class="k">import</span> <span class="n">WolframKernelPool</span>
+<span class="hll"><span class="kn">from</span> <span class="nn">wolframclient.evaluation</span> <span class="k">import</span> <span class="n">WolframEvaluatorPool</span>
 </span><span class="kn">from</span> <span class="nn">wolframclient.utils.api</span> <span class="k">import</span> <span class="n">time</span>
 <span class="c1"># Change the path to point to a local kernel.</span>
 <span class="c1"># This value corresponds to the default path to a MacOS Wolfram Desktop kernel.</span>
 <span class="n">kernel_path</span> <span class="o">=</span> <span class="s1">&#39;/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel&#39;</span>
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-<span class="hll">    <span class="k">async</span> <span class="k">with</span> <span class="n">WolframKernelPool</span><span class="p">(</span><span class="n">kernel_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+<span class="hll">    <span class="k">async</span> <span class="k">with</span> <span class="n">WolframEvaluatorPool</span><span class="p">(</span><span class="n">kernel_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
 </span>        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
 <span class="hll">        <span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span>
 </span><span class="hll">            <span class="n">pool</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;Pause[1]&#39;</span><span class="p">)</span>
@@ -439,13 +436,9 @@ After 1.03s, both evaluations finished returning: hello, world!
 <span class="c1"># asyncio.run(main())</span>
 </pre></div>
 </td></tr></table></div>
-<p>Evaluation output shows that if more than one kernel was started, the total time is less than ten seconds:</p>
+<p>Evaluation output shows that if more than one evaluator was started, the total time is less than ten seconds:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Done after 3.04s, using up to 4 kernels.
 </pre></div>
-</div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">require on Python 3.5+</p>
 </div>
 </div>
 <div class="section" id="parallel-evaluate">
@@ -469,10 +462,6 @@ After 1.03s, both evaluations finished returning: hello, world!
 </pre></div>
 </div>
 <p>The result varies but the pattern remains the same – namely, at least one process was started, and each process is eventually used more than once.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">require on Python 3.5+</p>
-</div>
 </div>
 </div>
 </div>
@@ -622,7 +611,8 @@ WARNING:wolframclient.evaluation.kernel.kernelsession:Infinite expression Infini
 15
 16
 17
-18</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+18
+19</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="kn">from</span> <span class="nn">wolframclient.evaluation</span> <span class="k">import</span> <span class="n">WolframLanguageSession</span>
 <span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="k">import</span> <span class="n">wl</span>
 
@@ -639,6 +629,7 @@ WARNING:wolframclient.evaluation.kernel.kernelsession:Infinite expression Infini
 </span>    <span class="c1"># expression to evaluate</span>
 <span class="hll">    <span class="n">expr</span> <span class="o">=</span> <span class="n">wl</span><span class="o">.</span><span class="n">Eigenvalues</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
 </span>    <span class="c1"># send expression to the kernel for evaluation.</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>  <span class="c1"># [-2, -2, 1]</span>
 </pre></div>
 </td></tr></table></div>
@@ -1085,7 +1076,7 @@ WARNING:wolframclient.evaluation.kernel.kernelsession:Infinite expression Infini
         <li class="right" >
           <a href="intro.html" title="Introduction to the Wolfram Client Library"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

@@ -12,6 +12,14 @@ wolframclient.utils.api module
     :undoc-members:
     :show-inheritance:
 
+wolframclient.utils.asyncio module
+----------------------------------
+
+.. automodule:: wolframclient.utils.asyncio
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 wolframclient.utils.datastructures module
 -----------------------------------------
 
@@ -96,6 +104,14 @@ wolframclient.utils.tests module
 --------------------------------
 
 .. automodule:: wolframclient.utils.tests
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.utils.url module
+------------------------------
+
+.. automodule:: wolframclient.utils.url
     :members:
     :undoc-members:
     :show-inheritance:

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.language package &#8212; Wolfram Client Library for Python 1.0 documentation</title>
+    <title>wolframclient.language package &#8212; Wolfram Client Library for Python 1.0.0.dev3 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -160,6 +160,13 @@ context.</p>
 </div>
 </dd></dl>
 
+<dl class="class">
+<dt id="wolframclient.language.expression.WLInputExpression">
+<em class="property">class </em><code class="descclassname">wolframclient.language.expression.</code><code class="descname">WLInputExpression</code><span class="sig-paren">(</span><em>input</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/expression.html#WLInputExpression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.language.expression.WLInputExpression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.language.expression.WLExpressionMeta</span></code></p>
+<p>Represent a string input form expression.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-wolframclient.language.side_effects">
 <span id="wolframclient-language-side-effects-module"></span><h2>wolframclient.language.side_effects module<a class="headerlink" href="#module-wolframclient.language.side_effects" title="Permalink to this headline">¶</a></h2>
@@ -208,7 +215,7 @@ by calling its attributes. The following code represents various Wolfram Languag
 <dt id="wolframclient.language.System">
 <code class="descclassname">wolframclient.language.</code><code class="descname">System</code><a class="headerlink" href="#wolframclient.language.System" title="Permalink to this definition">¶</a></dt>
 <dd><p>A factory of <a class="reference internal" href="#wolframclient.language.expression.WLSymbol" title="wolframclient.language.expression.WLSymbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbol</span></code></a> instances having <code class="docutils literal notranslate"><span class="pre">System`</span></code> context.</p>
-<p>See <a class="reference internal" href="#wolframclient.language.expression.WLSymbolFactory" title="wolframclient.language.expression.WLSymbolFactory"><code class="xref py py-func docutils literal notranslate"><span class="pre">WLSymbolFactory()</span></code></a> and
+<p>See <a class="reference internal" href="#wolframclient.language.expression.WLSymbolFactory" title="wolframclient.language.expression.WLSymbolFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbolFactory</span></code></a> and
 <a class="reference internal" href="#wolframclient.language.expression.WLSymbolFactory" title="wolframclient.language.expression.WLSymbolFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbolFactory</span></code></a> for more details.</p>
 </dd></dl>
 
@@ -216,28 +223,14 @@ by calling its attributes. The following code represents various Wolfram Languag
 <dt id="wolframclient.language.Global">
 <code class="descclassname">wolframclient.language.</code><code class="descname">Global</code><a class="headerlink" href="#wolframclient.language.Global" title="Permalink to this definition">¶</a></dt>
 <dd><p>A factory of <a class="reference internal" href="#wolframclient.language.expression.WLSymbol" title="wolframclient.language.expression.WLSymbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbol</span></code></a> instances having <code class="docutils literal notranslate"><span class="pre">Global`</span></code> context.</p>
-<p>See <a class="reference internal" href="#wolframclient.language.expression.WLSymbolFactory" title="wolframclient.language.expression.WLSymbolFactory"><code class="xref py py-func docutils literal notranslate"><span class="pre">WLSymbolFactory()</span></code></a> and
+<p>See <a class="reference internal" href="#wolframclient.language.expression.WLSymbolFactory" title="wolframclient.language.expression.WLSymbolFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbolFactory</span></code></a> and
 <a class="reference internal" href="#wolframclient.language.expression.WLSymbolFactory" title="wolframclient.language.expression.WLSymbolFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbolFactory</span></code></a> for more details.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="wolframclient.language.wlexpr">
 <code class="descclassname">wolframclient.language.</code><code class="descname">wlexpr</code><a class="headerlink" href="#wolframclient.language.wlexpr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Provide a convenient way to build objects representing arbitrary Wolfram Language expressions through the use of attributes.</p>
-<p>This class is conveniently instanciated at startup as: <a class="reference internal" href="#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-class docutils literal notranslate"><span class="pre">wl</span></code></a>, <a class="reference internal" href="#wolframclient.language.Global" title="wolframclient.language.Global"><code class="xref py py-class docutils literal notranslate"><span class="pre">Global</span></code></a> 
-and <a class="reference internal" href="#wolframclient.language.System" title="wolframclient.language.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">System</span></code></a>. It should be instanciated only to represent many symbols belonging to the same specific
-context.</p>
-<p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">developer</span> <span class="o">=</span> <span class="n">WLSymbolFactory</span><span class="p">(</span><span class="s1">&#39;Developer&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">developer</span><span class="o">.</span><span class="n">PackedArrayQ</span>
-<span class="go">Developer`PackedArrayQ</span>
-</pre></div>
-</div>
-<p>Alternative:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">Developer</span><span class="o">.</span><span class="n">PackedArrayQ</span>
-<span class="go">Developer`PackedArrayQ</span>
-</pre></div>
-</div>
+<dd><p>alias of <a class="reference internal" href="#wolframclient.language.expression.WLInputExpression" title="wolframclient.language.expression.WLInputExpression"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.language.expression.WLInputExpression</span></code></a></p>
 </dd></dl>
 
 </div>
@@ -301,7 +294,7 @@ context.</p>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

@@ -4,6 +4,30 @@ wolframclient.evaluation.cloud package
 Submodules
 ----------
 
+wolframclient.evaluation.cloud.asynccloudsession module
+-------------------------------------------------------
+
+.. automodule:: wolframclient.evaluation.cloud.asynccloudsession
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.evaluation.cloud.asyncoauth module
+------------------------------------------------
+
+.. automodule:: wolframclient.evaluation.cloud.asyncoauth
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.evaluation.cloud.base module
+------------------------------------------
+
+.. automodule:: wolframclient.evaluation.cloud.base
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 wolframclient.evaluation.cloud.cloudsession module
 --------------------------------------------------
 
@@ -16,6 +40,14 @@ wolframclient.evaluation.cloud.oauth module
 -------------------------------------------
 
 .. automodule:: wolframclient.evaluation.cloud.oauth
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.evaluation.cloud.request\_adapter module
+------------------------------------------------------
+
+.. automodule:: wolframclient.evaluation.cloud.request_adapter
     :members:
     :undoc-members:
     :show-inheritance:

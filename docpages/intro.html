@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Introduction to the Wolfram Client Library &#8212; Wolfram Client Library for Python 1.0 documentation</title>
+    <title>Introduction to the Wolfram Client Library &#8212; Wolfram Client Library for Python 1.0.0.dev3 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -32,9 +32,9 @@
           <a href="advanced_usages.html" title="Advanced Usage and Code Examples"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="install.html" title="Installation of the Library"
+          <a href="install.html" title="Installation and prerequisites"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -50,14 +50,14 @@
 <p>The Wolfram Client Library is structured in submodules all located in <a class="reference internal" href="../api/wolframclient.html#module-wolframclient" title="wolframclient"><code class="xref py py-mod docutils literal notranslate"><span class="pre">wolframclient</span></code></a>:</p>
 <ul class="simple">
 <li><a class="reference internal" href="../api/wolframclient.evaluation.html#module-wolframclient.evaluation" title="wolframclient.evaluation"><code class="xref py py-mod docutils literal notranslate"><span class="pre">evaluation</span></code></a> provides convenient methods to evaluate Wolfram Language expressions directly from Python. There are many ways to evaluate code including: evaluation by a local kernel, direct evaluation by a public or private Wolfram Cloud, calling a deployed API.</li>
+<li><a class="reference internal" href="../api/wolframclient.language.html#module-wolframclient.language" title="wolframclient.language"><code class="xref py py-mod docutils literal notranslate"><span class="pre">language</span></code></a> provides a Python representation of Wolfram Language symbols and functions.</li>
 <li><a class="reference internal" href="../api/wolframclient.serializers.html#module-wolframclient.serializers" title="wolframclient.serializers"><code class="xref py py-mod docutils literal notranslate"><span class="pre">serializers</span></code></a> provides serialization methods to various formats such as string <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html" target="_blank">InputForm</a> and binary <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html" target="_blank">WXF</a> format.</li>
 <li><a class="reference internal" href="../api/wolframclient.deserializers.html#module-wolframclient.deserializers" title="wolframclient.deserializers"><code class="xref py py-mod docutils literal notranslate"><span class="pre">deserializers</span></code></a> contains a parser for <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html" target="_blank">WXF</a>.</li>
-<li><a class="reference internal" href="../api/wolframclient.language.html#module-wolframclient.language" title="wolframclient.language"><code class="xref py py-mod docutils literal notranslate"><span class="pre">language</span></code></a> provides a Python representation of Wolfram Language symbols and functions.</li>
 <li><a class="reference internal" href="../api/wolframclient.html#module-wolframclient.exception" title="wolframclient.exception"><code class="xref py py-mod docutils literal notranslate"><span class="pre">exception</span></code></a> regroups the exceptions and errors that the library may raise.</li>
 </ul>
 <div class="section" id="wolfram-language-expression-representation">
 <span id="ref-expressions"></span><h2>Wolfram Language Expression Representation<a class="headerlink" href="#wolfram-language-expression-representation" title="Permalink to this headline">¶</a></h2>
-<p>The library exposes many kinds of interactions with the Wolfram Language, many of which require representation of Wolfram Language expressions as Python objects. A straightforward way to construct Python objects representing expressions is to call attributes of <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-func docutils literal notranslate"><span class="pre">wl()</span></code></a>.</p>
+<p>The library exposes many kinds of interactions with the Wolfram Language, many of which require representation of Wolfram Language expressions as Python objects. A straightforward way to construct Python objects representing expressions is to call attributes of <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-data docutils literal notranslate"><span class="pre">wl</span></code></a>.</p>
 <p>Import the factory:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="k">import</span> <span class="n">wl</span>
 </pre></div>
@@ -111,7 +111,7 @@
 </div>
 <div class="section" id="expression-evaluation">
 <h4>Expression Evaluation<a class="headerlink" href="#expression-evaluation" title="Permalink to this headline">¶</a></h4>
-<p>Functions are conveniently represented using <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-func docutils literal notranslate"><span class="pre">wl()</span></code></a>. First import it:</p>
+<p>Functions are conveniently represented using <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-data docutils literal notranslate"><span class="pre">wl</span></code></a>. First import it:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="k">import</span> <span class="n">wl</span>
 </pre></div>
 </div>
@@ -200,9 +200,9 @@
 </div>
 <div class="section" id="create-python-function">
 <h4>Create Python Function<a class="headerlink" href="#create-python-function" title="Permalink to this headline">¶</a></h4>
-<p>From a Wolfram Language expression, it is possible to create a Python function that directly evaluates when called using <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.function" title="wolframclient.evaluation.WolframLanguageSession.function"><code class="xref py py-func docutils literal notranslate"><span class="pre">function()</span></code></a>:</p>
+<p>From a Wolfram Language expression, it is possible to create a Python function that directly evaluates when called using <code class="xref py py-func docutils literal notranslate"><span class="pre">function()</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">str_reverse</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="s1">&#39;StringReverse&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">str_reverse</span><span class="p">(</span><span class="s1">&#39;abc&#39;</span><span class="p">,</span> <span class="s1">&#39;def&#39;</span><span class="p">,</span> <span class="s1">&#39;ghi&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">str_reverse</span><span class="p">(</span><span class="s1">&#39;abc&#39;</span><span class="p">)</span>
 <span class="go">&#39;cba&#39;</span>
 </pre></div>
 </div>
@@ -299,8 +299,9 @@
 </pre></div>
 </div>
 <p>Using <cite>sak</cite>, start a new authenticated cloud session:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span> <span class="o">=</span> <span class="n">WolframCloudSession</span><span class="p">(</span><span class="n">authentication</span><span class="o">=</span><span class="n">sak</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">authorized</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span> <span class="o">=</span> <span class="n">WolframCloudSession</span><span class="p">(</span><span class="n">credentials</span><span class="o">=</span><span class="n">sak</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">authorized</span><span class="p">()</span>
 <span class="go">True</span>
 </pre></div>
 </div>
@@ -633,7 +634,7 @@ The function <a class="reference internal" href="../api/wolframclient.deserializ
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="install.html"
-                        title="previous chapter">Installation of the Library</a></p>
+                        title="previous chapter">Installation and prerequisites</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="advanced_usages.html"
                         title="next chapter">Advanced Usage and Code Examples</a></p>
@@ -673,9 +674,9 @@ The function <a class="reference internal" href="../api/wolframclient.deserializ
           <a href="advanced_usages.html" title="Advanced Usage and Code Examples"
              >next</a> |</li>
         <li class="right" >
-          <a href="install.html" title="Installation of the Library"
+          <a href="install.html" title="Installation and prerequisites"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
