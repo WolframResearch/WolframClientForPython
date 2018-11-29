@@ -138,10 +138,9 @@
 		</exec>
 
 		<!-- Build docs using Bash script -->
-		<mkdir dir="${files_directory}/ghpages" />
 		<exec dir= "${basedir}/docs" executable="build_docs.sh">
 			<arg value="-b" />
-			<arg value="${files_directory}/ghpages" />
+			<arg value="${files_directory}" />
 			<env key="PATH" path="${env.PATH}:${tmp_directory}/venv/bin"/>
 		</exec>
 
