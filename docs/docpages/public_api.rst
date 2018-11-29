@@ -14,6 +14,9 @@ Wolfram Language Expression Representation
 .. autofunction:: wolframclient.language.wl
     :noindex:
 
+.. autofunction:: wolframclient.language.wlexpr
+    :noindex:
+
 .. autofunction:: wolframclient.language.System
     :noindex:
 
@@ -173,21 +176,6 @@ Deserialization
 .. autofunction:: wolframclient.deserializers.binary_deserialize
     :noindex:
 
-
-.. _extensible-deserialization:
-
-Extensible mechanism
---------------------
-
-The :mod:`~wolframclient.deserializers` module provides a simple mechanism to extend the built-in implementation and to define custom deserializations. This is done by subclassing :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer` and override the relevant `consume_*` methods.
-
-.. autoclass:: wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer
-    :noindex:
-    :members:
-
-.. autoclass:: wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy
-    :noindex:
-    :members:
 
 Kernel evaluation
 ==================
