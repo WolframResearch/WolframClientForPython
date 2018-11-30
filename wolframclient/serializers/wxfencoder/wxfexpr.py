@@ -243,7 +243,7 @@ class WXFExprNumericArray(_WXFExprArray):
 
     def __init__(self, dimensions, value_type, data=None):
         super(WXFExprNumericArray, self).__init__(WXF_CONSTANTS.NumericArray,
-                                              dimensions, value_type, data)
+                                                  dimensions, value_type, data)
 
 
 class WXFExprAssociation(WXFExpr):

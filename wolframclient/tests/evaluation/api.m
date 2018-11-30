@@ -33,7 +33,17 @@ CloudDeploy[APIFunction[
   Range[#min, #max, #step] &,
   "JSON"],
  co
- ]
+]
+
+co = CloudObject["api/public/jsonrange"];
+CloudDeploy[
+	APIFunction[
+		{"i"->"Integer"},
+		Range[#i]&,
+		"JSON"
+	],
+	Permissions->"Public"
+]
 
 co = CloudObject["api/private/range/wlerror"];
 CloudDeploy[APIFunction[
@@ -51,7 +61,14 @@ CloudDeploy[APIFunction[
  co
  ];
 
- CloudDeploy[
-	APIFunction[{"image" -> "Image"}, ImageDimensions[#image] &], 
+CloudDeploy[
+	APIFunction[{"image" -> "Image"}, ImageDimensions[#image] &, "JSON"], 
  	CloudObject["api/private/imagedimensions"]
 ];
+
+api = APIFunction[{"str" -> "String", "image" -> "Image", 
+   "int" -> "Integer"},
+  {#str, ImageDimensions[#image], #int} &,
+  "JSON"
+];
+CloudDeploy[api, CloudObject["api/private/str_image_int"]];

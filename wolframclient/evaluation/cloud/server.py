@@ -17,7 +17,6 @@ class WolframServer(object):
     For conveniency this class exposes static methods to build instances from
     a `Configuration` or from a file path.
     '''
-    __slots__ = 'cloudbase', 'request_token_endpoint', 'access_token_endpoint', 'xauth_consumer_key', 'xauth_consumer_secret', 'certificate'
 
     def __init__(self,
                  cloudbase,
@@ -31,20 +30,14 @@ class WolframServer(object):
         self.access_token_endpoint = access_token_endpoint
         self.xauth_consumer_key = xauth_consumer_key
         self.xauth_consumer_secret = xauth_consumer_secret
-        self.certificate = certificate
-
-    def is_xauth(self):
-        return self.xauth_consumer_key is not None and self.xauth_consumer_secret is not None
-
-    @property
-    def verify(self):
-        if self.certificate is None:
-            return True
-        elif isinstance(self.certificate, six.string_types):
-            return self.certificate
+        if certificate is None or isinstance(certificate, six.string_types):
+            self.certificate = certificate
         else:
             raise ValueError(
                 'Invalid certificate. Must be a string type or None.')
+
+    def is_xauth(self):
+        return self.xauth_consumer_key is not None and self.xauth_consumer_secret is not None
 
 
 # A built-in instance representing the Wolfram public Cloud.

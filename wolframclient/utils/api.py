@@ -71,7 +71,7 @@ time = API(perf_counter=('time.perf_counter', 'time.time'), sleep='time.sleep')
 futures = API(ThreadPoolExecutor='concurrent.futures.ThreadPoolExecutor')
 
 asyncio = API(
-    ensure_task=('asyncio.ensure_task', 'asyncio.ensure_future'),
+    create_task=('wolframclient.utils.asyncio.create_task'),
     ensure_future=('asyncio.ensure_future'),
     get_event_loop='asyncio.get_event_loop',
     new_event_loop='asyncio.new_event_loop',
@@ -82,7 +82,8 @@ asyncio = API(
     FIRST_COMPLETED='asyncio.FIRST_COMPLETED',
     gather='asyncio.gather',
     Future='asyncio.Future',
-    sleep='asyncio.sleep')
+    sleep='asyncio.sleep',
+    BytesIO='asyncio.io.BytesIO')
 
 urllib = API(
     urlparse=('urllib.parse.urlparse', 'urlparse.urlparse'),
@@ -99,6 +100,7 @@ atexit = API(register='atexit.register', unregister=('atexit.unregister', ))
 numpy = API(
     array='numpy.array',
     ndarray='numpy.ndarray',
+    arange='numpy.arange',
     int8='numpy.int8',
     int16='numpy.int16',
     int32='numpy.int32',
@@ -119,6 +121,7 @@ multiprocessing = API(Lock='multiprocessing.Lock')
 
 PIL = API(
     Image='PIL.Image.Image',
+    fromarray='PIL.Image.fromarray',
     open='PIL.Image.open',
 )
 

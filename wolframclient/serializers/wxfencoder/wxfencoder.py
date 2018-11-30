@@ -32,8 +32,6 @@ class WXFEncoder(object):
     To do so one must call ``self.serialize`` on the target object and yield the results (yield from in PY3).
     """
 
-    __slots__ = '_provider'
-
     def __init__(self):
         self._provider = None
 

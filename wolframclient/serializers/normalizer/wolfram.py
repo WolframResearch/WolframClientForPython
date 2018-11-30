@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.language.expression import WLFunction, WLSymbol
+from wolframclient.language.expression import WLFunction, WLSymbol, WLInputExpression
 from wolframclient.serializers.normalizer.builtin import safe_key
 from wolframclient.serializers.serializable import WLSerializable
 from wolframclient.serializers.utils import safe_len
@@ -19,6 +19,10 @@ def update_dispatch(dispatch):
         return self.serialize_function(
             self.normalize(o.head), tuple(
                 self.normalize(arg) for arg in o.args))
+
+    @dispatch.multi(WLInputExpression)
+    def normalizer(self, o):
+        return self.serialize_input_form(o.input)
 
     @dispatch.multi(WLSerializable)
     def normalizer(self, o):
