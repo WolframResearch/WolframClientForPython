@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 import asyncio
-from wolframclient.evaluation import WolframKernelPool
+from wolframclient.evaluation import WolframEvaluatorPool
 from wolframclient.utils.api import time
 # Change the path to point to a local kernel.
 # This value corresponds to the default path to a MacOS Wolfram Desktop kernel.
 kernel_path = '/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel'
 
 async def main():
-    async with WolframKernelPool(kernel_path) as pool:
+    async with WolframEvaluatorPool(kernel_path) as pool:
         start = time.perf_counter()
         tasks = [
             pool.evaluate('Pause[1]')

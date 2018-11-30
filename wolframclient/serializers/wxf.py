@@ -31,8 +31,7 @@ def get_length(iterable, length=None):
 
 
 class WXFSerializer(FormatSerializer):
-    ''' TODO
-    '''
+    """ Serialize python objects to WXF. """
 
     def __init__(self, normalizer=None, compress=False, **opts):
         super(WXFSerializer, self).__init__(normalizer=normalizer, **opts)

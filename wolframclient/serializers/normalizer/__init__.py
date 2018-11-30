@@ -27,9 +27,6 @@ def normalizer(self, o):
 
 
 class DispatchUpdater(object):
-
-    # global lock to avoid multiple dispatcher updating in multithreaded programs.
-
     def __init__(self, dispatch):
         self.registry = defaultdict(list)
         self.modules = set()

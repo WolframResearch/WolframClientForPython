@@ -24,10 +24,7 @@ HERE = os.path.abspath(os.path.dirname(__file__))
 CLASSIFIERS = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 2",
-    "Programming Language :: Python :: 2.7",
     "Programming Language :: Python :: 3"
-    "Programming Language :: Python :: 3.4",
     "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
@@ -46,7 +43,7 @@ def load_tests():
 
 setup(
     name = 'wolframclient',
-    version = '1.0.0.dev2',
+    version = '1.0.0.dev3',
     description = 'A Python library with various tools to interact with the Wolfram Language and the Wolfram Cloud.',
     long_description = read('README.rst'),
     long_description_content_type = 'text/x-rst',
@@ -56,14 +53,15 @@ setup(
     include_package_data=True,
     packages=find_packages(),
     test_suite='setup.load_tests',
-    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*',
+    python_requires='>=3.5.3',
     install_requires = [
         'pip',
         'numpy',
         'pytz',
         'requests',
+        'aiohttp',
         'oauthlib',
-        'zmq'
+        'zmq',
     ],
     project_urls={
         'Source code': 'https://github.com/WolframResearch/WolframClientForPython',

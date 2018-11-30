@@ -3,11 +3,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import decimal
-import os
 import unittest
 from collections import OrderedDict
 
-from wolframclient.language import wl
+from wolframclient.language import wl, wlexpr
 from wolframclient.serializers import export
 from wolframclient.serializers.wxfencoder.serializer import WXFExprSerializer
 from wolframclient.serializers.wxfencoder.utils import (
@@ -18,7 +17,8 @@ from wolframclient.serializers.wxfencoder.wxfexprprovider import (
     WXFExprProvider)
 from wolframclient.utils import six
 from wolframclient.utils.datastructures import Association
-from wolframclient.utils.tests import TestCase as BaseTestCase, path_to_file_in_data_dir
+from wolframclient.utils.tests import TestCase as BaseTestCase
+from wolframclient.utils.tests import path_to_file_in_data_dir
 
 
 def init(compress=False, enforce=True):
@@ -38,6 +38,7 @@ class SerializeTest(BaseTestCase):
         serializer, stream = init(compress=compress)
         serializer.serialize(pythonExpr)
         self.assertSequenceEqual(stream.getvalue(), expected_wxf)
+
 
 class TestCase(SerializeTest):
     def test_zero(self):
@@ -267,8 +268,7 @@ class TestCase(SerializeTest):
             else:
                 all_char += chr(i)
 
-        with open(path_to_file_in_data_dir('allchars.wxf'),
-                  'rb') as r_file:
+        with open(path_to_file_in_data_dir('allchars.wxf'), 'rb') as r_file:
             ba = bytearray(r_file.read())
         self.serialize_compare(all_char, ba)
 
@@ -294,6 +294,17 @@ class TestCase(SerializeTest):
                 wl.Association(*(wl.Rule(i, v) for i, v in enumerate('abc'))),
                 target_format='wxf'),
         )
+
+        self.assertEqual(
+            export(wlexpr("2+2"), target_format='wxf'),
+            export(wl.ToExpression("2+2"), target_format='wxf'),
+        )
+
+        self.assertEqual(
+            export(wl.Foo(wlexpr("2+2"), 1, 2), target_format='wxf'),
+            export(wl.Foo(wl.ToExpression("2+2"), 1, 2), target_format='wxf'),
+        )
+
 
     def test_small_compression(self):
         wxf = b'\x38\x3a\x43\x01'

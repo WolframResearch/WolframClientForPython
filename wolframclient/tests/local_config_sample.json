@@ -11,9 +11,9 @@
         "SAK": {
             "consumer_key": "consumer key",
             "consumer_secret": "consumer secret"
-        },
-        "ApiOwner": "$UserName"
+        }
     },
+    "ApiOwner": "$UserName",
     "server": {
         "host": "https://www.my.wolframcloud.com",
         "request_token_endpoint": "https://account.my.wolfram.cloud.com/auth/request-token",

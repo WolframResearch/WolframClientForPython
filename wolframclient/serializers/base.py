@@ -58,6 +58,11 @@ class FormatSerializer(Normalizer):
     def serialize_int(self, obj):
         raise NotImplementedError
 
+    def serialize_input_form(self, string):
+        return self.serialize_function(
+            self.serialize_symbol(b'ToExpression'),
+            (self.serialize_string(string, ), ))
+
     def serialize_numeric_array(self, data, shape, wl_type):
 
         payload = b''.join(

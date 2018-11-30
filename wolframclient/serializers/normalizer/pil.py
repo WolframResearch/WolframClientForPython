@@ -3,9 +3,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import sys
-from wolframclient.utils import six 
-from wolframclient.utils.api import PIL, numpy
+
 from wolframclient.language import wl
+from wolframclient.utils import six
+from wolframclient.utils.api import PIL, numpy
 """ Serialize a given :class:`PIL.Image` into a Wolfram Language image.
 
     This method first tries to extract the data and relevant information about the image,
@@ -27,17 +28,18 @@ from wolframclient.language import wl
 
 MODE_MAPPING = {
     # mode  : (type, colorspace, interleaving)
-    "1"     : ("Bit", None, True),
-    "L"     : ("Byte", "Grayscale", True),
-    "RGB"   : ("Byte", "RGB", True),
-    "CMYK"  : ("Byte", "CMYK", True),
-    "LAB"   : ("Byte", "LAB", True),
-    "F"     : ("Real32", None, True),
-    "RGBA"  : ("Byte", "RGB", True),
-    "HSV"   : ("Byte", "HSB", True)
+    "1": ("Bit", None, True),
+    "L": ("Byte", "Grayscale", True),
+    "RGB": ("Byte", "RGB", True),
+    "CMYK": ("Byte", "CMYK", True),
+    "LAB": ("Byte", "LAB", True),
+    "F": ("Real32", None, True),
+    "RGBA": ("Byte", "RGB", True),
+    "HSV": ("Byte", "HSB", True)
 }
 SYS_IS_LE = sys.byteorder == 'little'
 DTYPE_BOOL = numpy.dtype('bool')
+
 
 def normalize_array(array):
     # big endian
@@ -48,6 +50,7 @@ def normalize_array(array):
     if array.dtype == DTYPE_BOOL:
         array = array.astype('<u1')
     return array
+
 
 def update_dispatch(dispatch):
     @dispatch.multi(PIL.Image)
@@ -60,24 +63,20 @@ def update_dispatch(dispatch):
 
             return self.normalize(
                 wl.Image(
-                    normalize_array(numpy.array(img)), 
-                    wl_data_type, 
-                    ColorSpace=colorspace or wl.Automatic, 
-                    Interleaving=interleaving
-                )
-            )
+                    normalize_array(numpy.array(img)),
+                    wl_data_type,
+                    ColorSpace=colorspace or wl.Automatic,
+                    Interleaving=interleaving))
         else:
             # try to use format and import/export, may fail during save() and raise exception.
             stream = six.BytesIO()
-            img_format=img.format or "PNG"
+            img_format = img.format or "PNG"
             try:
                 img.save(stream, format=img_format)
             except KeyError:
-                raise NotImplementedError('Format %s is not supported.' % img_format)
+                raise NotImplementedError(
+                    'Format %s is not supported.' % img_format)
             return self.serialize_function(
-                    self.serialize_symbol(b'ImportByteArray'),
-                    (
-                        self.serialize_bytes(stream.getvalue()),
-                        self.serialize_string(img_format)
-                    )
-                )
+                self.serialize_symbol(b'ImportByteArray'),
+                (self.serialize_bytes(stream.getvalue()),
+                 self.serialize_string(img_format)))

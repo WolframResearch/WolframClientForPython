@@ -17,14 +17,11 @@ __all__ = ['WolframLanguageFutureSession']
 class WolframLanguageFutureSession(WolframLanguageSession):
     """Evaluate expressions asynchronously and return Future instances.
 
-    Asynchronous evaluations are provided through the :mod:`~concurrent` module and the :class:`~concurrent.futures.Future` class. 
+    Asynchronous evaluations are backed by the :mod:`concurrent.futures` module, especially the :class:`~concurrent.futures.Future` class. 
 
-    Contrary to :class:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageAsyncSession`, none of the methods of this class
-    is a coroutine. Evaluation methods herited from :class:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession`,
-    namely :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageAsyncSession.evaluate`,
-    :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageAsyncSession.evaluate_wxf`, and 
-    :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageAsyncSession.evaluate_wrap`,
-    run asynchronously in a thread and return :class:`~concurrent.futures.Future` objects.
+    Contrary to :class:`~wolframclient.evaluation.WolframLanguageAsyncSession`, none of the methods of this class
+    is a coroutine. Evaluation methods are synchronous; they start the evaluation as a background task in a thread, and immediatly return
+    a :class:`~concurrent.futures.Future` objects, that can later be awaited.
     """
 
     def __init__(self,
@@ -37,8 +34,10 @@ class WolframLanguageFutureSession(WolframLanguageSession):
                  stdin=PIPE,
                  stdout=PIPE,
                  stderr=PIPE,
+                 inputform_string_evaluation=True,
+                 wxf_bytes_evaluation=True,
                  **kwargs):
-        super(WolframLanguageFutureSession, self).__init__(
+        super().__init__(
             kernel,
             consumer=consumer,
             initfile=initfile,
@@ -48,6 +47,8 @@ class WolframLanguageFutureSession(WolframLanguageSession):
             stdin=stdin,
             stdout=stdout,
             stderr=stderr,
+            inputform_string_evaluation=inputform_string_evaluation,
+            wxf_bytes_evaluation=wxf_bytes_evaluation,
             **kwargs)
         self.thread_pool_exec = None
 

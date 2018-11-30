@@ -83,8 +83,6 @@ class SerializationContext(_Context):
     last one avoid incorrect use of `WXFExprRule(Delayed)` tokens.
     """
 
-    __slots__ = '_depth', '_expected_length_stack', '_current_index_stack', '_in_assoc_stack'
-
     def __init__(self):
         # first level has index 0 and lenght 1. It's the root of the expr
         # but does not represent anything in the final WL expr.
@@ -195,8 +193,6 @@ class WXFExprSerializer(object):
     or visit http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html.
 
     """
-
-    __slots__ = '_expr_provider', '_writer', '_context', '_compress', '_enforce'
 
     def __init__(self,
                  stream,
