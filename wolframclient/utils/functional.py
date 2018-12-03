@@ -61,6 +61,24 @@ def iterate(*args):
             for item in arg:
                 yield item
 
+def chain_indexed(*iterators):
+    """ Yield all first elements, then seconds, etc.
+
+        >>> chain_indexed('AB', 'CDE', )
+
+    """
+    iter_not_exhausted = [*iterators]
+    i = 0
+    while True:
+        try:
+            yield next(iter_not_exhausted[i])
+            i = (i+1) % len(iter_not_exhausted)
+        except StopIteration:
+            iter_not_exhausted.pop(i)
+            if len(iter_not_exhausted)>0:
+                i = i % len(iter_not_exhausted)
+            else:
+                return
 
 def flatten(*args):
     for arg in args:

@@ -28,7 +28,7 @@ class WLSerializer(FormatSerializer):
         self.indent = indent
 
     def dump(self, data, stream):
-        for payload in self.normalize(data):
+        for payload in self.encode(data):
             stream.write(payload)
         return stream
 

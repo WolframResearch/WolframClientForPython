@@ -48,10 +48,10 @@ class WXFSerializer(FormatSerializer):
 
         if self.compress:
             with ZipCompressedWriter(stream) as zstream:
-                for payload in self.normalize(data):
+                for payload in self.encode(data):
                     zstream.write(payload)
         else:
-            for payload in self.normalize(data):
+            for payload in self.encode(data):
                 stream.write(payload)
 
         return stream

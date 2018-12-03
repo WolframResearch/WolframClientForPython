@@ -7,7 +7,7 @@ import inspect
 import re
 from itertools import chain
 
-from wolframclient.serializers.normalizer import Normalizer
+from wolframclient.serializers.encoder import Encoder
 from wolframclient.serializers.wxfencoder.constants import (
     WXF_HEADER_SEPARATOR, WXF_VERSION)
 from wolframclient.serializers.wxfencoder.utils import numeric_array_to_wxf
@@ -16,7 +16,7 @@ from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import first
 
 
-class FormatSerializer(Normalizer):
+class FormatSerializer(Encoder):
     def dump(self, data, stream):
         raise NotImplementedError
 
@@ -158,5 +158,5 @@ class FormatSerializer(Normalizer):
     def serialize_external_object(self, obj):
         return self.serialize_function(
             self.serialize_symbol(b'ExternalObject'), (self.serialize_mapping(
-                (self.normalize(key), self.normalize(value))
+                (self.encode(key), self.encode(value))
                 for key, value in self._serialize_external_object(obj)), ))

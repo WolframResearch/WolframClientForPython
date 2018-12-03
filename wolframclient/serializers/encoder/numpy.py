@@ -3,7 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from operator import methodcaller
-
+from wolframclient.serializers.encoder import wolfram_encoder
 from wolframclient.utils.api import numpy
 from wolframclient.utils.functional import identity
 
@@ -25,24 +25,22 @@ NUMPY_MAPPING = {
     numpy.dtype('complex128'): ('ComplexReal64', identity),
 }
 
+@wolfram_encoder(numpy.ndarray)
+def encode_ndarray(serializer, o):
 
-def update_dispatch(dispatch):
-    @dispatch.multi(numpy.ndarray)
-    def normalizer(self, o):
+    try:
+        wl_type, handler = NUMPY_MAPPING[o.dtype]
+    except KeyError:
+        raise NotImplementedError(
+            'NumPy serialization not implemented for %s. Choices are: %s' %
+            (repr(o.dtype), ', '.join(map(repr, NUMPY_MAPPING.keys()))))
 
-        try:
-            wl_type, handler = NUMPY_MAPPING[o.dtype]
-        except KeyError:
-            raise NotImplementedError(
-                'NumPy serialization not implemented for %s. Choices are: %s' %
-                (repr(o.dtype), ', '.join(map(repr, NUMPY_MAPPING.keys()))))
+    data = handler(o)
 
-        data = handler(o)
+    if hasattr(o, 'tobytes'):
+        #Numpy 1.9+ support array.tobytes, but previous versions don't and use tostring instead.
+        data = o.tobytes()
+    else:
+        data = o.tostring()
 
-        if hasattr(o, 'tobytes'):
-            #Numpy 1.9+ support array.tobytes, but previous versions don't and use tostring instead.
-            data = o.tobytes()
-        else:
-            data = o.tostring()
-
-        return self.serialize_numeric_array(data, o.shape, wl_type)
+    return serializer.serialize_numeric_array(data, o.shape, wl_type)
