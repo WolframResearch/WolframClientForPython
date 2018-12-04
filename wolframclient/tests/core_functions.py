@@ -6,7 +6,7 @@ import math
 
 from wolframclient.utils import six
 from wolframclient.utils.dispatch import ClassDispatch, Dispatch
-from wolframclient.utils.functional import partition, riffle
+from wolframclient.utils.functional import partition, riffle, chain_indexed
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
 
@@ -16,6 +16,10 @@ class TestCase(BaseTestCase):
             list(riffle(range(5), "/")), [0, "/", 1, "/", 2, "/", 3, "/", 4])
 
         self.assertEqual(list(riffle([], "/")), [])
+
+    def test_chain_indexed(self):
+        chained = list(chain_indexed(iter([1,2,3]), iter('ab'), iter(()), iter('xxxx')))
+        self.assertEqual(chained, [1,'a','x',2,'b','x',3,'x','x'])
 
     def test_partition(self):
 

@@ -67,7 +67,7 @@ def chain_indexed(*iterators):
         >>> chain_indexed('AB', 'CDE', )
 
     """
-    iter_not_exhausted = [*iterators]
+    iter_not_exhausted = list(iterators)
     i = 0
     while True:
         try:

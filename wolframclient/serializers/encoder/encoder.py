@@ -6,6 +6,7 @@ import sys
 import functools
 import logging
 import warnings
+import pkg_resources
 from collections import defaultdict
 from importlib import import_module
 
@@ -17,6 +18,7 @@ from wolframclient.utils.api import multiprocessing
 
 logger = logging.getLogger(__name__)
 
+__all__ = ['wolfram_encoder', 'Encoder']
 
 dispatch = ClassDispatch()
 
@@ -34,6 +36,9 @@ def wolfram_encoder(*types):
 
     Serializer is expected to be a :class:`~wolframclient.serializers.base.FormatSerializer`.
     """
+    for t in types:
+        if not inspect.isclass(t):
+            raise ValueError('Invalid type specification. %s is not a class.' % (t,))
     if logger.isEnabledFor(logging.INFO):
         logger.info('New Wolfram encoder for types: %s', types)
     def wrap(fn):
@@ -60,33 +65,54 @@ class DispatchUpdater(object):
     def __init__(self, dispatch):
         self.registry = defaultdict(list)
         self.modules = set()
+        self.plugins_registry = defaultdict(list)
         self.dispatch = dispatch
 
     def register_modules(self, **handlers):
-        for module, handlers in handlers.items():
+        for module, _handlers in handlers.items():
             self.modules.add(module)
-            self.registry[module].extend(iterate(handlers))
+            self.registry[module].extend(iterate(_handlers))
+
+    def register_plugins(self, name='wolframclient_serializers_encoder'):
+        if logger.isEnabledFor(logging.INFO):
+            logger.info('Registering Wolfram encoders plugins associated to entrypoint %s.' % name)
+        for entry_point in pkg_resources.iter_entry_points(group=name):
+            self.plugins_registry[entry_point.name].extend(entry_point.module_name)
 
     def _update_dispatch(self):
         if self.modules:
-            for module in self.modules.intersection(sys.modules.keys()):
+            installed_modules = sys.modules.keys()
+            for module in self.modules.intersection(installed_modules):
                 for handler in self.registry[module]:
                     import_module(handler)
 
                 del self.registry[module]
                 self.modules.remove(module)
+            
+    def _update_plugins(self):
+        if self.plugins_registry:
+            for plugins_name, handler in self.plugins_registry.items():
+                handler = ''.join(handler)
+                try:
+                    import_module(handler)
+                except TypeError as e:
+                    warnings.warn('Failed to load encoder associated to plugins %s. The following error occured while loading %s: %s' % 
+                        (plugins_name, handler, e), RuntimeWarning)
+            self.plugins_registry = None
+
 
     if not six.JYTHON:
         # global lock to avoid multiple dispatcher updating in multithreaded programs.
         _lock = multiprocessing.Lock()
-
         def update_dispatch(self):
             with self._lock:
                 self._update_dispatch()
+                self._update_plugins()
+        
     else:
-
         def update_dispatch(self):
             self._update_dispatch()
+            self._update_plugins()
 
 
 updater = DispatchUpdater(dispatch)
@@ -107,6 +133,7 @@ updater.register_modules(
     PIL='wolframclient.serializers.encoder.pil',
 )
 
+updater.register_plugins()
 
 class Encoder(object):
     """ A generic class exposing an :meth:`~wolframclient.serializers.encode.Encoder.encode`
@@ -123,10 +150,9 @@ class Encoder(object):
                  target_kernel_version=None):
         self.encode = self.chain_normalizer(normalizer)
         self.allow_external_objects = allow_external_objects
-        self.target_kernel_version = target_kernel_version or 11.3
+        self.target_kernel_version = target_kernel_version or 11.3        
 
     def chain_normalizer(self, func):
-
         self.default_updater.update_dispatch()
 
         return composition(*map(safe_import_string,

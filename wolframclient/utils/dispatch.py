@@ -81,7 +81,6 @@ class Dispatch(object):
         def register(function):
 
             key = (self.get_key(function), len(types))
-
             for expanded in product(*map(force_tuple, types)):
                 if expanded in self.dispatchmap[key]:
                     raise TypeError("duplicate registration for input type(s): %s" % (expanded, ))
@@ -135,7 +134,7 @@ class Dispatch(object):
             if default is not UNDEFINED:
                 self.dispatchmap[key][types] = default
                 return default
-            raise TypeError("no match")
+            raise TypeError("No type match for arguments: %s", (args,))
         return function
 
     @staticmethod
@@ -146,7 +145,9 @@ class Dispatch(object):
         """
         if len(types) == 0:
             return
-        for elem in product(*map(lambda x : x.__mro__, types[:-1]), types[-1].__mro__[:-1]):
+        mro = list(map(lambda x : x.__mro__, types[:-1]))
+        mro.append(types[-1].__mro__[:-1])
+        for elem in product(*mro):
             yield elem
 
 class ClassDispatch(Dispatch):
