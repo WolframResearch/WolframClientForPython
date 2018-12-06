@@ -54,7 +54,7 @@ def normalize_array(array):
     return array
 
 
-@wolfram_encoder(PIL.Image)
+@wolfram_encoder.register(PIL.Image)
 def encode_image(serializer, img):
     # some PIL mode are directly mapped to WL ones. Best case fast (de)serialization.
     mode = img.mode

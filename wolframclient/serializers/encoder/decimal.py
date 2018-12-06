@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.serializers.encoder import wolfram_encoder
 import decimal
 
-@wolfram_encoder(decimal.Decimal)
+@wolfram_encoder.register(decimal.Decimal)
 def encode_decimal(serializer, o):
 
     if o.is_infinite():

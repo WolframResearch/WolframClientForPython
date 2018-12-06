@@ -25,7 +25,7 @@ NUMPY_MAPPING = {
     numpy.dtype('complex128'): ('ComplexReal64', identity),
 }
 
-@wolfram_encoder(numpy.ndarray)
+@wolfram_encoder.register(numpy.ndarray)
 def encode_ndarray(serializer, o):
 
     try:

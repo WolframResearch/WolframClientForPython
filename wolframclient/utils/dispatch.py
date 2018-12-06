@@ -153,6 +153,9 @@ class Dispatch(object):
 class ClassDispatch(Dispatch):
     """ Multi method implementation where the first element is of a given type, known ahead of time,
     and as such can be ignored both during dispatch and resolve.
+
+    Named input parameters are not used to resolve which implementation to use, but are passed to the
+    function.
     """
     def create_proxy(self, function):
         def inner(obj, *args, **opts):

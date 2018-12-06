@@ -22,35 +22,55 @@ __all__ = ['wolfram_encoder', 'Encoder']
 
 dispatch = ClassDispatch()
 
-def wolfram_encoder(*types):
-    """ Annotation to declare a given function as an Wolfram encoder for a given list of types. 
+class WolframEncoder(ClassDispatch):
+    """ Multi method implementation targeting Wolfram encoder functions. The first element is of a given type, 
+    known ahead of time, it's a serializer instance, and as such can be ignored both during dispatch and resolve.
 
-    An encoder is a generator with two arguments: a serializer instance, and an object of a type matching 
-    one of the type in `types`. It returns bytes. 
+    Only the second parameter, the object to encode, is used during dispatch. A tuple can be provided if one method
+    is supporting more than one type.
 
-    Define an encoder applied to input of type `bytes` or `bytearray`::
-
-        @wolfram_encoder(bytes, bytearray)
-        def func(serializer, o):
-            raise NotImplementedError
-
-    Serializer is expected to be a :class:`~wolframclient.serializers.base.FormatSerializer`.
+    Named input parameters are not used to resolve which implementation to use, but are passed to the
+    function.
     """
-    for t in types:
-        if not inspect.isclass(t):
-            raise ValueError('Invalid type specification. %s is not a class.' % (t,))
-    if logger.isEnabledFor(logging.INFO):
-        logger.info('New Wolfram encoder for types: %s', types)
-    def wrap(fn):
-        @functools.wraps(fn)
-        @dispatch.multi(types)
-        def encode(serializer, o):
-            return fn(serializer, o)
-        return encode
-    return wrap
+    def create_proxy(self, encoder):
+        def inner(serializer, o, **opts):
+            return self._resolve(encoder, o)(serializer, o, **opts)
+
+        return inner
+
+    def register(self, *types):
+        """ Annotation to declare a given function as an Wolfram encoder for a given list of types. 
+
+        An encoder is a generator with two arguments: a serializer instance, and an object of a type matching 
+        one of the type in `types`. It returns bytes. 
+
+        Define an encoder applied to input of type `bytes` or `bytearray`::
+
+            @wolfram_encoder.register(bytes, bytearray)
+            def func(serializer, o):
+                raise NotImplementedError
+
+        Serializer is expected to be a :class:`~wolframclient.serializers.base.FormatSerializer`.
+        """
+        for t in types:
+            if not inspect.isclass(t):
+                raise ValueError('Invalid type specification. %s is not a class.' % (t,))
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('New Wolfram encoder for types: %s', types)
+
+        def wrap(fn):
+            @functools.wraps(fn)
+            @self.multi(types)
+            def encode(serializer, o):
+                return fn(serializer, o)
+            return encode
+        return wrap
+
+wolfram_encoder = WolframEncoder()
+""" Instance of :class:`~wolframclient.serializers.encoder.WolframEncoder` used by default during serialization. """
 
 # for now, this method name is fixed and must match the one in the wolfram_encoder wrapper.
-@dispatch.default()
+@wolfram_encoder.default()
 def encode(serializer, o):
     if not inspect.isclass(o) and hasattr(o, '__iter__'):
         return serializer.serialize_iterable(serializer.encode(value) for value in o)
@@ -147,13 +167,18 @@ class Encoder(object):
     def __init__(self,
                  normalizer=None,
                  allow_external_objects=False,
-                 target_kernel_version=None):
+                 target_kernel_version=None,
+                 **kwargs):
         self.encode = self.chain_normalizer(normalizer)
         self.allow_external_objects = allow_external_objects
-        self.target_kernel_version = target_kernel_version or 11.3        
+        self.target_kernel_version = target_kernel_version or 11.3
+        self._properties = kwargs
 
     def chain_normalizer(self, func):
         self.default_updater.update_dispatch()
 
         return composition(*map(safe_import_string,
                                 iterate(func or (), self.default_encoder)))
+
+    def get_property(self, key, d=None):
+        return self._properties.get(key, d)

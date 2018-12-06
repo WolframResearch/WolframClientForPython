@@ -5,7 +5,7 @@ from wolframclient.serializers.encoder import wolfram_encoder
 
 import datetime
 
-@wolfram_encoder(datetime.datetime)
+@wolfram_encoder.register(datetime.datetime)
 def encode_datetime(serializer, o):
     return serializer.serialize_function(
         serializer.serialize_symbol(b"DateObject"),
@@ -18,11 +18,11 @@ def encode_datetime(serializer, o):
             serializer.serialize_string("Gregorian"),
             serializer.serialize_tzinfo(o.tzinfo, o)))
 
-@wolfram_encoder(datetime.tzinfo)
+@wolfram_encoder.register(datetime.tzinfo)
 def encode_tzinfo(serializer, o):
     return serializer.serialize_tzinfo(o)
 
-@wolfram_encoder(datetime.timedelta)
+@wolfram_encoder.register(datetime.timedelta)
 def encode_timedelta(serializer, o):
     return serializer.serialize_function(
         serializer.serialize_symbol(b"Quantity"), (
@@ -30,7 +30,7 @@ def encode_timedelta(serializer, o):
             serializer.serialize_string("Seconds"),
         ))
 
-@wolfram_encoder(datetime.date)
+@wolfram_encoder.register(datetime.date)
 def encode_date(serializer, o):
     return serializer.serialize_function(
         serializer.serialize_symbol(b"DateObject"), (serializer.serialize_iterable((
@@ -39,7 +39,7 @@ def encode_date(serializer, o):
             serializer.serialize_int(o.day),
         )), ))
 
-@wolfram_encoder(datetime.time)
+@wolfram_encoder.register(datetime.time)
 def encode_time(serializer, o):
 
     inner = [
