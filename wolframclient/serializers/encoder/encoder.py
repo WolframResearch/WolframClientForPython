@@ -10,7 +10,7 @@ import pkg_resources
 from collections import defaultdict
 from importlib import import_module
 
-from wolframclient.utils.dispatch import ClassDispatch
+from wolframclient.utils.dispatch import Dispatch
 from wolframclient.utils.functional import composition, iterate
 from wolframclient.utils.importutils import safe_import_string
 from wolframclient.utils import six
@@ -20,9 +20,7 @@ logger = logging.getLogger(__name__)
 
 __all__ = ['wolfram_encoder', 'Encoder']
 
-dispatch = ClassDispatch()
-
-class WolframEncoder(ClassDispatch):
+class WolframEncoder(Dispatch):
     """ Multi method implementation targeting Wolfram encoder functions. The first element is of a given type, 
     known ahead of time, it's a serializer instance, and as such can be ignored both during dispatch and resolve.
 
@@ -135,8 +133,8 @@ class DispatchUpdater(object):
             self._update_plugins()
 
 
-updater = DispatchUpdater(dispatch)
-updater.register_modules(
+wolfram_encoder_updater = DispatchUpdater(wolfram_encoder)
+wolfram_encoder_updater.register_modules(
 
     #builtin libraries
     sys='wolframclient.serializers.encoder.builtin',
@@ -153,7 +151,7 @@ updater.register_modules(
     PIL='wolframclient.serializers.encoder.pil',
 )
 
-updater.register_plugins()
+wolfram_encoder_updater.register_plugins()
 
 class Encoder(object):
     """ A generic class exposing an :meth:`~wolframclient.serializers.encode.Encoder.encode`
@@ -162,7 +160,7 @@ class Encoder(object):
     """
 
     default_encoder = encode
-    default_updater = updater
+    default_updater = wolfram_encoder_updater
 
     def __init__(self,
                  normalizer=None,
