@@ -9,7 +9,7 @@ import unittest
 from wolframclient.evaluation.cloud.base import (SecuredAuthenticationKey,
                                                  UserIDPassword)
 from wolframclient.evaluation.cloud.cloudsession import (
-    WolframAPICall, WolframCloudSession, WolframCloudSessionFuture,
+    WolframAPICall, WolframCloudSession, WolframCloudFutureSession,
     encode_api_inputs)
 from wolframclient.exception import (AuthenticationException,
                                      WolframLanguageException)
@@ -43,7 +43,7 @@ class TestCaseSettings(BaseTestCase):
         cls.user_cred = user_configuration
         cls.server = server
         cls.cloud_session = WolframCloudSession(credentials=cls.sak)
-        cls.cloud_session_future = WolframCloudSessionFuture(
+        cls.cloud_session_future = WolframCloudFutureSession(
             credentials=cls.sak)
 
     @classmethod
@@ -235,7 +235,7 @@ class TestCase(TestCaseSettings):
             self.assertEqual(res, '"f"["abc"]')
 
     def test_evaluate_future_string_disable(self):
-        with WolframCloudSessionFuture(
+        with WolframCloudFutureSession(
                 credentials=self.sak,
                 inputform_string_evaluation=False) as session:
             res = session.evaluate('Range[3]')
@@ -246,7 +246,7 @@ class TestCase(TestCaseSettings):
 
     def test_stop_start_restart_status(self):
         self._stop_start_restart_status(WolframCloudSession)
-        self._stop_start_restart_status(WolframCloudSessionFuture)
+        self._stop_start_restart_status(WolframCloudFutureSession)
 
     def _stop_start_restart_status(self, eval_class):
         session = None
