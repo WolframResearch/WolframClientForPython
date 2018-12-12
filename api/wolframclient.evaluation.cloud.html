@@ -374,23 +374,23 @@ or a the string InputForm of an expression to evaluate.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="wolframclient.evaluation.cloud.cloudsession.WolframCloudSessionFuture">
-<em class="property">class </em><code class="descclassname">wolframclient.evaluation.cloud.cloudsession.</code><code class="descname">WolframCloudSessionFuture</code><span class="sig-paren">(</span><em>credentials=None</em>, <em>server=&lt;wolframclient.evaluation.cloud.server.WolframServer object&gt;</em>, <em>max_workers=None</em>, <em>inputform_string_evaluation=True</em>, <em>oauth_session_class=&lt;class 'wolframclient.evaluation.cloud.oauth.OAuth1RequestsSyncSession'&gt;</em>, <em>xauth_session_class=&lt;class 'wolframclient.evaluation.cloud.oauth.XAuthRequestsSyncSession'&gt;</em>, <em>http_sessionclass=&lt;class 'requests.sessions.Session'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSessionFuture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.cloudsession.WolframCloudSessionFuture" title="Permalink to this definition">¶</a></dt>
+<dt id="wolframclient.evaluation.cloud.cloudsession.WolframCloudFutureSession">
+<em class="property">class </em><code class="descclassname">wolframclient.evaluation.cloud.cloudsession.</code><code class="descname">WolframCloudFutureSession</code><span class="sig-paren">(</span><em>credentials=None</em>, <em>server=&lt;wolframclient.evaluation.cloud.server.WolframServer object&gt;</em>, <em>max_workers=None</em>, <em>inputform_string_evaluation=True</em>, <em>oauth_session_class=&lt;class 'wolframclient.evaluation.cloud.oauth.OAuth1RequestsSyncSession'&gt;</em>, <em>xauth_session_class=&lt;class 'wolframclient.evaluation.cloud.oauth.XAuthRequestsSyncSession'&gt;</em>, <em>http_sessionclass=&lt;class 'requests.sessions.Session'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudFutureSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.cloudsession.WolframCloudFutureSession" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#wolframclient.evaluation.cloud.cloudsession.WolframCloudSession" title="wolframclient.evaluation.cloud.cloudsession.WolframCloudSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.evaluation.cloud.cloudsession.WolframCloudSession</span></code></a></p>
 <p>Am asynchronous Wolfram cloud session wrapping API calls and cloud evaluations 
 in future objects.</p>
 <p><cite>max_workers</cite> can be specified and is passed to the ThreadPoolExecutor.
 <cite>kwargs</cite> are parameters as expect by <cite>~wolframclient.evaluation.WolframCloudSession</cite></p>
 <dl class="method">
-<dt id="wolframclient.evaluation.cloud.cloudsession.WolframCloudSessionFuture.call">
-<code class="descname">call</code><span class="sig-paren">(</span><em>api</em>, <em>input_parameters={}</em>, <em>target_format='wl'</em>, <em>permissions_key=None</em>, <em>**kwargv</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSessionFuture.call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.cloudsession.WolframCloudSessionFuture.call" title="Permalink to this definition">¶</a></dt>
+<dt id="wolframclient.evaluation.cloud.cloudsession.WolframCloudFutureSession.call">
+<code class="descname">call</code><span class="sig-paren">(</span><em>api</em>, <em>input_parameters={}</em>, <em>target_format='wl'</em>, <em>permissions_key=None</em>, <em>**kwargv</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudFutureSession.call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.cloudsession.WolframCloudFutureSession.call" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call a given API asynchronously. Returns a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">concurrent.futures.Future</span></code></a> object.</p>
 <p>See <a class="reference internal" href="#wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.call" title="wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.call"><code class="xref py py-func docutils literal notranslate"><span class="pre">WolframCloudSession.call()</span></code></a> for more details about input parameters.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="wolframclient.evaluation.cloud.cloudsession.WolframCloudSessionFuture.evaluate">
-<code class="descname">evaluate</code><span class="sig-paren">(</span><em>expr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSessionFuture.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.cloudsession.WolframCloudSessionFuture.evaluate" title="Permalink to this definition">¶</a></dt>
+<dt id="wolframclient.evaluation.cloud.cloudsession.WolframCloudFutureSession.evaluate">
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>expr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudFutureSession.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.cloudsession.WolframCloudFutureSession.evaluate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send <cite>expr</cite> to the cloud for asynchronous evaluation.</p>
 <p>Returns a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">concurrent.futures.Future</span></code></a> object.</p>
 <p><cite>expr</cite> can be a Python object serializable by <a class="reference internal" href="wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a>,
@@ -398,26 +398,26 @@ or a the string InputForm of an expression to evaluate.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="wolframclient.evaluation.cloud.cloudsession.WolframCloudSessionFuture.start">
-<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSessionFuture.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.cloudsession.WolframCloudSessionFuture.start" title="Permalink to this definition">¶</a></dt>
+<dt id="wolframclient.evaluation.cloud.cloudsession.WolframCloudFutureSession.start">
+<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudFutureSession.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.cloudsession.WolframCloudFutureSession.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the evaluator.</p>
 <p>Once this function was called, the evaluator must be ready to evaluate incoming expressions.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="wolframclient.evaluation.cloud.cloudsession.WolframCloudSessionFuture.started">
-<code class="descname">started</code><a class="headerlink" href="#wolframclient.evaluation.cloud.cloudsession.WolframCloudSessionFuture.started" title="Permalink to this definition">¶</a></dt>
+<dt id="wolframclient.evaluation.cloud.cloudsession.WolframCloudFutureSession.started">
+<code class="descname">started</code><a class="headerlink" href="#wolframclient.evaluation.cloud.cloudsession.WolframCloudFutureSession.started" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="wolframclient.evaluation.cloud.cloudsession.WolframCloudSessionFuture.stop">
-<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSessionFuture.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.cloudsession.WolframCloudSessionFuture.stop" title="Permalink to this definition">¶</a></dt>
+<dt id="wolframclient.evaluation.cloud.cloudsession.WolframCloudFutureSession.stop">
+<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudFutureSession.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.cloudsession.WolframCloudFutureSession.stop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gracefully stop the evaluator. Try to stop the evaluator, but wait for current evaluation to finish first.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="wolframclient.evaluation.cloud.cloudsession.WolframCloudSessionFuture.terminate">
-<code class="descname">terminate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSessionFuture.terminate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.cloudsession.WolframCloudSessionFuture.terminate" title="Permalink to this definition">¶</a></dt>
+<dt id="wolframclient.evaluation.cloud.cloudsession.WolframCloudFutureSession.terminate">
+<code class="descname">terminate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudFutureSession.terminate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.cloudsession.WolframCloudFutureSession.terminate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Immediatly stop the evaluator, eventually killing running jobs resulting in cancelled evaluations.</p>
 </dd></dl>
 
@@ -623,23 +623,23 @@ or a the string InputForm of an expression to evaluate.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="wolframclient.evaluation.cloud.WolframCloudSessionFuture">
-<em class="property">class </em><code class="descclassname">wolframclient.evaluation.cloud.</code><code class="descname">WolframCloudSessionFuture</code><span class="sig-paren">(</span><em>credentials=None</em>, <em>server=&lt;wolframclient.evaluation.cloud.server.WolframServer object&gt;</em>, <em>max_workers=None</em>, <em>inputform_string_evaluation=True</em>, <em>oauth_session_class=&lt;class 'wolframclient.evaluation.cloud.oauth.OAuth1RequestsSyncSession'&gt;</em>, <em>xauth_session_class=&lt;class 'wolframclient.evaluation.cloud.oauth.XAuthRequestsSyncSession'&gt;</em>, <em>http_sessionclass=&lt;class 'requests.sessions.Session'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSessionFuture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.WolframCloudSessionFuture" title="Permalink to this definition">¶</a></dt>
+<dt id="wolframclient.evaluation.cloud.WolframCloudFutureSession">
+<em class="property">class </em><code class="descclassname">wolframclient.evaluation.cloud.</code><code class="descname">WolframCloudFutureSession</code><span class="sig-paren">(</span><em>credentials=None</em>, <em>server=&lt;wolframclient.evaluation.cloud.server.WolframServer object&gt;</em>, <em>max_workers=None</em>, <em>inputform_string_evaluation=True</em>, <em>oauth_session_class=&lt;class 'wolframclient.evaluation.cloud.oauth.OAuth1RequestsSyncSession'&gt;</em>, <em>xauth_session_class=&lt;class 'wolframclient.evaluation.cloud.oauth.XAuthRequestsSyncSession'&gt;</em>, <em>http_sessionclass=&lt;class 'requests.sessions.Session'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudFutureSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.WolframCloudFutureSession" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#wolframclient.evaluation.cloud.cloudsession.WolframCloudSession" title="wolframclient.evaluation.cloud.cloudsession.WolframCloudSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.evaluation.cloud.cloudsession.WolframCloudSession</span></code></a></p>
 <p>Am asynchronous Wolfram cloud session wrapping API calls and cloud evaluations 
 in future objects.</p>
 <p><cite>max_workers</cite> can be specified and is passed to the ThreadPoolExecutor.
 <cite>kwargs</cite> are parameters as expect by <cite>~wolframclient.evaluation.WolframCloudSession</cite></p>
 <dl class="method">
-<dt id="wolframclient.evaluation.cloud.WolframCloudSessionFuture.call">
-<code class="descname">call</code><span class="sig-paren">(</span><em>api</em>, <em>input_parameters={}</em>, <em>target_format='wl'</em>, <em>permissions_key=None</em>, <em>**kwargv</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSessionFuture.call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.WolframCloudSessionFuture.call" title="Permalink to this definition">¶</a></dt>
+<dt id="wolframclient.evaluation.cloud.WolframCloudFutureSession.call">
+<code class="descname">call</code><span class="sig-paren">(</span><em>api</em>, <em>input_parameters={}</em>, <em>target_format='wl'</em>, <em>permissions_key=None</em>, <em>**kwargv</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudFutureSession.call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.WolframCloudFutureSession.call" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call a given API asynchronously. Returns a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">concurrent.futures.Future</span></code></a> object.</p>
 <p>See <a class="reference internal" href="#wolframclient.evaluation.cloud.WolframCloudSession.call" title="wolframclient.evaluation.cloud.WolframCloudSession.call"><code class="xref py py-func docutils literal notranslate"><span class="pre">WolframCloudSession.call()</span></code></a> for more details about input parameters.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="wolframclient.evaluation.cloud.WolframCloudSessionFuture.evaluate">
-<code class="descname">evaluate</code><span class="sig-paren">(</span><em>expr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSessionFuture.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.WolframCloudSessionFuture.evaluate" title="Permalink to this definition">¶</a></dt>
+<dt id="wolframclient.evaluation.cloud.WolframCloudFutureSession.evaluate">
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>expr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudFutureSession.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.WolframCloudFutureSession.evaluate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send <cite>expr</cite> to the cloud for asynchronous evaluation.</p>
 <p>Returns a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">concurrent.futures.Future</span></code></a> object.</p>
 <p><cite>expr</cite> can be a Python object serializable by <a class="reference internal" href="wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a>,
@@ -647,26 +647,26 @@ or a the string InputForm of an expression to evaluate.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="wolframclient.evaluation.cloud.WolframCloudSessionFuture.start">
-<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSessionFuture.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.WolframCloudSessionFuture.start" title="Permalink to this definition">¶</a></dt>
+<dt id="wolframclient.evaluation.cloud.WolframCloudFutureSession.start">
+<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudFutureSession.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.WolframCloudFutureSession.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the evaluator.</p>
 <p>Once this function was called, the evaluator must be ready to evaluate incoming expressions.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="wolframclient.evaluation.cloud.WolframCloudSessionFuture.started">
-<code class="descname">started</code><a class="headerlink" href="#wolframclient.evaluation.cloud.WolframCloudSessionFuture.started" title="Permalink to this definition">¶</a></dt>
+<dt id="wolframclient.evaluation.cloud.WolframCloudFutureSession.started">
+<code class="descname">started</code><a class="headerlink" href="#wolframclient.evaluation.cloud.WolframCloudFutureSession.started" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="wolframclient.evaluation.cloud.WolframCloudSessionFuture.stop">
-<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSessionFuture.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.WolframCloudSessionFuture.stop" title="Permalink to this definition">¶</a></dt>
+<dt id="wolframclient.evaluation.cloud.WolframCloudFutureSession.stop">
+<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudFutureSession.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.WolframCloudFutureSession.stop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gracefully stop the evaluator. Try to stop the evaluator, but wait for current evaluation to finish first.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="wolframclient.evaluation.cloud.WolframCloudSessionFuture.terminate">
-<code class="descname">terminate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSessionFuture.terminate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.WolframCloudSessionFuture.terminate" title="Permalink to this definition">¶</a></dt>
+<dt id="wolframclient.evaluation.cloud.WolframCloudFutureSession.terminate">
+<code class="descname">terminate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudFutureSession.terminate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.WolframCloudFutureSession.terminate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Immediatly stop the evaluator, eventually killing running jobs resulting in cancelled evaluations.</p>
 </dd></dl>
 
