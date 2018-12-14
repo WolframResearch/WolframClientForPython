@@ -9,8 +9,7 @@
 #>     -b path, --build=path
 #>         set the output directory to path. It must be a valid directory.
 #>         BUILDDIR is set to path if specified, otherwise the default 
-#>         directory _build is used. When targetting Github.io the path should
-#>         target a directory called `docs`.
+#>         directory _build is used.
 #> 
 #>     -a, --all
 #>         rebuild from scratch. Call `make clean` and remove the api directory.
