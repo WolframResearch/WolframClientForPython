@@ -246,7 +246,7 @@ class WolframLanguageSession(WolframEvaluator):
         self.parameters[parameter_name] = parameter_value
 
     def terminate(self):
-        """Immediatly stop the current session."""
+        """Immediately stop the current session."""
         self._stop(gracefully=False)
 
     def stop(self):
@@ -288,7 +288,7 @@ class WolframLanguageSession(WolframEvaluator):
                         error = True
                 # Kill process if not already terminated.
                 # Wait for it to cleanly stop if the Quit command was succesfully sent,
-                # otherwise the kernel is likely in a bad state so we kill it immediatly.
+                # otherwise the kernel is likely in a bad state so we kill it immediately.
             if self._stdin == PIPE:
                 try:
                     self.kernel_proc.stdin.close()

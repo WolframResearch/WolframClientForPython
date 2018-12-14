@@ -20,7 +20,7 @@ class WolframLanguageFutureSession(WolframLanguageSession):
     Asynchronous evaluations are backed by the :mod:`concurrent.futures` module, especially the :class:`~concurrent.futures.Future` class. 
 
     Contrary to :class:`~wolframclient.evaluation.WolframLanguageAsyncSession`, none of the methods of this class
-    is a coroutine. Evaluation methods are synchronous; they start the evaluation as a background task in a thread, and immediatly return
+    is a coroutine. Evaluation methods are synchronous; they start the evaluation as a background task in a thread, and immediately return
     a :class:`~concurrent.futures.Future` objects, that can later be awaited.
     """
 
