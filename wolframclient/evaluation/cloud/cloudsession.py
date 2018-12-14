@@ -22,7 +22,7 @@ from wolframclient.utils.url import evaluation_api_url, user_api_url
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    'WolframCloudSession', 'WolframCloudSessionFuture', 'WolframAPICall'
+    'WolframCloudSession', 'WolframCloudFutureSession', 'WolframAPICall'
 ]
 
 
@@ -228,7 +228,7 @@ class WolframCloudSession(WolframEvaluator):
                                                     self.authorized())
 
 
-class WolframCloudSessionFuture(WolframCloudSession):
+class WolframCloudFutureSession(WolframCloudSession):
     """ Am asynchronous Wolfram cloud session wrapping API calls and cloud evaluations 
     in future objects.
 

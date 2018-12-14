@@ -1,3 +1,6 @@
+# Version 1.0.0.dev4
+- Inconsistent class name `WolframCloudSessionFuture` replaced with `WolframCloudFutureSession`.
+
 # Version 1.0.0.dev3
 - Add `CHANGELOG.md` to the repository to help users track the changes.
 - Major refactoring of the evaluation module.
