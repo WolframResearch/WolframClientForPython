@@ -78,7 +78,7 @@ class WolframEvaluator(WolframEvaluatorBase):
         raise NotImplementedError
 
     def terminate(self):
-        """ Immediatly stop the evaluator, eventually killing running jobs resulting in cancelled evaluations. """
+        """ Immediately stop the evaluator, eventually killing running jobs resulting in cancelled evaluations. """
         raise NotImplementedError
 
     def restart(self):

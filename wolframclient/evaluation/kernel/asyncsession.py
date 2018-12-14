@@ -22,7 +22,7 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
 
     Asynchronous evaluations are provided through coroutines and the :mod:`asyncio` modules.
 
-    Instance of this class can be managed with an asynchronous context manager::
+    Instances of this class can be managed with an asynchronous context manager::
         
         async with WolframLanguageAsyncSession(kernelpath) as session:
             await session.evaluate('Now')
