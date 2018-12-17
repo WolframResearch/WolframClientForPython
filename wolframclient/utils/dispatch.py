@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-
+import warnings
 from collections import defaultdict
 from itertools import product, chain
 
@@ -65,7 +65,7 @@ class Dispatch(object):
 
         return inner
 
-    def multi(self, *types):
+    def multi(self, *types, force=False):
         """ Annotate a function and map it to a given set of type(s).
 
         Multiple mappings for a given function must share the same name as defined by :meth:`~wolframclient.utils.dispatch.Dispatch.get_key`.
@@ -77,13 +77,17 @@ class Dispatch(object):
             @multi((bytes, bytearray), dict)
             def my_func(...)
         
+        By default, each type can have only one registered implementation. Set `force` to `True` to override existing implementation for a given type.
         """
         def register(function):
 
             key = (self.get_key(function), len(types))
             for expanded in product(*map(force_tuple, types)):
                 if expanded in self.dispatchmap[key]:
-                    raise TypeError("duplicate registration for input type(s): %s" % (expanded, ))
+                    if force:
+                        raise warnings.warn("duplicate registration for input type(s): %s" % (expanded, ), UserWarning)
+                    else:
+                        raise TypeError("duplicate registration for input type(s): %s" % (expanded, ))
 
                 self.dispatchmap[key][expanded] = function
 

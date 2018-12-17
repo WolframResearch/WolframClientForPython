@@ -20,6 +20,19 @@ logger = logging.getLogger(__name__)
 
 __all__ = ['wolfram_encoder', 'Encoder']
 
+class _NoForceContext(object):
+    """ Disable the possiblity to force update the mapping of types to implementation, for a given scope. """
+    def __init__(self, encoder):
+        self.encoder = encoder
+    
+    def __enter__(self):
+        self.encoder._disable_force_update = True
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.encoder._disable_force_update = False
+
+
 class WolframEncoder(Dispatch):
     """ Multi method implementation targeting Wolfram encoder functions. The first element is of a given type, 
     known ahead of time, it's a serializer instance, and as such can be ignored both during dispatch and resolve.
@@ -30,13 +43,18 @@ class WolframEncoder(Dispatch):
     Named input parameters are not used to resolve which implementation to use, but are passed to the
     function.
     """
+
+    def __init__(self):
+        super().__init__()
+        self._disable_force_update = False
+
     def create_proxy(self, encoder):
         def inner(serializer, o, **opts):
             return self._resolve(encoder, o)(serializer, o, **opts)
 
         return inner
 
-    def register(self, *types):
+    def register(self, *types, force=False):
         """ Annotation to declare a given function as an Wolfram encoder for a given list of types. 
 
         An encoder is a generator with two arguments: a serializer instance, and an object of a type matching 
@@ -56,13 +74,20 @@ class WolframEncoder(Dispatch):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('New Wolfram encoder for types: %s', types)
 
+        if self._disable_force_update and force:
+            raise ValueError('Cannot use force to override %s encoder from a plugin.' % (types,))
+
         def wrap(fn):
             @functools.wraps(fn)
-            @self.multi(types)
+            @self.multi(types, force=force)
             def encode(serializer, o):
                 return fn(serializer, o)
             return encode
         return wrap
+    
+    def plugin_context(self):
+        return _NoForceContext(self)
+
 
 wolfram_encoder = WolframEncoder()
 """ Instance of :class:`~wolframclient.serializers.encoder.WolframEncoder` used by default during serialization. """
@@ -109,19 +134,21 @@ class DispatchUpdater(object):
             
     def _update_plugins(self):
         if self.plugins_registry:
-            for plugins_name, handler in self.plugins_registry.items():
-                handler = ''.join(handler)
-                try:
-                    import_module(handler)
-                except TypeError as e:
-                    warnings.warn('Failed to load encoder associated to plugins %s. The following error occured while loading %s: %s' % 
-                        (plugins_name, handler, e), RuntimeWarning)
-            self.plugins_registry = None
+            with wolfram_encoder.plugin_context():
+                for plugins_name, handler in self.plugins_registry.items():
+                    handler = ''.join(handler)
+                    try:
+                        import_module(handler)
+                    except TypeError as e:
+                        warnings.warn('Failed to load encoder associated to plugins %s. The following error occured while loading %s: %s' % 
+                            (plugins_name, handler, e), UserWarning)
+                self.plugins_registry = None
 
 
     if not six.JYTHON:
         # global lock to avoid multiple dispatcher updating in multithreaded programs.
         _lock = multiprocessing.Lock()
+        
         def update_dispatch(self):
             with self._lock:
                 self._update_dispatch()
