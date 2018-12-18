@@ -12,6 +12,15 @@ __all__ = ['binary_deserialize']
 def binary_deserialize(wxf_input, consumer=None, **kwargs):
     """Deserialize binary data, return a Python object.
 
+    Serialize a python object to WXF::
+
+        >>> wxf = export({'key' : [1,2,3]}, target_format='wxf')
+
+    Retrieve the input object::
+
+        >>> binary_deserialize(wxf)
+        {'key': [1, 2, 3]}
+
     A stream of :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` is generated from the WXF input by a instance
     of :class:`~wolframclient.deserializers.wxf.wxfparser.WXFParser`.
 
