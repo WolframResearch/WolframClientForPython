@@ -85,7 +85,7 @@ class Dispatch(object):
             for expanded in product(*map(force_tuple, types)):
                 if expanded in self.dispatchmap[key]:
                     if force:
-                        raise warnings.warn("duplicate registration for input type(s): %s" % (expanded, ), UserWarning)
+                        warnings.warn("duplicate registration for input type(s): %s" % (expanded, ), UserWarning)
                     else:
                         raise TypeError("duplicate registration for input type(s): %s" % (expanded, ))
 
@@ -127,13 +127,13 @@ class Dispatch(object):
             # This can quickly become fairly big because of the cartesian products.
             tuple_args = product(*map(force_tuple, types))
             #populating cache
+            dispatch = self.dispatchmap[key]
             for tuple_type in chain_indexed(*map(lambda t : self.all_type_combinations(*t), tuple_args)):
-                for targets, function in self.dispatchmap[key].items():
-                    if len(targets) == len(types):
-                        if all(issubclass(a, b) for a, b in zip(tuple_type, targets)):
-                            self.dispatchmap[key][types] = function
-                            return function
-
+                function = dispatch.get(tuple_type, None)
+                if function:
+                    dispatch[types] = function
+                    return function
+                
             default = self.defaultmap.get(self.get_key(source), UNDEFINED)
             if default is not UNDEFINED:
                 self.dispatchmap[key][types] = default
@@ -145,7 +145,7 @@ class Dispatch(object):
     def all_type_combinations(*types):
         """ From a given set of types yield all the combinations of types and parent types.
 
-        The combination of object types only is not returned because there should only be one default.
+        The tuple made of sollely `object` is not returned, because it's the default implementation, which should be unique.
         """
         if len(types) == 0:
             return
