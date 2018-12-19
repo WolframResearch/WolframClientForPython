@@ -68,6 +68,8 @@ def chain_indexed(*iterators):
 
     """
     iter_not_exhausted = list(iterators)
+    if len(iter_not_exhausted) == 0:
+        return
     i = 0
     while True:
         try:
