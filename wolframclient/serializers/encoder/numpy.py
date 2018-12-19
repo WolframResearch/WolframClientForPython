@@ -44,3 +44,34 @@ def encode_ndarray(serializer, o):
         data = o.tostring()
 
     return serializer.serialize_numeric_array(data, o.shape, wl_type)
+
+
+@wolfram_encoder.register(numpy.integer)
+def encode_numpy_int(serializer, o):
+    return serializer.serialize_int(int(o))
+
+@wolfram_encoder.register(numpy.floating)
+def encode_numpy_floating(serializer, o):
+    # mantissa, and base 2 exponent.
+    mantissa, exp = numpy.frexp(o)
+    return serializer.serialize_function(
+        serializer.serialize_symbol(b'Times'),
+        (
+            serializer.serialize_float(mantissa),
+            serializer.serialize_function(
+                serializer.serialize_symbol(b'Power'),
+                (
+                    serializer.serialize_int(2),
+                    serializer.serialize_float(exp),
+                ),
+            ),
+        )
+    )
+
+@wolfram_encoder.register(numpy.float16, numpy.float32, numpy.float64)
+def encode_numpy_mp_float(serializer, o):
+    return serializer.serialize_float(o)
+
+@wolfram_encoder.register(numpy.complexfloating)
+def encode_complex(serializer, o):
+    return serializer.serialize_complex(o)
