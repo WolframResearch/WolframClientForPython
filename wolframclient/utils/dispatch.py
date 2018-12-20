@@ -94,6 +94,10 @@ class Dispatch(object):
             yield t
 
     def register(self, function, *types):
+
+        if not callable(function):
+            raise ValueError('Function %s is not callable' %  function)
+
         if not types:
             if self.default_function:
                 raise TypeError(
