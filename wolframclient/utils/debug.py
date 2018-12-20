@@ -32,7 +32,8 @@ def timed_repeated(N=30):
     return repeated
 
 
-def repeated_timing(function, *args, N=20, **opts):
+def repeated_timing(function, *args, **opts):
+    N = opts.pop('N', 30)
     timed_func = timed(function)
     timers = []
     for _ in range(N):
