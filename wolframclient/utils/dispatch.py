@@ -24,7 +24,7 @@ class Dispatch(object):
     It resolves the type mapping, if need be, and caches the result, then applies the implementation to
     the input argument.
         
-    If the types is not mapped to a specific function, i.e. it is not found in dispatchmap,
+    If the types is not mapped to a specific function, i.e. it is not found in dispatchdict,
     and if a default method is set, the tuple type is associated to this default to speedup next
     invocation. This imply that the mapping will not be checked anymore.
 
@@ -77,7 +77,7 @@ class Dispatch(object):
 
     def update(self, dispatch, update_default=False):
         if isinstance(dispatch, Dispatch):
-            for t, function in dispatch.dispatchmap.items():
+            for t, function in dispatch.dispatchdict.items():
                 self.register(function, t)
             if update_default and dispatch.default_function:
                 self.register_default(dispatch.default_function)
@@ -106,10 +106,10 @@ class Dispatch(object):
             return self.default_function
 
         for t in self.validate_types(*types):
-            if t in self.dispatchmap:
+            if t in self.dispatchdict:
                 raise TypeError(
                     "Duplicated registration for input type(s): %s" % (t, ))
-            self.dispatchmap[t] = function
+            self.dispatchdict[t] = function
 
         return function
 
@@ -119,13 +119,13 @@ class Dispatch(object):
         else:
             for t in self.validate_types(*types):
                 try:
-                    del self.dispatchmap[t]
+                    del self.dispatchdict[t]
                 except KeyError:
                     pass
 
     def clear(self):
         self.default_function = None
-        self.dispatchmap = dict()
+        self.dispatchdict = dict()
 
     def __call__(self, arg, *args, **opts):
         return self.resolve(arg)(arg, *args, **opts)
@@ -134,7 +134,7 @@ class Dispatch(object):
 
         for t in arg.__class__.__mro__:
             try:
-                return self.dispatchmap[t]
+                return self.dispatchdict[t]
             except KeyError:
                 pass
 
