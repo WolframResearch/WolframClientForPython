@@ -7,7 +7,7 @@ import math
 from wolframclient.serializers.utils import safe_len
 from wolframclient.utils import six
 from wolframclient.utils.encoding import force_bytes, force_text
-from wolframclient.utils.functional import identity, force_tuple
+from wolframclient.utils.functional import identity
 from wolframclient.serializers.encoder import wolfram_encoder
 from wolframclient.utils.dispatch import Dispatch
 
