@@ -22,18 +22,6 @@ logger = logging.getLogger(__name__)
 
 __all__ = ['wolfram_encoder', 'Encoder']
 
-class _NoForceContext(object):
-    """ Disable the possiblity to force update the mapping of types to implementation, for a given scope. """
-    def __init__(self, encoder):
-        self.encoder = encoder
-    
-    def __enter__(self):
-        self.encoder._disable_force_update = True
-        return self
-
-    def __exit__(self, type, value, traceback):
-        self.encoder._disable_force_update = False
-
 wolfram_encoder = Dispatch()
 """ Instance of :class:`~wolframclient.serializers.encoder.WolframEncoder` used by default during serialization. """
 
