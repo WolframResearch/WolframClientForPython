@@ -3,7 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.utils.functional import flatten
-
+import inspect
 #original idea by Guido in person.
 #https://www.artima.com/weblogs/viewpost.jsp?thread=101605
 
@@ -87,6 +87,12 @@ class Dispatch(object):
         else:
             raise ValueError('%s is not an instance of Dispatch' % dispatch)
 
+    def validate_types(self, *types):
+        for t in frozenset(flatten(*types)):
+            if not inspect.isclass(t):
+                raise ValueError('%s is not a class' % t)
+            yield t
+
     def register(self, function, *types):
         if not types:
             if self.default_function:
@@ -95,7 +101,7 @@ class Dispatch(object):
             self.default_function = function
             return self.default_function
 
-        for t in frozenset(flatten(*types)):
+        for t in self.validate_types(*types):
             if t in self.dispatchmap:
                 raise TypeError(
                     "Duplicated registration for input type(s): %s" % (t, ))
@@ -107,7 +113,7 @@ class Dispatch(object):
         if not types:
             self.default_function = None
         else:
-            for t in frozenset(flatten(*types)):
+            for t in self.validate_types(*types):
                 try:
                     del self.dispatchmap[t]
                 except KeyError:
