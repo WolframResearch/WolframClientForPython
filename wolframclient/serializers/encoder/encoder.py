@@ -142,7 +142,7 @@ class DispatchUpdater(object):
                     except TypeError as e:
                         warnings.warn('Failed to load encoder associated to plugins %s. The following error occured while loading %s: %s' % 
                             (plugins_name, handler, e), UserWarning)
-                self.plugins_registry = None
+                self.plugins_registry = defaultdict(list)
 
 
     if not six.JYTHON:
