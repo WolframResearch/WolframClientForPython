@@ -27,7 +27,7 @@ class WLSerializer(FormatSerializer):
         super(WLSerializer, self).__init__(normalizer=normalizer, **opts)
         self.indent = indent
 
-    def generate_tokens(self, data):
+    def generate_bytes(self, data):
         return self.encode(data)
 
     def serialize_function(self, head, args):

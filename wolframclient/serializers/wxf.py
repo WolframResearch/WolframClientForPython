@@ -37,7 +37,7 @@ class WXFSerializer(FormatSerializer):
         super(WXFSerializer, self).__init__(normalizer=normalizer, **opts)
         self.compress = compress
 
-    def generate_tokens(self, data):
+    def generate_bytes(self, data):
 
         yield WXF_VERSION
 
