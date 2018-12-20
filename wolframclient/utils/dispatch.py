@@ -5,13 +5,15 @@ import warnings
 from collections import defaultdict
 from itertools import product, chain
 
-from wolframclient.utils.functional import force_tuple, chain_indexed
+from wolframclient.utils.functional import force_tuple, flatten
 
 #original idea by Guido in person.
 #https://www.artima.com/weblogs/viewpost.jsp?thread=101605
 
 UNDEFINED = object()
 
+def default_function(*args, **opts):
+    raise ValueError('Unable to handle args')
 
 class Dispatch(object):
     """ A method dispatcher class allowing for multiple implementations of functions specified by their name.
@@ -41,31 +43,11 @@ class Dispatch(object):
     Once the mapping is determined, it is cached for later use.
     """
     def __init__(self):
-        self.dispatchmap = defaultdict(dict)
-        self.defaultmap = dict()
-        self.proxymap = dict()
+        self.dispatchmap = dict()
+        self.unregister_default()
+        self.clear()
 
-    def get_key(self, function):
-        return function.__name__
-
-    def get_proxy(self, function):
-        key = self.get_key(function)
-        try:
-            return self.proxymap[key]
-        except KeyError:
-            self.proxymap[key] = self.create_proxy(function)
-            return self.proxymap[key]
-
-    def create_proxy(self, function):
-        """ Annotate a function so that its actual implementation is a function found using the mapping
-        table and input parameter types. 
-        """
-        def inner(*args, **opts):
-            return self._resolve(function, *args)(*args, **opts)
-
-        return inner
-
-    def multi(self, types):
+    def dispatch(self, types):
         """ Annotate a function and map it to a given set of type(s).
 
         Multiple mappings for a given function must share the same name as defined by :meth:`~wolframclient.utils.dispatch.Dispatch.get_key`.
@@ -89,22 +71,9 @@ class Dispatch(object):
         
         Implementation must be unique. Registering the same combinaison of types will raise an error.
         """
-        def register(function):
-            if isinstance(types, tuple):
-                length = 1
-            else:
-                length = len(types)
-            key = (self.get_key(function), length)
-            for expanded in product(*map(force_tuple, types)):
-                if expanded in self.dispatchmap[key]:
-                    if force:
-                        warnings.warn("duplicate registration for input type(s): %s" % (expanded, ), UserWarning)
-                    else:
-                        raise TypeError("duplicate registration for input type(s): %s" % (expanded, ))
 
-                self.dispatchmap[key][expanded] = function
-
-            return self.get_proxy(function)
+        def register(func):
+            return self.register(types, func)
 
         return register
 
@@ -113,69 +82,59 @@ class Dispatch(object):
 
         There must be one and only one default, which can also be set in the constructor.
         """
-        def register(function):
-
-            key = self.get_key(function)
-
-            if key in self.defaultmap:
-                raise TypeError("duplicate registration for default")
-
-            self.defaultmap[key] = function
-
-            return self.get_proxy(function)
+        def register(func):
+            return self.register_default(func)
 
         return register
 
-    def _resolve(self, source, *args):
-        """ Return the implementation associated to given method and type of args. """
+    def clear(self):
+        """ Removes the local cache """
+        self.cache = dict()
 
-        key = (self.get_key(source), len(args))
-        types = tuple(arg.__class__ for arg in args)
-        # check if the types are associated to a given function:
-        function = self.dispatchmap[key].get(types, UNDEFINED)
+    def register(self, types, function):
+        for t in flatten(types):
+            if t in self.dispatchmap:
+                raise TypeError("Duplicated registration for input type(s): %s" % (t, ))  
+            self.dispatchmap[t] = function
 
-        if function is UNDEFINED:
-            # Need to build all the possible tuples using subclasses and order them properly by MRO,
-            # and parameter index.
-            # This can quickly become fairly big because of the cartesian products.
-            tuple_args = product(*map(force_tuple, types))
-            #populating cache
-            dispatch = self.dispatchmap[key]
-            for tuple_type in chain_indexed(*map(lambda t : self.all_type_combinations(*t), tuple_args)):
-                function = dispatch.get(tuple_type, None)
-                if function:
-                    dispatch[types] = function
-                    return function
-                
-            default = self.defaultmap.get(self.get_key(source), UNDEFINED)
-            if default is not UNDEFINED:
-                self.dispatchmap[key][types] = default
-                return default
-            raise TypeError("No type match for arguments: %s", (args,))
+        self.clear()
         return function
 
-    @staticmethod
-    def all_type_combinations(*types):
-        """ From a given set of types yield all the combinations of types and parent types.
+    def register_default(self, function):
+        if self.default_function:
+            raise TypeError("Dispatch already has a default function registred.")  
+        self.default_function = function
+        return function
 
-        The tuple made of sollely `object` is not returned, because it's the default implementation, which should be unique.
-        """
-        if len(types) == 0:
-            return
-        mro = list(map(lambda x : x.__mro__, types[:-1]))
-        mro.append(types[-1].__mro__[:-1])
-        for elem in product(*mro):
-            yield elem
+    def unregister_default(self):
+        self.default_function = None
 
-class ClassDispatch(Dispatch):
-    """ Multi method implementation where the first element is of a given type, known ahead of time,
-    and as such can be ignored both during dispatch and resolve.
+    def unregister(self, types):
+        for t in flatten(types):
+            try:
+                del self.dispatchmap[t]
+            except KeyError:
+                pass
+        self.clear()
 
-    Named input parameters are not used to resolve which implementation to use, but are passed to the
-    function.
-    """
-    def create_proxy(self, function):
-        def inner(obj, *args, **opts):
-            return self._resolve(function, *args)(obj, *args, **opts)
+    def __call__(self, arg, *args, **opts):
+        return self.resolve(arg)(arg, *args, **opts)
 
-        return inner
+    def resolve(self, arg):
+        try:
+            return self.cache[arg.__class__]
+        except KeyError:
+            for t in arg.__class__.__mro__:
+                try:
+                    self.cache[t] = self.dispatchmap[t]
+                    return self.cache[t]
+                except KeyError:
+                    pass
+
+            self.cache[arg.__class__] = self.default_function or default_function
+            return self.cache[arg.__class__]
+
+    def as_method(self):
+        def method(instance, arg, *args, **opts):
+            return self.resolve(arg)(instance, arg, *args, **opts)
+        return method

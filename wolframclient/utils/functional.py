@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import types
 from functools import reduce
-from itertools import islice
+from itertools import islice, chain
 
 from wolframclient.utils import six
 
@@ -50,37 +50,18 @@ def composition(*functions):
 def is_iterable(obj, exclude_list=six.string_types):
     if isinstance(obj, exclude_list):
         return False
-    return hasattr(obj, '__iter__')
+    return hasattr(obj, '__iter__') and not obj.__class__ == type
 
+def to_iterable(obj, exclude_list=six.string_types):
+    if isinstance(obj, exclude_list):
+        return obj, 
+    try:
+        return iter(obj)
+    except TypeError:
+        return obj, 
 
 def iterate(*args):
-    for arg in args:
-        if not is_iterable(arg):
-            yield arg
-        else:
-            for item in arg:
-                yield item
-
-def chain_indexed(*iterators):
-    """ Yield all first elements, then seconds, etc.
-
-        >>> chain_indexed('AB', 'CDE', )
-
-    """
-    iter_not_exhausted = list(iterators)
-    if len(iter_not_exhausted) == 0:
-        return
-    i = 0
-    while True:
-        try:
-            yield next(iter_not_exhausted[i])
-            i = (i+1) % len(iter_not_exhausted)
-        except StopIteration:
-            iter_not_exhausted.pop(i)
-            if len(iter_not_exhausted)>0:
-                i = i % len(iter_not_exhausted)
-            else:
-                return
+    return chain.from_iterable(map(to_iterable, args))
 
 def flatten(*args):
     for arg in args:
@@ -90,7 +71,6 @@ def flatten(*args):
                     yield el
         else:
             yield arg
-
 
 def riffle(iterable, separator):
     iterable = iter(iterable)

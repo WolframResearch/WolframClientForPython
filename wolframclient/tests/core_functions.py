@@ -5,21 +5,32 @@ from __future__ import absolute_import, print_function, unicode_literals
 import math
 
 from wolframclient.utils import six
-from wolframclient.utils.dispatch import ClassDispatch, Dispatch
-from wolframclient.utils.functional import partition, riffle, chain_indexed
+from wolframclient.utils.dispatch import Dispatch
+from wolframclient.utils.functional import partition, riffle, iterate, flatten
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
 
 class TestCase(BaseTestCase):
+
     def test_riffle(self):
         self.assertEqual(
             list(riffle(range(5), "/")), [0, "/", 1, "/", 2, "/", 3, "/", 4])
 
         self.assertEqual(list(riffle([], "/")), [])
 
-    def test_chain_indexed(self):
-        chained = list(chain_indexed(iter([1,2,3]), iter('ab'), iter(()), iter('xxxx')))
-        self.assertEqual(chained, [1,'a','x',2,'b','x',3,'x','x'])
+    def test_iterate(self):
+
+        self.assertEqual(
+            list(iterate(2, 3, "a", [2, 3])),
+            [2, 3, "a", 2, 3]
+        )
+
+    def test_flatten(self):
+
+        self.assertEqual(
+            list(flatten(2, 3, "a", [2, 3, str, [5, [10, 89]]])),
+            [2, 3, "a", 2, 3, str, 5, 10, 89]
+        )
 
     def test_partition(self):
 
@@ -34,66 +45,48 @@ class TestCase(BaseTestCase):
 
     def test_dispatch(self):
 
-        dispatcher = Dispatch()
+        normalizer = Dispatch()
 
-        @dispatcher.default()
-        def normalizer(o):
+        @normalizer.default()
+        def implementation(o):
             return o
 
-        @dispatcher.multi((int, float))
-        def normalizer(o):
+        @normalizer.dispatch((int, float))
+        def implementation(o):
             return o * 2
 
-        @dispatcher.multi(six.text_type)
-        def normalizer(o):
+        @normalizer.dispatch(six.text_type)
+        def implementation(o):
             return 'Hello %s' % o
 
         self.assertEqual(normalizer('Ric'), 'Hello Ric')
         self.assertEqual(normalizer(2), 4)
         self.assertEqual(normalizer(None), None)
 
-    def test_dispatch_multi(self):
+        normalizer.unregister(six.text_type)
+        normalizer.register(six.text_type, lambda s: 'Goodbye %s' % s)
 
-        dispatcher = Dispatch()
-
-        @dispatcher.default()
-        def normalizer(a, b):
-            return (a, b)
-
-        @dispatcher.multi(int, int)
-        def normalizer(a, b):
-            return a + b
-
-        @dispatcher.multi(int, float)
-        def normalizer(a, b):
-            return a + int(math.floor(b))
-
-        @dispatcher.multi(float, float)
-        def normalizer(a, b):
-            return a + b
-
-        self.assertEqual(normalizer("a", "b"), ("a", "b"))
-        self.assertEqual(normalizer(1, 2), 3)
-        self.assertEqual(normalizer(1, 4.5), 5)
-        self.assertEqual(normalizer(1.2, 4.5), 5.7)
+        self.assertEqual(normalizer('Ric'), 'Goodbye Ric')
 
     def test_class_dispatch(self):
 
-        dispatcher = ClassDispatch()
+        normalizer = Dispatch()
+
+        @normalizer.default()
+        def implementation(self, o):
+            return o
+
+        @normalizer.dispatch(six.text_type)
+        def implementation(self, o):
+            return 'Hello %s' % o
+
+        @normalizer.dispatch(int)
+        def implementation(self, o):
+            return o * 2
 
         class Foo(object):
-            @dispatcher.default()
-            def normalizer(self, o):
-                return o
+            attr = normalizer.as_method()
 
-            @dispatcher.multi(six.text_type)
-            def normalizer(self, o):
-                return 'Hello %s' % o
-
-            @dispatcher.multi(int)
-            def normalizer(self, o):
-                return o * 2
-
-        self.assertEqual(Foo().normalizer('Ric'), 'Hello Ric')
-        self.assertEqual(Foo().normalizer(2), 4)
-        self.assertEqual(Foo().normalizer(None), None)
+        self.assertEqual(Foo().attr('Ric'), 'Hello Ric')
+        self.assertEqual(Foo().attr(2), 4)
+        self.assertEqual(Foo().attr(None), None)
