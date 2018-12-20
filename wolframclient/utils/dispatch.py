@@ -98,7 +98,9 @@ class Dispatch(object):
             if update_default and dispatch.default_function:
                 self.register_default(dispatch.default_function)
             self.clear()
-
+        else:
+            raise ValueError('%s is not an instance of Dispatch' % dispatch)
+            
     def register(self, types, function):
         for t in flatten(types):
             if t in self.dispatchmap:
