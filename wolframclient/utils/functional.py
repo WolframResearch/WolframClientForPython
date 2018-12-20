@@ -9,7 +9,6 @@ from itertools import chain, islice
 from wolframclient.utils import six
 
 if six.PY2:
-
     def map(f, iterable):
         return (f(e) for e in iterable)
 else:
