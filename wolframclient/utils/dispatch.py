@@ -5,7 +5,7 @@ import warnings
 from collections import defaultdict
 from itertools import product, chain
 
-from wolframclient.utils.functional import force_tuple, flatten
+from wolframclient.utils.functional import flatten
 
 #original idea by Guido in person.
 #https://www.artima.com/weblogs/viewpost.jsp?thread=101605
