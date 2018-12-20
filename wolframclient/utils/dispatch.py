@@ -82,7 +82,7 @@ class Dispatch(object):
             if update_default and dispatch.default_function:
                 self.register_default(dispatch.default_function)
         elif isinstance(dispatch, dict):
-            for t, function in dispatch.dispatchmap.items():
+            for t, function in dispatch.items():
                 self.register(function, t)
         else:
             raise ValueError('%s is not an instance of Dispatch' % dispatch)
