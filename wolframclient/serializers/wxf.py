@@ -66,7 +66,6 @@ class WXFSerializer(FormatSerializer):
         yield force_bytes(name)
 
     def serialize_function(self, head, args, **opts):
-        #args is always a tuple
 
         iterable, length = get_length(args, **opts)
 

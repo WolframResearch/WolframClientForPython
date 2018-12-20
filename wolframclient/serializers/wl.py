@@ -30,7 +30,7 @@ class WLSerializer(FormatSerializer):
     def generate_bytes(self, data):
         return self.encode(data)
 
-    def serialize_function(self, head, args):
+    def serialize_function(self, head, args, **opts):
         return chain(head, yield_with_separators(args, first=b'[', last=b']'))
 
     def serialize_symbol(self, name):

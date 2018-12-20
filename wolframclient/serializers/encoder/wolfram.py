@@ -9,6 +9,7 @@ from wolframclient.serializers.serializable import WLSerializable
 from wolframclient.serializers.utils import safe_len
 from wolframclient.utils.datastructures import Association
 from wolframclient.utils.dispatch import Dispatch
+from wolframclient.utils.functional import map
 
 encoder = Dispatch()
 
@@ -22,7 +23,8 @@ def encode_symbol(serializer, o):
 def encode_function(serializer, o):
     return serializer.serialize_function(
         serializer.encode(o.head),
-        tuple(serializer.encode(arg) for arg in o.args))
+        map(serializer.encode, o.args),
+        length=len(o.args))
 
 
 @encoder.dispatch(WLInputExpression)
