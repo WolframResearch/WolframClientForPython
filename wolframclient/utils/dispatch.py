@@ -76,17 +76,12 @@ class Dispatch(object):
 
         return register
 
-    def clear(self):
-        """ Removes the local cache """
-        self.cache = dict()
-
     def update(self, dispatch, update_default = False):
         if isinstance(dispatch, Dispatch):
             for t, function in dispatch.dispatchmap.items():
                 self.register(function, t)
             if update_default and dispatch.default_function:
                 self.register_default(dispatch.default_function)
-            self.clear()
         else:
             raise ValueError('%s is not an instance of Dispatch' % dispatch)
             
@@ -95,7 +90,6 @@ class Dispatch(object):
             if self.default_function:
                 raise TypeError("Dispatch already has a default function registred.")  
             self.default_function = function
-            self.clear()
             return self.default_function
 
         for t in flatten(*types):
@@ -103,7 +97,6 @@ class Dispatch(object):
                 raise TypeError("Duplicated registration for input type(s): %s" % (t, ))  
             self.dispatchmap[t] = function
 
-        self.clear()
         return function
 
     def unregister(self, *types):
@@ -115,24 +108,19 @@ class Dispatch(object):
                     del self.dispatchmap[t]
                 except KeyError:
                     pass
-        self.clear()
 
     def __call__(self, arg, *args, **opts):
         return self.resolve(arg)(arg, *args, **opts)
 
     def resolve(self, arg):
-        try:
-            return self.cache[arg.__class__]
-        except KeyError:
-            for t in arg.__class__.__mro__:
-                try:
-                    self.cache[t] = self.dispatchmap[t]
-                    return self.cache[t]
-                except KeyError:
-                    pass
 
-            self.cache[arg.__class__] = self.default_function or default_function
-            return self.cache[arg.__class__]
+        for t in arg.__class__.__mro__:
+            try:
+                return self.dispatchmap[t]
+            except KeyError:
+                pass
+
+        return self.default_function or default_function
 
     def as_method(self):
         def method(instance, arg, *args, **opts):
