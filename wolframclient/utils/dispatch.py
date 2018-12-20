@@ -65,23 +65,36 @@ class Dispatch(object):
 
         return inner
 
-    def multi(self, *types, force=False):
+    def multi(self, types):
         """ Annotate a function and map it to a given set of type(s).
 
         Multiple mappings for a given function must share the same name as defined by :meth:`~wolframclient.utils.dispatch.Dispatch.get_key`.
-
-        A tuple can be used as a type to specify alternative choice for a given parameter. 
         
-        Declare a function mapping to either `(bytes, dict)` or `(bytearray, dict)`::
+        Declare an implementation to use on :data:`bytearray` input::
 
-            @multi((bytes, bytearray), dict)
+            @dispatcher.multi(bytearray)
+            def my_func(...)
+
+        Function with many arguments are specified with a list of types. Declare an implementation for two arguments of type 
+        :data:`str` and :data:`int`::
+
+            @dispatcher.multi([str, int])
+            def my_func(...)
+
+        A tuple can be used as a type to specify alternative choices for a given parameter. 
+        Declare a function used for both :data:`bytes` and :data:`bytearray`::
+
+            @dispatcher.multi((bytes, bytearray))
             def my_func(...)
         
-        By default, each type can have only one registered implementation. Set `force` to `True` to override existing implementation for a given type.
+        Implementation must be unique. Registering the same combinaison of types will raise an error.
         """
         def register(function):
-
-            key = (self.get_key(function), len(types))
+            if isinstance(types, tuple):
+                length = 1
+            else:
+                length = len(types)
+            key = (self.get_key(function), length)
             for expanded in product(*map(force_tuple, types)):
                 if expanded in self.dispatchmap[key]:
                     if force:
