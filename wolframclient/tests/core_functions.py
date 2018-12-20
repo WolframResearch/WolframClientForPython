@@ -83,6 +83,12 @@ class TestCase(BaseTestCase):
 
         self.assertEqual(normalizer('Ric'), 'Goodbye Ric')
 
+        normalizer.unregister()
+        normalizer.register(lambda s: 5)
+
+        self.assertEqual(normalizer(None), 5)
+
+
     def test_class_dispatch(self):
 
         normalizer = Dispatch()
