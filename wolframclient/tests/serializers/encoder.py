@@ -7,6 +7,7 @@ import warnings
 from wolframclient.serializers import export
 from wolframclient.utils.tests import TestCase as BaseTestCase
 from wolframclient.serializers import wolfram_encoder
+from wolframclient.utils.dispatch import Dispatch
 
 class foo(object):
     pass
@@ -68,7 +69,7 @@ class TestCase(BaseTestCase):
 
     #def test_register_twice_force(self):
     #    with warnings.catch_warnings(record=True) as w:
-    #        @wolfram_encoder.dispatch(subsubfoo, force=True)
+    #        @encoder.dispatch(subsubfoo, force=True)
     #        def encode_subsubfoo_again(s, o):
     #            return s.serialize_symbol('subsubfooFORCE')
     #        wl = export(subsubfoo())

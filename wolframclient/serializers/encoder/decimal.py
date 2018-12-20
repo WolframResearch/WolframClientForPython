@@ -3,8 +3,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.serializers.encoder import wolfram_encoder
 import decimal
+from wolframclient.utils.dispatch import Dispatch
 
-@wolfram_encoder.dispatch(decimal.Decimal)
+encoder = Dispatch()
+
+@encoder.dispatch(decimal.Decimal)
 def encode_decimal(serializer, o):
 
     if o.is_infinite():

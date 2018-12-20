@@ -47,6 +47,16 @@ class TestCase(BaseTestCase):
 
         normalizer = Dispatch()
 
+        class Person(object):
+            pass
+
+        class SportPlayer(Person):
+            pass
+
+        class FootballPlayer(SportPlayer):
+            pass
+
+
         @normalizer.default()
         def implementation(o):
             return o
@@ -59,9 +69,22 @@ class TestCase(BaseTestCase):
         def implementation(o):
             return 'Hello %s' % o
 
+        @normalizer.dispatch(Person)
+        def implementation(o):
+            return 'Hello person'
+
+        @normalizer.dispatch(FootballPlayer)
+        def implementation(o):
+            return 'Hello football player'
+
         self.assertEqual(normalizer('Ric'), 'Hello Ric')
         self.assertEqual(normalizer(2), 4)
         self.assertEqual(normalizer(None), None)
+
+        self.assertEqual(normalizer(Person()), 'Hello person')
+        self.assertEqual(normalizer(SportPlayer()), 'Hello person')
+        self.assertEqual(normalizer(FootballPlayer()), 'Hello football player')
+
 
         normalizer.unregister(six.text_type)
         normalizer.register(six.text_type, lambda s: 'Goodbye %s' % s)

@@ -15,6 +15,8 @@ from wolframclient.utils.functional import composition, iterate
 from wolframclient.utils.importutils import safe_import_string
 from wolframclient.utils import six
 from wolframclient.utils.api import multiprocessing
+from wolframclient.utils.dispatch import Dispatch
+from wolframclient.utils.importutils import import_string
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +72,7 @@ class DispatchUpdater(object):
             installed_modules = sys.modules.keys()
             for module in self.modules.intersection(installed_modules):
                 for handler in self.registry[module]:
-                    import_module(handler)
+                    self.dispatch.update(safe_import_string(handler))
 
                 del self.registry[module]
                 self.modules.remove(module)
@@ -107,18 +109,18 @@ wolfram_encoder_updater = DispatchUpdater(wolfram_encoder)
 wolfram_encoder_updater.register_modules(
 
     #builtin libraries
-    sys='wolframclient.serializers.encoder.builtin',
-    decimal='wolframclient.serializers.encoder.decimal',
-    datetime='wolframclient.serializers.encoder.datetime',
-    fractions='wolframclient.serializers.encoder.fractions',
+    sys='wolframclient.serializers.encoder.builtin.encoder',
+    decimal='wolframclient.serializers.encoder.decimal.encoder',
+    datetime='wolframclient.serializers.encoder.datetime.encoder',
+    fractions='wolframclient.serializers.encoder.fractions.encoder',
 
     #wolfram language support
     wolframclient=
-    'wolframclient.serializers.encoder.wolfram',
+    'wolframclient.serializers.encoder.wolfram.encoder',
 
     #third party libraries
-    numpy='wolframclient.serializers.encoder.numpy',
-    PIL='wolframclient.serializers.encoder.pil',
+    numpy='wolframclient.serializers.encoder.numpy.encoder',
+    PIL='wolframclient.serializers.encoder.pil.encoder',
 )
 
 wolfram_encoder_updater.register_plugins()

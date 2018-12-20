@@ -8,6 +8,9 @@ from wolframclient.language import wl
 from wolframclient.utils import six
 from wolframclient.utils.api import PIL, numpy
 from wolframclient.serializers.encoder import wolfram_encoder
+from wolframclient.utils.dispatch import Dispatch
+
+encoder = Dispatch()
 
 """ Serialize a given :class:`PIL.Image` into a Wolfram Language image.
 
@@ -54,7 +57,7 @@ def normalize_array(array):
     return array
 
 
-@wolfram_encoder.dispatch(PIL.Image)
+@encoder.dispatch(PIL.Image)
 def encode_image(serializer, img):
     # some PIL mode are directly mapped to WL ones. Best case fast (de)serialization.
     mode = img.mode
