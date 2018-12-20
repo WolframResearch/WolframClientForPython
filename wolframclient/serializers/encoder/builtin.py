@@ -69,5 +69,5 @@ def encode_complex(serializer, o):
 
 @encoder.dispatch(six.iterable_types)
 def encode_iter(serializer, o):
-    return serializer.serialize_iterable((serializer.encode(value) for value in o),
+    return serializer.serialize_iterable(map(serializer.encode, o),
                                     length=safe_len(o))

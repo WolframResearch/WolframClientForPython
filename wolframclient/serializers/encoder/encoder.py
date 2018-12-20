@@ -17,6 +17,8 @@ from wolframclient.utils import six
 from wolframclient.utils.api import multiprocessing
 from wolframclient.utils.dispatch import Dispatch
 from wolframclient.utils.importutils import import_string
+from wolframclient.serializers.utils import py_encode_decimal, safe_len
+from wolframclient.utils.functional import map
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +31,8 @@ wolfram_encoder = Dispatch()
 @wolfram_encoder.dispatch()
 def encode(serializer, o):
     if is_iterable(o):
-        return serializer.serialize_iterable(serializer.encode(value) for value in o)
+        return serializer.serialize_iterable(map(serializer.encode, o),
+                                    length=safe_len(o))
     if serializer.allow_external_objects:
         return serializer.serialize_external_object(o)
 
