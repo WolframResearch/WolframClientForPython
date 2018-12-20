@@ -71,5 +71,7 @@ def safe_force_text(obj):
     except Exception as e:
         return '<unprintable obj: %s>' % e
 
-def concatenate_bytes(iterable):
-    return b''.join(iterable)
+#this function is supposed to be the most efficient byte concatenation that can be archived in python
+#used by the serializers
+
+concatenate_bytes = b''.join
