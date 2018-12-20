@@ -5,7 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import types
 from functools import reduce
 from itertools import islice, chain
-
+import inspect
 from wolframclient.utils import six
 
 
@@ -50,7 +50,7 @@ def composition(*functions):
 def is_iterable(obj, exclude_list=six.string_types):
     if isinstance(obj, exclude_list):
         return False
-    return hasattr(obj, '__iter__') and not obj.__class__ == type
+    return not inspect.isclass(obj) and hasattr(obj, '__iter__')
 
 def to_iterable(obj, exclude_list=six.string_types):
     if isinstance(obj, exclude_list):
