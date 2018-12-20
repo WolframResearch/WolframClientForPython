@@ -95,7 +95,7 @@ class Dispatch(object):
             self.default_function = function
             return self.default_function
 
-        for t in flatten(*types):
+        for t in frozenset(flatten(*types)):
             if t in self.dispatchmap:
                 raise TypeError(
                     "Duplicated registration for input type(s): %s" % (t, ))
@@ -107,7 +107,7 @@ class Dispatch(object):
         if not types:
             self.default_function = None
         else:
-            for t in flatten(*types):
+            for t in frozenset(flatten(*types)):
                 try:
                     del self.dispatchmap[t]
                 except KeyError:
