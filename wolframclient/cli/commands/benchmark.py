@@ -73,6 +73,9 @@ class Command(SimpleCommand):
             "", *(force_text(c).ljust(self.col_size) for c in self.complexity))
         self.table_divider(len(self.complexity) + 1)
 
+        #running export to do all lazy loadings
+        export(1)
+
         for label, export_format, opts in (
             ("wl", "wl", dict()),
             ("wxf", "wxf", dict()),
