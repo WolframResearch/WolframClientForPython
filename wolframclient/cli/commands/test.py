@@ -21,8 +21,9 @@ def dependencies():
         yield ("pillow", "5.3.0")
         yield ("requests", "2.20.0")
         yield ("oauthlib", "2.1.0")
-        yield ("aiohttp", "3.4.4")
         yield ("pyzmq", "17.1.2")
+    if not six.PY2:
+        yield ("aiohttp", "3.4.4")
 
 
 class Command(SimpleCommand):
