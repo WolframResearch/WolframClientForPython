@@ -36,11 +36,8 @@ def identity(x):
 
 def composition(*functions):
 
-    if len(functions) <= 1:
-        return first(functions, identity)
-
     return reduce(lambda f, g: lambda *args, **kw: f(g(*args, **kw)),
-                  reversed(functions))
+                  reversed(functions) or (identity, ))
 
 
 def is_iterable(obj, exclude_list=six.string_types):
