@@ -106,7 +106,7 @@ class WolframLanguageSession(WolframEvaluator):
     session.
 
     It is possible to pass ZMQ sockets to use instead of new one, but this is generally
-    not recommanded, probably never necessary.
+    not recommended, probably never necessary.
 
     The kernel associated to a given session provides the following
     logging functions:
@@ -121,7 +121,7 @@ class WolframLanguageSession(WolframEvaluator):
     * ``ClientLibrary`SetErrorLogLevel[]`` only send error messages
     * ``ClientLibrary`DisableKernelLogging[]`` stop sending error message to the logging socket
 
-    The standart input, output and error file handles can be specified with `stdin`, `stdout` and `stderr`
+    The standard input, output and error file handles can be specified with `stdin`, `stdout` and `stderr`
     named parameters. Valid values are those accepted by subprocess.Popen (e.g :data:`sys.stdout`). Those parameters should be handled
     with care as deadlocks can arise from misconfiguration.
 
@@ -236,7 +236,7 @@ class WolframLanguageSession(WolframEvaluator):
         Session parameters are:
 
         * ``'STARTUP_READ_TIMEOUT'``: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.
-        * ``'STARTUP_RETRY_SLEEP_TIME'``: time to sleep, in seconds, before checking that the initilazed kernel has responded. Default is 1 ms.
+        * ``'STARTUP_RETRY_SLEEP_TIME'``: time to sleep, in seconds, before checking that the initialized kernel has responded. Default is 1 ms.
         * ``'TERMINATE_READ_TIMEOUT'``: time to wait, in seconds, after the ``Quit[]`` command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.
         """
         if parameter_name not in self._DEFAULT_PARAMETERS:
@@ -256,7 +256,7 @@ class WolframLanguageSession(WolframEvaluator):
         """Stop the kernel process and close sockets.
 
         This function must be called when a given session is no more useful
-        to prevent orfan processes and sockets from being generated.
+        to prevent orphan processes and sockets from being generated.
 
         .. note::
             Licencing restrictions usually apply to Wolfram kernels and may
