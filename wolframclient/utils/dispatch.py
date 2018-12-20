@@ -43,8 +43,7 @@ class Dispatch(object):
     Once the mapping is determined, it is cached for later use.
     """
     def __init__(self):
-        self.dispatchmap = dict()
-        self.unregister()
+        self.clear()
 
     def dispatch(self, *types):
         """ Annotate a function and map it to a given set of type(s).
@@ -108,6 +107,10 @@ class Dispatch(object):
                     del self.dispatchmap[t]
                 except KeyError:
                     pass
+
+    def clear(self):
+        self.default_function = None
+        self.dispatchmap = dict()
 
     def __call__(self, arg, *args, **opts):
         return self.resolve(arg)(arg, *args, **opts)
