@@ -91,6 +91,14 @@ class Dispatch(object):
         """ Removes the local cache """
         self.cache = dict()
 
+    def update(self, dispatch, update_default = False):
+        if isinstance(dispatch, Dispatch):
+            for t, function in dispatch.dispatchmap.items():
+                self.register(t, function)
+            if update_default and dispatch.default_function:
+                self.register_default(dispatch.default_function)
+            self.clear()
+
     def register(self, types, function):
         for t in flatten(types):
             if t in self.dispatchmap:
