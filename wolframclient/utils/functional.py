@@ -9,6 +9,12 @@ import inspect
 from wolframclient.utils import six
 
 
+if six.PY2:
+    def map(f, iterable):
+        return (f(e) for e in iterable)
+else:
+    map = map
+
 def first(iterable, default=None):
     try:
         return next(iter(iterable))
