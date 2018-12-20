@@ -29,7 +29,7 @@ def encode_none(serializer, o):
     return serializer.serialize_symbol(force_bytes(o))
 
 
-@encoder.dispatch(frozenset([bytearray, six.binary_type, *six.buffer_types]))
+@encoder.dispatch((bytearray, six.binary_type, six.buffer_types))
 def encode_bytes(serializer, o):
     return serializer.serialize_bytes(o)
 
