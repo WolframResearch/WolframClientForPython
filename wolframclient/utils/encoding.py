@@ -5,6 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.utils import six
 from wolframclient.utils.functional import map
 
+
 def force_text(s, encoding='utf-8', errors='strict'):
     """
     Similar to smart_text, except that lazy instances are resolved to
@@ -80,8 +81,8 @@ def safe_force_text(obj):
 #https://blog.mclemon.io/python-efficient-string-concatenation-in-python-2016-edition
 
 if six.PY2:
+
     def concatenate_bytes(iterable):
         return b''.join(map(six.binary_type, iterable))
 else:
     concatenate_bytes = b''.join
-

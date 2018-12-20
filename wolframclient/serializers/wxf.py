@@ -12,9 +12,10 @@ from wolframclient.serializers.wxfencoder.constants import (
 from wolframclient.serializers.wxfencoder.utils import (
     float_to_bytes, integer_size, integer_to_bytes, numeric_array_to_wxf,
     varint_bytes, write_varint)
+from wolframclient.utils import six
 from wolframclient.utils.api import zlib
 from wolframclient.utils.encoding import force_bytes
-from wolframclient.utils import six
+
 
 def get_length(iterable, length=None):
     if length is not None:
@@ -48,12 +49,12 @@ class WXFSerializer(FormatSerializer):
 
         if self.compress:
             compressor = zlib.compressobj()
-            if six.PY2:                
+            if six.PY2:
                 for payload in self.encode(data):
                     yield compressor.compress(six.binary_type(payload))
             else:
                 for payload in self.encode(data):
-                    yield compressor.compress(payload)                
+                    yield compressor.compress(payload)
             yield compressor.flush()
         else:
             for payload in self.encode(data):
