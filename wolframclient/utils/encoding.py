@@ -70,3 +70,6 @@ def safe_force_text(obj):
         return force_text(obj, errors='ignore')
     except Exception as e:
         return '<unprintable obj: %s>' % e
+
+def concatenate_bytes(iterable):
+    return b''.join(iterable)

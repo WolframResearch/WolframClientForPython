@@ -12,9 +12,9 @@ from wolframclient.serializers.wxfencoder.constants import (
     WXF_HEADER_SEPARATOR, WXF_VERSION)
 from wolframclient.serializers.wxfencoder.utils import numeric_array_to_wxf
 from wolframclient.utils import six
-from wolframclient.utils.encoding import force_text
+from wolframclient.utils.encoding import force_text, concatenate_bytes
 from wolframclient.utils.functional import first
-
+from wolframclient.utils.encoding import force_text, concatenate_bytes
 
 class FormatSerializer(Encoder):
 
@@ -33,7 +33,7 @@ class FormatSerializer(Encoder):
                 stream.write(token)
             return stream
 
-        return b''.join(self.generate_bytes(data))
+        return concatenate_bytes(self.generate_bytes(data))
 
     #implementation of several methods
 
@@ -65,7 +65,7 @@ class FormatSerializer(Encoder):
 
     def serialize_numeric_array(self, data, shape, wl_type):
 
-        payload = b''.join(
+        payload = concatenate_bytes(
             chain((WXF_VERSION, WXF_HEADER_SEPARATOR),
                   numeric_array_to_wxf(data, shape, wl_type)))
 
