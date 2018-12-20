@@ -7,11 +7,9 @@ import sys
 from wolframclient.language import wl
 from wolframclient.utils import six
 from wolframclient.utils.api import PIL, numpy
-from wolframclient.serializers.encoder import wolfram_encoder
 from wolframclient.utils.dispatch import Dispatch
 
 encoder = Dispatch()
-
 """ Serialize a given :class:`PIL.Image` into a Wolfram Language image.
 
     This method first tries to extract the data and relevant information about the image,
@@ -83,4 +81,4 @@ def encode_image(serializer, img):
         return serializer.serialize_function(
             serializer.serialize_symbol(b'ImportByteArray'),
             (serializer.serialize_bytes(stream.getvalue()),
-                serializer.serialize_string(img_format)))
+             serializer.serialize_string(img_format)))

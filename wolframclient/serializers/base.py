@@ -12,12 +12,11 @@ from wolframclient.serializers.wxfencoder.constants import (
     WXF_HEADER_SEPARATOR, WXF_VERSION)
 from wolframclient.serializers.wxfencoder.utils import numeric_array_to_wxf
 from wolframclient.utils import six
-from wolframclient.utils.encoding import force_text, concatenate_bytes
+from wolframclient.utils.encoding import concatenate_bytes, force_text
 from wolframclient.utils.functional import first
-from wolframclient.utils.encoding import force_text, concatenate_bytes
+
 
 class FormatSerializer(Encoder):
-
     def generate_bytes(self, data):
         raise NotImplementedError
 

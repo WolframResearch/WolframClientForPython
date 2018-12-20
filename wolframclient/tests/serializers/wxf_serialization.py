@@ -305,7 +305,6 @@ class TestCase(SerializeTest):
             export(wl.Foo(wl.ToExpression("2+2"), 1, 2), target_format='wxf'),
         )
 
-
     def test_small_compression(self):
         wxf = b'\x38\x3a\x43\x01'
         self.serialize_compare(1, wxf, compress=False)

@@ -9,12 +9,12 @@ from wolframclient.serializers.utils import py_encode_decimal, safe_len
 from wolframclient.serializers.wxfencoder.constants import (
     ARRAY_TYPES, WXF_CONSTANTS, WXF_HEADER_COMPRESS, WXF_HEADER_SEPARATOR,
     WXF_VERSION)
-from wolframclient.serializers.wxfencoder.streaming import ZipCompressedWriter
 from wolframclient.serializers.wxfencoder.utils import (
     float_to_bytes, integer_size, integer_to_bytes, numeric_array_to_wxf,
     varint_bytes, write_varint)
-from wolframclient.utils.encoding import force_bytes
 from wolframclient.utils.api import zlib
+from wolframclient.utils.encoding import force_bytes
+
 
 def get_length(iterable, length=None):
     if length is not None:

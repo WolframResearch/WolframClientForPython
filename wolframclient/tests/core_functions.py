@@ -2,16 +2,14 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import math
-
 from wolframclient.utils import six
 from wolframclient.utils.dispatch import Dispatch
-from wolframclient.utils.functional import partition, riffle, iterate, flatten
+from wolframclient.utils.functional import (flatten, iterate, map, partition,
+                                            riffle)
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
 
 class TestCase(BaseTestCase):
-
     def test_riffle(self):
         self.assertEqual(
             list(riffle(range(5), "/")), [0, "/", 1, "/", 2, "/", 3, "/", 4])
@@ -20,17 +18,13 @@ class TestCase(BaseTestCase):
 
     def test_iterate(self):
 
-        self.assertEqual(
-            list(iterate(2, 3, "a", [2, 3])),
-            [2, 3, "a", 2, 3]
-        )
+        self.assertEqual(list(iterate(2, 3, "a", [2, 3])), [2, 3, "a", 2, 3])
 
     def test_flatten(self):
 
         self.assertEqual(
             list(flatten(2, 3, "a", [2, 3, str, [5, [10, 89]]])),
-            [2, 3, "a", 2, 3, str, 5, 10, 89]
-        )
+            [2, 3, "a", 2, 3, str, 5, 10, 89])
 
     def test_partition(self):
 
@@ -55,7 +49,6 @@ class TestCase(BaseTestCase):
 
         class FootballPlayer(SportPlayer):
             pass
-
 
         @normalizer.dispatch()
         def implementation(o):
@@ -84,7 +77,6 @@ class TestCase(BaseTestCase):
         self.assertEqual(normalizer(Person()), 'Hello person')
         self.assertEqual(normalizer(SportPlayer()), 'Hello person')
         self.assertEqual(normalizer(FootballPlayer()), 'Hello football player')
-
 
         normalizer.unregister(six.text_type)
         normalizer.register(lambda s: 'Goodbye %s' % s, six.text_type)

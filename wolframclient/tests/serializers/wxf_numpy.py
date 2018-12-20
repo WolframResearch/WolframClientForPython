@@ -165,7 +165,7 @@ class TestCase(BaseTestCase):
     def test_numpy_float16(self):
         f16 = numpy.float16('1.234e-3')
         self.assertEqual(export(f16), b'0.001234')
-    
+
     def test_numpy_float32(self):
         f32 = numpy.float32('1.2345678e-1')
         self.assertEqual(export(f32), b'0.12345678')
@@ -176,7 +176,8 @@ class TestCase(BaseTestCase):
 
     def test_numpy_float128(self):
         f128 = numpy.float128('1.23e-1234')
-        self.assertEqual(export(f128), b'Times[0.5138393296552710333, Power[2, -4098]]')
+        self.assertEqual(
+            export(f128), b'Times[0.5138393296552710333, Power[2, -4098]]')
 
     def test_numpy_integers(self):
         int8 = [numpy.int8(127), numpy.int8(-128)]
@@ -189,15 +190,16 @@ class TestCase(BaseTestCase):
         self.assertEqual(export(int16), b'{32767, -32768}')
 
         ints = [
-            numpy.uint16(65535), 
-            numpy.int32(-2147483648), 
+            numpy.uint16(65535),
+            numpy.int32(-2147483648),
             numpy.uint32(4294967296),
             numpy.int64(-9223372036854775808),
             numpy.uint64(18446744073709551615)
-            ]
+        ]
         self.assertEqual(
-            export(ints), 
-            b'{65535, -2147483648, 0, -9223372036854775808, 18446744073709551615}')
+            export(ints),
+            b'{65535, -2147483648, 0, -9223372036854775808, 18446744073709551615}'
+        )
 
     def test_bad_options(self):
         with self.assertRaises(ValueError):

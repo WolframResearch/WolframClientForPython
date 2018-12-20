@@ -71,12 +71,12 @@ def safe_force_text(obj):
     except Exception as e:
         return '<unprintable obj: %s>' % e
 
+
 #this function is supposed to be the most efficient byte concatenation that can be archived in python
 #used by the serializers
 
 #join seems to be the winner
 #https://gist.github.com/smcl/7462529818bb77baad32727a9e5ff44c
 #https://blog.mclemon.io/python-efficient-string-concatenation-in-python-2016-edition
-
 
 concatenate_bytes = b''.join

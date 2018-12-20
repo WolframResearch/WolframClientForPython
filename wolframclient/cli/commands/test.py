@@ -8,6 +8,7 @@ import unittest
 from wolframclient.cli.utils import SimpleCommand
 from wolframclient.utils import six
 from wolframclient.utils.decorators import to_tuple
+from wolframclient.utils.functional import map
 from wolframclient.utils.importutils import module_path
 
 

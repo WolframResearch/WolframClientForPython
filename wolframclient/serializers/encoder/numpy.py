@@ -3,10 +3,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from operator import methodcaller
-from wolframclient.serializers.encoder import wolfram_encoder
+
 from wolframclient.utils.api import numpy
-from wolframclient.utils.functional import identity
 from wolframclient.utils.dispatch import Dispatch
+from wolframclient.utils.functional import identity, map
 
 encoder = Dispatch()
 
@@ -27,6 +27,7 @@ NUMPY_MAPPING = {
     numpy.dtype('complex64'): ('ComplexReal32', identity),
     numpy.dtype('complex128'): ('ComplexReal64', identity),
 }
+
 
 @encoder.dispatch(numpy.ndarray)
 def encode_ndarray(serializer, o):
@@ -53,13 +54,13 @@ def encode_ndarray(serializer, o):
 def encode_numpy_int(serializer, o):
     return serializer.serialize_int(int(o))
 
+
 @encoder.dispatch(numpy.floating)
 def encode_numpy_floating(serializer, o):
     # mantissa, and base 2 exponent.
     mantissa, exp = numpy.frexp(o)
     return serializer.serialize_function(
-        serializer.serialize_symbol(b'Times'),
-        (
+        serializer.serialize_symbol(b'Times'), (
             serializer.serialize_float(mantissa),
             serializer.serialize_function(
                 serializer.serialize_symbol(b'Power'),
@@ -68,12 +69,13 @@ def encode_numpy_floating(serializer, o):
                     serializer.serialize_float(exp),
                 ),
             ),
-        )
-    )
+        ))
+
 
 @encoder.dispatch((numpy.float16, numpy.float32, numpy.float64))
 def encode_numpy_mp_float(serializer, o):
     return serializer.serialize_float(o)
+
 
 @encoder.dispatch(numpy.complexfloating)
 def encode_complex(serializer, o):

@@ -2,18 +2,19 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import types
-from functools import reduce
-from itertools import islice, chain
 import inspect
+from functools import reduce
+from itertools import chain, islice
+
 from wolframclient.utils import six
 
-
 if six.PY2:
+
     def map(f, iterable):
         return (f(e) for e in iterable)
 else:
     map = map
+
 
 def first(iterable, default=None):
     try:
@@ -50,16 +51,19 @@ def is_iterable(obj, exclude_list=six.string_types):
         return False
     return not inspect.isclass(obj) and hasattr(obj, '__iter__')
 
+
 def to_iterable(obj, exclude_list=six.string_types):
     if isinstance(obj, exclude_list):
-        return obj, 
+        return obj,
     try:
         return iter(obj)
     except TypeError:
-        return obj, 
+        return obj,
+
 
 def iterate(*args):
     return chain.from_iterable(map(to_iterable, args))
+
 
 def flatten(*args):
     for arg in args:
@@ -69,6 +73,7 @@ def flatten(*args):
                     yield el
         else:
             yield arg
+
 
 def riffle(iterable, separator):
     iterable = iter(iterable)

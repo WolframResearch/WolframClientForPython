@@ -191,12 +191,9 @@ class TestCase(BaseTestCase):
 
     def test_input_form(self):
 
-        self.compare(
-            wlexpr('<|"2" -> 2|>'),
-            b'(<|"2" -> 2|>)'
-        )
+        self.compare(wlexpr('<|"2" -> 2|>'), b'(<|"2" -> 2|>)')
 
         self.compare(
-            wl.Foo(2, wlexpr('#foo &')(wlexpr('<|"foo" -> 2|>'))),
-            b'Foo[2, (#foo &)[(<|"foo" -> 2|>)]]'
-        )
+            wl.Foo(2,
+                   wlexpr('#foo &')(wlexpr('<|"foo" -> 2|>'))),
+            b'Foo[2, (#foo &)[(<|"foo" -> 2|>)]]')

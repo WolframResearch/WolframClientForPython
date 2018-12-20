@@ -9,7 +9,7 @@ import unittest
 from wolframclient.evaluation.cloud.base import (SecuredAuthenticationKey,
                                                  UserIDPassword)
 from wolframclient.evaluation.cloud.cloudsession import (
-    WolframAPICall, WolframCloudSession, WolframCloudFutureSession,
+    WolframAPICall, WolframCloudFutureSession, WolframCloudSession,
     encode_api_inputs)
 from wolframclient.exception import (AuthenticationException,
                                      WolframLanguageException)

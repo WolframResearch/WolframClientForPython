@@ -6,13 +6,11 @@ import math
 
 from wolframclient.serializers.utils import safe_len
 from wolframclient.utils import six
-from wolframclient.utils.encoding import force_bytes, force_text
-from wolframclient.utils.functional import identity
-from wolframclient.serializers.encoder import wolfram_encoder
 from wolframclient.utils.dispatch import Dispatch
+from wolframclient.utils.encoding import force_bytes, force_text
+from wolframclient.utils.functional import identity, map
 
 encoder = Dispatch()
-
 
 if six.PY2:
     #in py2 if you construct use dict(a=2) then "a" is binary
@@ -26,29 +24,33 @@ else:
     safe_key = identity
 
 
-
 @encoder.dispatch((bool, six.none_type))
 def encode_none(serializer, o):
     return serializer.serialize_symbol(force_bytes(o))
+
 
 @encoder.dispatch(frozenset([bytearray, six.binary_type, *six.buffer_types]))
 def encode_bytes(serializer, o):
     return serializer.serialize_bytes(o)
 
+
 @encoder.dispatch(six.text_type)
 def encode_text(serializer, o):
     return serializer.serialize_string(o)
+
 
 @encoder.dispatch(dict)
 def encode_dict(serializer, o):
     return serializer.serialize_mapping(
         ((serializer.encode(safe_key(key)), serializer.encode(value))
-            for key, value in o.items()),
+         for key, value in o.items()),
         length=safe_len(o))
+
 
 @encoder.dispatch(six.integer_types)
 def encode_int(serializer, o):
     return serializer.serialize_int(o)
+
 
 @encoder.dispatch(float)
 def encode_float(serializer, o):
@@ -63,11 +65,13 @@ def encode_float(serializer, o):
 
     return serializer.serialize_float(o)
 
+
 @encoder.dispatch(complex)
 def encode_complex(serializer, o):
     return serializer.serialize_complex(o)
 
+
 @encoder.dispatch(six.iterable_types)
 def encode_iter(serializer, o):
-    return serializer.serialize_iterable(map(serializer.encode, o),
-                                    length=safe_len(o))
+    return serializer.serialize_iterable(
+        map(serializer.encode, o), length=safe_len(o))

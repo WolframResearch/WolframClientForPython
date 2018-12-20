@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-import warnings
-from collections import defaultdict
-from itertools import product, chain
 
 from wolframclient.utils.functional import flatten
 
@@ -12,8 +9,10 @@ from wolframclient.utils.functional import flatten
 
 UNDEFINED = object()
 
+
 def default_function(*args, **opts):
     raise ValueError('Unable to handle args')
+
 
 class Dispatch(object):
     """ A method dispatcher class allowing for multiple implementations of functions specified by their name.
@@ -42,6 +41,7 @@ class Dispatch(object):
 
     Once the mapping is determined, it is cached for later use.
     """
+
     def __init__(self):
         self.clear()
 
@@ -75,7 +75,7 @@ class Dispatch(object):
 
         return register
 
-    def update(self, dispatch, update_default = False):
+    def update(self, dispatch, update_default=False):
         if isinstance(dispatch, Dispatch):
             for t, function in dispatch.dispatchmap.items():
                 self.register(function, t)
@@ -86,17 +86,19 @@ class Dispatch(object):
                 self.register(function, t)
         else:
             raise ValueError('%s is not an instance of Dispatch' % dispatch)
-            
+
     def register(self, function, *types):
         if not types:
             if self.default_function:
-                raise TypeError("Dispatch already has a default function registred.")  
+                raise TypeError(
+                    "Dispatch already has a default function registred.")
             self.default_function = function
             return self.default_function
 
         for t in flatten(*types):
             if t in self.dispatchmap:
-                raise TypeError("Duplicated registration for input type(s): %s" % (t, ))  
+                raise TypeError(
+                    "Duplicated registration for input type(s): %s" % (t, ))
             self.dispatchmap[t] = function
 
         return function
@@ -131,4 +133,5 @@ class Dispatch(object):
     def as_method(self):
         def method(instance, arg, *args, **opts):
             return self.resolve(arg)(instance, arg, *args, **opts)
+
         return method
