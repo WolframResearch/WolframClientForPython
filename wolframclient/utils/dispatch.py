@@ -44,10 +44,9 @@ class Dispatch(object):
     """
     def __init__(self):
         self.dispatchmap = dict()
-        self.unregister_default()
-        self.clear()
+        self.unregister()
 
-    def dispatch(self, types):
+    def dispatch(self, *types):
         """ Annotate a function and map it to a given set of type(s).
 
         Multiple mappings for a given function must share the same name as defined by :meth:`~wolframclient.utils.dispatch.Dispatch.get_key`.
@@ -73,17 +72,7 @@ class Dispatch(object):
         """
 
         def register(func):
-            return self.register(types, func)
-
-        return register
-
-    def default(self):
-        """ Annotate a function to be the default implementation.
-
-        There must be one and only one default, which can also be set in the constructor.
-        """
-        def register(func):
-            return self.register_default(func)
+            return self.register(func, *types)
 
         return register
 
@@ -94,15 +83,22 @@ class Dispatch(object):
     def update(self, dispatch, update_default = False):
         if isinstance(dispatch, Dispatch):
             for t, function in dispatch.dispatchmap.items():
-                self.register(t, function)
+                self.register(function, t)
             if update_default and dispatch.default_function:
                 self.register_default(dispatch.default_function)
             self.clear()
         else:
             raise ValueError('%s is not an instance of Dispatch' % dispatch)
             
-    def register(self, types, function):
-        for t in flatten(types):
+    def register(self, function, *types):
+        if not types:
+            if self.default_function:
+                raise TypeError("Dispatch already has a default function registred.")  
+            self.default_function = function
+            self.clear()
+            return self.default_function
+
+        for t in flatten(*types):
             if t in self.dispatchmap:
                 raise TypeError("Duplicated registration for input type(s): %s" % (t, ))  
             self.dispatchmap[t] = function
@@ -110,21 +106,15 @@ class Dispatch(object):
         self.clear()
         return function
 
-    def register_default(self, function):
-        if self.default_function:
-            raise TypeError("Dispatch already has a default function registred.")  
-        self.default_function = function
-        return function
-
-    def unregister_default(self):
-        self.default_function = None
-
-    def unregister(self, types):
-        for t in flatten(types):
-            try:
-                del self.dispatchmap[t]
-            except KeyError:
-                pass
+    def unregister(self, *types):
+        if not types:
+            self.default_function = None
+        else:
+            for t in flatten(types):
+                try:
+                    del self.dispatchmap[t]
+                except KeyError:
+                    pass
         self.clear()
 
     def __call__(self, arg, *args, **opts):

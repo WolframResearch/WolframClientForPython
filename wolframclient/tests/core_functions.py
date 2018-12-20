@@ -57,7 +57,7 @@ class TestCase(BaseTestCase):
             pass
 
 
-        @normalizer.default()
+        @normalizer.dispatch()
         def implementation(o):
             return o
 
@@ -95,7 +95,7 @@ class TestCase(BaseTestCase):
 
         normalizer = Dispatch()
 
-        @normalizer.default()
+        @normalizer.dispatch()
         def implementation(self, o):
             return o
 
