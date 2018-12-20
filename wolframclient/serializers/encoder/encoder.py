@@ -11,7 +11,7 @@ from collections import defaultdict
 from importlib import import_module
 
 from wolframclient.utils.dispatch import Dispatch
-from wolframclient.utils.functional import composition, iterate
+from wolframclient.utils.functional import composition, iterate, is_iterable
 from wolframclient.utils.importutils import safe_import_string
 from wolframclient.utils import six
 from wolframclient.utils.api import multiprocessing
@@ -28,7 +28,7 @@ wolfram_encoder = Dispatch()
 # for now, this method name is fixed and must match the one in the wolfram_encoder wrapper.
 @wolfram_encoder.dispatch()
 def encode(serializer, o):
-    if not inspect.isclass(o) and hasattr(o, '__iter__'):
+    if is_iterable(o):
         return serializer.serialize_iterable(serializer.encode(value) for value in o)
     if serializer.allow_external_objects:
         return serializer.serialize_external_object(o)
