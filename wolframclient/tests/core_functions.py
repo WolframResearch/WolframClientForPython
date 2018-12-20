@@ -87,7 +87,7 @@ class TestCase(BaseTestCase):
 
 
         normalizer.unregister(six.text_type)
-        normalizer.register(six.text_type, lambda s: 'Goodbye %s' % s)
+        normalizer.register(lambda s: 'Goodbye %s' % s, six.text_type)
 
         self.assertEqual(normalizer('Ric'), 'Goodbye Ric')
 
