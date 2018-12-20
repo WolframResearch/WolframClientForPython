@@ -97,18 +97,15 @@ class WolframLanguageSession(WolframEvaluator):
 
     Communication with a given kernel is based on ZMQ sockets:
 
-    * one `PUSH` socket receiving expressions to evaluate,
-    * one `PULL` socket to read evaluation results.
+    * one `PUSH` socket to receive expressions for evaluation
+    * one `PULL` socket to read evaluation results
 
     Kernel logging is disabled by default and is done through a third socket
-    (type `SUB`). The initial log level is specificed by parameter kernel_loglevel.
-    If log level was not set at initialization, logging is not available for the entire
+    (type `SUB`). The initial log level is specified by the parameter `kernel_loglevel`.
+    If the log level was not set at initialization, logging is not available for the entire
     session.
 
-    It is possible to pass ZMQ sockets to use instead of new one, but this is generally
-    not recommended, probably never necessary.
-
-    The kernel associated to a given session provides the following
+    The kernel associated with a given session provides the following
     logging functions:
 
     * ``ClientLibrary`debug`` corresponding to :py:meth:`logging.Logger.debug`
@@ -191,7 +188,7 @@ class WolframLanguageSession(WolframEvaluator):
             self.set_parameter(k, v)
 
     def duplicate(self, session):
-        """ Build a new object using the same configuration of the current one. """
+        """ Build a new object using the same configuration as the current one. """
         return WolframLanguageSession(
             self.kernel,
             consumer=self.consumer,
@@ -219,7 +216,7 @@ class WolframLanguageSession(WolframEvaluator):
         Session parameters are:
 
         * ``'STARTUP_READ_TIMEOUT'``: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.
-        * ``'STARTUP_RETRY_SLEEP_TIME'``: time to sleep, in seconds, before checking that the initilazed kernel has responded. Default is 1 ms.
+        * ``'STARTUP_RETRY_SLEEP_TIME'``: time to sleep, in seconds, before checking that the initialized kernel has responded. Default is 1 ms.
         * ``'TERMINATE_READ_TIMEOUT'``: time to wait, in seconds, after the ``Quit[]`` command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.
         """
         try:
@@ -255,11 +252,11 @@ class WolframLanguageSession(WolframEvaluator):
     def _stop(self, gracefully=True):
         """Stop the kernel process and close sockets.
 
-        This function must be called when a given session is no more useful
+        This function must be called when a given session is no longer useful
         to prevent orphan processes and sockets from being generated.
 
         .. note::
-            Licencing restrictions usually apply to Wolfram kernels and may
+            Licensing restrictions usually apply to Wolfram kernels and may
             prevent new instances from starting if too many kernels are running
             simultaneously. Make sure to always terminate sessions to avoid
             unexpected start-up errors.
@@ -512,14 +509,9 @@ class WolframLanguageSession(WolframEvaluator):
     def evaluate(self, expr, **kwargs):
         """Send an expression to the kernel for evaluation.
 
-        The `expr` can be:
+        The `expr` is an instance of a Python object serializable as WXF by :func:`~wolframclient.serializers.export`.
 
-            * a text string representing the Wolfram Language expression :wl:`InputForm`.
-            * an instance of Python object serializable as WXF by :func:`~wolframclient.serializers.export`.
-            * a binary string of a serialized expression in the WXF format.
-
-        `kwargs` are passed to :func:`~wolframclient.serializers.export` during serialization step of
-        non-string inputs.
+        `kwargs` are passed to :func:`~wolframclient.serializers.export`.
         """
         result = self._evaluate(self.normalize_input(expr), **kwargs)
         if not result.success:
@@ -574,8 +566,8 @@ class Socket(object):
                      timeout=2.,
                      retry_sleep_time=0.001,
                      sleep=time.sleep):
-        """ Read a socket in a non-blocking fashion, until a timeout is reach, retrying at a given interval.
-        The sleep function is passed as parameter and can be conveniently modify to support Event based interruption.
+        """ Read a socket in a non-blocking fashion, until a timeout is reached, retrying at a given interval.
+        The sleep function is passed as a parameter and can be conveniently modified to support Event based interruption.
         """
         if not self.bound:
             raise SocketException('ZMQ socket not bound.')
