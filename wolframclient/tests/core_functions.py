@@ -88,7 +88,6 @@ class TestCase(BaseTestCase):
 
         self.assertEqual(normalizer(None), 5)
 
-
     def test_class_dispatch(self):
 
         normalizer = Dispatch()

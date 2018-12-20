@@ -2,8 +2,10 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.utils.functional import flatten
 import inspect
+
+from wolframclient.utils.functional import flatten
+
 #original idea by Guido in person.
 #https://www.artima.com/weblogs/viewpost.jsp?thread=101605
 
@@ -96,7 +98,7 @@ class Dispatch(object):
     def register(self, function, *types):
 
         if not callable(function):
-            raise ValueError('Function %s is not callable' %  function)
+            raise ValueError('Function %s is not callable' % function)
 
         if not types:
             if self.default_function:

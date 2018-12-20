@@ -172,12 +172,14 @@ class TestCase(BaseTestCase):
 
     def test_numpy_float64(self):
         f64 = numpy.float64('-1.234567891234e-1')
-        self.assertEqual(export(f64), six.PY2 and b'-0.123456789123' or b'-0.1234567891234')
+        self.assertEqual(
+            export(f64), six.PY2 and b'-0.123456789123' or b'-0.1234567891234')
 
     def test_numpy_float128(self):
         f128 = numpy.float128('1.23e-1234')
         self.assertEqual(
-            export(f128), six.PY2 and b'Times[0.513839329655, Power[2, -4098]]' or b'Times[0.5138393296552710333, Power[2, -4098]]')
+            export(f128), six.PY2 and b'Times[0.513839329655, Power[2, -4098]]'
+            or b'Times[0.5138393296552710333, Power[2, -4098]]')
 
     def test_numpy_integers(self):
         int8 = [numpy.int8(127), numpy.int8(-128)]

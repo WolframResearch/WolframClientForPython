@@ -11,12 +11,13 @@ if six.JYTHON:
     pass
 
 if six.PY2:
+
     def _bytes(value):
         return chr(value)
 else:
+
     def _bytes(value):
         return bytes((value, ))
-
 
 
 WXF_VERSION = b'8'
