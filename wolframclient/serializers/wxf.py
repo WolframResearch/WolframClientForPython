@@ -14,7 +14,7 @@ from wolframclient.serializers.wxfencoder.utils import (
     float_to_bytes, integer_size, integer_to_bytes, numeric_array_to_wxf,
     varint_bytes, write_varint)
 from wolframclient.utils.encoding import force_bytes
-
+from wolframclient.utils.api import zlib
 
 def get_length(iterable, length=None):
     if length is not None:
@@ -37,24 +37,23 @@ class WXFSerializer(FormatSerializer):
         super(WXFSerializer, self).__init__(normalizer=normalizer, **opts)
         self.compress = compress
 
-    def dump(self, data, stream):
+    def generate_tokens(self, data):
 
-        stream.write(WXF_VERSION)
-
-        if self.compress:
-            stream.write(WXF_HEADER_COMPRESS)
-
-        stream.write(WXF_HEADER_SEPARATOR)
+        yield WXF_VERSION
 
         if self.compress:
-            with ZipCompressedWriter(stream) as zstream:
-                for payload in self.encode(data):
-                    zstream.write(payload)
+            yield WXF_HEADER_COMPRESS
+
+        yield WXF_HEADER_SEPARATOR
+
+        if self.compress:
+            compressor = zlib.compressobj()
+            for payload in self.encode(data):
+                yield compressor.compress(payload)
+            yield compressor.flush()
         else:
             for payload in self.encode(data):
-                stream.write(payload)
-
-        return stream
+                yield payload
 
     def serialize_symbol(self, name):
         yield WXF_CONSTANTS.Symbol

@@ -27,10 +27,8 @@ class WLSerializer(FormatSerializer):
         super(WLSerializer, self).__init__(normalizer=normalizer, **opts)
         self.indent = indent
 
-    def dump(self, data, stream):
-        for payload in self.encode(data):
-            stream.write(payload)
-        return stream
+    def generate_tokens(self, data):
+        return self.encode(data)
 
     def serialize_function(self, head, args):
         return chain(head, yield_with_separators(args, first=b'[', last=b']'))

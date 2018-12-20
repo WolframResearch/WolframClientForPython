@@ -17,23 +17,23 @@ from wolframclient.utils.functional import first
 
 
 class FormatSerializer(Encoder):
-    def dump(self, data, stream):
+
+    def generate_tokens(self, data):
         raise NotImplementedError
 
     def export(self, data, stream=None):
         if stream:
             if isinstance(stream, six.string_types):
                 with open(stream, 'wb') as file:
-                    self.dump(data, file)
+                    for token in self.generate_tokens(data):
+                        file.write(token)
                     return stream
 
-            self.dump(data, stream)
+            for token in self.generate_tokens(data):
+                stream.write(token)
             return stream
 
-        stream = six.BytesIO()
-        stream = self.dump(data, stream)
-        stream.seek(0)
-        return stream.read()
+        return b''.join(self.generate_tokens(data))
 
     #implementation of several methods
 
