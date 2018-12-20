@@ -22,30 +22,30 @@ else:
 
 
 
-@wolfram_encoder.register(bool, six.none_type)
+@wolfram_encoder.dispatch((bool, six.none_type))
 def encode_none(serializer, o):
     return serializer.serialize_symbol(force_bytes(o))
 
-@wolfram_encoder.register(*set([bytearray, six.binary_type, *six.buffer_types]))
+@wolfram_encoder.dispatch(frozenset([bytearray, six.binary_type, *six.buffer_types]))
 def encode_bytes(serializer, o):
     return serializer.serialize_bytes(o)
 
-@wolfram_encoder.register(six.text_type)
+@wolfram_encoder.dispatch(six.text_type)
 def encode_text(serializer, o):
     return serializer.serialize_string(o)
 
-@wolfram_encoder.register(dict)
+@wolfram_encoder.dispatch(dict)
 def encode_dict(serializer, o):
     return serializer.serialize_mapping(
         ((serializer.encode(safe_key(key)), serializer.encode(value))
             for key, value in o.items()),
         length=safe_len(o))
 
-@wolfram_encoder.register(*six.integer_types)
+@wolfram_encoder.dispatch(six.integer_types)
 def encode_int(serializer, o):
     return serializer.serialize_int(o)
 
-@wolfram_encoder.register(float)
+@wolfram_encoder.dispatch(float)
 def encode_float(serializer, o):
 
     if math.isinf(o):
@@ -58,11 +58,11 @@ def encode_float(serializer, o):
 
     return serializer.serialize_float(o)
 
-@wolfram_encoder.register(complex)
+@wolfram_encoder.dispatch(complex)
 def encode_complex(serializer, o):
     return serializer.serialize_complex(o)
 
-@wolfram_encoder.register(*six.iterable_types)
+@wolfram_encoder.dispatch(six.iterable_types)
 def encode_iter(serializer, o):
     return serializer.serialize_iterable((serializer.encode(value) for value in o),
                                     length=safe_len(o))

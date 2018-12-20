@@ -32,64 +32,7 @@ class _NoForceContext(object):
     def __exit__(self, type, value, traceback):
         self.encoder._disable_force_update = False
 
-
-class WolframEncoder(Dispatch):
-    """ Multi method implementation targeting Wolfram encoder functions. The first element is of a given type, 
-    known ahead of time, it's a serializer instance, and as such can be ignored both during dispatch and resolve.
-
-    Only the second parameter, the object to encode, is used during dispatch. A tuple can be provided if one method
-    is supporting more than one type.
-
-    Named input parameters are not used to resolve which implementation to use, but are passed to the
-    function.
-    """
-
-    def __init__(self):
-        super().__init__()
-        self._disable_force_update = False
-
-    def create_proxy(self, encoder):
-        def inner(serializer, o, **opts):
-            return self._resolve(encoder, o)(serializer, o, **opts)
-
-        return inner
-
-    def register(self, *types, force=False):
-        """ Annotation to declare a given function as an Wolfram encoder for a given list of types. 
-
-        An encoder is a generator with two arguments: a serializer instance, and an object of a type matching 
-        one of the type in `types`. It returns bytes. 
-
-        Define an encoder applied to input of type `bytes` or `bytearray`::
-
-            @wolfram_encoder.register(bytes, bytearray)
-            def func(serializer, o):
-                raise NotImplementedError
-
-        Serializer is expected to be a :class:`~wolframclient.serializers.base.FormatSerializer`.
-        """
-        for t in types:
-            if not inspect.isclass(t):
-                raise ValueError('Invalid type specification. %s is not a class.' % (t,))
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('New Wolfram encoder for types: %s', types)
-
-        if self._disable_force_update and force:
-            raise ValueError('Cannot use force to override %s encoder from a plugin.' % (types,))
-
-        def wrap(fn):
-            @functools.wraps(fn)
-            @self.multi(types, force=force)
-            def encode(serializer, o):
-                return fn(serializer, o)
-            return encode
-        return wrap
-    
-    def plugin_context(self):
-        return _NoForceContext(self)
-
-
-wolfram_encoder = WolframEncoder()
+wolfram_encoder = Dispatch()
 """ Instance of :class:`~wolframclient.serializers.encoder.WolframEncoder` used by default during serialization. """
 
 # for now, this method name is fixed and must match the one in the wolfram_encoder wrapper.
@@ -186,7 +129,7 @@ class Encoder(object):
     for a given type.
     """
 
-    default_encoder = encode
+    default_encoder = wolfram_encoder.as_method()
     default_updater = wolfram_encoder_updater
 
     def __init__(self,
