@@ -15,21 +15,11 @@ class Dispatch(object):
     Imprementations are registered with the annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch`.
 
     The Dispatch class is callable, it behaves as a function that uses the implementation corresponding to the input parameter.
-        
-    When a mapping is 
-    If the types is not mapped to a specific function, and if a default method is set, the tuple type is associated to this default to speedup next
-    invocation. This imply that the mapping will not be checked anymore.
 
-    Where there is a type hierarchy, all possible combinations are checked in order, following MRO,
-    and argument order. Finding the best matching mapping can be a costly operation, performed once. 
+    When a type is a subtype, the type and its parents are checked in the order given by :data:`__mro__`. 
         
-    Example: call :meth:`~wolframclient.utils.dispatch.Dispatch.create_proxy` with two arguments of types (:class:`collections.OrderedDict`, :class:`dict`) 
-    (:class:`~collections.OrderedDict` inherits from :class:`dict`). The type combinations are checked as follows:
-
-        - (OrderedDict, dict)
-        - (OrderedDict, object)
-        - (dict, dict)
-        - (dict, object)
+    Example: method :meth:`~wolframclient.utils.dispatch.Dispatch.resolve` applied to an instance of :class:`collections.OrderedDict`,
+    check for the first implementation to match with :class:`collections.OrderedDict`, then with :class:`dict`, and ultimately to :data:`object`.
 
     Once the mapping is determined, it is cached for later use.
     """
