@@ -84,15 +84,15 @@ class TestCase(BaseTestCase):
 
         self.compare(
             test_datetime(),
-            b'DateObject[{2000, 1, 1, 11, 15, 20.0}, "Instant", "Gregorian", $TimeZone]'
+            b'DateObject[{2000, 1, 1, 11, 15, 20.}, "Instant", "Gregorian", $TimeZone]'
         )
         self.compare(
             pytz.FixedOffset(60).localize(test_datetime()),
-            b'DateObject[{2000, 1, 1, 11, 15, 20.0}, "Instant", "Gregorian", 1.0]'
+            b'DateObject[{2000, 1, 1, 11, 15, 20.}, "Instant", "Gregorian", 1.]'
         )
         self.compare(
             pytz.timezone("Europe/Rome").localize(test_datetime()),
-            b'DateObject[{2000, 1, 1, 11, 15, 20.0}, "Instant", "Gregorian", "Europe/Rome"]'
+            b'DateObject[{2000, 1, 1, 11, 15, 20.}, "Instant", "Gregorian", "Europe/Rome"]'
         )
 
     def test_date(self):
@@ -103,14 +103,14 @@ class TestCase(BaseTestCase):
 
         self.compare(
             datetime.timedelta(minutes=1, seconds=30),
-            b'Quantity[90.0, "Seconds"]')
+            b'Quantity[90., "Seconds"]')
 
     def test_time(self):
 
-        self.compare(test_datetime().time(), b'TimeObject[{11, 15, 20.0}]')
+        self.compare(test_datetime().time(), b'TimeObject[{11, 15, 20.}]')
         self.compare(
             pytz.timezone("Europe/Rome").localize(test_datetime()).timetz(),
-            b'TimeObject[{11, 15, 20.0}, TimeZone -> 1.0]')
+            b'TimeObject[{11, 15, 20.}, TimeZone -> 1.]')
 
     def test_symbol_factory(self):
 

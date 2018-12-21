@@ -8,7 +8,7 @@ from wolframclient.serializers.base import FormatSerializer
 from wolframclient.serializers.utils import py_encode_decimal, py_encode_text
 from wolframclient.utils.api import base64
 from wolframclient.utils.encoding import force_bytes
-
+from wolframclient.utils import six
 
 def yield_with_separators(iterable, separator=b', ', first=None, last=None):
     if first:
@@ -48,10 +48,10 @@ class WLSerializer(FormatSerializer):
         yield py_encode_decimal(number)
 
     def serialize_float(self, number):
-        yield force_bytes(number)
+        yield (b'%.13f' % number).rstrip(b'0')
 
     def serialize_int(self, number):
-        yield force_bytes(number)
+        yield b'%i' % number
 
     def serialize_rule(self, lhs, rhs):
         return yield_with_separators((lhs, rhs), separator=b' -> ')
