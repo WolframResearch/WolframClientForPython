@@ -9,8 +9,6 @@ from wolframclient.utils.functional import flatten
 #original idea by Guido in person.
 #https://www.artima.com/weblogs/viewpost.jsp?thread=101605
 
-UNDEFINED = object()
-
 class Dispatch(object):
     """ A method dispatcher class allowing for multiple implementations of a function. Each implementation is associated to a given of input type.
     
