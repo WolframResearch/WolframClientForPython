@@ -39,11 +39,6 @@ class WLSerializer(FormatSerializer):
     def serialize_string(self, string):
         return py_encode_text(string)
 
-    def serialize_bytes(self, bytes):
-        return self.serialize_function(
-            self.serialize_symbol(b'ByteArray'),
-            ((b'"', base64.b64encode(bytes), b'"'), ))
-
     def serialize_decimal(self, number):
         yield py_encode_decimal(number)
 
