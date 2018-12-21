@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.language.expression import (WLFunction, WLInputExpression,
                                                WLSymbol)
-from wolframclient.serializers.encoder.builtin import to_key_value
+from wolframclient.serializers.encoder.builtin import _to_key_value
 from wolframclient.serializers.serializable import WLSerializable
 from wolframclient.serializers.utils import safe_len
 from wolframclient.utils.datastructures import Association
@@ -39,6 +39,4 @@ def encode_serializable(serializer, o):
 
 @encoder.dispatch(Association)
 def encode_association(serializer, o):
-    return serializer.serialize_association(
-        to_key_value(serializer, o),
-        length=safe_len(o))
+    return _to_key_value(serializer.serialize_association, serializer, o)
