@@ -77,24 +77,23 @@ class Dispatch(object):
         for t, function in dispatchmapping.items():
             self.register(function, t, force = force)
 
-    def validate_types(self, types):
+    def validate_types(self, types, force = False):
         for t in frozenset(flatten(types)):
             if not inspect.isclass(t):
                 raise ValueError('%s is not a class' % t)
+            if not force and t in self.dispatch_dict:
+                raise TypeError(
+                    "Duplicated registration for input type(s): %s" % t)
             yield t
 
-    def register(self, function, types = object, force = False):
+    def register(self, function, types = object):
         if not callable(function):
             raise ValueError('Function %s is not callable' % function)
 
         self.clear_cache()
 
-        for t in self.validate_types(types):
-            if not force and t in self.dispatch_dict:
-                raise TypeError(
-                    "Duplicated registration for input type(s): %s" % (t, ))
-            else:
-                self.dispatch_dict[t] = function
+        for t in self.validate_types(types, force = False):
+            self.dispatch_dict[t] = function
 
         return function
 
@@ -103,7 +102,7 @@ class Dispatch(object):
 
         self.clear_cache()
 
-        for t in self.validate_types(types):
+        for t in self.validate_types(types, force = False):
             try:
                 del self.dispatch_dict[t]
             except KeyError:
