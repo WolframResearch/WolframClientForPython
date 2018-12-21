@@ -117,9 +117,6 @@ class Dispatch(object):
     def clear_cache(self):
         self.dispatch_dict_cache = dict()
 
-    def __call__(self, arg, *args, **opts):
-        return self.resolve(arg)(arg, *args, **opts)
-
     def resolve(self, arg):
         for t in arg.__class__.__mro__:
             try:
@@ -134,6 +131,9 @@ class Dispatch(object):
 
     def default_function(self, *args, **opts):
         raise ValueError('Unable to handle args')
+
+    def __call__(self, arg, *args, **opts):
+        return self.resolve(arg)(arg, *args, **opts)
 
     def as_method(self):
         """ Return the dispatch as a class method. 
