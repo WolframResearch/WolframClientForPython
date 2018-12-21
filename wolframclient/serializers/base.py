@@ -17,6 +17,7 @@ from wolframclient.utils.functional import first
 from wolframclient.utils.api import base64
 
 class FormatSerializer(Encoder):
+    
     def generate_bytes(self, data):
         raise NotImplementedError
 
