@@ -93,7 +93,7 @@ class WXFConsumer(object):
         Return a :class:`list` if the head is symbol `List`, otherwise returns the result of :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function`
         applied to the head and arguments.
 
-        Usually custom parsing rules target Functions, but not List. To do so, it is recommanded to override
+        Usually custom parsing rules target Functions, but not List. To do so, it is recommended to override
         :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function`.
         """
         head = self.next_expression(tokens, **kwargs)
