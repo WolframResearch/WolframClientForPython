@@ -44,7 +44,7 @@ class Dispatch(object):
     def __init__(self):
         self.clear()
 
-    def dispatch(self, *types):
+    def dispatch(self, *args, **opts):
         """ Annotate a function and map it to a given set of type(s).
         
         Declare an implementation to use on :data:`bytearray` input::
@@ -67,11 +67,11 @@ class Dispatch(object):
         """
 
         def register(func):
-            return self.register(func, *types)
+            return self.register(func, *args, **opts)
 
         return register
 
-    def update(self, dispatch):
+    def update(self, dispatch, force = False):
         """ Update current mapping with the one from `dispatch`. """
         if isinstance(dispatch, Dispatch):
             dispatchmapping = dispatch.dispatchdict
@@ -80,34 +80,34 @@ class Dispatch(object):
         else:
             raise ValueError('%s is not an instance of Dispatch' % dispatch)
         for t, function in dispatchmapping.items():
-            self.register(function, t)
+            self.register(function, t, force = force)
 
-    def validate_types(self, *types):
-        for t in frozenset(flatten(*types)):
+    def validate_types(self, types):
+        for t in frozenset(flatten(types)):
             if not inspect.isclass(t):
                 raise ValueError('%s is not a class' % t)
             yield t
 
-    def register(self, function, *types):
+    def register(self, function, types = object, force = False):
         if not callable(function):
             raise ValueError('Function %s is not callable' % function)
-        if not types:
-            raise ValueError('Missing types.')
+
         self.reset_cached_mapping()
-        for t in self.validate_types(*types):
-            if t in self.dispatchdict:
+
+        for t in self.validate_types(types):
+            if not force and t in self.dispatchdict:
                 raise TypeError(
                     "Duplicated registration for input type(s): %s" % (t, ))
             else:
                 self.dispatchdict[t] = function
         return function
 
-    def unregister(self, *types):
+    def unregister(self, types = object):
         """ Remove implementations associated to types. """
-        if not types:
-            return
+
         self.reset_cached_mapping()
-        for t in self.validate_types(*types):
+
+        for t in self.validate_types(types):
             try:
                 del self.dispatchdict[t]
             except KeyError:
@@ -119,8 +119,7 @@ class Dispatch(object):
         self.cached_mapping = dict()
 
     def reset_cached_mapping(self):
-        if self.cached_mapping:
-            self.cached_mapping = dict()
+        self.cached_mapping = dict()
 
     def __call__(self, arg, *args, **opts):
         return self.resolve(arg)(arg, *args, **opts)
