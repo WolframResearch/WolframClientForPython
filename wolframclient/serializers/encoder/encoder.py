@@ -4,9 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
 import sys
-import warnings
 from collections import defaultdict
-from importlib import import_module
 
 import pkg_resources
 
@@ -27,7 +25,7 @@ wolfram_encoder = Dispatch()
 
 
 # for now, this method name is fixed and must match the one in the wolfram_encoder wrapper.
-@wolfram_encoder.dispatch()
+@wolfram_encoder.dispatch(object)
 def encode(serializer, o):
     if is_iterable(o):
         return serializer.serialize_iterable(
@@ -72,16 +70,16 @@ class DispatchUpdater(object):
 
     def _update_plugins(self):
         if self.plugins_registry:
-            with wolfram_encoder.plugin_context():
-                for plugins_name, handler in self.plugins_registry.items():
-                    handler = ''.join(handler)
-                    try:
-                        import_module(handler)
-                    except TypeError as e:
-                        warnings.warn(
-                            'Failed to load encoder associated to plugins %s. The following error occured while loading %s: %s'
-                            % (plugins_name, handler, e), UserWarning)
-                self.plugins_registry = defaultdict(list)
+            for plugins_name, handler in self.plugins_registry.items():
+                handler = ''.join(handler)
+                try:
+                    self.dispatch.update(safe_import_string(handler))
+                except TypeError as e:
+                    logger.fatal(
+                        'Failed to load encoder associated to plugins %s.' %
+                        plugins_name)
+                    raise e
+            self.plugins_registry = defaultdict(list)
 
     if not six.JYTHON:
         # global lock to avoid multiple dispatcher updating in multithreaded programs.

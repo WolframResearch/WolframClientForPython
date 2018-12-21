@@ -17,17 +17,14 @@ def default_function(*args, **opts):
 
 
 class Dispatch(object):
-    """ A method dispatcher class allowing for multiple implementations of functions specified by their name.
-    Each implementation is associated to a set of input types.
+    """ A method dispatcher class allowing for multiple implementations of a function. Each implementation is associated to a given of input type.
     
-    Imprementations are registered with the annotation :meth:`~wolframclient.utils.dispatch.Dispatch.multi`.
+    Imprementations are registered with the annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch`.
 
-    The function implementation must be called using :meth:`~wolframclient.utils.dispatch.Dispatch.create_proxy`.
-    It resolves the type mapping, if need be, and caches the result, then applies the implementation to
-    the input argument.
+    The Dispatch class is callable, it behaves as a function that uses the implementation corresponding to the input parameter.
         
-    If the types is not mapped to a specific function, i.e. it is not found in dispatchdict,
-    and if a default method is set, the tuple type is associated to this default to speedup next
+    When a mapping is 
+    If the types is not mapped to a specific function, and if a default method is set, the tuple type is associated to this default to speedup next
     invocation. This imply that the mapping will not be checked anymore.
 
     Where there is a type hierarchy, all possible combinations are checked in order, following MRO,
@@ -49,26 +46,23 @@ class Dispatch(object):
 
     def dispatch(self, *types):
         """ Annotate a function and map it to a given set of type(s).
-
-        Multiple mappings for a given function must share the same name as defined by :meth:`~wolframclient.utils.dispatch.Dispatch.get_key`.
         
         Declare an implementation to use on :data:`bytearray` input::
 
-            @dispatcher.multi(bytearray)
+            @dispatcher.dispatch(bytearray)
             def my_func(...)
 
-        Function with many arguments are specified with a list of types. Declare an implementation for two arguments of type 
-        :data:`str` and :data:`int`::
+        The default implementation is associated with :data:`object`. Set a default::
 
-            @dispatcher.multi([str, int])
-            def my_func(...)
+            @dispatcher.dispatch(object)
+            def my_default_func(...)
 
-        A tuple can be used as a type to specify alternative choices for a given parameter. 
+        A tuple can be used as input to associate more than one type with a function. 
         Declare a function used for both :data:`bytes` and :data:`bytearray`::
 
-            @dispatcher.multi((bytes, bytearray))
+            @dispatcher.dispatch((bytes, bytearray))
             def my_func(...)
-        
+
         Implementation must be unique. Registering the same combinaison of types will raise an error.
         """
 
@@ -77,17 +71,16 @@ class Dispatch(object):
 
         return register
 
-    def update(self, dispatch, update_default=False):
+    def update(self, dispatch):
+        """ Update current mapping with the one from `dispatch`. """
         if isinstance(dispatch, Dispatch):
-            for t, function in dispatch.dispatchdict.items():
-                self.register(function, t)
-            if update_default and dispatch.default_function:
-                self.register_default(dispatch.default_function)
+            dispatchmapping = dispatch.dispatchdict
         elif isinstance(dispatch, dict):
-            for t, function in dispatch.items():
-                self.register(function, t)
+            dispatchmapping = dispatch
         else:
             raise ValueError('%s is not an instance of Dispatch' % dispatch)
+        for t, function in dispatchmapping.items():
+            self.register(function, t)
 
     def validate_types(self, *types):
         for t in frozenset(flatten(*types)):
@@ -96,38 +89,38 @@ class Dispatch(object):
             yield t
 
     def register(self, function, *types):
-
         if not callable(function):
             raise ValueError('Function %s is not callable' % function)
-
         if not types:
-            if self.default_function:
-                raise TypeError(
-                    "Dispatch already has a default function registred.")
-            self.default_function = function
-            return self.default_function
-
+            raise ValueError('Missing types.')
+        self.reset_cached_mapping()
         for t in self.validate_types(*types):
             if t in self.dispatchdict:
                 raise TypeError(
                     "Duplicated registration for input type(s): %s" % (t, ))
-            self.dispatchdict[t] = function
-
+            else:
+                self.dispatchdict[t] = function
         return function
 
     def unregister(self, *types):
+        """ Remove implementations associated to types. """
         if not types:
-            self.default_function = None
-        else:
-            for t in self.validate_types(*types):
-                try:
-                    del self.dispatchdict[t]
-                except KeyError:
-                    pass
+            return
+        self.reset_cached_mapping()
+        for t in self.validate_types(*types):
+            try:
+                del self.dispatchdict[t]
+            except KeyError:
+                pass
 
     def clear(self):
-        self.default_function = None
+        """ Reset the dispatcher to its initial state. """
         self.dispatchdict = dict()
+        self.cached_mapping = dict()
+
+    def reset_cached_mapping(self):
+        if self.cached_mapping:
+            self.cached_mapping = dict()
 
     def __call__(self, arg, *args, **opts):
         return self.resolve(arg)(arg, *args, **opts)
@@ -136,13 +129,24 @@ class Dispatch(object):
 
         for t in arg.__class__.__mro__:
             try:
-                return self.dispatchdict[t]
+                return self.cached_mapping[t]
             except KeyError:
-                pass
+                impl = self.dispatchdict.get(t, None)
+                if impl:
+                    self.cached_mapping[t] = impl
+                    return impl
 
-        return self.default_function or default_function
+        return default_function
 
     def as_method(self):
+        """ Return the dispatch as a class method. 
+        
+        If :data:`myMethod` is the function dispatched on input :data:`arg`, it enables:: 
+            
+            self.myMethod(arg, *args, **kwargs)
+
+        """
+
         def method(instance, arg, *args, **opts):
             return self.resolve(arg)(instance, arg, *args, **opts)
 

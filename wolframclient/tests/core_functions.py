@@ -50,7 +50,7 @@ class TestCase(BaseTestCase):
         class FootballPlayer(SportPlayer):
             pass
 
-        @normalizer.dispatch()
+        @normalizer.dispatch(object)
         def implementation(o):
             return o
 
@@ -83,8 +83,8 @@ class TestCase(BaseTestCase):
 
         self.assertEqual(normalizer('Ric'), 'Goodbye Ric')
 
-        normalizer.unregister()
-        normalizer.register(lambda s: 5)
+        normalizer.unregister(object)
+        normalizer.register(lambda s: 5, object)
 
         self.assertEqual(normalizer(None), 5)
 
@@ -92,7 +92,7 @@ class TestCase(BaseTestCase):
 
         normalizer = Dispatch()
 
-        @normalizer.dispatch()
+        @normalizer.dispatch(object)
         def implementation(self, o):
             return o
 
