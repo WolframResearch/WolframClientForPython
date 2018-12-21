@@ -133,3 +133,11 @@ PIL = API(
 )
 
 base64 = API(b64encode='base64.b64encode')
+
+pandas = API(
+    Series='pandas.Series', 
+    DataFrame='pandas.DataFrame', 
+    DatetimeIndex='pandas.DatetimeIndex', 
+    TimedeltaIndex='pandas.TimedeltaIndex', 
+    MultiIndex='pandas.MultiIndex',
+)
