@@ -115,7 +115,8 @@ class Dispatch(object):
         self.dispatch_dict_cache = dict()
 
     def clear_cache(self):
-        self.dispatch_dict_cache = dict()
+        if self.dispatch_dict_cache:
+            self.dispatch_dict_cache = dict()
 
     def resolve(self, arg):
         for t in arg.__class__.__mro__:
