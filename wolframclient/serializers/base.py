@@ -12,28 +12,28 @@ from wolframclient.serializers.wxfencoder.constants import (
     WXF_HEADER_SEPARATOR, WXF_VERSION)
 from wolframclient.serializers.wxfencoder.utils import numeric_array_to_wxf
 from wolframclient.utils import six
-from wolframclient.utils.encoding import force_text
+from wolframclient.utils.encoding import concatenate_bytes, force_text
 from wolframclient.utils.functional import first
-
+from wolframclient.utils.api import base64
 
 class FormatSerializer(Encoder):
-    def dump(self, data, stream):
+    
+    def generate_bytes(self, data):
         raise NotImplementedError
 
     def export(self, data, stream=None):
         if stream:
             if isinstance(stream, six.string_types):
                 with open(stream, 'wb') as file:
-                    self.dump(data, file)
+                    for token in self.generate_bytes(data):
+                        file.write(token)
                     return stream
 
-            self.dump(data, stream)
+            for token in self.generate_bytes(data):
+                stream.write(token)
             return stream
 
-        stream = six.BytesIO()
-        stream = self.dump(data, stream)
-        stream.seek(0)
-        return stream.read()
+        return concatenate_bytes(self.generate_bytes(data))
 
     #implementation of several methods
 
@@ -46,9 +46,6 @@ class FormatSerializer(Encoder):
     def serialize_string(self, obj):
         raise NotImplementedError
 
-    def serialize_bytes(self, obj):
-        raise NotImplementedError
-
     def serialize_float(self, obj):
         raise NotImplementedError
 
@@ -58,6 +55,11 @@ class FormatSerializer(Encoder):
     def serialize_int(self, obj):
         raise NotImplementedError
 
+    def serialize_bytes(self, bytes):
+        return self.serialize_function(
+            self.serialize_symbol(b'ByteArray'),
+            ((b'"', base64.b64encode(bytes), b'"'), ))
+
     def serialize_input_form(self, string):
         return self.serialize_function(
             self.serialize_symbol(b'ToExpression'),
@@ -65,7 +67,7 @@ class FormatSerializer(Encoder):
 
     def serialize_numeric_array(self, data, shape, wl_type):
 
-        payload = b''.join(
+        payload = concatenate_bytes(
             chain((WXF_VERSION, WXF_HEADER_SEPARATOR),
                   numeric_array_to_wxf(data, shape, wl_type)))
 

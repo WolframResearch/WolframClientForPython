@@ -1,30 +1,23 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-import warnings
-from collections import defaultdict
-from itertools import product, chain
 
-from wolframclient.utils.functional import force_tuple, chain_indexed
+import inspect
+
+from wolframclient.utils.functional import flatten
 
 #original idea by Guido in person.
 #https://www.artima.com/weblogs/viewpost.jsp?thread=101605
 
-UNDEFINED = object()
-
-
 class Dispatch(object):
-    """ A method dispatcher class allowing for multiple implementations of functions specified by their name.
-    Each implementation is associated to a set of input types.
+    """ A method dispatcher class allowing for multiple implementations of a function. Each implementation is associated to a given of input type.
     
-    Imprementations are registered with the annotation :meth:`~wolframclient.utils.dispatch.Dispatch.multi`.
+    Imprementations are registered with the annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch`.
 
-    The function implementation must be called using :meth:`~wolframclient.utils.dispatch.Dispatch.create_proxy`.
-    It resolves the type mapping, if need be, and caches the result, then applies the implementation to
-    the input argument.
+    The Dispatch class is callable, it behaves as a function that uses the implementation corresponding to the input parameter.
         
-    If the types is not mapped to a specific function, i.e. it is not found in dispatchmap,
-    and if a default method is set, the tuple type is associated to this default to speedup next
+    When a mapping is 
+    If the types is not mapped to a specific function, and if a default method is set, the tuple type is associated to this default to speedup next
     invocation. This imply that the mapping will not be checked anymore.
 
     Where there is a type hierarchy, all possible combinations are checked in order, following MRO,
@@ -40,142 +33,117 @@ class Dispatch(object):
 
     Once the mapping is determined, it is cached for later use.
     """
+
     def __init__(self):
-        self.dispatchmap = defaultdict(dict)
-        self.defaultmap = dict()
-        self.proxymap = dict()
+        self.clear()
 
-    def get_key(self, function):
-        return function.__name__
-
-    def get_proxy(self, function):
-        key = self.get_key(function)
-        try:
-            return self.proxymap[key]
-        except KeyError:
-            self.proxymap[key] = self.create_proxy(function)
-            return self.proxymap[key]
-
-    def create_proxy(self, function):
-        """ Annotate a function so that its actual implementation is a function found using the mapping
-        table and input parameter types. 
-        """
-        def inner(*args, **opts):
-            return self._resolve(function, *args)(*args, **opts)
-
-        return inner
-
-    def multi(self, types):
+    def dispatch(self, *args, **opts):
         """ Annotate a function and map it to a given set of type(s).
-
-        Multiple mappings for a given function must share the same name as defined by :meth:`~wolframclient.utils.dispatch.Dispatch.get_key`.
         
         Declare an implementation to use on :data:`bytearray` input::
 
-            @dispatcher.multi(bytearray)
+            @dispatcher.dispatch(bytearray)
             def my_func(...)
 
-        Function with many arguments are specified with a list of types. Declare an implementation for two arguments of type 
-        :data:`str` and :data:`int`::
+        The default implementation is associated with :data:`object`. Set a default::
 
-            @dispatcher.multi([str, int])
-            def my_func(...)
+            @dispatcher.dispatch(object)
+            def my_default_func(...)
 
-        A tuple can be used as a type to specify alternative choices for a given parameter. 
+        A tuple can be used as input to associate more than one type with a function. 
         Declare a function used for both :data:`bytes` and :data:`bytearray`::
 
-            @dispatcher.multi((bytes, bytearray))
+            @dispatcher.dispatch((bytes, bytearray))
             def my_func(...)
-        
+
         Implementation must be unique. Registering the same combinaison of types will raise an error.
         """
-        def register(function):
-            if isinstance(types, tuple):
-                length = 1
+
+        def register(func):
+            return self.register(func, *args, **opts)
+
+        return register
+
+    def update(self, dispatch, force = False):
+        """ Update current mapping with the one from `dispatch`. """
+        if isinstance(dispatch, Dispatch):
+            dispatchmapping = dispatch.dispatch_dict
+        elif isinstance(dispatch, dict):
+            dispatchmapping = dispatch
+        else:
+            raise ValueError('%s is not an instance of Dispatch' % dispatch)
+        for t, function in dispatchmapping.items():
+            self.register(function, t, force = force)
+
+    def validate_types(self, types):
+        for t in frozenset(flatten(types)):
+            if not inspect.isclass(t):
+                raise ValueError('%s is not a class' % t)
+            yield t
+
+    def register(self, function, types = object, force = False):
+        if not callable(function):
+            raise ValueError('Function %s is not callable' % function)
+
+        self.clear_cache()
+
+        for t in self.validate_types(types):
+            if not force and t in self.dispatch_dict:
+                raise TypeError(
+                    "Duplicated registration for input type(s): %s" % (t, ))
             else:
-                length = len(types)
-            key = (self.get_key(function), length)
-            for expanded in product(*map(force_tuple, types)):
-                if expanded in self.dispatchmap[key]:
-                    if force:
-                        warnings.warn("duplicate registration for input type(s): %s" % (expanded, ), UserWarning)
-                    else:
-                        raise TypeError("duplicate registration for input type(s): %s" % (expanded, ))
+                self.dispatch_dict[t] = function
 
-                self.dispatchmap[key][expanded] = function
-
-            return self.get_proxy(function)
-
-        return register
-
-    def default(self):
-        """ Annotate a function to be the default implementation.
-
-        There must be one and only one default, which can also be set in the constructor.
-        """
-        def register(function):
-
-            key = self.get_key(function)
-
-            if key in self.defaultmap:
-                raise TypeError("duplicate registration for default")
-
-            self.defaultmap[key] = function
-
-            return self.get_proxy(function)
-
-        return register
-
-    def _resolve(self, source, *args):
-        """ Return the implementation associated to given method and type of args. """
-
-        key = (self.get_key(source), len(args))
-        types = tuple(arg.__class__ for arg in args)
-        # check if the types are associated to a given function:
-        function = self.dispatchmap[key].get(types, UNDEFINED)
-
-        if function is UNDEFINED:
-            # Need to build all the possible tuples using subclasses and order them properly by MRO,
-            # and parameter index.
-            # This can quickly become fairly big because of the cartesian products.
-            tuple_args = product(*map(force_tuple, types))
-            #populating cache
-            dispatch = self.dispatchmap[key]
-            for tuple_type in chain_indexed(*map(lambda t : self.all_type_combinations(*t), tuple_args)):
-                function = dispatch.get(tuple_type, None)
-                if function:
-                    dispatch[types] = function
-                    return function
-                
-            default = self.defaultmap.get(self.get_key(source), UNDEFINED)
-            if default is not UNDEFINED:
-                self.dispatchmap[key][types] = default
-                return default
-            raise TypeError("No type match for arguments: %s", (args,))
         return function
 
-    @staticmethod
-    def all_type_combinations(*types):
-        """ From a given set of types yield all the combinations of types and parent types.
+    def unregister(self, types = object):
+        """ Remove implementations associated to types. """
 
-        The tuple made of sollely `object` is not returned, because it's the default implementation, which should be unique.
+        self.clear_cache()
+
+        for t in self.validate_types(types):
+            try:
+                del self.dispatch_dict[t]
+            except KeyError:
+                pass
+
+    def clear(self):
+        """ Reset the dispatcher to its initial state. """
+        self.dispatch_dict = dict()
+        self.dispatch_dict_cache = dict()
+
+    def clear_cache(self):
+        if self.dispatch_dict_cache:
+            self.dispatch_dict_cache = dict()
+
+    def resolve(self, arg):
+        for t in arg.__class__.__mro__:
+            try:
+                return self.dispatch_dict_cache[t]
+            except KeyError:
+                impl = self.dispatch_dict.get(t, None)
+                if impl:
+                    self.dispatch_dict_cache[t] = impl
+                    return impl
+
+        return self.default_function
+
+    def default_function(self, *args, **opts):
+        raise ValueError('Unable to handle args')
+
+    def __call__(self, arg, *args, **opts):
+        return self.resolve(arg)(arg, *args, **opts)
+
+    def as_method(self):
+        """ Return the dispatch as a class method. 
+        
+        If :data:`myMethod` is the function dispatched on input :data:`arg`, it enables:: 
+            
+            self.myMethod(arg, *args, **kwargs)
+
         """
-        if len(types) == 0:
-            return
-        mro = list(map(lambda x : x.__mro__, types[:-1]))
-        mro.append(types[-1].__mro__[:-1])
-        for elem in product(*mro):
-            yield elem
 
-class ClassDispatch(Dispatch):
-    """ Multi method implementation where the first element is of a given type, known ahead of time,
-    and as such can be ignored both during dispatch and resolve.
+        def method(instance, arg, *args, **opts):
+            return self.resolve(arg)(instance, arg, *args, **opts)
 
-    Named input parameters are not used to resolve which implementation to use, but are passed to the
-    function.
-    """
-    def create_proxy(self, function):
-        def inner(obj, *args, **opts):
-            return self._resolve(function, *args)(obj, *args, **opts)
-
-        return inner
+        return method

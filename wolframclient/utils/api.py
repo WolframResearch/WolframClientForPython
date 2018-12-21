@@ -121,7 +121,8 @@ numpy = API(
     integer='numpy.integer',
     floating='numpy.floating',
     complexfloating='numpy.complexfloating',
-    frexp='numpy.frexp',)
+    frexp='numpy.frexp',
+)
 
 multiprocessing = API(Lock='multiprocessing.Lock')
 

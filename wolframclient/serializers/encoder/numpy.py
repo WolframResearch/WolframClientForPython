@@ -3,9 +3,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from operator import methodcaller
-from wolframclient.serializers.encoder import wolfram_encoder
+
 from wolframclient.utils.api import numpy
-from wolframclient.utils.functional import identity
+from wolframclient.utils.dispatch import Dispatch
+from wolframclient.utils.functional import identity, map
+
+encoder = Dispatch()
 
 NUMPY_MAPPING = {
     numpy.dtype('int8'): ('Integer8', methodcaller('astype', '<i1')),
@@ -25,7 +28,8 @@ NUMPY_MAPPING = {
     numpy.dtype('complex128'): ('ComplexReal64', identity),
 }
 
-@wolfram_encoder.register(numpy.ndarray)
+
+@encoder.dispatch(numpy.ndarray)
 def encode_ndarray(serializer, o):
 
     try:
@@ -46,17 +50,17 @@ def encode_ndarray(serializer, o):
     return serializer.serialize_numeric_array(data, o.shape, wl_type)
 
 
-@wolfram_encoder.register(numpy.integer)
+@encoder.dispatch(numpy.integer)
 def encode_numpy_int(serializer, o):
     return serializer.serialize_int(int(o))
 
-@wolfram_encoder.register(numpy.floating)
+
+@encoder.dispatch(numpy.floating)
 def encode_numpy_floating(serializer, o):
     # mantissa, and base 2 exponent.
     mantissa, exp = numpy.frexp(o)
     return serializer.serialize_function(
-        serializer.serialize_symbol(b'Times'),
-        (
+        serializer.serialize_symbol(b'Times'), (
             serializer.serialize_float(mantissa),
             serializer.serialize_function(
                 serializer.serialize_symbol(b'Power'),
@@ -65,13 +69,14 @@ def encode_numpy_floating(serializer, o):
                     serializer.serialize_float(exp),
                 ),
             ),
-        )
-    )
+        ))
 
-@wolfram_encoder.register(numpy.float16, numpy.float32, numpy.float64)
+
+@encoder.dispatch((numpy.float16, numpy.float32, numpy.float64))
 def encode_numpy_mp_float(serializer, o):
     return serializer.serialize_float(o)
 
-@wolfram_encoder.register(numpy.complexfloating)
+
+@encoder.dispatch(numpy.complexfloating)
 def encode_complex(serializer, o):
     return serializer.serialize_complex(o)

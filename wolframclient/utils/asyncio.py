@@ -7,7 +7,7 @@ import functools
 from operator import methodcaller
 
 from wolframclient.utils.decorators import to_tuple
-from wolframclient.utils.functional import first, iterate
+from wolframclient.utils.functional import first, iterate, map
 
 
 async def wait_all(args, **opts):

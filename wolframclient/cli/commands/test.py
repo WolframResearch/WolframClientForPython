@@ -8,6 +8,7 @@ import unittest
 from wolframclient.cli.utils import SimpleCommand
 from wolframclient.utils import six
 from wolframclient.utils.decorators import to_tuple
+from wolframclient.utils.functional import map
 from wolframclient.utils.importutils import module_path
 
 
@@ -16,12 +17,13 @@ def dependencies():
     yield ("pytz", '2018.6')
 
     if not six.JYTHON:
-        yield ("numpy", "1.15.3")
+        yield ("numpy", not six.PY2 and "1.15.3" or None)
         yield ("pillow", "5.3.0")
         yield ("requests", "2.20.0")
         yield ("oauthlib", "2.1.0")
-        yield ("aiohttp", "3.4.4")
         yield ("pyzmq", "17.1.2")
+    if not six.PY2:
+        yield ("aiohttp", "3.4.4")
 
 
 class Command(SimpleCommand):

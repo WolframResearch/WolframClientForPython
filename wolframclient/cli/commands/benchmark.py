@@ -13,6 +13,8 @@ from wolframclient.utils.debug import timed
 from wolframclient.utils.decorators import to_tuple
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import first
+import cProfile
+import re
 
 
 @to_tuple
@@ -26,6 +28,9 @@ class Command(SimpleCommand):
     col_size = 8
     repetitions = 10
     complexity = [1, 2, 5, 10, 100, 1000]
+
+    def add_arguments(self, parser):
+        parser.add_argument('--profile', dest = 'profile', default = False, action = 'store_true')
 
     def complexity_handler(self, complexity):
         return {
@@ -61,7 +66,7 @@ class Command(SimpleCommand):
     def table_divider(self, length):
         self.print(*("-" * self.col_size for i in range(length)))
 
-    def handle(self, *args):
+    def report(self):
 
         path = tempfile.gettempdir()
 
@@ -72,6 +77,9 @@ class Command(SimpleCommand):
         self.table_line(
             "", *(force_text(c).ljust(self.col_size) for c in self.complexity))
         self.table_divider(len(self.complexity) + 1)
+
+        #running export to do all lazy loadings
+        export(1)
 
         for label, export_format, opts in (
             ("wl", "wl", dict()),
@@ -89,3 +97,9 @@ class Command(SimpleCommand):
                     **opts) for complexity, expr in benchmarks))
 
         self.table_line()
+
+    def handle(self, profile, **opts):
+        if profile:
+            cProfile.runctx('report()', {'report': self.report}, {})
+        else:
+            self.report()
