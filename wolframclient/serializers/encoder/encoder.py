@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 __all__ = ['wolfram_encoder', 'Encoder']
 
 wolfram_encoder = Dispatch()
-""" Instance of :class:`~wolframclient.serializers.encoder.WolframEncoder` used by default during serialization. """
+""" Instance of :class:`~wolframclient.utils.dispatch.Dispatch` used by default during serialization. """
 
 
 # for now, this method name is fixed and must match the one in the wolfram_encoder wrapper.

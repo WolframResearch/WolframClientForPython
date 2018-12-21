@@ -55,7 +55,9 @@ class Dispatch(object):
         return register
 
     def update(self, dispatch, force = False):
-        """ Update current mapping with the one from `dispatch`. """
+        """ Update current mapping with the one from `dispatch`.
+        
+        `dispatch` can be a Dispatch instance or a :class:`dict`. """
         if isinstance(dispatch, Dispatch):
             dispatchmapping = dispatch.dispatch_dict
         elif isinstance(dispatch, dict):
@@ -72,6 +74,9 @@ class Dispatch(object):
             yield t
 
     def register(self, function, types = object, force = False):
+        """ Equivalent to annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch` but as 
+        a function.
+        """
         if not callable(function):
             raise ValueError('Function %s is not callable' % function)
 
@@ -87,7 +92,7 @@ class Dispatch(object):
         return function
 
     def unregister(self, types = object):
-        """ Remove implementations associated to types. """
+        """ Remove implementations associated with types. """
 
         self.clear_cache()
 
@@ -107,6 +112,7 @@ class Dispatch(object):
             self.dispatch_dict_cache = dict()
 
     def resolve(self, arg):
+        """ Return the implementation better matching the type the argument type. """
         for t in arg.__class__.__mro__:
             try:
                 return self.dispatch_dict_cache[t]
@@ -119,6 +125,7 @@ class Dispatch(object):
         return self.default_function
 
     def default_function(self, *args, **opts):
+        """ Ultimately called when no type was found. """
         raise ValueError('Unable to handle args')
 
     def __call__(self, arg, *args, **opts):
