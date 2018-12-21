@@ -69,7 +69,7 @@ class Dispatch(object):
     def update(self, dispatch, force = False):
         """ Update current mapping with the one from `dispatch`. """
         if isinstance(dispatch, Dispatch):
-            dispatchmapping = dispatch.dispatchdict
+            dispatchmapping = dispatch.dispatch_dict
         elif isinstance(dispatch, dict):
             dispatchmapping = dispatch
         else:
@@ -87,35 +87,35 @@ class Dispatch(object):
         if not callable(function):
             raise ValueError('Function %s is not callable' % function)
 
-        self.reset_cached_mapping()
+        self.clear_cache()
 
         for t in self.validate_types(types):
-            if not force and t in self.dispatchdict:
+            if not force and t in self.dispatch_dict:
                 raise TypeError(
                     "Duplicated registration for input type(s): %s" % (t, ))
             else:
-                self.dispatchdict[t] = function
+                self.dispatch_dict[t] = function
 
         return function
 
     def unregister(self, types = object):
         """ Remove implementations associated to types. """
 
-        self.reset_cached_mapping()
+        self.clear_cache()
 
         for t in self.validate_types(types):
             try:
-                del self.dispatchdict[t]
+                del self.dispatch_dict[t]
             except KeyError:
                 pass
 
     def clear(self):
         """ Reset the dispatcher to its initial state. """
-        self.dispatchdict = dict()
-        self.cached_mapping = dict()
+        self.dispatch_dict = dict()
+        self.dispatch_dict_cache = dict()
 
-    def reset_cached_mapping(self):
-        self.cached_mapping = dict()
+    def clear_cache(self):
+        self.dispatch_dict_cache = dict()
 
     def __call__(self, arg, *args, **opts):
         return self.resolve(arg)(arg, *args, **opts)
@@ -123,11 +123,11 @@ class Dispatch(object):
     def resolve(self, arg):
         for t in arg.__class__.__mro__:
             try:
-                return self.cached_mapping[t]
+                return self.dispatch_dict_cache[t]
             except KeyError:
-                impl = self.dispatchdict.get(t, None)
+                impl = self.dispatch_dict.get(t, None)
                 if impl:
-                    self.cached_mapping[t] = impl
+                    self.dispatch_dict_cache[t] = impl
                     return impl
 
         return self.default_function
