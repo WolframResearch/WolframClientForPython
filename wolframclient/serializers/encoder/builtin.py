@@ -20,9 +20,14 @@ if six.PY2:
         if isinstance(key, six.binary_type):
             return force_text(key)
         return key
-else:
-    safe_key = identity
 
+    def to_key_value(serializer, o):
+        return ((serializer.encode(safe_key(key)), serializer.encode(value))
+             for key, value in o.items())
+else:
+    def to_key_value(serializer, o):
+        return ((serializer.encode(key), serializer.encode(value))
+             for key, value in o.items())
 
 @encoder.dispatch((bool, six.none_type))
 def encode_none(serializer, o):
@@ -41,10 +46,7 @@ def encode_text(serializer, o):
 
 @encoder.dispatch(dict)
 def encode_dict(serializer, o):
-    return serializer.serialize_mapping(
-        ((serializer.encode(safe_key(key)), serializer.encode(value))
-         for key, value in o.items()),
-        length=safe_len(o))
+    return serializer.serialize_mapping(to_key_value(serializer, o), length = safe_len(o))
 
 
 @encoder.dispatch(six.integer_types)
