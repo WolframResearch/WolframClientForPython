@@ -11,11 +11,6 @@ from wolframclient.utils.functional import flatten
 
 UNDEFINED = object()
 
-
-def default_function(*args, **opts):
-    raise ValueError('Unable to handle args')
-
-
 class Dispatch(object):
     """ A method dispatcher class allowing for multiple implementations of a function. Each implementation is associated to a given of input type.
     
@@ -100,6 +95,7 @@ class Dispatch(object):
                     "Duplicated registration for input type(s): %s" % (t, ))
             else:
                 self.dispatchdict[t] = function
+
         return function
 
     def unregister(self, types = object):
@@ -125,7 +121,6 @@ class Dispatch(object):
         return self.resolve(arg)(arg, *args, **opts)
 
     def resolve(self, arg):
-
         for t in arg.__class__.__mro__:
             try:
                 return self.cached_mapping[t]
@@ -135,7 +130,10 @@ class Dispatch(object):
                     self.cached_mapping[t] = impl
                     return impl
 
-        return default_function
+        return self.default_function
+
+    def default_function(self, *args, **opts):
+        raise ValueError('Unable to handle args')
 
     def as_method(self):
         """ Return the dispatch as a class method. 
