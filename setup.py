@@ -69,8 +69,6 @@ setup(
         'Wolfram Research': 'https://www.wolfram.com'
     },
     entry_points = {
-        'wolframclient_serializers_encoder':[
-            # a list of modules defining encoders for serialization.
-        ]
+        'wolframclient_serializers_encoder':[]
     }
 )

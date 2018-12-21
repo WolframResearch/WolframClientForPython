@@ -52,7 +52,7 @@ class DispatchUpdater(object):
     def register_plugins(self, name='wolframclient_serializers_encoder'):
         if logger.isEnabledFor(logging.INFO):
             logger.info(
-                'Registering Wolfram encoders plugins associated to entrypoint %s.'
+                'Registering Wolfram encoders plugins associated with entrypoint %s.'
                 % name)
         for entry_point in pkg_resources.iter_entry_points(group=name):
             self.plugins_registry[entry_point.name].extend(
@@ -108,10 +108,9 @@ wolfram_encoder_updater.register_modules(
 
     #wolfram language support
     wolframclient='wolframclient.serializers.encoder.wolfram.encoder',
-
-    #third party libraries
-    numpy='wolframclient.serializers.encoder.numpy.encoder',
-    PIL='wolframclient.serializers.encoder.pil.encoder',
+    numpy = 'wolframclient.serializers.encoder.numpy.encoder',
+    pandas = 'wolframclient.serializers.encoder.pandas.encoder',
+    PIL = 'wolframclient.serializers.encoder.pil.encoder',
 )
 
 wolfram_encoder_updater.register_plugins()
