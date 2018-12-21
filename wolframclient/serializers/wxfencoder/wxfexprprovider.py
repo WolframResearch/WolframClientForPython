@@ -14,7 +14,7 @@ class WXFExprProvider(object):
     default class `DefaultWXFEncoder` is used to instanciate one. It is possible
     to add extra encoder using `add_encoder`. The order in which encoders are called
     is the one in which they were added. Note that for performance reasons, it is
-    recommanded to have the default encoder be first, as such one should not initialize
+    recommended to have the default encoder be first, as such one should not initialize
     a provider with an encoder except if the default one is not suited for ones needs.
 
     An optional `default` function can be passed to the provider at initialization. It
