@@ -106,7 +106,7 @@ def normalized_prop_pandas_series_head(serializer):
     return prop
 
 
-@encoder.dispatch(pandas.Series, pandas.DataFrame)
+@encoder.dispatch((pandas.Series, pandas.DataFrame))
 def encode_panda_series(serializer, o):
     use_ts = normalized_prop_timeseries(serializer)
     form = normalized_prop_pandas_series_head(serializer)
