@@ -115,6 +115,7 @@ numpy = API(
     float128='numpy.float128',
     complex64='numpy.complex64',
     complex128='numpy.complex128',
+    nan='numpy.nan',
     dtype='numpy.dtype',
     frombuffer='numpy.frombuffer',
     reshape='numpy.reshape',
@@ -140,4 +141,6 @@ pandas = API(
     DatetimeIndex='pandas.DatetimeIndex', 
     TimedeltaIndex='pandas.TimedeltaIndex', 
     MultiIndex='pandas.MultiIndex',
+    SparseSeries='pandas.SparseSeries', 
+    bdate_range='pandas.bdate_range',
 )
