@@ -14,8 +14,16 @@ from wolframclient.utils.api import pandas
 encoder = Dispatch()
 
 def safe_pandas_length(o):
+    """ Return the length of a pandas Series and DataFrame as expected for WL serialization.
+
+    - The length of a Series is the only value of the tuple `shape`.
+    - The length of a dataframe is the number of columns. It's the second value of `shape`.
+
+    This function is safe, when the shape does not have the expected number of elements, it fails silently and
+    returns `None`, the object is later traversed to find out how many elements it contains.
+    """
     try:
-        return o.shape[0]
+        return o.shape[-1]
     except (TypeError, IndexError):
         return
 
