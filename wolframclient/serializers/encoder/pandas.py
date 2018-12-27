@@ -55,17 +55,7 @@ def encode_as_timeseries(serializer, o, length):
         ),
     )
 
-def encode_multiindex_as_assoc(serializer, o, length):
-    return _iter_encode_multiindex_inner_assoc(serializer, o)
-
-def encode_multiindex_as_dataset(serializer, o, length):
-    return serializer.serialize_function(
-        serializer.serialize_symbol(b'Dataset'),
-            (_iter_encode_multiindex_inner_assoc(serializer, o),
-            )
-    )
-
-def _iter_encode_multiindex_inner_assoc(serializer, o):
+def _distribute_multikey(o):
     expr_dict = {}
     for multikey, value in o.iteritems():
         cur_dict = expr_dict
@@ -74,30 +64,47 @@ def _iter_encode_multiindex_inner_assoc(serializer, o):
                 cur_dict[key] = {}
             cur_dict = cur_dict[key]
         cur_dict[multikey[-1]] = value
-    return serializer.encode(expr_dict)
+    return expr_dict
 
-SERIES_PROPERTIES = {
+def encode_multiindex_as_assoc(serializer, o, length):
+    return serializer.encode(_distribute_multikey(o))
+
+def encode_multiindex_as_dataset(serializer, o, length):
+    return serializer.serialize_function(
+        serializer.serialize_symbol(b'Dataset'),
+            (
+                serializer.encode(_distribute_multikey(o)),
+            )
+    )
+
+PANDAS_PROPERTIES = {
     'pandas_series_head' : {'dataset', 'list', 'association'},
     'pandas_dataframe_head' : {'dataset', 'association'},
     'timeseries' : True,
 }
 
-SERIALIZE_FORMAT = {
-    'dataset' : encode_as_dataset,
-    'list' : encode_as_list,
-    'association' : encode_as_association,
-    'timeseries' : encode_as_timeseries,
-    ('multiindex', 'association') : encode_multiindex_as_assoc,
-    ('multiindex', 'dataset') : encode_multiindex_as_dataset,
+ENCODERS = {
+    'default': {
+        'dataset' : encode_as_dataset,
+        'list' : encode_as_list,
+        'association' : encode_as_association,
+        },
+    'datetimeindex' : encode_as_timeseries,
+    'multiindex' : {
+        'association' : encode_multiindex_as_assoc,
+        'list' : encode_multiindex_as_assoc,
+        'dataset' : encode_multiindex_as_dataset
+        },
 }
 
-def _get_encoder_from_index(index, use_ts, form):
+def get_series_encoder_from_index(index, use_ts, form):
     if use_ts and isinstance(index, pandas.DatetimeIndex):
-        return 'timeseries'
+        return ENCODERS['datetimeindex']
     elif isinstance(index, pandas.MultiIndex):
-        return ('multiindex', form or 'dataset')
+        return ENCODERS['multiindex'][form or 'dataset']
     else:
-        return form or 'association'
+        return ENCODERS['default'][form or 'association']
+
 
 INVALID_PROPERTY_MSG = 'Invalid property %s, expecting %s'
 
@@ -108,15 +115,41 @@ def normalized_prop_timeseries(serializer):
     return prop
 
 def normalized_prop_pandas_series_head(serializer):
+    """ Check property `pandas_series_head` only if specified (not None). """
     prop = serializer.get_property('pandas_series_head', d=None)
-    if prop and prop not in SERIES_PROPERTIES['pandas_series_head']:
-        raise ValueError("Invalid value for property 'pandas_series_head'. Expecting one of (%s), got %s." % (', '.join(SERIES_PROPERTIES['pandas_series_head']), prop))
+    if prop and prop not in PANDAS_PROPERTIES['pandas_series_head']:
+        raise ValueError("Invalid value for property 'pandas_series_head'. Expecting one of (%s), got %s." % (', '.join(PANDAS_PROPERTIES['pandas_series_head']), prop))
     return prop
 
 
-@encoder.dispatch((pandas.Series, pandas.DataFrame))
+@encoder.dispatch(pandas.Series)
 def encode_panda_series(serializer, o):
     use_ts = normalized_prop_timeseries(serializer)
     form = normalized_prop_pandas_series_head(serializer)
-    format_tuple = _get_encoder_from_index(o.index, use_ts, form)
-    return SERIALIZE_FORMAT[format_tuple](serializer, o, safe_pandas_length(o))
+    encoder = get_series_encoder_from_index(o.index, use_ts, form)
+    return encoder(serializer, o, safe_pandas_length(o))
+
+def encode_dataframe_as_assoc(serializer, o, length):
+    use_ts = normalized_prop_timeseries(serializer)
+    return serializer.serialize_association(
+        ((
+            serializer.encode(k),
+            get_series_encoder_from_index(v.index, use_ts, 'association')(serializer, v, safe_pandas_length(v))
+        ) for k, v in o.items()),
+        length=length)
+
+def encode_dataframe_as_dataset(serializer, o, length):
+    return serializer.serialize_function(
+        serializer.serialize_symbol(b'Dataset'),
+            (encode_dataframe_as_assoc(serializer, o, length),)
+        )
+
+@encoder.dispatch(pandas.DataFrame)
+def encoder_panda_dataframe(serializer, o):
+    head = serializer.get_property('pandas_dataframe_head', d=None)
+    if head is None or head == 'dataset':
+        return encode_dataframe_as_dataset(serializer, o, safe_pandas_length(o))
+    elif head in PANDAS_PROPERTIES['pandas_dataframe_head']:
+        return encode_dataframe_as_assoc(serializer, o, safe_pandas_length(o))
+    else:
+        raise ValueError("Invalid value for property 'pandas_dataframe_head'. Expecting one of (%s), got %s." % (', '.join(PANDAS_PROPERTIES['pandas_dataframe_head']), prop))
