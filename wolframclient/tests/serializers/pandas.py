@@ -4,13 +4,11 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import pandas
 import numpy
-
+from collections import OrderedDict
 import unittest
-from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
 from wolframclient.serializers import export
 
-@unittest.skipIf(six.PY2, "skipped on Python2. Dict ordering is not preserved.")
 class PandasTestCase(BaseTestCase):
     def export_compare(self, o, wl=None, wxf=None, **kwargs):
         if wl:
@@ -36,7 +34,10 @@ class PandasSeriesTestCase(PandasTestCase):
         return arr, index
 
     def sparse_series_dict(self):
-        d = {'b': 1, 'a': 0, 'c': 2}
+        d = OrderedDict()
+        d['b']=1
+        d['a']=0
+        d['c']=2
         return pandas.SparseSeries(d)
 
     def sparse_series_dict_indexed(self):
@@ -198,7 +199,10 @@ class PandasSeriesTestCase(PandasTestCase):
 
 class PandasDataFrameTestCase(PandasTestCase):
     def dataframe_from_dict(self):
-        return pandas.DataFrame.from_dict({'a':{'x':1}, 'b':{'x':[-1]}})
+        d = OrderedDict()
+        d['a'] = {'x' : 1}
+        d['b'] = {'x': [-1]}
+        return pandas.DataFrame.from_dict(d)
 
     def test_empty_dataframe(self):
         o = pandas.DataFrame.from_dict({})
