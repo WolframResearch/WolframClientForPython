@@ -83,7 +83,7 @@ class WXFSerializer(FormatSerializer):
             #WXFExprInteger is raising a ValueError if the integer is not in the appropriate bounds.
             #that check needs to be done in case, it's better to do it only once.
 
-            number = force_bytes(number)
+            number = b'%i' % number
 
             yield WXF_CONSTANTS.BigInteger
             yield varint_bytes(len(number))
