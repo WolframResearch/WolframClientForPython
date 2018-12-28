@@ -4,8 +4,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import json
 import logging
-from wolframclient.utils import six
+
 from wolframclient.logger.utils import setup_logging_to_file
+from wolframclient.utils import six
 from wolframclient.utils.api import os
 
 logger = logging.getLogger(__name__)

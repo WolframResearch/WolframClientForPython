@@ -108,9 +108,9 @@ wolfram_encoder_updater.register_modules(
 
     #wolfram language support
     wolframclient='wolframclient.serializers.encoder.wolfram.encoder',
-    numpy = 'wolframclient.serializers.encoder.numpy.encoder',
-    pandas = 'wolframclient.serializers.encoder.pandas.encoder',
-    PIL = 'wolframclient.serializers.encoder.pil.encoder',
+    numpy='wolframclient.serializers.encoder.numpy.encoder',
+    pandas='wolframclient.serializers.encoder.pandas.encoder',
+    PIL='wolframclient.serializers.encoder.pil.encoder',
 )
 
 wolfram_encoder_updater.register_plugins()

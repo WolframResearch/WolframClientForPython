@@ -9,6 +9,7 @@ from wolframclient.utils.functional import flatten
 #original idea by Guido in person.
 #https://www.artima.com/weblogs/viewpost.jsp?thread=101605
 
+
 class Dispatch(object):
     """ A method dispatcher class allowing for multiple implementations of a function. Each implementation is associated to a given of input type.
     
@@ -54,7 +55,7 @@ class Dispatch(object):
 
         return register
 
-    def update(self, dispatch, force = False):
+    def update(self, dispatch, force=False):
         """ Update current mapping with the one from `dispatch`.
         
         `dispatch` can be a Dispatch instance or a :class:`dict`. """
@@ -65,7 +66,7 @@ class Dispatch(object):
         else:
             raise ValueError('%s is not an instance of Dispatch' % dispatch)
         for t, function in dispatchmapping.items():
-            self.register(function, t, force = force)
+            self.register(function, t, force=force)
 
     def validate_types(self, types):
         for t in frozenset(flatten(types)):
@@ -73,7 +74,7 @@ class Dispatch(object):
                 raise ValueError('%s is not a class' % t)
             yield t
 
-    def register(self, function, types = object, force = False):
+    def register(self, function, types=object, force=False):
         """ Equivalent to annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch` but as 
         a function.
         """
@@ -91,7 +92,7 @@ class Dispatch(object):
 
         return function
 
-    def unregister(self, types = object):
+    def unregister(self, types=object):
         """ Remove implementations associated with types. """
 
         self.clear_cache()

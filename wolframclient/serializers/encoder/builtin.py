@@ -8,7 +8,7 @@ from wolframclient.serializers.utils import safe_len
 from wolframclient.utils import six
 from wolframclient.utils.dispatch import Dispatch
 from wolframclient.utils.encoding import force_bytes, force_text
-from wolframclient.utils.functional import identity, map
+from wolframclient.utils.functional import map
 
 encoder = Dispatch()
 
@@ -22,12 +22,17 @@ if six.PY2:
         return key
 
     def _to_key_value(func, serializer, o):
-        return func(((serializer.encode(safe_key(key)), serializer.encode(value))
-             for key, value in o.items()), length = safe_len(o))
+        return func(
+            ((serializer.encode(safe_key(key)), serializer.encode(value))
+             for key, value in o.items()),
+            length=safe_len(o))
 else:
+
     def _to_key_value(func, serializer, o):
         return func(((serializer.encode(key), serializer.encode(value))
-             for key, value in o.items()), length = safe_len(o))
+                     for key, value in o.items()),
+                    length=safe_len(o))
+
 
 @encoder.dispatch((bool, six.none_type))
 def encode_none(serializer, o):

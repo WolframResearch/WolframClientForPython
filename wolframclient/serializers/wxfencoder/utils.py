@@ -54,8 +54,7 @@ def integer_size(value):
     try:
         return _exceptions.get(value, None) or _size[value.bit_length() + 1]
     except KeyError:
-        raise ValueError(
-                'Value %i is not a machine-sized integer.' % value)
+        raise ValueError('Value %i is not a machine-sized integer.' % value)
 
 
 _packing = {

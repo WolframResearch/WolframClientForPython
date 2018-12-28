@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import cProfile
 import decimal
 import os
 import tempfile
@@ -13,8 +14,6 @@ from wolframclient.utils.debug import timed
 from wolframclient.utils.decorators import to_tuple
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import first
-import cProfile
-import re
 
 
 @to_tuple
@@ -30,7 +29,8 @@ class Command(SimpleCommand):
     complexity = [1, 2, 5, 10, 100, 1000]
 
     def add_arguments(self, parser):
-        parser.add_argument('--profile', dest = 'profile', default = False, action = 'store_true')
+        parser.add_argument(
+            '--profile', dest='profile', default=False, action='store_true')
 
     def complexity_handler(self, complexity):
         return {

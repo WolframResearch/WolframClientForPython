@@ -2,17 +2,14 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.utils.dispatch import Dispatch
-from wolframclient.serializers.base import FormatSerializer
-from wolframclient.language import wl
-from wolframclient.utils import six 
 from collections import OrderedDict
-
 from itertools import starmap
 
 from wolframclient.utils.api import pandas
+from wolframclient.utils.dispatch import Dispatch
 
 encoder = Dispatch()
+
 
 def safe_pandas_length(o):
     """ Return the length of a pandas Series and DataFrame as expected for WL serialization.
@@ -28,33 +25,39 @@ def safe_pandas_length(o):
     except (TypeError, IndexError):
         return
 
+
 def encode_as_dataset(serializer, o, length):
     return serializer.serialize_function(
         serializer.serialize_symbol(b'Dataset'),
-        (encode_as_association(serializer, o, length),),
+        (encode_as_association(serializer, o, length), ),
     )
 
+
 def encode_as_list(serializer, o, length):
-    return serializer.serialize_iterable(starmap(lambda k,v : serializer.serialize_rule(k,v), encoded_kv_tuples(serializer, o)), length=length)
+    return serializer.serialize_iterable(
+        starmap(lambda k, v: serializer.serialize_rule(k, v),
+                encoded_kv_tuples(serializer, o)),
+        length=length)
+
 
 def encode_as_association(serializer, o, length):
     return serializer.serialize_association(
-        encoded_kv_tuples(serializer, o), 
-        length=length)
+        encoded_kv_tuples(serializer, o), length=length)
+
 
 def encoded_kv_tuples(serializer, o):
-    return ((serializer.encode(k),
-            serializer.encode(v)) for k,v in o.items())
+    return ((serializer.encode(k), serializer.encode(v)) for k, v in o.items())
 
 
 def encode_as_timeseries(serializer, o, length):
     return serializer.serialize_function(
         serializer.serialize_symbol(b'TimeSeries'),
         (serializer.serialize_iterable(
-            (serializer.serialize_iterable(item, length=2) for item in 
-                encoded_kv_tuples(serializer, o)), length=length),
-        ),
+            (serializer.serialize_iterable(item, length=2)
+             for item in encoded_kv_tuples(serializer, o)),
+            length=length), ),
     )
+
 
 def _distribute_multikey(o):
     expr_dict = OrderedDict()
@@ -67,36 +70,37 @@ def _distribute_multikey(o):
         cur_dict[multikey[-1]] = value
     return expr_dict
 
+
 def encode_multiindex_as_assoc(serializer, o, length):
     return serializer.encode(_distribute_multikey(o))
+
 
 def encode_multiindex_as_dataset(serializer, o, length):
     return serializer.serialize_function(
         serializer.serialize_symbol(b'Dataset'),
-            (
-                serializer.encode(_distribute_multikey(o)),
-            )
-    )
+        (serializer.encode(_distribute_multikey(o)), ))
+
 
 PANDAS_PROPERTIES = {
-    'pandas_series_head' : {'dataset', 'list', 'association'},
-    'pandas_dataframe_head' : {'dataset', 'association'},
-    'timeseries' : True,
+    'pandas_series_head': {'dataset', 'list', 'association'},
+    'pandas_dataframe_head': {'dataset', 'association'},
+    'timeseries': True,
 }
 
 ENCODERS = {
     'default': {
-        'dataset' : encode_as_dataset,
-        'list' : encode_as_list,
-        'association' : encode_as_association,
-        },
-    'datetimeindex' : encode_as_timeseries,
-    'multiindex' : {
-        'association' : encode_multiindex_as_assoc,
-        'list' : encode_multiindex_as_assoc,
-        'dataset' : encode_multiindex_as_dataset
-        },
+        'dataset': encode_as_dataset,
+        'list': encode_as_list,
+        'association': encode_as_association,
+    },
+    'datetimeindex': encode_as_timeseries,
+    'multiindex': {
+        'association': encode_multiindex_as_assoc,
+        'list': encode_multiindex_as_assoc,
+        'dataset': encode_multiindex_as_dataset
+    },
 }
+
 
 def get_series_encoder_from_index(index, use_ts, form):
     if use_ts and isinstance(index, pandas.DatetimeIndex):
@@ -109,17 +113,23 @@ def get_series_encoder_from_index(index, use_ts, form):
 
 INVALID_PROPERTY_MSG = 'Invalid property %s, expecting %s'
 
+
 def normalized_prop_timeseries(serializer):
     prop = serializer.get_property('timeseries', d=True)
     if not isinstance(prop, bool):
-        raise ValueError("Invalid value for property 'timeseries'. Expecting a boolean, got %s." % prop)
+        raise ValueError(
+            "Invalid value for property 'timeseries'. Expecting a boolean, got %s."
+            % prop)
     return prop
+
 
 def normalized_prop_pandas_series_head(serializer):
     """ Check property `pandas_series_head` only if specified (not None). """
     prop = serializer.get_property('pandas_series_head', d=None)
     if prop and prop not in PANDAS_PROPERTIES['pandas_series_head']:
-        raise ValueError("Invalid value for property 'pandas_series_head'. Expecting one of (%s), got %s." % (', '.join(PANDAS_PROPERTIES['pandas_series_head']), prop))
+        raise ValueError(
+            "Invalid value for property 'pandas_series_head'. Expecting one of (%s), got %s."
+            % (', '.join(PANDAS_PROPERTIES['pandas_series_head']), prop))
     return prop
 
 
@@ -130,27 +140,31 @@ def encode_panda_series(serializer, o):
     encoder = get_series_encoder_from_index(o.index, use_ts, form)
     return encoder(serializer, o, safe_pandas_length(o))
 
+
 def encode_dataframe_as_assoc(serializer, o, length):
     use_ts = normalized_prop_timeseries(serializer)
     return serializer.serialize_association(
-        ((
-            serializer.encode(k),
-            get_series_encoder_from_index(v.index, use_ts, 'association')(serializer, v, safe_pandas_length(v))
-        ) for k, v in o.items()),
+        ((serializer.encode(k),
+          get_series_encoder_from_index(v.index, use_ts, 'association')(
+              serializer, v, safe_pandas_length(v))) for k, v in o.items()),
         length=length)
+
 
 def encode_dataframe_as_dataset(serializer, o, length):
     return serializer.serialize_function(
         serializer.serialize_symbol(b'Dataset'),
-            (encode_dataframe_as_assoc(serializer, o, length),)
-        )
+        (encode_dataframe_as_assoc(serializer, o, length), ))
+
 
 @encoder.dispatch(pandas.DataFrame)
 def encoder_panda_dataframe(serializer, o):
     head = serializer.get_property('pandas_dataframe_head', d=None)
     if head is None or head == 'dataset':
-        return encode_dataframe_as_dataset(serializer, o, safe_pandas_length(o))
+        return encode_dataframe_as_dataset(serializer, o,
+                                           safe_pandas_length(o))
     elif head in PANDAS_PROPERTIES['pandas_dataframe_head']:
         return encode_dataframe_as_assoc(serializer, o, safe_pandas_length(o))
     else:
-        raise ValueError("Invalid value for property 'pandas_dataframe_head'. Expecting one of (%s), got %s." % (', '.join(PANDAS_PROPERTIES['pandas_dataframe_head']), prop))
+        raise ValueError(
+            "Invalid value for property 'pandas_dataframe_head'. Expecting one of (%s), got %s."
+            % (', '.join(PANDAS_PROPERTIES['pandas_dataframe_head']), prop))
