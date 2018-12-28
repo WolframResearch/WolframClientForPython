@@ -101,16 +101,16 @@ wolfram_encoder_updater = DispatchUpdater(wolfram_encoder)
 wolfram_encoder_updater.register_modules(
 
     #builtin libraries
-    sys='wolframclient.serializers.encoder.builtin.encoder',
-    decimal='wolframclient.serializers.encoder.decimal.encoder',
-    datetime='wolframclient.serializers.encoder.datetime.encoder',
-    fractions='wolframclient.serializers.encoder.fractions.encoder',
+    sys='wolframclient.serializers.encoders.builtin.encoder',
+    decimal='wolframclient.serializers.encoders.decimal.encoder',
+    datetime='wolframclient.serializers.encoders.datetime.encoder',
+    fractions='wolframclient.serializers.encoders.fractions.encoder',
 
     #wolfram language support
-    wolframclient='wolframclient.serializers.encoder.wolfram.encoder',
-    numpy='wolframclient.serializers.encoder.numpy.encoder',
-    pandas='wolframclient.serializers.encoder.pandas.encoder',
-    PIL='wolframclient.serializers.encoder.pil.encoder',
+    wolframclient='wolframclient.serializers.encoders.wolfram.encoder',
+    numpy='wolframclient.serializers.encoders.numpy.encoder',
+    pandas='wolframclient.serializers.encoders.pandas.encoder',
+    PIL='wolframclient.serializers.encoders.pil.encoder',
 )
 
 wolfram_encoder_updater.register_plugins()
