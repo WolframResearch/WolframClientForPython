@@ -9,10 +9,11 @@ from wolframclient.serializers.utils import py_encode_decimal, safe_len
 from wolframclient.serializers.wxfencoder.constants import (
     ARRAY_TYPES, WXF_CONSTANTS, WXF_HEADER_COMPRESS, WXF_HEADER_SEPARATOR,
     WXF_VERSION)
-from wolframclient.serializers.wxfencoder.streaming import ZipCompressedWriter
 from wolframclient.serializers.wxfencoder.utils import (
     float_to_bytes, integer_size, integer_to_bytes, numeric_array_to_wxf,
     varint_bytes, write_varint)
+from wolframclient.utils import six
+from wolframclient.utils.api import zlib
 from wolframclient.utils.encoding import force_bytes
 
 
@@ -37,24 +38,27 @@ class WXFSerializer(FormatSerializer):
         super(WXFSerializer, self).__init__(normalizer=normalizer, **opts)
         self.compress = compress
 
-    def dump(self, data, stream):
+    def generate_bytes(self, data):
 
-        stream.write(WXF_VERSION)
-
-        if self.compress:
-            stream.write(WXF_HEADER_COMPRESS)
-
-        stream.write(WXF_HEADER_SEPARATOR)
+        yield WXF_VERSION
 
         if self.compress:
-            with ZipCompressedWriter(stream) as zstream:
-                for payload in self.normalize(data):
-                    zstream.write(payload)
+            yield WXF_HEADER_COMPRESS
+
+        yield WXF_HEADER_SEPARATOR
+
+        if self.compress:
+            compressor = zlib.compressobj()
+            if six.PY2:
+                for payload in self.encode(data):
+                    yield compressor.compress(six.binary_type(payload))
+            else:
+                for payload in self.encode(data):
+                    yield compressor.compress(payload)
+            yield compressor.flush()
         else:
-            for payload in self.normalize(data):
-                stream.write(payload)
-
-        return stream
+            for payload in self.encode(data):
+                yield payload
 
     def serialize_symbol(self, name):
         yield WXF_CONSTANTS.Symbol
@@ -62,7 +66,6 @@ class WXFSerializer(FormatSerializer):
         yield force_bytes(name)
 
     def serialize_function(self, head, args, **opts):
-        #args is always a tuple
 
         iterable, length = get_length(args, **opts)
 
@@ -80,7 +83,7 @@ class WXFSerializer(FormatSerializer):
             #WXFExprInteger is raising a ValueError if the integer is not in the appropriate bounds.
             #that check needs to be done in case, it's better to do it only once.
 
-            number = force_bytes(number)
+            number = b'%i' % number
 
             yield WXF_CONSTANTS.BigInteger
             yield varint_bytes(len(number))

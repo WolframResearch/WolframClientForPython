@@ -7,6 +7,9 @@ import sys
 from wolframclient.language import wl
 from wolframclient.utils import six
 from wolframclient.utils.api import PIL, numpy
+from wolframclient.utils.dispatch import Dispatch
+
+encoder = Dispatch()
 """ Serialize a given :class:`PIL.Image` into a Wolfram Language image.
 
     This method first tries to extract the data and relevant information about the image,
@@ -52,31 +55,30 @@ def normalize_array(array):
     return array
 
 
-def update_dispatch(dispatch):
-    @dispatch.multi(PIL.Image)
-    def normalizer(self, img):
-        # some PIL mode are directly mapped to WL ones. Best case fast (de)serialization.
-        mode = img.mode
-        if mode in MODE_MAPPING:
+@encoder.dispatch(PIL.Image)
+def encode_image(serializer, img):
+    # some PIL mode are directly mapped to WL ones. Best case fast (de)serialization.
+    mode = img.mode
+    if mode in MODE_MAPPING:
 
-            wl_data_type, colorspace, interleaving = MODE_MAPPING[mode]
+        wl_data_type, colorspace, interleaving = MODE_MAPPING[mode]
 
-            return self.normalize(
-                wl.Image(
-                    normalize_array(numpy.array(img)),
-                    wl_data_type,
-                    ColorSpace=colorspace or wl.Automatic,
-                    Interleaving=interleaving))
-        else:
-            # try to use format and import/export, may fail during save() and raise exception.
-            stream = six.BytesIO()
-            img_format = img.format or "PNG"
-            try:
-                img.save(stream, format=img_format)
-            except KeyError:
-                raise NotImplementedError(
-                    'Format %s is not supported.' % img_format)
-            return self.serialize_function(
-                self.serialize_symbol(b'ImportByteArray'),
-                (self.serialize_bytes(stream.getvalue()),
-                 self.serialize_string(img_format)))
+        return serializer.encode(
+            wl.Image(
+                normalize_array(numpy.array(img)),
+                wl_data_type,
+                ColorSpace=colorspace or wl.Automatic,
+                Interleaving=interleaving))
+    else:
+        # try to use format and import/export, may fail during save() and raise exception.
+        stream = six.BytesIO()
+        img_format = img.format or "PNG"
+        try:
+            img.save(stream, format=img_format)
+        except KeyError:
+            raise NotImplementedError(
+                'Format %s is not supported.' % img_format)
+        return serializer.serialize_function(
+            serializer.serialize_symbol(b'ImportByteArray'),
+            (serializer.serialize_bytes(stream.getvalue()),
+             serializer.serialize_string(img_format)))

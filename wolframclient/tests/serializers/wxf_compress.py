@@ -11,14 +11,14 @@ from wolframclient.serializers.wxfencoder.streaming import (
 from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
-if six.PY3:
-
-    def _bytes(value):
-        return bytes((value, ))
-else:
+if six.PY2:
 
     def _bytes(value):
         return chr(value)
+else:
+
+    def _bytes(value):
+        return bytes((value, ))
 
 
 class TestCase(BaseTestCase):

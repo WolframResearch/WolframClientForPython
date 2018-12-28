@@ -2,97 +2,146 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from collections import defaultdict
-from itertools import product
+import inspect
 
-from wolframclient.utils.functional import force_tuple
+from wolframclient.utils.functional import flatten
 
-#code borrowed by Guido in person.
+#original idea by Guido in person.
 #https://www.artima.com/weblogs/viewpost.jsp?thread=101605
-
-UNDEFINED = object()
 
 
 class Dispatch(object):
+    """ A method dispatcher class allowing for multiple implementations of a function. Each implementation is associated to a given of input type.
+    
+    Imprementations are registered with the annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch`.
+
+    The Dispatch class is callable, it behaves as a function that uses the implementation corresponding to the input parameter.
+
+    When a type is a subtype, the type and its parents are checked in the order given by :data:`__mro__`. 
+        
+    Example: method :meth:`~wolframclient.utils.dispatch.Dispatch.resolve` applied to an instance of :class:`collections.OrderedDict`,
+    check for the first implementation to match with :class:`collections.OrderedDict`, then with :class:`dict`, and ultimately to :data:`object`.
+
+    Once the mapping is determined, it is cached for later use.
+    """
+
     def __init__(self):
-        self.dispatchmap = defaultdict(dict)
-        self.defaultmap = dict()
-        self.proxymap = dict()
+        self.clear()
 
-    def get_key(self, function):
-        return function.__name__
+    def dispatch(self, *args, **opts):
+        """ Annotate a function and map it to a given set of type(s).
+        
+        Declare an implementation to use on :data:`bytearray` input::
 
-    def get_proxy(self, function):
-        key = self.get_key(function)
-        try:
-            return self.proxymap[key]
-        except KeyError:
-            self.proxymap[key] = self.create_proxy(function)
-            return self.proxymap[key]
+            @dispatcher.dispatch(bytearray)
+            def my_func(...)
 
-    def create_proxy(self, function):
-        def inner(*args, **opts):
-            return self.resolve(function, *args)(*args, **opts)
+        The default implementation is associated with :data:`object`. Set a default::
 
-        return inner
+            @dispatcher.dispatch(object)
+            def my_default_func(...)
 
-    def multi(self, *types):
-        def register(function):
+        A tuple can be used as input to associate more than one type with a function. 
+        Declare a function used for both :data:`bytes` and :data:`bytearray`::
 
-            key = (self.get_key(function), len(types))
+            @dispatcher.dispatch((bytes, bytearray))
+            def my_func(...)
 
-            for expanded in product(*map(force_tuple, types)):
-                if expanded in self.dispatchmap[key]:
-                    raise TypeError("duplicate registration %s" % (expanded, ))
+        Implementation must be unique. Registering the same combinaison of types will raise an error.
+        """
 
-                self.dispatchmap[key][expanded] = function
-
-            return self.get_proxy(function)
+        def register(func):
+            return self.register(func, *args, **opts)
 
         return register
 
-    def default(self):
-        def register(function):
+    def update(self, dispatch, force=False):
+        """ Update current mapping with the one from `dispatch`.
+        
+        `dispatch` can be a Dispatch instance or a :class:`dict`. """
+        if isinstance(dispatch, Dispatch):
+            dispatchmapping = dispatch.dispatch_dict
+        elif isinstance(dispatch, dict):
+            dispatchmapping = dispatch
+        else:
+            raise ValueError('%s is not an instance of Dispatch' % dispatch)
+        for t, function in dispatchmapping.items():
+            self.register(function, t, force=force)
 
-            key = self.get_key(function)
+    def validate_types(self, types):
+        for t in frozenset(flatten(types)):
+            if not inspect.isclass(t):
+                raise ValueError('%s is not a class' % t)
+            yield t
 
-            if key in self.defaultmap:
-                raise TypeError("duplicate registration for default")
+    def register(self, function, types=object, force=False):
+        """ Equivalent to annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch` but as 
+        a function.
+        """
+        if not callable(function):
+            raise ValueError('Function %s is not callable' % function)
 
-            self.defaultmap[key] = function
+        self.clear_cache()
 
-            return self.get_proxy(function)
+        for t in self.validate_types(types):
+            if not force and t in self.dispatch_dict:
+                raise TypeError(
+                    "Duplicated registration for input type(s): %s" % (t, ))
+            else:
+                self.dispatch_dict[t] = function
 
-        return register
-
-    def resolve(self, source, *args):
-
-        key = (self.get_key(source), len(args))
-        types = tuple(arg.__class__ for arg in args)
-
-        function = self.dispatchmap[key].get(types, UNDEFINED)
-
-        if function is UNDEFINED:
-            #populating cache
-            for targets, function in self.dispatchmap[key].items():
-                if len(targets) == len(types):
-                    if all(issubclass(a, b) for a, b in zip(types, targets)):
-                        self.dispatchmap[key][types] = function
-                        return function
-
-            default = self.defaultmap.get(self.get_key(source), UNDEFINED)
-
-            if default is not UNDEFINED:
-                self.dispatchmap[key][types] = default
-
-                return default
-            raise TypeError("no match")
         return function
 
+    def unregister(self, types=object):
+        """ Remove implementations associated with types. """
 
-class ClassDispatch(Dispatch):
-    def create_proxy(self, function):
-        def inner(obj, *args, **opts):
-            return self.resolve(function, *args)(obj, *args, **opts)
+        self.clear_cache()
 
-        return inner
+        for t in self.validate_types(types):
+            try:
+                del self.dispatch_dict[t]
+            except KeyError:
+                pass
+
+    def clear(self):
+        """ Reset the dispatcher to its initial state. """
+        self.dispatch_dict = dict()
+        self.dispatch_dict_cache = dict()
+
+    def clear_cache(self):
+        if self.dispatch_dict_cache:
+            self.dispatch_dict_cache = dict()
+
+    def resolve(self, arg):
+        """ Return the implementation better matching the type the argument type. """
+        for t in arg.__class__.__mro__:
+            try:
+                return self.dispatch_dict_cache[t]
+            except KeyError:
+                impl = self.dispatch_dict.get(t, None)
+                if impl:
+                    self.dispatch_dict_cache[t] = impl
+                    return impl
+
+        return self.default_function
+
+    def default_function(self, *args, **opts):
+        """ Ultimately called when no type was found. """
+        raise ValueError('Unable to handle args')
+
+    def __call__(self, arg, *args, **opts):
+        return self.resolve(arg)(arg, *args, **opts)
+
+    def as_method(self):
+        """ Return the dispatch as a class method. 
+        
+        If :data:`myMethod` is the function dispatched on input :data:`arg`, it enables:: 
+            
+            self.myMethod(arg, *args, **kwargs)
+
+        """
+
+        def method(instance, arg, *args, **opts):
+            return self.resolve(arg)(instance, arg, *args, **opts)
+
+        return method

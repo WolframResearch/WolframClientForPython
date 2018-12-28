@@ -3,6 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.utils import six
+from wolframclient.utils.functional import map
 
 
 def force_text(s, encoding='utf-8', errors='strict'):
@@ -13,9 +14,9 @@ def force_text(s, encoding='utf-8', errors='strict'):
     If strings_only is True, don't convert (some) non-string-like objects.
     """
     # Handle the common case first for performance reasons.
-    if issubclass(type(s), six.text_type):
+    if isinstance(s, six.text_type):
         return s
-    if not issubclass(type(s), six.string_types):
+    if not isinstance(s, six.string_types):
         if six.PY3:
             if isinstance(s, bytes):
                 s = six.text_type(s, encoding, errors)
@@ -39,10 +40,7 @@ def force_bytes(s, encoding='utf-8', errors='strict'):
     """
     # Handle the common case first for performance reasons.
     if isinstance(s, bytes):
-        if encoding == 'utf-8':
-            return s
-        else:
-            return s.decode('utf-8', errors).encode(encoding, errors)
+        return s
 
     if isinstance(s, six.buffer_types):
         return bytes(s)
@@ -70,3 +68,18 @@ def safe_force_text(obj):
         return force_text(obj, errors='ignore')
     except Exception as e:
         return '<unprintable obj: %s>' % e
+
+
+#this function is supposed to be the most efficient byte concatenation that can be archived in python
+#used by the serializers
+
+#join seems to be the winner
+#https://gist.github.com/smcl/7462529818bb77baad32727a9e5ff44c
+#https://blog.mclemon.io/python-efficient-string-concatenation-in-python-2016-edition
+
+if six.PY2:
+
+    def concatenate_bytes(iterable):
+        return b''.join(map(six.binary_type, iterable))
+else:
+    concatenate_bytes = b''.join
