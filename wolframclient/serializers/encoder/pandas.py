@@ -6,6 +6,7 @@ from wolframclient.utils.dispatch import Dispatch
 from wolframclient.serializers.base import FormatSerializer
 from wolframclient.language import wl
 from wolframclient.utils import six 
+from collections import OrderedDict
 
 from itertools import starmap
 
@@ -56,12 +57,12 @@ def encode_as_timeseries(serializer, o, length):
     )
 
 def _distribute_multikey(o):
-    expr_dict = {}
+    expr_dict = OrderedDict()
     for multikey, value in o.iteritems():
         cur_dict = expr_dict
         for key in multikey[:-1]:
             if key not in cur_dict:
-                cur_dict[key] = {}
+                cur_dict[key] = OrderedDict()
             cur_dict = cur_dict[key]
         cur_dict[multikey[-1]] = value
     return expr_dict
