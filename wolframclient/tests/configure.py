@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import json
 import logging
-
+from wolframclient.utils import six
 from wolframclient.logger.utils import setup_logging_to_file
 from wolframclient.utils.api import os
 
@@ -85,14 +85,14 @@ server = None
 kernel_path = None
 
 _json_config_path = os.environ.get('WOLFRAMCLIENT_PY_JSON_CONFIG', None)
-if _json_config_path is not None:
+if six.PY_35 and _json_config_path is not None:
     expended_path = os.expanduser(os.expandvars(_json_config_path))
     try:
         with open(expended_path, 'r') as fp:
             json_config = json.load(fp)
             secured_authentication_key, user_configuration, server, kernel_path = _parse_config(
                 json_config)
-    except:
+    except IOError:
         raise ValueError(
             'Failed to find json configuration file %s' % _json_config_path)
 
