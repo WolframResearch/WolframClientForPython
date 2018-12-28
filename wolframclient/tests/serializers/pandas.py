@@ -2,18 +2,15 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-try:
-    import pandas
-    import numpy
-    pandas_available = True
-except:
-    pandas_available = False
+import pandas
+import numpy
 
 import unittest
+from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
 from wolframclient.serializers import export
 
-@unittest.skipIf(not pandas_available, 'Pandas is not available.')
+@unittest.skipIf(six.PY2, "skipped on Python2. Dict ordering is not preserved.")
 class PandasTestCase(BaseTestCase):
     def export_compare(self, o, wl=None, wxf=None, **kwargs):
         if wl:
@@ -23,7 +20,6 @@ class PandasTestCase(BaseTestCase):
             res = export(o, target_format='wxf', **kwargs)
             self.assertEqual(res, wxf)
 
-@unittest.skipIf(not pandas_available, 'Pandas is not available.')
 class PandasSeriesTestCase(PandasTestCase):
     def create_numpy_data_nan(self):
         # nan-based
@@ -200,7 +196,6 @@ class PandasSeriesTestCase(PandasTestCase):
             wxf=b'8:f\x01s\x07DatasetA\x02-S\x01bA\x02-S\x01xA\x02-r\x00\x00\x00\x00\x00\x00\x00\x00C\x00-s\rIndeterminateC\x01-S\x01yA\x02-r\x00\x00\x00\x00\x00\x00\x00\x00C\x02-s\rIndeterminateC\x03-S\x01aA\x02-S\x01xA\x02-r\x00\x00\x00\x00\x00\x00\x00\x00C\x04-s\rIndeterminateC\x05-S\x01yA\x02-r\x00\x00\x00\x00\x00\x00\x00\x00C\x06-s\rIndeterminateC\x07'
         )
 
-@unittest.skipIf(not pandas_available, 'Pandas is not available.')
 class PandasDataFrameTestCase(PandasTestCase):
     def dataframe_from_dict(self):
         return pandas.DataFrame.from_dict({'a':{'x':1}, 'b':{'x':[-1]}})
