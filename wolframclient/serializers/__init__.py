@@ -19,15 +19,17 @@ available_formats = API(
 def export(data, stream=None, target_format=DEFAULT_FORMAT, **options):
     """Serialize input `data` to a target format.
 
-    Input `data` can be one of the native Python types supported directly including:
-    :class:`list`, :class:`dict`, etc. Or, a serializable python object, i.e extending
-    :class:`~wolframclient.serializers.serializable.WLSerializable`.
-    The default format is string *InputForm*::
+    Input `data` can be any supported Python types including: :class:`list`, :class:`dict`, etc, or, a serializable python object. 
+    
+    Serializable python objects are class extending :class:`~wolframclient.serializers.serializable.WLSerializable`, and types mapped to
+    an encoder.
+
+    The default format is *InputForm* string::
 
         >>> export(wl.Range(3))
         b'Range[3]'
 
-    Specify the target format to be WXF::
+    Specify WXF format by setting `target_format`::
 
         >>> export([1,2,3], target_format='wxf')
         b'8:f\x03s\x04ListC\x01C\x02C\x03'
