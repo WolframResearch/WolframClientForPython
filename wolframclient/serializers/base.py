@@ -7,7 +7,7 @@ import inspect
 import re
 from itertools import chain
 
-from wolframclient.serializers.encoder import Encoder
+from wolframclient.serializers.encoders import Encoder
 from wolframclient.serializers.wxfencoder.constants import (
     WXF_HEADER_SEPARATOR, WXF_VERSION)
 from wolframclient.serializers.wxfencoder.utils import numeric_array_to_wxf

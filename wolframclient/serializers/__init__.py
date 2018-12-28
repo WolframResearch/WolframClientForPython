@@ -3,7 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.serializers.serializable import WLSerializable
-from wolframclient.serializers.encoder import wolfram_encoder
+from wolframclient.serializers.encoders import wolfram_encoder
 from wolframclient.utils.importutils import API
 
 __all__ = ['export', 'WLSerializable', 'wolfram_encoder']
