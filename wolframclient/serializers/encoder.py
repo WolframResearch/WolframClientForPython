@@ -23,8 +23,6 @@ __all__ = ['wolfram_encoder', 'Encoder']
 wolfram_encoder = Dispatch()
 """ Instance of :class:`~wolframclient.utils.dispatch.Dispatch` used by default during serialization. """
 
-
-# for now, this method name is fixed and must match the one in the wolfram_encoder wrapper.
 @wolfram_encoder.dispatch(object)
 def encode(serializer, o):
     if is_iterable(o):
