@@ -36,8 +36,7 @@ Specify a context and a subcontext::
 System = wl.System
 """A factory of :class:`~wolframclient.language.expression.WLSymbol` instances having ``System``` context.
 
-See :class:`~wolframclient.language.expression.WLSymbolFactory` and
-:class:`~wolframclient.language.expression.WLSymbolFactory` for more details.
+See :class:`~wolframclient.language.expression.WLSymbolFactory` for more details.
 
 Represent a symbol in the System context::
 
