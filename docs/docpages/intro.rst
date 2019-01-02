@@ -35,7 +35,7 @@ Represent the Wolfram Language symbol :wl:`Now`::
     >>> wl.Now
     Now
 
-More functions are represented in a similar fashion::
+Functions are represented in a similar fashion::
 
     >>> wl.Select(wl.PrimeQ, wl.Range(5))
     Select[PrimeQ, Range[5]]
@@ -44,6 +44,24 @@ Option are defined using named parameters. :wl:`ArrayPad` accepts option :wl:`Pa
 
     >>> wl.ArrayPad([[0]], 1, Padding=1)
     ArrayPad[[[0]], 1, Rule[Padding, 1]]
+
+The function :func:`~wolframclient.language.wlexpr` conveniently represents expressions with input form strings. Import the function::
+
+    >>> from wolframclient.language import wlexpr
+
+Represent a Wolfram Language pure function::
+
+    >>> wlexpr('#^2 &')
+    (#^2 &)
+
+Combine both expression representations, :func:`~wolframclient.language.wlexpr` and :data:`~wolframclient.language.wl` and represent a complex expression::
+
+    >>> wl.Map(wlexpr('#^2&'), [1,2,3])
+    Map[(#^2&), [1, 2, 3]]
+
+.. code-block :: wl
+
+    Map[#^2 &, {1,2,3}]
 
 .. note :: 
     for more details about the Python representation of Wolfram Language expressions, refer to :ref:`the advanced usage section<adv-expression-representation>`.
@@ -109,7 +127,7 @@ Call the Wolfram Language function :wl:`MinMax` on a Python :class:`list`::
 Query `WolframAlpha <https://www.wolframalpha.com/>`_ for the distance between the Earth and the Sun using the function :wl:`WolframAlpha`::
 
     >>> distance = session.evaluate(wl.WolframAlpha("Earth distance from Sun", "Result"))
-    distance = Quantity[1.008045994315923, AstronomicalUnit]
+    Quantity[1.008045994315923, AstronomicalUnit]
 
 .. code-block :: wl
 
@@ -157,14 +175,21 @@ Wolfram Language options are passed as Python named arguments (a.k.a. `**kwargs`
 InputForm String Evaluate
 +++++++++++++++++++++++++
 
-It is sometimes simpler to input Wolfram Language code as :wl:`InputForm` strings, and let the kernel apply :wl:`ToExpression` to it. Compute the squares of an array of integers::
+It is sometimes simpler to input Wolfram Language code as :wl:`InputForm` strings. 
 
-    >>> session.evaluate('Map[#^2 &, Range[5]]')
-    [1, 4, 9, 16, 25]
-
-The library provides a function :func:`~wolframclient.language.wlexpr` to help mix :wl:`InputForm` strings and objects. This is particularly useful to define pure functions. Evaluate an alternative representation of the previous expression::
+First import :func:`~wolframclient.language.wlexpr`::
 
     >>> from wolframclient.language import wlexpr
+
+Compute the squares of an array of integers::
+
+    >>> session.evaluate(wlexpr('Map[#^2 &, Range[5]]'))
+    [1, 4, 9, 16, 25]
+
+The function :func:`~wolframclient.language.wlexpr` is particularly useful for defining pure functions, which can be combined with :data:`~wolframclient.language.wl`.
+
+Evaluate an alternative representation of the previous expression::
+
     >>> session.evaluate(wl.Map(wlexpr('#^2&'), wl.Range(5)))
 
 Persistence
@@ -180,7 +205,7 @@ Expressions evaluated in a given session are persistent. Define a function, and 
 Create Python Function
 ++++++++++++++++++++++
 
-From a Wolfram Language expression, it is possible to create a Python function that directly evaluates when called using :func:`~wolframclient.evaluation.WolframLanguageSession.function`::
+From a Wolfram Language expression, it is possible to create a Python function that directly evaluates when called using :meth:`~wolframclient.evaluation.base.WolframEvaluator.function`::
 
     >>> str_reverse = session.function('StringReverse')
     >>> str_reverse('abc')
@@ -306,7 +331,7 @@ First import the :ref:`expression factory<ref-expressions>`::
 
     >>> from wolframclient.language import wl
 
-Using an authenticated session, call a function::
+Using an authenticated session, evaluate Wolfram Language expressions::
 
     >>> session.evaluate(wl.Range(3))
     '{1, 2, 3}'
@@ -314,21 +339,16 @@ Using an authenticated session, call a function::
     >>> session.evaluate(wl.StringReverse('abc'))
     '"cba"'
 
-Complex expressions are evaluated with the :meth:`~wolframclient.evaluation.WolframCloudSession.evaluate` method. Return the first five `wl`:Prime` numbers::
-
-    >>> session.evaluate('Map[Prime, Range[5]]')
-    '{2, 3, 5, 7, 11}'
-
 Even if the authenticated session is a persistent object, each evaluation occurs independently, similarly to :wl:`CloudEvaluate`. This means that this is not the appropriate tool to work with variables and functions.
 
 Define a function `f`::
 
-    >>> result = session.evaluate('f[x_]:=x+1')
+    >>> result = session.evaluate(wlexpr('f[x_]:=x+1'))
     'Null'
 
 Apply `f` to `1`. However, `f` is no longer defined, thus returning an unevaluated result::
 
-    >>> result = session.evaluate('f[1]')
+    >>> result = session.evaluate(wlexpr('f[1]'))
     'f[1]'
 
 Cloud Functions
@@ -336,7 +356,7 @@ Cloud Functions
 
 From an :ref:`authenticated session<ref-auth>`, it is possible to build a cloud function to later use it with various parameters. Create a cloud function::
 
-    >>> wl_str_reverse = session.function('StringReverse')
+    >>> wl_str_reverse = session.function(wl.StringReverse)
 
 Apply it to a first string::
 
@@ -350,12 +370,12 @@ Use the function again with a new argument::
 
 Functions may accept more than one input parameter. Define a cloud function that applies :wl:`Join` on all arguments it is given. Join multiple Python arrays::
 
-    >>> wl_join = session.function('Join[##] &')
+    >>> wl_join = session.function(wlexpr('Join[##] &'))
     >>> wl_join([0,1], ["a", "b"], [2, "c"])
     '{0, 1, "a", "b", 2, "c"}'
 
 API
----------------
+----
 
 .. _ref-deployAPI:
 
@@ -458,9 +478,17 @@ Deploy an API that takes an image and returns its :wl:`ImageDimensions` as a JSO
         CloudObject["api/private/imagedimensions"]
     ]
 
-Create a :class:`~wolframclient.evaluation.WolframAPICall` targeting the new API::
+Specify the API as a :class:`tuple`::
 
-    >>> api_call = WolframAPICall(session, ('MyWolframID', 'api/private/imagedimensions'))
+    >>> api = ('MyWolframID', 'api/private/imagedimensions')
+
+Create a :class:`~wolframclient.evaluation.WolframAPICall` targeting the API::
+
+    >>> api_call = WolframAPICall(session, api)
+
+Alternativelly, it is possible to create a :class:`~wolframclient.evaluation.WolframAPICall` directly from a session::
+
+    >>> api_call =  session.wolfram_api_call(api)
 
 Add a new file parameter. File parameters have a name, and their values must be an opened file object as returned by :func:`open`. Call the API using an image stored in `/path/to/example/image.png`::
 
@@ -471,7 +499,7 @@ Add a new file parameter. File parameters have a name, and their values must be 
     WolframAPICall<api=('dorianb', 'api/private/imagedimensions')>
 
 .. note ::
-    it is important to make the call while the file object is opened, i.e. inside the `with` statement.
+    the API call must be performed while the file object is opened, i.e. inside the `with` statement.
 
 Parse the JSON API response::
 
@@ -526,15 +554,15 @@ The :wl:`WXF` format is also supported. It is a binary format, thus not always h
     >>> export(wl.Select(wl.PrimeQ, [1,2,3]), target_format='wxf')
     b'8:f\x02s\x06Selects\x06PrimeQf\x03s\x04ListC\x01C\x02C\x03'
 
-If a string is provided as second argument, the serialized output is directly written to the file.
+If the `sream` parameter is set to a string path, the serialized output is directly written to the file.
 
-Represent a Wolfram Language :wl:`ListPlot` of the first 25 :wl:`Prime` numbers::
+First, represent a Wolfram Language :wl:`ListPlot` of the first 25 :wl:`Prime` numbers::
 
     wl_expr = wl.ListPlot(wl.Prime(wl.Range(25)))
 
 Serialize it to :wl:`WXF` and print the resulting bytes to the file `/path/to/file.wxf`::
 
-    >>> export(wl_expr, '/path/to/file.wxf', target_format='wxf')
+    >>> export(wl_expr, stream='/path/to/file.wxf', target_format='wxf')
     '/path/to/file.wxf'
 
 Using the Wolfram Desktop, import the file:
@@ -553,7 +581,7 @@ Deserialize
 -----------
 
 The library can parse :wl:`WXF` binary inputs and return Python objects from it.
-The function :func:`~wolframclient.deserializers.binary_deserialize` can deserialize any :wl:`WXF` input into standard Python objects and, eventually, `NumPy <http://www.numpy.org/>`_ arrays. Note that the `NumPy <http://www.numpy.org/>`_ library is not mandatory so long as no numeric array is encountered.
+The function :func:`~wolframclient.deserializers.binary_deserialize` can deserialize any :wl:`WXF` input into standard Python objects and, eventually, `NumPy <http://www.numpy.org/>`_ arrays.
 
 Export a Python list of integers to :wl:`WXF`::
 
@@ -580,7 +608,7 @@ Import it as a Python object::
     >>> with open('/path/to/file.wxf', 'rb') as fp:
     ...     binary_deserialize(fp)
     ...
-    {'key1': 1, 'key2': 2}
+    {'name': 'Alice', 'age': 37}
 
 .. note ::
     make sure to :func:`open` WXF files in binary mode **'b'** to avoid encoding issues.
