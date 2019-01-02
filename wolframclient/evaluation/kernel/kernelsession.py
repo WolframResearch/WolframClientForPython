@@ -97,8 +97,8 @@ class WolframLanguageSession(WolframEvaluator):
 
     Communication with a given kernel is based on ZMQ sockets:
 
-    * one `PUSH` socket to receive expressions for evaluation
-    * one `PULL` socket to read evaluation results
+    * one `PUSH` socket to send expressions for evaluation
+    * one `PULL` socket to receive evaluation results
 
     Kernel logging is disabled by default and is done through a third socket
     (type `SUB`). The initial log level is specified by the parameter `kernel_loglevel`.
