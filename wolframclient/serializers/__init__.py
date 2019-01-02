@@ -54,7 +54,7 @@ def export(data, stream=None, target_format=DEFAULT_FORMAT, **options):
     Any object that implements a `write` method, e.g. :data:`file`, :class:`io.BytesIO`, or :class:`io.StringIO` is a valid value for the `stream` named parameter::
 
         >>> with open('file.wl', 'wb') as f:
-        ...     export([1, 2, 3], f)
+        ...     export([1, 2, 3], stream=f)
         ...
         <open file 'file.wl', mode 'wb' at 0x10a4f01e0>
 
