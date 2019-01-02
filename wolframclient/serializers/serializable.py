@@ -6,12 +6,13 @@ __all__ = ['WLSerializable']
 
 
 class WLSerializable:
-    """A familly of classes that can be serialized using :func:`~wolframclient.serializers.export`.
+    """A class that can be serialized using :func:`~wolframclient.serializers.export`.
 
     Custom serialization of a class is done by subclassing this class::
 
         from wolframclient.serializers.serializable import WLSerializable
         from wolframclient.language import wl
+        from wolframclient.serializers import export
 
         class MyPythonClass(WLSerializable):
             def __init__(self, *arguments):
@@ -20,7 +21,12 @@ class WLSerializable:
             def to_wl(self):
                 return wl.MyWolframFunction(*self.arguments)
 
-    :func:`~wolframclient.serializers.export` is able to serialize expressions recursively::
+    Serialize :data:`MyPythonClass` using export::
+
+        >>> export(MyPythonClass('foo', 'bar'))
+        b'MyWolframFunction["foo", "bar"]'
+
+    Serialization is applied recursively, arguments are also serialized::
 
         >>> export(MyPythonClass(1, 2, MyPythonClass(2, 3)))
         'MyWolframFunction[1, 2, MyWolframFunction[2, 3]]'
@@ -28,6 +34,9 @@ class WLSerializable:
     """
 
     def to_wl(self):
-        """Return a serialization of a given python class as a combinasion of WL serializable objects."""
+        """ Return the serialized form of a given python class.
+        
+        The returned value must be a combinasion of serializable types.
+        """
         raise NotImplementedError(
             'class %s must implement a to_wl method' % self.__class__.__name__)
