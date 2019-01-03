@@ -54,7 +54,7 @@ wolfram_encoder.__doc__ = """
         >>> export(MyPythonClass(1,2))
         b'MyWolframFunction[1, 2]'
 
-    Alternativelly, apply :meth:`~wolframclient.utils.dispatch.Dispatch.register` to a function and its associated type(s) achieves the 
+    Alternatively, apply :meth:`~wolframclient.utils.dispatch.Dispatch.register` to a function and its associated type(s) achieves the 
     same result.
 
     It is not possible to associate two encoders with the same type, but it's possible to remove a mapping. First, unregister the previous encoder::
@@ -91,7 +91,7 @@ wolfram_encoder.__doc__ = """
 
 
     The library supports an entry point dedicated to new encoders: `wolframclient_serializers_encoder`. The library use this entry point to
-    loads plugins at runtime, as separed libraries.
+    loads plugins at runtime, as separated libraries.
     For more information about entry points, refer to the documentation page: https://packaging.python.org/specifications/entry-points/
 
     The plugin name must be unique and the value must reference a dispatcher instance. This instance is loaded and used to update 
