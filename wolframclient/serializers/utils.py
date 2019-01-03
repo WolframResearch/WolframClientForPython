@@ -33,9 +33,8 @@ def py_encode_text(s):
     yield b'"'
 
 
-def py_encode_decimal(number):
-    return '{0:f}``{1:d}'.format(number,
-                                 decimal.getcontext().prec).encode('utf-8')
+def py_encode_decimal(number, prec = decimal.getcontext().prec):
+    return '{0:f}``{1:d}'.format(number, prec).encode('utf-8')
 
 
 def safe_len(obj):

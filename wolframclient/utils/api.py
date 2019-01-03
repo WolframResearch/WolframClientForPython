@@ -109,13 +109,21 @@ numpy = API(
     uint16='numpy.uint16',
     uint32='numpy.uint32',
     uint64='numpy.uint64',
+    float16='numpy.float16',
     float32='numpy.float32',
     float64='numpy.float64',
+    float128='numpy.float128',
     complex64='numpy.complex64',
     complex128='numpy.complex128',
+    nan='numpy.nan',
     dtype='numpy.dtype',
     frombuffer='numpy.frombuffer',
-    reshape='numpy.reshape')
+    reshape='numpy.reshape',
+    integer='numpy.integer',
+    floating='numpy.floating',
+    complexfloating='numpy.complexfloating',
+    frexp='numpy.frexp',
+)
 
 multiprocessing = API(Lock='multiprocessing.Lock')
 
@@ -126,3 +134,13 @@ PIL = API(
 )
 
 base64 = API(b64encode='base64.b64encode')
+
+pandas = API(
+    Series='pandas.Series',
+    DataFrame='pandas.DataFrame',
+    DatetimeIndex='pandas.DatetimeIndex',
+    TimedeltaIndex='pandas.TimedeltaIndex',
+    MultiIndex='pandas.MultiIndex',
+    SparseSeries='pandas.SparseSeries',
+    bdate_range='pandas.bdate_range',
+)

@@ -6,7 +6,6 @@ from itertools import chain
 
 from wolframclient.serializers.base import FormatSerializer
 from wolframclient.serializers.utils import py_encode_decimal, py_encode_text
-from wolframclient.utils.api import base64
 from wolframclient.utils.encoding import force_bytes
 
 
@@ -27,12 +26,10 @@ class WLSerializer(FormatSerializer):
         super(WLSerializer, self).__init__(normalizer=normalizer, **opts)
         self.indent = indent
 
-    def dump(self, data, stream):
-        for payload in self.normalize(data):
-            stream.write(payload)
-        return stream
+    def generate_bytes(self, data):
+        return self.encode(data)
 
-    def serialize_function(self, head, args):
+    def serialize_function(self, head, args, **opts):
         return chain(head, yield_with_separators(args, first=b'[', last=b']'))
 
     def serialize_symbol(self, name):
@@ -41,19 +38,14 @@ class WLSerializer(FormatSerializer):
     def serialize_string(self, string):
         return py_encode_text(string)
 
-    def serialize_bytes(self, bytes):
-        return self.serialize_function(
-            self.serialize_symbol(b'ByteArray'),
-            ((b'"', base64.b64encode(bytes), b'"'), ))
-
     def serialize_decimal(self, number):
         yield py_encode_decimal(number)
 
     def serialize_float(self, number):
-        yield force_bytes(number)
+        yield (b'%.13f' % number).rstrip(b'0')
 
     def serialize_int(self, number):
-        yield force_bytes(number)
+        yield b'%i' % number
 
     def serialize_rule(self, lhs, rhs):
         return yield_with_separators((lhs, rhs), separator=b' -> ')
