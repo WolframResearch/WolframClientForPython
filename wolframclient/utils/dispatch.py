@@ -13,7 +13,7 @@ from wolframclient.utils.functional import flatten
 class Dispatch(object):
     """ A method dispatcher class allowing for multiple implementations of a function. Each implementation is associated to a specific input type.
     
-    Imprementations are registered with the annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch`.
+    Implementations are registered with the annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch`.
 
     The Dispatch class is callable, it behaves as a function that uses the implementation corresponding to the input parameter.
 
@@ -47,7 +47,7 @@ class Dispatch(object):
             @dispatcher.dispatch((bytes, bytearray))
             def my_func(...)
 
-        Implementation must be unique. Registering the same combinaison of types will raise an error, 
+        Implementation must be unique. Registering the same combination of types will raise an error, 
         except if `force` is set to :data:`True`, in which case the mapping is updated.
         """
 

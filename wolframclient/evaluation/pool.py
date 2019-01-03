@@ -173,7 +173,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
                     e2)
 
         if kernel_started:
-            # shedule the infinite evaluation loop
+            # schedule the infinite evaluation loop
             task = asyncio.create_task(self._kernel_loop(kernel))
             if logger.isEnabledFor(logging.INFO):
                 logger.info('New kernel started in pool: %s.', kernel)
@@ -210,8 +210,6 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
 
     async def stop(self):
         self.stopped = True
-        #  todo cancel with self.event_abort.set() ???
-
         # make sure all init tasks are finished.
         if len(self._pending_init_tasks) > 0:
             for task in self._pending_init_tasks:
@@ -275,7 +273,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         return await asyncio.gather(*tasks)
 
     def __repr__(self):
-        return 'WolframEvaluatorPool<%i/%i started evaluators, cummulating %i evaluations>' % (
+        return 'WolframEvaluatorPool<%i/%i started evaluators, cumulating %i evaluations>' % (
             len(self._started_tasks), self.requestedsize, self.eval_count)
 
     def __len__(self):

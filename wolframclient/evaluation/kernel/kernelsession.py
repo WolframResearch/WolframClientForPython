@@ -284,7 +284,7 @@ class WolframLanguageSession(WolframEvaluator):
                             % self.get_parameter('TERMINATE_READ_TIMEOUT'))
                         error = True
                 # Kill process if not already terminated.
-                # Wait for it to cleanly stop if the Quit command was succesfully sent,
+                # Wait for it to cleanly stop if the Quit command was successfully sent,
                 # otherwise the kernel is likely in a bad state so we kill it immediately.
             if self._stdin == PIPE:
                 try:

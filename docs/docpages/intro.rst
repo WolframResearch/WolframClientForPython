@@ -246,7 +246,7 @@ Session management
 
 It is highly recommended to initialize a session once and for all to mitigate the initialization cost.
 
-Delegate the handling of the lifecycle of a session using a `with` block::
+Delegate the handling of the life-cycle of a session using a `with` block::
 
     >>> with WolframLanguageSession('/path/to/kernel-executable') as wl_session:
     ...     wl_session.StringReverse('abc')
@@ -268,7 +268,7 @@ Manually terminate the session::
     >>> session.terminate()
 
 .. note::
-    nonterminated sessions usually result in orphan kernel processes, which ultimately lead to the inability to spawn any usable instance at all. Typically, this ends up with a WolframKernelException raised after a failure to communicate with the kernel.
+    non-terminated sessions usually result in orphan kernel processes, which ultimately lead to the inability to spawn any usable instance at all. Typically, this ends up with a WolframKernelException raised after a failure to communicate with the kernel.
 
 .. note :: 
     for in-depth explanations and use cases of local evaluation, refer to :ref:`the advanced usage section<adv-local-evaluation>`.
@@ -486,7 +486,7 @@ Create a :class:`~wolframclient.evaluation.WolframAPICall` targeting the API::
 
     >>> api_call = WolframAPICall(session, api)
 
-Alternativelly, it is possible to create a :class:`~wolframclient.evaluation.WolframAPICall` directly from a session::
+Alternatively, it is possible to create a :class:`~wolframclient.evaluation.WolframAPICall` directly from a session::
 
     >>> api_call =  session.wolfram_api_call(api)
 
@@ -554,7 +554,7 @@ The :wl:`WXF` format is also supported. It is a binary format, thus not always h
     >>> export(wl.Select(wl.PrimeQ, [1,2,3]), target_format='wxf')
     b'8:f\x02s\x06Selects\x06PrimeQf\x03s\x04ListC\x01C\x02C\x03'
 
-If the `sream` parameter is set to a string path, the serialized output is directly written to the file.
+If the `stream` parameter is set to a string path, the serialized output is directly written to the file.
 
 First, represent a Wolfram Language :wl:`ListPlot` of the first 25 :wl:`Prime` numbers::
 

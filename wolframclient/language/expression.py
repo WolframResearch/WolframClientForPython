@@ -99,8 +99,8 @@ class WLFunction(WLExpressionMeta):
 class WLSymbolFactory(WLSymbol):
     """Provide a convenient way to build objects representing arbitrary Wolfram Language expressions through the use of attributes.
 
-    This class is conveniently instanciated at startup as: :class:`~wolframclient.language.wl`, :class:`~wolframclient.language.Global` 
-    and :class:`~wolframclient.language.System`. It should be instanciated only to represent many symbols belonging to the same specific
+    This class is conveniently instantiated at startup as: :class:`~wolframclient.language.wl`, :class:`~wolframclient.language.Global` 
+    and :class:`~wolframclient.language.System`. It should be instantiated only to represent many symbols belonging to the same specific
     context.
 
     Example::
