@@ -22,6 +22,30 @@ def echo(x):
     return x
 
 
+def timed_repeated(N=30):
+    def repeated(function):
+        def inner(*args, **opts):
+            return repeated_timing(function, *args, N=N, **opts)
+
+        return inner
+
+    return repeated
+
+
+def repeated_timing(function, *args, **opts):
+    N = opts.pop('N', 30)
+    timed_func = timed(function)
+    timers = []
+    for _ in range(N):
+        timer, res = timed_func(*args, **opts)
+        timers.append(timer)
+    timers = sorted(timers)
+    min = int(.1 * N)
+    max = int(.9 * N)
+    trimmed_timers = timers[min:max]
+    return sum(trimmed_timers) / len(trimmed_timers), res
+
+
 def print_elapsed_time(viewfunc):
     @wraps(viewfunc)
     def inner(*args, **kw):

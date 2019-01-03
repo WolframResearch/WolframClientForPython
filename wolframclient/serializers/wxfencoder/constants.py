@@ -10,14 +10,14 @@ from wolframclient.utils.datastructures import Settings
 if six.JYTHON:
     pass
 
-if six.PY3:
-
-    def _bytes(value):
-        return bytes((value, ))
-else:
+if six.PY2:
 
     def _bytes(value):
         return chr(value)
+else:
+
+    def _bytes(value):
+        return bytes((value, ))
 
 
 WXF_VERSION = b'8'

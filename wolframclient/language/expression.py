@@ -89,9 +89,8 @@ class WLFunction(WLExpressionMeta):
     def __repr__(self):
         if len(self) > 4:
             return '%s[%s, << %i >>, %s]' % (repr(self.head), ', '.join(
-                repr(x)
-                 for x in self.args[:2]), len(self) - 4, ', '.join(
-                     repr(x) for x in self.args[-2:]))
+                repr(x) for x in self.args[:2]), len(self) - 4, ', '.join(
+                    repr(x) for x in self.args[-2:]))
         else:
             return '%s[%s]' % (repr(self.head), ', '.join(
                 repr(x) for x in self.args))
@@ -124,6 +123,7 @@ class WLSymbolFactory(WLSymbol):
         #summing a tuple with another tuple is returning a new immutable tuple, this operation is always creating a new immutable symbol factory
         return self.__class__(self.name and '%s`%s' % (self.name, attr)
                               or attr)
+
 
 class WLInputExpression(WLExpressionMeta):
     """ Represent a string input form expression. """

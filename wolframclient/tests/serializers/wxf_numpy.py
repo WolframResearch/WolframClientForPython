@@ -162,6 +162,45 @@ class TestCase(BaseTestCase):
             b'8:\xc2\x13\x01\x02\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff\xff\xff\xff\xff\xff\xff'
         )
 
+    def test_numpy_float16(self):
+        f16 = numpy.float16('1.234e-3')
+        self.assertEqual(export(f16), b'0.0012340545654')
+
+    def test_numpy_float32(self):
+        f32 = numpy.float32('1.2345678e-1')
+        self.assertEqual(export(f32), b'0.1234567835927')
+
+    def test_numpy_float64(self):
+        f64 = numpy.float64('-1.234567891234e-1')
+        self.assertEqual(export(f64), b'-0.1234567891234')
+
+    def test_numpy_float128(self):
+        f128 = numpy.float128('1.23e-1234')
+        self.assertEqual(
+            export(f128), b'Times[0.5138393296553, Power[2, -4098.]]')
+
+    def test_numpy_integers(self):
+        int8 = [numpy.int8(127), numpy.int8(-128)]
+        self.assertEqual(export(int8), b'{127, -128}')
+
+        uint8 = [numpy.uint8(0), numpy.uint8(255)]
+        self.assertEqual(export(uint8), b'{0, 255}')
+
+        int16 = [numpy.int16(32767), numpy.int16(-32768)]
+        self.assertEqual(export(int16), b'{32767, -32768}')
+
+        ints = [
+            numpy.uint16(65535),
+            numpy.int32(-2147483648),
+            numpy.uint32(4294967296),
+            numpy.int64(-9223372036854775808),
+            numpy.uint64(18446744073709551615)
+        ]
+        self.assertEqual(
+            export(ints),
+            b'{65535, -2147483648, 0, -9223372036854775808, 18446744073709551615}'
+        )
+
     def test_bad_options(self):
         with self.assertRaises(ValueError):
             NumPyWXFEncoder(

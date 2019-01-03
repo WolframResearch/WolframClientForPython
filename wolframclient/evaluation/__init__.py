@@ -17,10 +17,10 @@ from wolframclient.evaluation.pool import WolframEvaluatorPool, parallel_evaluat
 
 __all__ = [
     'WolframAPICall', 'WolframServer', 'WolframCloudSession',
-    'WolframCloudAsyncSession', 'WolframCloudFutureSession', 'WolframAPICall', 
-    'SecuredAuthenticationKey', 'UserIDPassword', 
-    'WolframLanguageSession', 'WolframLanguageFutureSession',
-    'WolframResult', 'WolframKernelEvaluationResult', 'WolframAPIResponse',
+    'WolframCloudAsyncSession', 'WolframCloudFutureSession', 'WolframAPICall',
+    'SecuredAuthenticationKey', 'UserIDPassword', 'WolframLanguageSession',
+    'WolframLanguageFutureSession', 'WolframResult',
+    'WolframKernelEvaluationResult', 'WolframAPIResponse',
     'WolframEvaluationJSONResponse', 'WolframLanguageAsyncSession',
     'WolframEvaluatorPool', 'parallel_evaluate'
 ]

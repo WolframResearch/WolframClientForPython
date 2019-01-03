@@ -67,5 +67,8 @@ setup(
         'Source code': 'https://github.com/WolframResearch/WolframClientForPython',
         'Documentation': 'https://wolfr.am/wolframclientdoc',
         'Wolfram Research': 'https://www.wolfram.com'
+    },
+    entry_points = {
+        'wolframclient_serializers_encoder':[]
     }
 )

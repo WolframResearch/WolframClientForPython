@@ -52,13 +52,9 @@ _size = dict((j, (WXF_CONSTANTS['Integer%i' % ih], ih // 8))
 
 def integer_size(value):
     try:
-        return _exceptions[value]
+        return _exceptions.get(value, None) or _size[value.bit_length() + 1]
     except KeyError:
-        try:
-            return _size[value.bit_length() + 1]
-        except KeyError:
-            raise ValueError(
-                'Value %i is not a machine-sized integer.' % value)
+        raise ValueError('Value %i is not a machine-sized integer.' % value)
 
 
 _packing = {
