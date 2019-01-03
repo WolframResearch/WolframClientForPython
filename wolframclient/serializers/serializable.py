@@ -36,7 +36,7 @@ class WLSerializable:
     def to_wl(self):
         """ Return the serialized form of a given python class.
         
-        The returned value must be a combinasion of serializable types.
+        The returned value must be a combination of serializable types.
         """
         raise NotImplementedError(
             'class %s must implement a to_wl method' % self.__class__.__name__)

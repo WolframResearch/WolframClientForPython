@@ -11,7 +11,7 @@ class WXFExprProvider(object):
     Expression provider pull instances of WXFExpr from instances of `WXFEncoder`.
 
     `WXFExprProvider` can be initialized with an encoder. If none is provided the
-    default class `DefaultWXFEncoder` is used to instanciate one. It is possible
+    default class `DefaultWXFEncoder` is used to instantiate one. It is possible
     to add extra encoder using `add_encoder`. The order in which encoders are called
     is the one in which they were added. Note that for performance reasons, it is
     recommended to have the default encoder be first, as such one should not initialize
