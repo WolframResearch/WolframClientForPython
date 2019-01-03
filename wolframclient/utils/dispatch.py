@@ -11,15 +11,15 @@ from wolframclient.utils.functional import flatten
 
 
 class Dispatch(object):
-    """ A method dispatcher class allowing for multiple implementations of a function. Each implementation is associated to a given of input type.
+    """ A method dispatcher class allowing for multiple implementations of a function. Each implementation is associated to a specific input type.
     
     Imprementations are registered with the annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch`.
 
     The Dispatch class is callable, it behaves as a function that uses the implementation corresponding to the input parameter.
 
-    When a type is a subtype, the type and its parents are checked in the order given by :data:`__mro__`. 
+    When a type is a subtype, the type and its parents are checked in the order given by :data:`__mro__` (method resolution order). 
         
-    Example: method :meth:`~wolframclient.utils.dispatch.Dispatch.resolve` applied to an instance of :class:`collections.OrderedDict`,
+    *Example:* method :meth:`~wolframclient.utils.dispatch.Dispatch.resolve` applied to an instance of :class:`collections.OrderedDict`,
     check for the first implementation to match with :class:`collections.OrderedDict`, then with :class:`dict`, and ultimately to :data:`object`.
 
     Once the mapping is determined, it is cached for later use.
@@ -47,7 +47,8 @@ class Dispatch(object):
             @dispatcher.dispatch((bytes, bytearray))
             def my_func(...)
 
-        Implementation must be unique. Registering the same combinaison of types will raise an error.
+        Implementation must be unique. Registering the same combinaison of types will raise an error, 
+        except if `force` is set to :data:`True`, in which case the mapping is updated.
         """
 
         def register(func):
@@ -135,9 +136,19 @@ class Dispatch(object):
     def as_method(self):
         """ Return the dispatch as a class method. 
         
-        If :data:`myMethod` is the function dispatched on input :data:`arg`, it enables:: 
+        Create a new dispatcher::
+
+            dispatch = Dispatcher()
+
+        Use the dispatcher as a class method::
+
+            class MyClass(object):
+                myMethod = dispatch.as_method()
+
+        Call the class method::
             
-            self.myMethod(arg, *args, **kwargs)
+            o = MyClass()
+            o.myMethod(arg, *args, **kwargs)
 
         """
 
