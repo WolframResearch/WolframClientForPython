@@ -35,10 +35,9 @@ def identity(x):
 
 
 def composition(*functions):
-    return reduce(
-        lambda f, g: lambda *args, **kw: f(g(*args, **kw)),
-        reversed(functions or (identity, ))
-    )
+    return reduce(lambda f, g: lambda *args, **kw: f(g(*args, **kw)),
+                  reversed(functions or (identity, )))
+
 
 def is_iterable(obj, exclude_list=six.string_types):
     if isinstance(obj, exclude_list):
