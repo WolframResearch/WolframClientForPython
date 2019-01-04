@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.language.expression import WLSymbolFactory, WLInputExpression, wlexpr
+from wolframclient.language.expression import WLSymbolFactory, wlexpr
 
 wl = WLSymbolFactory()
 """A factory of :class:`~wolframclient.language.expression.WLSymbol` instances without any particular context.
@@ -62,6 +62,5 @@ Represent a function call to a function::
     Global`myFunction['foo']
 
 """
-
 
 __all__ = ['wl', 'System', 'Global', 'wlexpr']

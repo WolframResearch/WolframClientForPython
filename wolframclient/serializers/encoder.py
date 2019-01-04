@@ -102,6 +102,7 @@ wolfram_encoder.__doc__ = """
     makes heavy use of Numpy arrays.
     """
 
+
 @wolfram_encoder.dispatch(object)
 def encode(serializer, o):
     if is_iterable(o):
