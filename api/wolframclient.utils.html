@@ -120,8 +120,18 @@ the first hit, e.g.:</p>
 <dd></dd></dl>
 
 <dl class="function">
+<dt id="wolframclient.utils.debug.repeated_timing">
+<code class="descclassname">wolframclient.utils.debug.</code><code class="descname">repeated_timing</code><span class="sig-paren">(</span><em>function</em>, <em>*args</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/debug.html#repeated_timing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.debug.repeated_timing" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="wolframclient.utils.debug.timed">
 <code class="descclassname">wolframclient.utils.debug.</code><code class="descname">timed</code><span class="sig-paren">(</span><em>function</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/debug.html#timed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.debug.timed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wolframclient.utils.debug.timed_repeated">
+<code class="descclassname">wolframclient.utils.debug.</code><code class="descname">timed_repeated</code><span class="sig-paren">(</span><em>N=30</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/debug.html#timed_repeated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.debug.timed_repeated" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -162,48 +172,106 @@ methods. (e.g.  url = cached_property(get_absolute_url, name=’url’) )</p>
 <div class="section" id="module-wolframclient.utils.dispatch">
 <span id="wolframclient-utils-dispatch-module"></span><h2>wolframclient.utils.dispatch module<a class="headerlink" href="#module-wolframclient.utils.dispatch" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="wolframclient.utils.dispatch.ClassDispatch">
-<em class="property">class </em><code class="descclassname">wolframclient.utils.dispatch.</code><code class="descname">ClassDispatch</code><a class="reference internal" href="../_modules/wolframclient/utils/dispatch.html#ClassDispatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.dispatch.ClassDispatch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#wolframclient.utils.dispatch.Dispatch" title="wolframclient.utils.dispatch.Dispatch"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.utils.dispatch.Dispatch</span></code></a></p>
-<dl class="method">
-<dt id="wolframclient.utils.dispatch.ClassDispatch.create_proxy">
-<code class="descname">create_proxy</code><span class="sig-paren">(</span><em>function</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/dispatch.html#ClassDispatch.create_proxy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.dispatch.ClassDispatch.create_proxy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="wolframclient.utils.dispatch.Dispatch">
 <em class="property">class </em><code class="descclassname">wolframclient.utils.dispatch.</code><code class="descname">Dispatch</code><a class="reference internal" href="../_modules/wolframclient/utils/dispatch.html#Dispatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.dispatch.Dispatch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A method dispatcher class allowing for multiple implementations of a function. Each implementation is associated to a specific input type.</p>
+<p>Implementations are registered with the annotation <a class="reference internal" href="#wolframclient.utils.dispatch.Dispatch.dispatch" title="wolframclient.utils.dispatch.Dispatch.dispatch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dispatch()</span></code></a>.</p>
+<p>The Dispatch class is callable, it behaves as a function that uses the implementation corresponding to the input parameter.</p>
+<p>When a type is a subtype, the type and its parents are checked in the order given by <code class="xref py py-data docutils literal notranslate"><span class="pre">__mro__</span></code> (method resolution order).</p>
+<p><em>Example:</em> method <a class="reference internal" href="#wolframclient.utils.dispatch.Dispatch.resolve" title="wolframclient.utils.dispatch.Dispatch.resolve"><code class="xref py py-meth docutils literal notranslate"><span class="pre">resolve()</span></code></a> applied to an instance of <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.OrderedDict</span></code></a>,
+check for the first implementation to match with <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.OrderedDict</span></code></a>, then with <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, and ultimately to <code class="xref py py-data docutils literal notranslate"><span class="pre">object</span></code>.</p>
+<p>Once the mapping is determined, it is cached for later use.</p>
 <dl class="method">
-<dt id="wolframclient.utils.dispatch.Dispatch.create_proxy">
-<code class="descname">create_proxy</code><span class="sig-paren">(</span><em>function</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/dispatch.html#Dispatch.create_proxy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.dispatch.Dispatch.create_proxy" title="Permalink to this definition">¶</a></dt>
+<dt id="wolframclient.utils.dispatch.Dispatch.as_method">
+<code class="descname">as_method</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/dispatch.html#Dispatch.as_method"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.dispatch.Dispatch.as_method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the dispatch as a class method.</p>
+<p>Create a new dispatcher:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dispatch</span> <span class="o">=</span> <span class="n">Dispatcher</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Use the dispatcher as a class method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyClass</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">myMethod</span> <span class="o">=</span> <span class="n">dispatch</span><span class="o">.</span><span class="n">as_method</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Call the class method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">o</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">()</span>
+<span class="n">o</span><span class="o">.</span><span class="n">myMethod</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.utils.dispatch.Dispatch.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/dispatch.html#Dispatch.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.dispatch.Dispatch.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the dispatcher to its initial state.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.utils.dispatch.Dispatch.clear_cache">
+<code class="descname">clear_cache</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/dispatch.html#Dispatch.clear_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.dispatch.Dispatch.clear_cache" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="wolframclient.utils.dispatch.Dispatch.default">
-<code class="descname">default</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/dispatch.html#Dispatch.default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.dispatch.Dispatch.default" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="wolframclient.utils.dispatch.Dispatch.default_function">
+<code class="descname">default_function</code><span class="sig-paren">(</span><em>*args</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/dispatch.html#Dispatch.default_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.dispatch.Dispatch.default_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ultimately called when no type was found.</p>
+</dd></dl>
 
 <dl class="method">
-<dt id="wolframclient.utils.dispatch.Dispatch.get_key">
-<code class="descname">get_key</code><span class="sig-paren">(</span><em>function</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/dispatch.html#Dispatch.get_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.dispatch.Dispatch.get_key" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="wolframclient.utils.dispatch.Dispatch.dispatch">
+<code class="descname">dispatch</code><span class="sig-paren">(</span><em>*args</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/dispatch.html#Dispatch.dispatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.dispatch.Dispatch.dispatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Annotate a function and map it to a given set of type(s).</p>
+<p>Declare an implementation to use on <code class="xref py py-data docutils literal notranslate"><span class="pre">bytearray</span></code> input:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="nb">bytearray</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">my_func</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The default implementation is associated with <code class="xref py py-data docutils literal notranslate"><span class="pre">object</span></code>. Set a default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">my_default_func</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A tuple can be used as input to associate more than one type with a function. 
+Declare a function used for both <code class="xref py py-data docutils literal notranslate"><span class="pre">bytes</span></code> and <code class="xref py py-data docutils literal notranslate"><span class="pre">bytearray</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">((</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">bytearray</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">my_func</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Implementation must be unique. Registering the same combination of types will raise an error, 
+except if <cite>force</cite> is set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">True</span></code></a>, in which case the mapping is updated.</p>
+</dd></dl>
 
 <dl class="method">
-<dt id="wolframclient.utils.dispatch.Dispatch.get_proxy">
-<code class="descname">get_proxy</code><span class="sig-paren">(</span><em>function</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/dispatch.html#Dispatch.get_proxy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.dispatch.Dispatch.get_proxy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="wolframclient.utils.dispatch.Dispatch.multi">
-<code class="descname">multi</code><span class="sig-paren">(</span><em>*types</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/dispatch.html#Dispatch.multi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.dispatch.Dispatch.multi" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="wolframclient.utils.dispatch.Dispatch.register">
+<code class="descname">register</code><span class="sig-paren">(</span><em>function</em>, <em>types=&lt;class 'object'&gt;</em>, <em>force=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/dispatch.html#Dispatch.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.dispatch.Dispatch.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equivalent to annotation <a class="reference internal" href="#wolframclient.utils.dispatch.Dispatch.dispatch" title="wolframclient.utils.dispatch.Dispatch.dispatch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dispatch()</span></code></a> but as 
+a function.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="wolframclient.utils.dispatch.Dispatch.resolve">
-<code class="descname">resolve</code><span class="sig-paren">(</span><em>source</em>, <em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/dispatch.html#Dispatch.resolve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.dispatch.Dispatch.resolve" title="Permalink to this definition">¶</a></dt>
+<code class="descname">resolve</code><span class="sig-paren">(</span><em>arg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/dispatch.html#Dispatch.resolve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.dispatch.Dispatch.resolve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the implementation better matching the type the argument type.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.utils.dispatch.Dispatch.unregister">
+<code class="descname">unregister</code><span class="sig-paren">(</span><em>types=&lt;class 'object'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/dispatch.html#Dispatch.unregister"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.dispatch.Dispatch.unregister" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove implementations associated with types.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.utils.dispatch.Dispatch.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>dispatch</em>, <em>force=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/dispatch.html#Dispatch.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.dispatch.Dispatch.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update current mapping with the one from <cite>dispatch</cite>.</p>
+<p><cite>dispatch</cite> can be a Dispatch instance or a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.utils.dispatch.Dispatch.validate_types">
+<code class="descname">validate_types</code><span class="sig-paren">(</span><em>types</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/dispatch.html#Dispatch.validate_types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.dispatch.Dispatch.validate_types" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -211,6 +279,15 @@ methods. (e.g.  url = cached_property(get_absolute_url, name=’url’) )</p>
 </div>
 <div class="section" id="module-wolframclient.utils.encoding">
 <span id="wolframclient-utils-encoding-module"></span><h2>wolframclient.utils.encoding module<a class="headerlink" href="#module-wolframclient.utils.encoding" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="wolframclient.utils.encoding.concatenate_bytes">
+<code class="descclassname">wolframclient.utils.encoding.</code><code class="descname">concatenate_bytes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wolframclient.utils.encoding.concatenate_bytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenate any number of bytes objects.</p>
+<p>The bytes whose method is called is inserted in between each pair.</p>
+<p>The result is returned as a new bytes object.</p>
+<p>Example: b’.’.join([b’ab’, b’pq’, b’rs’]) -&gt; b’ab.pq.rs’.</p>
+</dd></dl>
+
 <dl class="function">
 <dt id="wolframclient.utils.encoding.force_bytes">
 <code class="descclassname">wolframclient.utils.encoding.</code><code class="descname">force_bytes</code><span class="sig-paren">(</span><em>s</em>, <em>encoding='utf-8'</em>, <em>errors='strict'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/encoding.html#force_bytes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.encoding.force_bytes" title="Permalink to this definition">¶</a></dt>
@@ -249,11 +326,6 @@ strings, rather than kept as lazy objects.</p>
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="wolframclient.utils.functional.force_tuple">
-<code class="descclassname">wolframclient.utils.functional.</code><code class="descname">force_tuple</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/functional.html#force_tuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.functional.force_tuple" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
 <dt id="wolframclient.utils.functional.identity">
 <code class="descclassname">wolframclient.utils.functional.</code><code class="descname">identity</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/functional.html#identity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.functional.identity" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -282,6 +354,11 @@ strings, rather than kept as lazy objects.</p>
 <dl class="function">
 <dt id="wolframclient.utils.functional.riffle">
 <code class="descclassname">wolframclient.utils.functional.</code><code class="descname">riffle</code><span class="sig-paren">(</span><em>iterable</em>, <em>separator</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/functional.html#riffle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.functional.riffle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wolframclient.utils.functional.to_iterable">
+<code class="descclassname">wolframclient.utils.functional.</code><code class="descname">to_iterable</code><span class="sig-paren">(</span><em>obj</em>, <em>exclude_list=(&lt;class 'str'&gt;</em>, <em>)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/functional.html#to_iterable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.functional.to_iterable" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -333,6 +410,21 @@ last name in the path. Raise ImportError if the import failed.</p>
 </div>
 <div class="section" id="module-wolframclient.utils.json">
 <span id="wolframclient-utils-json-module"></span><h2>wolframclient.utils.json module<a class="headerlink" href="#module-wolframclient.utils.json" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-wolframclient.utils.logger">
+<span id="wolframclient-utils-logger-module"></span><h2>wolframclient.utils.logger module<a class="headerlink" href="#module-wolframclient.utils.logger" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="wolframclient.utils.logger.setup_logging_to_file">
+<code class="descclassname">wolframclient.utils.logger.</code><code class="descname">setup_logging_to_file</code><span class="sig-paren">(</span><em>path</em>, <em>level=20</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/logger.html#setup_logging_to_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.logger.setup_logging_to_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup a basic Python logging configuration to a given file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="wolframclient.utils.logger.str_trim">
+<code class="descclassname">wolframclient.utils.logger.</code><code class="descname">str_trim</code><span class="sig-paren">(</span><em>o</em>, <em>max_char=80</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/logger.html#str_trim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.logger.str_trim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the string representation of an object, trimmed to keep up to <cite>max_char</cite> characters.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-wolframclient.utils.require">
 <span id="wolframclient-utils-require-module"></span><h2>wolframclient.utils.require module<a class="headerlink" href="#module-wolframclient.utils.require" title="Permalink to this headline">¶</a></h2>
@@ -425,6 +517,7 @@ last name in the path. Raise ImportError if the import failed.</p>
 <li><a class="reference internal" href="#module-wolframclient.utils.functional">wolframclient.utils.functional module</a></li>
 <li><a class="reference internal" href="#module-wolframclient.utils.importutils">wolframclient.utils.importutils module</a></li>
 <li><a class="reference internal" href="#module-wolframclient.utils.json">wolframclient.utils.json module</a></li>
+<li><a class="reference internal" href="#module-wolframclient.utils.logger">wolframclient.utils.logger module</a></li>
 <li><a class="reference internal" href="#module-wolframclient.utils.require">wolframclient.utils.require module</a></li>
 <li><a class="reference internal" href="#module-wolframclient.utils.six">wolframclient.utils.six module</a></li>
 <li><a class="reference internal" href="#module-wolframclient.utils.tests">wolframclient.utils.tests module</a></li>

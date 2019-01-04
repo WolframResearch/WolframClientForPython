@@ -43,16 +43,17 @@
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="wolframclient.serializers.normalizer.html">wolframclient.serializers.normalizer package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.normalizer.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer.builtin">wolframclient.serializers.normalizer.builtin module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer.datetime">wolframclient.serializers.normalizer.datetime module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer.decimal">wolframclient.serializers.normalizer.decimal module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer.fractions">wolframclient.serializers.normalizer.fractions module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer.numpy">wolframclient.serializers.normalizer.numpy module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer.pil">wolframclient.serializers.normalizer.pil module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer.wolfram">wolframclient.serializers.normalizer.wolfram module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wolframclient.serializers.encoders.html">wolframclient.serializers.encoders package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.encoders.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.encoders.html#module-wolframclient.serializers.encoders.builtin">wolframclient.serializers.encoders.builtin module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.encoders.html#module-wolframclient.serializers.encoders.datetime">wolframclient.serializers.encoders.datetime module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.encoders.html#module-wolframclient.serializers.encoders.decimal">wolframclient.serializers.encoders.decimal module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.encoders.html#module-wolframclient.serializers.encoders.fractions">wolframclient.serializers.encoders.fractions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.encoders.html#module-wolframclient.serializers.encoders.numpy">wolframclient.serializers.encoders.numpy module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.encoders.html#module-wolframclient.serializers.encoders.pandas">wolframclient.serializers.encoders.pandas module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.encoders.html#module-wolframclient.serializers.encoders.pil">wolframclient.serializers.encoders.pil module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.encoders.html#module-wolframclient.serializers.encoders.wolfram">wolframclient.serializers.encoders.wolfram module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wolframclient.serializers.encoders.html#module-wolframclient.serializers.encoders">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="wolframclient.serializers.wxfencoder.html">wolframclient.serializers.wxfencoder package</a><ul>
@@ -78,16 +79,16 @@
 <span id="wolframclient-serializers-base-module"></span><h2>wolframclient.serializers.base module<a class="headerlink" href="#module-wolframclient.serializers.base" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="wolframclient.serializers.base.FormatSerializer">
-<em class="property">class </em><code class="descclassname">wolframclient.serializers.base.</code><code class="descname">FormatSerializer</code><span class="sig-paren">(</span><em>normalizer=None</em>, <em>allow_external_objects=False</em>, <em>target_kernel_version=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/base.html#FormatSerializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.base.FormatSerializer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="wolframclient.serializers.normalizer.html#wolframclient.serializers.normalizer.Normalizer" title="wolframclient.serializers.normalizer.Normalizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.serializers.normalizer.Normalizer</span></code></a></p>
-<dl class="method">
-<dt id="wolframclient.serializers.base.FormatSerializer.dump">
-<code class="descname">dump</code><span class="sig-paren">(</span><em>data</em>, <em>stream</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/base.html#FormatSerializer.dump"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.base.FormatSerializer.dump" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<em class="property">class </em><code class="descclassname">wolframclient.serializers.base.</code><code class="descname">FormatSerializer</code><span class="sig-paren">(</span><em>normalizer=None</em>, <em>allow_external_objects=False</em>, <em>target_kernel_version=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/base.html#FormatSerializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.base.FormatSerializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wolframclient.serializers.encoder.Encoder" title="wolframclient.serializers.encoder.Encoder"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.serializers.encoder.Encoder</span></code></a></p>
 <dl class="method">
 <dt id="wolframclient.serializers.base.FormatSerializer.export">
 <code class="descname">export</code><span class="sig-paren">(</span><em>data</em>, <em>stream=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/base.html#FormatSerializer.export"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.base.FormatSerializer.export" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.serializers.base.FormatSerializer.generate_bytes">
+<code class="descname">generate_bytes</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/base.html#FormatSerializer.generate_bytes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.base.FormatSerializer.generate_bytes" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -97,7 +98,7 @@
 
 <dl class="method">
 <dt id="wolframclient.serializers.base.FormatSerializer.serialize_bytes">
-<code class="descname">serialize_bytes</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/base.html#FormatSerializer.serialize_bytes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.base.FormatSerializer.serialize_bytes" title="Permalink to this definition">¶</a></dt>
+<code class="descname">serialize_bytes</code><span class="sig-paren">(</span><em>bytes</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/base.html#FormatSerializer.serialize_bytes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.base.FormatSerializer.serialize_bytes" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -182,6 +183,51 @@
 
 </dd></dl>
 
+<dl class="function">
+<dt id="wolframclient.serializers.base.concatenate_bytes">
+<code class="descclassname">wolframclient.serializers.base.</code><code class="descname">concatenate_bytes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wolframclient.serializers.base.concatenate_bytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenate any number of bytes objects.</p>
+<p>The bytes whose method is called is inserted in between each pair.</p>
+<p>The result is returned as a new bytes object.</p>
+<p>Example: b’.’.join([b’ab’, b’pq’, b’rs’]) -&gt; b’ab.pq.rs’.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-wolframclient.serializers.encoder">
+<span id="wolframclient-serializers-encoder-module"></span><h2>wolframclient.serializers.encoder module<a class="headerlink" href="#module-wolframclient.serializers.encoder" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="wolframclient.serializers.encoder.Encoder">
+<em class="property">class </em><code class="descclassname">wolframclient.serializers.encoder.</code><code class="descname">Encoder</code><span class="sig-paren">(</span><em>normalizer=None</em>, <em>allow_external_objects=False</em>, <em>target_kernel_version=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/encoder.html#Encoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.encoder.Encoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A generic class exposing an <code class="xref py py-meth docutils literal notranslate"><span class="pre">encode()</span></code>
+method applying an optional normalizer function, followed the most relevant encoding available 
+for a given type.</p>
+<p>Arbitrary named parameters passed during initialization are later accessible with 
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">get_property()</span></code>.</p>
+<dl class="method">
+<dt id="wolframclient.serializers.encoder.Encoder.chain_normalizer">
+<code class="descname">chain_normalizer</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/encoder.html#Encoder.chain_normalizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.encoder.Encoder.chain_normalizer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.serializers.encoder.Encoder.default_encoder">
+<code class="descname">default_encoder</code><span class="sig-paren">(</span><em>arg</em>, <em>*args</em>, <em>**opts</em><span class="sig-paren">)</span><a class="headerlink" href="#wolframclient.serializers.encoder.Encoder.default_encoder" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="wolframclient.serializers.encoder.Encoder.default_updater">
+<code class="descname">default_updater</code><em class="property"> = &lt;wolframclient.serializers.encoder.DispatchUpdater object&gt;</em><a class="headerlink" href="#wolframclient.serializers.encoder.Encoder.default_updater" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.serializers.encoder.Encoder.get_property">
+<code class="descname">get_property</code><span class="sig-paren">(</span><em>key</em>, <em>d=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/encoder.html#Encoder.get_property"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.encoder.Encoder.get_property" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value of the named parameter passed during initialization.</p>
+<p>Set <cite>d</cite> to the default value if key was not present.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-wolframclient.serializers.serializable">
 <span id="wolframclient-serializers-serializable-module"></span><h2>wolframclient.serializers.serializable module<a class="headerlink" href="#module-wolframclient.serializers.serializable" title="Permalink to this headline">¶</a></h2>
@@ -189,10 +235,11 @@
 <dt id="wolframclient.serializers.serializable.WLSerializable">
 <em class="property">class </em><code class="descclassname">wolframclient.serializers.serializable.</code><code class="descname">WLSerializable</code><a class="reference internal" href="../_modules/wolframclient/serializers/serializable.html#WLSerializable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.serializable.WLSerializable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>A familly of classes that can be serialized using <a class="reference internal" href="#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a>.</p>
+<p>A class that can be serialized using <a class="reference internal" href="#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a>.</p>
 <p>Custom serialization of a class is done by subclassing this class:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">wolframclient.serializers.serializable</span> <span class="k">import</span> <span class="n">WLSerializable</span>
 <span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="k">import</span> <span class="n">wl</span>
+<span class="kn">from</span> <span class="nn">wolframclient.serializers</span> <span class="k">import</span> <span class="n">export</span>
 
 <span class="k">class</span> <span class="nc">MyPythonClass</span><span class="p">(</span><span class="n">WLSerializable</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">arguments</span><span class="p">):</span>
@@ -202,7 +249,12 @@
         <span class="k">return</span> <span class="n">wl</span><span class="o">.</span><span class="n">MyWolframFunction</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><a class="reference internal" href="#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a> is able to serialize expressions recursively:</p>
+<p>Serialize <code class="xref py py-data docutils literal notranslate"><span class="pre">MyPythonClass</span></code> using export:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">(</span><span class="n">MyPythonClass</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">))</span>
+<span class="go">b&#39;MyWolframFunction[&quot;foo&quot;, &quot;bar&quot;]&#39;</span>
+</pre></div>
+</div>
+<p>Serialization is applied recursively, arguments are also serialized:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">(</span><span class="n">MyPythonClass</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">MyPythonClass</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span>
 <span class="go">&#39;MyWolframFunction[1, 2, MyWolframFunction[2, 3]]&#39;</span>
 </pre></div>
@@ -210,7 +262,8 @@
 <dl class="method">
 <dt id="wolframclient.serializers.serializable.WLSerializable.to_wl">
 <code class="descname">to_wl</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/serializable.html#WLSerializable.to_wl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.serializable.WLSerializable.to_wl" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a serialization of a given python class as a combinasion of WL serializable objects.</p>
+<dd><p>Return the serialized form of a given python class.</p>
+<p>The returned value must be a combination of serializable types.</p>
 </dd></dl>
 
 </dd></dl>
@@ -220,7 +273,7 @@
 <span id="wolframclient-serializers-utils-module"></span><h2>wolframclient.serializers.utils module<a class="headerlink" href="#module-wolframclient.serializers.utils" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="wolframclient.serializers.utils.py_encode_decimal">
-<code class="descclassname">wolframclient.serializers.utils.</code><code class="descname">py_encode_decimal</code><span class="sig-paren">(</span><em>number</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/utils.html#py_encode_decimal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.utils.py_encode_decimal" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">wolframclient.serializers.utils.</code><code class="descname">py_encode_decimal</code><span class="sig-paren">(</span><em>number</em>, <em>prec=28</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/utils.html#py_encode_decimal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.utils.py_encode_decimal" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -246,18 +299,13 @@
 <em class="property">class </em><code class="descclassname">wolframclient.serializers.wl.</code><code class="descname">WLSerializer</code><span class="sig-paren">(</span><em>normalizer=None</em>, <em>indent=None</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wl.html#WLSerializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wl.WLSerializer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#wolframclient.serializers.base.FormatSerializer" title="wolframclient.serializers.base.FormatSerializer"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.serializers.base.FormatSerializer</span></code></a></p>
 <dl class="method">
-<dt id="wolframclient.serializers.wl.WLSerializer.dump">
-<code class="descname">dump</code><span class="sig-paren">(</span><em>data</em>, <em>stream</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wl.html#WLSerializer.dump"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wl.WLSerializer.dump" title="Permalink to this definition">¶</a></dt>
+<dt id="wolframclient.serializers.wl.WLSerializer.generate_bytes">
+<code class="descname">generate_bytes</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wl.html#WLSerializer.generate_bytes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wl.WLSerializer.generate_bytes" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="wolframclient.serializers.wl.WLSerializer.serialize_association">
 <code class="descname">serialize_association</code><span class="sig-paren">(</span><em>mapping</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wl.html#WLSerializer.serialize_association"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wl.WLSerializer.serialize_association" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="wolframclient.serializers.wl.WLSerializer.serialize_bytes">
-<code class="descname">serialize_bytes</code><span class="sig-paren">(</span><em>bytes</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wl.html#WLSerializer.serialize_bytes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wl.WLSerializer.serialize_bytes" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -272,7 +320,7 @@
 
 <dl class="method">
 <dt id="wolframclient.serializers.wl.WLSerializer.serialize_function">
-<code class="descname">serialize_function</code><span class="sig-paren">(</span><em>head</em>, <em>args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wl.html#WLSerializer.serialize_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wl.WLSerializer.serialize_function" title="Permalink to this definition">¶</a></dt>
+<code class="descname">serialize_function</code><span class="sig-paren">(</span><em>head</em>, <em>args</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wl.html#WLSerializer.serialize_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wl.WLSerializer.serialize_function" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -331,8 +379,8 @@
 <dd><p>Bases: <a class="reference internal" href="#wolframclient.serializers.base.FormatSerializer" title="wolframclient.serializers.base.FormatSerializer"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.serializers.base.FormatSerializer</span></code></a></p>
 <p>Serialize python objects to WXF.</p>
 <dl class="method">
-<dt id="wolframclient.serializers.wxf.WXFSerializer.dump">
-<code class="descname">dump</code><span class="sig-paren">(</span><em>data</em>, <em>stream</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxf.html#WXFSerializer.dump"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxf.WXFSerializer.dump" title="Permalink to this definition">¶</a></dt>
+<dt id="wolframclient.serializers.wxf.WXFSerializer.generate_bytes">
+<code class="descname">generate_bytes</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxf.html#WXFSerializer.generate_bytes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxf.WXFSerializer.generate_bytes" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -394,17 +442,17 @@
 <dt id="wolframclient.serializers.export">
 <code class="descclassname">wolframclient.serializers.</code><code class="descname">export</code><span class="sig-paren">(</span><em>data</em>, <em>stream=None</em>, <em>target_format='wl'</em>, <em>**options</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers.html#export"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.export" title="Permalink to this definition">¶</a></dt>
 <dd><p>Serialize input <cite>data</cite> to a target format.</p>
-<p>Input <cite>data</cite> can be one of the native Python types supported directly including:
-<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, etc. Or, a serializable python object, i.e extending
-<a class="reference internal" href="#wolframclient.serializers.serializable.WLSerializable" title="wolframclient.serializers.serializable.WLSerializable"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSerializable</span></code></a>.
-The default format is string <em>InputForm</em>:</p>
+<p>Input <cite>data</cite> can be any supported Python types including: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, etc, or, a serializable python object.</p>
+<p>Serializable python objects are class extending <a class="reference internal" href="#wolframclient.serializers.serializable.WLSerializable" title="wolframclient.serializers.serializable.WLSerializable"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSerializable</span></code></a>, and types mapped to
+an encoder.</p>
+<p>The default format is <em>InputForm</em> string:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">Range</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
-<span class="go">&#39;Range[3]&#39;</span>
+<span class="go">b&#39;Range[3]&#39;</span>
 </pre></div>
 </div>
-<p>Specify the target format to be WXF:</p>
+<p>Specify WXF format by setting <cite>target_format</cite>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wxf&#39;</span><span class="p">)</span>
-<span class="go">&#39;8:fsListCCC&#39;</span>
+<span class="go">b&#39;8:fsListCCC&#39;</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -412,17 +460,22 @@ The default format is string <em>InputForm</em>:</p>
 <p class="last">WXF is a binary format for serializing Wolfram Language expression. Consult
 the documentation for a full format description: <a class="reference external" href="https://reference.wolfram.com/language/tutorial/WXFFormatDescription.html">https://reference.wolfram.com/language/tutorial/WXFFormatDescription.html</a></p>
 </div>
-<p>If a string is provided as second argument, it is interpreted as a file path, and serialized form is
-written directly to the file. The file is opened and closed automatically:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;file.wl&#39;</span><span class="p">)</span>
+<p>WXF byte arrays are deserialized with <a class="reference internal" href="wolframclient.deserializers.html#wolframclient.deserializers.binary_deserialize" title="wolframclient.deserializers.binary_deserialize"><code class="xref py py-func docutils literal notranslate"><span class="pre">binary_deserialize()</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wxf</span> <span class="o">=</span> <span class="n">export</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wxf&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">binary_deserialize</span><span class="p">(</span><span class="n">wxf</span><span class="p">)</span>
+<span class="go">[1, 2, 3]</span>
+</pre></div>
+</div>
+<p>If <cite>stream</cite> is specified with a string, it is interpreted as a file path, and serialized form is
+written directly to the specified file. The file is opened and closed automatically:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">stream</span><span class="o">=</span><span class="s1">&#39;file.wl&#39;</span><span class="p">)</span>
 <span class="go">&#39;file.wl&#39;</span>
 </pre></div>
 </div>
-<p>An output stream can also be provided, in which case the output bytes are written to it.</p>
-<p>Finally any object that implements a <cite>write</cite> method, like <code class="xref py py-class docutils literal notranslate"><span class="pre">file</span></code>, <a class="reference external" href="https://docs.python.org/3/library/io.html#io.BytesIO" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">io.BytesIO</span></code></a>
-or <a class="reference external" href="https://docs.python.org/3/library/io.html#io.StringIO" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">io.StringIO</span></code></a> is a valid value for the <cite>stream</cite> option:</p>
+<p>If <cite>stream</cite> is specified with an output stream, the serialization bytes are written to it.</p>
+<p>Any object that implements a <cite>write</cite> method, e.g. <code class="xref py py-data docutils literal notranslate"><span class="pre">file</span></code>, <a class="reference external" href="https://docs.python.org/3/library/io.html#io.BytesIO" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">io.BytesIO</span></code></a>, or <a class="reference external" href="https://docs.python.org/3/library/io.html#io.StringIO" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">io.StringIO</span></code></a> is a valid value for the <cite>stream</cite> named parameter:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;file.wl&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="n">export</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">f</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">export</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">stream</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="go">&lt;open file &#39;file.wl&#39;, mode &#39;wb&#39; at 0x10a4f01e0&gt;</span>
 </pre></div>
@@ -433,10 +486,11 @@ or <a class="reference external" href="https://docs.python.org/3/library/io.html
 <dt id="wolframclient.serializers.WLSerializable">
 <em class="property">class </em><code class="descclassname">wolframclient.serializers.</code><code class="descname">WLSerializable</code><a class="reference internal" href="../_modules/wolframclient/serializers/serializable.html#WLSerializable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.WLSerializable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>A familly of classes that can be serialized using <a class="reference internal" href="#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a>.</p>
+<p>A class that can be serialized using <a class="reference internal" href="#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a>.</p>
 <p>Custom serialization of a class is done by subclassing this class:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">wolframclient.serializers.serializable</span> <span class="k">import</span> <span class="n">WLSerializable</span>
 <span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="k">import</span> <span class="n">wl</span>
+<span class="kn">from</span> <span class="nn">wolframclient.serializers</span> <span class="k">import</span> <span class="n">export</span>
 
 <span class="k">class</span> <span class="nc">MyPythonClass</span><span class="p">(</span><span class="n">WLSerializable</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">arguments</span><span class="p">):</span>
@@ -446,7 +500,12 @@ or <a class="reference external" href="https://docs.python.org/3/library/io.html
         <span class="k">return</span> <span class="n">wl</span><span class="o">.</span><span class="n">MyWolframFunction</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><a class="reference internal" href="#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a> is able to serialize expressions recursively:</p>
+<p>Serialize <code class="xref py py-data docutils literal notranslate"><span class="pre">MyPythonClass</span></code> using export:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">(</span><span class="n">MyPythonClass</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">))</span>
+<span class="go">b&#39;MyWolframFunction[&quot;foo&quot;, &quot;bar&quot;]&#39;</span>
+</pre></div>
+</div>
+<p>Serialization is applied recursively, arguments are also serialized:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">(</span><span class="n">MyPythonClass</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">MyPythonClass</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span>
 <span class="go">&#39;MyWolframFunction[1, 2, MyWolframFunction[2, 3]]&#39;</span>
 </pre></div>
@@ -454,7 +513,8 @@ or <a class="reference external" href="https://docs.python.org/3/library/io.html
 <dl class="method">
 <dt id="wolframclient.serializers.WLSerializable.to_wl">
 <code class="descname">to_wl</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/serializable.html#WLSerializable.to_wl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.WLSerializable.to_wl" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a serialization of a given python class as a combinasion of WL serializable objects.</p>
+<dd><p>Return the serialized form of a given python class.</p>
+<p>The returned value must be a combination of serializable types.</p>
 </dd></dl>
 
 </dd></dl>
@@ -480,6 +540,7 @@ or <a class="reference external" href="https://docs.python.org/3/library/io.html
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-wolframclient.serializers.base">wolframclient.serializers.base module</a></li>
+<li><a class="reference internal" href="#module-wolframclient.serializers.encoder">wolframclient.serializers.encoder module</a></li>
 <li><a class="reference internal" href="#module-wolframclient.serializers.serializable">wolframclient.serializers.serializable module</a></li>
 <li><a class="reference internal" href="#module-wolframclient.serializers.utils">wolframclient.serializers.utils module</a></li>
 <li><a class="reference internal" href="#module-wolframclient.serializers.wl">wolframclient.serializers.wl module</a></li>

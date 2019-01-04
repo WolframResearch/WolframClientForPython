@@ -288,6 +288,34 @@ Control the log level at both the Python and the kernel levels:
     :emphasize-lines: 6,14-15,17,20,22,23
 
 **********************************************
+Extending serialization: Writing an Encoder
+**********************************************
+
+Serialization of Python object involves encoders, which convert an input object into a stream of bytes. The library defines encoders for most built-in Python types and for some core libraries. It stores a mapping between types and encoder implementation. In order to serialize more classes, new encoders must be registered.
+
+An encoder is a function of two arguments, the serializer and an object, associated with a type. The object is guaranteed to be an instance of the associated type.
+
+Register a new encoder for a user defined class:
+
+.. literalinclude:: /examples/python/encoder1.py
+    :linenos:
+    :emphasize-lines: 8,12-13, 15, 20
+
+During export, for each object to serialize, the proper encoder is found by inspecting the type hierarchy (field :data:`__mro__`). First, check that an encoder is associated with the object type, if not, repeat with the first parent type until one is found. The default encoder, associated with :data:`object`, is used in last resort.
+
+Register some encoders for a hierarchy of classes: 
+
+.. literalinclude:: /examples/python/encoder2.py
+    :linenos:
+    :emphasize-lines: 8,11,14,18,22,27,32,38,39
+
+Note: the encoder for :data:`Animal` is never used, not even for the instance of :data:`Salmon`, because :data:`Fish` has a dedicated encoder, and type :data:`Fish` appears first in the method resolution order of type :data:`Salmon`::
+    
+    >>> Salmon.__mro__
+    (<class '__main__.Salmon'>, <class '__main__.Fish'>, <class '__main__.Animal'>, <class 'object'>)
+
+
+**********************************************
 Extending WXF Parsing: Writing a WXFConsumer
 **********************************************
 

@@ -63,6 +63,30 @@
     <span class="k">return</span> <span class="n">x</span></div>
 
 
+<div class="viewcode-block" id="timed_repeated"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.cli.commands.benchmark.timed_repeated">[docs]</a><span class="k">def</span> <span class="nf">timed_repeated</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">repeated</span><span class="p">(</span><span class="n">function</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">inner</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">repeated_timing</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">inner</span>
+
+    <span class="k">return</span> <span class="n">repeated</span></div>
+
+
+<div class="viewcode-block" id="repeated_timing"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.cli.commands.benchmark.repeated_timing">[docs]</a><span class="k">def</span> <span class="nf">repeated_timing</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+    <span class="n">timed_func</span> <span class="o">=</span> <span class="n">timed</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
+    <span class="n">timers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">timer</span><span class="p">,</span> <span class="n">res</span> <span class="o">=</span> <span class="n">timed_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
+        <span class="n">timers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">timer</span><span class="p">)</span>
+    <span class="n">timers</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">timers</span><span class="p">)</span>
+    <span class="nb">min</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="o">.</span><span class="mi">1</span> <span class="o">*</span> <span class="n">N</span><span class="p">)</span>
+    <span class="nb">max</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="o">.</span><span class="mi">9</span> <span class="o">*</span> <span class="n">N</span><span class="p">)</span>
+    <span class="n">trimmed_timers</span> <span class="o">=</span> <span class="n">timers</span><span class="p">[</span><span class="nb">min</span><span class="p">:</span><span class="nb">max</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">trimmed_timers</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">trimmed_timers</span><span class="p">),</span> <span class="n">res</span></div>
+
+
 <div class="viewcode-block" id="print_elapsed_time"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.cli.commands.benchmark.print_elapsed_time">[docs]</a><span class="k">def</span> <span class="nf">print_elapsed_time</span><span class="p">(</span><span class="n">viewfunc</span><span class="p">):</span>
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">viewfunc</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">inner</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>

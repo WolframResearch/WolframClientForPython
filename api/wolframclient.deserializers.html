@@ -146,7 +146,7 @@ code from being introduced in place of an actual real.</p>
 <dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>function</em>.</p>
 <p>Return a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> if the head is symbol <cite>List</cite>, otherwise returns the result of <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function"><code class="xref py py-func docutils literal notranslate"><span class="pre">build_function()</span></code></a>
 applied to the head and arguments.</p>
-<p>Usually custom parsing rules target Functions, but not List. To do so, it is recommanded to override
+<p>Usually custom parsing rules target Functions, but not List. To do so, it is recommended to override
 <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function"><code class="xref py py-func docutils literal notranslate"><span class="pre">build_function()</span></code></a>.</p>
 </dd></dl>
 
@@ -272,6 +272,15 @@ applied to the head and arguments.</p>
 <dt id="wolframclient.deserializers.binary_deserialize">
 <code class="descclassname">wolframclient.deserializers.</code><code class="descname">binary_deserialize</code><span class="sig-paren">(</span><em>wxf_input</em>, <em>consumer=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf.html#binary_deserialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.deserializers.binary_deserialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deserialize binary data, return a Python object.</p>
+<p>Serialize a python object to WXF:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wxf</span> <span class="o">=</span> <span class="n">export</span><span class="p">({</span><span class="s1">&#39;key&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]},</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wxf&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Retrieve the input object:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">binary_deserialize</span><span class="p">(</span><span class="n">wxf</span><span class="p">)</span>
+<span class="go">{&#39;key&#39;: [1, 2, 3]}</span>
+</pre></div>
+</div>
 <p>A stream of <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> is generated from the WXF input by a instance
 of <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFParser" title="wolframclient.deserializers.wxf.wxfparser.WXFParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFParser</span></code></a>.</p>
 <p>The consumer must be an instance of <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumer</span></code></a>. If none is
@@ -375,7 +384,7 @@ code from being introduced in place of an actual real.</p>
 <dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>function</em>.</p>
 <p>Return a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> if the head is symbol <cite>List</cite>, otherwise returns the result of <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function"><code class="xref py py-func docutils literal notranslate"><span class="pre">build_function()</span></code></a>
 applied to the head and arguments.</p>
-<p>Usually custom parsing rules target Functions, but not List. To do so, it is recommanded to override
+<p>Usually custom parsing rules target Functions, but not List. To do so, it is recommended to override
 <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function"><code class="xref py py-func docutils literal notranslate"><span class="pre">build_function()</span></code></a>.</p>
 </dd></dl>
 

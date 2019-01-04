@@ -49,33 +49,33 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">chain</span>
 
-<span class="kn">from</span> <span class="nn">wolframclient.serializers.normalizer</span> <span class="k">import</span> <span class="n">Normalizer</span>
+<span class="kn">from</span> <span class="nn">wolframclient.serializers.encoder</span> <span class="k">import</span> <span class="n">Encoder</span>
 <span class="kn">from</span> <span class="nn">wolframclient.serializers.wxfencoder.constants</span> <span class="k">import</span> <span class="p">(</span>
     <span class="n">WXF_HEADER_SEPARATOR</span><span class="p">,</span> <span class="n">WXF_VERSION</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">wolframclient.serializers.wxfencoder.utils</span> <span class="k">import</span> <span class="n">numeric_array_to_wxf</span>
 <span class="kn">from</span> <span class="nn">wolframclient.utils</span> <span class="k">import</span> <span class="n">six</span>
-<span class="kn">from</span> <span class="nn">wolframclient.utils.encoding</span> <span class="k">import</span> <span class="n">force_text</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils.api</span> <span class="k">import</span> <span class="n">base64</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils.encoding</span> <span class="k">import</span> <span class="n">concatenate_bytes</span><span class="p">,</span> <span class="n">force_text</span>
 <span class="kn">from</span> <span class="nn">wolframclient.utils.functional</span> <span class="k">import</span> <span class="n">first</span>
 
 
-<div class="viewcode-block" id="FormatSerializer"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer">[docs]</a><span class="k">class</span> <span class="nc">FormatSerializer</span><span class="p">(</span><span class="n">Normalizer</span><span class="p">):</span>
-<div class="viewcode-block" id="FormatSerializer.dump"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">stream</span><span class="p">):</span>
+<div class="viewcode-block" id="FormatSerializer"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer">[docs]</a><span class="k">class</span> <span class="nc">FormatSerializer</span><span class="p">(</span><span class="n">Encoder</span><span class="p">):</span>
+<div class="viewcode-block" id="FormatSerializer.generate_bytes"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.generate_bytes">[docs]</a>    <span class="k">def</span> <span class="nf">generate_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="FormatSerializer.export"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.export">[docs]</a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">stream</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
                 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
                     <span class="k">return</span> <span class="n">stream</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">stream</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">stream</span>
 
-        <span class="n">stream</span> <span class="o">=</span> <span class="n">six</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
-        <span class="n">stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">stream</span><span class="p">)</span>
-        <span class="n">stream</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">stream</span><span class="o">.</span><span class="n">read</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="n">concatenate_bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generate_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">))</span></div>
 
     <span class="c1">#implementation of several methods</span>
 
@@ -88,9 +88,6 @@
 <div class="viewcode-block" id="FormatSerializer.serialize_string"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_string">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="FormatSerializer.serialize_bytes"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_bytes">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
-
 <div class="viewcode-block" id="FormatSerializer.serialize_float"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_float">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_float</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
@@ -100,6 +97,11 @@
 <div class="viewcode-block" id="FormatSerializer.serialize_int"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_int">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
+<div class="viewcode-block" id="FormatSerializer.serialize_bytes"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_bytes">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;ByteArray&#39;</span><span class="p">),</span>
+            <span class="p">((</span><span class="sa">b</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="nb">bytes</span><span class="p">),</span> <span class="sa">b</span><span class="s1">&#39;&quot;&#39;</span><span class="p">),</span> <span class="p">))</span></div>
+
 <div class="viewcode-block" id="FormatSerializer.serialize_input_form"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_input_form">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_input_form</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;ToExpression&#39;</span><span class="p">),</span>
@@ -107,7 +109,7 @@
 
 <div class="viewcode-block" id="FormatSerializer.serialize_numeric_array"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_numeric_array">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_numeric_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">wl_type</span><span class="p">):</span>
 
-        <span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">concatenate_bytes</span><span class="p">(</span>
             <span class="n">chain</span><span class="p">((</span><span class="n">WXF_VERSION</span><span class="p">,</span> <span class="n">WXF_HEADER_SEPARATOR</span><span class="p">),</span>
                   <span class="n">numeric_array_to_wxf</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">wl_type</span><span class="p">)))</span>
 
@@ -200,7 +202,7 @@
 <div class="viewcode-block" id="FormatSerializer.serialize_external_object"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_external_object">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_external_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;ExternalObject&#39;</span><span class="p">),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">serialize_mapping</span><span class="p">(</span>
-                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
                 <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_external_object</span><span class="p">(</span><span class="n">obj</span><span class="p">)),</span> <span class="p">))</span></div></div>
 </pre></div>
 

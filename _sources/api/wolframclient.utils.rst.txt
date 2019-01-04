@@ -84,6 +84,14 @@ wolframclient.utils.json module
     :undoc-members:
     :show-inheritance:
 
+wolframclient.utils.logger module
+---------------------------------
+
+.. automodule:: wolframclient.utils.logger
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 wolframclient.utils.require module
 ----------------------------------
 

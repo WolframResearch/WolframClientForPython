@@ -55,13 +55,13 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;WolframLanguageFutureSession&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="WolframLanguageFutureSession"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageFutureSession">[docs]</a><span class="k">class</span> <span class="nc">WolframLanguageFutureSession</span><span class="p">(</span><span class="n">WolframLanguageSession</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageFutureSession"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageFutureSession">[docs]</a><span class="k">class</span> <span class="nc">WolframLanguageFutureSession</span><span class="p">(</span><span class="n">WolframLanguageSession</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Evaluate expressions asynchronously and return Future instances.</span>
 
 <span class="sd">    Asynchronous evaluations are backed by the :mod:`concurrent.futures` module, especially the :class:`~concurrent.futures.Future` class. </span>
 
 <span class="sd">    Contrary to :class:`~wolframclient.evaluation.WolframLanguageAsyncSession`, none of the methods of this class</span>
-<span class="sd">    is a coroutine. Evaluation methods are synchronous; they start the evaluation as a background task in a thread, and immediatly return</span>
+<span class="sd">    is a coroutine. Evaluation methods are synchronous; they start the evaluation as a background task in a thread, and immediately return</span>
 <span class="sd">    a :class:`~concurrent.futures.Future` objects, that can later be awaited.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -93,17 +93,17 @@
             <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">thread_pool_exec</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="WolframLanguageFutureSession.evaluate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageFutureSession.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageFutureSession.evaluate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageFutureSession.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Evaluate :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate`</span>
 <span class="sd">        asynchronously and return a :class:`~concurrent.futures.Future` object.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_in_thread</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">evaluate</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="WolframLanguageFutureSession.evaluate_wxf"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageFutureSession.evaluate_wxf">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageFutureSession.evaluate_wxf"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageFutureSession.evaluate_wxf">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Evaluate :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate_wxf`</span>
 <span class="sd">        asynchronously and return a :class:`~concurrent.futures.Future` object.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_in_thread</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">evaluate_wxf</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="WolframLanguageFutureSession.evaluate_wrap"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageFutureSession.evaluate_wrap">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageFutureSession.evaluate_wrap"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageFutureSession.evaluate_wrap">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Evaluate :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate_wrap`</span>
 <span class="sd">        asynchronously and return a :class:`~concurrent.futures.Future` object.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_in_thread</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">evaluate_wrap</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
@@ -123,7 +123,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">thread_pool_exec</span> <span class="o">=</span> <span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">thread_pool_exec</span>
 
-<div class="viewcode-block" id="WolframLanguageFutureSession.terminate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageFutureSession.terminate">[docs]</a>    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageFutureSession.terminate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageFutureSession.terminate">[docs]</a>    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Terminate the current session. This is a synchronous method.&quot;&quot;&quot;</span>
         <span class="c1"># First terminate all executions.</span>
         <span class="c1"># Then use the socket to actually quit. Avoid crashes when freeing zmq resources still in use.</span>

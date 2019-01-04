@@ -50,6 +50,7 @@
 <span class="kn">from</span> <span class="nn">wolframclient.language.expression</span> <span class="k">import</span> <span class="n">WLFunction</span>
 <span class="kn">from</span> <span class="nn">wolframclient.utils</span> <span class="k">import</span> <span class="n">six</span>
 <span class="kn">from</span> <span class="nn">wolframclient.utils.asyncio</span> <span class="k">import</span> <span class="n">wait_all</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils.functional</span> <span class="k">import</span> <span class="nb">map</span>
 
 
 <div class="viewcode-block" id="WolframEvaluatorBase"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.base.WolframEvaluatorBase">[docs]</a><span class="k">class</span> <span class="nc">WolframEvaluatorBase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -118,7 +119,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="WolframEvaluator.terminate"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.base.WolframEvaluator.terminate">[docs]</a>    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Immediatly stop the evaluator, eventually killing running jobs resulting in cancelled evaluations. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; Immediately stop the evaluator, eventually killing running jobs resulting in cancelled evaluations. &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="WolframEvaluator.restart"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.base.WolframEvaluator.restart">[docs]</a>    <span class="k">def</span> <span class="nf">restart</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

@@ -101,8 +101,9 @@ and will automatically serialize to a failure box when evaluated in a Wolfram De
 
 <dl class="method">
 <dt id="wolframclient.language.exceptions.WolframLanguageException.to_wl">
-<code class="descname">to_wl</code><span class="sig-paren">(</span><em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/exceptions.html#WolframLanguageException.to_wl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.language.exceptions.WolframLanguageException.to_wl" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a serialization of a given python class as a combinasion of WL serializable objects.</p>
+<code class="descname">to_wl</code><span class="sig-paren">(</span><em>*args</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/exceptions.html#WolframLanguageException.to_wl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.language.exceptions.WolframLanguageException.to_wl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the serialized form of a given python class.</p>
+<p>The returned value must be a combination of serializable types.</p>
 </dd></dl>
 
 </dd></dl>
@@ -144,12 +145,12 @@ and will automatically serialize to a failure box when evaluated in a Wolfram De
 <em class="property">class </em><code class="descclassname">wolframclient.language.expression.</code><code class="descname">WLSymbolFactory</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/expression.html#WLSymbolFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.language.expression.WLSymbolFactory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#wolframclient.language.expression.WLSymbol" title="wolframclient.language.expression.WLSymbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.language.expression.WLSymbol</span></code></a></p>
 <p>Provide a convenient way to build objects representing arbitrary Wolfram Language expressions through the use of attributes.</p>
-<p>This class is conveniently instanciated at startup as: <a class="reference internal" href="#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-class docutils literal notranslate"><span class="pre">wl</span></code></a>, <a class="reference internal" href="#wolframclient.language.Global" title="wolframclient.language.Global"><code class="xref py py-class docutils literal notranslate"><span class="pre">Global</span></code></a> 
-and <a class="reference internal" href="#wolframclient.language.System" title="wolframclient.language.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">System</span></code></a>. It should be instanciated only to represent many symbols belonging to the same specific
+<p>This class is conveniently instantiated at startup as: <a class="reference internal" href="#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-class docutils literal notranslate"><span class="pre">wl</span></code></a>, <a class="reference internal" href="#wolframclient.language.Global" title="wolframclient.language.Global"><code class="xref py py-class docutils literal notranslate"><span class="pre">Global</span></code></a> 
+and <a class="reference internal" href="#wolframclient.language.System" title="wolframclient.language.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">System</span></code></a>. It should be instantiated only to represent many symbols belonging to the same specific
 context.</p>
 <p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">developer</span> <span class="o">=</span> <span class="n">WLSymbolFactory</span><span class="p">(</span><span class="s1">&#39;Developer&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">developer</span><span class="o">.</span><span class="n">PackedArrayQ</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dev</span> <span class="o">=</span> <span class="n">WLSymbolFactory</span><span class="p">(</span><span class="s1">&#39;Developer&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dev</span><span class="o">.</span><span class="n">PackedArrayQ</span>
 <span class="go">Developer`PackedArrayQ</span>
 </pre></div>
 </div>
@@ -205,8 +206,17 @@ by calling its attributes. The following code represents various Wolfram Languag
 <span class="n">wl</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">PrimeQ</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>It is possible to specify context using the syntax:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wl</span><span class="o">.</span><span class="n">MyContext</span><span class="o">.</span><span class="n">MySubContext</span><span class="o">.</span><span class="n">SymbolName</span>
+<p>Represent symbols in various contexts:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">Developer</span><span class="o">.</span><span class="n">PackedArrayQ</span>
+<span class="go">Developer`PackedArrayQ</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">Global</span><span class="o">.</span><span class="n">f</span>
+<span class="go">Global`f</span>
+</pre></div>
+</div>
+<p>Specify a context and a subcontext:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">MyContext</span><span class="o">.</span><span class="n">MySubContext</span><span class="o">.</span><span class="n">SymbolName</span>
+<span class="go">MyContext`MySubContext`SymbolName</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -215,8 +225,12 @@ by calling its attributes. The following code represents various Wolfram Languag
 <dt id="wolframclient.language.System">
 <code class="descclassname">wolframclient.language.</code><code class="descname">System</code><a class="headerlink" href="#wolframclient.language.System" title="Permalink to this definition">¶</a></dt>
 <dd><p>A factory of <a class="reference internal" href="#wolframclient.language.expression.WLSymbol" title="wolframclient.language.expression.WLSymbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbol</span></code></a> instances having <code class="docutils literal notranslate"><span class="pre">System`</span></code> context.</p>
-<p>See <a class="reference internal" href="#wolframclient.language.expression.WLSymbolFactory" title="wolframclient.language.expression.WLSymbolFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbolFactory</span></code></a> and
-<a class="reference internal" href="#wolframclient.language.expression.WLSymbolFactory" title="wolframclient.language.expression.WLSymbolFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbolFactory</span></code></a> for more details.</p>
+<p>See <a class="reference internal" href="#wolframclient.language.expression.WLSymbolFactory" title="wolframclient.language.expression.WLSymbolFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbolFactory</span></code></a> for more details.</p>
+<p>Represent a symbol in the System context:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">System</span><span class="o">.</span><span class="n">ImageIdentify</span>
+<span class="go">System`ImageIdentify</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="attribute">
@@ -225,12 +239,34 @@ by calling its attributes. The following code represents various Wolfram Languag
 <dd><p>A factory of <a class="reference internal" href="#wolframclient.language.expression.WLSymbol" title="wolframclient.language.expression.WLSymbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbol</span></code></a> instances having <code class="docutils literal notranslate"><span class="pre">Global`</span></code> context.</p>
 <p>See <a class="reference internal" href="#wolframclient.language.expression.WLSymbolFactory" title="wolframclient.language.expression.WLSymbolFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbolFactory</span></code></a> and
 <a class="reference internal" href="#wolframclient.language.expression.WLSymbolFactory" title="wolframclient.language.expression.WLSymbolFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbolFactory</span></code></a> for more details.</p>
+<p>Represent a symbol in the Global context:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Global</span><span class="o">.</span><span class="n">mySymbol</span>
+<span class="go">Global`mySymbol</span>
+</pre></div>
+</div>
+<p>Represent a function call to a function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Global</span><span class="o">.</span><span class="n">myFunction</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+<span class="go">Global`myFunction[&#39;foo&#39;]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="wolframclient.language.wlexpr">
 <code class="descclassname">wolframclient.language.</code><code class="descname">wlexpr</code><a class="headerlink" href="#wolframclient.language.wlexpr" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="#wolframclient.language.expression.WLInputExpression" title="wolframclient.language.expression.WLInputExpression"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.language.expression.WLInputExpression</span></code></a></p>
+<dd><p>Represent Wolfram Language expressions with input form strings.</p>
+<p>Convenient alias for <a class="reference internal" href="#wolframclient.language.expression.WLInputExpression" title="wolframclient.language.expression.WLInputExpression"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLInputExpression</span></code></a>.</p>
+<p>Represent an expression:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wlexpr</span><span class="p">(</span><span class="s1">&#39;Select[EvenQ, Range[10]]&#39;</span><span class="p">)</span>
+<span class="go">(Select[EvenQ, Range[10]])</span>
+</pre></div>
+</div>
+<p>Represent a pure function that squares an input argument:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wlexpr</span><span class="p">(</span><span class="s1">&#39;# ^ 2 &amp;&#39;</span> <span class="p">)</span>
+<span class="go">(# ^ 2 &amp;)</span>
+</pre></div>
+</div>
+<p>alias of <a class="reference internal" href="#wolframclient.language.expression.WLInputExpression" title="wolframclient.language.expression.WLInputExpression"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.language.expression.WLInputExpression</span></code></a></p>
 </dd></dl>
 
 </div>

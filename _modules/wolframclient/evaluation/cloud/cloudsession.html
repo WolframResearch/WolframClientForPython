@@ -67,7 +67,7 @@
 <span class="p">]</span>
 
 
-<div class="viewcode-block" id="WolframCloudSession"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudSession">[docs]</a><span class="k">class</span> <span class="nc">WolframCloudSession</span><span class="p">(</span><span class="n">WolframEvaluator</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframCloudSession"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudSession">[docs]</a><span class="k">class</span> <span class="nc">WolframCloudSession</span><span class="p">(</span><span class="n">WolframEvaluator</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Represent a session to a given cloud enabling simple API call.</span>
 
 <span class="sd">    This is the central class of the cloud evaluation package. It is initialized with a server instance</span>
@@ -112,7 +112,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">anonymous</span><span class="p">()</span>
                                                   <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">authorized</span><span class="p">())</span>
 
-<div class="viewcode-block" id="WolframCloudSession.start"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudSession.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframCloudSession.start"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudSession.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -123,20 +123,20 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">anonymous</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_authenticate</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="WolframCloudSession.stop"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudSession.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframCloudSession.stop"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudSession.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="WolframCloudSession.terminate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudSession.terminate">[docs]</a>    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframCloudSession.terminate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudSession.terminate">[docs]</a>    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session</span> <span class="o">=</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="WolframCloudSession.anonymous"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudSession.anonymous">[docs]</a>    <span class="k">def</span> <span class="nf">anonymous</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframCloudSession.anonymous"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudSession.anonymous">[docs]</a>    <span class="k">def</span> <span class="nf">anonymous</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span> <span class="ow">is</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="WolframCloudSession.authorized"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudSession.authorized">[docs]</a>    <span class="k">def</span> <span class="nf">authorized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframCloudSession.authorized"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudSession.authorized">[docs]</a>    <span class="k">def</span> <span class="nf">authorized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session</span><span class="o">.</span><span class="n">authorized</span><span class="p">(</span>
         <span class="p">)</span></div>
 
@@ -184,7 +184,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">()</span>
 
-<div class="viewcode-block" id="WolframCloudSession.call"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudSession.call">[docs]</a>    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<div class="viewcode-block" id="WolframCloudSession.call"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudSession.call">[docs]</a>    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
              <span class="n">api</span><span class="p">,</span>
              <span class="n">input_parameters</span><span class="o">=</span><span class="p">{},</span>
              <span class="n">files</span><span class="o">=</span><span class="p">{},</span>
@@ -245,7 +245,7 @@
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluation_api_url</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">WolframEvaluationJSONResponse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 
-<div class="viewcode-block" id="WolframCloudSession.evaluate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudSession.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframCloudSession.evaluate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudSession.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Send `expr` to the cloud for evaluation, return the result.</span>
 
 <span class="sd">        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export`,</span>
@@ -254,12 +254,12 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_evaluation_api</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span>
                                          <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="WolframCloudSession.evaluate_wrap"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudSession.evaluate_wrap">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframCloudSession.evaluate_wrap"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudSession.evaluate_wrap">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Similar to :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframEvaluationJSONResponse`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_evaluation_api</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="WolframCloudSession.wolfram_api_call"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudSession.wolfram_api_call">[docs]</a>    <span class="k">def</span> <span class="nf">wolfram_api_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframCloudSession.wolfram_api_call"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudSession.wolfram_api_call">[docs]</a>    <span class="k">def</span> <span class="nf">wolfram_api_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Build an helper class instance to call a given API. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">WolframAPICall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -269,7 +269,7 @@
                                                     <span class="bp">self</span><span class="o">.</span><span class="n">authorized</span><span class="p">())</span></div>
 
 
-<div class="viewcode-block" id="WolframCloudFutureSession"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudFutureSession">[docs]</a><span class="k">class</span> <span class="nc">WolframCloudFutureSession</span><span class="p">(</span><span class="n">WolframCloudSession</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframCloudFutureSession"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudFutureSession">[docs]</a><span class="k">class</span> <span class="nc">WolframCloudFutureSession</span><span class="p">(</span><span class="n">WolframCloudSession</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Am asynchronous Wolfram cloud session wrapping API calls and cloud evaluations </span>
 <span class="sd">    in future objects.</span>
 
@@ -299,25 +299,25 @@
     <span class="k">def</span> <span class="nf">started</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pool</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">started</span>
 
-<div class="viewcode-block" id="WolframCloudFutureSession.start"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudFutureSession.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframCloudFutureSession.start"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudFutureSession.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pool</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_pool</span> <span class="o">=</span> <span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span>
                 <span class="n">max_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_workers</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="WolframCloudFutureSession.stop"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudFutureSession.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframCloudFutureSession.stop"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudFutureSession.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pool</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_pool</span><span class="o">.</span><span class="n">shutdown</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_pool</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="WolframCloudFutureSession.terminate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudFutureSession.terminate">[docs]</a>    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframCloudFutureSession.terminate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudFutureSession.terminate">[docs]</a>    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pool</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_pool</span><span class="o">.</span><span class="n">shutdown</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_pool</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="WolframCloudFutureSession.call"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudFutureSession.call">[docs]</a>    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<div class="viewcode-block" id="WolframCloudFutureSession.call"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudFutureSession.call">[docs]</a>    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
              <span class="n">api</span><span class="p">,</span>
              <span class="n">input_parameters</span><span class="o">=</span><span class="p">{},</span>
              <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wl&#39;</span><span class="p">,</span>
@@ -336,7 +336,7 @@
             <span class="n">permissions_key</span><span class="o">=</span><span class="n">permissions_key</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargv</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="WolframCloudFutureSession.evaluate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudFutureSession.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframCloudFutureSession.evaluate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudFutureSession.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Send `expr` to the cloud for asynchronous evaluation.</span>
 
 <span class="sd">        Returns a :class:`concurrent.futures.Future` object.</span>
@@ -348,10 +348,10 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pool</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">evaluate</span><span class="p">,</span> <span class="n">expr</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="WolframAPICall"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframAPICall">[docs]</a><span class="k">class</span> <span class="nc">WolframAPICall</span><span class="p">(</span><span class="n">WolframAPICallBase</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframAPICall"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframAPICall">[docs]</a><span class="k">class</span> <span class="nc">WolframAPICall</span><span class="p">(</span><span class="n">WolframAPICallBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Helper class to perform an API call using a cloud session. &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="WolframAPICall.perform"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframAPICall.perform">[docs]</a>    <span class="k">def</span> <span class="nf">perform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframAPICall.perform"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframAPICall.perform">[docs]</a>    <span class="k">def</span> <span class="nf">perform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Make the API call, return the result.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">call</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="p">,</span>

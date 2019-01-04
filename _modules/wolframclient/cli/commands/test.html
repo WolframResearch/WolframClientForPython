@@ -49,6 +49,7 @@
 <span class="kn">from</span> <span class="nn">wolframclient.cli.utils</span> <span class="k">import</span> <span class="n">SimpleCommand</span>
 <span class="kn">from</span> <span class="nn">wolframclient.utils</span> <span class="k">import</span> <span class="n">six</span>
 <span class="kn">from</span> <span class="nn">wolframclient.utils.decorators</span> <span class="k">import</span> <span class="n">to_tuple</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils.functional</span> <span class="k">import</span> <span class="nb">map</span>
 <span class="kn">from</span> <span class="nn">wolframclient.utils.importutils</span> <span class="k">import</span> <span class="n">module_path</span>
 
 
@@ -57,12 +58,14 @@
     <span class="k">yield</span> <span class="p">(</span><span class="s2">&quot;pytz&quot;</span><span class="p">,</span> <span class="s1">&#39;2018.6&#39;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">six</span><span class="o">.</span><span class="n">JYTHON</span><span class="p">:</span>
-        <span class="k">yield</span> <span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">,</span> <span class="s2">&quot;1.15.3&quot;</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">,</span> <span class="ow">not</span> <span class="n">six</span><span class="o">.</span><span class="n">PY2</span> <span class="ow">and</span> <span class="s2">&quot;1.15.3&quot;</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">yield</span> <span class="p">(</span><span class="s2">&quot;pillow&quot;</span><span class="p">,</span> <span class="s2">&quot;5.3.0&quot;</span><span class="p">)</span>
         <span class="k">yield</span> <span class="p">(</span><span class="s2">&quot;requests&quot;</span><span class="p">,</span> <span class="s2">&quot;2.20.0&quot;</span><span class="p">)</span>
         <span class="k">yield</span> <span class="p">(</span><span class="s2">&quot;oauthlib&quot;</span><span class="p">,</span> <span class="s2">&quot;2.1.0&quot;</span><span class="p">)</span>
-        <span class="k">yield</span> <span class="p">(</span><span class="s2">&quot;aiohttp&quot;</span><span class="p">,</span> <span class="s2">&quot;3.4.4&quot;</span><span class="p">)</span>
         <span class="k">yield</span> <span class="p">(</span><span class="s2">&quot;pyzmq&quot;</span><span class="p">,</span> <span class="s2">&quot;17.1.2&quot;</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="p">(</span><span class="s2">&quot;pandas&quot;</span><span class="p">,</span> <span class="s2">&quot;0.23.4&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">six</span><span class="o">.</span><span class="n">PY2</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="p">(</span><span class="s2">&quot;aiohttp&quot;</span><span class="p">,</span> <span class="s2">&quot;3.4.4&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Command"><a class="viewcode-back" href="../../../../api/wolframclient.cli.commands.html#wolframclient.cli.commands.test.Command">[docs]</a><span class="k">class</span> <span class="nc">Command</span><span class="p">(</span><span class="n">SimpleCommand</span><span class="p">):</span>

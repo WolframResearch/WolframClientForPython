@@ -57,13 +57,13 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;WolframLanguageAsyncSession&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="WolframLanguageAsyncSession"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageAsyncSession">[docs]</a><span class="k">class</span> <span class="nc">WolframLanguageAsyncSession</span><span class="p">(</span><span class="n">WolframLanguageSession</span><span class="p">,</span>
+<div class="viewcode-block" id="WolframLanguageAsyncSession"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageAsyncSession">[docs]</a><span class="k">class</span> <span class="nc">WolframLanguageAsyncSession</span><span class="p">(</span><span class="n">WolframLanguageSession</span><span class="p">,</span>
                                   <span class="n">WolframAsyncEvaluator</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Evaluate expressions asynchronously using coroutines.</span>
 
 <span class="sd">    Asynchronous evaluations are provided through coroutines and the :mod:`asyncio` modules.</span>
 
-<span class="sd">    Instance of this class can be managed with an asynchronous context manager::</span>
+<span class="sd">    Instances of this class can be managed with an asynchronous context manager::</span>
 <span class="sd">        </span>
 <span class="sd">        async with WolframLanguageAsyncSession(kernelpath) as session:</span>
 <span class="sd">            await session.evaluate(&#39;Now&#39;)</span>
@@ -71,11 +71,11 @@
 <span class="sd">    An event loop can be explicitly passed using the named parameter `loop`, otherwise the one </span>
 <span class="sd">    returned by :func:`~asyncio.get_event_loop` is used.</span>
 
-<span class="sd">    Coroutine all run in a unique thread. Since a Wolfram Kernel is single threaded, there can</span>
+<span class="sd">    Coroutines all run in a unique thread. Since a Wolfram Kernel is single threaded, there can</span>
 <span class="sd">    be only one evaluation at a time. In a sense, from the event loop point of view, evaluations </span>
 <span class="sd">    are atomic operations. Even when many asynchronous sessions are started, the number of </span>
 <span class="sd">    threads equals the number of kernel instances running and should not be problematic. Ensuring </span>
-<span class="sd">    that only one thread run all operations of a given Wolfram kernel significantly reduce the </span>
+<span class="sd">    that only one thread runs all operations of a given Wolfram kernel, significantly reduces the </span>
 <span class="sd">    complexity of the code without any real drawback.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -112,7 +112,7 @@
         <span class="c1"># zmq operation at startup.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">event_abort</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
 
-<div class="viewcode-block" id="WolframLanguageAsyncSession.duplicate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageAsyncSession.duplicate">[docs]</a>    <span class="k">def</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageAsyncSession.duplicate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageAsyncSession.duplicate">[docs]</a>    <span class="k">def</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">WolframLanguageAsyncSession</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">,</span>
             <span class="n">loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">,</span>
@@ -139,21 +139,21 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">thread_pool_exec</span> <span class="o">=</span> <span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">thread_pool_exec</span>
 
-<div class="viewcode-block" id="WolframLanguageAsyncSession.evaluate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageAsyncSession.evaluate">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageAsyncSession.evaluate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageAsyncSession.evaluate">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Evaluate :meth:`~wolframclient.evaluation.WolframLanguageSession.evaluate`</span>
 <span class="sd">        asynchronously.</span>
 
 <span class="sd">        This method is a coroutine.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_async_evaluate</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">evaluate</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="WolframLanguageAsyncSession.evaluate_wxf"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageAsyncSession.evaluate_wxf">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">evaluate_wxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageAsyncSession.evaluate_wxf"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageAsyncSession.evaluate_wxf">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">evaluate_wxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Evaluate :meth:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wxf`</span>
 <span class="sd">        asynchronously.</span>
 
 <span class="sd">        This method is a coroutine.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_async_evaluate</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">evaluate_wxf</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="WolframLanguageAsyncSession.evaluate_wrap"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageAsyncSession.evaluate_wrap">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">evaluate_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageAsyncSession.evaluate_wrap"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageAsyncSession.evaluate_wrap">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">evaluate_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Evaluate :meth:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wrap`</span>
 <span class="sd">        asynchronously.</span>
 
@@ -165,7 +165,7 @@
         <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_exec_pool</span><span class="p">(),</span> <span class="n">func</span><span class="p">,</span>
                                                 <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="WolframLanguageAsyncSession.start"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageAsyncSession.start">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageAsyncSession.start"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageAsyncSession.start">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Asynchronously start the session.</span>
 <span class="sd">        </span>
 <span class="sd">        This method is a coroutine.&quot;&quot;&quot;</span>
@@ -176,12 +176,12 @@
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
             <span class="k">raise</span> <span class="n">e</span></div>
 
-<div class="viewcode-block" id="WolframLanguageAsyncSession.stop"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageAsyncSession.stop">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageAsyncSession.stop"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageAsyncSession.stop">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># signal socket read with timeout function to abort current operation.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">event_abort</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_async_terminate</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="WolframLanguageAsyncSession.terminate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageAsyncSession.terminate">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageAsyncSession.terminate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageAsyncSession.terminate">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_async_terminate</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">terminate</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span></div>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_async_terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sync_stop_func</span><span class="p">,</span> <span class="n">wait</span><span class="p">):</span>

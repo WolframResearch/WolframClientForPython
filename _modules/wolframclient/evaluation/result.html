@@ -108,7 +108,7 @@
 
 <span class="sd">    The final Python expression is lazily computed when accessing the</span>
 <span class="sd">    field `result`. The WXF bytes holding the evaluation result are</span>
-<span class="sd">    stored in `wxf` and thus can be parsed with a consumized parser if</span>
+<span class="sd">    stored in `wxf` and thus can be parsed with a customized parser if</span>
 <span class="sd">    necessary.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -142,8 +142,8 @@
     <span class="sd">&quot;&quot;&quot;Result object associated with cloud kernel evaluation.</span>
 
 <span class="sd">    The response body associated to this type of result must be json encoded.</span>
-<span class="sd">    Other fields provide additionnal information. The HTTP response object is</span>
-<span class="sd">    stored as `http_response` and when HTTP error occured it is stored in `request_error`.</span>
+<span class="sd">    Other fields provide additional information. The HTTP response object is</span>
+<span class="sd">    stored as `http_response` and when HTTP error occurred it is stored in `request_error`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
@@ -232,8 +232,8 @@
     <span class="sd">&quot;&quot;&quot;Result object associated with cloud kernel evaluation.</span>
 
 <span class="sd">    The response body associated to this type of result must be json encoded.</span>
-<span class="sd">    Other fields provide additionnal information. The HTTP response object is</span>
-<span class="sd">    stored as `http_response` and when HTTP error occured it is stored in `request_error`.</span>
+<span class="sd">    Other fields provide additional information. The HTTP response object is</span>
+<span class="sd">    stored as `http_response` and when HTTP error occurred it is stored in `request_error`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -289,7 +289,7 @@
             <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&lt;request error </span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
                                                  <span class="bp">self</span><span class="o">.</span><span class="n">http_response</span><span class="o">.</span><span class="n">status</span><span class="p">())</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&lt;sucessful request, body not read&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&lt;successful request, body not read&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
 
@@ -356,19 +356,6 @@
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-    <span class="c1"># async generators do not exist in 3.5</span>
-    <span class="c1"># async def iter_error(self):</span>
-    <span class="c1">#     &quot;&quot;&quot;Generator of tuples made from the field name and the associated error message&quot;&quot;&quot;</span>
-    <span class="c1">#     if not self._built:</span>
-    <span class="c1">#         await self._build()</span>
-    <span class="c1">#     for err in self._iter_error():</span>
-    <span class="c1">#         yield err</span>
-    <span class="c1"># async def iter_full_error_report(self):</span>
-    <span class="c1">#     &quot;&quot;&quot;Generator of tuples made from the field name and the associated entire error report.&quot;&quot;&quot;</span>
-    <span class="c1">#     if not self._built:</span>
-    <span class="c1">#         await self._build()</span>
-    <span class="c1">#     for err in self._iter_full_error_report():</span>
-    <span class="c1">#         yield err</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">iter_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 

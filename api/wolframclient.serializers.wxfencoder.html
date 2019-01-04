@@ -167,7 +167,7 @@ one call may be necessary.</p>
 <em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.streaming.</code><code class="descname">ZipCompressedReader</code><span class="sig-paren">(</span><em>reader</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/streaming.html#ZipCompressedReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.streaming.ZipCompressedReader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A buffer implementation reading zip compressed data from a source buffer and returning uncompressed data.</p>
-<p>This class is instanciated from a reader, any object implementing a <a class="reference external" href="https://docs.python.org/3/library/io.html#io.BufferedIOBase.read" title="(in Python v3.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">read()</span></code></a> method.</p>
+<p>This class is instantiated from a reader, any object implementing a <a class="reference external" href="https://docs.python.org/3/library/io.html#io.BufferedIOBase.read" title="(in Python v3.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">read()</span></code></a> method.</p>
 <dl class="attribute">
 <dt id="wolframclient.serializers.wxfencoder.streaming.ZipCompressedReader.CHUNK_SIZE">
 <code class="descname">CHUNK_SIZE</code><em class="property"> = 8192</em><a class="headerlink" href="#wolframclient.serializers.wxfencoder.streaming.ZipCompressedReader.CHUNK_SIZE" title="Permalink to this definition">¶</a></dt>
@@ -333,10 +333,10 @@ is not accounted in the length.</p>
 <dt id="wolframclient.serializers.wxfencoder.wxfexpr.WXFExprInteger">
 <em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.wxfexpr.</code><code class="descname">WXFExprInteger</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/wxfexpr.html#WXFExprInteger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfexpr.WXFExprInteger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr</span></code></p>
-<p>Integers have various length, from one byte up to eigth and are signed
+<p>Integers have various length, from one byte up to eight and are signed
 values. Values above 2^63-1 are represented with <cite>WXFExprBigInteger</cite>.
 Internally WXF uses the two’s complement representation of integer values.
-The endianness is system independant and is always little-endian.</p>
+The endianness is system independent and is always little-endian.</p>
 <dl class="attribute">
 <dt id="wolframclient.serializers.wxfencoder.wxfexpr.WXFExprInteger.int_size">
 <code class="descname">int_size</code><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfexpr.WXFExprInteger.int_size" title="Permalink to this definition">¶</a></dt>
@@ -393,10 +393,10 @@ required.</p>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Expression provider pull instances of WXFExpr from instances of <cite>WXFEncoder</cite>.</p>
 <p><cite>WXFExprProvider</cite> can be initialized with an encoder. If none is provided the
-default class <cite>DefaultWXFEncoder</cite> is used to instanciate one. It is possible
+default class <cite>DefaultWXFEncoder</cite> is used to instantiate one. It is possible
 to add extra encoder using <cite>add_encoder</cite>. The order in which encoders are called
 is the one in which they were added. Note that for performance reasons, it is
-recommanded to have the default encoder be first, as such one should not initialize
+recommended to have the default encoder be first, as such one should not initialize
 a provider with an encoder except if the default one is not suited for ones needs.</p>
 <p>An optional <cite>default</cite> function can be passed to the provider at initialization. It
 is used in last resort if no encoder handled the object. It is applied to the

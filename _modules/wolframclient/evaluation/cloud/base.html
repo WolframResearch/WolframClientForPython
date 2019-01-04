@@ -55,7 +55,7 @@
 <span class="p">]</span>
 
 
-<div class="viewcode-block" id="SecuredAuthenticationKey"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.SecuredAuthenticationKey">[docs]</a><span class="k">class</span> <span class="nc">SecuredAuthenticationKey</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="SecuredAuthenticationKey"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.SecuredAuthenticationKey">[docs]</a><span class="k">class</span> <span class="nc">SecuredAuthenticationKey</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Represents a Secured Authentication Key generated using the Wolfram Language</span>
 <span class="sd">    function `GenerateSecuredAuthenticationKey[]`</span>
 
@@ -68,7 +68,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">consumer_secret</span> <span class="o">=</span> <span class="n">consumer_secret</span></div>
 
 
-<div class="viewcode-block" id="UserIDPassword"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.UserIDPassword">[docs]</a><span class="k">class</span> <span class="nc">UserIDPassword</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="UserIDPassword"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.UserIDPassword">[docs]</a><span class="k">class</span> <span class="nc">UserIDPassword</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Represents user credentials used to login to a cloud.</span>
 
 <span class="sd">    It is used as an input when authenticating a cloud session.</span>
@@ -111,7 +111,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="OAuthSessionBase.authorized"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.OAuthSessionBase.authorized">[docs]</a>    <span class="k">def</span> <span class="nf">authorized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return a reasonnably accurate state of the authentication status.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return a reasonably accurate state of the authentication status.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">client_secret</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">resource_owner_key</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span>

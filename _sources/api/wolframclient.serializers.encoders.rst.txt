@@ -1,0 +1,78 @@
+wolframclient.serializers.encoders package
+==========================================
+
+Submodules
+----------
+
+wolframclient.serializers.encoders.builtin module
+-------------------------------------------------
+
+.. automodule:: wolframclient.serializers.encoders.builtin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.encoders.datetime module
+--------------------------------------------------
+
+.. automodule:: wolframclient.serializers.encoders.datetime
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.encoders.decimal module
+-------------------------------------------------
+
+.. automodule:: wolframclient.serializers.encoders.decimal
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.encoders.fractions module
+---------------------------------------------------
+
+.. automodule:: wolframclient.serializers.encoders.fractions
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.encoders.numpy module
+-----------------------------------------------
+
+.. automodule:: wolframclient.serializers.encoders.numpy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.encoders.pandas module
+------------------------------------------------
+
+.. automodule:: wolframclient.serializers.encoders.pandas
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.encoders.pil module
+---------------------------------------------
+
+.. automodule:: wolframclient.serializers.encoders.pil
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.encoders.wolfram module
+-------------------------------------------------
+
+.. automodule:: wolframclient.serializers.encoders.wolfram
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: wolframclient.serializers.encoders
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -48,12 +48,13 @@
 
 
 <div class="viewcode-block" id="WLSerializable"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.serializable.WLSerializable">[docs]</a><span class="k">class</span> <span class="nc">WLSerializable</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;A familly of classes that can be serialized using :func:`~wolframclient.serializers.export`.</span>
+    <span class="sd">&quot;&quot;&quot;A class that can be serialized using :func:`~wolframclient.serializers.export`.</span>
 
 <span class="sd">    Custom serialization of a class is done by subclassing this class::</span>
 
 <span class="sd">        from wolframclient.serializers.serializable import WLSerializable</span>
 <span class="sd">        from wolframclient.language import wl</span>
+<span class="sd">        from wolframclient.serializers import export</span>
 
 <span class="sd">        class MyPythonClass(WLSerializable):</span>
 <span class="sd">            def __init__(self, *arguments):</span>
@@ -62,7 +63,12 @@
 <span class="sd">            def to_wl(self):</span>
 <span class="sd">                return wl.MyWolframFunction(*self.arguments)</span>
 
-<span class="sd">    :func:`~wolframclient.serializers.export` is able to serialize expressions recursively::</span>
+<span class="sd">    Serialize :data:`MyPythonClass` using export::</span>
+
+<span class="sd">        &gt;&gt;&gt; export(MyPythonClass(&#39;foo&#39;, &#39;bar&#39;))</span>
+<span class="sd">        b&#39;MyWolframFunction[&quot;foo&quot;, &quot;bar&quot;]&#39;</span>
+
+<span class="sd">    Serialization is applied recursively, arguments are also serialized::</span>
 
 <span class="sd">        &gt;&gt;&gt; export(MyPythonClass(1, 2, MyPythonClass(2, 3)))</span>
 <span class="sd">        &#39;MyWolframFunction[1, 2, MyWolframFunction[2, 3]]&#39;</span>
@@ -70,7 +76,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="WLSerializable.to_wl"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.serializable.WLSerializable.to_wl">[docs]</a>    <span class="k">def</span> <span class="nf">to_wl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return a serialization of a given python class as a combinasion of WL serializable objects.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; Return the serialized form of a given python class.</span>
+<span class="sd">        </span>
+<span class="sd">        The returned value must be a combination of serializable types.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
             <span class="s1">&#39;class </span><span class="si">%s</span><span class="s1"> must implement a to_wl method&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></div></div>
 </pre></div>

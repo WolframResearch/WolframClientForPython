@@ -44,11 +44,10 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
 
 <span class="kn">from</span> <span class="nn">wolframclient.serializers.serializable</span> <span class="k">import</span> <span class="n">WLSerializable</span>
+<span class="kn">from</span> <span class="nn">wolframclient.serializers.encoder</span> <span class="k">import</span> <span class="n">wolfram_encoder</span>
 <span class="kn">from</span> <span class="nn">wolframclient.utils.importutils</span> <span class="k">import</span> <span class="n">API</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">&quot;&quot;&quot;</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;export&#39;</span><span class="p">,</span> <span class="s1">&#39;WLSerializable&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;export&#39;</span><span class="p">,</span> <span class="s1">&#39;WLSerializable&#39;</span><span class="p">,</span> <span class="s1">&#39;wolfram_encoder&#39;</span><span class="p">]</span>
 
 <span class="n">DEFAULT_FORMAT</span> <span class="o">=</span> <span class="s1">&#39;wl&#39;</span>
 
@@ -61,35 +60,42 @@
 <div class="viewcode-block" id="export"><a class="viewcode-back" href="../../api/wolframclient.serializers.html#wolframclient.serializers.export">[docs]</a><span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="n">DEFAULT_FORMAT</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Serialize input `data` to a target format.</span>
 
-<span class="sd">    Input `data` can be one of the native Python types supported directly including:</span>
-<span class="sd">    :class:`list`, :class:`dict`, etc. Or, a serializable python object, i.e extending</span>
-<span class="sd">    :class:`~wolframclient.serializers.serializable.WLSerializable`.</span>
-<span class="sd">    The default format is string *InputForm*::</span>
+<span class="sd">    Input `data` can be any supported Python types including: :class:`list`, :class:`dict`, etc, or, a serializable python object. </span>
+<span class="sd">    </span>
+<span class="sd">    Serializable python objects are class extending :class:`~wolframclient.serializers.serializable.WLSerializable`, and types mapped to</span>
+<span class="sd">    an encoder.</span>
+
+<span class="sd">    The default format is *InputForm* string::</span>
 
 <span class="sd">        &gt;&gt;&gt; export(wl.Range(3))</span>
-<span class="sd">        &#39;Range[3]&#39;</span>
+<span class="sd">        b&#39;Range[3]&#39;</span>
 
-<span class="sd">    Specify the target format to be WXF::</span>
+<span class="sd">    Specify WXF format by setting `target_format`::</span>
 
 <span class="sd">        &gt;&gt;&gt; export([1,2,3], target_format=&#39;wxf&#39;)</span>
-<span class="sd">        &#39;8:f\x03s\x04ListC\x01C\x02C\x03&#39;</span>
+<span class="sd">        b&#39;8:f\x03s\x04ListC\x01C\x02C\x03&#39;</span>
 
 <span class="sd">    .. note :: WXF is a binary format for serializing Wolfram Language expression. Consult</span>
 <span class="sd">            the documentation for a full format description: https://reference.wolfram.com/language/tutorial/WXFFormatDescription.html</span>
 
-<span class="sd">    If a string is provided as second argument, it is interpreted as a file path, and serialized form is</span>
-<span class="sd">    written directly to the file. The file is opened and closed automatically::</span>
+<span class="sd">    WXF byte arrays are deserialized with :func:`~wolframclient.deserializers.binary_deserialize`::</span>
 
-<span class="sd">        &gt;&gt;&gt; export([1, 2, 3], &#39;file.wl&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; wxf = export([1,2,3], target_format=&#39;wxf&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; binary_deserialize(wxf)</span>
+<span class="sd">        [1, 2, 3]</span>
+
+<span class="sd">    If `stream` is specified with a string, it is interpreted as a file path, and serialized form is</span>
+<span class="sd">    written directly to the specified file. The file is opened and closed automatically::</span>
+
+<span class="sd">        &gt;&gt;&gt; export([1, 2, 3], stream=&#39;file.wl&#39;)</span>
 <span class="sd">        &#39;file.wl&#39;</span>
 
-<span class="sd">    An output stream can also be provided, in which case the output bytes are written to it.</span>
+<span class="sd">    If `stream` is specified with an output stream, the serialization bytes are written to it.</span>
 
-<span class="sd">    Finally any object that implements a `write` method, like :class:`file`, :class:`io.BytesIO`</span>
-<span class="sd">    or :class:`io.StringIO` is a valid value for the `stream` option::</span>
+<span class="sd">    Any object that implements a `write` method, e.g. :data:`file`, :class:`io.BytesIO`, or :class:`io.StringIO` is a valid value for the `stream` named parameter::</span>
 
 <span class="sd">        &gt;&gt;&gt; with open(&#39;file.wl&#39;, &#39;wb&#39;) as f:</span>
-<span class="sd">        ...     export([1, 2, 3], f)</span>
+<span class="sd">        ...     export([1, 2, 3], stream=f)</span>
 <span class="sd">        ...</span>
 <span class="sd">        &lt;open file &#39;file.wl&#39;, mode &#39;wb&#39; at 0x10a4f01e0&gt;</span>
 

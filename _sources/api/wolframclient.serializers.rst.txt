@@ -6,7 +6,7 @@ Subpackages
 
 .. toctree::
 
-    wolframclient.serializers.normalizer
+    wolframclient.serializers.encoders
     wolframclient.serializers.wxfencoder
 
 Submodules
@@ -16,6 +16,14 @@ wolframclient.serializers.base module
 -------------------------------------
 
 .. automodule:: wolframclient.serializers.base
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.serializers.encoder module
+----------------------------------------
+
+.. automodule:: wolframclient.serializers.encoder
     :members:
     :undoc-members:
     :show-inheritance:

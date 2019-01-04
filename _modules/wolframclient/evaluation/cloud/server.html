@@ -48,15 +48,12 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;WolframServer&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="WolframServer"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframServer">[docs]</a><span class="k">class</span> <span class="nc">WolframServer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframServer"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframServer">[docs]</a><span class="k">class</span> <span class="nc">WolframServer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Represents the cloud server.</span>
 
-<span class="sd">    Contains the authentication endpoints informations, the API endpoint aka. the</span>
+<span class="sd">    Contains the authentication endpoints information, the API endpoint aka. the</span>
 <span class="sd">    cloud base (`$CloudBase` in the Wolfram Language), and eventually the xauth</span>
 <span class="sd">    consumer key and secret.</span>
-
-<span class="sd">    For conveniency this class exposes static methods to build instances from</span>
-<span class="sd">    a `Configuration` or from a file path.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -77,7 +74,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s1">&#39;Invalid certificate. Must be a string type or None.&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="WolframServer.is_xauth"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframServer.is_xauth">[docs]</a>    <span class="k">def</span> <span class="nf">is_xauth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframServer.is_xauth"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframServer.is_xauth">[docs]</a>    <span class="k">def</span> <span class="nf">is_xauth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">xauth_consumer_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">xauth_consumer_secret</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div></div>
 
 

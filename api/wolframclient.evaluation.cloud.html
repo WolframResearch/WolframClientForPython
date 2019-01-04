@@ -244,7 +244,7 @@ function <cite>GenerateSecuredAuthenticationKey[]</cite></p>
 <dl class="method">
 <dt id="wolframclient.evaluation.cloud.base.OAuthSessionBase.authorized">
 <code class="descname">authorized</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/base.html#OAuthSessionBase.authorized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.base.OAuthSessionBase.authorized" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a reasonnably accurate state of the authentication status.</p>
+<dd><p>Return a reasonably accurate state of the authentication status.</p>
 </dd></dl>
 
 <dl class="method">
@@ -362,7 +362,7 @@ or a the string InputForm of an expression to evaluate.</p>
 <dl class="method">
 <dt id="wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.terminate">
 <code class="descname">terminate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.terminate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.terminate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Immediatly stop the evaluator, eventually killing running jobs resulting in cancelled evaluations.</p>
+<dd><p>Immediately stop the evaluator, eventually killing running jobs resulting in cancelled evaluations.</p>
 </dd></dl>
 
 <dl class="method">
@@ -418,7 +418,7 @@ or a the string InputForm of an expression to evaluate.</p>
 <dl class="method">
 <dt id="wolframclient.evaluation.cloud.cloudsession.WolframCloudFutureSession.terminate">
 <code class="descname">terminate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudFutureSession.terminate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.cloudsession.WolframCloudFutureSession.terminate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Immediatly stop the evaluator, eventually killing running jobs resulting in cancelled evaluations.</p>
+<dd><p>Immediately stop the evaluator, eventually killing running jobs resulting in cancelled evaluations.</p>
 </dd></dl>
 
 </dd></dl>
@@ -493,11 +493,9 @@ configuration.</p>
 <em class="property">class </em><code class="descclassname">wolframclient.evaluation.cloud.server.</code><code class="descname">WolframServer</code><span class="sig-paren">(</span><em>cloudbase</em>, <em>request_token_endpoint</em>, <em>access_token_endpoint</em>, <em>xauth_consumer_key=None</em>, <em>xauth_consumer_secret=None</em>, <em>certificate=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/server.html#WolframServer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.server.WolframServer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Represents the cloud server.</p>
-<p>Contains the authentication endpoints informations, the API endpoint aka. the
+<p>Contains the authentication endpoints information, the API endpoint aka. the
 cloud base (<cite>$CloudBase</cite> in the Wolfram Language), and eventually the xauth
 consumer key and secret.</p>
-<p>For conveniency this class exposes static methods to build instances from
-a <cite>Configuration</cite> or from a file path.</p>
 <dl class="method">
 <dt id="wolframclient.evaluation.cloud.server.WolframServer.is_xauth">
 <code class="descname">is_xauth</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/server.html#WolframServer.is_xauth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.server.WolframServer.is_xauth" title="Permalink to this definition">¶</a></dt>
@@ -513,11 +511,9 @@ a <cite>Configuration</cite> or from a file path.</p>
 <em class="property">class </em><code class="descclassname">wolframclient.evaluation.cloud.</code><code class="descname">WolframServer</code><span class="sig-paren">(</span><em>cloudbase</em>, <em>request_token_endpoint</em>, <em>access_token_endpoint</em>, <em>xauth_consumer_key=None</em>, <em>xauth_consumer_secret=None</em>, <em>certificate=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/server.html#WolframServer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.WolframServer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Represents the cloud server.</p>
-<p>Contains the authentication endpoints informations, the API endpoint aka. the
+<p>Contains the authentication endpoints information, the API endpoint aka. the
 cloud base (<cite>$CloudBase</cite> in the Wolfram Language), and eventually the xauth
 consumer key and secret.</p>
-<p>For conveniency this class exposes static methods to build instances from
-a <cite>Configuration</cite> or from a file path.</p>
 <dl class="method">
 <dt id="wolframclient.evaluation.cloud.WolframServer.is_xauth">
 <code class="descname">is_xauth</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/server.html#WolframServer.is_xauth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.WolframServer.is_xauth" title="Permalink to this definition">¶</a></dt>
@@ -611,7 +607,7 @@ or a the string InputForm of an expression to evaluate.</p>
 <dl class="method">
 <dt id="wolframclient.evaluation.cloud.WolframCloudSession.terminate">
 <code class="descname">terminate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.terminate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.WolframCloudSession.terminate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Immediatly stop the evaluator, eventually killing running jobs resulting in cancelled evaluations.</p>
+<dd><p>Immediately stop the evaluator, eventually killing running jobs resulting in cancelled evaluations.</p>
 </dd></dl>
 
 <dl class="method">
@@ -667,7 +663,7 @@ or a the string InputForm of an expression to evaluate.</p>
 <dl class="method">
 <dt id="wolframclient.evaluation.cloud.WolframCloudFutureSession.terminate">
 <code class="descname">terminate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudFutureSession.terminate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.cloud.WolframCloudFutureSession.terminate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Immediatly stop the evaluator, eventually killing running jobs resulting in cancelled evaluations.</p>
+<dd><p>Immediately stop the evaluator, eventually killing running jobs resulting in cancelled evaluations.</p>
 </dd></dl>
 
 </dd></dl>

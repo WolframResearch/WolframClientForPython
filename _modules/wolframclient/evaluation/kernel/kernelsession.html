@@ -127,7 +127,7 @@
                 <span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s1">&#39;Failed to close ZMQ logging socket.&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="WolframLanguageSession"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageSession">[docs]</a><span class="k">class</span> <span class="nc">WolframLanguageSession</span><span class="p">(</span><span class="n">WolframEvaluator</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession">[docs]</a><span class="k">class</span> <span class="nc">WolframLanguageSession</span><span class="p">(</span><span class="n">WolframEvaluator</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A session to a Wolfram Kernel enabling evaluation of Wolfram Language expressions.</span>
 
 <span class="sd">    Start a new session and send an expression for evaluation::</span>
@@ -138,18 +138,15 @@
 
 <span class="sd">    Communication with a given kernel is based on ZMQ sockets:</span>
 
-<span class="sd">    * one `PUSH` socket receiving expressions to evaluate,</span>
-<span class="sd">    * one `PULL` socket to read evaluation results.</span>
+<span class="sd">    * one `PUSH` socket to send expressions for evaluation</span>
+<span class="sd">    * one `PULL` socket to receive evaluation results</span>
 
 <span class="sd">    Kernel logging is disabled by default and is done through a third socket</span>
-<span class="sd">    (type `SUB`). The initial log level is specificed by parameter kernel_loglevel.</span>
-<span class="sd">    If log level was not set at initialization, logging is not available for the entire</span>
+<span class="sd">    (type `SUB`). The initial log level is specified by the parameter `kernel_loglevel`.</span>
+<span class="sd">    If the log level was not set at initialization, logging is not available for the entire</span>
 <span class="sd">    session.</span>
 
-<span class="sd">    It is possible to pass ZMQ sockets to use instead of new one, but this is generally</span>
-<span class="sd">    not recommanded, probably never necessary.</span>
-
-<span class="sd">    The kernel associated to a given session provides the following</span>
+<span class="sd">    The kernel associated with a given session provides the following</span>
 <span class="sd">    logging functions:</span>
 
 <span class="sd">    * ``ClientLibrary`debug`` corresponding to :py:meth:`logging.Logger.debug`</span>
@@ -162,7 +159,7 @@
 <span class="sd">    * ``ClientLibrary`SetErrorLogLevel[]`` only send error messages</span>
 <span class="sd">    * ``ClientLibrary`DisableKernelLogging[]`` stop sending error message to the logging socket</span>
 
-<span class="sd">    The standart input, output and error file handles can be specified with `stdin`, `stdout` and `stderr`</span>
+<span class="sd">    The standard input, output and error file handles can be specified with `stdin`, `stdout` and `stderr`</span>
 <span class="sd">    named parameters. Valid values are those accepted by subprocess.Popen (e.g :data:`sys.stdout`). Those parameters should be handled</span>
 <span class="sd">    with care as deadlocks can arise from misconfiguration.</span>
 
@@ -231,8 +228,8 @@
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
-<div class="viewcode-block" id="WolframLanguageSession.duplicate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageSession.duplicate">[docs]</a>    <span class="k">def</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Build a new object using the same configuration of the current one. &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="WolframLanguageSession.duplicate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.duplicate">[docs]</a>    <span class="k">def</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Build a new object using the same configuration as the current one. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">WolframLanguageSession</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">,</span>
             <span class="n">consumer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="p">,</span>
@@ -254,13 +251,13 @@
         <span class="s1">&#39;HIDE_SUBPROCESS_WINDOW&#39;</span><span class="p">:</span> <span class="kc">True</span>
     <span class="p">}</span>
 
-<div class="viewcode-block" id="WolframLanguageSession.get_parameter"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageSession.get_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.get_parameter"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.get_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the value of a given session parameter.</span>
 
 <span class="sd">        Session parameters are:</span>
 
 <span class="sd">        * ``&#39;STARTUP_READ_TIMEOUT&#39;``: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.</span>
-<span class="sd">        * ``&#39;STARTUP_RETRY_SLEEP_TIME&#39;``: time to sleep, in seconds, before checking that the initilazed kernel has responded. Default is 1 ms.</span>
+<span class="sd">        * ``&#39;STARTUP_RETRY_SLEEP_TIME&#39;``: time to sleep, in seconds, before checking that the initialized kernel has responded. Default is 1 ms.</span>
 <span class="sd">        * ``&#39;TERMINATE_READ_TIMEOUT&#39;``: time to wait, in seconds, after the ``Quit[]`` command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -271,13 +268,13 @@
                 <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> is not one of the valid parameters: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
                 <span class="p">(</span><span class="n">parameter_name</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_PARAMETERS</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span></div>
 
-<div class="viewcode-block" id="WolframLanguageSession.set_parameter"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageSession.set_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter_value</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.set_parameter"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.set_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter_value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set a new value for a given parameter. The new value only applies for this session.</span>
 
 <span class="sd">        Session parameters are:</span>
 
 <span class="sd">        * ``&#39;STARTUP_READ_TIMEOUT&#39;``: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.</span>
-<span class="sd">        * ``&#39;STARTUP_RETRY_SLEEP_TIME&#39;``: time to sleep, in seconds, before checking that the initilazed kernel has responded. Default is 1 ms.</span>
+<span class="sd">        * ``&#39;STARTUP_RETRY_SLEEP_TIME&#39;``: time to sleep, in seconds, before checking that the initialized kernel has responded. Default is 1 ms.</span>
 <span class="sd">        * ``&#39;TERMINATE_READ_TIMEOUT&#39;``: time to wait, in seconds, after the ``Quit[]`` command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">parameter_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_PARAMETERS</span><span class="p">:</span>
@@ -286,21 +283,21 @@
                 <span class="p">(</span><span class="n">parameter_name</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_PARAMETERS</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameter_value</span></div>
 
-<div class="viewcode-block" id="WolframLanguageSession.terminate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageSession.terminate">[docs]</a>    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Immediatly stop the current session.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="WolframLanguageSession.terminate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.terminate">[docs]</a>    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Immediately stop the current session.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">(</span><span class="n">gracefully</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="WolframLanguageSession.stop"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageSession.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.stop"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">(</span><span class="n">gracefully</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gracefully</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Stop the kernel process and close sockets.</span>
 
-<span class="sd">        This function must be called when a given session is no more useful</span>
-<span class="sd">        to prevent orfan processes and sockets from being generated.</span>
+<span class="sd">        This function must be called when a given session is no longer useful</span>
+<span class="sd">        to prevent orphan processes and sockets from being generated.</span>
 
 <span class="sd">        .. note::</span>
-<span class="sd">            Licencing restrictions usually apply to Wolfram kernels and may</span>
+<span class="sd">            Licensing restrictions usually apply to Wolfram kernels and may</span>
 <span class="sd">            prevent new instances from starting if too many kernels are running</span>
 <span class="sd">            simultaneously. Make sure to always terminate sessions to avoid</span>
 <span class="sd">            unexpected start-up errors.</span>
@@ -328,8 +325,8 @@
                             <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;TERMINATE_READ_TIMEOUT&#39;</span><span class="p">))</span>
                         <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="c1"># Kill process if not already terminated.</span>
-                <span class="c1"># Wait for it to cleanly stop if the Quit command was succesfully sent,</span>
-                <span class="c1"># otherwise the kernel is likely in a bad state so we kill it immediatly.</span>
+                <span class="c1"># Wait for it to cleanly stop if the Quit command was successfully sent,</span>
+                <span class="c1"># otherwise the kernel is likely in a bad state so we kill it immediately.</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stdin</span> <span class="o">==</span> <span class="n">PIPE</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">kernel_proc</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -390,7 +387,7 @@
                 <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_socket</span><span class="o">.</span><span class="n">bound</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_socket</span>
                 <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_socket</span><span class="o">.</span><span class="n">bound</span><span class="p">)</span>
 
-<div class="viewcode-block" id="WolframLanguageSession.start"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageSession.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.start"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -536,7 +533,7 @@
         <span class="k">return</span> <span class="n">WolframKernelEvaluationResult</span><span class="p">(</span>
             <span class="n">wxf_result</span><span class="p">,</span> <span class="n">errmsg</span><span class="p">,</span> <span class="n">consumer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="p">)</span>
 
-<div class="viewcode-block" id="WolframLanguageSession.evaluate_wxf"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wxf">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.evaluate_wxf"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wxf">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Send an expression to the kernel for evaluation and return the raw result still encoded as WXF.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -545,22 +542,17 @@
                 <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">wxf</span></div>
 
-<div class="viewcode-block" id="WolframLanguageSession.evaluate_wrap"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wrap">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.evaluate_wrap"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wrap">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Similar to :func:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="WolframLanguageSession.evaluate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageSession.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.evaluate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Send an expression to the kernel for evaluation.</span>
 
-<span class="sd">        The `expr` can be:</span>
+<span class="sd">        The `expr` is an instance of a Python object serializable as WXF by :func:`~wolframclient.serializers.export`.</span>
 
-<span class="sd">            * a text string representing the Wolfram Language expression :wl:`InputForm`.</span>
-<span class="sd">            * an instance of Python object serializable as WXF by :func:`~wolframclient.serializers.export`.</span>
-<span class="sd">            * a binary string of a serialized expression in the WXF format.</span>
-
-<span class="sd">        `kwargs` are passed to :func:`~wolframclient.serializers.export` during serialization step of</span>
-<span class="sd">        non-string inputs.</span>
+<span class="sd">        `kwargs` are passed to :func:`~wolframclient.serializers.export`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
@@ -615,8 +607,8 @@
                      <span class="n">timeout</span><span class="o">=</span><span class="mf">2.</span><span class="p">,</span>
                      <span class="n">retry_sleep_time</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
                      <span class="n">sleep</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Read a socket in a non-blocking fashion, until a timeout is reach, retrying at a given interval.</span>
-<span class="sd">        The sleep function is passed as parameter and can be conveniently modify to support Event based interruption.</span>
+        <span class="sd">&quot;&quot;&quot; Read a socket in a non-blocking fashion, until a timeout is reached, retrying at a given interval.</span>
+<span class="sd">        The sleep function is passed as a parameter and can be conveniently modified to support Event based interruption.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">bound</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SocketException</span><span class="p">(</span><span class="s1">&#39;ZMQ socket not bound.&#39;</span><span class="p">)</span>

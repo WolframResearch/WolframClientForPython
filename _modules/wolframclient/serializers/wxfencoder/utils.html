@@ -94,13 +94,9 @@
 
 <div class="viewcode-block" id="integer_size"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.utils.integer_size">[docs]</a><span class="k">def</span> <span class="nf">integer_size</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_exceptions</span><span class="p">[</span><span class="n">value</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">_exceptions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">_size</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">_size</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s1">&#39;Value </span><span class="si">%i</span><span class="s1"> is not a machine-sized integer.&#39;</span> <span class="o">%</span> <span class="n">value</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Value </span><span class="si">%i</span><span class="s1"> is not a machine-sized integer.&#39;</span> <span class="o">%</span> <span class="n">value</span><span class="p">)</span></div>
 
 
 <span class="n">_packing</span> <span class="o">=</span> <span class="p">{</span>

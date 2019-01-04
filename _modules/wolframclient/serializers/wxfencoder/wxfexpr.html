@@ -94,10 +94,10 @@
 
 
 <div class="viewcode-block" id="WXFExprInteger"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.wxfexpr.WXFExprInteger">[docs]</a><span class="k">class</span> <span class="nc">WXFExprInteger</span><span class="p">(</span><span class="n">WXFExpr</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Integers have various length, from one byte up to eigth and are signed</span>
+    <span class="sd">&#39;&#39;&#39; Integers have various length, from one byte up to eight and are signed</span>
 <span class="sd">    values. Values above 2^63-1 are represented with `WXFExprBigInteger`.</span>
 <span class="sd">    Internally WXF uses the two&#39;s complement representation of integer values.</span>
-<span class="sd">    The endianness is system independant and is always little-endian.</span>
+<span class="sd">    The endianness is system independent and is always little-endian.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="s1">&#39;int_size&#39;</span>
 
@@ -298,7 +298,7 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">integer_types</span><span class="p">)</span> <span class="ow">or</span> <span class="n">length</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="s1">&#39;WXFExprAssociation must be instanciated with a length.&#39;</span><span class="p">)</span>
+                <span class="s1">&#39;WXFExprAssociation must be instantiated with a length.&#39;</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">WXFExprAssociation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">Association</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="n">length</span>
 

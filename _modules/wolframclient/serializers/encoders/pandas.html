@@ -1,0 +1,261 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>wolframclient.serializers.encoders.pandas &#8212; Wolfram Client Library for Python 1.0.0.dev3 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css">
+ 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../serializers.html" accesskey="U">wolframclient.serializers</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for wolframclient.serializers.encoders.pandas</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">starmap</span>
+
+<span class="kn">from</span> <span class="nn">wolframclient.utils.api</span> <span class="k">import</span> <span class="n">pandas</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils.dispatch</span> <span class="k">import</span> <span class="n">Dispatch</span>
+
+<span class="n">encoder</span> <span class="o">=</span> <span class="n">Dispatch</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="safe_pandas_length"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.safe_pandas_length">[docs]</a><span class="k">def</span> <span class="nf">safe_pandas_length</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return the length of a pandas Series and DataFrame as expected for WL serialization.</span>
+
+<span class="sd">    - The length of a Series is the only value of the tuple `shape`.</span>
+<span class="sd">    - The length of a dataframe is the number of columns. It&#39;s the second value of `shape`.</span>
+
+<span class="sd">    This function is safe, when the shape does not have the expected number of elements, it fails silently and</span>
+<span class="sd">    returns `None`, the object is later traversed to find out how many elements it contains.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">o</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
+        <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="encode_as_dataset"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encode_as_dataset">[docs]</a><span class="k">def</span> <span class="nf">encode_as_dataset</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">serializer</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
+        <span class="n">serializer</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Dataset&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">encode_as_association</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">length</span><span class="p">),</span> <span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="encode_as_list"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encode_as_list">[docs]</a><span class="k">def</span> <span class="nf">encode_as_list</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">serializer</span><span class="o">.</span><span class="n">serialize_iterable</span><span class="p">(</span>
+        <span class="n">starmap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">serializer</span><span class="o">.</span><span class="n">serialize_rule</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">),</span>
+                <span class="n">encoded_kv_tuples</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">o</span><span class="p">)),</span>
+        <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="encode_as_association"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encode_as_association">[docs]</a><span class="k">def</span> <span class="nf">encode_as_association</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">serializer</span><span class="o">.</span><span class="n">serialize_association</span><span class="p">(</span>
+        <span class="n">encoded_kv_tuples</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">o</span><span class="p">),</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="encoded_kv_tuples"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encoded_kv_tuples">[docs]</a><span class="k">def</span> <span class="nf">encoded_kv_tuples</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">serializer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">serializer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">o</span><span class="o">.</span><span class="n">items</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="encode_as_timeseries"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encode_as_timeseries">[docs]</a><span class="k">def</span> <span class="nf">encode_as_timeseries</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">serializer</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
+        <span class="n">serializer</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;TimeSeries&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">serialize_iterable</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">serialize_iterable</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+             <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">encoded_kv_tuples</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">o</span><span class="p">)),</span>
+            <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">),</span> <span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_distribute_multikey</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+    <span class="n">expr_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">multikey</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">o</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">cur_dict</span> <span class="o">=</span> <span class="n">expr_dict</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">multikey</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cur_dict</span><span class="p">:</span>
+                <span class="n">cur_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="n">cur_dict</span> <span class="o">=</span> <span class="n">cur_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="n">cur_dict</span><span class="p">[</span><span class="n">multikey</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">return</span> <span class="n">expr_dict</span>
+
+
+<div class="viewcode-block" id="encode_multiindex_as_assoc"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encode_multiindex_as_assoc">[docs]</a><span class="k">def</span> <span class="nf">encode_multiindex_as_assoc</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">serializer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">_distribute_multikey</span><span class="p">(</span><span class="n">o</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="encode_multiindex_as_dataset"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encode_multiindex_as_dataset">[docs]</a><span class="k">def</span> <span class="nf">encode_multiindex_as_dataset</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">serializer</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
+        <span class="n">serializer</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Dataset&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">_distribute_multikey</span><span class="p">(</span><span class="n">o</span><span class="p">)),</span> <span class="p">))</span></div>
+
+
+<span class="n">PANDAS_PROPERTIES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;pandas_series_head&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;dataset&#39;</span><span class="p">,</span> <span class="s1">&#39;list&#39;</span><span class="p">,</span> <span class="s1">&#39;association&#39;</span><span class="p">},</span>
+    <span class="s1">&#39;pandas_dataframe_head&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;dataset&#39;</span><span class="p">,</span> <span class="s1">&#39;association&#39;</span><span class="p">},</span>
+    <span class="s1">&#39;timeseries&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">ENCODERS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;dataset&#39;</span><span class="p">:</span> <span class="n">encode_as_dataset</span><span class="p">,</span>
+        <span class="s1">&#39;list&#39;</span><span class="p">:</span> <span class="n">encode_as_list</span><span class="p">,</span>
+        <span class="s1">&#39;association&#39;</span><span class="p">:</span> <span class="n">encode_as_association</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;datetimeindex&#39;</span><span class="p">:</span> <span class="n">encode_as_timeseries</span><span class="p">,</span>
+    <span class="s1">&#39;multiindex&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;association&#39;</span><span class="p">:</span> <span class="n">encode_multiindex_as_assoc</span><span class="p">,</span>
+        <span class="s1">&#39;list&#39;</span><span class="p">:</span> <span class="n">encode_multiindex_as_assoc</span><span class="p">,</span>
+        <span class="s1">&#39;dataset&#39;</span><span class="p">:</span> <span class="n">encode_multiindex_as_dataset</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="get_series_encoder_from_index"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.get_series_encoder_from_index">[docs]</a><span class="k">def</span> <span class="nf">get_series_encoder_from_index</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">use_ts</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">use_ts</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ENCODERS</span><span class="p">[</span><span class="s1">&#39;datetimeindex&#39;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">MultiIndex</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ENCODERS</span><span class="p">[</span><span class="s1">&#39;multiindex&#39;</span><span class="p">][</span><span class="n">form</span> <span class="ow">or</span> <span class="s1">&#39;dataset&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ENCODERS</span><span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">][</span><span class="n">form</span> <span class="ow">or</span> <span class="s1">&#39;association&#39;</span><span class="p">]</span></div>
+
+
+<span class="n">INVALID_PROPERTY_MSG</span> <span class="o">=</span> <span class="s1">&#39;Invalid property </span><span class="si">%s</span><span class="s1">, expecting </span><span class="si">%s</span><span class="s1">&#39;</span>
+
+
+<div class="viewcode-block" id="normalized_prop_timeseries"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.normalized_prop_timeseries">[docs]</a><span class="k">def</span> <span class="nf">normalized_prop_timeseries</span><span class="p">(</span><span class="n">serializer</span><span class="p">):</span>
+    <span class="n">prop</span> <span class="o">=</span> <span class="n">serializer</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;timeseries&#39;</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prop</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Invalid value for property &#39;timeseries&#39;. Expecting a boolean, got </span><span class="si">%s</span><span class="s2">.&quot;</span>
+            <span class="o">%</span> <span class="n">prop</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">prop</span></div>
+
+
+<div class="viewcode-block" id="normalized_prop_pandas_series_head"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.normalized_prop_pandas_series_head">[docs]</a><span class="k">def</span> <span class="nf">normalized_prop_pandas_series_head</span><span class="p">(</span><span class="n">serializer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Check property `pandas_series_head` only if specified (not None). &quot;&quot;&quot;</span>
+    <span class="n">prop</span> <span class="o">=</span> <span class="n">serializer</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;pandas_series_head&#39;</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">prop</span> <span class="ow">and</span> <span class="n">prop</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">PANDAS_PROPERTIES</span><span class="p">[</span><span class="s1">&#39;pandas_series_head&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Invalid value for property &#39;pandas_series_head&#39;. Expecting one of (</span><span class="si">%s</span><span class="s2">), got </span><span class="si">%s</span><span class="s2">.&quot;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PANDAS_PROPERTIES</span><span class="p">[</span><span class="s1">&#39;pandas_series_head&#39;</span><span class="p">]),</span> <span class="n">prop</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">prop</span></div>
+
+
+<div class="viewcode-block" id="encode_panda_series"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encode_panda_series">[docs]</a><span class="nd">@encoder</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">pandas</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">encode_panda_series</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
+    <span class="n">use_ts</span> <span class="o">=</span> <span class="n">normalized_prop_timeseries</span><span class="p">(</span><span class="n">serializer</span><span class="p">)</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">normalized_prop_pandas_series_head</span><span class="p">(</span><span class="n">serializer</span><span class="p">)</span>
+    <span class="n">encoder</span> <span class="o">=</span> <span class="n">get_series_encoder_from_index</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">use_ts</span><span class="p">,</span> <span class="n">form</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">encoder</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">safe_pandas_length</span><span class="p">(</span><span class="n">o</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="encode_dataframe_as_assoc"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encode_dataframe_as_assoc">[docs]</a><span class="k">def</span> <span class="nf">encode_dataframe_as_assoc</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+    <span class="n">use_ts</span> <span class="o">=</span> <span class="n">normalized_prop_timeseries</span><span class="p">(</span><span class="n">serializer</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">serializer</span><span class="o">.</span><span class="n">serialize_association</span><span class="p">(</span>
+        <span class="p">((</span><span class="n">serializer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">k</span><span class="p">),</span>
+          <span class="n">get_series_encoder_from_index</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">use_ts</span><span class="p">,</span> <span class="s1">&#39;association&#39;</span><span class="p">)(</span>
+              <span class="n">serializer</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">safe_pandas_length</span><span class="p">(</span><span class="n">v</span><span class="p">)))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">o</span><span class="o">.</span><span class="n">items</span><span class="p">()),</span>
+        <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="encode_dataframe_as_dataset"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encode_dataframe_as_dataset">[docs]</a><span class="k">def</span> <span class="nf">encode_dataframe_as_dataset</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">serializer</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
+        <span class="n">serializer</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Dataset&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">encode_dataframe_as_assoc</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">length</span><span class="p">),</span> <span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="encoder_panda_dataframe"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encoder_panda_dataframe">[docs]</a><span class="nd">@encoder</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">encoder_panda_dataframe</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
+    <span class="n">head</span> <span class="o">=</span> <span class="n">serializer</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;pandas_dataframe_head&#39;</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">head</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">head</span> <span class="o">==</span> <span class="s1">&#39;dataset&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">encode_dataframe_as_dataset</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span>
+                                           <span class="n">safe_pandas_length</span><span class="p">(</span><span class="n">o</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">head</span> <span class="ow">in</span> <span class="n">PANDAS_PROPERTIES</span><span class="p">[</span><span class="s1">&#39;pandas_dataframe_head&#39;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">encode_dataframe_as_assoc</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">safe_pandas_length</span><span class="p">(</span><span class="n">o</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Invalid value for property &#39;pandas_dataframe_head&#39;. Expecting one of (</span><span class="si">%s</span><span class="s2">), got </span><span class="si">%s</span><span class="s2">.&quot;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PANDAS_PROPERTIES</span><span class="p">[</span><span class="s1">&#39;pandas_dataframe_head&#39;</span><span class="p">]),</span> <span class="n">prop</span><span class="p">))</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+    <a href="../../../../index.html">
+        <img class="logo" src="../../../../_static/python-client-library-logo.png" title="https://www.wolfram.com/" />
+    </a>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../serializers.html" >wolframclient.serializers</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Wolfram Research.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

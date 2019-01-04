@@ -589,6 +589,143 @@ WARNING:wolframclient.evaluation.kernel.kernelsession:Infinite expression Infini
 </td></tr></table></div>
 </div>
 </div>
+<div class="section" id="extending-serialization-writing-an-encoder">
+<h2>Extending serialization: Writing an Encoder<a class="headerlink" href="#extending-serialization-writing-an-encoder" title="Permalink to this headline">¶</a></h2>
+<p>Serialization of Python object involves encoders, which convert an input object into a stream of bytes. The library defines encoders for most built-in Python types and for some core libraries. It stores a mapping between types and encoder implementation. In order to serialize more classes, new encoders must be registered.</p>
+<p>An encoder is a function of two arguments, the serializer and an object, associated with a type. The object is guaranteed to be an instance of the associated type.</p>
+<p>Register a new encoder for a user defined class:</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+
+<span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="k">import</span> <span class="n">wl</span>
+<span class="kn">from</span> <span class="nn">wolframclient.serializers</span> <span class="k">import</span> <span class="n">export</span><span class="p">,</span> <span class="n">wolfram_encoder</span>
+
+<span class="c1"># define a new class.</span>
+<span class="hll"><span class="k">class</span> <span class="nc">Animal</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span>    <span class="k">pass</span>
+
+<span class="c1"># register a new encoder for instances of the Animal class.</span>
+<span class="hll"><span class="nd">@wolfram_encoder</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">Animal</span><span class="p">)</span>
+</span><span class="hll"><span class="k">def</span> <span class="nf">encode_animal</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">animal</span><span class="p">):</span>
+</span>    <span class="c1"># encode the class as a symbol called Animal</span>
+<span class="hll">    <span class="k">return</span> <span class="n">serializer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">Animal</span><span class="p">)</span>
+</span>
+<span class="c1"># create a new instance</span>
+<span class="n">animal</span> <span class="o">=</span> <span class="n">Animal</span><span class="p">()</span>
+<span class="c1"># serialize it</span>
+<span class="hll"><span class="n">result</span> <span class="o">=</span> <span class="n">export</span><span class="p">(</span><span class="n">animal</span><span class="p">)</span>
+</span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="c1"># b&#39;Animal&#39;</span>
+</pre></div>
+</td></tr></table></div>
+<p>During export, for each object to serialize, the proper encoder is found by inspecting the type hierarchy (field <code class="xref py py-data docutils literal notranslate"><span class="pre">__mro__</span></code>). First, check that an encoder is associated with the object type, if not, repeat with the first parent type until one is found. The default encoder, associated with <code class="xref py py-data docutils literal notranslate"><span class="pre">object</span></code>, is used in last resort.</p>
+<p>Register some encoders for a hierarchy of classes:</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+
+<span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="k">import</span> <span class="n">wl</span>
+<span class="kn">from</span> <span class="nn">wolframclient.serializers</span> <span class="k">import</span> <span class="n">export</span><span class="p">,</span> <span class="n">wolfram_encoder</span>
+
+<span class="c1"># define a hierarchy of classes.</span>
+<span class="hll"><span class="k">class</span> <span class="nc">Animal</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span>    <span class="k">pass</span>
+
+<span class="hll"><span class="k">class</span> <span class="nc">Fish</span><span class="p">(</span><span class="n">Animal</span><span class="p">):</span>
+</span>    <span class="k">pass</span>
+
+<span class="hll"><span class="k">class</span> <span class="nc">Tuna</span><span class="p">(</span><span class="n">Fish</span><span class="p">):</span>
+</span>    <span class="k">pass</span>
+
+<span class="c1"># will not have its own encoder.</span>
+<span class="hll"><span class="k">class</span> <span class="nc">Salmon</span><span class="p">(</span><span class="n">Fish</span><span class="p">):</span>
+</span>    <span class="k">pass</span>
+
+<span class="c1"># register a new encoder for Animal.</span>
+<span class="hll"><span class="nd">@wolfram_encoder</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">Animal</span><span class="p">)</span>
+</span><span class="k">def</span> <span class="nf">encode_animal</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">animal</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">serializer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">Animal</span><span class="p">)</span>
+
+<span class="c1"># register a new encoder for Fish.</span>
+<span class="hll"><span class="nd">@wolfram_encoder</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">Fish</span><span class="p">)</span>
+</span><span class="k">def</span> <span class="nf">encode_fish</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">animal</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">serializer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">Fish</span><span class="p">)</span>
+
+<span class="c1"># register a new encoder for Tuna.</span>
+<span class="hll"><span class="nd">@wolfram_encoder</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">Tuna</span><span class="p">)</span>
+</span><span class="k">def</span> <span class="nf">encode_tuna</span><span class="p">(</span><span class="n">serializer</span><span class="p">,</span> <span class="n">animal</span><span class="p">):</span>
+    <span class="c1"># encode the class as a function using class name</span>
+    <span class="k">return</span> <span class="n">serializer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">Tuna</span><span class="p">)</span>
+
+
+<span class="hll"><span class="n">expr</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fish&#39;</span> <span class="p">:</span> <span class="n">Fish</span><span class="p">(),</span> <span class="s1">&#39;tuna&#39;</span><span class="p">:</span> <span class="n">Tuna</span><span class="p">(),</span> <span class="s1">&#39;salmon&#39;</span><span class="p">:</span> <span class="n">Salmon</span><span class="p">()}</span>
+</span><span class="hll"><span class="n">result</span> <span class="o">=</span> <span class="n">export</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span>
+</span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="c1"># b&#39;&lt;|&quot;fish&quot; -&gt; Fish, &quot;tuna&quot; -&gt; Tuna, &quot;salmon&quot; -&gt; Fish|&gt;&#39;</span>
+</pre></div>
+</td></tr></table></div>
+<p>Note: the encoder for <code class="xref py py-data docutils literal notranslate"><span class="pre">Animal</span></code> is never used, not even for the instance of <code class="xref py py-data docutils literal notranslate"><span class="pre">Salmon</span></code>, because <code class="xref py py-data docutils literal notranslate"><span class="pre">Fish</span></code> has a dedicated encoder, and type <code class="xref py py-data docutils literal notranslate"><span class="pre">Fish</span></code> appears first in the method resolution order of type <code class="xref py py-data docutils literal notranslate"><span class="pre">Salmon</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Salmon</span><span class="o">.</span><span class="vm">__mro__</span>
+<span class="go">(&lt;class &#39;__main__.Salmon&#39;&gt;, &lt;class &#39;__main__.Fish&#39;&gt;, &lt;class &#39;__main__.Animal&#39;&gt;, &lt;class &#39;object&#39;&gt;)</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="extending-wxf-parsing-writing-a-wxfconsumer">
 <h2>Extending WXF Parsing: Writing a WXFConsumer<a class="headerlink" href="#extending-wxf-parsing-writing-a-wxfconsumer" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="integer-eigenvalues">
@@ -1018,6 +1155,7 @@ WARNING:wolframclient.evaluation.kernel.kernelsession:Infinite expression Infini
 <li><a class="reference internal" href="#logging">Logging</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#extending-serialization-writing-an-encoder">Extending serialization: Writing an Encoder</a></li>
 <li><a class="reference internal" href="#extending-wxf-parsing-writing-a-wxfconsumer">Extending WXF Parsing: Writing a WXFConsumer</a><ul>
 <li><a class="reference internal" href="#integer-eigenvalues">Integer Eigenvalues</a></li>
 <li><a class="reference internal" href="#complex-eigenvalues">Complex Eigenvalues</a></li>

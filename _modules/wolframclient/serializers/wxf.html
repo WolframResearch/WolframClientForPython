@@ -51,10 +51,11 @@
 <span class="kn">from</span> <span class="nn">wolframclient.serializers.wxfencoder.constants</span> <span class="k">import</span> <span class="p">(</span>
     <span class="n">ARRAY_TYPES</span><span class="p">,</span> <span class="n">WXF_CONSTANTS</span><span class="p">,</span> <span class="n">WXF_HEADER_COMPRESS</span><span class="p">,</span> <span class="n">WXF_HEADER_SEPARATOR</span><span class="p">,</span>
     <span class="n">WXF_VERSION</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">wolframclient.serializers.wxfencoder.streaming</span> <span class="k">import</span> <span class="n">ZipCompressedWriter</span>
 <span class="kn">from</span> <span class="nn">wolframclient.serializers.wxfencoder.utils</span> <span class="k">import</span> <span class="p">(</span>
     <span class="n">float_to_bytes</span><span class="p">,</span> <span class="n">integer_size</span><span class="p">,</span> <span class="n">integer_to_bytes</span><span class="p">,</span> <span class="n">numeric_array_to_wxf</span><span class="p">,</span>
     <span class="n">varint_bytes</span><span class="p">,</span> <span class="n">write_varint</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils</span> <span class="k">import</span> <span class="n">six</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils.api</span> <span class="k">import</span> <span class="n">zlib</span>
 <span class="kn">from</span> <span class="nn">wolframclient.utils.encoding</span> <span class="k">import</span> <span class="n">force_bytes</span>
 
 
@@ -79,24 +80,27 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">WXFSerializer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">normalizer</span><span class="o">=</span><span class="n">normalizer</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">compress</span> <span class="o">=</span> <span class="n">compress</span>
 
-<div class="viewcode-block" id="WXFSerializer.dump"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.wxf.WXFSerializer.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">stream</span><span class="p">):</span>
+<div class="viewcode-block" id="WXFSerializer.generate_bytes"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.wxf.WXFSerializer.generate_bytes">[docs]</a>    <span class="k">def</span> <span class="nf">generate_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
 
-        <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">WXF_VERSION</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">compress</span><span class="p">:</span>
-            <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">WXF_HEADER_COMPRESS</span><span class="p">)</span>
-
-        <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">WXF_HEADER_SEPARATOR</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">WXF_VERSION</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">compress</span><span class="p">:</span>
-            <span class="k">with</span> <span class="n">ZipCompressedWriter</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span> <span class="k">as</span> <span class="n">zstream</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">payload</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-                    <span class="n">zstream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">WXF_HEADER_COMPRESS</span>
+
+        <span class="k">yield</span> <span class="n">WXF_HEADER_SEPARATOR</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">compress</span><span class="p">:</span>
+            <span class="n">compressor</span> <span class="o">=</span> <span class="n">zlib</span><span class="o">.</span><span class="n">compressobj</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">PY2</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">payload</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                    <span class="k">yield</span> <span class="n">compressor</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">binary_type</span><span class="p">(</span><span class="n">payload</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">payload</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                    <span class="k">yield</span> <span class="n">compressor</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">compressor</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">payload</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-                <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">stream</span></div>
+            <span class="k">for</span> <span class="n">payload</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">payload</span></div>
 
 <div class="viewcode-block" id="WXFSerializer.serialize_symbol"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.wxf.WXFSerializer.serialize_symbol">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="k">yield</span> <span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">Symbol</span>
@@ -104,7 +108,6 @@
         <span class="k">yield</span> <span class="n">force_bytes</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="WXFSerializer.serialize_function"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.wxf.WXFSerializer.serialize_function">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
-        <span class="c1">#args is always a tuple</span>
 
         <span class="n">iterable</span><span class="p">,</span> <span class="n">length</span> <span class="o">=</span> <span class="n">get_length</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
 
@@ -122,7 +125,7 @@
             <span class="c1">#WXFExprInteger is raising a ValueError if the integer is not in the appropriate bounds.</span>
             <span class="c1">#that check needs to be done in case, it&#39;s better to do it only once.</span>
 
-            <span class="n">number</span> <span class="o">=</span> <span class="n">force_bytes</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+            <span class="n">number</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">number</span>
 
             <span class="k">yield</span> <span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">BigInteger</span>
             <span class="k">yield</span> <span class="n">varint_bytes</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">number</span><span class="p">))</span>

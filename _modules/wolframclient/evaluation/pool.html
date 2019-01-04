@@ -214,7 +214,7 @@
                     <span class="n">e2</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">kernel_started</span><span class="p">:</span>
-            <span class="c1"># shedule the infinite evaluation loop</span>
+            <span class="c1"># schedule the infinite evaluation loop</span>
             <span class="n">task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kernel_loop</span><span class="p">(</span><span class="n">kernel</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">):</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;New kernel started in pool: </span><span class="si">%s</span><span class="s1">.&#39;</span><span class="p">,</span> <span class="n">kernel</span><span class="p">)</span>
@@ -251,8 +251,6 @@
 
 <div class="viewcode-block" id="WolframEvaluatorPool.stop"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.pool.WolframEvaluatorPool.stop">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="c1">#  todo cancel with self.event_abort.set() ???</span>
-
         <span class="c1"># make sure all init tasks are finished.</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pending_init_tasks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending_init_tasks</span><span class="p">:</span>
@@ -316,7 +314,7 @@
         <span class="k">return</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">tasks</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;WolframEvaluatorPool&lt;</span><span class="si">%i</span><span class="s1">/</span><span class="si">%i</span><span class="s1"> started evaluators, cummulating </span><span class="si">%i</span><span class="s1"> evaluations&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="k">return</span> <span class="s1">&#39;WolframEvaluatorPool&lt;</span><span class="si">%i</span><span class="s1">/</span><span class="si">%i</span><span class="s1"> started evaluators, cumulating </span><span class="si">%i</span><span class="s1"> evaluations&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_started_tasks</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">requestedsize</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_count</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

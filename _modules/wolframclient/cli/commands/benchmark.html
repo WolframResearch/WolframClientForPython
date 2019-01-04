@@ -43,6 +43,7 @@
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
 
+<span class="kn">import</span> <span class="nn">cProfile</span>
 <span class="kn">import</span> <span class="nn">decimal</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
@@ -67,6 +68,10 @@
     <span class="n">col_size</span> <span class="o">=</span> <span class="mi">8</span>
     <span class="n">repetitions</span> <span class="o">=</span> <span class="mi">10</span>
     <span class="n">complexity</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1000</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Command.add_arguments"><a class="viewcode-back" href="../../../../api/wolframclient.cli.commands.html#wolframclient.cli.commands.benchmark.Command.add_arguments">[docs]</a>    <span class="k">def</span> <span class="nf">add_arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">):</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s1">&#39;--profile&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;profile&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Command.complexity_handler"><a class="viewcode-back" href="../../../../api/wolframclient.cli.commands.html#wolframclient.cli.commands.benchmark.Command.complexity_handler">[docs]</a>    <span class="k">def</span> <span class="nf">complexity_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">complexity</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span>
@@ -102,7 +107,7 @@
 <div class="viewcode-block" id="Command.table_divider"><a class="viewcode-back" href="../../../../api/wolframclient.cli.commands.html#wolframclient.cli.commands.benchmark.Command.table_divider">[docs]</a>    <span class="k">def</span> <span class="nf">table_divider</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_size</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">)))</span></div>
 
-<div class="viewcode-block" id="Command.handle"><a class="viewcode-back" href="../../../../api/wolframclient.cli.commands.html#wolframclient.cli.commands.benchmark.Command.handle">[docs]</a>    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="Command.report"><a class="viewcode-back" href="../../../../api/wolframclient.cli.commands.html#wolframclient.cli.commands.benchmark.Command.report">[docs]</a>    <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="n">path</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">()</span>
 
@@ -113,6 +118,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">table_line</span><span class="p">(</span>
             <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="n">force_text</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_size</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">complexity</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table_divider</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">complexity</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1">#running export to do all lazy loadings</span>
+        <span class="n">export</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">export_format</span><span class="p">,</span> <span class="n">opts</span> <span class="ow">in</span> <span class="p">(</span>
             <span class="p">(</span><span class="s2">&quot;wl&quot;</span><span class="p">,</span> <span class="s2">&quot;wl&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">()),</span>
@@ -129,7 +137,13 @@
                     <span class="n">target_format</span><span class="o">=</span><span class="n">export_format</span><span class="p">,</span>
                     <span class="o">**</span><span class="n">opts</span><span class="p">)</span> <span class="k">for</span> <span class="n">complexity</span><span class="p">,</span> <span class="n">expr</span> <span class="ow">in</span> <span class="n">benchmarks</span><span class="p">))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">table_line</span><span class="p">()</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table_line</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Command.handle"><a class="viewcode-back" href="../../../../api/wolframclient.cli.commands.html#wolframclient.cli.commands.benchmark.Command.handle">[docs]</a>    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">profile</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">profile</span><span class="p">:</span>
+            <span class="n">cProfile</span><span class="o">.</span><span class="n">runctx</span><span class="p">(</span><span class="s1">&#39;report()&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;report&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">report</span><span class="p">},</span> <span class="p">{})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">report</span><span class="p">()</span></div></div>
 </pre></div>
 
           </div>

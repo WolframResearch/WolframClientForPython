@@ -71,9 +71,11 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/wolframclient.cli.commands.html#wolframclient.cli.commands.test.Command.add_arguments">add_arguments() (wolframclient.cli.commands.test.Command method)</a>
+      <li><a href="api/wolframclient.cli.commands.html#wolframclient.cli.commands.benchmark.Command.add_arguments">add_arguments() (wolframclient.cli.commands.benchmark.Command method)</a>
 
       <ul>
+        <li><a href="api/wolframclient.cli.commands.html#wolframclient.cli.commands.test.Command.add_arguments">(wolframclient.cli.commands.test.Command method)</a>
+</li>
         <li><a href="api/wolframclient.cli.html#wolframclient.cli.utils.SimpleCommand.add_arguments">(wolframclient.cli.utils.SimpleCommand method)</a>
 </li>
       </ul></li>
@@ -109,6 +111,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.as_method">as_method() (wolframclient.utils.dispatch.Dispatch method)</a>
+</li>
       <li><a href="api/wolframclient.utils.html#wolframclient.utils.datastructures.Association">Association (class in wolframclient.utils.datastructures)</a>
 </li>
       <li><a href="api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframAPIResponseBuilder.async_response_mapper">async_response_mapper (wolframclient.evaluation.result.WolframAPIResponseBuilder attribute)</a>
@@ -207,13 +211,15 @@
         <li><a href="api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.call">(wolframclient.evaluation.cloud.cloudsession.WolframCloudSession method)</a>
 </li>
       </ul></li>
-      <li><a href="api/wolframclient.serializers.normalizer.html#wolframclient.serializers.normalizer.Normalizer.chain_normalizers">chain_normalizers() (wolframclient.serializers.normalizer.Normalizer method)</a>
+      <li><a href="api/wolframclient.serializers.html#wolframclient.serializers.encoder.Encoder.chain_normalizer">chain_normalizer() (wolframclient.serializers.encoder.Encoder method)</a>
 </li>
       <li><a href="api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.streaming.ZipCompressedReader.CHUNK_SIZE">CHUNK_SIZE (wolframclient.serializers.wxfencoder.streaming.ZipCompressedReader attribute)</a>
 </li>
       <li><a href="api/wolframclient.cli.html#wolframclient.cli.dispatch.DispatchCommand.class_name">class_name (wolframclient.cli.dispatch.DispatchCommand attribute)</a>
 </li>
-      <li><a href="api/wolframclient.utils.html#wolframclient.utils.dispatch.ClassDispatch">ClassDispatch (class in wolframclient.utils.dispatch)</a>
+      <li><a href="api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.clear">clear() (wolframclient.utils.dispatch.Dispatch method)</a>
+</li>
+      <li><a href="api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.clear_cache">clear_cache() (wolframclient.utils.dispatch.Dispatch method)</a>
 </li>
       <li><a href="api/wolframclient.cli.commands.html#wolframclient.cli.commands.benchmark.Command.col_size">col_size (wolframclient.cli.commands.benchmark.Command attribute)</a>
 </li>
@@ -231,6 +237,12 @@
 </li>
       <li><a href="api/wolframclient.utils.html#wolframclient.utils.functional.composition">composition() (in module wolframclient.utils.functional)</a>
 </li>
+      <li><a href="api/wolframclient.serializers.html#wolframclient.serializers.base.concatenate_bytes">concatenate_bytes() (in module wolframclient.serializers.base)</a>
+
+      <ul>
+        <li><a href="api/wolframclient.utils.html#wolframclient.utils.encoding.concatenate_bytes">(in module wolframclient.utils.encoding)</a>
+</li>
+      </ul></li>
       <li><a href="api/wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy.consume_array">consume_array() (wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy method)</a>
 
       <ul>
@@ -255,14 +267,14 @@
         <li><a href="api/wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumer.consume_bigreal">(wolframclient.deserializers.WXFConsumer method)</a>, <a href="api/wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumer.consume_bigreal">[1]</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.consume_binary_string">consume_binary_string() (wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer method)</a>
 
       <ul>
         <li><a href="api/wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumer.consume_binary_string">(wolframclient.deserializers.WXFConsumer method)</a>, <a href="api/wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumer.consume_binary_string">[1]</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.consume_function">consume_function() (wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer method)</a>
 
       <ul>
@@ -347,12 +359,6 @@
 </li>
       <li><a href="api/wolframclient.cli.html#wolframclient.cli.utils.SimpleCommand.create_parser">create_parser() (wolframclient.cli.utils.SimpleCommand method)</a>
 </li>
-      <li><a href="api/wolframclient.utils.html#wolframclient.utils.dispatch.ClassDispatch.create_proxy">create_proxy() (wolframclient.utils.dispatch.ClassDispatch method)</a>
-
-      <ul>
-        <li><a href="api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.create_proxy">(wolframclient.utils.dispatch.Dispatch method)</a>
-</li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -369,15 +375,15 @@
       </ul></li>
       <li><a href="api/wolframclient.utils.html#wolframclient.utils.decorators.decorate">decorate() (in module wolframclient.utils.decorators)</a>
 </li>
-      <li><a href="api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.default">default() (wolframclient.utils.dispatch.Dispatch method)</a>
-</li>
       <li><a href="api/wolframclient.cli.html#wolframclient.cli.dispatch.DispatchCommand.default_command">default_command (wolframclient.cli.dispatch.DispatchCommand attribute)</a>
 </li>
       <li><a href="api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.base.OAuthSessionBase.DEFAULT_CONTENT_TYPE">DEFAULT_CONTENT_TYPE (wolframclient.evaluation.cloud.base.OAuthSessionBase attribute)</a>
 </li>
-      <li><a href="api/wolframclient.serializers.normalizer.html#wolframclient.serializers.normalizer.Normalizer.default_normalizer">default_normalizer() (wolframclient.serializers.normalizer.Normalizer method)</a>
+      <li><a href="api/wolframclient.serializers.html#wolframclient.serializers.encoder.Encoder.default_encoder">default_encoder() (wolframclient.serializers.encoder.Encoder method)</a>
 </li>
-      <li><a href="api/wolframclient.serializers.normalizer.html#wolframclient.serializers.normalizer.Normalizer.default_updater">default_updater (wolframclient.serializers.normalizer.Normalizer attribute)</a>
+      <li><a href="api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.default_function">default_function() (wolframclient.utils.dispatch.Dispatch method)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.html#wolframclient.serializers.encoder.Encoder.default_updater">default_updater (wolframclient.serializers.encoder.Encoder attribute)</a>
 </li>
       <li><a href="api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.wxfencoder.DefaultWXFEncoder">DefaultWXFEncoder (class in wolframclient.serializers.wxfencoder.wxfencoder)</a>
 </li>
@@ -401,18 +407,10 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch">Dispatch (class in wolframclient.utils.dispatch)</a>
 </li>
+      <li><a href="api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.dispatch">dispatch() (wolframclient.utils.dispatch.Dispatch method)</a>
+</li>
       <li><a href="api/wolframclient.cli.html#wolframclient.cli.dispatch.DispatchCommand">DispatchCommand (class in wolframclient.cli.dispatch)</a>
 </li>
-      <li><a href="api/wolframclient.serializers.normalizer.html#wolframclient.serializers.normalizer.DispatchUpdater">DispatchUpdater (class in wolframclient.serializers.normalizer)</a>
-</li>
-      <li><a href="api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.dump">dump() (wolframclient.serializers.base.FormatSerializer method)</a>
-
-      <ul>
-        <li><a href="api/wolframclient.serializers.html#wolframclient.serializers.wl.WLSerializer.dump">(wolframclient.serializers.wl.WLSerializer method)</a>
-</li>
-        <li><a href="api/wolframclient.serializers.html#wolframclient.serializers.wxf.WXFSerializer.dump">(wolframclient.serializers.wxf.WXFSerializer method)</a>
-</li>
-      </ul></li>
       <li><a href="api/wolframclient.evaluation.html#wolframclient.evaluation.base.WolframAsyncEvaluator.duplicate">duplicate() (wolframclient.evaluation.base.WolframAsyncEvaluator method)</a>
 
       <ul>
@@ -459,6 +457,86 @@
         <li><a href="api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.wxfnumpyencoder.NumPyWXFEncoder.encode">(wolframclient.serializers.wxfencoder.wxfnumpyencoder.NumPyWXFEncoder method)</a>
 </li>
       </ul></li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encode_as_association">encode_as_association() (in module wolframclient.serializers.encoders.pandas)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encode_as_dataset">encode_as_dataset() (in module wolframclient.serializers.encoders.pandas)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encode_as_list">encode_as_list() (in module wolframclient.serializers.encoders.pandas)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encode_as_timeseries">encode_as_timeseries() (in module wolframclient.serializers.encoders.pandas)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.wolfram.encode_association">encode_association() (in module wolframclient.serializers.encoders.wolfram)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.builtin.encode_bytes">encode_bytes() (in module wolframclient.serializers.encoders.builtin)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.builtin.encode_complex">encode_complex() (in module wolframclient.serializers.encoders.builtin)</a>
+
+      <ul>
+        <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.numpy.encode_complex">(in module wolframclient.serializers.encoders.numpy)</a>
+</li>
+      </ul></li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encode_dataframe_as_assoc">encode_dataframe_as_assoc() (in module wolframclient.serializers.encoders.pandas)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encode_dataframe_as_dataset">encode_dataframe_as_dataset() (in module wolframclient.serializers.encoders.pandas)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.datetime.encode_date">encode_date() (in module wolframclient.serializers.encoders.datetime)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.datetime.encode_datetime">encode_datetime() (in module wolframclient.serializers.encoders.datetime)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.decimal.encode_decimal">encode_decimal() (in module wolframclient.serializers.encoders.decimal)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.builtin.encode_dict">encode_dict() (in module wolframclient.serializers.encoders.builtin)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.fractions.encode_faction">encode_faction() (in module wolframclient.serializers.encoders.fractions)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.builtin.encode_float">encode_float() (in module wolframclient.serializers.encoders.builtin)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.wolfram.encode_function">encode_function() (in module wolframclient.serializers.encoders.wolfram)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pil.encode_image">encode_image() (in module wolframclient.serializers.encoders.pil)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.wolfram.encode_inputexpr">encode_inputexpr() (in module wolframclient.serializers.encoders.wolfram)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.builtin.encode_int">encode_int() (in module wolframclient.serializers.encoders.builtin)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.builtin.encode_iter">encode_iter() (in module wolframclient.serializers.encoders.builtin)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encode_multiindex_as_assoc">encode_multiindex_as_assoc() (in module wolframclient.serializers.encoders.pandas)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encode_multiindex_as_dataset">encode_multiindex_as_dataset() (in module wolframclient.serializers.encoders.pandas)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.numpy.encode_ndarray">encode_ndarray() (in module wolframclient.serializers.encoders.numpy)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.builtin.encode_none">encode_none() (in module wolframclient.serializers.encoders.builtin)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.numpy.encode_numpy_floating">encode_numpy_floating() (in module wolframclient.serializers.encoders.numpy)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.numpy.encode_numpy_int">encode_numpy_int() (in module wolframclient.serializers.encoders.numpy)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.numpy.encode_numpy_mp_float">encode_numpy_mp_float() (in module wolframclient.serializers.encoders.numpy)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encode_panda_series">encode_panda_series() (in module wolframclient.serializers.encoders.pandas)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.wolfram.encode_serializable">encode_serializable() (in module wolframclient.serializers.encoders.wolfram)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.wolfram.encode_symbol">encode_symbol() (in module wolframclient.serializers.encoders.wolfram)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.builtin.encode_text">encode_text() (in module wolframclient.serializers.encoders.builtin)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.datetime.encode_time">encode_time() (in module wolframclient.serializers.encoders.datetime)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.datetime.encode_timedelta">encode_timedelta() (in module wolframclient.serializers.encoders.datetime)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.datetime.encode_tzinfo">encode_tzinfo() (in module wolframclient.serializers.encoders.datetime)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encoded_kv_tuples">encoded_kv_tuples() (in module wolframclient.serializers.encoders.pandas)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.html#wolframclient.serializers.encoder.Encoder">Encoder (class in wolframclient.serializers.encoder)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pil.encoder">encoder (in module wolframclient.serializers.encoders.pil)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.encoder_panda_dataframe">encoder_panda_dataframe() (in module wolframclient.serializers.encoders.pandas)</a>
+</li>
       <li><a href="api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframAPIResponse.error_report">error_report() (wolframclient.evaluation.result.WolframAPIResponse method)</a>
 
       <ul>
@@ -511,6 +589,8 @@
         <li><a href="api/wolframclient.evaluation.html#wolframclient.evaluation.pool.WolframEvaluatorPool.evaluate">(wolframclient.evaluation.pool.WolframEvaluatorPool method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/wolframclient.evaluation.html#wolframclient.evaluation.pool.WolframEvaluatorPool.evaluate_all">evaluate_all() (wolframclient.evaluation.pool.WolframEvaluatorPool method)</a>
 
       <ul>
@@ -563,8 +643,6 @@
         <li><a href="api/wolframclient.evaluation.html#wolframclient.evaluation.pool.WolframEvaluatorPool.evaluate_wrap">(wolframclient.evaluation.pool.WolframEvaluatorPool method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.asyncsession.WolframLanguageAsyncSession.evaluate_wxf">evaluate_wxf() (wolframclient.evaluation.kernel.asyncsession.WolframLanguageAsyncSession method)</a>
 
       <ul>
@@ -665,8 +743,6 @@
 </li>
       <li><a href="api/wolframclient.utils.html#wolframclient.utils.encoding.force_text">force_text() (in module wolframclient.utils.encoding)</a>
 </li>
-      <li><a href="api/wolframclient.utils.html#wolframclient.utils.functional.force_tuple">force_tuple() (in module wolframclient.utils.functional)</a>
-</li>
       <li><a href="api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer">FormatSerializer (class in wolframclient.serializers.base)</a>
 </li>
       <li><a href="api/wolframclient.cli.commands.html#wolframclient.cli.commands.benchmark.Command.formatted_time">formatted_time() (wolframclient.cli.commands.benchmark.Command method)</a>
@@ -683,6 +759,14 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.generate_bytes">generate_bytes() (wolframclient.serializers.base.FormatSerializer method)</a>
+
+      <ul>
+        <li><a href="api/wolframclient.serializers.html#wolframclient.serializers.wl.WLSerializer.generate_bytes">(wolframclient.serializers.wl.WLSerializer method)</a>
+</li>
+        <li><a href="api/wolframclient.serializers.html#wolframclient.serializers.wxf.WXFSerializer.generate_bytes">(wolframclient.serializers.wxf.WXFSerializer method)</a>
+</li>
+      </ul></li>
       <li><a href="api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframAPIResponse.get">get() (wolframclient.evaluation.result.WolframAPIResponse method)</a>
 
       <ul>
@@ -705,8 +789,6 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/wolframclient.utils.html#wolframclient.utils.asyncio.get_event_loop">get_event_loop() (in module wolframclient.utils.asyncio)</a>
 </li>
-      <li><a href="api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.get_key">get_key() (wolframclient.utils.dispatch.Dispatch method)</a>
-</li>
       <li><a href="api/wolframclient.serializers.html#wolframclient.serializers.wxf.get_length">get_length() (in module wolframclient.serializers.wxf)</a>
 </li>
       <li><a href="api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.get_parameter">get_parameter() (wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession method)</a>
@@ -717,7 +799,9 @@
         <li><a href="api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.WolframLanguageSession.get_parameter">(wolframclient.evaluation.kernel.WolframLanguageSession method)</a>
 </li>
       </ul></li>
-      <li><a href="api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.get_proxy">get_proxy() (wolframclient.utils.dispatch.Dispatch method)</a>
+      <li><a href="api/wolframclient.serializers.html#wolframclient.serializers.encoder.Encoder.get_property">get_property() (wolframclient.serializers.encoder.Encoder method)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.get_series_encoder_from_index">get_series_encoder_from_index() (in module wolframclient.serializers.encoders.pandas)</a>
 </li>
       <li><a href="api/wolframclient.language.html#wolframclient.language.Global">Global (in module wolframclient.language)</a>
 </li>
@@ -861,8 +945,6 @@
         <li><a href="api/wolframclient.cli.html#wolframclient.cli.dispatch.DispatchCommand.modules">(wolframclient.cli.dispatch.DispatchCommand attribute)</a>
 </li>
       </ul></li>
-      <li><a href="api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.multi">multi() (wolframclient.utils.dispatch.Dispatch method)</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -879,19 +961,25 @@
       </ul></li>
       <li><a href="api/wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFParser.next_token">next_token() (wolframclient.deserializers.wxf.wxfparser.WXFParser method)</a>
 </li>
-      <li><a href="api/wolframclient.serializers.normalizer.html#wolframclient.serializers.normalizer.pil.normalize_array">normalize_array() (in module wolframclient.serializers.normalizer.pil)</a>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.numpy.noop_handler">noop_handler() (in module wolframclient.serializers.encoders.numpy)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pil.normalize_array">normalize_array() (in module wolframclient.serializers.encoders.pil)</a>
+</li>
+      <li><a href="api/wolframclient.evaluation.html#wolframclient.evaluation.base.WolframEvaluatorBase.normalize_input">normalize_input() (wolframclient.evaluation.base.WolframEvaluatorBase method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/wolframclient.evaluation.html#wolframclient.evaluation.base.WolframEvaluatorBase.normalize_input">normalize_input() (wolframclient.evaluation.base.WolframEvaluatorBase method)</a>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.normalized_prop_pandas_series_head">normalized_prop_pandas_series_head() (in module wolframclient.serializers.encoders.pandas)</a>
 </li>
-      <li><a href="api/wolframclient.serializers.normalizer.html#wolframclient.serializers.normalizer.Normalizer">Normalizer (class in wolframclient.serializers.normalizer)</a>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.normalized_prop_timeseries">normalized_prop_timeseries() (in module wolframclient.serializers.encoders.pandas)</a>
 </li>
       <li><a href="api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder.NOT_PROVIDED">NOT_PROVIDED (wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder attribute)</a>
 </li>
       <li><a href="api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.wxfencoder.NotEncodedException">NotEncodedException</a>
 </li>
       <li><a href="api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.utils.numeric_array_to_wxf">numeric_array_to_wxf() (in module wolframclient.serializers.wxfencoder.utils)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.numpy.numpy_type_to_wl_type">numpy_type_to_wl_type() (in module wolframclient.serializers.encoders.numpy)</a>
 </li>
       <li><a href="api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.wxfnumpyencoder.NumPyWXFEncoder">NumPyWXFEncoder (class in wolframclient.serializers.wxfencoder.wxfnumpyencoder)</a>
 </li>
@@ -989,11 +1077,15 @@
         <li><a href="api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.streaming.ZipCompressedReader.read">(wolframclient.serializers.wxfencoder.streaming.ZipCompressedReader method)</a>
 </li>
       </ul></li>
-      <li><a href="api/wolframclient.serializers.normalizer.html#wolframclient.serializers.normalizer.DispatchUpdater.register_modules">register_modules() (wolframclient.serializers.normalizer.DispatchUpdater method)</a>
+      <li><a href="api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.register">register() (wolframclient.utils.dispatch.Dispatch method)</a>
+</li>
+      <li><a href="api/wolframclient.utils.html#wolframclient.utils.debug.repeated_timing">repeated_timing() (in module wolframclient.utils.debug)</a>
 </li>
       <li><a href="api/wolframclient.cli.commands.html#wolframclient.cli.commands.benchmark.Command.repetitions">repetitions (wolframclient.cli.commands.benchmark.Command attribute)</a>
 </li>
       <li><a href="api/wolframclient.serializers.html#wolframclient.serializers.utils.replace">replace() (in module wolframclient.serializers.utils)</a>
+</li>
+      <li><a href="api/wolframclient.cli.commands.html#wolframclient.cli.commands.benchmark.Command.report">report() (wolframclient.cli.commands.benchmark.Command method)</a>
 </li>
       <li><a href="api/wolframclient.html#wolframclient.exception.RequestException">RequestException</a>
 </li>
@@ -1001,10 +1093,10 @@
 </li>
       <li><a href="api/wolframclient.utils.html#wolframclient.utils.require.require_module">require_module() (in module wolframclient.utils.require)</a>
 </li>
-      <li><a href="api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.resolve">resolve() (wolframclient.utils.dispatch.Dispatch method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.resolve">resolve() (wolframclient.utils.dispatch.Dispatch method)</a>
+</li>
       <li><a href="api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframAPIResponseBuilder.response_mapper">response_mapper (wolframclient.evaluation.result.WolframAPIResponseBuilder attribute)</a>
 </li>
       <li><a href="api/wolframclient.evaluation.html#wolframclient.evaluation.base.WolframAsyncEvaluator.restart">restart() (wolframclient.evaluation.base.WolframAsyncEvaluator method)</a>
@@ -1043,6 +1135,8 @@
 </li>
       <li><a href="api/wolframclient.serializers.html#wolframclient.serializers.utils.safe_len">safe_len() (in module wolframclient.serializers.utils)</a>
 </li>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.pandas.safe_pandas_length">safe_pandas_length() (in module wolframclient.serializers.encoders.pandas)</a>
+</li>
       <li><a href="api/wolframclient.language.html#wolframclient.language.decorators.safe_wl_execute">safe_wl_execute() (in module wolframclient.language.decorators)</a>
 </li>
       <li><a href="api/wolframclient.evaluation.html#wolframclient.evaluation.SecuredAuthenticationKey">SecuredAuthenticationKey (class in wolframclient.evaluation)</a>
@@ -1070,8 +1164,6 @@
       <li><a href="api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_bytes">serialize_bytes() (wolframclient.serializers.base.FormatSerializer method)</a>
 
       <ul>
-        <li><a href="api/wolframclient.serializers.html#wolframclient.serializers.wl.WLSerializer.serialize_bytes">(wolframclient.serializers.wl.WLSerializer method)</a>
-</li>
         <li><a href="api/wolframclient.serializers.html#wolframclient.serializers.wxf.WXFSerializer.serialize_bytes">(wolframclient.serializers.wxf.WXFSerializer method)</a>
 </li>
       </ul></li>
@@ -1199,7 +1291,7 @@
       </ul></li>
       <li><a href="api/wolframclient.utils.html#wolframclient.utils.datastructures.Settings">Settings (class in wolframclient.utils.datastructures)</a>
 </li>
-      <li><a href="api/wolframclient.logger.html#wolframclient.logger.utils.setup_logging_to_file">setup_logging_to_file() (in module wolframclient.logger.utils)</a>
+      <li><a href="api/wolframclient.utils.html#wolframclient.utils.logger.setup_logging_to_file">setup_logging_to_file() (in module wolframclient.utils.logger)</a>
 </li>
       <li><a href="api/wolframclient.html#wolframclient.exception.WolframLanguageException.show_traceback">show_traceback() (wolframclient.exception.WolframLanguageException method)</a>
 
@@ -1345,7 +1437,7 @@
       </ul></li>
       <li><a href="api/wolframclient.evaluation.html#wolframclient.evaluation.base.WolframEvaluatorBase.stopped">stopped (wolframclient.evaluation.base.WolframEvaluatorBase attribute)</a>
 </li>
-      <li><a href="api/wolframclient.logger.html#wolframclient.logger.utils.str_trim">str_trim() (in module wolframclient.logger.utils)</a>
+      <li><a href="api/wolframclient.utils.html#wolframclient.utils.logger.str_trim">str_trim() (in module wolframclient.utils.logger)</a>
 </li>
       <li><a href="api/wolframclient.cli.html#wolframclient.cli.dispatch.DispatchCommand.subcommand_args">subcommand_args() (wolframclient.cli.dispatch.DispatchCommand method)</a>
 </li>
@@ -1423,9 +1515,13 @@
 </li>
       <li><a href="api/wolframclient.utils.html#wolframclient.utils.debug.timed">timed() (in module wolframclient.utils.debug)</a>
 </li>
+      <li><a href="api/wolframclient.utils.html#wolframclient.utils.debug.timed_repeated">timed_repeated() (in module wolframclient.utils.debug)</a>
+</li>
       <li><a href="api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.wxfexpr.WXFExprInteger.to_bytes">to_bytes() (wolframclient.serializers.wxfencoder.wxfexpr.WXFExprInteger method)</a>
 </li>
       <li><a href="api/wolframclient.utils.html#wolframclient.utils.decorators.to_dict">to_dict() (in module wolframclient.utils.decorators)</a>
+</li>
+      <li><a href="api/wolframclient.utils.html#wolframclient.utils.functional.to_iterable">to_iterable() (in module wolframclient.utils.functional)</a>
 </li>
       <li><a href="api/wolframclient.utils.html#wolframclient.utils.decorators.to_tuple">to_tuple() (in module wolframclient.utils.decorators)</a>
 </li>
@@ -1473,30 +1569,18 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/wolframclient.serializers.encoders.html#wolframclient.serializers.encoders.numpy.uint64_handler">uint64_handler() (in module wolframclient.serializers.encoders.numpy)</a>
+</li>
       <li><a href="api/wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.unpack_mapping">unpack_mapping (wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer attribute)</a>
 
       <ul>
         <li><a href="api/wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumer.unpack_mapping">(wolframclient.deserializers.WXFConsumer attribute)</a>, <a href="api/wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumer.unpack_mapping">[1]</a>
 </li>
       </ul></li>
-      <li><a href="api/wolframclient.serializers.normalizer.html#wolframclient.serializers.normalizer.builtin.update_dispatch">update_dispatch() (in module wolframclient.serializers.normalizer.builtin)</a>
-
-      <ul>
-        <li><a href="api/wolframclient.serializers.normalizer.html#wolframclient.serializers.normalizer.datetime.update_dispatch">(in module wolframclient.serializers.normalizer.datetime)</a>
+      <li><a href="api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.unregister">unregister() (wolframclient.utils.dispatch.Dispatch method)</a>
 </li>
-        <li><a href="api/wolframclient.serializers.normalizer.html#wolframclient.serializers.normalizer.decimal.update_dispatch">(in module wolframclient.serializers.normalizer.decimal)</a>
+      <li><a href="api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.update">update() (wolframclient.utils.dispatch.Dispatch method)</a>
 </li>
-        <li><a href="api/wolframclient.serializers.normalizer.html#wolframclient.serializers.normalizer.fractions.update_dispatch">(in module wolframclient.serializers.normalizer.fractions)</a>
-</li>
-        <li><a href="api/wolframclient.serializers.normalizer.html#wolframclient.serializers.normalizer.numpy.update_dispatch">(in module wolframclient.serializers.normalizer.numpy)</a>
-</li>
-        <li><a href="api/wolframclient.serializers.normalizer.html#wolframclient.serializers.normalizer.pil.update_dispatch">(in module wolframclient.serializers.normalizer.pil)</a>
-</li>
-        <li><a href="api/wolframclient.serializers.normalizer.html#wolframclient.serializers.normalizer.wolfram.update_dispatch">(in module wolframclient.serializers.normalizer.wolfram)</a>
-</li>
-        <li><a href="api/wolframclient.serializers.normalizer.html#wolframclient.serializers.normalizer.DispatchUpdater.update_dispatch">(wolframclient.serializers.normalizer.DispatchUpdater method)</a>
-</li>
-      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/wolframclient.utils.html#wolframclient.utils.url.url_join">url_join() (in module wolframclient.utils.url)</a>
@@ -1517,6 +1601,8 @@
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.validate_types">validate_types() (wolframclient.utils.dispatch.Dispatch method)</a>
+</li>
       <li><a href="api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.wxfexpr.WXFExprInteger.value">value (wolframclient.serializers.wxfencoder.wxfexpr.WXFExprInteger attribute)</a>
 </li>
   </ul></td>
@@ -1665,29 +1751,29 @@
 </li>
       <li><a href="api/wolframclient.language.html#module-wolframclient.language.traceback">wolframclient.language.traceback (module)</a>
 </li>
-      <li><a href="api/wolframclient.logger.html#module-wolframclient.logger">wolframclient.logger (module)</a>
-</li>
-      <li><a href="api/wolframclient.logger.html#module-wolframclient.logger.utils">wolframclient.logger.utils (module)</a>
-</li>
       <li><a href="api/wolframclient.serializers.html#module-wolframclient.serializers">wolframclient.serializers (module)</a>
 </li>
       <li><a href="api/wolframclient.serializers.html#module-wolframclient.serializers.base">wolframclient.serializers.base (module)</a>
 </li>
-      <li><a href="api/wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer">wolframclient.serializers.normalizer (module)</a>
+      <li><a href="api/wolframclient.serializers.html#module-wolframclient.serializers.encoder">wolframclient.serializers.encoder (module)</a>
 </li>
-      <li><a href="api/wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer.builtin">wolframclient.serializers.normalizer.builtin (module)</a>
+      <li><a href="api/wolframclient.serializers.encoders.html#module-wolframclient.serializers.encoders">wolframclient.serializers.encoders (module)</a>
 </li>
-      <li><a href="api/wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer.datetime">wolframclient.serializers.normalizer.datetime (module)</a>
+      <li><a href="api/wolframclient.serializers.encoders.html#module-wolframclient.serializers.encoders.builtin">wolframclient.serializers.encoders.builtin (module)</a>
 </li>
-      <li><a href="api/wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer.decimal">wolframclient.serializers.normalizer.decimal (module)</a>
+      <li><a href="api/wolframclient.serializers.encoders.html#module-wolframclient.serializers.encoders.datetime">wolframclient.serializers.encoders.datetime (module)</a>
 </li>
-      <li><a href="api/wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer.fractions">wolframclient.serializers.normalizer.fractions (module)</a>
+      <li><a href="api/wolframclient.serializers.encoders.html#module-wolframclient.serializers.encoders.decimal">wolframclient.serializers.encoders.decimal (module)</a>
 </li>
-      <li><a href="api/wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer.numpy">wolframclient.serializers.normalizer.numpy (module)</a>
+      <li><a href="api/wolframclient.serializers.encoders.html#module-wolframclient.serializers.encoders.fractions">wolframclient.serializers.encoders.fractions (module)</a>
 </li>
-      <li><a href="api/wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer.pil">wolframclient.serializers.normalizer.pil (module)</a>
+      <li><a href="api/wolframclient.serializers.encoders.html#module-wolframclient.serializers.encoders.numpy">wolframclient.serializers.encoders.numpy (module)</a>
 </li>
-      <li><a href="api/wolframclient.serializers.normalizer.html#module-wolframclient.serializers.normalizer.wolfram">wolframclient.serializers.normalizer.wolfram (module)</a>
+      <li><a href="api/wolframclient.serializers.encoders.html#module-wolframclient.serializers.encoders.pandas">wolframclient.serializers.encoders.pandas (module)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#module-wolframclient.serializers.encoders.pil">wolframclient.serializers.encoders.pil (module)</a>
+</li>
+      <li><a href="api/wolframclient.serializers.encoders.html#module-wolframclient.serializers.encoders.wolfram">wolframclient.serializers.encoders.wolfram (module)</a>
 </li>
       <li><a href="api/wolframclient.serializers.html#module-wolframclient.serializers.serializable">wolframclient.serializers.serializable (module)</a>
 </li>
@@ -1701,10 +1787,10 @@
 </li>
       <li><a href="api/wolframclient.serializers.wxfencoder.html#module-wolframclient.serializers.wxfencoder.constants">wolframclient.serializers.wxfencoder.constants (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/wolframclient.serializers.wxfencoder.html#module-wolframclient.serializers.wxfencoder.serializer">wolframclient.serializers.wxfencoder.serializer (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/wolframclient.serializers.wxfencoder.html#module-wolframclient.serializers.wxfencoder.streaming">wolframclient.serializers.wxfencoder.streaming (module)</a>
 </li>
       <li><a href="api/wolframclient.serializers.wxfencoder.html#module-wolframclient.serializers.wxfencoder.utils">wolframclient.serializers.wxfencoder.utils (module)</a>
@@ -1740,6 +1826,8 @@
       <li><a href="api/wolframclient.utils.html#module-wolframclient.utils.importutils">wolframclient.utils.importutils (module)</a>
 </li>
       <li><a href="api/wolframclient.utils.html#module-wolframclient.utils.json">wolframclient.utils.json (module)</a>
+</li>
+      <li><a href="api/wolframclient.utils.html#module-wolframclient.utils.logger">wolframclient.utils.logger (module)</a>
 </li>
       <li><a href="api/wolframclient.utils.html#module-wolframclient.utils.require">wolframclient.utils.require (module)</a>
 </li>

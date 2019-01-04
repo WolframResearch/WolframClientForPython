@@ -10,7 +10,6 @@ Subpackages
     wolframclient.deserializers
     wolframclient.evaluation
     wolframclient.language
-    wolframclient.logger
     wolframclient.serializers
     wolframclient.utils
 
