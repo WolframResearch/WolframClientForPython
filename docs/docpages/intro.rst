@@ -577,6 +577,61 @@ Using the Wolfram Desktop, import the file:
 
 The library also provides extensible serialization mechanisms for custom Python classes. Refer to the :ref:`API guide page<extensible-serialization>` for detailed explanations and to the :doc:`examples page<advanced_usages>` for some use cases.
 
+Popular libraries support
+--------------------------
+
+PIL
++++++
+
+PIL :data:`Image` are serialized to Wolfram Language :wl:`Image`. Most image modes are supported. Popular modes are natively supported, their raw pixel data corresponds to the one used in the Wolfram Language. These modes enable fast serialization and deserialization. When the mode is not supported natively, the raw pixel data is converted back to the original format of the image and imported in the Wolfram Language. When there is no original format specified, and when the mode is not natively supported, the image is encoded as `PNG` first. Except for the last case which is uncommon, images are faithfully serialized.
+
+NumPy
++++++++
+
+Numpy arrays of integers signed and unsigned, floats, and complexes are serialized to Wolfram Language :wl:`NumericArray`. Numeric types are also supported (e.g.: :data:`numpy.integer`, :data:`numpy.float16`, etc).
+
+Pandas
+++++++++
+
+The library supports Pandas core classes :data:`Series` and :data:`DataFrame`. 
+
+The serialized form of a :data:`Series` depends on its index. :data:`Series` indexed with a :data:`DatetimeIndex` are serialized to :wl:`TimeSeries`. :data:`Series` indexed with a :data:`MultiIndex` are serialized to :wl:`Dataset`. Other series are serialized to :wl:`Association`. In :func:`~wolframclient.serializers.export`, it is possible to set `pandas_series_head` to any of: `'association'`, `'dataset'`, or `'list'` to specify the outer head.
+
+Import the library::
+
+    >>> import pandas
+
+Create a simple Series::
+
+    >>> series = pandas.Series([1, 2, 3], index=[-1, 'a', 1])
+
+Serialize it::
+
+    >>> export(series)
+    b'<|-1 -> 1, "a" -> 2, 1 -> 3|>'
+
+Serialize it to a list of rules::
+
+    >>> export(series, pandas_series_head='list')
+    b'{-1 -> 1, "a" -> 2, 1 -> 3}'    
+
+:data:`DataFrame` is serialized by default to :wl:`Dataset`. It is possible to set `pandas_dataframe_head` to `'association'` in :func:`~wolframclient.serializers.export` to return an :wl:`Association` instead.
+
+Create a :data:`DataFrame`::
+
+    >>> df = pandas.DataFrame.from_dict({'a': [1, 2]})
+    
+Serialize it::
+
+    >>> export(df)
+    b'Dataset[<|"a" -> <|0 -> 1, 1 -> 2|>|>]'
+
+Serialize it to an association::
+
+    >>> export(df, pandas_dataframe_head='association')
+    b'<|"a" -> <|0 -> 1, 1 -> 2|>|>'
+
+
 Deserialize
 -----------
 
