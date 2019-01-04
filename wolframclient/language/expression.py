@@ -140,6 +140,7 @@ class WLInputExpression(WLExpressionMeta):
     def __str__(self):
         return '(%s)' % self.input
 
+
 # Sphinx seems to bug on this one, and picks an outdated the docstring when declared in __init__.
 wlexpr = WLInputExpression
 """ Represent Wolfram Language expressions with input form strings.
