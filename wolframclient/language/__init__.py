@@ -2,9 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.language.expression import WLSymbolFactory, WLInputExpression
-
-__all__ = ['wl', 'System', 'Global', 'wlexpr']
+from wolframclient.language.expression import WLSymbolFactory, wlexpr
 
 wl = WLSymbolFactory()
 """A factory of :class:`~wolframclient.language.expression.WLSymbol` instances without any particular context.
@@ -19,25 +17,50 @@ by calling its attributes. The following code represents various Wolfram Languag
     # Select[PrimeQ, {1,2,3,4}]
     wl.Select(wl.PrimeQ, [1, 2, 3, 4])
 
-It is possible to specify context using the syntax::
+Represent symbols in various contexts::
 
-    wl.MyContext.MySubContext.SymbolName
+    >>> wl.Developer.PackedArrayQ
+    Developer`PackedArrayQ
+
+    >>> wl.Global.f
+    Global`f
+
+Specify a context and a subcontext::
+
+    >>> wl.MyContext.MySubContext.SymbolName
+    MyContext`MySubContext`SymbolName
+
+
 """
 
 System = wl.System
 """A factory of :class:`~wolframclient.language.expression.WLSymbol` instances having ``System``` context.
 
-See :class:`~wolframclient.language.expression.WLSymbolFactory` and
-:class:`~wolframclient.language.expression.WLSymbolFactory` for more details."""
+See :class:`~wolframclient.language.expression.WLSymbolFactory` for more details.
+
+Represent a symbol in the System context::
+
+    >>> System.ImageIdentify
+    System`ImageIdentify
+
+"""
 
 Global = wl.Global
 """A factory of :class:`~wolframclient.language.expression.WLSymbol` instances having ``Global``` context.
 
 See :class:`~wolframclient.language.expression.WLSymbolFactory` and
-:class:`~wolframclient.language.expression.WLSymbolFactory` for more details."""
+:class:`~wolframclient.language.expression.WLSymbolFactory` for more details.
 
-wlexpr = WLInputExpression
-""" A string wrapper for input string expressions.
+Represent a symbol in the Global context::
 
-Convenient alias for :class:`~wolframclient.language.expression.WLInputExpression`.
+    >>> Global.mySymbol
+    Global`mySymbol
+
+Represent a function call to a function::
+
+    >>> Global.myFunction('foo')
+    Global`myFunction['foo']
+
 """
+
+__all__ = ['wl', 'System', 'Global', 'wlexpr']

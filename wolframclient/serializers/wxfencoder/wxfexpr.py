@@ -52,10 +52,10 @@ class WXFExprFunction(WXFExpr):
 
 
 class WXFExprInteger(WXFExpr):
-    ''' Integers have various length, from one byte up to eigth and are signed
+    ''' Integers have various length, from one byte up to eight and are signed
     values. Values above 2^63-1 are represented with `WXFExprBigInteger`.
     Internally WXF uses the two's complement representation of integer values.
-    The endianness is system independant and is always little-endian.
+    The endianness is system independent and is always little-endian.
     '''
     __slots__ = 'value', 'int_size'
 
@@ -256,7 +256,7 @@ class WXFExprAssociation(WXFExpr):
     def __init__(self, length):
         if not isinstance(length, six.integer_types) or length < 0:
             raise TypeError(
-                'WXFExprAssociation must be instanciated with a length.')
+                'WXFExprAssociation must be instantiated with a length.')
         super(WXFExprAssociation, self).__init__(WXF_CONSTANTS.Association)
         self.length = length
 

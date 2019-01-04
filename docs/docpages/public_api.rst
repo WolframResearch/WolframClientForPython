@@ -136,7 +136,11 @@ Specify a timezone in Python using :func:`pytz.timezone` and serialize the date 
 Extensible mechanism
 --------------------
 
-The :mod:`~wolframclient.serializers` module provides mechanisms to extend built-in core functions and to define custom class serializations. One way is to extend :class:`~wolframclient.serializers.serializable.WLSerializable` and override :func:`~wolframclient.serializers.serializable.WLSerializable.to_wl`. An other is to define a normalizer function.
+The :mod:`~wolframclient.serializers` module provides mechanisms to extend built-in core functions and to define custom class serializations. There are three ways to extend serialization:
+
+* extend :class:`~wolframclient.serializers.serializable.WLSerializable` and override its method :meth:`~wolframclient.serializers.serializable.WLSerializable.to_wl`. 
+* call :func:`~wolframclient.serializers.export` with `normalizer` set to a normalizer function. This function will be applied to each object prior to the serialization process.
+* declare a type encoder.
 
 Serializable classes
 ^^^^^^^^^^^^^^^^^^^^
@@ -149,9 +153,9 @@ Serializable classes
 Normalizer
 ^^^^^^^^^^
 
-The serialization process is built on top of a chain of normalizers. A normalizer is a function that takes one argument and return one python object. Each normalizer can either return a new object or pass the input if they can't deal with its type. Built-in normalizers are applied first and when one consumes the input and returns an other object the chain is applied from the beginning on the new object. In :class:`~wolframclient.serializers.serializable.WLSerializable` we build a new class `MyPythonClass` extending `WLSerializable` that was serialized to Wolfram Language ``MyWolframFunction[...]``. Let's take a new approach based on normalizer to achieve the same result.
+A normalizer is a function that takes one argument and return one python object. It can either return a new object or pass the input if they can't deal with its type.
 
-The class can be defined as follow::
+Define a class::
 
     class MyPythonClass(object):
         def __init__(self, *arguments):
@@ -159,21 +163,32 @@ The class can be defined as follow::
 
 Define a normalizer function::
 
+    from wolframclient.language import wl
+    from wolframclient.serializers import export
+    
     def normalizer(o):
         if isinstance(o, MyPythonClass):
             return wl.MyWolframFunction(*o.arguments)
         # don't forget to return the input if we can't deal with the type.
         return o
 
-Serialize the function:
+Serialize an instance of :data:`MyPythonClass` using the normalizer function defined previously::
 
     >>> export(MyPythonClass(1,2), normalizer=normalizer)
     b'MyWolframFunction[1, 2]'
 
+Encoder
+^^^^^^^^
+
+The serialization of Python object relies on encoder functions. Each encoder is attached to a set of Python types. Encoders are generators of bytes. The library defines encoders for most built-in Python types, and for the core components of some popular libraries such as PIL :data:`Image`, Numpy arrays, and Pandas :data:`Series`.
+
+.. autodata:: wolframclient.serializers.encoder.wolfram_encoder
+    :noindex:
+
 Deserialization
 ==================
 
-.. autofunction:: wolframclient.deserializers.binary_deserialize
+.. autodata:: wolframclient.deserializers.binary_deserialize
     :noindex:
 
 

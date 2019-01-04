@@ -67,7 +67,7 @@ class WolframKernelEvaluationResult(WolframResultBase):
 
     The final Python expression is lazily computed when accessing the
     field `result`. The WXF bytes holding the evaluation result are
-    stored in `wxf` and thus can be parsed with a consumized parser if
+    stored in `wxf` and thus can be parsed with a customized parser if
     necessary.
     """
 
@@ -101,8 +101,8 @@ class WolframEvaluationJSONResponse(WolframResultBase):
     """Result object associated with cloud kernel evaluation.
 
     The response body associated to this type of result must be json encoded.
-    Other fields provide additionnal information. The HTTP response object is
-    stored as `http_response` and when HTTP error occured it is stored in `request_error`.
+    Other fields provide additional information. The HTTP response object is
+    stored as `http_response` and when HTTP error occurred it is stored in `request_error`.
     """
 
     def __init__(self, response):
@@ -191,8 +191,8 @@ class WolframEvaluationJSONResponseAsync(WolframEvaluationJSONResponse):
     """Result object associated with cloud kernel evaluation.
 
     The response body associated to this type of result must be json encoded.
-    Other fields provide additionnal information. The HTTP response object is
-    stored as `http_response` and when HTTP error occured it is stored in `request_error`.
+    Other fields provide additional information. The HTTP response object is
+    stored as `http_response` and when HTTP error occurred it is stored in `request_error`.
     """
 
     async def _build(self):
@@ -248,7 +248,7 @@ class WolframEvaluationJSONResponseAsync(WolframEvaluationJSONResponse):
             return '{}<request error {}>'.format(self.__class__.__name__,
                                                  self.http_response.status())
         else:
-            return '{}<sucessful request, body not read>'.format(
+            return '{}<successful request, body not read>'.format(
                 self.__class__.__name__)
 
 
@@ -315,19 +315,6 @@ class WolframAPIResponseAsync(WolframAPIResponse):
     async def _build(self):
         raise NotImplementedError
 
-    # async generators do not exist in 3.5
-    # async def iter_error(self):
-    #     """Generator of tuples made from the field name and the associated error message"""
-    #     if not self._built:
-    #         await self._build()
-    #     for err in self._iter_error():
-    #         yield err
-    # async def iter_full_error_report(self):
-    #     """Generator of tuples made from the field name and the associated entire error report."""
-    #     if not self._built:
-    #         await self._build()
-    #     for err in self._iter_full_error_report():
-    #         yield err
     async def iter_error(self):
         raise NotImplementedError
 

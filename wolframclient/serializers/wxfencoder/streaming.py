@@ -62,7 +62,7 @@ class ExactSizeReader(object):
 class ZipCompressedReader(object):
     """A buffer implementation reading zip compressed data from a source buffer and returning uncompressed data.
 
-    This class is instanciated from a reader, any object implementing a :meth:`~io.BufferedIOBase.read` method.
+    This class is instantiated from a reader, any object implementing a :meth:`~io.BufferedIOBase.read` method.
     """
     CHUNK_SIZE = 8192
 

@@ -70,7 +70,7 @@ class OAuthSessionBase(object):
         raise NotImplementedError
 
     def authorized(self):
-        """Return a reasonnably accurate state of the authentication status."""
+        """Return a reasonably accurate state of the authentication status."""
         return self._client is not None and bool(
             self._client.client_secret) and bool(
                 self._client.resource_owner_key) and bool(

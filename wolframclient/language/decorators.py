@@ -25,7 +25,7 @@ def safe_wl_execute(function,
     except Exception as e:
 
         #the user might provide an exception class, that might be broken.
-        #in this case we are running another try / except to return errors that are happneing during class serialization
+        #in this case we are running another try / except to return errors that are happening during class serialization
 
         if isinstance(e, WolframLanguageException):
             try:

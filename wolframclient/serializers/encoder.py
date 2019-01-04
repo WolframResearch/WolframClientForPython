@@ -21,10 +21,88 @@ logger = logging.getLogger(__name__)
 __all__ = ['wolfram_encoder', 'Encoder']
 
 wolfram_encoder = Dispatch()
-""" Instance of :class:`~wolframclient.utils.dispatch.Dispatch` used by default during serialization. """
+wolfram_encoder.__doc__ = """ 
+    Mapping between Python types and encoders used during serializations.
+
+    This instance of :class:`~wolframclient.utils.dispatch.Dispatch` is used in :func:`~wolframclient.serializers.export`
+    to serialize Python expressions and produce a stream of bytes.
+
+    **Register new encoders:**
 
 
-# for now, this method name is fixed and must match the one in the wolfram_encoder wrapper.
+    The annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch` applied to a function, defines an encoder, and associates 
+    it to the types passed as argument of the annotation.
+
+    Define a new class::
+
+        class MyPythonClass(object):
+            def __init__(self, *arguments):
+                self.arguments = arguments
+
+    Specify its encoder::
+
+        from wolframclient.serializers import wolfram_encoder
+        from wolframclient.language import wl
+        from wolframclient.serializers import export
+
+        @wolfram_encoder.dispatch(MyPythonClass)
+        def my_encoder(serializer, o):
+            return serializer.encode(wl.MyWolframFunction(*o.arguments))
+
+    Serialize an expression::
+
+        >>> export(MyPythonClass(1,2))
+        b'MyWolframFunction[1, 2]'
+
+    Alternatively, apply :meth:`~wolframclient.utils.dispatch.Dispatch.register` to a function and its associated type(s) achieves the 
+    same result.
+
+    It is not possible to associate two encoders with the same type, but it's possible to remove a mapping. First, unregister the previous encoder::
+
+        wolfram_encoder.unregister(MyPythonClass)
+
+    And register it again with :meth:`~wolframclient.utils.dispatch.Dispatch.register`::
+
+        wolfram_encoder.register(my_encoder, MyPythonClass) 
+
+    **Update with a dispatcher:**
+
+
+    An other way to extend supported types is to create a new :class:`~wolframclient.utils.dispatch.Dispatch`, map various
+    types and encoders, and ultimatelly update :data:`wolfram_encoder` using :meth:`~wolframclient.utils.dispatch.Dispatch.update`.
+
+    Create a new dispatcher, and register :data:`MyPythonClass`::
+
+        from wolframclient.utils.dispatch import Dispatch
+
+        dispatch = Dispatch()
+        dispatch.register(my_encoder, MyPythonClass)
+
+    Update the main encoder with the new dispatch instance::
+
+        wolfram_encoder.update(dispatch)
+
+    Serialize an expression::
+
+        >>> export(MyPythonClass(1,2))
+        b'MyWolframFunction[1, 2]'
+
+    **Define plugins:**
+
+
+    The library supports an entry point dedicated to new encoders: `wolframclient_serializers_encoder`. The library use this entry point to
+    loads plugins at runtime, as separated libraries.
+    For more information about entry points, refer to the documentation page: https://packaging.python.org/specifications/entry-points/
+
+    The plugin name must be unique and the value must reference a dispatcher instance. This instance is loaded and used to update 
+    :data:`wolfram_encoder`. A plugin is a simple way to distribute encoders as a separe library. 
+    
+    One type must have a unique encoder associated to it, as a consequence, two plugins registering an encoder for the same type are incompatible.
+    it is strongly advised to create one plugin for each existing Python library. e.g.: have one plugin dedicated to Numpy, and one to Pandas which 
+    makes heavy use of Numpy arrays.
+    """
+
+
 @wolfram_encoder.dispatch(object)
 def encode(serializer, o):
     if is_iterable(o):
@@ -120,6 +198,9 @@ class Encoder(object):
     """ A generic class exposing an :meth:`~wolframclient.serializers.encode.Encoder.encode`
     method applying an optional normalizer function, followed the most relevant encoding available 
     for a given type.
+
+    Arbitrary named parameters passed during initialization are later accessible with 
+    :meth:`~wolframclient.serializers.encode.Encoder.get_property`. 
     """
 
     default_encoder = wolfram_encoder.as_method()
@@ -142,4 +223,8 @@ class Encoder(object):
                                 iterate(func or (), self.default_encoder)))
 
     def get_property(self, key, d=None):
+        """ Return the value of the named parameter passed during initialization.
+
+        Set `d` to the default value if key was not present.
+        """
         return self._properties.get(key, d)

@@ -19,35 +19,42 @@ available_formats = API(
 def export(data, stream=None, target_format=DEFAULT_FORMAT, **options):
     """Serialize input `data` to a target format.
 
-    Input `data` can be one of the native Python types supported directly including:
-    :class:`list`, :class:`dict`, etc. Or, a serializable python object, i.e extending
-    :class:`~wolframclient.serializers.serializable.WLSerializable`.
-    The default format is string *InputForm*::
+    Input `data` can be any supported Python types including: :class:`list`, :class:`dict`, etc, or, a serializable python object. 
+    
+    Serializable python objects are class extending :class:`~wolframclient.serializers.serializable.WLSerializable`, and types mapped to
+    an encoder.
+
+    The default format is *InputForm* string::
 
         >>> export(wl.Range(3))
-        'Range[3]'
+        b'Range[3]'
 
-    Specify the target format to be WXF::
+    Specify WXF format by setting `target_format`::
 
         >>> export([1,2,3], target_format='wxf')
-        '8:f\x03s\x04ListC\x01C\x02C\x03'
+        b'8:f\x03s\x04ListC\x01C\x02C\x03'
 
     .. note :: WXF is a binary format for serializing Wolfram Language expression. Consult
             the documentation for a full format description: https://reference.wolfram.com/language/tutorial/WXFFormatDescription.html
 
-    If a string is provided as second argument, it is interpreted as a file path, and serialized form is
-    written directly to the file. The file is opened and closed automatically::
+    WXF byte arrays are deserialized with :func:`~wolframclient.deserializers.binary_deserialize`::
 
-        >>> export([1, 2, 3], 'file.wl')
+        >>> wxf = export([1,2,3], target_format='wxf')
+        >>> binary_deserialize(wxf)
+        [1, 2, 3]
+
+    If `stream` is specified with a string, it is interpreted as a file path, and serialized form is
+    written directly to the specified file. The file is opened and closed automatically::
+
+        >>> export([1, 2, 3], stream='file.wl')
         'file.wl'
 
-    An output stream can also be provided, in which case the output bytes are written to it.
+    If `stream` is specified with an output stream, the serialization bytes are written to it.
 
-    Finally any object that implements a `write` method, like :class:`file`, :class:`io.BytesIO`
-    or :class:`io.StringIO` is a valid value for the `stream` option::
+    Any object that implements a `write` method, e.g. :data:`file`, :class:`io.BytesIO`, or :class:`io.StringIO` is a valid value for the `stream` named parameter::
 
         >>> with open('file.wl', 'wb') as f:
-        ...     export([1, 2, 3], f)
+        ...     export([1, 2, 3], stream=f)
         ...
         <open file 'file.wl', mode 'wb' at 0x10a4f01e0>
 

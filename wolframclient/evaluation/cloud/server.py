@@ -10,12 +10,9 @@ __all__ = ['WolframServer']
 class WolframServer(object):
     ''' Represents the cloud server.
 
-    Contains the authentication endpoints informations, the API endpoint aka. the
+    Contains the authentication endpoints information, the API endpoint aka. the
     cloud base (`$CloudBase` in the Wolfram Language), and eventually the xauth
     consumer key and secret.
-
-    For conveniency this class exposes static methods to build instances from
-    a `Configuration` or from a file path.
     '''
 
     def __init__(self,

@@ -5,6 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.serializers import export, wolfram_encoder
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
+
 class foo(object):
     pass
 
@@ -26,7 +27,6 @@ class bar(object):
 
 
 class TestCase(BaseTestCase):
-
     @classmethod
     def setUpClass(cls):
         @wolfram_encoder.dispatch(foo)
@@ -71,6 +71,7 @@ class TestCase(BaseTestCase):
 
     def test_register_twice_no_force(self):
         with self.assertRaises(TypeError):
+
             @wolfram_encoder.dispatch(subsubfoo)
             def encode_subsubfoo_again(s, o):
                 return s.serialize_symbol('subsubfooAGAIN')
@@ -79,5 +80,6 @@ class TestCase(BaseTestCase):
         @wolfram_encoder.dispatch(subsubfoo, force=True)
         def encode_subsubfoo_again(s, o):
             return s.serialize_symbol('subsubfooFORCE')
+
         wl = export(subsubfoo())
         self.assertEqual(wl, b'subsubfooFORCE')

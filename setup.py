@@ -43,7 +43,7 @@ def load_tests():
 
 setup(
     name = 'wolframclient',
-    version = '1.0.0.dev3',
+    version = '1.0.0',
     description = 'A Python library with various tools to interact with the Wolfram Language and the Wolfram Cloud.',
     long_description = read('README.rst'),
     long_description_content_type = 'text/x-rst',
