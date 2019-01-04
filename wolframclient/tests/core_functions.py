@@ -4,12 +4,17 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.utils import six
 from wolframclient.utils.dispatch import Dispatch
-from wolframclient.utils.functional import (flatten, iterate, map, partition,
-                                            riffle)
+from wolframclient.utils.functional import (composition, flatten, iterate, map,
+                                            partition, riffle)
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
 
 class TestCase(BaseTestCase):
+    def test_composition(self):
+        self.assertEqual(composition()(1), 1)
+        self.assertEqual(composition(lambda s: s + 2)(1), 3)
+        self.assertEqual(composition(lambda s: s + 2, lambda s: s * 3)(1), 9)
+
     def test_riffle(self):
         self.assertEqual(
             list(riffle(range(5), "/")), [0, "/", 1, "/", 2, "/", 3, "/", 4])
