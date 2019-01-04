@@ -197,6 +197,9 @@ class Encoder(object):
     """ A generic class exposing an :meth:`~wolframclient.serializers.encode.Encoder.encode`
     method applying an optional normalizer function, followed the most relevant encoding available 
     for a given type.
+
+    Arbitrary named parameters passed during initialization are later accessible with 
+    :meth:`~wolframclient.serializers.encode.Encoder.get_property`. 
     """
 
     default_encoder = wolfram_encoder.as_method()
@@ -219,4 +222,8 @@ class Encoder(object):
                                 iterate(func or (), self.default_encoder)))
 
     def get_property(self, key, d=None):
+        """ Return the value of the named parameter passed during initialization.
+
+        Set `d` to the default value if key was not present.
+        """
         return self._properties.get(key, d)
