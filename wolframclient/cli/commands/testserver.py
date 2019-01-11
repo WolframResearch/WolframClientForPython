@@ -5,13 +5,11 @@ from __future__ import absolute_import, print_function, unicode_literals
 from aiohttp import web
 
 from wolframclient.cli.utils import SimpleCommand
-from wolframclient.evaluation import WolframKernelPool
+from wolframclient.evaluation import WolframLanguageAsyncSession as WolframEngine
 from wolframclient.language import wl
 
 
 async def generate_http_response(session, request, expression):
-    if not session.started:
-        await session.start()
     return (await session.evaluate(
         wl.GenerateHTTPResponse(expression, request)(
             ("BodyByteArray", "Headers", "StatusCode"))))
@@ -46,6 +44,6 @@ class Command(SimpleCommand):
 
     def handle(self):
 
-        session = WolframKernelPool(
+        session = WolframEngine(
             '/Applications/Mathematica.app/Contents/MacOS/WolframKernel')
         web.run_app(self.get_web_app(session), port=self.port)
