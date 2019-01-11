@@ -252,7 +252,7 @@ class WolframLanguageSession(WolframEvaluator):
 
     def duplicate(self, session):
         """ Build a new object using the same configuration as the current one. """
-        return WolframLanguageSession(
+        return self.__class__(
             self.kernel,
             consumer=self.consumer,
             initfile=self.initfile,
