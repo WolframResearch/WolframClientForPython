@@ -72,7 +72,7 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
         self.event_abort = Event()
 
     def duplicate(self):
-        return WolframLanguageAsyncSession(
+        return self.__class__(
             self.kernel,
             loop=self._loop,
             consumer=self.consumer,
