@@ -121,7 +121,7 @@ class WolframCloudSession(WolframEvaluator):
 
     def _post(self, url, headers={}, body={}, files={}, params={}):
         """Do a POST request, signing the content only if authentication has been successful."""
-        self._ensure_started()
+        self.ensure_started()
         headers['User-Agent'] = 'WolframClientForPython/1.0'
         if self.authorized():
             logger.info('Authenticated call to api %s', url)
@@ -137,7 +137,7 @@ class WolframCloudSession(WolframEvaluator):
                 files=files,
                 verify=self.verify)
 
-    def _ensure_started(self):
+    def ensure_started(self):
         if not self.started:
             self.start()
         if self.stopped:
@@ -286,7 +286,7 @@ class WolframCloudFutureSession(WolframCloudSession):
 
         See :func:`WolframCloudSession.call` for more details about input parameters.
         """
-        self._ensure_started()
+        self.ensure_started()
         return self._pool.submit(
             super().call,
             api,
@@ -303,7 +303,7 @@ class WolframCloudFutureSession(WolframCloudSession):
         `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export`,
         or a the string InputForm of an expression to evaluate.
         """
-        self._ensure_started()
+        self.ensure_started()
         return self._pool.submit(super().evaluate, expr)
 
 
