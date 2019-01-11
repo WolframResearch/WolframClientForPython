@@ -55,7 +55,7 @@ class Command(SimpleCommand):
 
     def create_handler(self, get, autoreload):
         if not get:
-            return wl.HTTPResponse("It works!")
+            return wl.HTTPResponse("<h1>It works!</h1>")
         if autoreload:
             return wl.Get(get)
         return wl.Once(wl.Get(get))
