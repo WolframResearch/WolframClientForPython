@@ -33,7 +33,7 @@ class Command(SimpleCommand):
 
         @routes.get('/')
         async def hello(request):
-            response = await generate_http_response(session, request, wl.APIFunction({"x": "String"}))
+            response = await generate_http_response(session, request, wl.HTTPResponse("It works!"))
             return web.Response(
                 body=response['BodyByteArray'],
                 status=response['StatusCode'],
