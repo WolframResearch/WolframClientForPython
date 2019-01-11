@@ -238,14 +238,14 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
     async def terminate(self):
         await self.stop()
 
-    async def _ensure_started(self):
+    async def ensure_started(self):
         if not self.started:
             await self.start()
         if self.stopped:
             await self.restart()
 
     async def _put_evaluation_task(self, future, func, expr, **kwargs):
-        await self._ensure_started()
+        await self.ensure_started()
         await self._queue.put((future, func, (expr, ), kwargs))
         self.eval_count += 1
 
