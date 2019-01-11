@@ -5,7 +5,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 from aiohttp import web
 
 from wolframclient.cli.utils import SimpleCommand
-from wolframclient.evaluation import WolframLanguageAsyncSession, WolframEvaluatorPool
+from wolframclient.evaluation import (WolframEvaluatorPool,
+                                      WolframLanguageAsyncSession)
 from wolframclient.language import wl
 
 
@@ -14,44 +15,33 @@ async def generate_http_response(session, request, expression):
         wl.GenerateHTTPResponse(expression, request)(
             ("BodyByteArray", "Headers", "StatusCode")))
 
+
 class Command(SimpleCommand):
     """ Run test suites from the tests modules.
     A list of patterns can be provided to specify the tests to run.
     """
 
-
     def add_arguments(self, parser):
         parser.add_argument(
-            '--get',
-            default=None,
-            help='Insert the string to Get.'
-        )        
-        parser.add_argument(
-            '--port',
-            default=18000,
-            help='Insert the port.'
-        )
+            '--get', default=None, help='Insert the string to Get.')
+        parser.add_argument('--port', default=18000, help='Insert the port.')
         parser.add_argument(
             '--kernel',
-            default='/Applications/Mathematica.app/Contents/MacOS/WolframKernel',
-            help='Insert the kernel path.'
-        )
+            default=
+            '/Applications/Mathematica.app/Contents/MacOS/WolframKernel',
+            help='Insert the kernel path.')
         parser.add_argument(
-            '--poolsize',
-            default=4,
-            help='Insert the kernel pool size.'
-        )   
+            '--poolsize', default=4, help='Insert the kernel pool size.')
         parser.add_argument(
             '--autoreload',
             default=False,
             help='Insert the server should autoreload the WL input expression.',
-            action = 'store_true'
-        )
+            action='store_true')
 
-    def create_session(self, path, poolsize = 1, **opts):
+    def create_session(self, path, poolsize=1, **opts):
         if poolsize <= 1:
             return WolframLanguageAsyncSession(path, **opts)
-        return WolframEvaluatorPool(path, poolsize = poolsize, **opts)
+        return WolframEvaluatorPool(path, poolsize=poolsize, **opts)
 
     def create_handler(self, get, autoreload):
         if not get:
@@ -62,10 +52,7 @@ class Command(SimpleCommand):
 
     def get_web_app(self, kernel, poolsize, **opts):
 
-        session = self.create_session(
-            kernel, 
-            poolsize = poolsize
-        )
+        session = self.create_session(kernel, poolsize=poolsize)
         handler = self.create_handler(**opts)
 
         routes = web.RouteTableDef()
@@ -87,7 +74,4 @@ class Command(SimpleCommand):
         pass
 
     def handle(self, port, **opts):
-        web.run_app(
-            self.get_web_app(**opts), 
-            port=port
-        )
+        web.run_app(self.get_web_app(**opts), port=port)
