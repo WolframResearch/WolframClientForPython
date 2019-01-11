@@ -53,7 +53,7 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
             self._ssl_context = None
 
     def duplicate(self):
-        return WolframCloudAsyncSession(
+        return self.__class__(
             credentials=self.credentials,
             server=self.server,
             loop=self._loop,
