@@ -5,15 +5,19 @@ from __future__ import absolute_import, print_function, unicode_literals
 from aiohttp import web
 
 from wolframclient.cli.utils import SimpleCommand
-from wolframclient.evaluation import WolframLanguageAsyncSession as WolframEngine
+from wolframclient.evaluation import WolframLanguageAsyncSession, WolframEvaluatorPool
 from wolframclient.language import wl
 
 
 async def generate_http_response(session, request, expression):
-    return (await session.evaluate(
+    return await session.evaluate(
         wl.GenerateHTTPResponse(expression, request)(
-            ("BodyByteArray", "Headers", "StatusCode"))))
+            ("BodyByteArray", "Headers", "StatusCode")))
 
+def WolframEngine(path, poolsize = 1, **opts):
+    if poolsize <= 1:
+        return WolframLanguageAsyncSession(path, **opts)
+    return WolframEvaluatorPool(path, poolsize = poolsize, **opts)
 
 class Command(SimpleCommand):
     """ Run test suites from the tests modules.
@@ -21,6 +25,7 @@ class Command(SimpleCommand):
     """
 
     port = 18000
+    poolsize = 4
 
     def get_web_app(self, session):
 
@@ -45,5 +50,5 @@ class Command(SimpleCommand):
     def handle(self):
 
         session = WolframEngine(
-            '/Applications/Mathematica.app/Contents/MacOS/WolframKernel')
+            '/Applications/Mathematica.app/Contents/MacOS/WolframKernel', poolsize = self.poolsize)
         web.run_app(self.get_web_app(session), port=self.port)
