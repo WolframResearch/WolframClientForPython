@@ -503,14 +503,16 @@ class WolframLanguageSession(WolframEvaluator):
     def evaluate_wxf(self, expr, **kwargs):
         """Send an expression to the kernel for evaluation and return the raw result still encoded as WXF.
         """
-        result = self._evaluate_ensure_started(self.normalize_input(expr), **kwargs)
+        result = self._evaluate_ensure_started(
+            self.normalize_input(expr), **kwargs)
         self.log_message_from_result(result)
         return result.wxf
 
     def evaluate_wrap(self, expr, **kwargs):
         """ Similar to :func:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.
         """
-        return self._evaluate_ensure_started(self.normalize_input(expr), **kwargs)
+        return self._evaluate_ensure_started(
+            self.normalize_input(expr), **kwargs)
 
     def evaluate(self, expr, **kwargs):
         """Send an expression to the kernel for evaluation.
@@ -519,7 +521,8 @@ class WolframLanguageSession(WolframEvaluator):
 
         `kwargs` are passed to :func:`~wolframclient.serializers.export`.
         """
-        result = self._evaluate_ensure_started(self.normalize_input(expr), **kwargs)
+        result = self._evaluate_ensure_started(
+            self.normalize_input(expr), **kwargs)
         self.log_message_from_result(result)
         return result.get()
 

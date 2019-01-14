@@ -94,7 +94,7 @@ class TestCoroutineSession(BaseTestCase):
     async def test_eval_start(self):
         async_session = WolframLanguageAsyncSession(
             self.KERNEL_PATH, kernel_loglevel=logging.INFO)
-        res = await async_session.evaluate(wl.Plus(1,1))
+        res = await async_session.evaluate(wl.Plus(1, 1))
         self.assertTrue(res, 2)
 
     @run_in_loop
