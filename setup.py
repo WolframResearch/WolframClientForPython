@@ -41,15 +41,20 @@ def load_tests():
     from wolframclient.cli.commands.test import Command as TestCommand
     TestCommand().handle()
 
+ABOUT = {}
+with open(os.path.join(HERE, 'wolframclient', 'about.py'), 'r') as fp:
+    exec(fp.read(), ABOUT)
+
+
 setup(
-    name = 'wolframclient',
-    version = '1.0.0',
-    description = 'A Python library with various tools to interact with the Wolfram Language and the Wolfram Cloud.',
+    name = ABOUT['__name__'],
+    version = ABOUT['__version__'],
+    description = ABOUT['__description__'],
     long_description = read('README.rst'),
     long_description_content_type = 'text/x-rst',
     keywords=['Wolfram Language', 'Wolfram Desktop', 'Mathematica', 'parser', 'serializer', 'WXF'],
-    author = 'Wolfram Research',
-    author_email = 'dorianb@wolfram.com, riccardod@wolfram.com',
+    author = ABOUT['__author__'],
+    author_email = ABOUT['__author_email__'],
     include_package_data=True,
     packages=find_packages(),
     test_suite='setup.load_tests',
@@ -66,7 +71,7 @@ setup(
     project_urls={
         'Source code': 'https://github.com/WolframResearch/WolframClientForPython',
         'Documentation': 'https://wolfr.am/wolframclientdoc',
-        'Wolfram Research': 'https://www.wolfram.com'
+        'Wolfram Research': 'https://www.wolfram.com',
     },
     entry_points = {
         'wolframclient_serializers_encoder':[]
