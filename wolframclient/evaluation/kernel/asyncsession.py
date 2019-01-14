@@ -92,7 +92,7 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
             self.event_abort.wait(timeout=duration)
         else:
             raise TimeoutError
-    
+
     def _get_exec_pool(self):
         if self.thread_pool_exec is None:
             self.thread_pool_exec = futures.ThreadPoolExecutor(max_workers=1)
@@ -104,7 +104,8 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
 
         This method is a coroutine."""
         await self.ensure_started()
-        result = await self._async_evaluate(super().do_evaluate, expr, **kwargs)
+        result = await self._async_evaluate(super().do_evaluate, expr,
+                                            **kwargs)
         self.log_message_from_result(result)
         return result.get()
 
@@ -114,7 +115,8 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
 
         This method is a coroutine."""
         await self.ensure_started()
-        result = await self._async_evaluate(super().do_evaluate, expr, **kwargs)
+        result = await self._async_evaluate(super().do_evaluate, expr,
+                                            **kwargs)
         self.log_message_from_result(result)
         return result.wxf
 
@@ -124,8 +126,7 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
 
         This method is a coroutine."""
         await self.ensure_started()
-        return await self._async_evaluate(super().do_evaluate, expr,
-                                          **kwargs)
+        return await self._async_evaluate(super().do_evaluate, expr, **kwargs)
 
     async def _async_evaluate(self, func, expr, **kwargs):
         return await self._loop.run_in_executor(self._get_exec_pool(), func,
@@ -136,7 +137,6 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
             await self.start()
         if self.stopped:
             await self.restart()
-
 
     async def start(self):
         """Asynchronously start the session.
