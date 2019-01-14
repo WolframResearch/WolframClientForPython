@@ -55,24 +55,7 @@ def aiohttp_request_to_response(request, post):
 
 
 async def generate_http_response(session, request, expression):
-
     wl_req = aiohttp_request_to_response(request, await request.post())
-
-    print(wl_req)
-
-    #{
-    #    "FileName" -> "/tmp/UserTemporaryFiles/public/1541/166/1660da3a-b8bc-4314-85a2-2a993e8acb63/uploaded_941666725542197870",
-    #    "ContentString" :> "",
-    #    "FieldName" -> "_charset_",
-    #    "ContentType" -> None,
-    #    "OriginalFileName" -> None,
-    #    "ByteCount" -> 12,
-    #    "FormField" -> True,
-    #    "InMemory" -> False
-    #}
-
-    #{"FileName" -> "/tmp/UserTemporaryFiles/public/1541/166/1660da3a-b8bc-4314-85a2-2a993e8acb63/upload-directory-0/49947811_984396671759504_6275627207268237312_n.jpg", "ContentString" :> FromCharacterCode[BinaryReadList["/tmp/UserTemporaryFiles/public/1541/166/1660da3a-b8bc-4314-85a2-2a993e8acb63/upload-directory-0/49947811_984396671759504_6275627207268237312_n.jpg"], "Unicode"], "FieldName" -> "x", "ContentType" -> "image/jpeg", "OriginalFileName" -> "49947811_984396671759504_6275627207268237312_n.jpg", "ByteCount" -> 38861, "FormField" -> False, "InMemory" -> False}
-
     return await session.evaluate(
         wl.GenerateHTTPResponse(expression, wl_req)(("BodyByteArray",
                                                      "Headers", "StatusCode")))
