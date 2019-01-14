@@ -77,7 +77,7 @@ class Command(SimpleCommand):
             help='Insert the kernel path.')
         parser.add_argument(
             '--poolsize',
-            default=4,
+            default=1,
             help='Insert the kernel pool size.',
             type=int)
         parser.add_argument(
