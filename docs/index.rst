@@ -1,12 +1,5 @@
-.. Wolfram Client Library for Python documentation master file, created by
-   sphinx-quickstart on Wed Jun  6 10:45:54 2018.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-
-
 =============================================================
-Wolfram Client Library for Python's Documentation
+Wolfram Language integration for Python
 =============================================================
 
 The client library provides seamless Wolfram Language integration in Python.
