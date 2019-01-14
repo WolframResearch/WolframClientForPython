@@ -2,18 +2,82 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import os
+import shutil
+import tempfile
+import uuid
+
 from aiohttp import web
 
 from wolframclient.cli.utils import SimpleCommand
 from wolframclient.evaluation import (WolframEvaluatorPool,
                                       WolframLanguageAsyncSession)
 from wolframclient.language import wl
+from wolframclient.utils import six
+from wolframclient.utils.decorators import to_dict
+from wolframclient.utils.encoding import force_text
+
+
+def to_multipart(v):
+    if isinstance(v, six.string_types):
+        return {"ContentString": v, "InMemory": True}
+
+    destdir = os.path.join(tempfile.gettempdir(), force_text(uuid.uuid4()))
+    os.mkdir(destdir)
+
+    target = os.path.join(destdir, v.filename)
+
+    with open(target, 'wb') as dest:
+        shutil.copyfileobj(v.file, dest)
+
+    return {
+        "FileName": target,
+        "InMemory": False,
+        "OriginalFileName": v.filename
+    }
+
+
+@to_dict
+def aiohttp_request_to_response(request, post):
+    yield 'Method', request.method,
+    yield 'Scheme', request.url.scheme,
+    yield 'Domain', request.url.host,
+    yield 'Port', force_text(request.url.port),
+    yield 'PathString', request.url.path,
+    yield 'QueryString', request.url.query_string,
+    yield 'Headers', tuple(wl.Rule(k, v) for k, v in request.headers.items())
+    if all(isinstance(v, six.string_types) for v in post.values()):
+        #this is a normal post request
+        yield 'Parameters', tuple(wl.Rule(k, v) for k, v in post.items())
+        yield 'MultipartElements', None
+    else:
+        yield 'Parameters', ()
+        yield 'MultipartElements', tuple(
+            wl.Rule(k, to_multipart(v)) for k, v in post.items())
 
 
 async def generate_http_response(session, request, expression):
+
+    wl_req = aiohttp_request_to_response(request, await request.post())
+
+    print(wl_req)
+
+    #{
+    #    "FileName" -> "/tmp/UserTemporaryFiles/public/1541/166/1660da3a-b8bc-4314-85a2-2a993e8acb63/uploaded_941666725542197870",
+    #    "ContentString" :> "",
+    #    "FieldName" -> "_charset_",
+    #    "ContentType" -> None,
+    #    "OriginalFileName" -> None,
+    #    "ByteCount" -> 12,
+    #    "FormField" -> True,
+    #    "InMemory" -> False
+    #}
+
+    #{"FileName" -> "/tmp/UserTemporaryFiles/public/1541/166/1660da3a-b8bc-4314-85a2-2a993e8acb63/upload-directory-0/49947811_984396671759504_6275627207268237312_n.jpg", "ContentString" :> FromCharacterCode[BinaryReadList["/tmp/UserTemporaryFiles/public/1541/166/1660da3a-b8bc-4314-85a2-2a993e8acb63/upload-directory-0/49947811_984396671759504_6275627207268237312_n.jpg"], "Unicode"], "FieldName" -> "x", "ContentType" -> "image/jpeg", "OriginalFileName" -> "49947811_984396671759504_6275627207268237312_n.jpg", "ByteCount" -> 38861, "FormField" -> False, "InMemory" -> False}
+
     return await session.evaluate(
-        wl.GenerateHTTPResponse(expression, request)(
-            ("BodyByteArray", "Headers", "StatusCode")))
+        wl.GenerateHTTPResponse(expression, wl_req)(("BodyByteArray",
+                                                     "Headers", "StatusCode")))
 
 
 class Command(SimpleCommand):
@@ -31,7 +95,10 @@ class Command(SimpleCommand):
             '/Applications/Mathematica.app/Contents/MacOS/WolframKernel',
             help='Insert the kernel path.')
         parser.add_argument(
-            '--poolsize', default=4, help='Insert the kernel pool size.', type = int)
+            '--poolsize',
+            default=4,
+            help='Insert the kernel pool size.',
+            type=int)
         parser.add_argument(
             '--autoreload',
             default=False,
@@ -57,13 +124,14 @@ class Command(SimpleCommand):
 
         routes = web.RouteTableDef()
 
-        @routes.get('/')
+        @routes.route('*', '/{tail:.*}')
         async def hello(request):
             response = await generate_http_response(session, request, handler)
             return web.Response(
-                body=response['BodyByteArray'],
-                status=response['StatusCode'],
-                headers=dict(rule.args for rule in response['Headers']))
+                body=response.get('BodyByteArray', b''),
+                status=response.get('StatusCode', 200),
+                headers=dict(
+                    rule.args for rule in response.get('Headers', ())))
 
         app = web.Application()
         app.add_routes(routes)
