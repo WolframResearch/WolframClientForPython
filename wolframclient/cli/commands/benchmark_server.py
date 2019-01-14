@@ -34,9 +34,9 @@ class Command(SimpleCommand):
             default='http://localhost:18000',
             help='Insert the url to stress.')
 
-    async def consumer(self, queue, results, i):
+    async def consumer(self, queue, i):
+        results = []
         async with aiohttp.ClientSession() as session:
-
             while queue:
                 t1 = time.time()
                 async with session.get(queue.pop()) as resp:
@@ -51,12 +51,9 @@ class Command(SimpleCommand):
         # Create the queue with a fixed size so the producer
         # will block until the consumers pull some items out.
         queue = [url for i in range(requests)]
-        results = []
 
         for i in range(clients):
-            yield self.consumer(queue, [], i)
-
-        return results
+            yield self.consumer(queue, i)
 
     @run_in_loop
     async def handle(self, requests, clients, url):
@@ -74,6 +71,8 @@ class Command(SimpleCommand):
         s = sum(results)
         l = len(results)
         t2 = time.time() - t1
+
+        assert l == requests
 
         print('Elapsed total time', t2)
         print('Elapsed avg time', t2 / l)
