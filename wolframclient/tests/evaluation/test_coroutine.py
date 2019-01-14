@@ -9,7 +9,7 @@ from wolframclient.deserializers import binary_deserialize
 from wolframclient.evaluation import (
     WolframCloudAsyncSession, WolframEvaluatorPool,
     WolframLanguageAsyncSession, parallel_evaluate)
-from wolframclient.language import wl
+from wolframclient.language import wl, wlexpr
 from wolframclient.tests.configure import (MSG_JSON_NOT_FOUND, json_config,
                                            secured_authentication_key)
 from wolframclient.tests.evaluation.test_kernel import \
@@ -53,7 +53,7 @@ class TestCoroutineSession(BaseTestCase):
     async def test_eval_inputform(self):
         start = time.perf_counter()
         task = asyncio.create_task(
-            self.async_session.evaluate('Pause[.1]; Range[3]'))
+            self.async_session.evaluate(wlexpr('Pause[.1]; Range[3]')))
         timer = time.perf_counter() - start
         self.assertTrue(timer < .1)
         res = await task
@@ -74,7 +74,7 @@ class TestCoroutineSession(BaseTestCase):
     async def test_eval_wxf(self):
         start = time.perf_counter()
         task = asyncio.create_task(
-            self.async_session.evaluate_wxf('Pause[.1]; Range[3]'))
+            self.async_session.evaluate_wxf(wlexpr('Pause[.1]; Range[3]')))
         timer = time.perf_counter() - start
         self.assertTrue(timer < .1)
         res = await task
@@ -84,11 +84,18 @@ class TestCoroutineSession(BaseTestCase):
     async def test_eval_wrap(self):
         start = time.perf_counter()
         task = asyncio.create_task(
-            self.async_session.evaluate_wrap('Pause[.1]; Range[3]'))
+            self.async_session.evaluate_wrap(wlexpr('Pause[.1]; Range[3]')))
         timer = time.perf_counter() - start
         self.assertTrue(timer < .1)
         res = await task
         self.assertEqual(res.get(), [1, 2, 3])
+
+    @run_in_loop
+    async def test_eval_start(self):
+        async_session = WolframLanguageAsyncSession(
+            self.KERNEL_PATH, kernel_loglevel=logging.INFO)
+        res = await async_session.evaluate(wl.Plus(1, 1))
+        self.assertTrue(res, 2)
 
     @run_in_loop
     async def test_eval_parallel(self):
@@ -150,7 +157,7 @@ class TestKernelPool(BaseTestCase):
     async def test_eval_inputform(self):
         tasks = [
             asyncio.create_task(
-                self.pool.evaluate('FromLetterNumber[%i]' % i))
+                self.pool.evaluate(wlexpr('FromLetterNumber[%i]' % i)))
             for i in range(1, 11)
         ]
         res = await asyncio.gather(*tasks)
@@ -161,7 +168,7 @@ class TestKernelPool(BaseTestCase):
     async def test_eval_wxf(self):
         tasks = [
             asyncio.create_task(
-                self.pool.evaluate_wxf('FromLetterNumber[%i]' % i))
+                self.pool.evaluate_wxf(wlexpr('FromLetterNumber[%i]' % i)))
             for i in range(1, 11)
         ]
         res = await asyncio.gather(*tasks)
@@ -172,7 +179,7 @@ class TestKernelPool(BaseTestCase):
     @run_in_loop
     async def test_failed_expr(self):
         tasks = [
-            asyncio.create_task(self.pool.evaluate('Pause[.1]; 1/0'))
+            asyncio.create_task(self.pool.evaluate(wlexpr('Pause[.1]; 1/0')))
             for i in range(1, 10)
         ]
         res = await asyncio.gather(*tasks)

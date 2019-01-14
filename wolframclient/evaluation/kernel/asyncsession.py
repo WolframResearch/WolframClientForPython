@@ -103,26 +103,40 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
         asynchronously.
 
         This method is a coroutine."""
-        return await self._async_evaluate(super().evaluate, expr, **kwargs)
+        await self.ensure_started()
+        result = await self._async_evaluate(super().do_evaluate, expr,
+                                            **kwargs)
+        self.log_message_from_result(result)
+        return result.get()
 
     async def evaluate_wxf(self, expr, **kwargs):
         """Evaluate :meth:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wxf`
         asynchronously.
 
         This method is a coroutine."""
-        return await self._async_evaluate(super().evaluate_wxf, expr, **kwargs)
+        await self.ensure_started()
+        result = await self._async_evaluate(super().do_evaluate, expr,
+                                            **kwargs)
+        self.log_message_from_result(result)
+        return result.wxf
 
     async def evaluate_wrap(self, expr, **kwargs):
         """Evaluate :meth:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wrap`
         asynchronously.
 
         This method is a coroutine."""
-        return await self._async_evaluate(super().evaluate_wrap, expr,
-                                          **kwargs)
+        await self.ensure_started()
+        return await self._async_evaluate(super().do_evaluate, expr, **kwargs)
 
     async def _async_evaluate(self, func, expr, **kwargs):
         return await self._loop.run_in_executor(self._get_exec_pool(), func,
                                                 expr, **kwargs)
+
+    async def ensure_started(self):
+        if not self.started:
+            await self.start()
+        if self.stopped:
+            await self.restart()
 
     async def start(self):
         """Asynchronously start the session.

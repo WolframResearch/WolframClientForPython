@@ -440,7 +440,7 @@ class WolframLanguageSession(WolframEvaluator):
                 'Failed to communicate with the kernel %s. Could not read from ZMQ socket.'
                 % self.kernel)
 
-    def _ensure_started(self):
+    def ensure_started(self):
         if not self.started:
             self.start()
         if self.stopped:
@@ -454,11 +454,14 @@ class WolframLanguageSession(WolframEvaluator):
         else:
             return None
 
-    def _evaluate(self, expr, **kwargs):
+    def _evaluate_ensure_started(self, expr, **kwargs):
+        self.ensure_started()
+        assert (self.started)
+        return self.do_evaluate(expr, **kwargs)
+
+    def do_evaluate(self, expr, **kwargs):
         """Send an expression to the kernel for evaluation. Return a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.
         """
-        self._ensure_started()
-        assert (self.started)
         start = time.perf_counter()
         if self.wxf_bytes_evaluation and isinstance(expr, six.binary_type):
             data = expr
@@ -492,19 +495,24 @@ class WolframLanguageSession(WolframEvaluator):
         return WolframKernelEvaluationResult(
             wxf_result, errmsg, consumer=self.consumer)
 
-    def evaluate_wxf(self, expr, **kwargs):
-        """Send an expression to the kernel for evaluation and return the raw result still encoded as WXF.
-        """
-        result = self._evaluate(self.normalize_input(expr), **kwargs)
+    def log_message_from_result(self, result):
         if not result.success:
             for msg in result.messages:
                 logger.warning(msg[1])
+
+    def evaluate_wxf(self, expr, **kwargs):
+        """Send an expression to the kernel for evaluation and return the raw result still encoded as WXF.
+        """
+        result = self._evaluate_ensure_started(
+            self.normalize_input(expr), **kwargs)
+        self.log_message_from_result(result)
         return result.wxf
 
     def evaluate_wrap(self, expr, **kwargs):
         """ Similar to :func:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.
         """
-        return self._evaluate(self.normalize_input(expr), **kwargs)
+        return self._evaluate_ensure_started(
+            self.normalize_input(expr), **kwargs)
 
     def evaluate(self, expr, **kwargs):
         """Send an expression to the kernel for evaluation.
@@ -513,10 +521,9 @@ class WolframLanguageSession(WolframEvaluator):
 
         `kwargs` are passed to :func:`~wolframclient.serializers.export`.
         """
-        result = self._evaluate(self.normalize_input(expr), **kwargs)
-        if not result.success:
-            for msg in result.messages:
-                logger.warning(msg[1])
+        result = self._evaluate_ensure_started(
+            self.normalize_input(expr), **kwargs)
+        self.log_message_from_result(result)
         return result.get()
 
     def __repr__(self):
