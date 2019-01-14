@@ -31,7 +31,7 @@ class Command(SimpleCommand):
             '/Applications/Mathematica.app/Contents/MacOS/WolframKernel',
             help='Insert the kernel path.')
         parser.add_argument(
-            '--poolsize', default=4, help='Insert the kernel pool size.')
+            '--poolsize', default=4, help='Insert the kernel pool size.', type = int)
         parser.add_argument(
             '--autoreload',
             default=False,
