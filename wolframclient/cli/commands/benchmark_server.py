@@ -41,6 +41,7 @@ class Command(SimpleCommand):
                 t1 = time.time()
                 async with session.get(queue.pop()) as resp:
                     await resp.content.read()
+                    assert resp.status == 200
                     results.append(time.time() - t1)
 
         return results
@@ -70,6 +71,11 @@ class Command(SimpleCommand):
         results = await wait_all(self.generate_tasks(requests, clients, url))
         results = tuple(flatten(results))
 
-        print('Elapsed time', time.time() - t1)
-        print('Total time', sum(results))
-        print('Avg time', sum(results) / len(results))
+        s = sum(results)
+        l = len(results)
+        t2 = time.time() - t1
+
+        print('Elapsed total time', t2)
+        print('Elapsed avg time', t2 / l)
+        print('Request total time', s)
+        print('Request avg time', s / l)
