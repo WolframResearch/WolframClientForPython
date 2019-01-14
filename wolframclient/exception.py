@@ -46,7 +46,8 @@ class WolframEvaluationException(WolframLanguageException):
         return self.error
 
     def __repr__(self):
-        return 'WolframEvaluationException<error=%s, expr=%s, messages=%i>:' % (
+        return '<%s error=%s, expr=%s, messages=%i>:' % (
+            self.__class__.__name__,
             self.error, str_trim(self.result), len(self.messages))
 
 
