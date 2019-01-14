@@ -8,6 +8,7 @@ import tempfile
 import uuid
 
 from aiohttp import web
+from aiohttp.multipart import CIMultiDict
 
 from wolframclient.cli.utils import SimpleCommand
 from wolframclient.evaluation import (WolframEvaluatorPool,
@@ -111,7 +112,7 @@ class Command(SimpleCommand):
             return web.Response(
                 body=response.get('BodyByteArray', b''),
                 status=response.get('StatusCode', 200),
-                headers=dict(
+                headers=CIMultiDict(
                     rule.args for rule in response.get('Headers', ())))
 
         app = web.Application()
