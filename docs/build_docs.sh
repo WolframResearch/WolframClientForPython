@@ -18,6 +18,9 @@
 #>     -h display this page.
 #> 
 
+echo "Compile mma.scss."
+sass ./wri_theme/static/mma.scss > wri_theme/static/mma.css
+
 function help(){
     less $0 | grep -e "^#>" | sed 's/^#> \(.*\)$/\1/g'
     exit $1 || 0
