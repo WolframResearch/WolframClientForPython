@@ -13,11 +13,12 @@ from aiohttp.multipart import CIMultiDict
 from wolframclient.cli.utils import SimpleCommand
 from wolframclient.evaluation import (WolframEvaluatorPool,
                                       WolframLanguageAsyncSession)
-from wolframclient.language import wl
+from wolframclient.language import wl, wlexpr
 from wolframclient.utils import six
 from wolframclient.utils.api import asyncio
 from wolframclient.utils.decorators import to_dict
 from wolframclient.utils.encoding import force_text
+from wolframclient.utils.functional import composition, first
 
 
 def to_multipart(v):
@@ -62,8 +63,12 @@ class Command(SimpleCommand):
     """
 
     def add_arguments(self, parser):
+        parser.add_argument('expressions', nargs='*', type=str)
         parser.add_argument(
-            '--get', default=None, help='Insert the string to Get.')
+            '--get',
+            help='Insert the string to Get.',
+            action='append',
+            default=None)
         parser.add_argument('--port', default=18000, help='Insert the port.')
         parser.add_argument(
             '--kernel',
@@ -92,17 +97,21 @@ class Command(SimpleCommand):
             return WolframLanguageAsyncSession(path, **opts)
         return WolframEvaluatorPool(path, poolsize=poolsize, **opts)
 
-    def create_handler(self, get, autoreload):
-        if not get:
-            return wl.HTTPResponse("<h1>It works!</h1>")
-        if autoreload:
-            return wl.Get(get)
-        return wl.Once(wl.Get(get))
+    def create_handler(self, expressions, get, autoreload):
 
-    def get_web_app(self, kernel, poolsize, preload, **opts):
+        exprs = (*map(wlexpr, expressions), *map(
+            autoreload and composition(wl.Get, wl.Once) or wl.Get, get or ()))
+
+        if not exprs:
+            return wl.HTTPResponse("<h1>It works!</h1>")
+        elif len(exprs) == 1:
+            return first(exprs)
+        return wl.CompoundExpression(*exprs)
+
+    def get_web_app(self, expressions, kernel, poolsize, preload, **opts):
 
         session = self.create_session(kernel, poolsize=poolsize)
-        handler = self.create_handler(**opts)
+        handler = self.create_handler(expressions, **opts)
 
         routes = web.RouteTableDef()
 
