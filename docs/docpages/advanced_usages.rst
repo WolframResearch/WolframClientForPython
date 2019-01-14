@@ -39,7 +39,7 @@ The method :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguage
 * Python strings are treated as a string :wl:`InputForm`; as such, context is resolved during evaluation. User-defined functions are most of the time automatically created with the ``Global``` context. 
 * Serializable Python objects are serialized to WXF before evaluation; as such, context must be explicitly specified, except for ``System``` symbols.
 
-``System``` Context
+System Context
 --------------------
 
 In order to explicitly represent a system symbol in Python, the factory :data:`~wolframclient.language.System` can be used. First import it::
@@ -51,7 +51,7 @@ Create a Python object representing the built-in function :wl:`Classify`::
     >>> System.Classify
     System`Classify
 
-``Global``` Context
+Global Context
 ---------------------
 
 User-defined functions and variables are associated to the ``Global``` context by default. The factory :data:`~wolframclient.language.Global` can be used to represent those symbols::
