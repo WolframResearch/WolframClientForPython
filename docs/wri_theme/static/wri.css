@@ -1,4 +1,5 @@
 /* Default theme css */
+@import url("mma.css");
 @import url("default.css");
 
 div.viewcode-block:target {
@@ -129,7 +130,11 @@ div.section ul.simple li {
     font-family: "Source Code Pro", Courier, monospace;
     background: rgb(252, 252, 252);
 }
-
+code.wlcode {
+    font-family: "Source Code Pro", Courier, monospace;
+    background: rgb(252, 252, 252);
+    font-size: inherit;
+}
 .wl {
     font-family: "Source Code Pro", Courier, monospace;
     background-color: #ecf0f3;
@@ -285,55 +290,14 @@ img.logo {
     font-weight: normal;
 }
 
-/* pygments custom CSS  */
-/* Selectors from https://github.com/rsmenon/pygments-mathematica 
-Color scheme from wolframcloud.com */
-
-/* Comment */
-.highlight-mathematica .highlight .c {
-    color: rgb(153, 153, 153);
-    font-style: italic;
+.toctree-l1 {
+    list-style: square
+}
+li.toctree-l1.current > a {
+    font-weight : bold;
 }
 
-/*  Builtins */
-.highlight-wl .highlight .nb { 
-    color: black;
-}
-/*  Messages (the "foo" in General::foo) */
-.highlight-wl .highlight .ne { 
-    color: #ab466a;
-}
-/*  Slots */
-.highlight-wl .highlight .nf { 
-    color: rgb(67, 137, 88);
-    font-style: italic;
-}
-/*  Patterns */
-.highlight-wl .highlight .nt { 
-    color: rgb(67, 137, 88);
-    font-style: italic;
-}
-/*  Non-builtin symbols */
-.highlight-wl .highlight .nv { 
-    color: rgb(0, 44, 195);
-}
-/*  Operators */
-.highlight-wl .highlight .o { 
-    color:black;
-}
-/*  Groupings */
-.highlight-wl .highlight .p { 
-    color: black;
-}
-/*  Strings */
-.highlight-wl .highlight .s { 
-    color: rgb(102, 102, 102);
-}
-/*  Local scope variables */
-.highlight-wl .highlight .vc { 
-    color: rgb(67, 137, 88);
-}
-/*  Any unrecognized input that is not lexed correctly */
-.highlight-wl .highlight .err { 
-    color: black;
+.toctree-l2 {
+    margin-top : 3px;
+    margin-bottom : 3px;
 }
