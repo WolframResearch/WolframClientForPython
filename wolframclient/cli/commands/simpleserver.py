@@ -16,7 +16,7 @@ from wolframclient.evaluation import (WolframEvaluatorPool,
 from wolframclient.language import wl
 from wolframclient.utils import six
 from wolframclient.utils.decorators import to_dict
-from wolframclient.utils.encoding import force_text, force_bytes
+from wolframclient.utils.encoding import force_text
 
 
 def to_multipart(v):
@@ -46,7 +46,6 @@ def aiohttp_request_to_response(request, post):
     yield 'Headers', tuple(wl.Rule(k, v) for k, v in request.headers.items())
     yield 'MultipartElements', tuple(
         wl.Rule(k, to_multipart(v)) for k, v in post.items())
-
 
 
 async def generate_http_response(session, request, expression):
