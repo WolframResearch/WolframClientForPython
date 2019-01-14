@@ -279,8 +279,8 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
 
     def __repr__(self):
         return '<%s %i/%i started evaluators, cumulating %i evaluations>' % (
-            self.__class__.__name__,
-            len(self._started_tasks), self.requestedsize, self.eval_count)
+            self.__class__.__name__, len(
+                self._started_tasks), self.requestedsize, self.eval_count)
 
     def __len__(self):
         return len(self._started_tasks)
