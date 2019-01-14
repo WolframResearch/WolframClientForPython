@@ -74,7 +74,9 @@ class Command(SimpleCommand):
 
         assert l == requests
 
-        print('Elapsed total time', t2)
-        print('Elapsed avg time', t2 / l)
-        print('Request total time', s)
-        print('Request avg time', s / l)
+        print('Total time', t2)
+        print('Avg time', t2 / l)
+        print('Reqests/sec', 1 / (t2 / l))
+
+        print('Client total time', s)
+        print('Client avg time', s / l)
