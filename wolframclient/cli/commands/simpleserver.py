@@ -15,6 +15,7 @@ from wolframclient.evaluation import (WolframEvaluatorPool,
                                       WolframLanguageAsyncSession)
 from wolframclient.language import wl
 from wolframclient.utils import six
+from wolframclient.utils.api import asyncio
 from wolframclient.utils.decorators import to_dict
 from wolframclient.utils.encoding import force_text
 
@@ -79,6 +80,12 @@ class Command(SimpleCommand):
             default=False,
             help='Insert the server should autoreload the WL input expression.',
             action='store_true')
+        parser.add_argument(
+            '--preload',
+            default=False,
+            help=
+            'Insert the server should should start the kernels immediately.',
+            action='store_true')
 
     def create_session(self, path, poolsize=1, **opts):
         if poolsize <= 1:
@@ -92,7 +99,7 @@ class Command(SimpleCommand):
             return wl.Get(get)
         return wl.Once(wl.Get(get))
 
-    def get_web_app(self, kernel, poolsize, **opts):
+    def get_web_app(self, kernel, poolsize, preload, **opts):
 
         session = self.create_session(kernel, poolsize=poolsize)
         handler = self.create_handler(**opts)
@@ -110,6 +117,9 @@ class Command(SimpleCommand):
 
         app = web.Application()
         app.add_routes(routes)
+
+        if preload:
+            asyncio.ensure_future(session.start())
 
         return app
 
