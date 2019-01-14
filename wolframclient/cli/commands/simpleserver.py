@@ -44,15 +44,9 @@ def aiohttp_request_to_response(request, post):
     yield 'PathString', request.url.path,
     yield 'QueryString', request.url.query_string,
     yield 'Headers', tuple(wl.Rule(k, v) for k, v in request.headers.items())
+    yield 'MultipartElements', tuple(
+        wl.Rule(k, to_multipart(v)) for k, v in post.items())
 
-    if all(isinstance(v, six.string_types) for v in post.values()):
-        #this is a normal post request
-        yield 'Parameters', tuple(wl.Rule(k, v) for k, v in post.items())
-        yield 'MultipartElements', None
-    else:
-        yield 'Parameters', ()
-        yield 'MultipartElements', tuple(
-            wl.Rule(k, to_multipart(v)) for k, v in post.items())
 
 
 async def generate_http_response(session, request, expression):
