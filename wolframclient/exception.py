@@ -47,8 +47,8 @@ class WolframEvaluationException(WolframLanguageException):
 
     def __repr__(self):
         return '<%s error=%s, expr=%s, messages=%i>:' % (
-            self.__class__.__name__,
-            self.error, str_trim(self.result), len(self.messages))
+            self.__class__.__name__, self.error, str_trim(self.result),
+            len(self.messages))
 
 
 class SocketException(WolframLanguageException):
