@@ -175,7 +175,7 @@ class WolframAPICallBase(object):
         raise NotImplementedError
 
     def __repr__(self):
-        return '%s<api=%s>' % (
+        return '<%s api=%s>' % (
             self.__class__.__name__,
             self.api,
         )

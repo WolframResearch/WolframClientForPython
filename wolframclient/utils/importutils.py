@@ -98,7 +98,7 @@ class API(object):
         return zip(self.keys(), self.values())
 
     def __repr__(self):
-        return '<API: %s>' % (", ".join(sorted(self)))
+        return '<%s %s>' % (self.__class__.__name__, ", ".join(sorted(self)))
 
     def __dir__(self):
         return list(self)
