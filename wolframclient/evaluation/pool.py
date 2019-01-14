@@ -273,7 +273,8 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         return await asyncio.gather(*tasks)
 
     def __repr__(self):
-        return 'WolframEvaluatorPool<%i/%i started evaluators, cumulating %i evaluations>' % (
+        return '<%s %i/%i started evaluators, cumulating %i evaluations>' % (
+            self.__class__.__name__,
             len(self._started_tasks), self.requestedsize, self.eval_count)
 
     def __len__(self):
