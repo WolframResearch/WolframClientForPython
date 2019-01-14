@@ -26,7 +26,7 @@ class Command(SimpleCommand):
             type=int)
         parser.add_argument(
             '--clients',
-            default=10,
+            default=4,
             help='Insert the number of clients.',
             type=int)
         parser.add_argument(
