@@ -3,7 +3,7 @@
 
 
 
-Introduction to the Wolfram Client Library
+Introduction
 *******************************************
 
 The Wolfram Client Library is structured in submodules all located in :mod:`wolframclient`:
@@ -21,10 +21,12 @@ The Wolfram Client Library is structured in submodules all located in :mod:`wolf
 
 .. _ref-expressions:
 
-Wolfram Language Expression Representation
+Expression Representation
 ==========================================
 
-The library exposes many kinds of interactions with the Wolfram Language, many of which require representation of Wolfram Language expressions as Python objects. A straightforward way to construct Python objects representing expressions is to call attributes of :data:`~wolframclient.language.wl`.
+The library exposes many kinds of interactions with the Wolfram Language, many of which require representation of Wolfram Language expressions as Python objects. A fast introduction to the Wolfram Language is available at https://www.wolfram.com/language/fast-introduction-for-programmers.
+
+A straightforward way to construct Python objects representing expressions is to call attributes of :data:`~wolframclient.language.wl`.
 
 Import the factory::
 
@@ -53,35 +55,31 @@ Represent a Wolfram Language pure function::
 
     >>> wlexpr('#^2 &')
     (#^2 &)
-
-Combine both expression representations, :func:`~wolframclient.language.wlexpr` and :data:`~wolframclient.language.wl` and represent a complex expression::
+    
+Evaluate :wlcode:`Map[#^2 &, {1,2,3}]`, by combining both methods. Insert :wlcode:`#^2 &`, using :func:`~wolframclient.language.wlexpr`, into :wl:`Map` represented with :data:`~wolframclient.language.wl`::
 
     >>> wl.Map(wlexpr('#^2&'), [1,2,3])
     Map[(#^2&), [1, 2, 3]]
 
-.. code-block :: wl
-
-    Map[#^2 &, {1,2,3}]
-
 .. note :: 
     for more details about the Python representation of Wolfram Language expressions, refer to :ref:`the advanced usage section<adv-expression-representation>`.
 
-Wolfram Language Evaluation
+Evaluating Expressions
 ==============================
 
 .. _ref-localkernel:
 
-Local Kernel
----------------
+Local Evaluation
+------------------
 
-The Wolfram Language session :class:`~wolframclient.evaluation.WolframLanguageSession` is initialized with a *WolframKernel* executable specified by its path. A session enables local evaluation of Wolfram Language code directly from Python.
+The Wolfram Language session :class:`~wolframclient.evaluation.WolframLanguageSession` is initialized with a path to a Wolfram Engine executable. A session enables local evaluation of Wolfram Language code directly from Python.
 
 .. note ::
-    the typical location of the *WolframKernel* executable depends on the operating system. The relative path from your installation directory should be:
+    the typical location of the Wolfram Engine executable depends on the operating system. The relative path from your installation directory should be:
     
     * On `MacOS`: `Contents/MacOS/WolframKernel`
-    * On `Windows`: `WolframKernel.exe`
-    * On Linux: `Files/Executables/WolframKernel`
+    * On `Windows`: `wolfram.exe`
+    * On Linux: `Files/Executables/wolfram`
 
     **It is advised to first try to run the WolframKernel executable once from your terminal.**
 
@@ -92,9 +90,19 @@ Import :class:`~wolframclient.evaluation.WolframLanguageSession`::
     
     >>> from wolframclient.evaluation import WolframLanguageSession
 
-Create a new session targeting a local *WolframKernel* specified by its path::
+Create a new session targeting a local Wolfram Engine specified by its path.
 
-    >>> session = WolframLanguageSession('/path/to/kernel-executable')
+On `MacOS`::
+
+    >>> session = WolframLanguageSession('/Applications/Mathematica.app/Contents/MacOS/WolframKernel')
+
+On `Windows`::
+
+    >>> session = WolframLanguageSession('C:\\Program Files\\Wolfram Research\\Mathematica\\11.3\\wolfram.exe')
+
+On `Linux`::
+
+    >>> session = WolframLanguageSession('/usr/local/Wolfram/Mathematica/11.3/Files/Executables/wolfram')
 
 Note that sessions are also automatically started when the first evaluation occurs.
 
@@ -105,72 +113,49 @@ Functions are conveniently represented using :data:`~wolframclient.language.wl`.
 
     >>> from wolframclient.language import wl
 
-Evaluate a Wolfram Language function from Python using :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate`::
+Evaluate :wlcode:`StringReverse["abc"]` from Python using :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate`::
 
     >>> session.evaluate(wl.StringReverse('abc'))
     'cba'
 
-.. code-block :: wl
-
-    StringReverse["abc"]
-
-
-Call the Wolfram Language function :wl:`MinMax` on a Python :class:`list`::
+Evaluate :wlcode:`MinMax[{1, 5, -3, 9}]`, using the Wolfram Language function :wl:`MinMax` on a Python :class:`list`::
 
     >>> session.evaluate(wl.MinMax([1, 5, -3, 9]))
     [-3, 9]
 
-.. code-block :: wl
-
-    MinMax[{1, 5, -3, 9}]
-
-Query `WolframAlpha <https://www.wolframalpha.com/>`_ for the distance between the Earth and the Sun using the function :wl:`WolframAlpha`::
+Query `WolframAlpha <https://www.wolframalpha.com/>`_ for the distance between the Earth and the Sun using :wl:`WolframAlpha`.::
 
     >>> distance = session.evaluate(wl.WolframAlpha("Earth distance from Sun", "Result"))
     Quantity[1.008045994315923, AstronomicalUnit]
-
-.. code-block :: wl
-
-    WolframAlpha["Earth distance from Sun", "Result"]
 
 The Python object stored in the `distance` variable is a Wolfram Language :wl:`Quantity`. Convert the unit to kilometers, looping back the previous result in a new expression evaluation::
 
     >>> d_km = session.evaluate(wl.UnitConvert(distance, "Kilometers"))
     Quantity[150801534.3173264, Kilometers]
 
-.. code-block :: wl
-
-    dkm = UnitConvert[distance, "Kilometers"]
-
-Finally, retrieve the result as a Python number::
+Get the magnitude as a Python number using :wl:`QuantityMagnitude`::
 
     >>> session.evaluate(wl.QuantityMagnitude(d_km))
     150801534.3173264
 
-.. code-block :: wl
-    
-    QuantityMagnitude[dkm]
+Associations are represented as Python dictionaries and vice versa.
 
-Associations are represented as Python dictionaries and vice versa:
+Evaluate :wlcode:`AssociationMap[Prime, {1, 3, 5}]`::
 
     >>> session.evaluate(wl.AssociationMap(wl.Prime, [1, 3, 5]))
     {1: 2, 3: 5, 5: 11}
 
-.. code-block :: wl
-
-    AssociationMap[Prime, {1, 3, 5}]
 
 Options
 +++++++++
 
-Wolfram Language options are passed as Python named arguments (a.k.a. `**kwargs`). As seen previously, :wl:`ArrayPad` accepts an option :wl:`Padding` to specify what padding to use. Pad an array with ones::
+Wolfram Language options are passed as Python named arguments (a.k.a. `**kwargs`). As seen previously, :wl:`ArrayPad` accepts an option :wl:`Padding` to specify what padding to use.
+
+Evaluate :wlcode:`ArrayPad[{{0}}, 1, Padding->1]`::
 
     >>> session.evaluate(wl.ArrayPad([[0]], 1, Padding=1))
     [[1, 1, 1], [1, 0, 1], [1, 1, 1]]
-
-.. code-block :: wl
-
-    ArrayPad[{{0}}, 1, Padding->1]
+    
 
 InputForm String Evaluate
 +++++++++++++++++++++++++
@@ -207,18 +192,23 @@ Create Python Function
 
 From a Wolfram Language expression, it is possible to create a Python function that directly evaluates when called using :meth:`~wolframclient.evaluation.base.WolframEvaluator.function`::
 
-    >>> str_reverse = session.function('StringReverse')
+    >>> str_reverse = session.function(wl.StringReverse)
     >>> str_reverse('abc')
     'cba'
 
 Define a Wolfram Language function that takes a list or a sequence of integers and only returns the primes::
 
-    >>> session.evaluate('selectPrimes[integers : List[__Integer]] := Select[integers, PrimeQ]')
-    >>> session.evaluate('selectPrimes[integers___Integer] := selectPrimes[{integers}]')
+    >>> session.evaluate(wlexpr('selectPrimes[integers : List[__Integer]] := Select[integers, PrimeQ]'))
+    >>> session.evaluate(wlexpr('selectPrimes[integers___Integer] := selectPrimes[{integers}]'))
     
 Create a Python function from it::
 
-    >>> selectPrimes = session.function('selectPrimes')
+    >>> selectPrimes = session.function(wlexpr('selectPrimes'))
+
+Alternatively use the Global expression constructor::
+
+    >>> from wolframclient.language import Global
+    >>> selectPrimes = session.function(Global.selectPrimes)
 
 Apply the function to a list::
 
@@ -242,20 +232,13 @@ The session is no more useful, so terminate it::
 Session management
 +++++++++++++++++++++
 
-:class:`~wolframclient.evaluation.WolframLanguageSession` must be terminated, either by explicitly calling :func:`~wolframclient.evaluation.WolframLanguageSession.terminate` or, preferably, using it in a `with` block that achieves the same result automatically. 
+:class:`~wolframclient.evaluation.WolframLanguageSession` must be terminated, either by explicitly calling :func:`~wolframclient.evaluation.WolframLanguageSession.terminate` or, alternatively, in a `with` block that achieves the same result automatically. 
 
-It is highly recommended to initialize a session once and for all to mitigate the initialization cost.
+A Wolfram Language session starts on average in about a second. For this reason, it is highly recommended to initialize a session once and for all.
 
-Delegate the handling of the life-cycle of a session using a `with` block::
+Start a session manually::
 
-    >>> with WolframLanguageSession('/path/to/kernel-executable') as wl_session:
-    ...     wl_session.StringReverse('abc')
-    ...
-    'cba'
-
-Alternatively, start a session manually::
-
-    >>> session = WolframLanguageSession('/path/to/kernel-executable')
+    >>> session = WolframLanguageSession('/path/to/executable')
     >>> session.start()
 
 This is not required, since this operation is automatically performed during the first evaluation. Ensure the session started successfully:
@@ -269,6 +252,14 @@ Manually terminate the session::
 
 .. note::
     non-terminated sessions usually result in orphan kernel processes, which ultimately lead to the inability to spawn any usable instance at all. Typically, this ends up with a WolframKernelException raised after a failure to communicate with the kernel.
+
+Alternatively, delegate the handling of the life-cycle of a session using a `with` block::
+
+    >>> with WolframLanguageSession('/path/to/executable') as wl_session:
+    ...     wl_session.evaluate(wl.StringReverse('abc'))
+    ...
+    'cba'
+
 
 .. note :: 
     for in-depth explanations and use cases of local evaluation, refer to :ref:`the advanced usage section<adv-local-evaluation>`.
