@@ -15,7 +15,7 @@ from wolframclient.evaluation import (WolframEvaluatorPool,
 from wolframclient.language import wl
 from wolframclient.utils import six
 from wolframclient.utils.decorators import to_dict
-from wolframclient.utils.encoding import force_text
+from wolframclient.utils.encoding import force_text, force_bytes
 
 
 def to_multipart(v):
@@ -25,16 +25,13 @@ def to_multipart(v):
     destdir = os.path.join(tempfile.gettempdir(), force_text(uuid.uuid4()))
     os.mkdir(destdir)
 
-    target = os.path.join(destdir, v.filename)
-
-    with open(target, 'wb') as dest:
+    with open(os.path.join(destdir, v.filename), 'wb') as dest:
         shutil.copyfileobj(v.file, dest)
-
-    return {
-        "FileName": target,
-        "InMemory": False,
-        "OriginalFileName": v.filename
-    }
+        return {
+            "FileName": dest.name,
+            "InMemory": False,
+            "OriginalFileName": v.filename
+        }
 
 
 @to_dict
@@ -46,6 +43,7 @@ def aiohttp_request_to_response(request, post):
     yield 'PathString', request.url.path,
     yield 'QueryString', request.url.query_string,
     yield 'Headers', tuple(wl.Rule(k, v) for k, v in request.headers.items())
+
     if all(isinstance(v, six.string_types) for v in post.values()):
         #this is a normal post request
         yield 'Parameters', tuple(wl.Rule(k, v) for k, v in post.items())
