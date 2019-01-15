@@ -2,14 +2,12 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.utils.api import aiohttp
-
 from wolframclient.cli.utils import SimpleCommand
 from wolframclient.evaluation import (WolframEvaluatorPool,
                                       WolframLanguageAsyncSession)
 from wolframclient.http import aiohttp_wl_view
 from wolframclient.language import wl, wlexpr
-from wolframclient.utils.api import asyncio
+from wolframclient.utils.api import aiohttp, asyncio
 from wolframclient.utils.functional import composition, first
 
 
