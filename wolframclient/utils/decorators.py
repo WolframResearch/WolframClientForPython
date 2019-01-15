@@ -17,20 +17,6 @@ to_tuple = decorate(tuple)
 to_dict = decorate(Association)
 
 
-def synchronized(lock):
-    """Synchronized call to the wrapped function using the provided `lock`."""
-
-    def wrap(fn):
-        @functools.wraps(fn)
-        def caller(*args, **kwargs):
-            with lock:
-                return fn(*args, **kwargs)
-
-        return caller
-
-    return wrap
-
-
 class cached_property(object):
     """
     Decorator that converts a method with a single self argument into a
