@@ -2,8 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from aiohttp import web
-from aiohttp.multipart import CIMultiDict
+from wolframclient.utils.api import aiohttp
 
 from wolframclient.language import wl
 from wolframclient.utils import six
@@ -47,7 +46,7 @@ async def generate_http_response(session, request, expression):
         wl.GenerateHTTPResponse(expression, wl_req)(("BodyByteArray",
                                                      "Headers", "StatusCode")))
 
-    return web.Response(
+    return aiohttp.Response(
         body=response.get('BodyByteArray', b''),
         status=response.get('StatusCode', 200),
-        headers=CIMultiDict(rule.args for rule in response.get('Headers', ())))
+        headers=aiohttp.CIMultiDict(rule.args for rule in response.get('Headers', ())))

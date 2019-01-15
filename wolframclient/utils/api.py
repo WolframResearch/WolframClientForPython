@@ -146,3 +146,11 @@ pandas = API(
     SparseSeries='pandas.SparseSeries',
     bdate_range='pandas.bdate_range',
 )
+
+aiohttp = API(
+    Response = 'aiohttp.web.Response',
+    CIMultiDict = 'aiohttp.multipart.CIMultiDict',
+    RouteTableDef = 'aiohttp.web.RouteTableDef',
+    Application = 'aiohttp.web.Application',
+    run_app = 'aiohttp.web.run_app',
+)

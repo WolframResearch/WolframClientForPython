@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from aiohttp import web
+from wolframclient.utils.api import aiohttp
 
 from wolframclient.cli.utils import SimpleCommand
 from wolframclient.evaluation import (WolframEvaluatorPool,
@@ -69,14 +69,14 @@ class Command(SimpleCommand):
         session = self.create_session(kernel, poolsize=poolsize)
         handler = self.create_handler(expressions, **opts)
 
-        routes = web.RouteTableDef()
+        routes = aiohttp.RouteTableDef()
 
         @routes.route('*', '/{tail:.*}')
         @aiohttp_wl_view(session)
         async def hello(request):
             return handler
 
-        app = web.Application()
+        app = aiohttp.Application()
         app.add_routes(routes)
 
         if preload:
@@ -88,4 +88,4 @@ class Command(SimpleCommand):
         pass
 
     def handle(self, port, **opts):
-        web.run_app(self.get_web_app(**opts), port=port)
+        aiohttp.run_app(self.get_web_app(**opts), port=port)
