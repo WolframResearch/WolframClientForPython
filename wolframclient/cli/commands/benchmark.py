@@ -74,27 +74,36 @@ class Command(SimpleCommand):
 
         self.print('dumping results in', path)
 
-        self.table_line(
-            "", *(force_text(c).ljust(self.col_size) for c in self.complexity))
-        self.table_divider(len(self.complexity) + 1)
-
         #running export to do all lazy loadings
         export(1)
 
-        for label, export_format, opts in (
-            ("wl", "wl", dict()),
-            ("wxf", "wxf", dict()),
-            ("wxf zip", "wxf", dict(compress=True)),
-        ):
-            self.table_line(
-                label,
-                *(self.formatted_time(
-                    expr,
-                    stream=os.path.join(
+        for title, stream_generator in (
+            ('In memory', lambda complexity: None),
+            ('File', lambda complexity: os.path.join(
                         path, 'benchmark-test-%s.%s' %
-                        (force_text(complexity).zfill(7), export_format)),
-                    target_format=export_format,
-                    **opts) for complexity, expr in benchmarks))
+                        (force_text(complexity).zfill(7), export_format)))
+            ):
+
+            print(title)
+
+            self.table_line(
+                "", *(force_text(c).ljust(self.col_size) for c in self.complexity))
+            self.table_divider(len(self.complexity) + 1)
+
+            for label, export_format, opts in (
+                ("wl", "wl", dict()),
+                ("wxf", "wxf", dict()),
+                ("wxf zip", "wxf", dict(compress=True)),
+                ):
+                self.table_line(
+                    label,
+                    *(self.formatted_time(
+                        expr,
+                        stream=stream_generator(complexity),
+                        target_format=export_format,
+                        **opts) for complexity, expr in benchmarks))
+
+            self.table_line()
 
         self.table_line()
 
