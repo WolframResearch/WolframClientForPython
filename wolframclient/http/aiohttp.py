@@ -28,7 +28,7 @@ def to_multipart(v):
 
 
 @to_dict
-def aiohttp_request_to_response(request, post):
+def aiohttp_request_meta(request, post):
     yield 'Method', request.method,
     yield 'Scheme', request.url.scheme,
     yield 'Domain', request.url.host,
@@ -41,7 +41,7 @@ def aiohttp_request_to_response(request, post):
 
 
 async def generate_http_response(session, request, expression):
-    wl_req = aiohttp_request_to_response(request, await request.post())
+    wl_req = aiohttp_request_meta(request, await request.post())
 
     response = await session.evaluate(
         wl.GenerateHTTPResponse(expression, wl_req)(("BodyByteArray",
