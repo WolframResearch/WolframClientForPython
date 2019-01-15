@@ -132,8 +132,8 @@ div.section ul.simple li {
 }
 code.wlcode {
     font-family: "Source Code Pro", Courier, monospace;
-    background: rgb(252, 252, 252);
-    font-size: inherit;
+    background: white;
+    font-size: 16px;
 }
 .wl {
     font-family: "Source Code Pro", Courier, monospace;
@@ -293,8 +293,9 @@ img.logo {
 .toctree-l1 {
     list-style: square
 }
+
 li.toctree-l1.current > a {
-    font-weight : bold;
+    font-weight : bolder;
 }
 
 .toctree-l2 {
