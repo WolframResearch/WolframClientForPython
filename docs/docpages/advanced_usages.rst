@@ -2,7 +2,7 @@
    :maxdepth: 4
 
 ##########################################
-Advanced Usage and Code Examples
+Advanced Usage
 ##########################################
 
 .. note ::
