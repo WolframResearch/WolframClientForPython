@@ -28,7 +28,7 @@ project = u'Wolfram Client Library for Python'
 year = datetime.datetime.now().year
 
 copyright = u'%i, Wolfram Research' % year
-author = u'Wolfram Research'
+author = wolframclient.__author__
 
 # The short X.Y version
 # version = 'x.y'
