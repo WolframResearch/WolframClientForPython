@@ -87,14 +87,15 @@ class Command(SimpleCommand):
             print(title)
 
             self.table_line(
-                "", *(force_text(c).ljust(self.col_size) for c in self.complexity))
+                "",
+                *(force_text(c).ljust(self.col_size) for c in self.complexity))
             self.table_divider(len(self.complexity) + 1)
 
             for label, export_format, opts in (
                 ("wl", "wl", dict()),
                 ("wxf", "wxf", dict()),
                 ("wxf zip", "wxf", dict(compress=True)),
-                ):
+            ):
                 self.table_line(
                     label,
                     *(self.formatted_time(
