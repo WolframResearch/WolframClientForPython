@@ -78,6 +78,7 @@ def safe_force_text(obj):
 #https://blog.mclemon.io/python-efficient-string-concatenation-in-python-2016-edition
 
 if six.PY2:
+
     def concatenate_bytes(iterable):
         return b''.join(map(six.binary_type, iterable))
 else:
