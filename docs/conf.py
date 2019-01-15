@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath('..'))
 sys.path.insert(0, os.path.abspath('roles'))
 
 import datetime
-from wolframclient import __version__ as client_meta
+import wolframclient
 
 # -- Project information -----------------------------------------------------
 
@@ -33,7 +33,7 @@ author = u'Wolfram Research'
 # The short X.Y version
 # version = 'x.y'
 # The full version, including alpha/beta/rc tags
-release = client_meta.__version__
+release = wolframclient.__version__
 
 
 # -- General configuration ---------------------------------------------------
