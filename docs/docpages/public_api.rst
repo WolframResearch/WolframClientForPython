@@ -1,13 +1,24 @@
 ###########
-API: Guide
+Guide
 ###########
 
 .. toctree::
    :maxdepth: 4
 
-The library provides features through the classes and functions listed on this page. There are grouped by functionality and cover topics ranging from basic usage to most advanced features.
+The Wolfram Client Library is structured in submodules all located in :mod:`wolframclient`:
 
-Wolfram Language Expression Representation
+* :mod:`~wolframclient.evaluation` provides convenient methods to evaluate Wolfram Language expressions directly from Python. There are many ways to evaluate code including: evaluation by a local kernel, direct evaluation by a public or private Wolfram Cloud, calling a deployed API.
+
+* :mod:`~wolframclient.language` provides a Python representation of Wolfram Language symbols and functions.
+
+* :mod:`~wolframclient.serializers` provides serialization methods to various formats such as string :wl:`InputForm` and binary :wl:`WXF` format.
+
+* :mod:`~wolframclient.deserializers` contains a parser for :wl:`WXF`.
+
+* :mod:`~wolframclient.exception` regroups the exceptions and errors that the library may raise.
+
+
+Expression Representation
 ===========================================
 
 
@@ -192,8 +203,8 @@ Deserialization
     :noindex:
 
 
-Kernel evaluation
-==================
+Evaluating Expressions
+======================
 
 .. autoclass:: wolframclient.evaluation.WolframLanguageSession
     :noindex:
@@ -222,8 +233,8 @@ Kernel evaluation
     :noindex:
     :members:
 
-API call
-========
+Cloud API
+=========
 
 .. autoclass:: wolframclient.evaluation.WolframCloudSession
     :noindex:

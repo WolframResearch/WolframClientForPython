@@ -2,9 +2,9 @@
    :maxdepth: 4
 
 
-
-Introduction
-*******************************************
+##########################################
+Basic Usage
+##########################################
 
 The Wolfram Client Library is structured in submodules all located in :mod:`wolframclient`:
 
@@ -72,16 +72,13 @@ Evaluating Expressions
 Local Evaluation
 ------------------
 
-The Wolfram Language session :class:`~wolframclient.evaluation.WolframLanguageSession` is initialized with a path to a Wolfram Engine executable. A session enables local evaluation of Wolfram Language code directly from Python.
+The Wolfram Language session :class:`~wolframclient.evaluation.WolframLanguageSession` enables local evaluation of Wolfram Language code directly from Python. 
 
-.. note ::
-    the typical location of the Wolfram Engine executable depends on the operating system. The relative path from your installation directory should be:
+A session is initialized with a path to a Wolfram Engine executable. The executable is located in the top level directory returned by the Wolfram Language symbol :wl:`$InstallationDirectory`. The relative path from this directory depends on the operating system, typical values are:
     
     * On `MacOS`: `Contents/MacOS/WolframKernel`
     * On `Windows`: `wolfram.exe`
     * On Linux: `Files/Executables/wolfram`
-
-    **It is advised to first try to run the WolframKernel executable once from your terminal.**
 
 Initialization
 ++++++++++++++
@@ -90,21 +87,19 @@ Import :class:`~wolframclient.evaluation.WolframLanguageSession`::
     
     >>> from wolframclient.evaluation import WolframLanguageSession
 
-Create a new session targeting a local Wolfram Engine specified by its path.
+Create a session targeting a local Wolfram Engine specified by its path.
 
 On `MacOS`::
 
-    >>> session = WolframLanguageSession('/Applications/Mathematica.app/Contents/MacOS/WolframKernel')
+    >>> session = WolframLanguageSession('/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel')
 
 On `Windows`::
 
-    >>> session = WolframLanguageSession('C:\\Program Files\\Wolfram Research\\Mathematica\\11.3\\wolfram.exe')
+    >>> session = WolframLanguageSession('C:\\Program Files\\Wolfram Research\\Wolfram Desktop\\11.3\\wolfram.exe')
 
 On `Linux`::
 
-    >>> session = WolframLanguageSession('/usr/local/Wolfram/Mathematica/11.3/Files/Executables/wolfram')
-
-Note that sessions are also automatically started when the first evaluation occurs.
+    >>> session = WolframLanguageSession('/usr/local/Wolfram/Desktop/11.3/Files/Executables/wolfram')
 
 Expression Evaluation
 ++++++++++++++++++++++++++
