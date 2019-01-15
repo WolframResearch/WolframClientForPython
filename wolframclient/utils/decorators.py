@@ -14,6 +14,7 @@ def decorate(*func):
         return wraps(fn)(comp)
     return annotation
 
+
 to_tuple = decorate(tuple)
 to_dict = decorate(Association)
 
