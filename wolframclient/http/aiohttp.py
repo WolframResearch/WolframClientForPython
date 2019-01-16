@@ -8,6 +8,11 @@ from wolframclient.utils.api import aiohttp
 from wolframclient.utils.decorators import to_dict
 from wolframclient.utils.encoding import force_text
 
+import os
+import uuid
+import tempfile
+import shutil
+
 
 def to_multipart(v):
     if isinstance(v, six.string_types):
