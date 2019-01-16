@@ -64,7 +64,7 @@ class Command(SimpleCommand):
 
     def get_web_app(self, expressions, kernel, poolsize, preload, **opts):
 
-        session = self.create_session(kernel, poolsize=poolsize)
+        session = self.create_session(kernel, poolsize=poolsize, inputform_string_evaluation=False)
         handler = self.create_handler(expressions, **opts)
 
         routes = aiohttp.RouteTableDef()
