@@ -32,15 +32,14 @@ def to_multipart(v):
 
 @to_dict
 def aiohttp_request_meta(request, post):
-    yield 'Method', request.method,
-    yield 'Scheme', request.url.scheme,
-    yield 'Domain', request.url.host,
-    yield 'Port', force_text(request.url.port),
-    yield 'PathString', request.url.path,
-    yield 'QueryString', request.url.query_string,
+    yield 'Method', request.method
+    yield 'Scheme', request.url.scheme
+    yield 'Domain', request.url.host
+    yield 'Port', force_text(request.url.port)
+    yield 'PathString', request.url.path
+    yield 'QueryString', request.url.query_string
     yield 'Headers', tuple(wl.Rule(k, v) for k, v in request.headers.items())
-    yield 'MultipartElements', tuple(
-        wl.Rule(k, to_multipart(v)) for k, v in post.items())
+    yield 'MultipartElements', tuple(wl.Rule(k, to_multipart(v)) for k, v in post.items())
 
 
 async def generate_http_response(session, request, expression):
