@@ -1,4 +1,2 @@
-{%- if display_toc %}
-  <h3><a href="{{ pathto(master_doc) }}">{{ _('Table Of Contents') }}</a></h3>
-  {{ toctree(collapse=False, maxdepth=2) }}
-{%- endif %}
+<h3><a href="{{ pathto('docpages/table_of_content') }}">{{ _('Table Of Contents') }}</a></h3>
+{{ toctree(collapse=False, maxdepth=2, includehidden=True) }}

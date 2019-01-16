@@ -122,7 +122,10 @@ html_static_path = ['wri_theme/static']
 # default: ``['localtoc.html', 'relations.html', 'sourcelink.html',
 # 'searchbox.html']``.
 #
-html_sidebars = { '**': ['globaltoc.html', 'searchbox.html'] }
+html_sidebars = {
+    'index': ['globaltoc.html', 'searchbox.html'],
+    '**': ['logo.html', 'globaltoc.html', 'searchbox.html'],
+}
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
