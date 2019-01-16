@@ -9,9 +9,15 @@ from wolframclient.utils.functional import composition
 
 
 def decorate(*func):
-    def inner(fn):
-        return composition(fn, *func)
-    return inner
+    def annotation(fn):
+        comp = composition(fn, *func)
+
+        @functools.wraps(fn)
+        def inner(*args, **opts):
+            return comp(*args, **opts)
+
+        return inner
+    return annotation
 
 to_tuple = decorate(tuple)
 to_dict = decorate(Association)
