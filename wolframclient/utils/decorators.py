@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import functools
+from functools import wraps
 
 from wolframclient.utils.datastructures import Association
 from wolframclient.utils.functional import composition
@@ -11,7 +11,7 @@ from wolframclient.utils.functional import composition
 def decorate(*func):
     def annotation(fn):
         comp = composition(fn, *func)
-        return functools.wraps(fn)(comp)
+        return wraps(fn)(comp)
     return annotation
 
 to_tuple = decorate(tuple)
