@@ -11,12 +11,7 @@ from wolframclient.utils.functional import composition
 def decorate(*func):
     def annotation(fn):
         comp = composition(fn, *func)
-
-        @functools.wraps(fn)
-        def inner(*args, **opts):
-            return comp(*args, **opts)
-
-        return inner
+        return functools.wraps(fn)(comp)
     return annotation
 
 to_tuple = decorate(tuple)
