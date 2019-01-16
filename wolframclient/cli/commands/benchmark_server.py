@@ -10,8 +10,9 @@ from wolframclient.cli.utils import SimpleCommand
 from wolframclient.evaluation import (WolframEvaluatorPool,
                                       WolframLanguageAsyncSession)
 from wolframclient.utils.asyncio import run_in_loop, wait_all
-from wolframclient.utils.functional import flatten
+from wolframclient.utils.functional import flatten, iterate
 
+from operator import itemgetter
 
 class Command(SimpleCommand):
     """ Run test suites from the tests modules.
@@ -40,9 +41,9 @@ class Command(SimpleCommand):
             while queue:
                 t1 = time.time()
                 async with session.get(queue.pop()) as resp:
-                    await resp.content.read()
+                    bytes_count = len(await resp.content.read())
                     assert resp.status == 200
-                    results.append(time.time() - t1)
+                    results.append({'time': time.time() - t1, 'bytes': bytes_count})
 
         return results
 
@@ -66,13 +67,19 @@ class Command(SimpleCommand):
 
         # Wait for all of the coroutines to finish.
         results = await wait_all(self.generate_tasks(requests, clients, url))
-        results = tuple(flatten(results))
+        results = tuple(iterate(*results))
 
-        s = sum(results)
+        s = sum(map(itemgetter('time'), results))
+        kb = sum(map(itemgetter('bytes'), results)) / 1024
         l = len(results)
+
         t2 = time.time() - t1
 
         assert l == requests
+
+        print('Total Kb', kb)
+        print('Avb req Kb', kb / l)
+        print('Kb/sec', kb / t2)
 
         print('Total time', t2)
         print('Avg time', t2 / l)
