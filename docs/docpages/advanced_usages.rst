@@ -5,9 +5,6 @@
 Advanced Usage
 ##########################################
 
-.. note ::
-    all examples require the setting of the variable **kernel_path** to the path of a local Wolfram kernel.
-
 .. _adv-expression-representation:
 
 ****************************
@@ -17,15 +14,15 @@ Expression Representation
 Contexts
 ========
 
-In the Wolfram Language, symbols live in :wl:`Context`, which serves as a namespace mechanism. Built-in functions belong to the ``System``` context. By default, the context called ``Global``` is associated to user-defined functions and new variables. More information about contexts can be found at `tutorial/Contexts <http://reference.wolfram.com/language/tutorial/Contexts.html>`_.
+In the Wolfram Language, symbols live in `contexts <http://reference.wolfram.com/language/tutorial/Contexts.html>`_, which serve as a namespace mechanism. Built-in functions belong to the ``System``` context. User-defined symbols and functions are stored by default in the ``Global``` context.
 
-Wolfram Language expressions are conveniently represented in Python using the attributes of the factory :data:`~wolframclient.language.wl`::
+Wolfram Language expressions are represented in Python using the attributes of the factory :data:`~wolframclient.language.wl`::
 
     >>> from wolframclient.language import wl
     >>> wl.Range(3)
     Range[3]
 
-These attributes of the factory :data:`~wolframclient.language.wl` do not have a context attached::
+The attributes of the factory :data:`~wolframclient.language.wl` do not have a context attached::
 
     >>> wl.myFunction(1)
     myFunction[1]
@@ -104,6 +101,10 @@ Local Kernel Evaluation
 ****************************
 
 The following sections provide executable demonstrations of the local kernel evaluation features of the client library.
+
+.. note ::
+    all examples require the setting of the variable **kernel_path** to the path of a local Wolfram kernel.
+
 
 Evaluation Methods
 ======================
