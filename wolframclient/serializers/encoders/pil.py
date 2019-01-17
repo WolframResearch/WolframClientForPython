@@ -41,8 +41,6 @@ MODE_MAPPING = {
     "HSV": ("Byte", "HSB", True)
 }
 SYS_IS_LE = sys.byteorder == 'little'
-DTYPE_BOOL = numpy.dtype('bool')
-
 
 def normalize_array(array):
     # big endian
@@ -50,7 +48,7 @@ def normalize_array(array):
     # Ensure little endian
     if endianness == '>' or (endianness == '=' and not SYS_IS_LE):
         array.byteswap().newbyteorder()
-    if array.dtype == DTYPE_BOOL:
+    if array.dtype == numpy.dtype('bool'):
         array = array.astype('<u1')
     return array
 
