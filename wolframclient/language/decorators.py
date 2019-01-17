@@ -55,17 +55,23 @@ def safe_wl_execute(function,
             #this is the last resort.
             #everything went wrong, including the code that was supposed to return a traceback, or the custom normalizer is doing something it should not.
             #this should never happen.
+            try:
+                return export(
+                    wl.Failure(
+                        "PythonFailure", {
+                            "MessageTemplate": safe_force_text(e),
+                            "MessageParameters": {},
+                            "FailureCode": safe_force_text(e.__class__.__name__),
+                            "Traceback": force_text(traceback.format_exc())
+                        }),
+                    target_format=export_opts.get('target_format', DEFAULT_FORMAT))
+            except Exception:
+                return DEFAULT_UNKNOWN_FAILURE[export_opts.get('target_format', DEFAULT_FORMAT)]
 
-            return export(
-                wl.Failure(
-                    "PythonFailure", {
-                        "MessageTemplate": safe_force_text(e),
-                        "MessageParameters": {},
-                        "FailureCode": safe_force_text(e.__class__.__name__),
-                        "Traceback": force_text(traceback.format_exc())
-                    }),
-                target_format=export_opts.get('target_format', DEFAULT_FORMAT))
-
+DEFAULT_UNKNOWN_FAILURE = {
+    'wxf': b'8:f\x02s\x07FailureS\x0dPythonFailureA\x01-S\x0fMessageTemplateS\x1aUnexpected error occurred.',
+    'wl': b'Failure["PythonFailure", <|"MessageTemplate" -> "Unexpected error occurred."|>]',
+}
 
 def to_wl(**export_opts):
     def outer(function):
