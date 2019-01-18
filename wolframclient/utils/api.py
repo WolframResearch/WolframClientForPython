@@ -27,9 +27,11 @@ os = API(
     dirname='os.path.dirname',
     path_join='os.path.join',
     isfile='os.path.isfile',
+    isdir='os.path.isdir',
     exists='os.path.exists',
     makedirs='os.makedirs',
-    environ='os.environ')
+    environ='os.environ',
+    listdir='os.listdir')
 
 requests = API(
     get='requests.get',
