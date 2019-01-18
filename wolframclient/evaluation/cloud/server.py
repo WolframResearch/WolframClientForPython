@@ -38,7 +38,7 @@ class WolframServer(object):
 
 
 # A built-in instance representing the Wolfram public Cloud.
-WolframPublicCloudServer = WolframServer(
+WOLFRAM_PUBLIC_CLOUD_SERVER = WolframServer(
     'https://www.wolframcloud.com',
     'https://account.wolfram.com/auth/request-token',
     'https://account.wolfram.com/auth/access-token',

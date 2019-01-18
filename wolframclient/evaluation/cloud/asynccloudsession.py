@@ -13,7 +13,7 @@ from wolframclient.evaluation.cloud.asyncoauth import \
 from wolframclient.evaluation.cloud.asyncoauth import \
     XAuthAIOHttpAsyncSession as XAuthAsyncSession
 from wolframclient.evaluation.cloud.base import WolframAPICallBase
-from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
+from wolframclient.evaluation.cloud.server import WOLFRAM_PUBLIC_CLOUD_SERVER
 from wolframclient.evaluation.result import (
     WolframAPIResponseBuilder, WolframEvaluationJSONResponseAsync)
 from wolframclient.exception import AuthenticationException
@@ -29,7 +29,7 @@ __all__ = ['WolframCloudAsyncSession', 'WolframAPICallAsync']
 class WolframCloudAsyncSession(WolframAsyncEvaluator):
     def __init__(self,
                  credentials=None,
-                 server=WolframPublicCloudServer,
+                 server=WOLFRAM_PUBLIC_CLOUD_SERVER,
                  loop=None,
                  inputform_string_evaluation=True,
                  oauth_session_class=OAuthAsyncSession,
