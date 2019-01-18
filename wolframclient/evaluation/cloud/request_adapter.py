@@ -6,8 +6,10 @@ from requests import Response
 __all__ = ['wrap_response']
 
 
-class HTTPResponseAdapterBase(object):
+class RequestsHTTPRequestAdapter(object):
     """ Unify various request classes as a unique API. """
+
+    asynchronous = False
 
     def __init__(self, httpresponse):
         self.response = httpresponse
@@ -17,58 +19,32 @@ class HTTPResponseAdapterBase(object):
 
     def status(self):
         """ HTTP status code """
-        raise NotImplementedError
-
-    def json(self):
-        """ Request body as a json object """
-        raise NotImplementedError
-
-    def text(self):
-        """ Request body as decoded text. """
-        raise NotImplementedError
-
-    def content(self):
-        """ Request body as raw bytes """
-        raise NotImplementedError
-
-    def url(self):
-        """ String URL. """
-        raise NotImplementedError
-
-    def headers(self):
-        """ Headers as a dict. """
-        raise NotImplementedError
-
-    @property
-    def asynchronous(self):
-        raise NotImplementedError
-
-
-class RequestsHTTPRequestAdapter(HTTPResponseAdapterBase):
-    def status(self):
         return self.response.status_code
 
     def json(self):
+        """ Request body as a json object """
         return self.response.json()
 
     def text(self):
+        """ Request body as decoded text. """
         return self.response.text
 
     def content(self):
+        """ Request body as raw bytes """
         return self.response.content
 
     def url(self):
+        """ String URL. """
         return self.response.url
 
     def headers(self):
+        """ Headers as a dict. """
         return self.response.headers
 
-    @property
-    def asynchronous(self):
-        return False
+class AIOHttpHTTPRequestAdapter(RequestsHTTPRequestAdapter):
 
+    asynchronous = True
 
-class AIOHttpHTTPRequestAdapter(HTTPResponseAdapterBase):
     def status(self):
         return self.response.status
 
@@ -86,10 +62,6 @@ class AIOHttpHTTPRequestAdapter(HTTPResponseAdapterBase):
 
     def headers(self):
         return self.response.headers
-
-    @property
-    def asynchronous(self):
-        return True
 
 
 def wrap_response(response):
