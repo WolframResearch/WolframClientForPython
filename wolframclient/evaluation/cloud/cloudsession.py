@@ -18,6 +18,7 @@ from wolframclient.exception import AuthenticationException
 from wolframclient.serializers import export
 from wolframclient.utils import six
 from wolframclient.utils.api import futures, json, requests
+from wolframclient.utils.decorators import to_dict
 from wolframclient.utils.url import evaluation_api_url, user_api_url
 
 logger = logging.getLogger(__name__)
@@ -321,44 +322,42 @@ class WolframAPICall(WolframAPICallBase):
             **kwargs)
 
 
+@to_dict
 def _encode_inputs_as_wxf(inputs, multipart, **kwargs):
-    encoded_inputs = {}
     for name, value in inputs.items():
-        wxf_name = name + '__wxf'
-        wxf_value = export(value, target_format='wxf', **kwargs)
-        update_parameter_list(encoded_inputs, wxf_name, wxf_value, multipart)
-    return encoded_inputs
+        yield name, _to_multipart(
+            '%s__wxf' % name,
+            export(value, target_format='wxf', **kwargs),
+            multipart=multipart)
 
 
+@to_dict
 def _encode_inputs_as_json(inputs, multipart, **kwargs):
-    encoded_inputs = {}
     for name, value in inputs.items():
-        name = name + '__json'
-        json_value = json.dumps(value, **kwargs)
-        update_parameter_list(encoded_inputs, name, json_value, multipart)
-    return encoded_inputs
+        yield name, _to_multipart(
+            '%s__json' % name, json.dumps(value, **kwargs), multipart=multipart)
 
 
+@to_dict
 def _encode_inputs_as_wl(inputs, multipart, **kwargs):
-    encoded_inputs = {}
     for name, value in inputs.items():
         # avoid double encoding of strings '\"string\"'.
         if isinstance(value, six.string_types):
-            update_parameter_list(encoded_inputs, name, value, multipart)
+            yield name, _to_multipart(name, value, multipart=multipart)
         else:
-            exported_value = export(value, target_format='wl', **kwargs)
-            update_parameter_list(encoded_inputs, name, exported_value,
-                                  multipart)
-    return encoded_inputs
+            yield name, _to_multipart(
+                name,
+                export(value, target_format='wl', **kwargs),
+                multipart=multipart)
 
 
-def update_parameter_list(parameters, name, value, multipart=False):
+def _to_multipart(name, value, multipart=False):
     """ Update the given :class:`~parameters` with a new inputs using the appropriate form based on `multipart`.
     """
     if multipart:
-        parameters[name] = ('tmp_file_%s' % name, value)
+        return ('tmp_file_%s' % name, value)
     else:
-        parameters[name] = value
+        return value
 
 
 SUPPORTED_ENCODING_FORMATS = {
