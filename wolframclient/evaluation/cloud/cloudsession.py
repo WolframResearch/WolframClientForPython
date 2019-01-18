@@ -10,7 +10,7 @@ from wolframclient.evaluation.cloud.oauth import \
     OAuth1RequestsSyncSession as OAuthSession
 from wolframclient.evaluation.cloud.oauth import \
     XAuthRequestsSyncSession as XAuthSession
-from wolframclient.evaluation.cloud.server import WolframPublicCloudServer
+from wolframclient.evaluation.cloud.server import WOLFRAM_PUBLIC_CLOUD_SERVER
 from wolframclient.evaluation.result import (WolframAPIResponseBuilder,
                                              WolframEvaluationJSONResponse)
 from wolframclient.exception import AuthenticationException
@@ -45,7 +45,7 @@ class WolframCloudSession(WolframEvaluator):
 
     def __init__(self,
                  credentials=None,
-                 server=WolframPublicCloudServer,
+                 server=WOLFRAM_PUBLIC_CLOUD_SERVER,
                  inputform_string_evaluation=True,
                  oauth_session_class=OAuthSession,
                  xauth_session_class=XAuthSession,
@@ -238,7 +238,7 @@ class WolframCloudFutureSession(WolframCloudSession):
 
     def __init__(self,
                  credentials=None,
-                 server=WolframPublicCloudServer,
+                 server=WOLFRAM_PUBLIC_CLOUD_SERVER,
                  max_workers=None,
                  inputform_string_evaluation=True,
                  oauth_session_class=OAuthSession,
