@@ -204,10 +204,7 @@ class XAuthAIOHttpAsyncSession(OAuthAIOHttpAsyncSessionBase):
 
 class _AsyncBytesIO(object):
     def __init__(self, initial_bytes=None):
-        if initial_bytes:
-            self.buffer = six.BytesIO(initial_bytes)
-        else:
-            self.buffer = six.BytesIO()
+        self.buffer = six.BytesIO(initial_bytes)
 
     async def write(self, value):
         self.buffer.write(value)
