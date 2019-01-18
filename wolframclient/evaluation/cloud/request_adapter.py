@@ -2,6 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from aiohttp import ClientResponse
 from requests import Response
+from wolframclient.utils.encoding import force_text
 
 __all__ = ['wrap_response']
 
@@ -35,7 +36,7 @@ class RequestsHTTPRequestAdapter(object):
 
     def url(self):
         """ String URL. """
-        return self.response.url
+        return force_text(self.response.url)
 
     def headers(self):
         """ Headers as a dict. """
@@ -45,9 +46,6 @@ class AIOHttpHTTPRequestAdapter(RequestsHTTPRequestAdapter):
 
     asynchronous = True
 
-    def status(self):
-        return self.response.status
-
     async def json(self):
         return await self.response.json()
 
@@ -56,12 +54,6 @@ class AIOHttpHTTPRequestAdapter(RequestsHTTPRequestAdapter):
 
     async def content(self):
         return await self.response.read()
-
-    def url(self):
-        return str(self.response.url)
-
-    def headers(self):
-        return self.response.headers
 
 
 def wrap_response(response):
