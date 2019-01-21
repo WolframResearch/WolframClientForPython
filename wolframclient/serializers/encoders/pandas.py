@@ -146,7 +146,7 @@ def encode_dataframe_as_assoc(serializer, o, length):
     return serializer.serialize_association(
         ((serializer.encode(k),
           get_series_encoder_from_index(v.index, use_ts, 'association')(
-              serializer, v, safe_pandas_length(v))) for k, v in o.items()),
+            serializer, v, safe_pandas_length(v))) for k, v in o.T.items()),
         length=length)
 
 
@@ -161,9 +161,9 @@ def encoder_panda_dataframe(serializer, o):
     head = serializer.get_property('pandas_dataframe_head', d=None)
     if head is None or head == 'dataset':
         return encode_dataframe_as_dataset(serializer, o,
-                                           safe_pandas_length(o))
+                                           safe_pandas_length(o.index))
     elif head in PANDAS_PROPERTIES['pandas_dataframe_head']:
-        return encode_dataframe_as_assoc(serializer, o, safe_pandas_length(o))
+        return encode_dataframe_as_assoc(serializer, o, safe_pandas_length(o.index))
     else:
         raise ValueError(
             "Invalid value for property 'pandas_dataframe_head'. Expecting one of (%s), got %s."

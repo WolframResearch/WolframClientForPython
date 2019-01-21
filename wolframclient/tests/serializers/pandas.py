@@ -271,18 +271,17 @@ class PandasDataFrameTestCase(PandasTestCase):
         df = pandas.DataFrame.from_dict({'a': [1, 2]})
         self.export_compare(
             df,
-            wl=b'<|"a" -> <|0 -> 1, 1 -> 2|>|>',
-            wxf=
-            b'8:f\x01s\x0bAssociationf\x02s\x04RuleS\x01af\x02s\x0bAssociationf\x02s\x04RuleC\x00C\x01f\x02s\x04RuleC\x01C\x02',
+            wl=b'<|0 -> <|"a" -> 1|>, 1 -> <|"a" -> 2|>|>',
+            wxf=b'8:f\x02s\x0bAssociationf\x02s\x04RuleC\x00f\x01s\x0bAssociationf\x02s\x04RuleS\x01aC\x01f\x02s\x04RuleC\x01f\x01s\x0bAssociationf\x02s\x04RuleS\x01aC\x02',
             pandas_dataframe_head='association')
 
     def test_dataframe_from_dict_as_assoc(self):
         df = self.dataframe_from_dict()
         self.export_compare(
             df,
-            wl=b'<|"a" -> <|"x" -> 1|>, "b" -> <|"x" -> {-1}|>|>',
+            wl=b'<|"x" -> <|"a" -> 1, "b" -> {-1}|>|>',
             wxf=
-            b'8:f\x02s\x0bAssociationf\x02s\x04RuleS\x01af\x01s\x0bAssociationf\x02s\x04RuleS\x01xC\x01f\x02s\x04RuleS\x01bf\x01s\x0bAssociationf\x02s\x04RuleS\x01xf\x01s\x04ListC\xff',
+            b'8:f\x01s\x0bAssociationf\x02s\x04RuleS\x01xf\x02s\x0bAssociationf\x02s\x04RuleS\x01aC\x01f\x02s\x04RuleS\x01bf\x01s\x04ListC\xff',
             pandas_dataframe_head='association',
         )
 
@@ -290,8 +289,8 @@ class PandasDataFrameTestCase(PandasTestCase):
         df = self.dataframe_from_dict()
         self.export_compare(
             df,
-            wl=b'Dataset[<|"a" -> <|"x" -> 1|>, "b" -> <|"x" -> {-1}|>|>]',
+            wl=b'Dataset[<|"x" -> <|"a" -> 1, "b" -> {-1}|>|>]',
             wxf=
-            b'8:f\x01s\x07Datasetf\x02s\x0bAssociationf\x02s\x04RuleS\x01af\x01s\x0bAssociationf\x02s\x04RuleS\x01xC\x01f\x02s\x04RuleS\x01bf\x01s\x0bAssociationf\x02s\x04RuleS\x01xf\x01s\x04ListC\xff',
+            b'8:f\x01s\x07Datasetf\x01s\x0bAssociationf\x02s\x04RuleS\x01xf\x02s\x0bAssociationf\x02s\x04RuleS\x01aC\x01f\x02s\x04RuleS\x01bf\x01s\x04ListC\xff',
             pandas_dataframe_head='dataset',
         )
