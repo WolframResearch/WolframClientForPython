@@ -12,6 +12,7 @@ def decorate(*func):
     def annotation(fn):
         comp = composition(fn, *func)
         return wraps(fn)(comp)
+
     return annotation
 
 
