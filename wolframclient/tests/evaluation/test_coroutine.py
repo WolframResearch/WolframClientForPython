@@ -29,7 +29,7 @@ LOOP = get_event_loop()
 class TestCoroutineSession(BaseTestCase):
     @classmethod
     def setUpClass(cls):
-        cls.KERNEL_PATH = json_config['kernel']
+        cls.KERNEL_PATH = json_config.get('kernel', None)
         cls.setupKernelSession()
 
     @classmethod
@@ -123,7 +123,7 @@ class TestCoroutineSession(BaseTestCase):
 class TestKernelPool(BaseTestCase):
 
     if json_config:
-        KERNEL_PATH = json_config['kernel']
+        KERNEL_PATH = json_config.get('kernel', None)
 
     @classmethod
     def setUpClass(cls):
@@ -251,7 +251,7 @@ class TestKernelPool(BaseTestCase):
 class TestParalleleEvaluate(BaseTestCase):
 
     if json_config:
-        KERNEL_PATH = json_config['kernel']
+        KERNEL_PATH = json_config.get('kernel', None)
 
     def test_parallel_evaluate_local(self):
         exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
