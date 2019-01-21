@@ -2,6 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from aiohttp import ClientResponse
 from requests import Response
+
 from wolframclient.utils.encoding import force_text
 
 __all__ = ['wrap_response']
@@ -41,6 +42,7 @@ class RequestsHTTPRequestAdapter(object):
     def headers(self):
         """ Headers as a dict. """
         return self.response.headers
+
 
 class AIOHttpHTTPRequestAdapter(RequestsHTTPRequestAdapter):
 

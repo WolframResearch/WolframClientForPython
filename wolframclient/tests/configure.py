@@ -71,7 +71,7 @@ def _parse_config(config):
             certificate=server_json.get('certificate', None))
     except KeyError as e:
         logger.warning('Failed to parse json config.', e)
-        
+
     kernel_path = json_config.get('kernel', None)
     return sak, user_cred, server, kernel_path
 
