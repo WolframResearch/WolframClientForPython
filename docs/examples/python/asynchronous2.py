@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
 import asyncio
 from wolframclient.evaluation import WolframLanguageAsyncSession
 from wolframclient.utils.api import time
 from wolframclient.language import wl
-# Change the path to point to a local kernel.
-# This value corresponds to the default path to a MacOS Wolfram Desktop kernel.
-kernel_path = '/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel'
 
 async def delayed_evaluation(delay, async_session, expr):
     await asyncio.sleep(delay)

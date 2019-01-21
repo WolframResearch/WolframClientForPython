@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
 from wolframclient.evaluation import WolframLanguageSession
 from wolframclient.language import wl
 from wolframclient.deserializers import WXFConsumer, binary_deserialize
-
-# TODO: Change this value with a valid local path to a Wolfram Kernel.
-kernel_path = '/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel'
 
 # represent the symbol Complex as a Python class
 Complex = wl.Complex
@@ -17,7 +13,7 @@ class ComplexFunctionConsumer(WXFConsumer):
         else:
             return super().build_function(head, args, **kwargs)
 
-with WolframLanguageSession(kernel_path) as session:
+with WolframLanguageSession() as session:
     array = [
         [wl.Pi, -2, 0], 
         [1, wl.Pi, -1],

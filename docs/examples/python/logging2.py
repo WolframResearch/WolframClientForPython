@@ -1,15 +1,11 @@
-# -*- coding: utf-8 -*-
 from wolframclient.evaluation import WolframLanguageSession
 import logging
 
 # set the Python root logger level to INFO
 logging.basicConfig(level=logging.INFO)
 
-# TODO: Change this value with a valid local path to a Wolfram Kernel.
-kernel_path = '/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel'
-
 # Start a new session, with kernel logging activated and log level set to INFO.
-with WolframLanguageSession(kernel_path, kernel_loglevel=logging.INFO) as session:
+with WolframLanguageSession(kernel_loglevel=logging.INFO) as session:
     # This message is printed
     session.evaluate('ClientLibrary`info["ON -- Example message printed from the kernel \
 with log level INFO --"]')

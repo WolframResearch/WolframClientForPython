@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
 from wolframclient.evaluation import WolframLanguageSession
 from wolframclient.language import wl
 from wolframclient.deserializers import WXFConsumer, binary_deserialize
 
 import math
 import fractions
-
-# TODO: Change this value with a valid local path to a Wolfram Kernel.
-kernel_path = '/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel'
 
 # define Complex symbol once and for all
 Complex = wl.Complex
@@ -67,7 +63,7 @@ class MathConsumer(WXFConsumer):
             raise ValueError('Complex format not supported.')
         return complex(args[0], args[1])
 
-with WolframLanguageSession(kernel_path) as session:
+with WolframLanguageSession() as session:
     array = [
         [wl.Pi, -2, 0], 
         [1, wl.Pi, -1],
