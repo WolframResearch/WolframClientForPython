@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
 from wolframclient.evaluation import WolframLanguageFutureSession
 from wolframclient.utils.api import time
-# Change the path to point to a local kernel.
-# This value corresponds to the default path to a MacOS Wolfram Desktop kernel.
-kernel_path = '/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel'
 
-with WolframLanguageFutureSession(kernel_path) as future_session:
+with WolframLanguageFutureSession() as future_session:
     start = time.perf_counter()
     print('Starting an evaluation delayed by 2 seconds.')
     future = future_session.evaluate('Pause[2]; 1+1')
