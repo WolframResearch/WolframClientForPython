@@ -61,7 +61,7 @@ Local Evaluation
 
 The Wolfram Language session :class:`~wolframclient.evaluation.WolframLanguageSession` enables local evaluation of Wolfram Language code directly from Python. 
 
-A session is initialized with a path to a Wolfram Engine executable. The executable is located in the top level directory returned by the Wolfram Language symbol :wl:`$InstallationDirectory`. The relative path from this directory depends on the operating system, typical values are:
+A session must interact with a Wolfram Engine executable. The library automatically discover Wolfram Engines installed at the default location. A specific Wolfram Engine can be specified by its path. The executable is located in the top level directory returned by the Wolfram Language symbol :wl:`$InstallationDirectory`. The relative path from this directory depends on the operating system, typical values are:
     
     * On `MacOS`: `Contents/MacOS/WolframKernel`
     * On `Windows`: `wolfram.exe`
@@ -74,7 +74,11 @@ Import :class:`~wolframclient.evaluation.WolframLanguageSession`::
     
     >>> from wolframclient.evaluation import WolframLanguageSession
 
-Create a session targeting a local Wolfram Engine specified by its path.
+Create a session using the default path::
+
+    >>> session = WolframLanguageSession()
+
+The default path depends on the environment, and may also depend on the version.
 
 On `MacOS`::
 
