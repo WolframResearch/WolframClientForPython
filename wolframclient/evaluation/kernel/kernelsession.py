@@ -30,6 +30,56 @@ TO_PY_LOG_LEVEL = {
 FROM_PY_LOG_LEVEL = dict((v, k) for k, v in TO_PY_LOG_LEVEL.items())
 
 
+if six.WINDOWS or six.LINUX:
+    if six.WINDOWS:
+        APP_ROOT_PATH = [
+            'C:\\Program Files\\Wolfram Research\\Wolfram Desktop\\',
+            'C:\\Program Files\\Wolfram Research\\Mathematica\\',
+            ]
+        EXE_REL_PATH = 'wolfram.exe'
+    elif six.LINUX:
+        APP_ROOT_PATH = [
+            '/usr/local/Wolfram/Desktop/',
+            '/usr/local/Wolfram/Mathematica/',
+            ]
+        EXE_REL_PATH = '/Files/Executables/wolfram'
+
+    def find_default_kernel_path():
+        highest_version = -1
+        best_path = None
+        for root in APP_ROOT_PATH:
+            if os.isdir(root):
+                for version in os.listdir(root):
+                    full_path = os.path_join(root, version)
+                    if os.isdir(full_path):
+                        try:
+                            v_num = float(version)
+                        except ValueError:
+                            continue
+                        if v_num > highest_version:
+                            highest_version = v_num
+                            best_path = full_path
+        if highest_version > 0:
+            return os.path_join(best_path, EXE_REL_PATH)
+        else:
+            return None
+elif six.MACOS:
+    DEFAULT_PATHS = [
+            '/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel',
+            '/Applications/Mathematica.app/Contents/MacOS/WolframKernel',
+        ]
+    def find_default_kernel_path():
+        for path in DEFAULT_PATHS:
+            if os.isfile(path):
+                return path
+        return None
+else:
+    def find_default_kernel_path():
+        return None
+
+find_default_kernel_path.__doc__ = """ Look for the most recent installed kernel. """
+
+
 class KernelLogger(Thread):
     """ Asynchronous logger for kernel messages. 
     
@@ -128,7 +178,7 @@ class WolframLanguageSession(WolframEvaluator):
     """
 
     def __init__(self,
-                 kernel,
+                 kernel=None,
                  consumer=None,
                  initfile=None,
                  in_socket=None,
@@ -142,6 +192,8 @@ class WolframLanguageSession(WolframEvaluator):
                  **kwargs):
         super().__init__(
             inputform_string_evaluation=inputform_string_evaluation)
+        if kernel is None:
+            kernel = self.default_kernel_path()
         if isinstance(kernel, six.string_types):
             if not os.isfile(kernel):
                 raise WolframKernelException(
@@ -525,6 +577,9 @@ class WolframLanguageSession(WolframEvaluator):
             self.normalize_input(expr), **kwargs)
         self.log_message_from_result(result)
         return result.get()
+
+    def default_kernel_path(self):
+        return find_default_kernel_path()
 
     def __repr__(self):
         if self.started:

@@ -375,7 +375,7 @@ class TestCaseSession(TestCaseSettings):
 
     def test_kernel_init_nonstring_path(self):
         with self.assertRaises(ValueError):
-            WolframLanguageSession(None)
+            WolframLanguageSession(False)
 
     def test_terminated_session_autorestart(self):
         session = None

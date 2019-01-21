@@ -18,6 +18,8 @@ PY_36 = sys.version_info >= (3, 6)
 PY_37 = sys.version_info >= (3, 7)
 
 WINDOWS = platform.system() == 'Windows'
+LINUX = platform.system() == 'Linux'
+MACOS = platform.system() == 'Darwin'
 
 JYTHON = sys.platform.startswith('java')
 
