@@ -123,8 +123,7 @@ html_static_path = ['wri_theme/static']
 # 'searchbox.html']``.
 #
 html_sidebars = {
-    'index': ['globaltoc.html', 'searchbox.html'],
-    '**': ['logo.html', 'globaltoc.html', 'searchbox.html'],
+    '**': ['globaltoc.html', 'searchbox.html'],
 }
 
 # -- Options for HTMLHelp output ---------------------------------------------
