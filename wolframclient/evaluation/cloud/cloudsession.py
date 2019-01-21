@@ -335,7 +335,9 @@ def _encode_inputs_as_wxf(inputs, multipart, **kwargs):
 def _encode_inputs_as_json(inputs, multipart, **kwargs):
     for name, value in inputs.items():
         yield name, _to_multipart(
-            '%s__json' % name, json.dumps(value, **kwargs), multipart=multipart)
+            '%s__json' % name,
+            json.dumps(value, **kwargs),
+            multipart=multipart)
 
 
 @to_dict
