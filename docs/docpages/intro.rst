@@ -594,19 +594,22 @@ Serialize it to a list of rules::
 
 :data:`DataFrame` is serialized by default to :wl:`Dataset`. It is possible to set `pandas_dataframe_head` to `'association'` in :func:`~wolframclient.serializers.export` to return an :wl:`Association` instead.
 
-Create a :data:`DataFrame`::
+Create a :data:`DataFrame` with two columns, indexed with string values::
 
-    >>> df = pandas.DataFrame.from_dict({'a': [1, 2]})
-    
+    >>> df = pandas.DataFrame(
+        {'col1': ['v12', 'v12'], 
+        'col2': ['v21', 'v22']}, 
+        index=['id1', 'id2'])
+
 Serialize it::
 
     >>> export(df)
-    b'Dataset[<|"a" -> <|0 -> 1, 1 -> 2|>|>]'
+    b'Dataset[<|"id1" -> <|"col1" -> "v12", "col2" -> "v21"|>, "id2" -> <|"col1" -> "v12", "col2" -> "v22"|>|>]'
 
 Serialize it to an association::
 
     >>> export(df, pandas_dataframe_head='association')
-    b'<|"a" -> <|0 -> 1, 1 -> 2|>|>'
+    b'<|"id1" -> <|"col1" -> "v12", "col2" -> "v21"|>, "id2" -> <|"col1" -> "v12", "col2" -> "v22"|>|>'
 
 
 Deserialize
