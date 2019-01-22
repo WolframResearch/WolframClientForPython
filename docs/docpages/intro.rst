@@ -224,7 +224,7 @@ A Wolfram Language session starts on average in about a second. For this reason,
 
 Start a session manually::
 
-    >>> session = WolframLanguageSession('/path/to/executable')
+    >>> session = WolframLanguageSession()
     >>> session.start()
 
 This is not required, since this operation is automatically performed during the first evaluation. Ensure the session started successfully:
@@ -241,7 +241,7 @@ Manually terminate the session::
 
 Alternatively, delegate the handling of the life-cycle of a session using a `with` block::
 
-    >>> with WolframLanguageSession('/path/to/executable') as wl_session:
+    >>> with WolframLanguageSession() as wl_session:
     ...     wl_session.evaluate(wl.StringReverse('abc'))
     ...
     'cba'

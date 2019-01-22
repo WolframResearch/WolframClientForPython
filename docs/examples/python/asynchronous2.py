@@ -8,7 +8,7 @@ async def delayed_evaluation(delay, async_session, expr):
     return await async_session.evaluate(expr)
 
 async def main():
-    async with WolframLanguageAsyncSession(kernel_path) as async_session:
+    async with WolframLanguageAsyncSession() as async_session:
         start = time.perf_counter()
         print('Starting two tasks sequentially.')
         result1 = await delayed_evaluation(1, async_session, wl.Range(3))

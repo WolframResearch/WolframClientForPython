@@ -86,7 +86,7 @@ Create a new function using :wl:`InputForm` evaluation that takes a list of stri
 
 .. literalinclude:: /examples/python/globalcontext.py
     :linenos:
-    :emphasize-lines: 7,13,17
+    :emphasize-lines: 4,8,12
 
 In that code, a simple replacement of `g.max` by `wl.max` shows that kernel no longer evaluates the input.
 
@@ -116,8 +116,7 @@ First initialize a session::
 
     from wolframclient.evaluation import WolframLanguageSession
 
-    kernel_path = '/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel'
-    session=WolframLanguageSession(kernel_path)
+    session=WolframLanguageSession()
     session.start()
 
 Expressions involving more than one function are usually evaluated with :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate`. Compute an integral::
