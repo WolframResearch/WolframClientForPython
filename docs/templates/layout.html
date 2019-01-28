@@ -4,3 +4,35 @@
     <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css"/>
 {% endblock %}
 
+{% block relbar1 %}
+    <header class='navigation'>
+        {{ super() }}
+    </header>
+    {% if pagename != 'index' %}
+        <header class='main-header'>
+            <div class='logo header'>
+                <h1>
+                <a class='header' href="{{ pathto(master_doc) }}">
+                    <span>
+                        <img class="logo align-left" 
+                            src="{{ pathto('_static/python-client-library-logo.png', 1) }}"
+                            title="https://www.wolfram.com/"
+                            height="70"
+                         />
+                    </span>
+                    <span>
+                        <span>
+                            Wolfram Language integration
+                        </span>
+                        <br>
+                        <span>for Python</span>
+                    </span>
+                </a>
+                </h1>
+            </div>
+        </header>
+    {% endif %}
+{% endblock %}
+
+{% block relbar2 %}
+{% endblock %}
