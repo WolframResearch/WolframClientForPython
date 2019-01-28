@@ -22,15 +22,65 @@ li.right {
 }
 div.body {
     min-height: 600px;
+    padding-left: 50px;
 }
 
 body {
     background-color: #424242;
 }
 
-div.related {
+div.bodywrapper {
+    -webkit-overflow-scrolling: touch;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    margin-left: 250px;
+    height: 100%;
+    left: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: absolute;
+    right: 0;
+}
+
+
+header {
+    height: 138px;
+    top: 0;
+}
+
+header.navigation {
+    height: 30px;
     background-color: #424242;
 }
+
+header.main-header {
+    height: 88px;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 0px;
+}
+
+a.header {
+    text-decoration: none;
+}
+
+div.header > h1 {
+    margin:0;
+}
+
+
+div.sphinxsidebar {
+    -webkit-overflow-scrolling: touch;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    bottom: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: absolute;
+    top: 0;
+    width: 250px;
+    margin : 0;
+}
+
 
 div.sphinxsidebar input {
     border: 1px solid #5d5d5d;
@@ -52,7 +102,13 @@ div.sphinxsidebar h3 a {
 }
 
 div.document {
-    background:linear-gradient(to right, #fff 0%,#fff 150px,#efefef 250px,#ffffff 250px,#ffffff 100%)  #eeeeee; 
+    background:linear-gradient(to right, #fff 0%,#fff 150px,#efefef 250px,#ffffff 250px,#ffffff 100%)  #eeeeee;
+    bottom: 0;
+    left: 0;
+    min-width: 320px;
+    position: absolute;
+    right: 0;
+    top: 138px;
 }
 div.related {
     background-color: #005c94;
@@ -93,9 +149,6 @@ input[type="submit"] {
 div.sphinxsidebar h3 a, div.sphinxsidebar h4 a {
     margin-left: 0px;
 }
-
-
-
 
 ul ul ul ul li, ul ul ul li {
     margin-top: 0px;
@@ -276,14 +329,6 @@ div.sphinxsidebarwrapper {
     padding: 10px 5px 0 5px;
 }
 
-img.logo {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 15px;
-    margin-bottom: 15px;
-}
-
 
 .highlight-default .highlight pre {
     font-family: Courier, monospace, sans-serif;
@@ -301,4 +346,8 @@ li.toctree-l1.current > a {
 .toctree-l2 {
     margin-top : 3px;
     margin-bottom : 3px;
+}
+
+th {
+    background-color: rgb(236, 240, 243);
 }
