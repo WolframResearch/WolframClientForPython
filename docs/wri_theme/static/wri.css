@@ -8,25 +8,17 @@ div.viewcode-block:target {
     border-bottom: 1px solid #d2cdba;
 }
 
-li.nav-item.nav-item-0 {
-    color: #cacaca;
-}
-
-div.related a {
-    color: #cacaca;
-    font-size: .9em;
-}
-
-li.right {
-    color: gray;
-}
 div.body {
     min-height: 600px;
     padding-left: 50px;
 }
 
 body {
-    background-color: #424242;
+    background-color: #efefef;
+}
+
+a {
+    color: #005c94;    
 }
 
 div.bodywrapper {
@@ -42,32 +34,63 @@ div.bodywrapper {
 }
 
 
-header {
-    height: 138px;
+header.main-header {
+    height: 80px;
     top: 0;
+    padding-top: 15px;
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-bottom: 0px;
+    border-bottom: 4px solid #005c94;
 }
+
+header div.right {
+    float: right;
+    padding-top: 20px;
+    line-height: inherit;
+}
+header div.left {
+    float: left;
+}
+
 
 header.navigation {
     height: 30px;
     background-color: #424242;
 }
 
-header.main-header {
-    height: 88px;
-    padding-top: 20px;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: 0px;
+div.related a {
+    font-size: .9em;
+    color:#005c94;
 }
-
+span.header {
+    color: #005c94;
+}
 a.header {
     text-decoration: none;
 }
 
 div.header > h1 {
     margin:0;
+    line-height: 1.1em
 }
 
+span.header.darkgrey {
+    color: #3c3c3c;
+}
+
+span.header.right.navigation {
+    margin-left : 5px;
+    margin-right: 5px;
+}
+
+span.reldelimiter {
+    color: #a5a5a5;
+}
+
+footer.copyright {
+    margin-top: 10px;
+}
 
 div.sphinxsidebar {
     -webkit-overflow-scrolling: touch;
@@ -108,10 +131,12 @@ div.document {
     min-width: 320px;
     position: absolute;
     right: 0;
-    top: 138px;
+    top:99px;
 }
+
 div.related {
-    background-color: #005c94;
+    background-color:inherit;
+    width: inherit;
 }
 div.sphinxsidebar ul {
     color: #bdbdbd;
@@ -219,7 +244,7 @@ div.body h1 {
     border-bottom: none;
     margin: 0px -20px 10px 15px;
     padding: 45px 0 3px 0px;
-    border-top: 1px solid #ccc;
+    /* border-top: 1px solid #ccc; */
     letter-spacing: -.02rem;
 }
 
@@ -336,11 +361,21 @@ div.sphinxsidebarwrapper {
 }
 
 .toctree-l1 {
-    list-style: square
+    list-style: none;
+    margin-top:15px;
 }
 
-li.toctree-l1.current > a {
-    font-weight : bolder;
+li.toctree-l1 a.reference.internal {
+	font-weight: 600;
+}
+
+li.toctree-l2 a.reference.internal {
+   font-weight: 400;
+}
+
+
+li.toctree-l1 a.reference.internal.current {
+    font-weight : 700;
 }
 
 .toctree-l2 {

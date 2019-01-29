@@ -12,11 +12,14 @@
 
 .. raw:: html
 
-    <div class='logo index-header'>
+    <div class='logo'>
         <h1>
-            <img alt="" class="align-left" src="_images/python-client-library-logo.png">
-            Wolfram Language integration</br>
-            <span>for Python</span>
+            <img alt="" class="align-left" src="_static/wolf-python-homepage.png">
+            <span>
+                <span>Wolfram Language integration</span>
+                </br>
+                <span>for Python</span>
+            <span>
         </h1>
     </div>
     <div>

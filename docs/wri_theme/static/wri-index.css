@@ -1,0 +1,9 @@
+header.main-header {
+    height: 0px;
+    padding-top: 0px;
+}
+
+div.document {
+    top:0;
+    position:inherit;
+}
