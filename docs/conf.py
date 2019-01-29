@@ -31,7 +31,7 @@ copyright = u'%i, Wolfram Research' % year
 author = wolframclient.__author__
 
 # The short X.Y version
-# version = 'x.y'
+version = wolframclient.__version__
 # The full version, including alpha/beta/rc tags
 release = wolframclient.__version__
 
@@ -123,7 +123,7 @@ html_static_path = ['wri_theme/static']
 # 'searchbox.html']``.
 #
 html_sidebars = {
-    '**': ['globaltoc.html', 'searchbox.html'],
+    '**': ['globaltoc.html', 'searchbox.html', 'sidecopyright.html'],
 }
 
 # -- Options for HTMLHelp output ---------------------------------------------
