@@ -1,2 +1,5 @@
-<h3><a href="{{ pathto('docpages/table_of_content') }}">{{ _('Overview') }}</a></h3>
+<div class='overview toctree-l1'>
+    <a class="reference internal {% if pagename == 'docpages/overview' %} current {% endif %} {{ pagename }}" 
+        href="{{ pathto('docpages/overview') }}">{{ _('Overview') }}</a>
+</div>
 {{ toctree(collapse=False, maxdepth=2, includehidden=True) }}

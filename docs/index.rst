@@ -12,23 +12,41 @@
 
 .. raw:: html
 
-    <div class='logo'>
-        <h1>
-            <img alt="" class="align-left" src="_static/wolf-python-homepage.png">
-            <span>
-                <span>Wolfram Language integration</span>
+    <div class='document-header'>
+        <div class='header-content'>
+            <div class='left'>
+                <span class='header darkgrey' style='font-size:1em;'>
+                    Wolfram Client Library
+                </span>
                 </br>
-                <span>for Python</span>
-            <span>
-        </h1>
+                <span class='header' style='font-size:1.2em;'>
+                    for Python
+                </span>
+                </br>
+                <span class='header lightgrey' style='font-size:.55em; font-weight:inherit; font-style:italic;'>
+                    Give Python programs access to the power of the Wolfram Language
+                </span>
+            </div>
+            <div class='right'>
+                <img alt="" class="align-right" src="_static/wolf-python-homepage.png">
+            </div>
+        </div>
+    </header>
     </div>
-    <div>
-        <h2> This is pure HTML </h2>
+    <div class='document-subheader'>
+        <span class='darkgrey'>
+            The Wolfram Client Library for Python lets Python programs directly integrate Wolfram Language capabilities. Connect either to a local Wolfram Engine, or to the Wolfram Cloud (or a private Wolfram Cloud)
+        </span>
+        <span>
+            <a href="https://github.com/WolframResearch/WolframClientForPython">[[ Source Code ]]</a>
+        </span>
     </div>
+
+
 
 .. raw:: html
     
-    <h2>Install the library</h2>
+    <h3>Install the library</h3>
 
 
 .. code-block :: console
@@ -37,7 +55,7 @@
 
 .. raw:: html
 
-    <h2>Evaluate code</h2>
+    <h4>Evaluate code</h4>
 
 
 Evaluate any Wolfram Language code from Python::
