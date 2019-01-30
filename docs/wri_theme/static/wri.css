@@ -53,7 +53,6 @@ header div.left {
     float: left;
 }
 
-
 header.navigation {
     height: 30px;
     background-color: #424242;
@@ -65,6 +64,7 @@ div.related a {
 }
 span.header {
     color: #005c94;
+    font-weight: 700;
 }
 a.header {
     text-decoration: none;
@@ -75,8 +75,11 @@ div.header > h1 {
     line-height: 1.1em
 }
 
-span.header.darkgrey {
+span.darkgrey {
     color: #3c3c3c;
+}
+span.lightgrey {
+    color: #767676;
 }
 
 span.header.right.navigation {
@@ -140,10 +143,12 @@ div.related {
 }
 div.sphinxsidebar ul {
     color: #bdbdbd;
+    margin:0;
 }
 div.sphinxsidebar a {
     color: #005c94;
     line-height: 1.35em;
+    display:block;
 }
 div.sphinxsidebar a:hover {
     color: #1c90d6;
@@ -351,7 +356,7 @@ div.body p, div.body dd, div.body li, div.body blockquote {
 }
 
 div.sphinxsidebarwrapper {
-    padding: 10px 5px 0 5px;
+    padding: 10px 0 0 0;
 }
 
 
@@ -365,17 +370,25 @@ div.sphinxsidebarwrapper {
     margin-top:15px;
 }
 
-li.toctree-l1 a.reference.internal {
-	font-weight: 600;
+div.sphinxsidebar ul ul {
+    padding-left: 10px;
 }
 
-li.toctree-l2 a.reference.internal {
+.toctree-l1 a.reference.internal {
+    font-weight: 600;
+    padding-left: 10px;
+}
+
+.toctree-l2 a.reference.internal {
    font-weight: 400;
+   padding-left: 0;
 }
 
 
-li.toctree-l1 a.reference.internal.current {
+div.sphinxsidebarwrapper a.reference.internal.current {
     font-weight : 700;
+    background-color: #005c94;
+    color: white;
 }
 
 .toctree-l2 {
@@ -385,4 +398,8 @@ li.toctree-l1 a.reference.internal.current {
 
 th {
     background-color: rgb(236, 240, 243);
+}
+
+.display-table-cell {
+    display: table-cell;
 }

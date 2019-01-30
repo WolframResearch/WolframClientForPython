@@ -2,8 +2,57 @@ header.main-header {
     height: 0px;
     padding-top: 0px;
 }
-
 div.document {
-    top:0;
-    position:inherit;
+    top:4px;
+}
+
+div.document-header {
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+div.document-header div.header-content {
+    font-size: 2.5em;
+    display: table-row;
+}
+
+div.document-header div.left {
+    width: 80%;
+    margin-right:20%;
+    display:table-cell;
+}
+
+div.document-header div.right {
+    width: 20%;
+    display:table-cell;
+    vertical-align: middle
+}
+
+div.document-header div.right img.align-right {
+    margin-left:0;
+    max-width: 100%;
+    width: auto;
+}
+
+div.document-subheader {
+    font-size: 1.5em;
+    border-top: 1px solid #ccc;   
+    padding-top:15px;
+}
+
+div.highlight-console pre {
+    background-color: #f2f2f2 !important;
+}
+div.highlight-console span.gp {
+    color : inherit !important;
+}
+
+h3 {
+    color: #3c3c3c; /* darkgrey */
+    font-weight: 700;
+    font-size: 1.5em;
+}
+
+.border-top {
+    border-top: 1px solid #ccc;
 }
