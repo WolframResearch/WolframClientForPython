@@ -6,9 +6,13 @@ div.document {
     top:4px;
 }
 
+div.body {
+    padding-left: 35px
+}
+
 div.document-header {
-    padding-top: 30px;
-    padding-bottom: 30px;
+    padding-top: 60px;
+    padding-bottom: 35px;
 }
 
 div.document-header div.header-content {
@@ -35,9 +39,10 @@ div.document-header div.right img.align-right {
 }
 
 div.document-subheader {
-    font-size: 1.5em;
+    font-size: 1.4em;
     border-top: 1px solid #ccc;   
     padding-top:15px;
+    padding-bottom:10px;
 }
 
 div.highlight-console pre {
@@ -55,4 +60,54 @@ h3 {
 
 .border-top {
     border-top: 1px solid #ccc;
+}
+
+.bodyaligned {
+    margin-left : 15px;
+}
+
+svg.github-fav {
+    vertical-align: center;
+}
+
+span#header-title-top {
+    font-size:1em;
+    color:#3c3c3c;
+    line-height:.6;
+}
+span#header-title-bottom {
+    font-size:1.2em;
+    color:#1667b2;
+}
+span#header-subtitle {
+    color: #9c9c9c;
+    font-size:.55em; 
+    font-weight:inherit; 
+    font-style:italic;
+}
+span#header-summary {
+    color: #7a7a7a;
+}
+div#install-lib{
+    color: #404040;
+    font-size: 1.3em;
+    font-weight: 700;
+    margin-top: 30px;
+}
+div#setup-session {
+    color: #7a7a7a;
+    font-size: .9em;
+    font-weight: 700;
+    font-style: italic;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    margin-top: 50px;
+}
+div.subsection {
+    padding-top: 10px;
+    padding-bottom: 5px;
+    margin-bottom: 40px;
+    margin-top: 50px;
+    font-size: 1.1em;
+    font-weight: 700;
 }
