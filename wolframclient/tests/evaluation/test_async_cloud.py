@@ -44,7 +44,7 @@ class TestCaseSettings(BaseTestCase):
         cls.api_owner = json_config['ApiOwner']
         cls.user_cred = user_configuration
         cls.server = server
-        cls.cloud_session_async = WolframCloudAsyncSession(credentials=cls.sak)
+        cls.cloud_session_async = WolframCloudAsyncSession(credentials=cls.sak, server=server)
 
     @classmethod
     def tearDownClass(cls):
@@ -66,13 +66,13 @@ class TestCaseSettings(BaseTestCase):
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 class TestCase(TestCaseSettings):
     def test_section_not_authorized(self):
-        session = WolframCloudAsyncSession()
+        session = WolframCloudAsyncSession(server=self.server)
         self.assertEqual(session.authorized(), False)
         self.assertEqual(session.anonymous(), True)
 
     @run_in_loop
     async def test_section_authorized_oauth(self):
-        cloud_session = WolframCloudAsyncSession(credentials=self.sak)
+        cloud_session = WolframCloudAsyncSession(credentials=self.sak, server=self.server)
         try:
             await cloud_session.start()
             self.assertEqual(cloud_session.authorized(), True)
@@ -82,8 +82,7 @@ class TestCase(TestCaseSettings):
 
     @run_in_loop
     async def test_section_authorized_oauth_with(self):
-        async with WolframCloudAsyncSession(
-                credentials=self.sak) as cloud_session:
+        async with WolframCloudAsyncSession(credentials=self.sak, server=self.server) as cloud_session:
             self.assertEqual(cloud_session.authorized(), True)
             self.assertEqual(cloud_session.anonymous(), False)
 
@@ -158,7 +157,7 @@ class TestCase(TestCaseSettings):
     @run_in_loop
     async def test_public_api_call(self):
         url = "api/public/jsonrange"
-        cloud_session = WolframCloudAsyncSession()
+        cloud_session = WolframCloudAsyncSession(server=self.server)
         try:
             self.assertFalse(cloud_session.authorized())
             self.assertTrue(cloud_session.anonymous())
@@ -239,7 +238,7 @@ class TestCase(TestCaseSettings):
     @run_in_loop
     async def test_evaluate_string_disable(self):
         async with WolframCloudAsyncSession(
-                credentials=self.sak,
+                credentials=self.sak, server=self.server,
                 inputform_string_evaluation=False) as session:
             res = await session.evaluate('Range[3]')
             self.assertEqual(res, '"Range[3]"')
@@ -249,7 +248,7 @@ class TestCase(TestCaseSettings):
 
     @run_in_loop
     async def test_stop_start_restart_status(self):
-        session = WolframCloudAsyncSession(credentials=self.sak)
+        session = WolframCloudAsyncSession(credentials=self.sak, server=self.server)
         try:
             self.assertFalse(session.started)
             self.assertTrue(session.stopped)
