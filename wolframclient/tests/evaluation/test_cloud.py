@@ -13,7 +13,8 @@ from wolframclient.evaluation.cloud.cloudsession import (
     encode_api_inputs)
 from wolframclient.exception import (AuthenticationException,
                                      WolframLanguageException)
-from wolframclient.language import wl
+from wolframclient.language import wl, wlexpr
+from wolframclient.language.expression import WLFunction
 from wolframclient.tests.configure import (MSG_JSON_NOT_FOUND, json_config,
                                            secured_authentication_key, server,
                                            user_configuration)
@@ -182,44 +183,44 @@ class TestCase(TestCaseSettings):
 
     def test_evaluate_string(self):
         res = self.cloud_session.evaluate('Range[3]')
-        self.assertEqual(res, '{1, 2, 3}')
+        self.assertEqual(res, [1,2,3])
 
     def test_evaluate_wl_expr(self):
         res = self.cloud_session.evaluate(wl.Range(2))
-        self.assertEqual(res, '{1, 2}')
+        self.assertEqual(res, [1,2])
 
     def test_evaluate_wl_expr_option(self):
         res = self.cloud_session.evaluate(wl.ArrayPad([[1]], 1, Padding=1))
-        self.assertEqual(res, '{{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}')
+        self.assertEqual(res, [[1, 1, 1], [1, 1, 1], [1, 1, 1]])
 
     def test_evaluate_wrap(self):
         res = self.cloud_session.evaluate_wrap(wl.Range(2))
         self.assertTrue(res.success)
-        self.assertEqual(res.get(), '{1, 2}')
+        self.assertEqual(res.get(), [1, 2])
 
     def test_evaluate_function(self):
         f = self.cloud_session.function('Range')
-        self.assertEqual(f(3), '{1, 2, 3}')
+        self.assertEqual(f(3), [1, 2, 3])
 
     def test_evaluate_function_wl(self):
         f = self.cloud_session.function(wl.Range)
-        self.assertEqual(f(3), '{1, 2, 3}')
+        self.assertEqual(f(3), [1, 2, 3])
 
     def test_evaluate_function_wl_option(self):
         f = self.cloud_session.function(wl.ArrayPad)
         self.assertEqual(
-            f([[1]], 1, Padding=1), '{{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}')
+            f([[1]], 1, Padding=1), [[1, 1, 1], [1, 1, 1], [1, 1, 1]])
 
     def test_evaluate_string(self):
         res1 = self.cloud_session_future.evaluate('Range[1]')
         res2 = self.cloud_session_future.evaluate('Range[2]')
 
-        self.assertEqual(res1.result(), '{1}')
-        self.assertEqual(res2.result(), '{1, 2}')
+        self.assertEqual(res1.result(), [1])
+        self.assertEqual(res2.result(), [1, 2])
 
     def test_evaluate_string(self):
         res = self.cloud_session_future.evaluate('Range[3]')
-        self.assertEqual(res.result(), '{1, 2, 3}')
+        self.assertEqual(res.result(), [1, 2, 3])
 
 
 # inputform evaluation option disabled
@@ -229,20 +230,20 @@ class TestCase(TestCaseSettings):
                 credentials=self.sak, server=self.server,
                 inputform_string_evaluation=False) as session:
             res = session.evaluate('Range[3]')
-            self.assertEqual(res, '"Range[3]"')
+            self.assertEqual(res, 'Range[3]')
             func = session.function('f')
             res = func('abc')
-            self.assertEqual(res, '"f"["abc"]')
+            self.assertEqual(res, WLFunction('f', 'abc'))
 
     def test_evaluate_future_string_disable(self):
         with WolframCloudFutureSession(
                 credentials=self.sak, server=self.server,
                 inputform_string_evaluation=False) as session:
             res = session.evaluate('Range[3]')
-            self.assertEqual(res.result(), '"Range[3]"')
+            self.assertEqual(res.result(), 'Range[3]')
             func = session.function('f')
             res = func('abc')
-            self.assertEqual(res.result(), '"f"["abc"]')
+            self.assertEqual(res.result(), WLFunction('f', 'abc'))
 
     def test_stop_start_restart_status(self):
         self._stop_start_restart_status(WolframCloudSession)
