@@ -24,7 +24,7 @@ def url_join(*fragments):
 
 
 def evaluation_api_url(server):
-    return url_join(server.cloudbase, 'evaluations?_responseform=json')
+    return url_join(server.cloudbase, 'evaluations?_responseform=wxf')
 
 
 def user_api_url(server, api):
