@@ -42,9 +42,9 @@ class TestCaseSettings(BaseTestCase):
         cls.api_owner = json_config['ApiOwner']
         cls.user_cred = user_configuration
         cls.server = server
-        cls.cloud_session = WolframCloudSession(credentials=cls.sak)
+        cls.cloud_session = WolframCloudSession(credentials=cls.sak, server=cls.server)
         cls.cloud_session_future = WolframCloudFutureSession(
-            credentials=cls.sak)
+            credentials=cls.sak, server=cls.server)
 
     @classmethod
     def tearDownClass(cls):
@@ -67,12 +67,12 @@ class TestCaseSettings(BaseTestCase):
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 class TestCase(TestCaseSettings):
     def test_section_not_authorized(self):
-        cloud_session = WolframCloudSession()
+        cloud_session = WolframCloudSession(server=self.server)
         self.assertEqual(cloud_session.authorized(), False)
         self.assertEqual(cloud_session.anonymous(), True)
 
     def test_section_authorized_oauth(self):
-        cloud_session = WolframCloudSession(credentials=self.sak)
+        cloud_session = WolframCloudSession(credentials=self.sak, server=self.server)
         cloud_session.start()
         self.assertEqual(cloud_session.authorized(), True)
         self.assertEqual(cloud_session.anonymous(), False)
@@ -90,7 +90,7 @@ class TestCase(TestCaseSettings):
     def test_bad_sak(self):
         bad_sak = SecuredAuthenticationKey('foo', 'bar')
         with self.assertRaises(AuthenticationException):
-            cloud_session = WolframCloudSession(credentials=bad_sak)
+            cloud_session = WolframCloudSession(credentials=bad_sak, server=self.server)
             cloud_session.start()
 
     def test_section_api_call_no_param(self):
@@ -113,7 +113,7 @@ class TestCase(TestCaseSettings):
 
     def test_public_api_call(self):
         url = "api/public/jsonrange"
-        cloud_session = WolframCloudSession()
+        cloud_session = WolframCloudSession(server=self.server)
         self.assertFalse(cloud_session.authorized())
         self.assertTrue(cloud_session.anonymous())
         response = cloud_session.call((self.api_owner, url),
@@ -226,7 +226,7 @@ class TestCase(TestCaseSettings):
 
     def test_evaluate_string_disable(self):
         with WolframCloudSession(
-                credentials=self.sak,
+                credentials=self.sak, server=self.server,
                 inputform_string_evaluation=False) as session:
             res = session.evaluate('Range[3]')
             self.assertEqual(res, '"Range[3]"')
@@ -236,7 +236,7 @@ class TestCase(TestCaseSettings):
 
     def test_evaluate_future_string_disable(self):
         with WolframCloudFutureSession(
-                credentials=self.sak,
+                credentials=self.sak, server=self.server,
                 inputform_string_evaluation=False) as session:
             res = session.evaluate('Range[3]')
             self.assertEqual(res.result(), '"Range[3]"')
@@ -251,7 +251,7 @@ class TestCase(TestCaseSettings):
     def _stop_start_restart_status(self, eval_class):
         session = None
         try:
-            session = eval_class(credentials=self.sak)
+            session = eval_class(credentials=self.sak, server=self.server)
             self.assertFalse(session.started)
             self.assertTrue(session.stopped)
             session.start()
