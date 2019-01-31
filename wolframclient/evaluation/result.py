@@ -96,11 +96,10 @@ class WolframKernelEvaluationResult(WolframResultBase):
                 self.__class__.__name__, self.success, self.result,
                 self.messages)
 
-
-class WolframEvaluationJSONResponse(WolframResultBase):
+class WolframEvaluationResponse(WolframResultBase):
     """Result object associated with cloud kernel evaluation.
 
-    The response body associated to this type of result must be json encoded.
+    The response body associated to this type of result is encoded.
     Other fields provide additional information. The HTTP response object is
     stored as `http_response` and when HTTP error occurred it is stored in `request_error`.
     """
@@ -109,64 +108,30 @@ class WolframEvaluationJSONResponse(WolframResultBase):
         self.http_response = wrap_response(response)
         self.request_error = self.http_response.status() != 200
         self._built = False
-
-    def parse_valid_json(self):
-        try:
-            self._success = self.json['Success']
-            self._result = self.json['Result']
-            if not self._success:
-                failure_type = self.json['FailureType']
-                if failure_type == 'MessageFailure':
-                    self.is_kernel_message = True
-                    self._failure = self.json['MessagesText']
-                else:
-                    logger.warning('Evaluation failed.')
-                    for msg in self.json.get('MessagesText', []):
-                        logger.warning(msg)
-                    self.is_kernel_message = False
-                    self._failure = failure_type
-            self._built = True
-        except json.JSONDecodeError as e:
-            logger.fatal('Server returned invalid JSON: %s', e)
-            self.json = None
-            self._success = False
-            self._result = None
-            self._failure = 'Failed to decode JSON response from server'
-            self._built = True
+        self.parsed_response = None
 
     @property
     def success(self):
         if not self._built:
-            self._build()
+            self.build()
         return self._success
 
     @property
     def failure(self):
         if not self._built:
-            self._build()
+            self.build()
         return self._failure
 
     @property
     def result(self):
         if not self._built:
-            self._build()
+            self.build()
         return self._result
-
-    def _build(self):
-        if self.http_response.status() == 200:
-            self.json = self.http_response.json()
-            self.request_error = False
-            self.parse_valid_json()
-        else:
-            logger.fatal('Server invalid response %i: %s',
-                         self.http_response.status(),
-                         self.http_response.text())
-            raise RequestException(self.http_response)
 
     def get(self):
         """Return the result or raise an exception based on the success status."""
         if not self._built:
-            self._build()
+            self.build()
         if self.success:
             return self.result
         elif self.is_kernel_message:
@@ -186,20 +151,81 @@ class WolframEvaluationJSONResponse(WolframResultBase):
             return '{}<request error {}>'.format(self.__class__.__name__,
                                                  self.http_response.status())
 
-
-class WolframEvaluationJSONResponseAsync(WolframEvaluationJSONResponse):
-    """Result object associated with cloud kernel evaluation.
-
-    The response body associated to this type of result must be json encoded.
-    Other fields provide additional information. The HTTP response object is
-    stored as `http_response` and when HTTP error occurred it is stored in `request_error`.
-    """
-
-    async def _build(self):
+    def build(self):
         if not self.request_error:
-            self.json = await self.http_response.json()
-            self.parse_valid_json()
-            self._built = True
+            self.parse_response()
+            if self.parsed_response:
+                self.build_from_parsed_response()
+            # make sure to always build a response, here a generic one.
+            elif not self._built:
+                self.build_invalid_format()
+        else:
+            logger.fatal('Server invalid response %i: %s',
+                            self.http_response.status(),
+                            self.http_response.text())
+            raise RequestException(self.http_response)
+
+    def parse_response(self):
+        raise NotImplementedError('%s does not implement parse_response method.' % (self.__class__.__name__, ))
+
+    def build_from_parsed_response(self):
+        self._success = self.parsed_response['Success']
+        self._result = self.parsed_response['Result']
+        if not self._success:
+            failure_type = self.parsed_response['FailureType']
+            if failure_type == 'MessageFailure':
+                self.is_kernel_message = True
+                self._failure = self.parsed_response['MessagesText']
+            else:
+                logger.warning('Evaluation failed.')
+                for msg in self.parsed_response.get('MessagesText', []):
+                    logger.warning(msg)
+                self.is_kernel_message = False
+                self._failure = failure_type
+
+        self._built = True
+
+    def build_invalid_format(self, response_format_name=None):
+        """ Build a response object for invalid format server response.
+
+        This method does not use the request object.
+        """
+        logger.fatal('Server returned invalid format. Parsing failed.')
+        self._success = False
+        if response_format_name:
+            self._failure = 'Failed to decode server response encoded with %s' % response_format_name
+        else:
+            self._failure = 'Failed to decode server response.'
+        self._result = None
+        self._built = True
+
+class WolframEvaluationWXFResponse(WolframEvaluationResponse):
+    """ Result object associated with cloud evaluation request WXF encoded. """
+    def parse_response(self):
+        wxf = self.http_response.content()
+        try:
+            self.parsed_response = binary_deserialize(wxf)
+        except WolframLanguageException as e:
+            self.build_invalid_format(response_format_name='WXF')
+
+class WolframEvaluationJSONResponse(WolframEvaluationResponse):
+    """ Result object associated with cloud evaluation request JSON encoded. """
+    def parse_response(self):
+        try:
+            self.parsed_response = self.http_response.json()
+        except json.JSONDecodeError as e:
+            self.build_invalid_format(response_format_name='JSON')
+
+class WolframEvaluationResponseAsync(WolframEvaluationResponse):
+    """Asynchronous result object associated with cloud evaluation request. """
+
+    async def build(self):
+        if not self.request_error:
+            await self.parse_response()
+            if self.parsed_response:
+                self.build_from_parsed_response()
+            elif not self._built:
+                self.build_invalid_format()
         else:
             msg = await self.http_response.text()
             logger.fatal('Server invalid response %i: %s',
@@ -207,28 +233,31 @@ class WolframEvaluationJSONResponseAsync(WolframEvaluationJSONResponse):
             self._built = True
             raise RequestException(self.http_response, msg=msg)
 
+    async def parse_response(self):
+        raise NotImplementedError('%s does not implement parse_response asynchronous method.' % (self.__class__.__name__, ))
+
     @property
     async def success(self):
         if not self._built:
-            await self._build()
+            await self.build()
         return self._success
 
     @property
     async def failure(self):
         if not self._built:
-            await self._build()
+            await self.build()
         return self._failure
 
     @property
     async def result(self):
         if not self._built:
-            await self._build()
+            await self.build()
         return self._result
 
     async def get(self):
         """Return the result or raise an exception based on the success status."""
         if not self._built:
-            await self._build()
+            await self.build()
         if self._success:
             return self._result
         elif self.is_kernel_message:
@@ -251,6 +280,22 @@ class WolframEvaluationJSONResponseAsync(WolframEvaluationJSONResponse):
             return '{}<successful request, body not read>'.format(
                 self.__class__.__name__)
 
+class WolframEvaluationJSONResponseAsync(WolframEvaluationResponseAsync):
+    """Asynchronous result object associated with cloud evaluation request encoded with JSON. """
+    async def parse_response(self):
+        try:
+            self.parsed_response = await self.http_response.json()
+        except json.JSONDecodeError as e:
+            self.build_invalid_format(response_format_name='JSON')
+
+class WolframEvaluationWXFResponseAsync(WolframEvaluationResponseAsync):
+    """Asynchronous result object associated with cloud evaluation request encoded with WXF. """
+    async def parse_response(self):
+        wxf = await self.http_response.content()
+        try:
+            self.parsed_response = binary_deserialize(wxf)
+        except WolframLanguageException as e:
+            self.build_invalid_format(response_format_name='WXF')
 
 class WolframAPIResponse(WolframResult):
     """Generic API response."""
@@ -275,24 +320,24 @@ class WolframAPIResponse(WolframResult):
         if not self.success and self.json:
             yield from self.json.get('Fields', {})
 
-    def _build(self):
+    def build(self):
         raise NotImplementedError
 
     def get(self):
         if not self._built:
-            self._build()
+            self.build()
         return super().get()
 
     def iter_error(self):
         """Generator of tuples made from the field name and the associated error message"""
         if not self._built:
-            self._build()
+            self.build()
         yield from self._iter_error()
 
     def iter_full_error_report(self):
         """Generator of tuples made from the field name and the associated entire error report."""
         if not self._built:
-            self._build()
+            self.build()
         yield from self._iter_full_error_report()
 
     def fields_in_error(self):
@@ -309,10 +354,10 @@ class WolframAPIResponse(WolframResult):
 
 class WolframAPIResponseAsync(WolframAPIResponse):
     async def get(self):
-        await self._build()
+        await self.build()
         return super(WolframAPIResponse, self).get()
 
-    async def _build(self):
+    async def build(self):
         raise NotImplementedError
 
     async def iter_error(self):
@@ -324,7 +369,7 @@ class WolframAPIResponseAsync(WolframAPIResponse):
     async def fields_in_error(self):
         """Return all the fields in error with their message as a list of tuples"""
         if not self._built:
-            await self._build()
+            await self.build()
         return list(self._iter_error())
 
     async def error_report(self):
@@ -351,7 +396,7 @@ class WolframAPIResponse200(WolframAPIResponse):
         self.success = True
         self.failure = None
 
-    def _build(self):
+    def build(self):
         self._built = True
         if self.decoder is not None:
             try:
@@ -366,7 +411,7 @@ class WolframAPIResponse200(WolframAPIResponse):
 
 class WolframAPIResponse200Async(WolframAPIResponseAsync,
                                  WolframAPIResponse200):
-    async def _build(self):
+    async def build(self):
         if self.decoder is not None:
             try:
                 self.result = self.decoder(await self.response.content())
@@ -384,7 +429,7 @@ class WolframAPIResponseRedirect(WolframAPIFailureResponse):
         super().__init__(response, decoder)
         self.location = None
 
-    def _build(self):
+    def build(self):
         self.location = self.response.headers().get('location', None)
         logger.warning('Redirected to %s.', self.location)
         self._specific_failure()
@@ -422,7 +467,7 @@ class WolframAPIResponse302Async(WolframAPIResponse302,
 
 
 class WolframAPIResponse400(WolframAPIFailureResponse):
-    def _build(self):
+    def build(self):
         # ignoring content-type. Must be JSON. Make sure it's robust enough.
         try:
             self.json = self.response.json()
@@ -445,7 +490,7 @@ class WolframAPIResponse400(WolframAPIFailureResponse):
 
 class WolframAPIResponse400Async(WolframAPIResponse400,
                                  WolframAPIResponseAsync):
-    async def _build(self):
+    async def build(self):
         # ignoring content-type. Must be JSON. Make sure it's robust enough.
         try:
             self.json = await self.response.json()
@@ -459,7 +504,7 @@ class WolframAPIResponse400Async(WolframAPIResponse400,
 
 
 class WolframAPIResponse401(WolframAPIFailureResponse):
-    def _build(self):
+    def build(self):
         # ignoring content-type. Must be JSON. Make sure it's robust enough.
         self.failure = self.response.text()
         logger.warning('Authentication missing or failed. Server response: %s',
@@ -469,7 +514,7 @@ class WolframAPIResponse401(WolframAPIFailureResponse):
 
 class WolframAPIResponse401Async(WolframAPIResponse401,
                                  WolframAPIResponseAsync):
-    async def _build(self):
+    async def build(self):
         # ignoring content-type. Must be JSON. Make sure it's robust enough.
         self.failure = await self.response.text()
         self._built = True
@@ -478,7 +523,7 @@ class WolframAPIResponse401Async(WolframAPIResponse401,
 
 
 class WolframAPIResponse404(WolframAPIFailureResponse):
-    def _build(self):
+    def build(self):
         self.failure = "The resource %s can't not be found." % self.response.url(
         )
         logger.warning('Wolfram API error response: %s', self.failure)
@@ -487,18 +532,18 @@ class WolframAPIResponse404(WolframAPIFailureResponse):
 
 class WolframAPIResponse404Async(WolframAPIResponse404,
                                  WolframAPIResponseAsync):
-    async def _build(self):
-        WolframAPIResponse404._build(self)
+    async def build(self):
+        WolframAPIResponse404.build(self)
 
 
 class WolframAPIResponseGeneric(WolframAPIFailureResponse):
-    async def _build(self):
+    async def build(self):
         self.failure = self.response.text()
         self._built = True
 
 
 class WolframAPIResponseGenericAsync(WolframAPIResponseAsync):
-    async def _build(self):
+    async def build(self):
         self.failure = await self.response.text()
         self._built = True
 
