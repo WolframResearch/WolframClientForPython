@@ -12,6 +12,7 @@ from wolframclient.evaluation.cloud.oauth import \
     XAuthRequestsSyncSession as XAuthSession
 from wolframclient.evaluation.cloud.server import WOLFRAM_PUBLIC_CLOUD_SERVER
 from wolframclient.evaluation.result import (WolframAPIResponseBuilder,
+                                             WolframEvaluationWXFResponse,
                                              WolframEvaluationJSONResponse)
 from wolframclient.exception import AuthenticationException
 from wolframclient.serializers import export
@@ -202,7 +203,7 @@ class WolframCloudSession(WolframEvaluator):
             logger.debug(
                 'Sending expression to cloud server for evaluation: %s', data)
         response = self._post(self.evaluation_api_url, body=data)
-        return WolframEvaluationJSONResponse(response)
+        return WolframEvaluationWXFResponse(response)
 
     def evaluate(self, expr, **kwargs):
         """Send `expr` to the cloud for evaluation, return the result.
