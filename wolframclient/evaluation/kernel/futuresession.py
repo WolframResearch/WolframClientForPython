@@ -55,17 +55,17 @@ class WolframLanguageFutureSession(WolframLanguageSession):
     def evaluate(self, expr, **kwargs):
         """Evaluate :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate`
         asynchronously and return a :class:`~concurrent.futures.Future` object."""
-        return self._do_in_thread(super().evaluate, expr, **kwargs)
+        return self._do_in_thread(super().evaluate, self.normalize_input(expr), **kwargs)
 
     def evaluate_wxf(self, expr, **kwargs):
         """Evaluate :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate_wxf`
         asynchronously and return a :class:`~concurrent.futures.Future` object."""
-        return self._do_in_thread(super().evaluate_wxf, expr, **kwargs)
+        return self._do_in_thread(super().evaluate_wxf, self.normalize_input(expr), **kwargs)
 
     def evaluate_wrap(self, expr, **kwargs):
         """Evaluate :meth:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate_wrap`
         asynchronously and return a :class:`~concurrent.futures.Future` object."""
-        return self._do_in_thread(super().evaluate_wrap, expr, **kwargs)
+        return self._do_in_thread(super().evaluate_wrap, self.normalize_input(expr), **kwargs)
 
     def _do_in_thread(self, func, *args, **kwargs):
         try:

@@ -104,7 +104,7 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
 
         This method is a coroutine."""
         await self.ensure_started()
-        result = await self._async_evaluate(super().do_evaluate, expr,
+        result = await self._async_evaluate(super().do_evaluate, self.normalize_input(expr),
                                             **kwargs)
         self.log_message_from_result(result)
         return result.get()
@@ -115,7 +115,7 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
 
         This method is a coroutine."""
         await self.ensure_started()
-        result = await self._async_evaluate(super().do_evaluate, expr,
+        result = await self._async_evaluate(super().do_evaluate, self.normalize_input(expr),
                                             **kwargs)
         self.log_message_from_result(result)
         return result.wxf
@@ -126,7 +126,7 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
 
         This method is a coroutine."""
         await self.ensure_started()
-        return await self._async_evaluate(super().do_evaluate, expr, **kwargs)
+        return await self._async_evaluate(super().do_evaluate, self.normalize_input(expr), **kwargs)
 
     async def _async_evaluate(self, func, expr, **kwargs):
         return await self._loop.run_in_executor(self._get_exec_pool(), func,
