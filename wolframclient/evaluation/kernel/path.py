@@ -19,7 +19,7 @@ if six.WINDOWS or six.LINUX:
         ]
         EXE_REL_PATH = '/Files/Executables/wolfram'
 
-    def find_default_kernel_path():
+    def os_default_kernel_path():
         highest_version = -1
         best_path = None
         for root in APP_ROOT_PATH:
@@ -44,15 +44,16 @@ elif six.MACOS:
         '/Applications/Mathematica.app/Contents/MacOS/WolframKernel',
     ]
 
-    def find_default_kernel_path():
+    def os_default_kernel_path():
         for path in DEFAULT_PATHS:
             if os.isfile(path):
                 return path
         return None
 else:
 
-    def find_default_kernel_path():
+    def os_default_kernel_path():
         return None
 
-
-find_default_kernel_path.__doc__ = """ Look for the most recent installed kernel. """
+def find_default_kernel_path():
+    """ Look for the most recent installed kernel. """
+    return os.environ.get('WOLFRAM_KERNEL_PATH', None) or os_default_kernel_path()
