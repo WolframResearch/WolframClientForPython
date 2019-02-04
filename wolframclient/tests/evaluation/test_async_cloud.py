@@ -13,7 +13,8 @@ from wolframclient.evaluation.cloud.base import (SecuredAuthenticationKey,
                                                  UserIDPassword)
 from wolframclient.exception import (AuthenticationException, RequestException,
                                      WolframLanguageException)
-from wolframclient.language import wl
+from wolframclient.language import wl, wlexpr
+from wolframclient.language.expression import WLFunction
 from wolframclient.tests.configure import (MSG_JSON_NOT_FOUND, json_config,
                                            secured_authentication_key, server,
                                            user_configuration)
@@ -44,7 +45,7 @@ class TestCaseSettings(BaseTestCase):
         cls.api_owner = json_config['ApiOwner']
         cls.user_cred = user_configuration
         cls.server = server
-        cls.cloud_session_async = WolframCloudAsyncSession(credentials=cls.sak)
+        cls.cloud_session_async = WolframCloudAsyncSession(credentials=cls.sak, server=server)
 
     @classmethod
     def tearDownClass(cls):
@@ -66,13 +67,13 @@ class TestCaseSettings(BaseTestCase):
 @unittest.skipIf(six.JYTHON, "Not supported in Jython.")
 class TestCase(TestCaseSettings):
     def test_section_not_authorized(self):
-        session = WolframCloudAsyncSession()
+        session = WolframCloudAsyncSession(server=self.server)
         self.assertEqual(session.authorized(), False)
         self.assertEqual(session.anonymous(), True)
 
     @run_in_loop
     async def test_section_authorized_oauth(self):
-        cloud_session = WolframCloudAsyncSession(credentials=self.sak)
+        cloud_session = WolframCloudAsyncSession(credentials=self.sak, server=self.server)
         try:
             await cloud_session.start()
             self.assertEqual(cloud_session.authorized(), True)
@@ -82,8 +83,7 @@ class TestCase(TestCaseSettings):
 
     @run_in_loop
     async def test_section_authorized_oauth_with(self):
-        async with WolframCloudAsyncSession(
-                credentials=self.sak) as cloud_session:
+        async with WolframCloudAsyncSession(credentials=self.sak, server=self.server) as cloud_session:
             self.assertEqual(cloud_session.authorized(), True)
             self.assertEqual(cloud_session.anonymous(), False)
 
@@ -158,7 +158,7 @@ class TestCase(TestCaseSettings):
     @run_in_loop
     async def test_public_api_call(self):
         url = "api/public/jsonrange"
-        cloud_session = WolframCloudAsyncSession()
+        cloud_session = WolframCloudAsyncSession(server=self.server)
         try:
             self.assertFalse(cloud_session.authorized())
             self.assertTrue(cloud_session.anonymous())
@@ -239,17 +239,17 @@ class TestCase(TestCaseSettings):
     @run_in_loop
     async def test_evaluate_string_disable(self):
         async with WolframCloudAsyncSession(
-                credentials=self.sak,
+                credentials=self.sak, server=self.server,
                 inputform_string_evaluation=False) as session:
             res = await session.evaluate('Range[3]')
-            self.assertEqual(res, '"Range[3]"')
+            self.assertEqual(res, 'Range[3]')
             cor = session.function('f')
             res = await cor('abc')
-            self.assertEqual(res, '"f"["abc"]')
+            self.assertEqual(res, WLFunction('f', 'abc'))
 
     @run_in_loop
     async def test_stop_start_restart_status(self):
-        session = WolframCloudAsyncSession(credentials=self.sak)
+        session = WolframCloudAsyncSession(credentials=self.sak, server=self.server)
         try:
             self.assertFalse(session.started)
             self.assertTrue(session.stopped)
@@ -273,48 +273,48 @@ class TestCase(TestCaseSettings):
     @run_in_loop
     async def test_evaluate_string(self):
         res = await self.cloud_session_async.evaluate('Range[3]')
-        self.assertEqual(res, '{1, 2, 3}')
+        self.assertEqual(res, [1, 2, 3])
 
     @run_in_loop
     async def test_evaluate_wl_expr(self):
         res = await self.cloud_session_async.evaluate(wl.Range(2))
-        self.assertEqual(res, '{1, 2}')
+        self.assertEqual(res, [1, 2])
 
     @run_in_loop
     async def test_evaluate_wl_expr_option(self):
         res = await self.cloud_session_async.evaluate(
             wl.ArrayPad([[1]], 1, Padding=1))
-        self.assertEqual(res, '{{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}')
+        self.assertEqual(res, [[1, 1, 1], [1, 1, 1], [1, 1, 1]])
 
     @run_in_loop
     async def test_evaluate_wrap(self):
         res = await self.cloud_session_async.evaluate_wrap(wl.Range(2))
         self.assertTrue(await res.success)
-        self.assertEqual(await res.get(), '{1, 2}')
+        self.assertEqual(await res.get(), [1, 2])
 
     @run_in_loop
     async def test_evaluate_function(self):
         f = self.cloud_session_async.function('Range')
-        self.assertEqual(await f(3), '{1, 2, 3}')
+        self.assertEqual(await f(3), [1, 2, 3])
 
     @run_in_loop
     async def test_evaluate_function_wl(self):
         f = self.cloud_session_async.function(wl.Range)
-        self.assertEqual(await f(3), '{1, 2, 3}')
+        self.assertEqual(await f(3), [1, 2, 3])
 
     @run_in_loop
     async def test_evaluate_function_wl_option(self):
         f = self.cloud_session_async.function(wl.ArrayPad)
         self.assertEqual(await f([[1]], 1, Padding=1),
-                         '{{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}')
+                         [[1, 1, 1], [1, 1, 1], [1, 1, 1]])
 
     @run_in_loop
     async def test_evaluate_string(self):
         res1 = await self.cloud_session_async.evaluate('Range[1]')
         res2 = await self.cloud_session_async.evaluate('Range[2]')
 
-        self.assertEqual(res1, '{1}')
-        self.assertEqual(res2, '{1, 2}')
+        self.assertEqual(res1, [1])
+        self.assertEqual(res2, [1, 2])
 
     @run_in_loop
     async def test_evaluate_string_concurrently(self):
@@ -323,9 +323,9 @@ class TestCase(TestCaseSettings):
         task2 = asyncio.ensure_future(
             self.cloud_session_async.evaluate_wrap('Range[2]'))
         res1, res2 = await asyncio.gather(task1, task2)
-        self.assertEqual(res1, '{1}')
+        self.assertEqual(res1, [1])
         res2 = await res2.result
-        self.assertEqual(res2, '{1, 2}')
+        self.assertEqual(res2, [1, 2])
 
     # @run_in_loop
     # async def test_big_expr(self):

@@ -15,7 +15,7 @@ from wolframclient.evaluation.cloud.asyncoauth import \
 from wolframclient.evaluation.cloud.base import WolframAPICallBase
 from wolframclient.evaluation.cloud.server import WOLFRAM_PUBLIC_CLOUD_SERVER
 from wolframclient.evaluation.result import (
-    WolframAPIResponseBuilder, WolframEvaluationJSONResponseAsync)
+    WolframAPIResponseBuilder, WolframEvaluationWXFResponseAsync)
 from wolframclient.exception import AuthenticationException
 from wolframclient.serializers import export
 from wolframclient.utils import six
@@ -48,7 +48,9 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
         self.ssl_context_class = ssl_context_class
         self.oauth_session = None
         if self.server.certificate is not None:
-            self._ssl_context = self.ssl_context_class(self.server.certificate)
+            self._ssl_context = self.ssl_context_class()
+            self._ssl_context.load_verify_locations(self.server.certificate)
+            # self._ssl_context = ssl.create_default_context(cafile=self.server.certificate)
         else:
             self._ssl_context = None
 
@@ -201,7 +203,7 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
             logger.debug(
                 'Sending expression to cloud server for evaluation: %s', data)
         response = await self._post(self.evaluation_api_url, data=data)
-        return WolframEvaluationJSONResponseAsync(response)
+        return WolframEvaluationWXFResponseAsync(response)
 
     async def evaluate(self, expr, **kwargs):
         """Send `expr` to the cloud for evaluation, return the result.

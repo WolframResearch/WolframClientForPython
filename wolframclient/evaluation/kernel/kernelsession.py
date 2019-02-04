@@ -145,6 +145,18 @@ class WolframLanguageSession(WolframEvaluator):
         with WolframLanguageSession(kernel) as session:
             session.evaluate('Range[3]')
 
+    When `consumer` is set to a :class:`~wolframclient.deserializers.WXFConsumer` instance,
+    this instance is passed to :func:`~wolframclient.deserializers.binary_deserialize` when
+    deserializing the WXF output. 
+    
+    By default packed arrays are deserialized as :class:`list`. Specify a consumer instance
+    that supports NumPy arrays :class:`~wolframclient.deserializers.WXFConsumerNumpy`::
+
+        from wolframclient.deserializers import WXFConsumerNumpy
+
+        with WolframLanguageSession(consumer=WXFConsumerNumpy()) as session:
+            numpy_array = session.evaluate('Range[3]')
+
     Communication with a given kernel is based on ZMQ sockets:
 
     * one `PUSH` socket to send expressions for evaluation

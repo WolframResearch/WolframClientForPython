@@ -36,7 +36,9 @@ class OAuthAIOHttpAsyncSessionBase(OAuthAsyncSessionBase):
         self.http_session = http_session
         self.ssl_context_class = ssl_context_class
         if self.server.certificate is not None:
-            self._ssl_context = self.ssl_context_class(self.server.certificate)
+            self._ssl_context = self.ssl_context_class()
+            self._ssl_context.load_verify_locations(self.server.certificate)
+            # self._ssl_context = ssl.create_default_context(cafile=self.server.certificate)
         else:
             self._ssl_context = None
 
