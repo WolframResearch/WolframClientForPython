@@ -20,7 +20,7 @@ def explore_paths(*paths):
                     if v_num > highest_version:
                         highest_version = v_num
                         best_path = full_path
-    if highest_version > 0:
+    if best_path:
         yield best_path
 
 def installation_directories():
