@@ -25,7 +25,7 @@ class WolframLanguageFutureSession(WolframLanguageSession):
     """
 
     def __init__(self,
-                 kernel,
+                 kernel=None,
                  consumer=None,
                  initfile=None,
                  in_socket=None,
@@ -38,7 +38,7 @@ class WolframLanguageFutureSession(WolframLanguageSession):
                  wxf_bytes_evaluation=True,
                  **kwargs):
         super().__init__(
-            kernel,
+            kernel=kernel,
             consumer=consumer,
             initfile=initfile,
             in_socket=in_socket,

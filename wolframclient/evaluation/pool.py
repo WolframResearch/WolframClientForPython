@@ -193,8 +193,8 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         """
         self.stopped = False
         # keep track of the init tasks. We have to wait before terminating.
-        self._pending_init_tasks = {(asyncio.create_task(
-            self._async_start_kernel(kernel)))
+        self._pending_init_tasks = {(asyncio.ensure_future(
+            self._async_start_kernel(kernel), loop=self._loop))
                                     for kernel in self._evaluators}
         # uninitialized kernels are removed if they failed to start
         # if they do start the task (the loop) is added to _started_tasks.
