@@ -39,7 +39,7 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
     """
 
     def __init__(self,
-                 kernel,
+                 kernel=None,
                  consumer=None,
                  loop=None,
                  initfile=None,
@@ -54,7 +54,7 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
                  **kwargs):
         self._loop = loop or asyncio.get_event_loop()
         super().__init__(
-            kernel,
+            kernel=kernel,
             consumer=consumer,
             initfile=initfile,
             in_socket=in_socket,
