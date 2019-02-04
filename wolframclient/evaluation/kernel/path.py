@@ -17,7 +17,7 @@ def explore_paths(*paths):
                         v_num = float(version)
                     except ValueError:
                         v_num = -2
-                    if v_num > highest_version:
+                    if v_num > highest_version and v_num > 0:
                         highest_version = v_num
                         best_path = full_path
     if best_path:
