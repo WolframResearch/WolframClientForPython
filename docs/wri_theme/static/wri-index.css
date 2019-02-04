@@ -96,18 +96,55 @@ div#install-lib{
 }
 div#setup-session {
     color: #7a7a7a;
-    font-size: .9em;
     font-weight: 700;
-    font-style: italic;
     padding-top: 10px;
     padding-bottom: 5px;
     margin-top: 50px;
 }
+
+div.code-label {
+    font-size: .9em;
+    font-style: italic;
+}
 div.subsection {
     padding-top: 10px;
     padding-bottom: 5px;
-    margin-bottom: 40px;
+    margin-bottom: 10px;
     margin-top: 50px;
     font-size: 1.1em;
     font-weight: 700;
+}
+
+/* div.annotated {
+    margin-bottom: 40px;
+    margin-top: 50px;
+} */
+
+div#letsyou-section {
+    color: #1667b2;
+    font-size: 1.85em;
+    margin-top: 70px;
+}
+
+div#wl-references-list ul{
+    list-style: none;
+    line-height:inherit;
+    position: relative;
+    top : -10px;
+    padding-left:0px;
+    height: 10px;
+}
+div#wl-references-list li {
+    float:left;
+    margin-left:0px;
+}
+
+div#wl-references-list a {
+    text-decoration:none;   
+}
+
+span.inlinebullet {
+    color : #adadad;
+    padding-left: 10px;
+    padding-right: 10px;
 }

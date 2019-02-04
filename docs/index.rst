@@ -62,8 +62,8 @@
 
 .. raw:: html
 
-    <div id='setup-session' class='border-top bodyaligned'>
-        <span><i>Setup you Wolfram Language session:</i></span>
+    <div id='setup-session' class='border-top bodyaligned code-label'>
+        <span>Setup your Wolfram Language session:</span>
     </div>
 
 .. code-block :: py
@@ -74,7 +74,7 @@
 
 .. raw:: html
     
-    <div class='border-top bodyaligned subsection'>
+    <div class='border-top bodyaligned subsection annotated'>
         <span>Evaluate any Wolfram Language code from Python:</span>
     </div>
 
@@ -85,7 +85,7 @@
 
 .. raw:: html
     
-    <div class='border-top bodyaligned subsection'>
+    <div class='border-top bodyaligned subsection annotated'>
         <span>
             Immediately call all 6000+ built-in Wolfram Language functions in Python:
         </span>
@@ -112,10 +112,19 @@
 
 .. raw:: html
 
-    <h3>Direct support for PIL, Pandas, NumPy libraries</h3>
+    <div class='border-top bodyaligned subsection'>
+        <span>
+            Direct support for PIL, Pandas, NumPy libraries:
+        </span>
+    </div>
 
+.. raw:: html
+    
+    <div  class='bodyaligned code-label'>
+        Create a Pandas <span class='pre'>DataFrame</span>:
+    </div>
 
-Create a Pandas :data:`DataFrame`::
+.. code-block :: python
 
     >>> import pandas
     >>> df = pandas.DataFrame({'A': [1, 2], 'B': [11, 12]}, index=['id1', 'id2'])
@@ -124,7 +133,14 @@ Create a Pandas :data:`DataFrame`::
     id1    1  11
     id2    2  12
 
-Apply Wolfram Language function directly on complex object. Sum the values of each column::
+
+.. raw:: html
+    
+    <div class='bodyaligned code-label'>
+        Apply Wolfram Language function directly to the <span class='pre'>DataFrame</span>:
+    </div>
+
+.. code-block:: python
 
     >>> session.evaluate(wl.Total(df))
     {'A': 3, 'B': 23}
@@ -132,63 +148,134 @@ Apply Wolfram Language function directly on complex object. Sum the values of ea
 
 .. raw:: html
 
-    <h3>Define native Python functions</h3>
+    <div class='border-top bodyaligned subsection'>
+        <span>
+            Define native Python functions:
+        </span>
+    </div>
 
-Define Wolfram Language functions as native Python functions:
+.. code-block :: py
 
     >>> str_reverse = session.function(wl.StringReverse)
     >>> str_reverse('abc')
     'cba'
 
+
 .. raw:: html
 
-    <h3>Represent expressions</h3>
+    <div class='border-top bodyaligned subsection'>
+        <span>
+            Represent Wolfram Language expressions as Python objects:
+        </span>
+    </div>
 
-Represent Wolfram Language expressions as Python objects::
+.. raw:: html
+    
+    <div class='bodyaligned code-label'>
+        Use object representation:
+    </div>
+
+.. code-block :: py
 
     >>> wl.Quantity(12, "Hours")
     Quantity[12, 'Hours']
 
-Use string InputForm::
+.. raw:: html
+    
+    <div class='bodyaligned code-label'>
+        Use string representation:
+    </div>
+
+.. code-block :: py
 
     >>> wlexpr('f[x_] := x^2')
     (f[x_] := x^2)
 
+
 .. raw:: html
 
-    <h3>Access the power of Wolfram algorithms:</h3>
+    <div id='letsyou-section' class='bodyaligned'>
+        <span>
+            Within your Python environment, the Wolfram Client Library for Python lets you:
+        </span>
+    </div>
 
-[ Data Science ] [ Numerics ] [ Graphs Theory ] ::
+.. raw:: html
+
+    <div class='border-top bodyaligned subsection'>
+        <span>
+            Access the power of Wolfram algorithms:
+        </span>
+    </div>
+
+.. raw:: html
+    
+    <div class='bodyaligned code-label'>
+        Get immediate access to the world's largest integrated algorithmbase:
+    </div>
+
+.. code-block :: py
 
     >>> limit = wlexpr('Limit[x Log[x^2], x -> 0]')
     >>> session.evaluate(limit)
     0
+    
+.. raw:: html
+
+    <div id='wl-references-list' class='bodyaligned'>
+        <ul>
+            <li><a class='' href='https://reference.wolfram.com/language/#DataManipulationAndAnalysis'>Data Science</a><span class='inlinebullet'>▪</span></li>
+            <li><a class='' href='https://reference.wolfram.com/language/#SymbolicAndNumericComputation'>Numerics</a><span class='inlinebullet'>▪</span></li>
+            <li><a class='' href='https://reference.wolfram.com/language/#GraphsAndNetworks'>Graphs Theory</a><span class='inlinebullet'>▪</span></li>
+            <li><a class='' href='https://reference.wolfram.com/language/'>...</a></li>
+        </ul>
+    </div>
 
 .. raw:: html
 
-    <h2>Get immediate access to the world's largest integrated algorithmbase</h2>
-
+    <div class='border-top bodyaligned subsection'>
+        <span>
+            Access the Wolfram knowledgebase:
+        </span>
+    </div>
 
 .. raw:: html
+    
+    <div class='bodyaligned code-label'>
+        Get the closest ocean:
+    </div>
 
-    <h3>Access the Wolfram knowledgebase</h3>
+.. code-block:: python
 
-
-Get the closest ocean::
-
-    >>> near_ocean = wlexpr('GeoNearest[Entity["Ocean"], Here]')
-    >>> session.evaluate(near_ocean)
+    >>> ocean = wlexpr('GeoNearest[Entity["Ocean"], Here]')
+    >>> session.evaluate(ocean)
     [Entity['Ocean', 'AtlanticOcean']]
 
 .. raw:: html
 
-    <h3>Use Wolfram natural language understanding</h3>
+    <div class='border-top bodyaligned subsection'>
+        <span>
+            Use Wolfram natural language understanding in Python:
+        </span>
+    </div>
 
-Query `Wolfram|Alpha <https://www.wolframalpha.com/>`_ directly in Python::
+.. raw:: html
+    
+    <div class='bodyaligned code-label'>
+        Query <a href='https://www.wolframalpha.com/'>Wolfram|Alpha</a> directly in Python:
+    </div>
+
+.. code-block:: python
 
     >>> session.evaluate(wl.WolframAlpha("number of moons of Saturn", "Result"))
     62
 
-Terminate the session, release all resources::
+.. raw:: html
+    
+    <div class='bodyaligned code-label'>
+        Terminate the session, release all resources:
+    </div>
+
+.. code-block:: python
 
     >>> session.terminate()
