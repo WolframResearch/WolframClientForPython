@@ -56,7 +56,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
     """
 
     def __init__(self,
-                 async_evaluators,
+                 async_evaluators=None,
                  poolsize=4,
                  load_factor=0,
                  loop=None,
@@ -70,7 +70,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         self._queue = asyncio.Queue(load_factor * poolsize, loop=self._loop)
         self.async_language_session_class = async_language_session_class
         self._evaluators = set()
-        if isinstance(async_evaluators, six.string_types):
+        if async_evaluators is None or isinstance(async_evaluators, six.string_types):
             for _ in range(poolsize):
                 self._add_evaluator(async_evaluators, **kwargs)
         else:
@@ -88,10 +88,10 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         self.requestedsize = poolsize
 
     def _add_evaluator(self, evaluator, **kwargs):
-        if isinstance(evaluator, six.string_types):
+        if evaluator is None or isinstance(evaluator, six.string_types):
             self._evaluators.add(
                 self.async_language_session_class(
-                    evaluator, loop=self._loop, **kwargs))
+                    kernel=evaluator, loop=self._loop, **kwargs))
         elif isinstance(evaluator, WolframAsyncEvaluator):
             if evaluator in self._evaluators:
                 self._evaluators.add(evaluator.duplicate())
@@ -281,14 +281,15 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         return len(self._started_tasks)
 
 
-def parallel_evaluate(evaluator_spec, expressions, max_evaluators=4,
+def parallel_evaluate(expressions, evaluator_spec=None, max_evaluators=4,
                       loop=None):
-    """ Start a kernel pool using `evaluator_spec` and evaluate the expressions on the created
-    pool, then terminate it and returns the results.
+    """ Start a kernel pool and evaluate the expressions in parallele. 
+    
+    The pool is created with the value of `evaluator_spec`. Terminate the pool when the
+    expressions are evaluated, and returns the results.
 
-    Note that each evaluation should be independent and not rely on any previous one, since
-    there is no guarantee that two given expr evaluates on the same kernel, and scoped to 
-    avoid side effects.
+    Note that each evaluation should be independent and not rely on any previous one. 
+    There is no guarantee that two given expr evaluates on the same kernel.
     """
     loop = loop or asyncio.get_event_loop()
     pool = None
