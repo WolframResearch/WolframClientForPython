@@ -255,21 +255,21 @@ class TestParalleleEvaluate(BaseTestCase):
 
     def test_parallel_evaluate_local(self):
         exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
-        res = parallel_evaluate(self.KERNEL_PATH, exprs)
+        res = parallel_evaluate(exprs, evaluator_spec=self.KERNEL_PATH)
         self.assertEqual(res,
                          ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"])
 
     def test_parallel_evaluate_sizeone(self):
         exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
-        res = parallel_evaluate(self.KERNEL_PATH, exprs, max_evaluators=1)
+        res = parallel_evaluate(exprs, evaluator_spec=self.KERNEL_PATH, max_evaluators=1)
         self.assertEqual(res,
                          ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"])
 
     def test_parallel_evaluate_sizeone(self):
         exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
         res = parallel_evaluate(
-            [self.KERNEL_PATH, self.KERNEL_PATH, self.KERNEL_PATH],
             exprs,
+            evaluator_spec=[self.KERNEL_PATH, self.KERNEL_PATH, self.KERNEL_PATH],
             max_evaluators=1)
         self.assertEqual(res,
                          ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"])
@@ -278,7 +278,7 @@ class TestParalleleEvaluate(BaseTestCase):
         cloud = WolframCloudAsyncSession(
             credentials=secured_authentication_key)
         exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
-        res = parallel_evaluate(cloud, exprs)
+        res = parallel_evaluate(exprs, evaluator_spec=cloud)
         self.assertEqual(len(res), 10)
         for elem in res:
             self.assertTrue(isinstance(elem, six.string_types))
@@ -287,7 +287,7 @@ class TestParalleleEvaluate(BaseTestCase):
         cloud = WolframCloudAsyncSession(
             credentials=secured_authentication_key)
         exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
-        res = parallel_evaluate([cloud, self.KERNEL_PATH, cloud], exprs)
+        res = parallel_evaluate(exprs, evaluator_spec=[cloud, self.KERNEL_PATH, cloud])
         self.assertEqual(len(res), 10)
         for elem in res:
             self.assertTrue(isinstance(elem, six.string_types))
