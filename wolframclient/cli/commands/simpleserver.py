@@ -71,7 +71,7 @@ class Command(SimpleCommand):
 
         @routes.route('*', '/{tail:.*}')
         @aiohttp_wl_view(session)
-        async def hello(request):
+        async def main(request):
             return handler
 
         app = aiohttp.Application()
