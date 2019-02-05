@@ -45,8 +45,7 @@ class Command(SimpleCommand):
                 t1 = time.time()
                 async with session.get(queue.pop()) as resp:
                     bytes_count = len(await resp.content.read())
-                    assert resp.status == 200
-                    results.append({'time': time.time() - t1, 'bytes': bytes_count})
+                    results.append({'time': time.time() - t1, 'bytes': bytes_count, 'success': resp.status == 200})
 
         return results
 
@@ -65,9 +64,11 @@ class Command(SimpleCommand):
     @run_in_loop
     async def handle(self, requests, clients, url):
 
-        self.table_line('Requests', requests)
-        self.table_line('Clients', clients)
+
+
         self.table_line('Url', url)
+        self.table_line('Clients', clients)
+        self.table_line('Requests', requests)
 
         t1 = time.time()
 
@@ -83,13 +84,20 @@ class Command(SimpleCommand):
 
         assert l == requests
 
-        self.table_line('Total Kb', kb)
-        self.table_line('Avb req Kb', kb / l)
-        self.table_line('Kb/sec', kb / t2)
+        self.table_line('Requests OK', '%i' % sum(map(itemgetter('success'), results)))
+        self.table_line('Requests/sec', '%.2f' % (1 / (t2 / l)))
 
-        self.table_line('Total time', t2)
-        self.table_line('Avg time', t2 / l)
-        self.table_line('Reqests/sec', 1 / (t2 / l))
+        self.table_line('Total time', '%.4f' % t2)
+        self.table_line('Avg time', '%.4f' % (t2 / l))
 
-        self.table_line('Client total time', s)
-        self.table_line('Client avg time', s / l)
+        self.table_line('Total Kb', '%.4f' % kb)
+        self.table_line('Avb req Kb', '%.4f' % (kb / l))
+        self.table_line('Kb/sec', '%.4f' % (kb / t2))
+
+
+
+
+        self.table_line('Client total time', '%.4f' % s)
+        self.table_line('Client avg time', '%.4f' % (s / l))
+
+
