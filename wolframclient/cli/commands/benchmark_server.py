@@ -11,6 +11,7 @@ from wolframclient.evaluation import (WolframEvaluatorPool,
                                       WolframLanguageAsyncSession)
 from wolframclient.utils.asyncio import run_in_loop, wait_all
 from wolframclient.utils.functional import flatten, iterate
+from wolframclient.utils.encoding import force_text
 
 from operator import itemgetter
 
@@ -18,6 +19,8 @@ class Command(SimpleCommand):
     """ Run test suites from the tests modules.
     A list of patterns can be provided to specify the tests to run.
     """
+
+    col_size = 20
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -56,12 +59,15 @@ class Command(SimpleCommand):
         for i in range(clients):
             yield self.consumer(queue, i)
 
+    def table_line(self, *iterable):
+        self.print(*(force_text(c).ljust(self.col_size) for c in iterable))
+
     @run_in_loop
     async def handle(self, requests, clients, url):
 
-        print('Requests', requests)
-        print('Clients', clients)
-        print('Url', url)
+        self.table_line('Requests', requests)
+        self.table_line('Clients', clients)
+        self.table_line('Url', url)
 
         t1 = time.time()
 
@@ -77,13 +83,13 @@ class Command(SimpleCommand):
 
         assert l == requests
 
-        print('Total Kb', kb)
-        print('Avb req Kb', kb / l)
-        print('Kb/sec', kb / t2)
+        self.table_line('Total Kb', kb)
+        self.table_line('Avb req Kb', kb / l)
+        self.table_line('Kb/sec', kb / t2)
 
-        print('Total time', t2)
-        print('Avg time', t2 / l)
-        print('Reqests/sec', 1 / (t2 / l))
+        self.table_line('Total time', t2)
+        self.table_line('Avg time', t2 / l)
+        self.table_line('Reqests/sec', 1 / (t2 / l))
 
-        print('Client total time', s)
-        print('Client avg time', s / l)
+        self.table_line('Client total time', s)
+        self.table_line('Client avg time', s / l)
