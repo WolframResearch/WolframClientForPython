@@ -66,8 +66,16 @@ h3 {
     margin-left : 15px;
 }
 
-svg.github-fav {
-    vertical-align: center;
+div#source-code{
+    margin-top:10px;
+    font-size:1.4em;
+    
+}
+
+div#source-code svg {
+    vertical-align: text-bottom;
+    height: 30px;
+    width: 30px;
 }
 
 span#header-title-top {
