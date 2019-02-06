@@ -133,7 +133,11 @@ class FormatSerializer(Encoder):
     def _serialize_external_object(self, o):
 
         yield "Type", "PythonFunction"
-        yield "Name", force_text(o.__name__)
+        if hasattr(o, '__name__'):
+            yield "Name", force_text(o.__name__)
+        else:
+            yield "Name", force_text(o.__class__.__name__)
+            
         yield "BuiltIn", inspect.isbuiltin(o),
 
         is_module = inspect.ismodule(o)
