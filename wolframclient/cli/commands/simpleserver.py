@@ -8,7 +8,7 @@ from wolframclient.evaluation import (WolframEvaluatorPool,
 from wolframclient.http import aiohttp_wl_view
 from wolframclient.language import wl, wlexpr
 from wolframclient.utils.api import aiohttp, asyncio
-from wolframclient.utils.functional import composition, first
+from wolframclient.utils.functional import composition, first, identity
 
 
 class Command(SimpleCommand):
@@ -54,8 +54,7 @@ class Command(SimpleCommand):
     def create_handler(self, expressions, get, autoreload):
 
         exprs = (*map(wlexpr, expressions), *map(
-            autoreload and composition(wl.Delayed, wl.Get)
-            or composition(wl.Delayed, wl.Get, wl.Once), get or ()))
+            composition(wl.Get, autoreload and identity or wl.Once, wl.Delayed), get or ()))
 
         if not exprs:
             return wl.HTTPResponse("<h1>It works!</h1>")
