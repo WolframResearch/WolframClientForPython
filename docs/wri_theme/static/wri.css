@@ -70,6 +70,10 @@ div.related.header.right ul li span {
     vertical-align: middle;
 }
 
+.vertical-align {
+    vertical-align: middle
+}
+
 span.header {
     color: #005c94;
     font-weight: 700;
@@ -227,6 +231,14 @@ code.wlcode {
     background: white;
     font-size: 16px;
 }
+
+div.note code {
+    background: transparent;
+}
+div.note a.wl {
+    background: transparent;
+}
+
 .wl {
     font-family: "Source Code Pro", Courier, monospace;
     background-color: #ecf0f3;
