@@ -9,7 +9,7 @@ Overview
     :maxdepth: 4
 
     install
-    intro
+    basic_usages
     advanced_usages
     public_api
     ../index
