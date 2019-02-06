@@ -5,7 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import time
 
 import aiohttp
-
+from wolframclient.serializers import export
 from wolframclient.cli.utils import SimpleCommand
 from wolframclient.evaluation import (WolframEvaluatorPool,
                                       WolframLanguageAsyncSession)
@@ -37,6 +37,10 @@ class Command(SimpleCommand):
             '--url',
             default='http://localhost:18000',
             help='Insert the url to stress.')
+        parser.add_argument(
+            '--format',
+            default=None
+        )
 
     async def consumer(self, queue, i):
         results = []
@@ -58,23 +62,23 @@ class Command(SimpleCommand):
         for i in range(clients):
             yield self.consumer(queue, i)
 
-    def table_line(self, *iterable):
-        self.print(*(force_text(c).ljust(self.col_size) for c in iterable))
-
     @run_in_loop
-    async def handle(self, requests, clients, url):
+    async def wait_for_tasks(self, requests, clients, url):
+        # Wait for all of the coroutines to finish.
+        results = await wait_all(self.generate_tasks(requests, clients, url))
+        results = tuple(iterate(*results))
+        return results
 
+    def create_data(self, requests, clients, url):
 
-
-        self.table_line('Url', url)
-        self.table_line('Clients', clients)
-        self.table_line('Requests', requests)
+        yield 'Url', url
+        yield 'Clients', clients
+        yield 'Requests', requests
 
         t1 = time.time()
 
         # Wait for all of the coroutines to finish.
-        results = await wait_all(self.generate_tasks(requests, clients, url))
-        results = tuple(iterate(*results))
+        results = self.wait_for_tasks(requests, clients, url)
 
         s = sum(map(itemgetter('time'), results))
         kb = sum(map(itemgetter('bytes'), results)) / 1024
@@ -84,20 +88,28 @@ class Command(SimpleCommand):
 
         assert l == requests
 
-        self.table_line('Requests OK', '%i' % sum(map(itemgetter('success'), results)))
-        self.table_line('Requests/sec', '%.2f' % (1 / (t2 / l)))
+        yield 'Requests OK', sum(map(itemgetter('success'), results))
+        yield 'Requests/sec', 1 / (t2 / l)
 
-        self.table_line('Total time', '%.4f' % t2)
-        self.table_line('Avg time', '%.4f' % (t2 / l))
+        yield 'Total time', t2
+        yield 'Avg time', t2 / l
 
-        self.table_line('Total Kb', '%.4f' % kb)
-        self.table_line('Avb req Kb', '%.4f' % (kb / l))
-        self.table_line('Kb/sec', '%.4f' % (kb / t2))
+        yield 'Total Kb', kb
+        yield 'Avb req Kb', kb / l
+        yield 'Kb/sec', kb / t2
 
+        yield 'Client total time', s
+        yield 'Client avg time', s / l
 
-
-
-        self.table_line('Client total time', '%.4f' % s)
-        self.table_line('Client avg time', '%.4f' % (s / l))
-
-
+    def table_line(self, *iterable):
+        self.print(*(force_text(c).ljust(self.col_size) for c in iterable))
+    
+    def handle(self, format, **opts):
+        data = self.create_data(**opts)
+        if format:
+            self.print(export(dict(data), target_format = format))
+        else:
+            for k, v in data:
+                if isinstance(v, float):
+                    v = '%.4f' % v
+                self.table_line(k, v)
