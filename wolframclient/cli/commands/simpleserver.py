@@ -54,7 +54,7 @@ class Command(SimpleCommand):
     def create_handler(self, expressions, get, autoreload):
 
         exprs = (*map(wlexpr, expressions), *map(
-            composition(wl.Get, autoreload and identity or wl.Once, wl.Delayed), get or ()))
+            composition(wl.Get, autoreload and identity or wl.Once, wl.Unevaluated), get or ()))
 
         if not exprs:
             return wl.HTTPResponse("<h1>It works!</h1>")
