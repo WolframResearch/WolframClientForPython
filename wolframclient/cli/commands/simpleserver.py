@@ -54,7 +54,8 @@ class Command(SimpleCommand):
     def create_handler(self, expressions, get, autoreload):
 
         exprs = (*map(wlexpr, expressions), *map(
-            autoreload and wl.Get or composition(wl.Get, wl.Once), get or ()))
+            autoreload and composition(wl.Delayed, wl.Get)
+            or composition(wl.Delayed, wl.Get, wl.Once), get or ()))
 
         if not exprs:
             return wl.HTTPResponse("<h1>It works!</h1>")
@@ -64,7 +65,8 @@ class Command(SimpleCommand):
 
     def get_web_app(self, expressions, kernel, poolsize, preload, **opts):
 
-        session = self.create_session(kernel, poolsize=poolsize, inputform_string_evaluation=False)
+        session = self.create_session(
+            kernel, poolsize=poolsize, inputform_string_evaluation=False)
         handler = self.create_handler(expressions, **opts)
 
         routes = aiohttp.RouteTableDef()
