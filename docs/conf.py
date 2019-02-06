@@ -127,6 +127,8 @@ html_sidebars = {
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'WolframClientLibraryForPythondoc'
 
+# If true, links to the reST sources are added to the pages.
+html_show_sourcelink = False
 
 # -- Options for LaTeX output ------------------------------------------------
 
