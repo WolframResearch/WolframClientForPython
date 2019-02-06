@@ -29,7 +29,12 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
     If the number of evaluators is less than the requested pool size (`poolsize`), elements are duplicated until the requested number of 
     evaluators is reached.
 
-    Create a pool from a kernel path::
+    Create a pool from a Wolfram Engine default location::
+
+        async with WolframEvaluatorPool() as pool:
+            await pool.evaluate('$InstallationDirectory')
+
+    Create a pool from a specific Wolfram Engine::
 
         async with WolframEvaluatorPool('/path/to/local/kernel') as pool:
             await pool.evaluate('1+1')
@@ -282,13 +287,13 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
 
 def parallel_evaluate(expressions, evaluator_spec=None, max_evaluators=4,
                       loop=None):
-    """ Start a kernel pool and evaluate the expressions in parallele. 
+    """ Start a kernel pool and evaluate the expressions in parallel. 
     
-    The pool is created with the value of `evaluator_spec`. Terminate the pool when the
-    expressions are evaluated, and returns the results.
+    The pool is created with the value of `evaluator_spec`. The pool is automatically
+    stopped when no more needed. The expressions are evaluated and returned in order.
 
     Note that each evaluation should be independent and not rely on any previous one. 
-    There is no guarantee that two given expr evaluates on the same kernel.
+    There is no guarantee that two given expressions evaluate on the same kernel.
     """
     loop = loop or asyncio.get_event_loop()
     pool = None
