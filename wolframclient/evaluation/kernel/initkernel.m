@@ -193,7 +193,7 @@ evaluationLoop[uuidIn_String]:= With[
 	Block[{pause=0.001, msg},
 		SendAck[];
 		While[True,
-			msg = SocketReadByteArrayFunc[uuidIn, 1];
+			msg = SocketReadByteArrayFunc[uuidIn, 1 (* NOWAIT *)];
 			If[Length[msg]>3, 
 				socketEventHandler[msg[[4;;]]];
 				pause=minPause,
