@@ -3,17 +3,18 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import time
+from operator import itemgetter
 
 import aiohttp
-from wolframclient.serializers import export
+
 from wolframclient.cli.utils import SimpleCommand
 from wolframclient.evaluation import (WolframEvaluatorPool,
                                       WolframLanguageAsyncSession)
+from wolframclient.serializers import export
 from wolframclient.utils.asyncio import run_in_loop, wait_all
-from wolframclient.utils.functional import flatten, iterate
 from wolframclient.utils.encoding import force_text
+from wolframclient.utils.functional import iterate
 
-from operator import itemgetter
 
 class Command(SimpleCommand):
     """ Run test suites from the tests modules.
@@ -37,10 +38,7 @@ class Command(SimpleCommand):
             '--url',
             default='http://localhost:18000',
             help='Insert the url to stress.')
-        parser.add_argument(
-            '--format',
-            default=None
-        )
+        parser.add_argument('--format', default=None)
 
     async def consumer(self, queue, i):
         results = []
@@ -49,7 +47,11 @@ class Command(SimpleCommand):
                 t1 = time.time()
                 async with session.get(queue.pop()) as resp:
                     bytes_count = len(await resp.content.read())
-                    results.append({'time': time.time() - t1, 'bytes': bytes_count, 'success': resp.status == 200})
+                    results.append({
+                        'time': time.time() - t1,
+                        'bytes': bytes_count,
+                        'success': resp.status == 200
+                    })
 
         return results
 
@@ -103,11 +105,11 @@ class Command(SimpleCommand):
 
     def table_line(self, *iterable):
         self.print(*(force_text(c).ljust(self.col_size) for c in iterable))
-    
+
     def handle(self, format, **opts):
         data = self.create_data(**opts)
         if format:
-            self.print(export(dict(data), target_format = format))
+            self.print(export(dict(data), target_format=format))
         else:
             for k, v in data:
                 if isinstance(v, float):
