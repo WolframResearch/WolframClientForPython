@@ -46,6 +46,9 @@ class AIOHttpHTTPRequestAdapter(RequestsHTTPRequestAdapter):
 
     asynchronous = True
 
+    def status(self):
+        return self.response.status
+
     async def json(self):
         return await self.response.json()
 
