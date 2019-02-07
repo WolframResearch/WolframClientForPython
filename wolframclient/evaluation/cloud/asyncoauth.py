@@ -176,10 +176,6 @@ class XAuthAIOHttpAsyncSession(OAuthAIOHttpAsyncSessionBase):
             logger.debug('xauth authentication of user %s',
                          self.xauth_credentials.user)
         client = self.client_class(self.consumer_key, self.consumer_secret)
-        params = {}
-        params["x_auth_username"] = self.xauth_credentials.user
-        params["x_auth_password"] = self.xauth_credentials.password
-        params["x_auth_mode"] = "client_auth"
 
         # avoid dumping password in log files.
         logging.disable(logging.DEBUG)
@@ -188,7 +184,11 @@ class XAuthAIOHttpAsyncSession(OAuthAIOHttpAsyncSessionBase):
             self.server.access_token_endpoint,
             'POST',
             headers=self.DEFAULT_CONTENT_TYPE,
-            body=params)
+            body={
+                "x_auth_username": self.xauth_credentials.user,
+                "x_auth_password": self.xauth_credentials.password,
+                "x_auth_mode": "client_auth",
+            })
 
         logging.disable(logging.NOTSET)
 
