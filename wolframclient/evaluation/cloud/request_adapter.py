@@ -1,8 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-from aiohttp import ClientResponse
-from requests import Response
-
+from wolframclient.utils.api import aiohttp, requests
 from wolframclient.utils.encoding import force_text
 
 __all__ = ['wrap_response']
@@ -59,9 +57,9 @@ class AIOHttpHTTPRequestAdapter(RequestsHTTPRequestAdapter):
 
 
 def wrap_response(response):
-    if isinstance(response, Response):
+    if isinstance(response, requests.Response):
         return RequestsHTTPRequestAdapter(response)
-    elif isinstance(response, ClientResponse):
+    elif isinstance(response, aiohttp.ClientResponse):
         return AIOHttpHTTPRequestAdapter(response)
     else:
         raise ValueError(
