@@ -38,6 +38,7 @@ requests = API(
     post='requests.post',
     request='requests.request',
     Request='requests.Request',
+    Response='requests.Response',
     Session='requests.Session')
 
 oauth = API(
@@ -153,4 +154,12 @@ aiohttp = API(
     RouteTableDef='aiohttp.web.RouteTableDef',
     Application='aiohttp.web.Application',
     run_app='aiohttp.web.run_app',
+    BytesPayload='aiohttp.BytesPayload', 
+    ClientSession='aiohttp.ClientSession', 
+    FormData='aiohttp.FormData', 
+    StringPayload='aiohttp.StringPayload', 
+)
+
+ssl = API(
+    SSLContext='ssl.SSLContext',
 )
