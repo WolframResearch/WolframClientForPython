@@ -26,13 +26,13 @@ class OAuthRequestsSyncSessionBase(OAuthSessionBase):
                  consumer_key,
                  consumer_secret,
                  signature_method=None,
-                 client_class=oauth.Client):
+                 client_class=None):
         super().__init__(
             server,
             consumer_key,
             consumer_secret,
             signature_method=signature_method,
-            client_class=client_class)
+            client_class=client_class or oauth.Client)
         self.http_session = http_session
         self.verify = self.server.certificate
 
