@@ -1,0 +1,158 @@
+header.main-header {
+    height: 0px;
+    padding-top: 0px;
+}
+div.document {
+    top:4px;
+}
+
+div.body {
+    padding-left: 35px
+}
+
+div.document-header {
+    padding-top: 60px;
+    padding-bottom: 35px;
+}
+
+div.document-header div.header-content {
+    font-size: 2.5em;
+    display: table-row;
+}
+
+div.document-header div.left {
+    width: 80%;
+    margin-right:20%;
+    display:table-cell;
+}
+
+div.document-header div.right {
+    width: 20%;
+    display:table-cell;
+    vertical-align: middle
+}
+
+div.document-header div.right img.align-right {
+    margin-left:0;
+    max-width: 100%;
+    width: auto;
+}
+
+div.document-subheader {
+    font-size: 1.4em;
+    border-top: 1px solid #ccc;   
+    padding-top:15px;
+    padding-bottom:10px;
+}
+
+div.highlight-console pre {
+    background-color: #f2f2f2 !important;
+}
+div.highlight-console span.gp {
+    color : inherit !important;
+}
+
+h3 {
+    color: #3c3c3c; /* darkgrey */
+    font-weight: 700;
+    font-size: 1.5em;
+}
+
+.border-top {
+    border-top: 1px solid #ccc;
+}
+
+.bodyaligned {
+    margin-left : 15px;
+}
+
+div#source-code{
+    margin-top:10px;
+    font-size:1.4em;
+    
+}
+
+div#source-code svg {
+    vertical-align: text-bottom;
+    height: 30px;
+    width: 30px;
+}
+
+span#header-title-top {
+    font-size:1em;
+    color:#3c3c3c;
+    line-height:.6;
+}
+span#header-title-bottom {
+    font-size:1.2em;
+    color:#1667b2;
+}
+span#header-subtitle {
+    color: #9c9c9c;
+    font-size:.55em; 
+    font-weight:inherit; 
+    font-style:italic;
+}
+span#header-summary {
+    color: #7a7a7a;
+}
+div#install-lib{
+    color: #404040;
+    font-size: 1.3em;
+    font-weight: 700;
+    margin-top: 30px;
+}
+div#setup-session {
+    color: #7a7a7a;
+    font-weight: 700;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    margin-top: 50px;
+}
+
+div.code-label {
+    font-size: .9em;
+    font-style: italic;
+}
+div.subsection {
+    padding-top: 10px;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    margin-top: 50px;
+    font-size: 1.1em;
+    font-weight: 700;
+}
+
+/* div.annotated {
+    margin-bottom: 40px;
+    margin-top: 50px;
+} */
+
+div#letsyou-section {
+    color: #1667b2;
+    font-size: 1.85em;
+    margin-top: 70px;
+}
+
+div#wl-references-list ul{
+    list-style: none;
+    line-height:inherit;
+    position: relative;
+    top : -10px;
+    padding-left:0px;
+    height: 10px;
+}
+div#wl-references-list li {
+    float:left;
+    margin-left:0px;
+}
+
+div#wl-references-list a {
+    text-decoration:none;   
+}
+
+span.inlinebullet {
+    color : #adadad;
+    padding-left: 10px;
+    padding-right: 10px;
+}

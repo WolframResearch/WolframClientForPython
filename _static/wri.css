@@ -1,4 +1,5 @@
 /* Default theme css */
+@import url("mma.css");
 @import url("default.css");
 
 div.viewcode-block:target {
@@ -7,29 +8,118 @@ div.viewcode-block:target {
     border-bottom: 1px solid #d2cdba;
 }
 
-li.nav-item.nav-item-0 {
-    color: #cacaca;
-}
-
-div.related a {
-    color: #cacaca;
-    font-size: .9em;
-}
-
-li.right {
-    color: gray;
-}
 div.body {
     min-height: 600px;
+    padding-left: 50px;
 }
 
 body {
+    background-color: #efefef;
+}
+
+a {
+    color: #005c94;    
+}
+
+div.bodywrapper {
+    -webkit-overflow-scrolling: touch;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    margin-left: 250px;
+    height: 100%;
+    left: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: absolute;
+    right: 0;
+}
+
+
+header.main-header {
+    height: 80px;
+    top: 0;
+    padding-top: 15px;
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-bottom: 0px;
+    border-bottom: 4px solid #005c94;
+}
+
+header div.right {
+    float: right;
+    padding-top: 20px;
+    line-height: inherit;
+}
+header div.left {
+    float: left;
+}
+
+header.navigation {
+    height: 30px;
     background-color: #424242;
 }
 
-div.related {
-    background-color: #424242;
+div.related a {
+    font-size: .9em;
+    color:#005c94;
 }
+
+div.related.header.right ul li {
+    height: 32px;
+}
+div.related.header.right ul li span {
+    vertical-align: middle;
+}
+
+.vertical-align {
+    vertical-align: middle
+}
+
+span.header {
+    color: #005c94;
+    font-weight: 700;
+}
+a.header {
+    text-decoration: none;
+}
+
+div.header > h1 {
+    margin:0;
+    line-height: 1.1em
+}
+
+span.darkgrey {
+    color: #3c3c3c;
+}
+span.lightgrey {
+    color: #767676;
+}
+
+span.header.right.navigation {
+    margin-left : 5px;
+    margin-right: 5px;
+}
+
+span.reldelimiter {
+    color: #a5a5a5;
+}
+
+footer.copyright {
+    margin-top: 10px;
+    padding-left: 10px;
+}
+
+div.sphinxsidebar {
+    -webkit-overflow-scrolling: touch;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    bottom: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: absolute;
+    top: 0;
+    width: 250px;
+    margin : 0;
+}
+
 
 div.sphinxsidebar input {
     border: 1px solid #5d5d5d;
@@ -51,17 +141,27 @@ div.sphinxsidebar h3 a {
 }
 
 div.document {
-    background:linear-gradient(to right, #fff 0%,#fff 150px,#efefef 250px,#ffffff 250px,#ffffff 100%)  #eeeeee; 
+    background:linear-gradient(to right, #fff 0%,#fff 150px,#efefef 250px,#ffffff 250px,#ffffff 100%)  #eeeeee;
+    bottom: 0;
+    left: 0;
+    min-width: 320px;
+    position: absolute;
+    right: 0;
+    top:99px;
 }
+
 div.related {
-    background-color: #005c94;
+    background-color:inherit;
+    width: inherit;
 }
 div.sphinxsidebar ul {
     color: #bdbdbd;
+    margin:0;
 }
 div.sphinxsidebar a {
     color: #005c94;
     line-height: 1.35em;
+    display:block;
 }
 div.sphinxsidebar a:hover {
     color: #1c90d6;
@@ -92,9 +192,6 @@ input[type="submit"] {
 div.sphinxsidebar h3 a, div.sphinxsidebar h4 a {
     margin-left: 0px;
 }
-
-
-
 
 ul ul ul ul li, ul ul ul li {
     margin-top: 0px;
@@ -129,6 +226,18 @@ div.section ul.simple li {
     font-family: "Source Code Pro", Courier, monospace;
     background: rgb(252, 252, 252);
 }
+code.wlcode {
+    font-family: "Source Code Pro", Courier, monospace;
+    background: white;
+    font-size: 16px;
+}
+
+div.note code {
+    background: transparent;
+}
+div.note a.wl {
+    background: transparent;
+}
 
 .wl {
     font-family: "Source Code Pro", Courier, monospace;
@@ -161,7 +270,7 @@ div.body h1 {
     border-bottom: none;
     margin: 0px -20px 10px 15px;
     padding: 45px 0 3px 0px;
-    border-top: 1px solid #ccc;
+    /* border-top: 1px solid #ccc; */
     letter-spacing: -.02rem;
 }
 
@@ -268,15 +377,7 @@ div.body p, div.body dd, div.body li, div.body blockquote {
 }
 
 div.sphinxsidebarwrapper {
-    padding: 10px 5px 0 5px;
-}
-
-img.logo {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 15px;
-    margin-bottom: 15px;
+    padding: 10px 0 0 0;
 }
 
 
@@ -285,55 +386,41 @@ img.logo {
     font-weight: normal;
 }
 
-/* pygments custom CSS  */
-/* Selectors from https://github.com/rsmenon/pygments-mathematica 
-Color scheme from wolframcloud.com */
-
-/* Comment */
-.highlight-mathematica .highlight .c {
-    color: rgb(153, 153, 153);
-    font-style: italic;
+.toctree-l1 {
+    list-style: none;
+    margin-top:15px;
 }
 
-/*  Builtins */
-.highlight-wl .highlight .nb { 
-    color: black;
+div.sphinxsidebar ul ul {
+    padding-left: 10px;
 }
-/*  Messages (the "foo" in General::foo) */
-.highlight-wl .highlight .ne { 
-    color: #ab466a;
+
+.toctree-l1 a.reference.internal {
+    font-weight: 600;
+    padding-left: 10px;
 }
-/*  Slots */
-.highlight-wl .highlight .nf { 
-    color: rgb(67, 137, 88);
-    font-style: italic;
+
+.toctree-l2 a.reference.internal {
+   font-weight: 400;
+   padding-left: 0;
 }
-/*  Patterns */
-.highlight-wl .highlight .nt { 
-    color: rgb(67, 137, 88);
-    font-style: italic;
+
+
+div.sphinxsidebarwrapper a.reference.internal.current {
+    font-weight : 700;
+    background-color: #005c94;
+    color: white;
 }
-/*  Non-builtin symbols */
-.highlight-wl .highlight .nv { 
-    color: rgb(0, 44, 195);
+
+.toctree-l2 {
+    margin-top : 3px;
+    margin-bottom : 3px;
 }
-/*  Operators */
-.highlight-wl .highlight .o { 
-    color:black;
+
+th {
+    background-color: rgb(236, 240, 243);
 }
-/*  Groupings */
-.highlight-wl .highlight .p { 
-    color: black;
-}
-/*  Strings */
-.highlight-wl .highlight .s { 
-    color: rgb(102, 102, 102);
-}
-/*  Local scope variables */
-.highlight-wl .highlight .vc { 
-    color: rgb(67, 137, 88);
-}
-/*  Any unrecognized input that is not lexed correctly */
-.highlight-wl .highlight .err { 
-    color: black;
+
+.display-table-cell {
+    display: table-cell;
 }

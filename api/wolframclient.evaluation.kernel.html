@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.evaluation.kernel package &#8212; Wolfram Client Library for Python 1.0.0.dev3 documentation</title>
+    <title>wolframclient.evaluation.kernel package &#8212; Wolfram Client Library for Python 1.0.0.dev4 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -14,23 +14,57 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     
-    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css">
+    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css"/>
+    
  
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li> 
-      </ul>
-    </div>  
+    <header class='main-header'>
+        <div class='header-content'>
+        
+            <div class='logo header left'>
+                <h1>
+                <a class='header' href="../index.html">
+                    <span>
+                        <img class="logo align-left" 
+                            src="../_static/wolf-python-subpage.png"
+                            title="https://www.wolfram.com/"
+                            height="70"
+                        />
+                    </span>
+                    <span class='header'>
+                        <span class='header darkgrey' style='font-size:.8em;'>
+                            Wolfram Client Library
+                        </span>
+                        <br>
+                        <span style='font-size:1em;'>for Python</span>
+                    </span>
+                </a>
+                </h1>
+            </div>
+            <div class="related header right" role="navigation" aria-label="related navigation">
+                <ul>
+                        <li class="right" style="margin-right: 10px">
+                            <span class='header right navigation'><a href="../genindex.html" title="General Index"
+                            accesskey="I">
+                                index
+                        </a></span></li>
+                        <li class="right" >
+                            <span class='header right navigation'><a href="../py-modindex.html" title="Python Module Index"
+                            >
+                                modules
+                        </a></span><span class='reldelimiter'>|</span></li>
+                    <li class="right">
+                        <span class='header right navigation darkgrey'>v 1.0.0.dev4</span>
+                        <span class='reldelimiter'>|</span>
+                    </li>
+                </ul>
+            </div>
+        
+        </div>
+    </header>
+  
 
     <div class="document">
       <div class="documentwrapper">
@@ -46,12 +80,12 @@
 <span id="wolframclient-evaluation-kernel-asyncsession-module"></span><h2>wolframclient.evaluation.kernel.asyncsession module<a class="headerlink" href="#module-wolframclient.evaluation.kernel.asyncsession" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="wolframclient.evaluation.kernel.asyncsession.WolframLanguageAsyncSession">
-<em class="property">class </em><code class="descclassname">wolframclient.evaluation.kernel.asyncsession.</code><code class="descname">WolframLanguageAsyncSession</code><span class="sig-paren">(</span><em>kernel</em>, <em>consumer=None</em>, <em>loop=None</em>, <em>initfile=None</em>, <em>in_socket=None</em>, <em>out_socket=None</em>, <em>kernel_loglevel=0</em>, <em>stdin=-1</em>, <em>stdout=-1</em>, <em>stderr=-1</em>, <em>inputform_string_evaluation=True</em>, <em>wxf_bytes_evaluation=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.asyncsession.WolframLanguageAsyncSession" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">wolframclient.evaluation.kernel.asyncsession.</code><code class="descname">WolframLanguageAsyncSession</code><span class="sig-paren">(</span><em>kernel=None</em>, <em>consumer=None</em>, <em>loop=None</em>, <em>initfile=None</em>, <em>in_socket=None</em>, <em>out_socket=None</em>, <em>kernel_loglevel=0</em>, <em>stdin=-1</em>, <em>stdout=-1</em>, <em>stderr=-1</em>, <em>inputform_string_evaluation=True</em>, <em>wxf_bytes_evaluation=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.asyncsession.WolframLanguageAsyncSession" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession" title="wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession</span></code></a>, <a class="reference internal" href="wolframclient.evaluation.html#wolframclient.evaluation.base.WolframAsyncEvaluator" title="wolframclient.evaluation.base.WolframAsyncEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.evaluation.base.WolframAsyncEvaluator</span></code></a></p>
 <p>Evaluate expressions asynchronously using coroutines.</p>
 <p>Asynchronous evaluations are provided through coroutines and the <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> modules.</p>
 <p>Instances of this class can be managed with an asynchronous context manager:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">with</span> <span class="n">WolframLanguageAsyncSession</span><span class="p">(</span><span class="n">kernelpath</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">with</span> <span class="n">WolframLanguageAsyncSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
     <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;Now&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -68,6 +102,11 @@ complexity of the code without any real drawback.</p>
 <code class="descname">duplicate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession.duplicate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.asyncsession.WolframLanguageAsyncSession.duplicate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build a new object using the same configuration as the current one.</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.evaluation.kernel.asyncsession.WolframLanguageAsyncSession.ensure_started">
+<code class="descname">ensure_started</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession.ensure_started"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.asyncsession.WolframLanguageAsyncSession.ensure_started" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="wolframclient.evaluation.kernel.asyncsession.WolframLanguageAsyncSession.evaluate">
@@ -119,7 +158,7 @@ asynchronously.</p>
 <span id="wolframclient-evaluation-kernel-futuresession-module"></span><h2>wolframclient.evaluation.kernel.futuresession module<a class="headerlink" href="#module-wolframclient.evaluation.kernel.futuresession" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="wolframclient.evaluation.kernel.futuresession.WolframLanguageFutureSession">
-<em class="property">class </em><code class="descclassname">wolframclient.evaluation.kernel.futuresession.</code><code class="descname">WolframLanguageFutureSession</code><span class="sig-paren">(</span><em>kernel</em>, <em>consumer=None</em>, <em>initfile=None</em>, <em>in_socket=None</em>, <em>out_socket=None</em>, <em>kernel_loglevel=0</em>, <em>stdin=-1</em>, <em>stdout=-1</em>, <em>stderr=-1</em>, <em>inputform_string_evaluation=True</em>, <em>wxf_bytes_evaluation=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/futuresession.html#WolframLanguageFutureSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.futuresession.WolframLanguageFutureSession" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">wolframclient.evaluation.kernel.futuresession.</code><code class="descname">WolframLanguageFutureSession</code><span class="sig-paren">(</span><em>kernel=None</em>, <em>consumer=None</em>, <em>initfile=None</em>, <em>in_socket=None</em>, <em>out_socket=None</em>, <em>kernel_loglevel=0</em>, <em>stdin=-1</em>, <em>stdout=-1</em>, <em>stderr=-1</em>, <em>inputform_string_evaluation=True</em>, <em>wxf_bytes_evaluation=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/futuresession.html#WolframLanguageFutureSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.futuresession.WolframLanguageFutureSession" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession" title="wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession</span></code></a></p>
 <p>Evaluate expressions asynchronously and return Future instances.</p>
 <p>Asynchronous evaluations are backed by the <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#module-concurrent.futures" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">concurrent.futures</span></code></a> module, especially the <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> class.</p>
@@ -160,13 +199,23 @@ asynchronously and return a <a class="reference external" href="https://docs.pyt
 <span id="wolframclient-evaluation-kernel-kernelsession-module"></span><h2>wolframclient.evaluation.kernel.kernelsession module<a class="headerlink" href="#module-wolframclient.evaluation.kernel.kernelsession" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession">
-<em class="property">class </em><code class="descclassname">wolframclient.evaluation.kernel.kernelsession.</code><code class="descname">WolframLanguageSession</code><span class="sig-paren">(</span><em>kernel</em>, <em>consumer=None</em>, <em>initfile=None</em>, <em>in_socket=None</em>, <em>out_socket=None</em>, <em>kernel_loglevel=0</em>, <em>stdin=-1</em>, <em>stdout=-1</em>, <em>stderr=-1</em>, <em>inputform_string_evaluation=True</em>, <em>wxf_bytes_evaluation=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">wolframclient.evaluation.kernel.kernelsession.</code><code class="descname">WolframLanguageSession</code><span class="sig-paren">(</span><em>kernel=None</em>, <em>consumer=None</em>, <em>initfile=None</em>, <em>in_socket=None</em>, <em>out_socket=None</em>, <em>kernel_loglevel=0</em>, <em>stdin=-1</em>, <em>stdout=-1</em>, <em>stderr=-1</em>, <em>inputform_string_evaluation=True</em>, <em>wxf_bytes_evaluation=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="wolframclient.evaluation.html#wolframclient.evaluation.base.WolframEvaluator" title="wolframclient.evaluation.base.WolframEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.evaluation.base.WolframEvaluator</span></code></a></p>
 <p>A session to a Wolfram Kernel enabling evaluation of Wolfram Language expressions.</p>
 <p>Start a new session and send an expression for evaluation:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">kernel</span> <span class="o">=</span> <span class="s1">&#39;/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel&#39;</span>
-<span class="k">with</span> <span class="n">WolframLanguageSession</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">WolframLanguageSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
     <span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;Range[3]&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When <cite>consumer</cite> is set to a <a class="reference internal" href="wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumer" title="wolframclient.deserializers.WXFConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumer</span></code></a> instance,
+this instance is passed to <a class="reference internal" href="wolframclient.deserializers.html#wolframclient.deserializers.binary_deserialize" title="wolframclient.deserializers.binary_deserialize"><code class="xref py py-func docutils literal notranslate"><span class="pre">binary_deserialize()</span></code></a> when
+deserializing the WXF output.</p>
+<p>By default packed arrays are deserialized as <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>. Specify a consumer instance
+that supports NumPy arrays <a class="reference internal" href="wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumerNumpy" title="wolframclient.deserializers.WXFConsumerNumpy"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumerNumpy</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">wolframclient.deserializers</span> <span class="k">import</span> <span class="n">WXFConsumerNumpy</span>
+
+<span class="k">with</span> <span class="n">WolframLanguageSession</span><span class="p">(</span><span class="n">consumer</span><span class="o">=</span><span class="n">WXFConsumerNumpy</span><span class="p">())</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="n">numpy_array</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;Range[3]&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Communication with a given kernel is based on ZMQ sockets:</p>
@@ -199,10 +248,26 @@ with care as deadlocks can arise from misconfiguration.</p>
 <p class="last">Wolfram Language sessions are <strong>not thread-safe</strong>, each thread must run its own instance.</p>
 </div>
 <dl class="method">
+<dt id="wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.default_kernel_path">
+<code class="descname">default_kernel_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession.default_kernel_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.default_kernel_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.do_evaluate">
+<code class="descname">do_evaluate</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession.do_evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.do_evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send an expression to the kernel for evaluation. Return a <a class="reference internal" href="wolframclient.evaluation.html#wolframclient.evaluation.result.WolframKernelEvaluationResult" title="wolframclient.evaluation.result.WolframKernelEvaluationResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframKernelEvaluationResult</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.duplicate">
 <code class="descname">duplicate</code><span class="sig-paren">(</span><em>session</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession.duplicate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.duplicate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build a new object using the same configuration as the current one.</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.ensure_started">
+<code class="descname">ensure_started</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession.ensure_started"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.ensure_started" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate">
@@ -235,6 +300,11 @@ with care as deadlocks can arise from misconfiguration.</p>
 <li><code class="docutils literal notranslate"><span class="pre">'TERMINATE_READ_TIMEOUT'</span></code>: time to wait, in seconds, after the <code class="docutils literal notranslate"><span class="pre">Quit[]</span></code> command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.</li>
 </ul>
 </dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.log_message_from_result">
+<code class="descname">log_message_from_result</code><span class="sig-paren">(</span><em>result</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession.log_message_from_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.log_message_from_result" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.pid">
@@ -285,13 +355,23 @@ with care as deadlocks can arise from misconfiguration.</p>
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-wolframclient.evaluation.kernel" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="wolframclient.evaluation.kernel.WolframLanguageSession">
-<em class="property">class </em><code class="descclassname">wolframclient.evaluation.kernel.</code><code class="descname">WolframLanguageSession</code><span class="sig-paren">(</span><em>kernel</em>, <em>consumer=None</em>, <em>initfile=None</em>, <em>in_socket=None</em>, <em>out_socket=None</em>, <em>kernel_loglevel=0</em>, <em>stdin=-1</em>, <em>stdout=-1</em>, <em>stderr=-1</em>, <em>inputform_string_evaluation=True</em>, <em>wxf_bytes_evaluation=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.WolframLanguageSession" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">wolframclient.evaluation.kernel.</code><code class="descname">WolframLanguageSession</code><span class="sig-paren">(</span><em>kernel=None</em>, <em>consumer=None</em>, <em>initfile=None</em>, <em>in_socket=None</em>, <em>out_socket=None</em>, <em>kernel_loglevel=0</em>, <em>stdin=-1</em>, <em>stdout=-1</em>, <em>stderr=-1</em>, <em>inputform_string_evaluation=True</em>, <em>wxf_bytes_evaluation=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.WolframLanguageSession" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="wolframclient.evaluation.html#wolframclient.evaluation.base.WolframEvaluator" title="wolframclient.evaluation.base.WolframEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.evaluation.base.WolframEvaluator</span></code></a></p>
 <p>A session to a Wolfram Kernel enabling evaluation of Wolfram Language expressions.</p>
 <p>Start a new session and send an expression for evaluation:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">kernel</span> <span class="o">=</span> <span class="s1">&#39;/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel&#39;</span>
-<span class="k">with</span> <span class="n">WolframLanguageSession</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">WolframLanguageSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
     <span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;Range[3]&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When <cite>consumer</cite> is set to a <a class="reference internal" href="wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumer" title="wolframclient.deserializers.WXFConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumer</span></code></a> instance,
+this instance is passed to <a class="reference internal" href="wolframclient.deserializers.html#wolframclient.deserializers.binary_deserialize" title="wolframclient.deserializers.binary_deserialize"><code class="xref py py-func docutils literal notranslate"><span class="pre">binary_deserialize()</span></code></a> when
+deserializing the WXF output.</p>
+<p>By default packed arrays are deserialized as <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>. Specify a consumer instance
+that supports NumPy arrays <a class="reference internal" href="wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumerNumpy" title="wolframclient.deserializers.WXFConsumerNumpy"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumerNumpy</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">wolframclient.deserializers</span> <span class="k">import</span> <span class="n">WXFConsumerNumpy</span>
+
+<span class="k">with</span> <span class="n">WolframLanguageSession</span><span class="p">(</span><span class="n">consumer</span><span class="o">=</span><span class="n">WXFConsumerNumpy</span><span class="p">())</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="n">numpy_array</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;Range[3]&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Communication with a given kernel is based on ZMQ sockets:</p>
@@ -324,10 +404,26 @@ with care as deadlocks can arise from misconfiguration.</p>
 <p class="last">Wolfram Language sessions are <strong>not thread-safe</strong>, each thread must run its own instance.</p>
 </div>
 <dl class="method">
+<dt id="wolframclient.evaluation.kernel.WolframLanguageSession.default_kernel_path">
+<code class="descname">default_kernel_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession.default_kernel_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.WolframLanguageSession.default_kernel_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.evaluation.kernel.WolframLanguageSession.do_evaluate">
+<code class="descname">do_evaluate</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession.do_evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.WolframLanguageSession.do_evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send an expression to the kernel for evaluation. Return a <a class="reference internal" href="wolframclient.evaluation.html#wolframclient.evaluation.result.WolframKernelEvaluationResult" title="wolframclient.evaluation.result.WolframKernelEvaluationResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframKernelEvaluationResult</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="wolframclient.evaluation.kernel.WolframLanguageSession.duplicate">
 <code class="descname">duplicate</code><span class="sig-paren">(</span><em>session</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession.duplicate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.WolframLanguageSession.duplicate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build a new object using the same configuration as the current one.</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.evaluation.kernel.WolframLanguageSession.ensure_started">
+<code class="descname">ensure_started</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession.ensure_started"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.WolframLanguageSession.ensure_started" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="wolframclient.evaluation.kernel.WolframLanguageSession.evaluate">
@@ -360,6 +456,11 @@ with care as deadlocks can arise from misconfiguration.</p>
 <li><code class="docutils literal notranslate"><span class="pre">'TERMINATE_READ_TIMEOUT'</span></code>: time to wait, in seconds, after the <code class="docutils literal notranslate"><span class="pre">Quit[]</span></code> command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.</li>
 </ul>
 </dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.evaluation.kernel.WolframLanguageSession.log_message_from_result">
+<code class="descname">log_message_from_result</code><span class="sig-paren">(</span><em>result</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession.log_message_from_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.WolframLanguageSession.log_message_from_result" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="wolframclient.evaluation.kernel.WolframLanguageSession.pid">
@@ -407,7 +508,7 @@ with care as deadlocks can arise from misconfiguration.</p>
 
 <dl class="class">
 <dt id="wolframclient.evaluation.kernel.WolframLanguageFutureSession">
-<em class="property">class </em><code class="descclassname">wolframclient.evaluation.kernel.</code><code class="descname">WolframLanguageFutureSession</code><span class="sig-paren">(</span><em>kernel</em>, <em>consumer=None</em>, <em>initfile=None</em>, <em>in_socket=None</em>, <em>out_socket=None</em>, <em>kernel_loglevel=0</em>, <em>stdin=-1</em>, <em>stdout=-1</em>, <em>stderr=-1</em>, <em>inputform_string_evaluation=True</em>, <em>wxf_bytes_evaluation=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/futuresession.html#WolframLanguageFutureSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.WolframLanguageFutureSession" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">wolframclient.evaluation.kernel.</code><code class="descname">WolframLanguageFutureSession</code><span class="sig-paren">(</span><em>kernel=None</em>, <em>consumer=None</em>, <em>initfile=None</em>, <em>in_socket=None</em>, <em>out_socket=None</em>, <em>kernel_loglevel=0</em>, <em>stdin=-1</em>, <em>stdout=-1</em>, <em>stderr=-1</em>, <em>inputform_string_evaluation=True</em>, <em>wxf_bytes_evaluation=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/futuresession.html#WolframLanguageFutureSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.WolframLanguageFutureSession" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession" title="wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession</span></code></a></p>
 <p>Evaluate expressions asynchronously and return Future instances.</p>
 <p>Asynchronous evaluations are backed by the <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#module-concurrent.futures" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">concurrent.futures</span></code></a> module, especially the <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> class.</p>
@@ -445,12 +546,12 @@ asynchronously and return a <a class="reference external" href="https://docs.pyt
 
 <dl class="class">
 <dt id="wolframclient.evaluation.kernel.WolframLanguageAsyncSession">
-<em class="property">class </em><code class="descclassname">wolframclient.evaluation.kernel.</code><code class="descname">WolframLanguageAsyncSession</code><span class="sig-paren">(</span><em>kernel</em>, <em>consumer=None</em>, <em>loop=None</em>, <em>initfile=None</em>, <em>in_socket=None</em>, <em>out_socket=None</em>, <em>kernel_loglevel=0</em>, <em>stdin=-1</em>, <em>stdout=-1</em>, <em>stderr=-1</em>, <em>inputform_string_evaluation=True</em>, <em>wxf_bytes_evaluation=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.WolframLanguageAsyncSession" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">wolframclient.evaluation.kernel.</code><code class="descname">WolframLanguageAsyncSession</code><span class="sig-paren">(</span><em>kernel=None</em>, <em>consumer=None</em>, <em>loop=None</em>, <em>initfile=None</em>, <em>in_socket=None</em>, <em>out_socket=None</em>, <em>kernel_loglevel=0</em>, <em>stdin=-1</em>, <em>stdout=-1</em>, <em>stderr=-1</em>, <em>inputform_string_evaluation=True</em>, <em>wxf_bytes_evaluation=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.WolframLanguageAsyncSession" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession" title="wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession</span></code></a>, <a class="reference internal" href="wolframclient.evaluation.html#wolframclient.evaluation.base.WolframAsyncEvaluator" title="wolframclient.evaluation.base.WolframAsyncEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.evaluation.base.WolframAsyncEvaluator</span></code></a></p>
 <p>Evaluate expressions asynchronously using coroutines.</p>
 <p>Asynchronous evaluations are provided through coroutines and the <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> modules.</p>
 <p>Instances of this class can be managed with an asynchronous context manager:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">with</span> <span class="n">WolframLanguageAsyncSession</span><span class="p">(</span><span class="n">kernelpath</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">with</span> <span class="n">WolframLanguageAsyncSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
     <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;Now&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -467,6 +568,11 @@ complexity of the code without any real drawback.</p>
 <code class="descname">duplicate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession.duplicate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.WolframLanguageAsyncSession.duplicate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build a new object using the same configuration as the current one.</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="wolframclient.evaluation.kernel.WolframLanguageAsyncSession.ensure_started">
+<code class="descname">ensure_started</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession.ensure_started"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.kernel.WolframLanguageAsyncSession.ensure_started" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="wolframclient.evaluation.kernel.WolframLanguageAsyncSession.evaluate">
@@ -521,32 +627,41 @@ asynchronously.</p>
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-
-    <a href="../index.html">
-        <img class="logo" src="../_static/python-client-library-logo.png" title="https://www.wolfram.com/" />
-    </a>
-
-
-  <h3><a href="../index.html">Table of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">wolframclient.evaluation.kernel package</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-wolframclient.evaluation.kernel.asyncsession">wolframclient.evaluation.kernel.asyncsession module</a></li>
-<li><a class="reference internal" href="#module-wolframclient.evaluation.kernel.futuresession">wolframclient.evaluation.kernel.futuresession module</a></li>
-<li><a class="reference internal" href="#module-wolframclient.evaluation.kernel.kernelsession">wolframclient.evaluation.kernel.kernelsession module</a></li>
-<li><a class="reference internal" href="#module-wolframclient.evaluation.kernel">Module contents</a></li>
+        <div class="sphinxsidebarwrapper"><div class='overview toctree-l1'>
+    <a class="reference internal  api/wolframclient.evaluation.kernel" 
+        href="../docpages/overview.html">Overview</a>
+</div>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../docpages/install.html">Installation and prerequisites</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../docpages/install.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docpages/install.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../docpages/basic_usages.html">Basic Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../docpages/basic_usages.html#expression-representation">Expression Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docpages/basic_usages.html#evaluating-expressions">Evaluating Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docpages/basic_usages.html#wolfram-cloud-interactions">Wolfram Cloud Interactions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docpages/basic_usages.html#serialization">Serialization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../docpages/advanced_usages.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../docpages/advanced_usages.html#expression-representation">Expression Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docpages/advanced_usages.html#local-kernel-evaluation">Local Kernel Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docpages/advanced_usages.html#extending-serialization-writing-an-encoder">Extending serialization: Writing an Encoder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docpages/advanced_usages.html#extending-wxf-parsing-writing-a-wxfconsumer">Extending WXF Parsing: Writing a WXFConsumer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../docpages/public_api.html">Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../docpages/public_api.html#expression-representation">Expression Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docpages/public_api.html#serialization">Serialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docpages/public_api.html#deserialization">Deserialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docpages/public_api.html#evaluating-expressions">Evaluating Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docpages/public_api.html#cloud-api">Cloud API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../docpages/public_api.html#exceptions">Exceptions</a></li>
 </ul>
 </li>
 </ul>
 
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/api/wolframclient.evaluation.kernel.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <div class="searchformwrapper">
@@ -558,26 +673,16 @@ asynchronously.</p>
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script><footer class='copyright'>
+    <div>
+        <span>&#169; Copyright 2019, Wolfram Research.</span>
+    </div>
+</footer>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Wolfram Research.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
-    </div>
+
+
   </body>
 </html>

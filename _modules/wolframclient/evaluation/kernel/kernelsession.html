@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.evaluation.kernel.kernelsession &#8212; Wolfram Client Library for Python 1.0.0.dev3 documentation</title>
+    <title>wolframclient.evaluation.kernel.kernelsession &#8212; Wolfram Client Library for Python 1.0.0.dev4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -14,24 +14,57 @@
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
     
-    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css">
+    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css"/>
+    
  
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../../../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../../../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
-      </ul>
-    </div>  
+    <header class='main-header'>
+        <div class='header-content'>
+        
+            <div class='logo header left'>
+                <h1>
+                <a class='header' href="../../../../index.html">
+                    <span>
+                        <img class="logo align-left" 
+                            src="../../../../_static/wolf-python-subpage.png"
+                            title="https://www.wolfram.com/"
+                            height="70"
+                        />
+                    </span>
+                    <span class='header'>
+                        <span class='header darkgrey' style='font-size:.8em;'>
+                            Wolfram Client Library
+                        </span>
+                        <br>
+                        <span style='font-size:1em;'>for Python</span>
+                    </span>
+                </a>
+                </h1>
+            </div>
+            <div class="related header right" role="navigation" aria-label="related navigation">
+                <ul>
+                        <li class="right" style="margin-right: 10px">
+                            <span class='header right navigation'><a href="../../../../genindex.html" title="General Index"
+                            accesskey="I">
+                                index
+                        </a></span></li>
+                        <li class="right" >
+                            <span class='header right navigation'><a href="../../../../py-modindex.html" title="Python Module Index"
+                            >
+                                modules
+                        </a></span><span class='reldelimiter'>|</span></li>
+                    <li class="right">
+                        <span class='header right navigation darkgrey'>v 1.0.0.dev4</span>
+                        <span class='reldelimiter'>|</span>
+                    </li>
+                </ul>
+            </div>
+        
+        </div>
+    </header>
+  
 
     <div class="document">
       <div class="documentwrapper">
@@ -69,6 +102,56 @@
     <span class="mi">4</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">FATAL</span>
 <span class="p">}</span>
 <span class="n">FROM_PY_LOG_LEVEL</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">v</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">TO_PY_LOG_LEVEL</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+
+
+<span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">WINDOWS</span> <span class="ow">or</span> <span class="n">six</span><span class="o">.</span><span class="n">LINUX</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">WINDOWS</span><span class="p">:</span>
+        <span class="n">APP_ROOT_PATH</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;C:</span><span class="se">\\</span><span class="s1">Program Files</span><span class="se">\\</span><span class="s1">Wolfram Research</span><span class="se">\\</span><span class="s1">Wolfram Desktop</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;C:</span><span class="se">\\</span><span class="s1">Program Files</span><span class="se">\\</span><span class="s1">Wolfram Research</span><span class="se">\\</span><span class="s1">Mathematica</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="n">EXE_REL_PATH</span> <span class="o">=</span> <span class="s1">&#39;wolfram.exe&#39;</span>
+    <span class="k">elif</span> <span class="n">six</span><span class="o">.</span><span class="n">LINUX</span><span class="p">:</span>
+        <span class="n">APP_ROOT_PATH</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;/usr/local/Wolfram/Desktop/&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;/usr/local/Wolfram/Mathematica/&#39;</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="n">EXE_REL_PATH</span> <span class="o">=</span> <span class="s1">&#39;/Files/Executables/wolfram&#39;</span>
+
+    <span class="k">def</span> <span class="nf">find_default_kernel_path</span><span class="p">():</span>
+        <span class="n">highest_version</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">best_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">root</span> <span class="ow">in</span> <span class="n">APP_ROOT_PATH</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">version</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+                    <span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path_join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">full_path</span><span class="p">):</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">v_num</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                        <span class="k">if</span> <span class="n">v_num</span> <span class="o">&gt;</span> <span class="n">highest_version</span><span class="p">:</span>
+                            <span class="n">highest_version</span> <span class="o">=</span> <span class="n">v_num</span>
+                            <span class="n">best_path</span> <span class="o">=</span> <span class="n">full_path</span>
+        <span class="k">if</span> <span class="n">highest_version</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path_join</span><span class="p">(</span><span class="n">best_path</span><span class="p">,</span> <span class="n">EXE_REL_PATH</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+<span class="k">elif</span> <span class="n">six</span><span class="o">.</span><span class="n">MACOS</span><span class="p">:</span>
+    <span class="n">DEFAULT_PATHS</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;/Applications/Mathematica.app/Contents/MacOS/WolframKernel&#39;</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="k">def</span> <span class="nf">find_default_kernel_path</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">DEFAULT_PATHS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">path</span>
+        <span class="k">return</span> <span class="kc">None</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">find_default_kernel_path</span><span class="p">():</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+<span class="n">find_default_kernel_path</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot; Look for the most recent installed kernel. &quot;&quot;&quot;</span>
 
 
 <span class="k">class</span> <span class="nc">KernelLogger</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
@@ -127,14 +210,25 @@
                 <span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s1">&#39;Failed to close ZMQ logging socket.&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="WolframLanguageSession"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession">[docs]</a><span class="k">class</span> <span class="nc">WolframLanguageSession</span><span class="p">(</span><span class="n">WolframEvaluator</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession">[docs]</a><span class="k">class</span> <span class="nc">WolframLanguageSession</span><span class="p">(</span><span class="n">WolframEvaluator</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A session to a Wolfram Kernel enabling evaluation of Wolfram Language expressions.</span>
 
 <span class="sd">    Start a new session and send an expression for evaluation::</span>
 
-<span class="sd">        kernel = &#39;/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel&#39;</span>
-<span class="sd">        with WolframLanguageSession(kernel) as session:</span>
+<span class="sd">        with WolframLanguageSession() as session:</span>
 <span class="sd">            session.evaluate(&#39;Range[3]&#39;)</span>
+
+<span class="sd">    When `consumer` is set to a :class:`~wolframclient.deserializers.WXFConsumer` instance,</span>
+<span class="sd">    this instance is passed to :func:`~wolframclient.deserializers.binary_deserialize` when</span>
+<span class="sd">    deserializing the WXF output. </span>
+<span class="sd">    </span>
+<span class="sd">    By default packed arrays are deserialized as :class:`list`. Specify a consumer instance</span>
+<span class="sd">    that supports NumPy arrays :class:`~wolframclient.deserializers.WXFConsumerNumpy`::</span>
+
+<span class="sd">        from wolframclient.deserializers import WXFConsumerNumpy</span>
+
+<span class="sd">        with WolframLanguageSession(consumer=WXFConsumerNumpy()) as session:</span>
+<span class="sd">            numpy_array = session.evaluate(&#39;Range[3]&#39;)</span>
 
 <span class="sd">    Communication with a given kernel is based on ZMQ sockets:</span>
 
@@ -169,7 +263,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">kernel</span><span class="p">,</span>
+                 <span class="n">kernel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">consumer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">initfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">in_socket</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -183,6 +277,8 @@
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">inputform_string_evaluation</span><span class="o">=</span><span class="n">inputform_string_evaluation</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kernel</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_kernel_path</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">kernel</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="n">WolframKernelException</span><span class="p">(</span>
@@ -228,7 +324,7 @@
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
-<div class="viewcode-block" id="WolframLanguageSession.duplicate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.duplicate">[docs]</a>    <span class="k">def</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.duplicate"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.duplicate">[docs]</a>    <span class="k">def</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Build a new object using the same configuration as the current one. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">WolframLanguageSession</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">,</span>
@@ -251,7 +347,7 @@
         <span class="s1">&#39;HIDE_SUBPROCESS_WINDOW&#39;</span><span class="p">:</span> <span class="kc">True</span>
     <span class="p">}</span>
 
-<div class="viewcode-block" id="WolframLanguageSession.get_parameter"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.get_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.get_parameter"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.get_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the value of a given session parameter.</span>
 
 <span class="sd">        Session parameters are:</span>
@@ -268,7 +364,7 @@
                 <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> is not one of the valid parameters: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
                 <span class="p">(</span><span class="n">parameter_name</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_PARAMETERS</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span></div>
 
-<div class="viewcode-block" id="WolframLanguageSession.set_parameter"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.set_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter_value</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.set_parameter"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.set_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter_value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set a new value for a given parameter. The new value only applies for this session.</span>
 
 <span class="sd">        Session parameters are:</span>
@@ -283,11 +379,11 @@
                 <span class="p">(</span><span class="n">parameter_name</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_PARAMETERS</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameter_value</span></div>
 
-<div class="viewcode-block" id="WolframLanguageSession.terminate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.terminate">[docs]</a>    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.terminate"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.terminate">[docs]</a>    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Immediately stop the current session.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">(</span><span class="n">gracefully</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="WolframLanguageSession.stop"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.stop"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">(</span><span class="n">gracefully</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gracefully</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -387,7 +483,7 @@
                 <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_socket</span><span class="o">.</span><span class="n">bound</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_socket</span>
                 <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_socket</span><span class="o">.</span><span class="n">bound</span><span class="p">)</span>
 
-<div class="viewcode-block" id="WolframLanguageSession.start"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.start"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -481,11 +577,11 @@
                 <span class="s1">&#39;Failed to communicate with the kernel </span><span class="si">%s</span><span class="s1">. Could not read from ZMQ socket.&#39;</span>
                 <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_ensure_started</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.ensure_started"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageSession.ensure_started">[docs]</a>    <span class="k">def</span> <span class="nf">ensure_started</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">()</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">pid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -495,11 +591,14 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_evaluate_ensure_started</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ensure_started</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_evaluate</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="WolframLanguageSession.do_evaluate"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.do_evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">do_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Send an expression to the kernel for evaluation. Return a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_started</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">)</span>
         <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wxf_bytes_evaluation</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">binary_type</span><span class="p">):</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">expr</span>
@@ -531,34 +630,41 @@
                          <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">evaluation_count</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">WolframKernelEvaluationResult</span><span class="p">(</span>
-            <span class="n">wxf_result</span><span class="p">,</span> <span class="n">errmsg</span><span class="p">,</span> <span class="n">consumer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="p">)</span>
+            <span class="n">wxf_result</span><span class="p">,</span> <span class="n">errmsg</span><span class="p">,</span> <span class="n">consumer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="WolframLanguageSession.evaluate_wxf"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wxf">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Send an expression to the kernel for evaluation and return the raw result still encoded as WXF.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="viewcode-block" id="WolframLanguageSession.log_message_from_result"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageSession.log_message_from_result">[docs]</a>    <span class="k">def</span> <span class="nf">log_message_from_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">messages</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="WolframLanguageSession.evaluate_wxf"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wxf">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send an expression to the kernel for evaluation and return the raw result still encoded as WXF.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_ensure_started</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_message_from_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">wxf</span></div>
 
-<div class="viewcode-block" id="WolframLanguageSession.evaluate_wrap"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wrap">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.evaluate_wrap"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wrap">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Similar to :func:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_ensure_started</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="WolframLanguageSession.evaluate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.evaluate"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Send an expression to the kernel for evaluation.</span>
 
 <span class="sd">        The `expr` is an instance of a Python object serializable as WXF by :func:`~wolframclient.serializers.export`.</span>
 
 <span class="sd">        `kwargs` are passed to :func:`~wolframclient.serializers.export`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">messages</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_ensure_started</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_message_from_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="WolframLanguageSession.default_kernel_path"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageSession.default_kernel_path">[docs]</a>    <span class="k">def</span> <span class="nf">default_kernel_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">find_default_kernel_path</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">:</span>
@@ -645,12 +751,40 @@
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-
-    <a href="../../../../index.html">
-        <img class="logo" src="../../../../_static/python-client-library-logo.png" title="https://www.wolfram.com/" />
-    </a>
-
+        <div class="sphinxsidebarwrapper"><div class='overview toctree-l1'>
+    <a class="reference internal  _modules/wolframclient/evaluation/kernel/kernelsession" 
+        href="../../../../docpages/overview.html">Overview</a>
+</div>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docpages/install.html">Installation and prerequisites</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/install.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/install.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docpages/basic_usages.html">Basic Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#expression-representation">Expression Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#evaluating-expressions">Evaluating Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#wolfram-cloud-interactions">Wolfram Cloud Interactions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#serialization">Serialization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docpages/advanced_usages.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/advanced_usages.html#expression-representation">Expression Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/advanced_usages.html#local-kernel-evaluation">Local Kernel Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/advanced_usages.html#extending-serialization-writing-an-encoder">Extending serialization: Writing an Encoder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/advanced_usages.html#extending-wxf-parsing-writing-a-wxfconsumer">Extending WXF Parsing: Writing a WXFConsumer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docpages/public_api.html">Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/public_api.html#expression-representation">Expression Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/public_api.html#serialization">Serialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/public_api.html#deserialization">Deserialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/public_api.html#evaluating-expressions">Evaluating Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/public_api.html#cloud-api">Cloud API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/public_api.html#exceptions">Exceptions</a></li>
+</ul>
+</li>
+</ul>
 
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
@@ -663,27 +797,16 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script><footer class='copyright'>
+    <div>
+        <span>&#169; Copyright 2019, Wolfram Research.</span>
+    </div>
+</footer>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../../../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../../../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Wolfram Research.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
-    </div>
+
+
   </body>
 </html>

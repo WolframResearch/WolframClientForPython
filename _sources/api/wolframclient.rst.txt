@@ -16,6 +16,14 @@ Subpackages
 Submodules
 ----------
 
+wolframclient.about module
+--------------------------
+
+.. automodule:: wolframclient.about
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 wolframclient.exception module
 ------------------------------
 

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Wolfram Client Library for Python’s Documentation &#8212; Wolfram Client Library for Python 1.0.0.dev3 documentation</title>
+    <title>Wolfram Client Library for Python &#8212; Wolfram Client Library for Python 1.0.0.dev4 documentation</title>
     <link rel="stylesheet" href="_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -14,168 +14,187 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     
-    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css">
+    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css"/>
+    
+    <link rel="stylesheet" href="_static/wri-index.css"/>
+    
  
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="docpages/install.html" title="Installation and prerequisites"
-             accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li> 
-      </ul>
-    </div>  
+    <header class='main-header'>
+        <div class='header-content'>
+        
+        </div>
+    </header>
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="wolfram-client-library-for-python-s-documentation">
-<h1>Wolfram Client Library for Python’s Documentation<a class="headerlink" href="#wolfram-client-library-for-python-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>The client library provides seamless Wolfram Language integration in Python.
-A list of features provided by the library:</p>
-<ul class="simple">
-<li>evaluate arbitrary code on a local kernel</li>
-<li>evaluate arbitrary code in the Wolfram Cloud, public or private</li>
-<li>call deployed <a class="wl external reference" href="http://reference.wolfram.com/language/ref/APIFunction.html" target="_blank">APIFunction</a></li>
-<li>build Python functions on top of Wolfram Language functions</li>
-<li>represent arbitrary Wolfram Language code as a Python object</li>
-<li>serialize a Python object to a Wolfram Language string <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html" target="_blank">InputForm</a></li>
-<li>serialize a Python object to <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html" target="_blank">WXF</a></li>
-<li>extend serialization to any arbitrary Python class</li>
-<li>parse <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html" target="_blank">WXF</a></li>
-</ul>
-<div class="section" id="table-of-contents">
-<h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="docpages/install.html">Installation and prerequisites</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="docpages/install.html#prerequisites">Prerequisites</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docpages/install.html#installation">Installation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="docpages/install.html#install-using-pip-recommended">Install using pip (recommended)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="docpages/install.html#install-using-git">Install using Git</a></li>
-<li class="toctree-l3"><a class="reference internal" href="docpages/install.html#install-from-wolfram-language-based-products">Install from Wolfram Language based products</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="docpages/intro.html">Introduction to the Wolfram Client Library</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="docpages/intro.html#wolfram-language-expression-representation">Wolfram Language Expression Representation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docpages/intro.html#wolfram-language-evaluation">Wolfram Language Evaluation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="docpages/intro.html#local-kernel">Local Kernel</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="docpages/intro.html#initialization">Initialization</a></li>
-<li class="toctree-l4"><a class="reference internal" href="docpages/intro.html#expression-evaluation">Expression Evaluation</a></li>
-<li class="toctree-l4"><a class="reference internal" href="docpages/intro.html#options">Options</a></li>
-<li class="toctree-l4"><a class="reference internal" href="docpages/intro.html#inputform-string-evaluate">InputForm String Evaluate</a></li>
-<li class="toctree-l4"><a class="reference internal" href="docpages/intro.html#persistence">Persistence</a></li>
-<li class="toctree-l4"><a class="reference internal" href="docpages/intro.html#create-python-function">Create Python Function</a></li>
-<li class="toctree-l4"><a class="reference internal" href="docpages/intro.html#session-management">Session management</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="docpages/intro.html#wolfram-cloud-interactions">Wolfram Cloud Interactions</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="docpages/intro.html#authenticate">Authenticate</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="docpages/intro.html#generate-a-secured-authentication-key">Generate a Secured Authentication Key</a></li>
-<li class="toctree-l4"><a class="reference internal" href="docpages/intro.html#start-authenticated-cloud-session">Start authenticated cloud session</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="docpages/intro.html#cloud-evaluation">Cloud Evaluation</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="docpages/intro.html#one-shot-evaluation">One-Shot Evaluation</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="docpages/intro.html#cloud-functions">Cloud Functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="docpages/intro.html#api">API</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="docpages/intro.html#deploy-a-wolfram-language-api">Deploy a Wolfram Language API</a></li>
-<li class="toctree-l4"><a class="reference internal" href="docpages/intro.html#api-call-from-python">API Call from Python</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="docpages/intro.html#use-wolframapicall">Use WolframAPICall</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="docpages/intro.html#serialization">Serialization</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="docpages/intro.html#serialize">Serialize</a></li>
-<li class="toctree-l3"><a class="reference internal" href="docpages/intro.html#popular-libraries-support">Popular libraries support</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="docpages/intro.html#pil">PIL</a></li>
-<li class="toctree-l4"><a class="reference internal" href="docpages/intro.html#numpy">NumPy</a></li>
-<li class="toctree-l4"><a class="reference internal" href="docpages/intro.html#pandas">Pandas</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="docpages/intro.html#deserialize">Deserialize</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="docpages/advanced_usages.html">Advanced Usage and Code Examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="docpages/advanced_usages.html#expression-representation">Expression Representation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="docpages/advanced_usages.html#contexts">Contexts</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="docpages/advanced_usages.html#system-context"><code class="docutils literal notranslate"><span class="pre">System`</span></code> Context</a></li>
-<li class="toctree-l4"><a class="reference internal" href="docpages/advanced_usages.html#global-context"><code class="docutils literal notranslate"><span class="pre">Global`</span></code> Context</a></li>
-<li class="toctree-l4"><a class="reference internal" href="docpages/advanced_usages.html#arbitrary-contexts">Arbitrary Contexts</a></li>
-<li class="toctree-l4"><a class="reference internal" href="docpages/advanced_usages.html#use-case">Use Case</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="docpages/advanced_usages.html#local-kernel-evaluation">Local Kernel Evaluation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="docpages/advanced_usages.html#evaluation-methods">Evaluation Methods</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="docpages/advanced_usages.html#synchronous">Synchronous</a></li>
-<li class="toctree-l4"><a class="reference internal" href="docpages/advanced_usages.html#asynchronous">Asynchronous</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="docpages/advanced_usages.html#logging">Logging</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="docpages/advanced_usages.html#extending-serialization-writing-an-encoder">Extending serialization: Writing an Encoder</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docpages/advanced_usages.html#extending-wxf-parsing-writing-a-wxfconsumer">Extending WXF Parsing: Writing a WXFConsumer</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="docpages/advanced_usages.html#integer-eigenvalues">Integer Eigenvalues</a></li>
-<li class="toctree-l3"><a class="reference internal" href="docpages/advanced_usages.html#complex-eigenvalues">Complex Eigenvalues</a></li>
-<li class="toctree-l3"><a class="reference internal" href="docpages/advanced_usages.html#symbolic-eigenvalues">Symbolic Eigenvalues</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="docpages/advanced_usages.html#a-python-heavy-approach">A Python-Heavy Approach</a></li>
-<li class="toctree-l4"><a class="reference internal" href="docpages/advanced_usages.html#a-wolfram-language-alternative">A Wolfram Language Alternative</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="docpages/public_api.html">API: Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="docpages/public_api.html#wolfram-language-expression-representation">Wolfram Language Expression Representation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docpages/public_api.html#serialization">Serialization</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="docpages/public_api.html#formats">Formats</a></li>
-<li class="toctree-l3"><a class="reference internal" href="docpages/public_api.html#supported-types">Supported Types</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="docpages/public_api.html#built-in-data-types">Built-in Data Types</a></li>
-<li class="toctree-l4"><a class="reference internal" href="docpages/public_api.html#numeric-types">Numeric Types</a></li>
-<li class="toctree-l4"><a class="reference internal" href="docpages/public_api.html#dateobject-serialization">DateObject Serialization</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="docpages/public_api.html#extensible-mechanism">Extensible mechanism</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="docpages/public_api.html#serializable-classes">Serializable classes</a></li>
-<li class="toctree-l4"><a class="reference internal" href="docpages/public_api.html#normalizer">Normalizer</a></li>
-<li class="toctree-l4"><a class="reference internal" href="docpages/public_api.html#encoder">Encoder</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="docpages/public_api.html#deserialization">Deserialization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docpages/public_api.html#kernel-evaluation">Kernel evaluation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docpages/public_api.html#api-call">API call</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docpages/public_api.html#exceptions">Exceptions</a></li>
-</ul>
-</li>
-</ul>
+  <div class="toctree-wrapper compound">
 </div>
+<div class='document-header bodyaligned'>
+    <div class='header-content'>
+        <div class='left'>
+            <span id='header-title-top' class='header'>
+                Wolfram Client Library
+            </span>
+            </br>
+            <span id='header-title-bottom' class='header'>
+                for Python
+            </span>
+            </br>
+            <span id='header-subtitle' class='header'>
+                Give Python programs access to the power of the Wolfram Language
+            </span>
+        </div>
+        <div class='right'>
+            <img alt="" class="align-right" src="_static/wolf-python-homepage.png">
+        </div>
+    </div>
+</header>
 </div>
+<div class='document-subheader bodyaligned'>
+    <span id='header-summary'>
+        The Wolfram Client Library for Python lets Python programs directly integrate Wolfram Language capabilities. Connect either to a local Wolfram Engine, or to the Wolfram Cloud (or a private Wolfram Cloud)
+    </span>
+    <br>
+</div>
+<div class='bodyaligned' id='source-code'>
+    <a href="https://github.com/WolframResearch/WolframClientForPython">
+        <svg class='github-fav' viewBox="0 0 16 16" version="1.1" aria-hidden="true"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg>
+        Source Code
+    </a>
+</div><div id='install-lib' class='bodyaligned'>
+    <span>Install the library:</span>
+</div><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install wolframclient
+</pre></div>
+</div>
+<div id='setup-session' class='border-top bodyaligned code-label'>
+    <span>Setup your Wolfram Language session:</span>
+</div><div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.evaluation</span> <span class="kn">import</span> <span class="n">WolframLanguageSession</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="kn">import</span> <span class="n">wl</span><span class="p">,</span> <span class="n">wlexpr</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">session</span> <span class="o">=</span> <span class="n">WolframLanguageSession</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class='border-top bodyaligned subsection annotated'>
+    <span>Evaluate any Wolfram Language code from Python:</span>
+</div><div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">wlexpr</span><span class="p">(</span><span class="s1">&#39;Range[5]&#39;</span><span class="p">))</span>
+<span class="go">[1, 2, 3, 4, 5]</span>
+</pre></div>
+</div>
+<div class='border-top bodyaligned subsection annotated'>
+    <span>
+        Immediately call all 6000+ built-in Wolfram Language functions in Python:
+    </span>
+</div><div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">MinMax</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">5</span><span class="p">]))</span>
+<span class="go">[-3, 9]</span>
+</pre></div>
+</div>
+<div class='border-top bodyaligned subsection'>
+    <span>
+        Build up Wolfram Language code directly in Python:
+    </span>
+</div><div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">func_squared</span> <span class="o">=</span> <span class="n">wlexpr</span><span class="p">(</span><span class="s1">&#39;#^2 &amp;&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">func_squared</span><span class="p">,</span> <span class="n">wl</span><span class="o">.</span><span class="n">Range</span><span class="p">(</span><span class="mi">5</span><span class="p">)))</span>
+<span class="go">[1, 4, 9, 16, 25]</span>
+</pre></div>
+</div>
+<div class='border-top bodyaligned subsection'>
+    <span>
+        Direct support for PIL, Pandas, NumPy libraries:
+    </span>
+</div><div  class='bodyaligned code-label'>
+    Create a Pandas <span class='pre'>DataFrame</span>:
+</div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]},</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;id1&#39;</span><span class="p">,</span> <span class="s1">&#39;id2&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span>
+<span class="go">       A   B</span>
+<span class="go">id1    1  11</span>
+<span class="go">id2    2  12</span>
+</pre></div>
+</div>
+<div class='bodyaligned code-label'>
+    Apply Wolfram Language function directly to the <span class='pre'>DataFrame</span>:
+</div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">Total</span><span class="p">(</span><span class="n">df</span><span class="p">))</span>
+<span class="go">{&#39;A&#39;: 3, &#39;B&#39;: 23}</span>
+</pre></div>
+</div>
+<div class='border-top bodyaligned subsection'>
+    <span>
+        Define native Python functions:
+    </span>
+</div><div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">str_reverse</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">StringReverse</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">str_reverse</span><span class="p">(</span><span class="s1">&#39;abc&#39;</span><span class="p">)</span>
+<span class="go">&#39;cba&#39;</span>
+</pre></div>
+</div>
+<div class='border-top bodyaligned subsection'>
+    <span>
+        Represent Wolfram Language expressions as Python objects:
+    </span>
+</div><div class='bodyaligned code-label'>
+    Use object representation:
+</div><div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;Hours&quot;</span><span class="p">)</span>
+<span class="go">Quantity[12, &#39;Hours&#39;]</span>
+</pre></div>
+</div>
+<div class='bodyaligned code-label'>
+    Use string representation:
+</div><div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wlexpr</span><span class="p">(</span><span class="s1">&#39;f[x_] := x^2&#39;</span><span class="p">)</span>
+<span class="go">(f[x_] := x^2)</span>
+</pre></div>
+</div>
+<div id='letsyou-section' class='bodyaligned'>
+    <span>
+        Within your Python environment, the Wolfram Client Library for Python lets you:
+    </span>
+</div><div class='border-top bodyaligned subsection'>
+    <span>
+        Access the power of Wolfram algorithms:
+    </span>
+</div><div class='bodyaligned code-label'>
+    Get immediate access to the world's largest integrated algorithmbase:
+</div><div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">limit</span> <span class="o">=</span> <span class="n">wlexpr</span><span class="p">(</span><span class="s1">&#39;Limit[x Log[x^2], x -&gt; 0]&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">limit</span><span class="p">)</span>
+<span class="go">0</span>
+</pre></div>
+</div>
+<div id='wl-references-list' class='bodyaligned'>
+    <ul>
+        <li><a class='' href='https://reference.wolfram.com/language/#DataManipulationAndAnalysis'>Data Science</a><span class='inlinebullet'>▪</span></li>
+        <li><a class='' href='https://reference.wolfram.com/language/#SymbolicAndNumericComputation'>Numerics</a><span class='inlinebullet'>▪</span></li>
+        <li><a class='' href='https://reference.wolfram.com/language/#GraphsAndNetworks'>Graphs Theory</a><span class='inlinebullet'>▪</span></li>
+        <li><a class='' href='https://reference.wolfram.com/language/'>...</a></li>
+    </ul>
+</div><div class='border-top bodyaligned subsection'>
+    <span>
+        Access the Wolfram knowledgebase:
+    </span>
+</div><div class='bodyaligned code-label'>
+    Get the closest ocean:
+</div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ocean</span> <span class="o">=</span> <span class="n">wlexpr</span><span class="p">(</span><span class="s1">&#39;GeoNearest[Entity[&quot;Ocean&quot;], Here]&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">ocean</span><span class="p">)</span>
+<span class="go">[Entity[&#39;Ocean&#39;, &#39;AtlanticOcean&#39;]]</span>
+</pre></div>
+</div>
+<div class='border-top bodyaligned subsection'>
+    <span>
+        Use Wolfram natural language understanding in Python:
+    </span>
+</div><div class='bodyaligned code-label'>
+    Query <a href='https://www.wolframalpha.com/'>Wolfram|Alpha</a> directly in Python:
+</div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">WolframAlpha</span><span class="p">(</span><span class="s2">&quot;number of moons of Saturn&quot;</span><span class="p">,</span> <span class="s2">&quot;Result&quot;</span><span class="p">))</span>
+<span class="go">62</span>
+</pre></div>
+</div>
+<div class='bodyaligned code-label'>
+    Terminate the session, release all resources:
+</div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+</pre></div>
 </div>
 
 
@@ -183,31 +202,41 @@ A list of features provided by the library:</p>
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-
-    <a href="#">
-        <img class="logo" src="_static/python-client-library-logo.png" title="https://www.wolfram.com/" />
-    </a>
-
-
-  <h3><a href="#">Table of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Wolfram Client Library for Python’s Documentation</a><ul>
-<li><a class="reference internal" href="#table-of-contents">Table of Contents</a></li>
+        <div class="sphinxsidebarwrapper"><div class='overview toctree-l1'>
+    <a class="reference internal  index" 
+        href="docpages/overview.html">Overview</a>
+</div>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docpages/install.html">Installation and prerequisites</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="docpages/install.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docpages/install.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="docpages/basic_usages.html">Basic Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="docpages/basic_usages.html#expression-representation">Expression Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docpages/basic_usages.html#evaluating-expressions">Evaluating Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docpages/basic_usages.html#wolfram-cloud-interactions">Wolfram Cloud Interactions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docpages/basic_usages.html#serialization">Serialization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="docpages/advanced_usages.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="docpages/advanced_usages.html#expression-representation">Expression Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docpages/advanced_usages.html#local-kernel-evaluation">Local Kernel Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docpages/advanced_usages.html#extending-serialization-writing-an-encoder">Extending serialization: Writing an Encoder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docpages/advanced_usages.html#extending-wxf-parsing-writing-a-wxfconsumer">Extending WXF Parsing: Writing a WXFConsumer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="docpages/public_api.html">Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="docpages/public_api.html#expression-representation">Expression Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docpages/public_api.html#serialization">Serialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docpages/public_api.html#deserialization">Deserialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docpages/public_api.html#evaluating-expressions">Evaluating Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docpages/public_api.html#cloud-api">Cloud API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docpages/public_api.html#exceptions">Exceptions</a></li>
 </ul>
 </li>
 </ul>
 
-  <h4>Next topic</h4>
-  <p class="topless"><a href="docpages/install.html"
-                        title="next chapter">Installation and prerequisites</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/index.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <div class="searchformwrapper">
@@ -219,29 +248,16 @@ A list of features provided by the library:</p>
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script><footer class='copyright'>
+    <div>
+        <span>&#169; Copyright 2019, Wolfram Research.</span>
+    </div>
+</footer>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="docpages/install.html" title="Installation and prerequisites"
-             >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Wolfram Research.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
-    </div>
+
+
   </body>
 </html>

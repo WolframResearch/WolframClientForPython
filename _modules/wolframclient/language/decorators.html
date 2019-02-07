@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.language.decorators &#8212; Wolfram Client Library for Python 1.0.0.dev3 documentation</title>
+    <title>wolframclient.language.decorators &#8212; Wolfram Client Library for Python 1.0.0.dev4 documentation</title>
     <link rel="stylesheet" href="../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
@@ -14,24 +14,57 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
     
-    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css">
+    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css"/>
+    
  
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
-      </ul>
-    </div>  
+    <header class='main-header'>
+        <div class='header-content'>
+        
+            <div class='logo header left'>
+                <h1>
+                <a class='header' href="../../../index.html">
+                    <span>
+                        <img class="logo align-left" 
+                            src="../../../_static/wolf-python-subpage.png"
+                            title="https://www.wolfram.com/"
+                            height="70"
+                        />
+                    </span>
+                    <span class='header'>
+                        <span class='header darkgrey' style='font-size:.8em;'>
+                            Wolfram Client Library
+                        </span>
+                        <br>
+                        <span style='font-size:1em;'>for Python</span>
+                    </span>
+                </a>
+                </h1>
+            </div>
+            <div class="related header right" role="navigation" aria-label="related navigation">
+                <ul>
+                        <li class="right" style="margin-right: 10px">
+                            <span class='header right navigation'><a href="../../../genindex.html" title="General Index"
+                            accesskey="I">
+                                index
+                        </a></span></li>
+                        <li class="right" >
+                            <span class='header right navigation'><a href="../../../py-modindex.html" title="Python Module Index"
+                            >
+                                modules
+                        </a></span><span class='reldelimiter'>|</span></li>
+                    <li class="right">
+                        <span class='header right navigation darkgrey'>v 1.0.0.dev4</span>
+                        <span class='reldelimiter'>|</span>
+                    </li>
+                </ul>
+            </div>
+        
+        </div>
+    </header>
+  
 
     <div class="document">
       <div class="documentwrapper">
@@ -52,6 +85,10 @@
 <span class="kn">from</span> <span class="nn">wolframclient.serializers</span> <span class="k">import</span> <span class="n">DEFAULT_FORMAT</span><span class="p">,</span> <span class="n">export</span>
 <span class="kn">from</span> <span class="nn">wolframclient.utils.encoding</span> <span class="k">import</span> <span class="n">force_text</span><span class="p">,</span> <span class="n">safe_force_text</span>
 
+<span class="n">DEFAULT_UNKNOWN_FAILURE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;wxf&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;8:f</span><span class="se">\x02</span><span class="s1">s</span><span class="se">\x07</span><span class="s1">FailureS</span><span class="se">\x0d</span><span class="s1">PythonFailureA</span><span class="se">\x01</span><span class="s1">-S</span><span class="se">\x0f</span><span class="s1">MessageTemplateS</span><span class="se">\x1a</span><span class="s1">Unexpected error occurred.&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;wl&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;Failure[&quot;PythonFailure&quot;, &lt;|&quot;MessageTemplate&quot; -&gt; &quot;Unexpected error occurred.&quot;|&gt;]&#39;</span><span class="p">,</span>
+<span class="p">}</span>
 
 <div class="viewcode-block" id="safe_wl_execute"><a class="viewcode-back" href="../../../api/wolframclient.language.html#wolframclient.language.decorators.safe_wl_execute">[docs]</a><span class="k">def</span> <span class="nf">safe_wl_execute</span><span class="p">(</span><span class="n">function</span><span class="p">,</span>
                     <span class="n">args</span><span class="o">=</span><span class="p">(),</span>
@@ -96,16 +133,20 @@
             <span class="c1">#this is the last resort.</span>
             <span class="c1">#everything went wrong, including the code that was supposed to return a traceback, or the custom normalizer is doing something it should not.</span>
             <span class="c1">#this should never happen.</span>
-
-            <span class="k">return</span> <span class="n">export</span><span class="p">(</span>
-                <span class="n">wl</span><span class="o">.</span><span class="n">Failure</span><span class="p">(</span>
-                    <span class="s2">&quot;PythonFailure&quot;</span><span class="p">,</span> <span class="p">{</span>
-                        <span class="s2">&quot;MessageTemplate&quot;</span><span class="p">:</span> <span class="n">safe_force_text</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
-                        <span class="s2">&quot;MessageParameters&quot;</span><span class="p">:</span> <span class="p">{},</span>
-                        <span class="s2">&quot;FailureCode&quot;</span><span class="p">:</span> <span class="n">safe_force_text</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">),</span>
-                        <span class="s2">&quot;Traceback&quot;</span><span class="p">:</span> <span class="n">force_text</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
-                    <span class="p">}),</span>
-                <span class="n">target_format</span><span class="o">=</span><span class="n">export_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;target_format&#39;</span><span class="p">,</span> <span class="n">DEFAULT_FORMAT</span><span class="p">))</span></div>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">export</span><span class="p">(</span>
+                    <span class="n">wl</span><span class="o">.</span><span class="n">Failure</span><span class="p">(</span>
+                        <span class="s2">&quot;PythonFailure&quot;</span><span class="p">,</span> <span class="p">{</span>
+                            <span class="s2">&quot;MessageTemplate&quot;</span><span class="p">:</span> <span class="n">safe_force_text</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
+                            <span class="s2">&quot;MessageParameters&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                            <span class="s2">&quot;FailureCode&quot;</span><span class="p">:</span> <span class="n">safe_force_text</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">),</span>
+                            <span class="s2">&quot;Traceback&quot;</span><span class="p">:</span> <span class="n">force_text</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+                        <span class="p">}),</span>
+                    <span class="n">target_format</span><span class="o">=</span><span class="n">export_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;target_format&#39;</span><span class="p">,</span> <span class="n">DEFAULT_FORMAT</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="c1">#something were even more wrong</span>
+                <span class="c1">#this might happen with import errors / syntax errors in third party pluging that are loading the exporter and doing some real damage to the dispatcher we are using.</span>
+                <span class="k">return</span> <span class="n">DEFAULT_UNKNOWN_FAILURE</span><span class="p">[</span><span class="n">export_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;target_format&#39;</span><span class="p">,</span> <span class="n">DEFAULT_FORMAT</span><span class="p">)]</span></div>
 
 
 <div class="viewcode-block" id="to_wl"><a class="viewcode-back" href="../../../api/wolframclient.language.html#wolframclient.language.decorators.to_wl">[docs]</a><span class="k">def</span> <span class="nf">to_wl</span><span class="p">(</span><span class="o">**</span><span class="n">export_opts</span><span class="p">):</span>
@@ -128,12 +169,40 @@
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-
-    <a href="../../../index.html">
-        <img class="logo" src="../../../_static/python-client-library-logo.png" title="https://www.wolfram.com/" />
-    </a>
-
+        <div class="sphinxsidebarwrapper"><div class='overview toctree-l1'>
+    <a class="reference internal  _modules/wolframclient/language/decorators" 
+        href="../../../docpages/overview.html">Overview</a>
+</div>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../docpages/install.html">Installation and prerequisites</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../docpages/install.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../docpages/install.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docpages/basic_usages.html">Basic Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../docpages/basic_usages.html#expression-representation">Expression Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../docpages/basic_usages.html#evaluating-expressions">Evaluating Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../docpages/basic_usages.html#wolfram-cloud-interactions">Wolfram Cloud Interactions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../docpages/basic_usages.html#serialization">Serialization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docpages/advanced_usages.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../docpages/advanced_usages.html#expression-representation">Expression Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../docpages/advanced_usages.html#local-kernel-evaluation">Local Kernel Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../docpages/advanced_usages.html#extending-serialization-writing-an-encoder">Extending serialization: Writing an Encoder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../docpages/advanced_usages.html#extending-wxf-parsing-writing-a-wxfconsumer">Extending WXF Parsing: Writing a WXFConsumer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docpages/public_api.html">Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../docpages/public_api.html#expression-representation">Expression Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../docpages/public_api.html#serialization">Serialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../docpages/public_api.html#deserialization">Deserialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../docpages/public_api.html#evaluating-expressions">Evaluating Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../docpages/public_api.html#cloud-api">Cloud API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../docpages/public_api.html#exceptions">Exceptions</a></li>
+</ul>
+</li>
+</ul>
 
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
@@ -146,27 +215,16 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script><footer class='copyright'>
+    <div>
+        <span>&#169; Copyright 2019, Wolfram Research.</span>
+    </div>
+</footer>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">Wolfram Client Library for Python 1.0.0.dev3 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Wolfram Research.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
-    </div>
+
+
   </body>
 </html>

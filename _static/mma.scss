@@ -1,0 +1,62 @@
+/*
+ * Copyright (c) 2016 rsmenon
+ * Licensed under the MIT License (https://opensource.org/licenses/MIT)
+ */
+
+$light-gray: #aaaaaa;
+$dark-gray: #555555;
+$black: #353f42;
+$orange: #b66a4b;
+$magenta: #ab466a;
+$blue: #4b78b1;
+$cyan: #499A9F;
+$green: #6E8413;
+
+.highlight-wl .highlight,
+.wlcode,
+.language-mathematica,
+.language-mma,
+.language-nb,
+.language-wl,
+.language-wolfram,
+.language-wolfram-language {
+  .c { // Comment
+    color: $light-gray;
+    font-style: italic;
+  }
+  .nb { // Builtins
+    color: $black;
+  }
+  .ne { // Messages (the "foo" in General::foo)
+    color: $magenta;
+  }
+  .nf { // Slots
+    color: $green;
+    font-style: italic;
+  }
+  .nt { // Patterns
+    color: $green;
+    font-style: italic;
+  }
+  .nv { // Non-builtin symbols
+    color: $blue;
+  }
+  .o { // Operators
+    color: $dark-gray;
+  }
+  .m { // Numbers
+    color: $black;
+  }
+  .p { // Groupings
+    color: $dark-gray;
+  }
+  .s { // Strings
+    color: $dark-gray;
+  }
+  .vc { // Local scope variables
+    color: #5d9066;
+  }
+  .err { // Any unrecognized input that is not lexed correctly
+    color: $dark-gray;
+  }
+}
