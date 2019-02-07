@@ -47,24 +47,24 @@ class WolframCloudSession(WolframEvaluator):
 
     def __init__(self,
                  credentials=None,
-                 server=WOLFRAM_PUBLIC_CLOUD_SERVER,
+                 server=None,
                  inputform_string_evaluation=True,
-                 oauth_session_class=OAuthSession,
-                 xauth_session_class=XAuthSession,
-                 http_sessionclass=requests.Session):
+                 oauth_session_class=None,
+                 xauth_session_class=None,
+                 http_sessionclass=None):
         super().__init__(
             inputform_string_evaluation=inputform_string_evaluation)
-        self.server = server
+        self.server = server or WOLFRAM_PUBLIC_CLOUD_SERVER
         self.evaluation_api_url = evaluation_api_url(self.server)
-        self.http_sessionclass = http_sessionclass
+        self.http_sessionclass = http_sessionclass or requests.Session
         self.http_session = None
         self.credentials = credentials
         self.evaluation_api_url = evaluation_api_url(self.server)
         if self.credentials:
             if self.credentials.is_xauth:
-                self.xauth_session_class = xauth_session_class
+                self.xauth_session_class = xauth_session_class or XAuthSession
             else:
-                self.oauth_session_class = oauth_session_class
+                self.oauth_session_class = oauth_session_class or OAuthSession
         self.oauth_session = None
         self.verify = self.server.certificate
 
