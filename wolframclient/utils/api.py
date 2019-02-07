@@ -150,6 +150,7 @@ pandas = API(
 
 aiohttp = API(
     Response='aiohttp.web.Response',
+    ClientResponse='aiohttp.ClientResponse',
     CIMultiDict='aiohttp.multipart.CIMultiDict',
     RouteTableDef='aiohttp.web.RouteTableDef',
     Application='aiohttp.web.Application',
