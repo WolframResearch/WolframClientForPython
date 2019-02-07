@@ -98,7 +98,7 @@ urllib = API(
     quote_plus=('urllib.parse.quote_plus', 'urllib.quote_plus'),
     quote=('urllib.parse.quote', 'urllib.quote'))
 
-atexit = API(register='atexit.register', unregister=('atexit.unregister', ))
+atexit = API(register='atexit.register', unregister='atexit.unregister')
 
 numpy = API(
     array='numpy.array',
