@@ -141,8 +141,7 @@ class WolframLanguageSession(WolframEvaluator):
 
     Start a new session and send an expression for evaluation::
 
-        kernel = '/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel'
-        with WolframLanguageSession(kernel) as session:
+        with WolframLanguageSession() as session:
             session.evaluate('Range[3]')
 
     When `consumer` is set to a :class:`~wolframclient.deserializers.WXFConsumer` instance,

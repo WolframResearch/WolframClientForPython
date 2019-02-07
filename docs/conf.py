@@ -18,16 +18,22 @@ import os
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.insert(0, os.path.abspath('roles'))
 
+import datetime
+import wolframclient
+
 # -- Project information -----------------------------------------------------
 
 project = u'Wolfram Client Library for Python'
-copyright = u'2018, Wolfram Research'
-author = u'Wolfram Research'
+
+year = datetime.datetime.now().year
+
+copyright = u'%i, Wolfram Research' % year
+author = wolframclient.__author__
 
 # The short X.Y version
-version = u'1.0'
+version = wolframclient.__version__
 # The full version, including alpha/beta/rc tags
-release = u'1.0.0.dev3'
+release = wolframclient.__version__
 
 
 # -- General configuration ---------------------------------------------------
@@ -44,11 +50,12 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
-    'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx.ext.intersphinx',
-    'roles'
+    'roles',
+    # 'sphinxcontrib.fulltoc',
+    # 'sphinxcontrib.inlinesyntaxhighlight',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -87,10 +94,10 @@ pygments_style = 'sphinx'
 html_theme = 'wri_theme'
 html_theme_path = ['.']
 
-# rst_prolog="""
-# .. role:: wl
-#    :class: wl
-# """
+rst_prolog="""
+.. role:: wlcode(code)
+   :language: wolfram
+"""
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -111,14 +118,17 @@ html_static_path = ['wri_theme/static']
 # default: ``['localtoc.html', 'relations.html', 'sourcelink.html',
 # 'searchbox.html']``.
 #
-# html_sidebars = {}
-
+html_sidebars = {
+    '**': ['globaltoc.html', 'searchbox.html', 'sidecopyright.html'],
+}
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'WolframClientLibraryForPythondoc'
 
+# If true, links to the reST sources are added to the pages.
+html_show_sourcelink = False
 
 # -- Options for LaTeX output ------------------------------------------------
 

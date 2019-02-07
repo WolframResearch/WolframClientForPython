@@ -24,7 +24,7 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
 
     Instances of this class can be managed with an asynchronous context manager::
         
-        async with WolframLanguageAsyncSession(kernelpath) as session:
+        async with WolframLanguageAsyncSession() as session:
             await session.evaluate('Now')
 
     An event loop can be explicitly passed using the named parameter `loop`, otherwise the one 

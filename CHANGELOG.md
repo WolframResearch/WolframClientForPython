@@ -1,9 +1,10 @@
-# Version 1.0.0
+# Version 1.0.0.dev4
 - Inconsistent class name `WolframCloudSessionFuture` replaced with `WolframCloudFutureSession`.
 - Rework completely `Dispatch` class. Add a `Dispatch` instance called `wolfram_encoder` representing the multi dispatch function that encodes Python object.
 - Add an entry point allowing new encoders to be registered as separated libraries (plugins).
 - Add support for pandas classes: `Series` and `DataFrame`.
 - Extend support for NumPy numbers.
+- Local evaluators can be initialized without a Wolfram Engine path, in which case default paths are scanned to find the most recent product.
 
 # Version 1.0.0.dev3
 - Add `CHANGELOG.md` to the repository to help users track the changes.

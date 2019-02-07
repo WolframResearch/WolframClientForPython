@@ -1,13 +1,71 @@
 {% extends "!layout.html" %}
 
 {% block linktags %}
-    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css">
+    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css"/>
+    {% if pagename == 'index' %}
+    <link rel="stylesheet" href="{{ pathto('_static/wri-index.css', 1) }}"/>
+    {% endif %}
 {% endblock %}
 
-{% block sidebarlogo %}
+{% set reldelim2 = "<span class='reldelimiter'>|</span>" %}
 
-    <a href="{{ pathto(master_doc) }}">
-        <img class="logo" src="{{ pathto('_static/python-client-library-logo.png', 1) }}" title="https://www.wolfram.com/" />
-    </a>
+{% block relbar1 %}
+    <header class='main-header'>
+        <div class='header-content'>
+        {% if pagename != 'index' %}
+            <div class='logo header left'>
+                <h1>
+                <a class='header' href="{{ pathto(master_doc) }}">
+                    <span>
+                        <img class="logo align-left" 
+                            src="{{ pathto('_static/wolf-python-subpage.png', 1) }}"
+                            title="https://www.wolfram.com/"
+                            height="70"
+                        />
+                    </span>
+                    <span class='header'>
+                        <span class='header darkgrey' style='font-size:.8em;'>
+                            Wolfram Client Library
+                        </span>
+                        <br>
+                        <span style='font-size:1em;'>for Python</span>
+                    </span>
+                </a>
+                </h1>
+            </div>
+            <div class="related header right" role="navigation" aria-label="related navigation">
+                <ul>
+                    {%- for rellink in rellinks %}
+                        <li class="right" {% if loop.first %}style="margin-right: 10px"{% endif %}>
+                            <span class='header right navigation'><a href="{{ pathto(rellink[0]) }}" title="{{ rellink[1]|striptags|e }}"
+                            {{ accesskey(rellink[2]) }}>
+                            {%- if rellink[3] == 'next' %}
+                                <span class='arrowright'>
+                                    <img src="{{ pathto('_static/wolf-python-arrowright.png', 1) }}"/>
+                                </span>
+                            {%- elif rellink[3] == 'previous' %}
+                                <span class='arrowleft'>
+                                    <img src="{{ pathto('_static/wolf-python-arrowleft.png', 1) }}"/>
+                                </span>
+                            {%- else %}
+                                {{ rellink[3] }}
+                            {%- endif %}
+                        </a></span>
+                        {%- if not loop.first %}{{ reldelim2 }}{% endif %}</li>
+                    {%- endfor %}
+                    <li class="right">
+                        <span class='header right navigation darkgrey'>v {{ version }}</span>
+                        {{ reldelim2 }}
+                    </li>
+                </ul>
+            </div>
+        {% endif %}
+        </div>
+    </header>
+{% endblock %}
 
+{% block relbar2 %}
+{% endblock %}
+
+{% block footer %}
 {% endblock %}
