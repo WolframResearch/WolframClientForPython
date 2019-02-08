@@ -47,6 +47,10 @@ class WolframEvaluatorBase(object):
         else:
             return expr
 
+    def duplicate(self):
+        """ Build a new instance using the same configuration as the one being duplicated. """
+        raise NotImplementedError
+
 
 class WolframEvaluator(WolframEvaluatorBase):
     """ Synchronous evaluator abstract class. """
@@ -100,10 +104,6 @@ class WolframEvaluator(WolframEvaluatorBase):
 
         return inner
 
-    def duplicate(self):
-        """ Build a new instance using the same configuration as the one being duplicated. """
-        raise NotImplementedError
-
     def __enter__(self):
         """Evaluator must be usable with context managers."""
         if not self.started:
@@ -151,9 +151,6 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
         if self.started:
             await self.stop()
         await self.start()
-
-    def duplicate(self):
-        raise NotImplementedError
 
     def function(self, expr):
         """ Return a coroutine from a Wolfram Language function. 
