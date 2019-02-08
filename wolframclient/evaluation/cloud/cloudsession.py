@@ -370,7 +370,7 @@ SUPPORTED_ENCODING_FORMATS = {
 
 
 def encode_api_inputs(inputs, target_format='wl', multipart=False, **kwargs):
-    if len(inputs) == 0:
+    if not inputs:
         return {}
 
     try:
