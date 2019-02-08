@@ -373,8 +373,9 @@ def encode_api_inputs(inputs, target_format='wl', multipart=False, **kwargs):
     if len(inputs) == 0:
         return {}
 
-    encoder = SUPPORTED_ENCODING_FORMATS.get(target_format, None)
-    if encoder is None:
+    try:
+        encoder = SUPPORTED_ENCODING_FORMATS[target_format]
+    except KeyError:
         raise ValueError(
             'Invalid encoding format %s. Choices are: %s' %
             (target_format, ', '.join(SUPPORTED_ENCODING_FORMATS.keys())))
