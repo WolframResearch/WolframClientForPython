@@ -325,8 +325,8 @@ class WolframAPICall(WolframAPICallBase):
 @to_dict
 def _encode_inputs_as_wxf(inputs, multipart, **kwargs):
     for name, value in inputs.items():
-        yield name, _to_multipart(
-            '%s__wxf' % name,
+        yield '%s__wxf' % name, _to_multipart(
+            name,
             export(value, target_format='wxf', **kwargs),
             multipart=multipart)
 
@@ -334,8 +334,8 @@ def _encode_inputs_as_wxf(inputs, multipart, **kwargs):
 @to_dict
 def _encode_inputs_as_json(inputs, multipart, **kwargs):
     for name, value in inputs.items():
-        yield name, _to_multipart(
-            '%s__json' % name,
+        yield '%s__json' % name, _to_multipart(
+            name,
             json.dumps(value, **kwargs),
             multipart=multipart)
 
