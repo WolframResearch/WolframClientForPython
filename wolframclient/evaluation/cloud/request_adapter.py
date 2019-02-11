@@ -5,8 +5,7 @@ from wolframclient.utils.encoding import force_text
 
 __all__ = ['wrap_response']
 
-
-class RequestsHTTPRequestAdapter(object):
+class HTTPResponseAdapterBase(object):
     """ Unify various request classes as a unique API. """
 
     asynchronous = False
@@ -41,8 +40,10 @@ class RequestsHTTPRequestAdapter(object):
         """ Headers as a dict. """
         return self.response.headers
 
+class RequestsHTTPRequestAdapter(HTTPResponseAdapterBase):
+    pass
 
-class AIOHttpHTTPRequestAdapter(RequestsHTTPRequestAdapter):
+class AIOHttpHTTPRequestAdapter(HTTPResponseAdapterBase):
 
     asynchronous = True
 
