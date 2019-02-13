@@ -2,8 +2,10 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from threading import Event, Thread
+from threading import Event, Thread, RLock
 from subprocess import PIPE, Popen
+from queue import Queue
+from concurrent import futures
 import logging
 
 from wolframclient.utils import six
@@ -12,9 +14,11 @@ from wolframclient.exception import WolframKernelException
 from wolframclient.serializers import export
 from wolframclient.evaluation.kernel.zmqsocket import Socket, SocketException
 from wolframclient.evaluation.result import WolframKernelEvaluationResult
-from wolframclient.evaluation.base import WolframEvaluator
+
 if six.WINDOWS:
     from subprocess import STARTUPINFO, STARTF_USESHOWWINDOW
+
+__all__ = [ 'KernelController' ]
 
 logger = logging.getLogger(__name__)
 
@@ -138,10 +142,11 @@ class KernelController(Thread):
     def __init__(self,
                  kernel=None,
                  initfile=None,
+                 consumer=None,
                  kernel_loglevel=logging.NOTSET,
                  stdin=PIPE,
                  stdout=PIPE, 
-                 stderr=PIPE, 
+                 stderr=PIPE,
                  **kwargs):
         super().__init__()
         if kernel is None:
@@ -168,24 +173,26 @@ class KernelController(Thread):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Initializing kernel %s using script: %s' %
                          (self.kernel, self.initfile))
-        self.inproc_socket_in_uri = None
-        self.inproc_socket_out_uri = None
-
+        self.tasks_queue = Queue()
         self.kernel_socket_in = None
         self.kernel_socket_out = None
         self.kernel_proc = None
+        self.consumer = consumer
         self.loglevel = kernel_loglevel
         self.kernel_logger = None
         self.evaluation_count = 0
         self._stdin = stdin
         self._stdout = stdout
         self._stderr = stderr
-        self.stop_event = Event()
-        self.terminate_event = Event()
         # some parameters may be passed as kwargs
         self.parameters = {}
         for k, v in kwargs.items():
             self.set_parameter(k, v)
+        # this event can be awaited to make sure the kernel process is up and running.
+        self.kernel_initialized = Event()
+        # this even is set when the kernel will not serve any more evaluation.
+        self.kernel_terminated = Event()
+        self.kernel_termination_requested = Event()
 
     def duplicate(self):
         """ Build a new object using the same configuration as the current one. """
@@ -193,9 +200,10 @@ class KernelController(Thread):
             kernel=self.kernel,
             initfile=self.initfile,
             kernel_loglevel=self.loglevel,
+            consumer=self.consumer,
             stdin=self._stdin,
             stdout=self._stdout,
-            stderr=self._stderr
+            stderr=self._stderr,
             **self.parameters)
 
     _DEFAULT_PARAMETERS = {
@@ -239,52 +247,6 @@ class KernelController(Thread):
     
     def default_kernel_path(self):
         return find_default_kernel_path()
-    
-    def connect(self):
-        """ Return a pair of bound sockets to use to send expression, and
-        receive result.
-
-        Return a pair of a PUSH socket to write to, and a PULL socket to read from, as a tuple.
-        Once this method has been called, it save the target URIs, and will always use them.
-        """
-        send_expr_socket = Socket(zmq_type=zmq.PUSH)
-        read_result_socket = Socket(zmq_type=zmq.PULL)
-        if self.inproc_socket_in_uri:
-            send_expr_socket.bind_to_uri(self.inproc_socket_in_uri)
-        else:
-            send_expr_socket.bind(protocol='inproc', host='wolfctrlr-in-%i' % hash(self))
-            self.inproc_socket_in_uri = send_expr_socket.uri
-        if self.inproc_socket_out_uri:
-            read_result_socket.bind_to_uri(self.inproc_socket_out_uri)
-        else:
-            read_result_socket.bind(protocol='inproc', host='wolfctrlr-out-%i' % hash(self))
-            self.inproc_socket_out_uri = read_result_socket.uri
-        return (send_expr_socket, read_result_socket)
-
-    def close(self):
-        """Close the kernel controller connections.
-        
-        This is different from joining the thread. Release inproc sockets. """
-        try:
-            self.close_inproc_socket_in()
-        finally:
-            self.close_inproc_socket_out()
-
-    def close_inproc_socket_in(self):
-        try:
-            if self.inproc_socket_in:
-                self.inproc_socket_in.close()
-        finally:
-            self.inproc_socket_in = None
-            self.inproc_socket_in_uri = None
-    
-    def close_inproc_socket_out(self):
-        try:
-            if self.inproc_socket_out:
-                self.inproc_socket_out.close()
-        finally:
-            self.inproc_socket_out = None
-            self.inproc_socket_out_uri = None
 
     def _kernel_terminate(self):
         self._kernel_stop(gracefully=False)
@@ -302,7 +264,7 @@ class KernelController(Thread):
             unexpected start-up errors.
         """
         logger.info('Start termination on kernel %s', self)
-        self.stopped = True
+        self.kernel_terminated.set()
         if self.kernel_proc is not None:
             error = False
             if gracefully:
@@ -377,12 +339,31 @@ class KernelController(Thread):
         assert (self.kernel_logger is None)
 
     @property
-    def kernel_started(self):
-        return (self.kernel_proc is not None and self.kernel_proc.poll() is None
-                and self.kernel_socket_out and self.kernel_socket_out.bound 
-                and self.kernel_socket_in and self.kernel_socket_in.bound)
+    def started(self):
+        """ Is the kernel starting or is started. 
+        
+        Event :data:`kernel_initialized` indicates the kernel has been initialized successfully. """
+        return self.is_alive() and not self.kernel_terminated.is_set()
+    
+    def wait_kernel_ready(self, timeout=None):
+        """ Wait for for the kernel to start. Return False if `timeout` is given and operation timed out. """
+        return self.kernel_initialized.wait(timeout=timeout)
 
-    def kernel_start(self):
+    @property
+    def terminated(self):
+        """ Is the kernel terminated. Terminated kernel no more handle evaluations. """
+        return self.kernel_terminated.is_set()
+
+    def is_kernel_alive(self):
+        """ Return the status of the kernel process. """ 
+        try:
+            # subprocess poll function is thread safe.
+            return (self.kernel_proc is not None and self.kernel_proc.poll() is None)
+        except AttributeError:
+            # in case kernel_proc was set to None. May not even be possible.
+            return False
+
+    def _safe_kernel_start(self):
         """ Start a kernel. If something went wrong, clean-up resources that may have been created. """
         try:
             self._kernel_start()
@@ -390,17 +371,14 @@ class KernelController(Thread):
             try:
                 self._kernel_terminate()
             finally:
-                assert (self.stopped)
-                assert (not self.kernel_started)
+                assert (not self.kernel_initialized.is_set())
+                assert (self.kernel_terminated.is_set())
                 raise e
 
     _KERNEL_OK = b'OK'
 
     def _kernel_start(self):
         """Start a new kernel process and open sockets to communicate with it."""
-        self.stopped = False
-        if self.kernel_started:
-            return
         # Socket to which we push new expressions for evaluation.
         if self.kernel_socket_out is None:
             self.kernel_socket_out = Socket(zmq_type=zmq.PUSH)
@@ -461,6 +439,7 @@ class KernelController(Thread):
                 retry_sleep_time=self.get_parameter('STARTUP_RETRY_SLEEP_TIME')
             )
             if response == self._KERNEL_OK:
+                self.kernel_initialized.set()
                 if logger.isEnabledFor(logging.INFO):
                     logger.info(
                         'Kernel %s is ready. Startup took %.2f seconds.' %
@@ -476,155 +455,88 @@ class KernelController(Thread):
     @property
     def pid(self):
         """Return the PID of the Wolfram Kernel process, if any, or None."""
-        if self.kernel_proc:
+        try:
             return self.kernel_proc.pid
-        else:
+        except AttributeError:
             return None
     
-    def run(self):
-        graceful_stop = None
-        if self.inproc_socket_in_uri is None or self.inproc_socket_out_uri is None:
-            raise WolframKernelException('Controller is not connected.')
-        try:
-            self.inproc_socket_in = Socket(zmq_type=zmq.PULL)
-            self.inproc_socket_out = Socket(zmq_type=zmq.PUSH)
-            logger.debug('PUSH inproc: %s, PULL kernel: %s', self.inproc_socket_out, self.inproc_socket_in_uri)
-            self.inproc_socket_in.zmq_socket.connect(self.inproc_socket_in_uri)
-            self.inproc_socket_out.zmq_socket.connect(self.inproc_socket_out_uri)
-
-            # wait for the command to initialize the kernel
-            while not self.stop_event.is_set() and not self.terminate_event.is_set():
-                if self.inproc_socket_in.poll(timeout=.1) > 0:
-                    self.kernel_start()
-                    break
-            while True:
-                if self.stop_event.is_set():
-                    graceful_stop = True
-                    break
-                if self.terminate_event.is_set():
-                    graceful_stop = False
-                    break
-                if self.inproc_socket_in.poll(timeout=.1) > 0:
-                    wxf_frame = self.inproc_socket_in.recv(copy=False)
-                    start = time.perf_counter()
-                    self.kernel_socket_out.send(wxf_frame)
-                    if logger.isEnabledFor(logging.DEBUG):
-                        logger.debug('Expression sent to kernel in %.06fsec',
-                                    time.perf_counter() - start)
-                        start = time.perf_counter()
-
-                    # read the message as bytes.
-                    msg_count = self.kernel_socket_in.recv()
-                    if logger.isEnabledFor(logging.DEBUG):
-                        logger.debug('Message count received from kernel after %.06fsec',
-                                    time.perf_counter() - start)
-                    try:
-                        msg_count_as_int = int(msg_count)
-                    except ValueError:
-                        raise WolframKernelException(
-                            'Unexpected message count returned by Kernel %s' % msg_count)
-                    # self.inproc_socket_out.send(msg_count)
-                    # TODO use EvaluationData to get one message with result and metadata.
-                    errmsg = []
-                    for i in range(msg_count_as_int):
-                        json_msg = self.kernel_socket_in.recv_json()
-                        errmsg.append((json_msg[0], force_text(json_msg[1])))
-                        logger.warn(json_msg)
-                    
-                    wxf_result = self.kernel_socket_in.recv(copy=False)
-                    if logger.isEnabledFor(logging.DEBUG):
-                        logger.debug('Expression received from kernel after %.06fsec',
-                                    time.perf_counter() - start)
-                    self.evaluation_count += 1
-                    self.inproc_socket_out.send(wxf_result)
-        finally:
-            try:
-                if graceful_stop:
-                    self._kernel_stop()
-                else:
-                    self._kernel_terminate()
-            finally:
-                self.close()
-
-class KernelEvaluator(WolframEvaluator):
-    def __init__(self,
-                 kernel=None,
-                 consumer=None,
-                 initfile=None,
-                 in_socket=None,
-                 out_socket=None,
-                 kernel_loglevel=logging.NOTSET,
-                 stdin=PIPE,
-                 stdout=PIPE,
-                 stderr=PIPE,
-                 inputform_string_evaluation=True,
-                 wxf_bytes_evaluation=True,
-                 **kwargs):
-        super().__init__(
-            inputform_string_evaluation=inputform_string_evaluation)
-        self.wxf_bytes_evaluation=wxf_bytes_evaluation
-        self.kernel_controller = KernelController(
-            kernel=kernel,
-            initfile=initfile,
-            kernel_loglevel=kernel_loglevel,
-            stdin=stdin,
-            stdout=stdout,
-            stderr=stderr,
-            **kwargs)
-        self.inproc_socket_out = None
-        self.inproc_socket_in = None
-        self.consumer = consumer
-        self.stopped = False
-
-    @property
-    def started(self):
-        return self.kernel_controller.is_alive()
-
-    _socket_read_sleep_func = time.sleep
-
-    def start(self):
-        self.stopped = False
-        try:
-            self.inproc_socket_out, self.inproc_socket_in = self.kernel_controller.connect()
-            # start the thread.
-            self.kernel_controller.start() 
-        except Exception as e:
-            try:
-                self.terminate()
-            finally:
-                raise e
+    START = object()
+    STOP = object()
 
     def stop(self):
-        self._stop(gracefully=True)
-    
+        self.tasks_queue.put(self.STOP)
+
     def terminate(self):
-        self._stop(gracefully=False)
+        self.kernel_termination_requested.set()
+        self.tasks_queue.put(self.STOP)
 
-    def _stop(self, gracefully=True):
-        self.stopped = True
-        if self.kernel_controller.is_alive():
-            try:
-                if gracefully:
-                    self.kernel_controller.stop_event.set()
-                else:
-                    self.kernel_controller.terminate_event.set()
-            finally:
-                self.kernel_controller.join()
-
-    def ensure_started(self):
-        if not self.started:
-            self.start()
-        if self.stopped:
-            self.restart()
-
-    def do_evaluate(self, expr, **kwargs):
-        if not self.started:
-            raise WolframKernelException('Kernel is not running.')
+    def evaluate_future(self, expr, future, result_update_callback=None, **kwargs):
         wxf = export(expr, target_format='wxf', **kwargs)
-        self.inproc_socket_out.send(wxf, copy=False)
-        wxf_frame = self.inproc_socket_in.recv(copy=False)
-        return WolframKernelEvaluationResult(wxf_frame.buffer, [], consumer=self.consumer)
+        self.tasks_queue.put((wxf, future, result_update_callback))
 
-    def evaluate_wrap(self, expr, **kwargs):
-        expr = self.normalize_input(expr)
-        return self.do_evaluate(expr, **kwargs)
+    def run(self):
+        try:
+            task = self.tasks_queue.get()
+            # Kernel start requested.
+            if task is self.START:
+                self.tasks_queue.task_done()
+                task=None
+                self._safe_kernel_start()
+                task = self.tasks_queue.get()
+            # first evaluation. Ensure kernel is started, and that it's not a stop command.
+            elif task is not self.STOP:
+                self._safe_kernel_start()
+            while not self.kernel_termination_requested.is_set():
+                future = None
+                if task is self.STOP:
+                    self.kernel_terminated.set()
+                    logger.info('Termination requested for kernel controller. Associated kernel PID: %s', self.pid)
+                    self.tasks_queue.task_done()
+                    task = None
+                    break
+                wxf, future, result_update_callback = task
+                self.kernel_socket_out.send(wxf)
+                if logger.isEnabledFor(logging.DEBUG):
+                    logger.debug('Expression sent to kernel in %.06fsec',
+                                time.perf_counter() - start)
+                    start = time.perf_counter()
+
+                # read the message as bytes.
+                msg_count = self.kernel_socket_in.recv()
+                if logger.isEnabledFor(logging.DEBUG):
+                    logger.debug('Message count received from kernel after %.06fsec',
+                                time.perf_counter() - start)
+                try:
+                    msg_count_as_int = int(msg_count)
+                except ValueError:
+                    raise WolframKernelException(
+                        'Unexpected message count returned by Kernel %s' % msg_count)
+                # TODO use EvaluationData to get one message with result and metadata.
+                errmsg = []
+                for i in range(msg_count_as_int):
+                    json_msg = self.kernel_socket_in.recv_json()
+                    errmsg.append((json_msg[0], force_text(json_msg[1])))
+                    logger.warn(json_msg)
+                
+                wxf_result = self.kernel_socket_in.recv(copy=False)
+                if logger.isEnabledFor(logging.DEBUG):
+                    logger.debug('Expression received from kernel after %.06fsec',
+                                time.perf_counter() - start)
+                self.evaluation_count += 1
+                result = WolframKernelEvaluationResult(wxf_result.buffer, errmsg, consumer=self.consumer)
+                if result_update_callback:
+                    result = result_update_callback(result)
+                future.set_result(result)
+                self.tasks_queue.task_done()
+                task = None
+                task = self.tasks_queue.get()
+        except Exception as e:
+            if task:
+                self.tasks_queue.task_done()
+            raise e
+        finally:
+            if self.kernel_termination_requested.is_set():
+                self._kernel_terminate()
+            else:
+                self._kernel_stop()
+
