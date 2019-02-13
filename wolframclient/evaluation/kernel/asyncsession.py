@@ -7,7 +7,7 @@ from subprocess import PIPE
 from threading import Event
 
 from wolframclient.evaluation.base import WolframAsyncEvaluator
-from wolframclient.evaluation.kernel.kernelsession import (
+from wolframclient.evaluation.kernel.localsession import (
     WolframLanguageSession)
 from wolframclient.utils.api import asyncio, futures
 
