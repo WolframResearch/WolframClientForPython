@@ -189,11 +189,19 @@ class WolframLanguageSession(WolframEvaluator):
         return self._timed_out_eval(self.evaluate_wrap_future, expr, timeout=timeout, **kwargs)
 
     def evaluate(self, expr, timeout=None, **kwargs):
-        return self._timed_out_eval(self.evaluate_future, expr, timeout=timeout, **kwargs)
+        result = self._timed_out_eval(self.evaluate_wrap_future, expr, timeout=timeout, **kwargs)
+        self.log_message_from_result(result)
+        return result.get()
 
     def evaluate_wxf(self, expr, timeout=None, **kwargs):
-        return self._timed_out_eval(self.evaluate_wxf_future, expr, timeout=timeout, **kwargs)
+        result = self._timed_out_eval(self.evaluate_wrap_future, expr, timeout=timeout, **kwargs)
+        self.log_message_from_result(result)
+        return result.wxf
 
+    def log_message_from_result(self, result):
+        if not result.success:
+            for msg in result.messages:
+                logger.warning(msg[1])
 
 # class WolframLanguageSession(WolframEvaluator):
 #     """A session to a Wolfram Kernel enabling evaluation of Wolfram Language expressions.
