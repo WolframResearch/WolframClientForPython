@@ -207,9 +207,8 @@ class KernelController(Thread):
             **self.parameters)
 
     _DEFAULT_PARAMETERS = {
-        'STARTUP_READ_TIMEOUT': 20,
-        'STARTUP_RETRY_SLEEP_TIME': 0.001,
-        'TERMINATE_READ_TIMEOUT': 3,
+        'STARTUP_TIMEOUT': 20,
+        'TERMINATE_TIMEOUT': 3,
         'HIDE_SUBPROCESS_WINDOW': True
     }
 
@@ -218,9 +217,8 @@ class KernelController(Thread):
 
         Session parameters are:
 
-        * ``'STARTUP_READ_TIMEOUT'``: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.
-        * ``'STARTUP_RETRY_SLEEP_TIME'``: time to sleep, in seconds, before checking that the initialized kernel has responded. Default is 1 ms.
-        * ``'TERMINATE_READ_TIMEOUT'``: time to wait, in seconds, after the ``Quit[]`` command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.
+        * ``'STARTUP_TIMEOUT'``: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.
+        * ``'TERMINATE_TIMEOUT'``: time to wait, in seconds, after the ``Quit[]`` command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.
         """
         try:
             return self.parameters.get(
@@ -235,9 +233,8 @@ class KernelController(Thread):
 
         Session parameters are:
 
-        * ``'STARTUP_READ_TIMEOUT'``: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.
-        * ``'STARTUP_RETRY_SLEEP_TIME'``: time to sleep, in seconds, before checking that the initialized kernel has responded. Default is 1 ms.
-        * ``'TERMINATE_READ_TIMEOUT'``: time to wait, in seconds, after the ``Quit[]`` command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.
+        * ``'STARTUP_TIMEOUT'``: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.
+        * ``'TERMINATE_TIMEOUT'``: time to wait, in seconds, after the ``Quit[]`` command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.
         """
         if parameter_name not in self._DEFAULT_PARAMETERS:
             raise KeyError(
@@ -279,11 +276,11 @@ class KernelController(Thread):
                     try:
                         self.kernel_proc.wait(
                             timeout=self.get_parameter(
-                                'TERMINATE_READ_TIMEOUT'))
+                                'TERMINATE_TIMEOUT'))
                     except:
                         logger.info(
                             'Kernel process failed to stop after %.02f seconds. Killing it.'
-                            % self.get_parameter('TERMINATE_READ_TIMEOUT'))
+                            % self.get_parameter('TERMINATE_TIMEOUT'))
                         error = True
                 # Kill process if not already terminated.
                 # Wait for it to cleanly stop if the Quit command was successfully sent,
@@ -434,9 +431,9 @@ class KernelController(Thread):
         try:
             # First message must be "OK", acknowledging everything is up and running
             # on the kernel side.
-            response = self.kernel_socket_in.recv_timeout(
-                timeout=self.get_parameter('STARTUP_READ_TIMEOUT'),
-                retry_sleep_time=self.get_parameter('STARTUP_RETRY_SLEEP_TIME')
+            response = self.kernel_socket_in.recv_abortable(
+                timeout=self.get_parameter('STARTUP_TIMEOUT'),
+                abort_event= self.kernel_termination_requested
             )
             if response == self._KERNEL_OK:
                 self.kernel_initialized.set()
@@ -450,8 +447,9 @@ class KernelController(Thread):
         except SocketException as se:
             logger.info(se)
             raise WolframKernelException(
-                'Failed to communicate with the kernel %s. Could not read from ZMQ socket.'
-                % self.kernel)
+                'Failed to communicate with kernel: %s. Startup timed out after %.2f seconds.'
+                % (self.kernel,self.get_parameter('STARTUP_TIMEOUT')))
+
     @property
     def pid(self):
         """Return the PID of the Wolfram Kernel process, if any, or None."""
