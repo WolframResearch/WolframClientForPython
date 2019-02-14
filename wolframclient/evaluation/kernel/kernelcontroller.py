@@ -473,6 +473,7 @@ class KernelController(Thread):
         self.tasks_queue.put((wxf, future, result_update_callback))
 
     def run(self):
+        future = None
         try:
             task = self.tasks_queue.get()
             # Kernel start requested.
@@ -483,6 +484,7 @@ class KernelController(Thread):
                 task = self.tasks_queue.get()
             # first evaluation. Ensure kernel is started, and that it's not a stop command.
             elif task is not self.STOP:
+                _, future, _ = task
                 self._safe_kernel_start()
             while not self.kernel_termination_requested.is_set():
                 future = None
@@ -531,6 +533,8 @@ class KernelController(Thread):
         except Exception as e:
             if task:
                 self.tasks_queue.task_done()
+            if future:
+                future.set_exception(e)
             raise e
         finally:
             if self.kernel_termination_requested.is_set():
