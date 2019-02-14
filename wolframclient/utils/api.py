@@ -74,8 +74,9 @@ time = API(perf_counter=('time.perf_counter', 'time.time'), sleep='time.sleep')
 futures = API(ThreadPoolExecutor='concurrent.futures.ThreadPoolExecutor')
 
 asyncio = API(
-    create_task=('wolframclient.utils.asyncio.create_task'),
-    ensure_future=('asyncio.ensure_future'),
+    create_task='wolframclient.utils.asyncio.create_task',
+    ensure_future='asyncio.ensure_future',
+    wrap_future='asyncio.wrap_future',
     get_event_loop='asyncio.get_event_loop',
     new_event_loop='asyncio.new_event_loop',
     Queue='asyncio.Queue',
