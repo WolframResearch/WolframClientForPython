@@ -7,7 +7,6 @@ from subprocess import PIPE, Popen
 from queue import Queue
 from concurrent import futures
 import logging
-
 from wolframclient.utils import six
 from wolframclient.utils.api import json, os, time, zmq
 from wolframclient.exception import WolframKernelException
@@ -360,6 +359,12 @@ class KernelController(Thread):
             # in case kernel_proc was set to None. May not even be possible.
             return False
 
+    def request_kernel_start(self):
+        """ Start the thread and the associated kernel. """
+        if not self.started:
+            self.tasks_queue.put(self.START)
+            self.start()
+
     def _safe_kernel_start(self):
         """ Start a kernel. If something went wrong, clean-up resources that may have been created. """
         try:
@@ -472,6 +477,39 @@ class KernelController(Thread):
         wxf = export(expr, target_format='wxf', **kwargs)
         self.tasks_queue.put((wxf, future, result_update_callback))
 
+    def _do_evaluate(self, wxf, future, result_update_callback):
+        self.kernel_socket_out.send(wxf)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('Expression sent to kernel in %.06fsec',
+                        time.perf_counter() - start)
+            start = time.perf_counter()
+        # read the message as bytes.
+        msg_count = self.kernel_socket_in.recv()
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('Message count received from kernel after %.06fsec',
+                        time.perf_counter() - start)
+        try:
+            msg_count_as_int = int(msg_count)
+        except ValueError:
+            raise WolframKernelException(
+                'Unexpected message count returned by Kernel %s' % msg_count)
+        # TODO use EvaluationData to get one message with result and metadata.
+        errmsg = []
+        for i in range(msg_count_as_int):
+            json_msg = self.kernel_socket_in.recv_json()
+            errmsg.append((json_msg[0], force_text(json_msg[1])))
+            logger.warn(json_msg)
+        
+        wxf_result = self.kernel_socket_in.recv(copy=False)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('Expression received from kernel after %.06fsec',
+                        time.perf_counter() - start)
+        self.evaluation_count += 1
+        result = WolframKernelEvaluationResult(wxf_result.buffer, errmsg, consumer=self.consumer)
+        if result_update_callback:
+            result = result_update_callback(result)
+        future.set_result(result)
+
     def run(self):
         future = None
         try:
@@ -488,45 +526,17 @@ class KernelController(Thread):
                 self._safe_kernel_start()
             while not self.kernel_termination_requested.is_set():
                 future = None
-                if task is self.STOP:
-                    self.kernel_terminated.set()
-                    logger.info('Termination requested for kernel controller. Associated kernel PID: %s', self.pid)
-                    self.tasks_queue.task_done()
-                    task = None
-                    break
-                wxf, future, result_update_callback = task
-                self.kernel_socket_out.send(wxf)
-                if logger.isEnabledFor(logging.DEBUG):
-                    logger.debug('Expression sent to kernel in %.06fsec',
-                                time.perf_counter() - start)
-                    start = time.perf_counter()
-
-                # read the message as bytes.
-                msg_count = self.kernel_socket_in.recv()
-                if logger.isEnabledFor(logging.DEBUG):
-                    logger.debug('Message count received from kernel after %.06fsec',
-                                time.perf_counter() - start)
                 try:
-                    msg_count_as_int = int(msg_count)
-                except ValueError:
-                    raise WolframKernelException(
-                        'Unexpected message count returned by Kernel %s' % msg_count)
-                # TODO use EvaluationData to get one message with result and metadata.
-                errmsg = []
-                for i in range(msg_count_as_int):
-                    json_msg = self.kernel_socket_in.recv_json()
-                    errmsg.append((json_msg[0], force_text(json_msg[1])))
-                    logger.warn(json_msg)
-                
-                wxf_result = self.kernel_socket_in.recv(copy=False)
-                if logger.isEnabledFor(logging.DEBUG):
-                    logger.debug('Expression received from kernel after %.06fsec',
-                                time.perf_counter() - start)
-                self.evaluation_count += 1
-                result = WolframKernelEvaluationResult(wxf_result.buffer, errmsg, consumer=self.consumer)
-                if result_update_callback:
-                    result = result_update_callback(result)
-                future.set_result(result)
+                    wxf, future, result_update_callback = task
+                    self._do_evaluate(wxf, future, result_update_callback)
+                # not a tuple: can be STOP, a late START or garbage (last two being ignored)
+                except TypeError:
+                    if task is self.STOP:
+                        self.kernel_terminated.set()
+                        logger.info('Termination requested for kernel controller. Associated kernel PID: %s', self.pid)
+                        self.tasks_queue.task_done()
+                        task = None
+                        break
                 self.tasks_queue.task_done()
                 task = None
                 task = self.tasks_queue.get()
