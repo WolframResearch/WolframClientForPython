@@ -5,11 +5,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 import logging
 from subprocess import PIPE
 from threading import Event
-
+from functools import partial
 from wolframclient.evaluation.base import WolframAsyncEvaluator
-from wolframclient.evaluation.kernel.localsession import (
-    WolframLanguageSession)
-from wolframclient.utils.api import asyncio, futures
+from wolframclient.evaluation.kernel.localsession import WolframLanguageSession
+from wolframclient.utils.api import asyncio, futures, time
 
 logger = logging.getLogger(__name__)
 
@@ -43,8 +42,6 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
                  consumer=None,
                  loop=None,
                  initfile=None,
-                 in_socket=None,
-                 out_socket=None,
                  kernel_loglevel=logging.NOTSET,
                  stdin=PIPE,
                  stdout=PIPE,
@@ -57,8 +54,6 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
             kernel=kernel,
             consumer=consumer,
             initfile=initfile,
-            in_socket=in_socket,
-            out_socket=out_socket,
             kernel_loglevel=kernel_loglevel,
             stdin=stdin,
             stdout=stdout,
@@ -67,9 +62,6 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
             wxf_bytes_evaluation=wxf_bytes_evaluation,
             **kwargs)
         self.thread_pool_exec = None
-        # event shared with timed out socket read function, to cancel
-        # zmq operation at startup.
-        self.event_abort = Event()
 
     def duplicate(self):
         return self.__class__(
@@ -77,8 +69,6 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
             loop=self._loop,
             consumer=self.consumer,
             initfile=self.initfile,
-            in_socket=self.in_socket,
-            out_socket=self.out_socket,
             kernel_loglevel=self.loglevel,
             stdin=self._stdin,
             stdout=self._stdout,
@@ -87,50 +77,46 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
             wxf_bytes_evaluation=self.wxf_bytes_evaluation,
             **self.parameters)
 
-    def _socket_read_sleep_func(self, duration):
-        if not self.event_abort.is_set():
-            self.event_abort.wait(timeout=duration)
-        else:
-            raise TimeoutError
-
     def _get_exec_pool(self):
         if self.thread_pool_exec is None:
             self.thread_pool_exec = futures.ThreadPoolExecutor(max_workers=1)
         return self.thread_pool_exec
 
+    async def do_evaluate_future(self, expr, result_update_callback=None, **kwargs):
+        future = super().do_evaluate_future(expr, result_update_callback=result_update_callback, **kwargs)
+        return asyncio.wrap_future(future, loop=self._loop)
+
+    async def evaluate_future(self, expr, **kwargs):
+        await self.ensure_started()
+        return await self.do_evaluate_future(expr, result_update_callback=self.CALLBACK_GET, **kwargs)
+    
+    async def evaluate_wxf_future(self, expr, **kwargs):
+        await self.ensure_started()
+        return await self.do_evaluate_future(expr, result_update_callback=self.CALLBACK_GET_WXF, **kwargs)
+
+    async def evaluate_wrap_future(self, expr, **kwargs):
+        await self.ensure_started()
+        return await self.do_evaluate_future(expr, **kwargs)
+
     async def evaluate(self, expr, **kwargs):
-        """Evaluate :meth:`~wolframclient.evaluation.WolframLanguageSession.evaluate`
-        asynchronously.
+        """Evaluate an expression asynchronously.
 
         This method is a coroutine."""
-        await self.ensure_started()
-        result = await self._async_evaluate(super().do_evaluate, self.normalize_input(expr),
-                                            **kwargs)
-        self.log_message_from_result(result)
-        return result.get()
-
+        future = await self.evaluate_future(expr, **kwargs)
+        await future
+        return future.result()
+        
     async def evaluate_wxf(self, expr, **kwargs):
-        """Evaluate :meth:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wxf`
-        asynchronously.
+        """Evaluate an expression and return the WXF output asynchronously.
 
         This method is a coroutine."""
-        await self.ensure_started()
-        result = await self._async_evaluate(super().do_evaluate, self.normalize_input(expr),
-                                            **kwargs)
-        self.log_message_from_result(result)
-        return result.wxf
+        return await self.evaluate_wxf_future(expr, **kwargs).result()
 
     async def evaluate_wrap(self, expr, **kwargs):
-        """Evaluate :meth:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wrap`
-        asynchronously.
+        """Evaluate an expression and return a result object asynchronously.
 
         This method is a coroutine."""
-        await self.ensure_started()
-        return await self._async_evaluate(super().do_evaluate, self.normalize_input(expr), **kwargs)
-
-    async def _async_evaluate(self, func, expr, **kwargs):
-        return await self._loop.run_in_executor(self._get_exec_pool(), func,
-                                                expr, **kwargs)
+        return await self.evaluate_wrap_future(expr, **kwargs).result()
 
     async def ensure_started(self):
         if not self.started:
@@ -138,29 +124,37 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
         if self.stopped:
             await self.restart()
 
+    async def restart(self):
+        if self.started:
+            await self.stop()
+        await self.start()
+
     async def start(self):
         """Asynchronously start the session.
         
         This method is a coroutine."""
         try:
-            await self._loop.run_in_executor(self._get_exec_pool(),
-                                             super()._start)
+            await self._loop.run_in_executor(
+                self._get_exec_pool(),
+                partial(super()._start, block=True),
+                )
         except Exception as e:
             await self.terminate()
             raise e
 
     async def stop(self):
-        # signal socket read with timeout function to abort current operation.
-        self.event_abort.set()
+        """Asynchronously stop the session (gracefully termination).
+        
+        This method is a coroutine."""
         await self._async_terminate(super().stop, True)
 
     async def terminate(self):
-        await self._async_terminate(super().terminate, False)
-
-    async def _async_terminate(self, sync_stop_func, wait):
         """Asynchronously terminate the session.
         
         This method is a coroutine."""
+        await self._async_terminate(super().terminate, False)
+
+    async def _async_terminate(self, sync_stop_func, wait):
         # Check that the thread pool was created, otherwise it's an initialized session
         # that was never started, and use it to asynchronously stop the kernel.
         if self.thread_pool_exec:
