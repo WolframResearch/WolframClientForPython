@@ -6,9 +6,12 @@ from wolframclient.evaluation.base import WolframEvaluator
 from wolframclient.evaluation.kernel.kernelcontroller import KernelController
 from wolframclient.evaluation.result import WolframKernelEvaluationResult
 from wolframclient.language import wl
+from wolframclient.serializers import export
+from wolframclient.utils import six
 from concurrent import futures
 
 import logging
+logger = logging.getLogger(__name__)
 
 # Some callback methods for internal use.
 def do_get_wxf(result):
@@ -98,6 +101,13 @@ class WolframLanguageSession(WolframEvaluator):
                  **kwargs):
         super().__init__(
             inputform_string_evaluation=inputform_string_evaluation)
+        self.kernel=kernel
+        self.consumer=None
+        self.initfile=None
+        self.kernel_loglevel=logging.NOTSET
+        self._stdin=stdin
+        self._stdout=stdout
+        self._stderr=stderr
         self.wxf_bytes_evaluation=wxf_bytes_evaluation
         self.controller_class = controller_class
         self.kernel_controller = self.controller_class(
@@ -108,16 +118,22 @@ class WolframLanguageSession(WolframEvaluator):
             stdout=stdout,
             stderr=stderr,
             **kwargs)
-        self.stopped = False
+        self.parameters = kwargs
+        self.stopped = True
 
     def duplicate(self):
-        new_session = self.__class__(
-            inputform_string_evaluation=self.inputform_string_evaluation, 
+        return self.__class__(
+            kernel=self.kernel,
+            consumer=self.consumer,
+            initfile=self.initfile,
+            kernel_loglevel=self.kernel_loglevel,
+            stdin=self._stdin,
+            stdout=self._stdout,
+            stderr=self._stderr,
+            inputform_string_evaluation=self.inputform_string_evaluation,
             wxf_bytes_evaluation=self.wxf_bytes_evaluation,
             controller_class = self.controller_class
-            )
-        new_session.kernel_controller = self.kernel_controller.duplicate()
-        return new_session
+            **self.parameters)
 
     @property
     def started(self):
@@ -160,11 +176,8 @@ class WolframLanguageSession(WolframEvaluator):
     def _stop(self, gracefully=True):
         # if the kernel is terminated the queue no more accept new tasks. Stop would hang.
         if not self.stopped:
-            try:
-                future = self.stop_future(gracefully=gracefully)
-                future.result()
-            finally:
-                self.kernel_controller.join()
+            future = self.stop_future(gracefully=gracefully)
+            future.result()
 
     def stop_future(self, gracefully=True):
         self.stopped = True
@@ -173,13 +186,13 @@ class WolframLanguageSession(WolframEvaluator):
         else:
             return self.kernel_controller.terminate()
 
-    def ensure_started(self, block=False, timeout=None):
+    def ensure_started(self):
         if not self.started:
-            self.start(block=block, timeout=timeout)
+            self.start(block=True, timeout=None)
         if self.stopped:
             self.restart()
 
-    def restart(self, block=False, timeout=None):
+    def restart(self, block=True, timeout=None):
         """ Restart a given evaluator by stopping it in case it was already started. """
         if self.started:
             self.stop()
@@ -190,8 +203,12 @@ class WolframLanguageSession(WolframEvaluator):
 
     def do_evaluate_future(self, expr, result_update_callback=None, **kwargs):
         future = futures.Future()
+        if self.wxf_bytes_evaluation and isinstance(expr, six.binary_type):
+            wxf = expr
+        else:
+            wxf = export(self.normalize_input(expr), target_format='wxf', **kwargs)
         self.kernel_controller.evaluate_future(
-            self.normalize_input(expr), 
+            wxf, 
             future, 
             result_update_callback=result_update_callback, 
             **kwargs)
