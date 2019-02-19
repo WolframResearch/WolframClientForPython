@@ -94,11 +94,13 @@ class WolframLanguageSession(WolframEvaluator):
                  stderr=PIPE,
                  inputform_string_evaluation=True,
                  wxf_bytes_evaluation=True,
+                 controller_class = KernelController,
                  **kwargs):
         super().__init__(
             inputform_string_evaluation=inputform_string_evaluation)
         self.wxf_bytes_evaluation=wxf_bytes_evaluation
-        self.kernel_controller = KernelController(
+        self.controller_class = controller_class
+        self.kernel_controller = self.controller_class(
             kernel=kernel,
             initfile=initfile,
             kernel_loglevel=kernel_loglevel,
@@ -108,11 +110,20 @@ class WolframLanguageSession(WolframEvaluator):
             **kwargs)
         self.stopped = False
 
+    def duplicate(self):
+        new_session = self.__class__(
+            inputform_string_evaluation=self.inputform_string_evaluation, 
+            wxf_bytes_evaluation=self.wxf_bytes_evaluation,
+            controller_class = self.controller_class
+            )
+        new_session.kernel_controller = self.kernel_controller.duplicate()
+        return new_session
+
     @property
     def started(self):
         return self.kernel_controller.started
 
-    def start(self, block=False, timeout=None):
+    def start(self, block=True, timeout=None):
         """ Start a kernel controller, eventually restart a fresh on if the previous one was terminated. 
         
         Set `block` to :data:`True` (default is :data:`False`) to wait for the kernel to be up and running 
@@ -120,42 +131,47 @@ class WolframLanguageSession(WolframEvaluator):
         will be raised.
         """
         try:
-            self._start(block=block, timeout=timeout)
+            future = self.start_future()
+            if future and block:
+                future.result(timeout=timeout)
         except Exception as e:
             try:
                 self.terminate()
             finally:
                 raise e
                 
-    def _start(self, block=False, timeout=None):
+    def start_future(self):
         self.stopped = False
         if self.kernel_controller.terminated:
             self.kernel_controller = self.kernel_controller.duplicate()
         if not self.started:
-            self.kernel_controller.request_kernel_start()
-            if block:
-                started = self.kernel_controller.wait_kernel_ready(timeout=timeout)
-                if not started:
-                    raise TimeoutError()
+            return self.kernel_controller.request_kernel_start()
+        future = futures.Future()
+        future.set_result(True)
+        return future
+
 
     def stop(self):
         self._stop(gracefully=True)
     
     def terminate(self):
         self._stop(gracefully=False)
-
+        
     def _stop(self, gracefully=True):
+        # if the kernel is terminated the queue no more accept new tasks. Stop would hang.
+        if not self.stopped:
+            try:
+                future = self.stop_future(gracefully=gracefully)
+                future.result()
+            finally:
+                self.kernel_controller.join()
+
+    def stop_future(self, gracefully=True):
         self.stopped = True
-        if self.kernel_controller.terminated:
-            return
-        try:
-            if self.kernel_controller.started:
-                if gracefully:
-                    self.kernel_controller.stop()
-                else:
-                    self.kernel_controller.terminate()
-        finally:
-            self.kernel_controller.join()
+        if gracefully:
+            return self.kernel_controller.stop()
+        else:
+            return self.kernel_controller.terminate()
 
     def ensure_started(self, block=False, timeout=None):
         if not self.started:
@@ -220,3 +236,19 @@ class WolframLanguageSession(WolframEvaluator):
         if not result.success:
             for msg in result.messages:
                 logger.warning(msg[1])
+
+    def get_parameter(self, parameter_name):
+        return self.kernel_controller.get_parameter(parameter_name)
+
+    def set_parameter(self, parameter_name, parameter_value):
+        self.kernel_controller.set_parameter(parameter_name, parameter_value)
+
+    get_parameter.__doc__ = KernelController.get_parameter.__doc__
+    set_parameter.__doc__ = KernelController.set_parameter.__doc__
+
+    def __repr__(self):
+        if self.started:
+            return '<%s: kernel controller=%s>' % (
+                self.__class__.__name__, self.kernel_controller)
+        else:
+            return '<%s: not started>' % self.__class__.__name__

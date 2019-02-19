@@ -2,10 +2,11 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from threading import Event, Thread, RLock
+from threading import Event, Thread, Lock
 from subprocess import PIPE, Popen
 from queue import Queue
 from concurrent import futures
+from itertools import count as _count
 import logging
 from wolframclient.utils import six
 from wolframclient.utils.api import json, os, time, zmq
@@ -29,6 +30,9 @@ TO_PY_LOG_LEVEL = {
 }
 FROM_PY_LOG_LEVEL = dict((v, k) for k, v in TO_PY_LOG_LEVEL.items())
 
+_thread_counter = _count().__next__
+_thread_counter()
+
 class KernelLogger(Thread):
     """ Asynchronous logger for kernel messages. 
     
@@ -36,19 +40,16 @@ class KernelLogger(Thread):
     by the :mod:`logging` module.
     """
     MAX_MESSAGE_BEFORE_QUIT = 32
-
-    def __init__(self, level=logging.WARN):
-        Thread.__init__()
+    def __init__(self, name=None, level=logging.WARN):
+        super().__init__(name=name)
         self.socket = Socket(zmq_type=zmq.SUB)
         self.socket.bind()
         # Subscribe to all since we want all log messages.
         self.socket.zmq_socket.setsockopt(zmq.SUBSCRIBE, b'')
-        logger.info('Initializing Kernel logger on socket ' + self.socket.uri)
-        super(KernelLogger,
-              self).__init__(name='wolframkernel-logger-%s:%s' %
-                             (self.socket.host, self.socket.port))
+        if logger.isEnabledFor(logging.INFO):
+            logger.info('Initializing Kernel logger on socket ' + self.socket.uri)
         self.logger = logging.getLogger(
-            'WolframKernel-%s:%s' % (self.socket.host, self.socket.port))
+            'WolframKernel-<%s>' % self.socket.uri)
         self.logger.setLevel(level)
         self.stopped = Event()
 
@@ -147,7 +148,8 @@ class KernelController(Thread):
                  stdout=PIPE, 
                  stderr=PIPE,
                  **kwargs):
-        super().__init__()
+        self.id = _thread_counter()
+        super().__init__(name='wolfram-engine-%i' % self.id)
         if kernel is None:
             kernel = self.default_kernel_path()
         if isinstance(kernel, six.string_types):
@@ -187,11 +189,13 @@ class KernelController(Thread):
         self.parameters = {}
         for k, v in kwargs.items():
             self.set_parameter(k, v)
-        # this event can be awaited to make sure the kernel process is up and running.
-        self.kernel_initialized = Event()
-        # this even is set when the kernel will not serve any more evaluation.
-        self.kernel_terminated = Event()
-        self.kernel_termination_requested = Event()
+        # this is a state: this event can be awaited to make sure the kernel process is up and running.
+        self.state_initialized = Event()
+        # this is a state: this event is set when the kernel will not serve any more evaluation.
+        self.state_terminated = Event()
+        # this is a trigger that will abort most blocking operations.
+        self.trigger_termination_requested = Event()
+        self._state_lock = Lock()
 
     def duplicate(self):
         """ Build a new object using the same configuration as the current one. """
@@ -260,7 +264,8 @@ class KernelController(Thread):
             unexpected start-up errors.
         """
         logger.info('Start termination on kernel %s', self)
-        self.kernel_terminated.set()
+        self.state_terminated.set()
+        self.trigger_termination_requested.set()
         if self.kernel_proc is not None:
             error = False
             if gracefully:
@@ -338,17 +343,13 @@ class KernelController(Thread):
     def started(self):
         """ Is the kernel starting or is started. 
         
-        Event :data:`kernel_initialized` indicates the kernel has been initialized successfully. """
-        return self.is_alive() and not self.kernel_terminated.is_set()
-    
-    def wait_kernel_ready(self, timeout=None):
-        """ Wait for for the kernel to start. Return False if `timeout` is given and operation timed out. """
-        return self.kernel_initialized.wait(timeout=timeout)
+        Event :data:`state_initialized` indicates the kernel has been initialized successfully. """
+        return self.is_alive() and not self.state_terminated.is_set()
 
     @property
     def terminated(self):
         """ Is the kernel terminated. Terminated kernel no more handle evaluations. """
-        return self.kernel_terminated.is_set()
+        return self.state_terminated.is_set()
 
     def is_kernel_alive(self):
         """ Return the status of the kernel process. """ 
@@ -360,21 +361,37 @@ class KernelController(Thread):
             return False
 
     def request_kernel_start(self):
-        """ Start the thread and the associated kernel. """
+        """ Start the thread and the associated kernel. Return a future object indicating the kernel status.
+        
+        The future object result is True once the kernel is successfully started. Exception raised in the process
+        and passed to the future object. 
+        
+        Calling this method twice is a no-op."""
+        future = futures.Future()
         if not self.started:
-            self.tasks_queue.put(self.START)
+            self.enqueue_task(self.START, future, None)
             self.start()
+        else:
+            future.set_result(True)
+        return future
+
+    def enqueue_task(self, payload, future, callback):
+        if self.terminated or self.trigger_termination_requested.is_set():
+            logger.fatal('Cannot enqueue tasks on terminated controller.')
+            raise RuntimeError('Thread is closing. Cannot queue task')
+        self.tasks_queue.put((payload, future, callback))
 
     def _safe_kernel_start(self):
         """ Start a kernel. If something went wrong, clean-up resources that may have been created. """
         try:
             self._kernel_start()
         except Exception as e:
+            logger.warn('Failed to start.')
             try:
                 self._kernel_terminate()
             finally:
-                assert (not self.kernel_initialized.is_set())
-                assert (self.kernel_terminated.is_set())
+                assert(not self.state_initialized.is_set())
+                assert(self.state_terminated.is_set())
                 raise e
 
     _KERNEL_OK = b'OK'
@@ -397,7 +414,7 @@ class KernelController(Thread):
         # start the kernel process
         cmd = [self.kernel, '-noprompt', "-initfile", self.initfile]
         if self.loglevel != logging.NOTSET:
-            self.kernel_logger = KernelLogger(level=self.loglevel)
+            self.kernel_logger = KernelLogger(name='wolfram-engine-logger-%i' % self.id, level=self.loglevel)
             self.kernel_logger.start()
             cmd.append('-run')
             cmd.append(
@@ -438,10 +455,10 @@ class KernelController(Thread):
             # on the kernel side.
             response = self.kernel_socket_in.recv_abortable(
                 timeout=self.get_parameter('STARTUP_TIMEOUT'),
-                abort_event= self.kernel_termination_requested
+                abort_event= self.trigger_termination_requested
             )
             if response == self._KERNEL_OK:
-                self.kernel_initialized.set()
+                self.state_initialized.set()
                 if logger.isEnabledFor(logging.INFO):
                     logger.info(
                         'Kernel %s is ready. Startup took %.2f seconds.' %
@@ -467,24 +484,39 @@ class KernelController(Thread):
     STOP = object()
 
     def stop(self):
-        self.tasks_queue.put(self.STOP)
+        future = futures.Future()
+        with self._state_lock:
+            if self.terminated:
+                future.set_result(True)
+                return future
+            self.enqueue_task(self.STOP, future, None)
+            self.state_terminated.set()
+        return future
 
     def terminate(self):
-        self.kernel_termination_requested.set()
-        self.tasks_queue.put(self.STOP)
+        future = futures.Future()
+        with self._state_lock:
+            if self.terminated:
+                future.set_result(True)
+                return future
+            self.enqueue_task(self.STOP, future, None)
+            self.state_terminated.set()
+            self.trigger_termination_requested.set()
+        return future
 
     def evaluate_future(self, expr, future, result_update_callback=None, **kwargs):
         wxf = export(expr, target_format='wxf', **kwargs)
-        self.tasks_queue.put((wxf, future, result_update_callback))
+        self.enqueue_task(wxf, future, result_update_callback)
 
     def _do_evaluate(self, wxf, future, result_update_callback):
+        start = time.perf_counter()
         self.kernel_socket_out.send(wxf)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Expression sent to kernel in %.06fsec',
                         time.perf_counter() - start)
             start = time.perf_counter()
         # read the message as bytes.
-        msg_count = self.kernel_socket_in.recv()
+        msg_count = self.kernel_socket_in.recv_abortable(abort_event=self.trigger_termination_requested)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Message count received from kernel after %.06fsec',
                         time.perf_counter() - start)
@@ -496,11 +528,11 @@ class KernelController(Thread):
         # TODO use EvaluationData to get one message with result and metadata.
         errmsg = []
         for i in range(msg_count_as_int):
-            json_msg = self.kernel_socket_in.recv_json()
+            json_msg = self.kernel_socket_in.recv_json_abortable()
             errmsg.append((json_msg[0], force_text(json_msg[1])))
             logger.warn(json_msg)
         
-        wxf_result = self.kernel_socket_in.recv(copy=False)
+        wxf_result = self.kernel_socket_in.recv_abortable(copy=False)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Expression received from kernel after %.06fsec',
                         time.perf_counter() - start)
@@ -512,43 +544,77 @@ class KernelController(Thread):
 
     def run(self):
         future = None
+        task = None
         try:
             task = self.tasks_queue.get()
+            action, future, _ = task
             # Kernel start requested.
-            if task is self.START:
-                self.tasks_queue.task_done()
-                task=None
+            if action is self.START:
                 self._safe_kernel_start()
-                task = self.tasks_queue.get()
-            # first evaluation. Ensure kernel is started, and that it's not a stop command.
-            elif task is not self.STOP:
-                _, future, _ = task
-                self._safe_kernel_start()
-            while not self.kernel_termination_requested.is_set():
+                future.set_result(True)
                 future = None
-                try:
-                    wxf, future, result_update_callback = task
-                    self._do_evaluate(wxf, future, result_update_callback)
-                # not a tuple: can be STOP, a late START or garbage (last two being ignored)
-                except TypeError:
-                    if task is self.STOP:
-                        self.kernel_terminated.set()
-                        logger.info('Termination requested for kernel controller. Associated kernel PID: %s', self.pid)
-                        self.tasks_queue.task_done()
-                        task = None
-                        break
-                self.tasks_queue.task_done()
                 task = None
-                task = self.tasks_queue.get()
-        except Exception as e:
-            if task:
                 self.tasks_queue.task_done()
-            if future:
-                future.set_exception(e)
-            raise e
-        finally:
-            if self.kernel_termination_requested.is_set():
-                self._kernel_terminate()
+                task = self.tasks_queue.get()
+            elif action is self.STOP:
+                future.set_result(True)
+                future = None
+                return
+            # first evaluation. Ensure kernel is started.
             else:
-                self._kernel_stop()
+                self._safe_kernel_start()
+            payload, future, result_update_callback = task
+            while not self.trigger_termination_requested.is_set():
+                if payload is self.STOP:
+                    self.state_terminated.set()
+                    logger.info('Termination requested for kernel controller. Associated kernel PID: %s', self.pid)
+                    task = None
+                    self.tasks_queue.task_done()
+                    break
+                self._do_evaluate(payload, future, result_update_callback)
+                future = None
+                task = None
+                self.tasks_queue.task_done()
+                logger.debug('Queue size: %s', self.tasks_queue.qsize())
+                task = self.tasks_queue.get()
+                payload, future, result_update_callback = task
+        except (KeyboardInterrupt, RuntimeError, futures.CancelledError) as e:
+            self.trigger_termination_requested.set()
+            logger.error('Fatal error in kernel controller: %s', e)
+            raise e
+        except Exception as e:
+            self.trigger_termination_requested.set()
+            logger.info('[run] Exception occurred.')
+            if future and not future.cancelled():
+                future.set_exception(e)
+                future = None
+            else:
+                raise e
+        finally:
+            logger.debug('Termination finally block')
+            try:
+                if task:
+                    self.tasks_queue.task_done()
+                logger.info('[run] Finalizing.')
+                if self.trigger_termination_requested.is_set():
+                    self._kernel_terminate()
+                else:
+                    self._kernel_stop()
+                logger.info('[run] End finalizing, updating future.')
+            except Exception as e:
+                if future:
+                    future.set_exception(e)
+                    future = None
+            finally:
+                logger.debug('last finally block')
+                if future:
+                    future.set_result(True)
+    
+    def __repr__(self):
+        if self.started:
+            return '<%s: pid:%i, kernel sockets: (in:%s, out:%s)>' % (
+                self.__class__.__name__, self.kernel_proc.pid,
+                self.kernel_socket_in.uri, self.kernel_socket_out.uri)
+        else:
+            return '<%s: not started>' % self.__class__.__name__
 
