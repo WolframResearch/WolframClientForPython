@@ -98,36 +98,16 @@ class Socket(object):
     def poll(self, *args, **kwargs):
         return self.zmq_socket.poll(*args, **kwargs)
 
-    def recv_abortable(self,
-                     timeout=None,
-                     abort_check_period=0.1,
-                     abort_event=None):
+    @abortable()
+    def recv_abortable(self, **kwargs):
+    # def abortable_recv(self, timeout=None, abort_check_period=0.1, abort_event=None, copy=True):
         """ Read a socket in a non-blocking fashion, until a timeout is reached, or until an abort Event is set."""
-        if not self.bound:
-            raise SocketException('ZMQ socket not bound.')
-        if timeout and timeout < 0:
-            raise ValueError('Timeout must be a positive number.')
-        retry = 0
-        start = time.perf_counter()
-        # fix inconsistencies
-        if timeout and abort_check_period > timeout:
-            abort_check_period = timeout
-        while True:
-            if self.zmq_socket.poll(timeout=abort_check_period) > 0:
-                try:
-                    return self.zmq_socket.recv(flags=zmq.NOBLOCK)
-                # just in case there is more than one consumer.
-                except zmq.Again:
-                    pass
-            retry += 1
-            if abort_event:
-                if abort_event.is_set():
-                    return None
-            if time.perf_counter() - start > timeout:
-                break
-        raise SocketException(
-            'Failed to read any message from socket %s after %.1f seconds and %i retries.'
-            % (self.uri, time.perf_counter() - start, retry))
+        return self.recv(**kwargs)
+
+    @abortable()
+    def recv_json_abortable(self, **kwargs):
+        """ Read a socket for a json message, in a non-blocking fashion, until a timeout is reached, or until an abort Event is set."""
+        return self.recv_json(**kwargs)
 
     def close(self):
         self.zmq_socket.close()
