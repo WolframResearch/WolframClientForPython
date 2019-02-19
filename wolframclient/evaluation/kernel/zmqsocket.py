@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-
+from functools import wraps
 import logging
 from wolframclient.utils.api import zmq, time
 
@@ -10,6 +10,42 @@ logger = logging.getLogger(__name__)
 class SocketException(Exception):
     pass
 
+class SocketAborted(SocketException):
+    pass
+
+def abortable():
+    def outer(recv_method):
+        @wraps(recv_method)
+        def recv_abortable(socket, timeout=None, abort_check_period=.1, abort_event=None, **kwargs):
+            if not socket.bound:
+                raise SocketException('ZMQ socket not bound.')
+            if timeout and timeout < 0:
+                raise ValueError('Timeout must be a positive number.')
+            retry = 0
+            start = time.perf_counter()
+            # fix inconsistencies
+            if timeout and abort_check_period > timeout:
+                abort_check_period = timeout
+            abort_check_period = 1000.*abort_check_period
+            while True:
+                if socket.zmq_socket.poll(timeout=abort_check_period) > 0:
+                    try:
+                        return recv_method(socket, flags=zmq.NOBLOCK, **kwargs)
+                    # just in case there is more than one consumer.
+                    except zmq.Again:
+                        pass
+                retry += 1
+                if abort_event:
+                    if abort_event.is_set():
+                        raise SocketAborted()
+                if timeout and (time.perf_counter() - start > timeout):
+                    break
+            raise SocketException(
+                'Failed to read any message from socket %s after %.1f seconds and %i retries.'
+                % (socket.uri, time.perf_counter() - start, retry))
+
+        return recv_abortable
+    return outer
 
 class Socket(object):
     """ Wrapper around ZMQ socket """
