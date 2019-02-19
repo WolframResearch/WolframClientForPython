@@ -45,8 +45,8 @@ class TestCoroutineSession(BaseTestCase):
     def setupKernelSession(cls):
         cls.async_session = WolframLanguageAsyncSession(
             cls.KERNEL_PATH, kernel_loglevel=logging.INFO)
-        cls.async_session.set_parameter('STARTUP_READ_TIMEOUT', 5)
-        cls.async_session.set_parameter('TERMINATE_READ_TIMEOUT', 3)
+        cls.async_session.set_parameter('STARTUP_TIMEOUT', 5)
+        cls.async_session.set_parameter('TERMINATE_TIMEOUT', 3)
         LOOP.run_until_complete(cls.async_session.start())
 
     @run_in_loop
@@ -143,8 +143,8 @@ class TestKernelPool(BaseTestCase):
         cls.pool = WolframEvaluatorPool(
             cls.KERNEL_PATH,
             kernel_loglevel=logging.INFO,
-            STARTUP_READ_TIMEOUT=5,
-            TERMINATE_READ_TIMEOUT=3)
+            STARTUP_TIMEOUT=5,
+            TERMINATE_TIMEOUT=3)
         LOOP.run_until_complete(cls.pool.start())
 
     @run_in_loop
@@ -196,8 +196,8 @@ class TestKernelPool(BaseTestCase):
         async with WolframEvaluatorPool(
                 session,
                 kernel_loglevel=logging.INFO,
-                STARTUP_READ_TIMEOUT=5,
-                TERMINATE_READ_TIMEOUT=3) as pool:
+                STARTUP_TIMEOUT=5,
+                TERMINATE_TIMEOUT=3) as pool:
             await self._pool_evaluation_check(pool)
         self.assertFalse(session.started)
         self.assertTrue(session.stopped)
@@ -209,8 +209,8 @@ class TestKernelPool(BaseTestCase):
         async with WolframEvaluatorPool(
                 session,
                 kernel_loglevel=logging.INFO,
-                STARTUP_READ_TIMEOUT=5,
-                TERMINATE_READ_TIMEOUT=3) as pool:
+                STARTUP_TIMEOUT=5,
+                TERMINATE_TIMEOUT=3) as pool:
             await self._pool_evaluation_check(pool)
         self.assertFalse(session.started)
         self.assertTrue(session.stopped)
@@ -225,8 +225,8 @@ class TestKernelPool(BaseTestCase):
         async with WolframEvaluatorPool(
                 sessions,
                 kernel_loglevel=logging.INFO,
-                STARTUP_READ_TIMEOUT=5,
-                TERMINATE_READ_TIMEOUT=3) as pool:
+                STARTUP_TIMEOUT=5,
+                TERMINATE_TIMEOUT=3) as pool:
             await self._pool_evaluation_check(pool)
         for session in sessions:
             if not isinstance(session, six.string_types):
