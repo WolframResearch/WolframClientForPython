@@ -151,7 +151,7 @@ Messages may be issued during evaluation. By default, the above evaluation metho
 Messages are stored as tuples of two elements; the message name and the formatted message. 
 
     >>> eval.messages
-    [('Power::infy', 'Infinite expression Infinity encountered.')]
+    [('Power::infy', 'Infinite expression Power[0, -1] encountered.')]
 
 Asynchronous
 ------------
@@ -265,7 +265,7 @@ The standard output should display:
     INFO:wolframclient.evaluation.kernel.kernelsession:Kernel writes evaluated expressions to socket: <Socket: host=127.0.0.1, port=63472>
     INFO:wolframclient.evaluation.kernel.kernelsession:Kernel process started with PID: 37169
     INFO:wolframclient.evaluation.kernel.kernelsession:Kernel is ready. Startup took 1.54 seconds.
-    WARNING:wolframclient.evaluation.kernel.kernelsession:Infinite expression Infinity encountered.
+    WARNING:wolframclient.evaluation.kernel.kernelsession:Infinite expression Power[0, -1] encountered.
 
 It is also possible to log from within the kernel. This feature is disabled by default. When initializing a :class:`~wolframclient.evaluation.WolframLanguageSession`, the parameter `kernel_loglevel` can be specified with one of the following values to activate kernel logging: :class:`logging.DEBUG`, :class:`logging.INFO`, :class:`logging.WARNING`, :class:`logging.ERROR`. 
 
