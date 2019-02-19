@@ -6,8 +6,7 @@ import logging
 import unittest
 
 from wolframclient.deserializers import binary_deserialize
-from wolframclient.evaluation import (WolframLanguageFutureSession,
-                                      WolframLanguageSession)
+from wolframclient.evaluation import WolframLanguageSession
 from wolframclient.exception import WolframKernelException
 from wolframclient.language import wl, wlexpr
 from wolframclient.language.expression import WLFunction, WLSymbol
@@ -49,8 +48,8 @@ class TestCaseSettings(BaseTestCase):
     def setupKernelSession(cls):
         cls.kernel_session = WolframLanguageSession(
             cls.KERNEL_PATH, kernel_loglevel=logging.INFO)
-        cls.kernel_session.set_parameter('STARTUP_READ_TIMEOUT', 5)
-        cls.kernel_session.set_parameter('TERMINATE_READ_TIMEOUT', 3)
+        cls.kernel_session.set_parameter('STARTUP_TIMEOUT', 5)
+        cls.kernel_session.set_parameter('TERMINATE_TIMEOUT', 3)
         cls.kernel_session.start()
 
     @classmethod
@@ -58,18 +57,15 @@ class TestCaseSettings(BaseTestCase):
         kernel_session = kernelclass(
             cls.KERNEL_PATH,
             kernel_loglevel=logging.INFO,
-            STARTUP_READ_TIMEOUT=5,
-            TERMINATE_READ_TIMEOUT=3,
-            HIDE_SUBPROCESS_WINDOW=False,
-            STARTUP_RETRY_SLEEP_TIME=1)
+            STARTUP_TIMEOUT=5,
+            TERMINATE_TIMEOUT=3,
+            HIDE_SUBPROCESS_WINDOW=False)
         testcase.assertEqual(
-            kernel_session.get_parameter('STARTUP_READ_TIMEOUT'), 5)
+            kernel_session.get_parameter('STARTUP_TIMEOUT'), 5)
         testcase.assertEqual(
-            kernel_session.get_parameter('TERMINATE_READ_TIMEOUT'), 3)
+            kernel_session.get_parameter('TERMINATE_TIMEOUT'), 3)
         testcase.assertEqual(
             kernel_session.get_parameter('HIDE_SUBPROCESS_WINDOW'), False)
-        testcase.assertEqual(
-            kernel_session.get_parameter('STARTUP_RETRY_SLEEP_TIME'), 1)
 
     @classmethod
     def class_bad_kwargs_parameters(cls, testcase, kernelclass):
@@ -129,7 +125,7 @@ class TestCase(TestCaseSettings):
         self.assertFalse(res.success)
         self.assertListEqual(
             res.messages,
-            [('Power::infy', 'Infinite expression Infinity encountered.')])
+            [('Power::infy', 'Infinite expression Power[0, -1] encountered.')])
 
     def test_silenced_msg(self):
         off = self.kernel_session.evaluate('Off[Power::infy]')
@@ -170,7 +166,7 @@ class TestCase(TestCaseSettings):
              'Expecting end of array or a value separator.'),
             ('Import::jsonhintposandchar',
              "An error occurred near character 'EOF', at line 1:6"),
-            ('Power::infy', 'Infinite expression Infinity encountered.')
+            ('Power::infy', 'Infinite expression Power[0, -1] encountered.')
         ]
         self.assertListEqual(res.messages, expected_msgs)
 
@@ -276,13 +272,9 @@ class TestCase(TestCaseSettings):
                     })
 
     def test_stop_start_restart_status(self):
-        self._stop_start_restart_status(WolframLanguageSession)
-        self._stop_start_restart_status(WolframLanguageFutureSession)
-
-    def _stop_start_restart_status(self, eval_class):
         session = None
         try:
-            session = eval_class(self.KERNEL_PATH)
+            session = WolframLanguageSession(self.KERNEL_PATH)
             self.assertFalse(session.started)
             self.assertTrue(session.stopped)
             session.start()
@@ -302,45 +294,32 @@ class TestCase(TestCaseSettings):
                 session.terminate()
 
 
-class TestFutureSession(TestCaseSettings):
-    @classmethod
-    def tearDownKernelSession(cls):
-        if cls.future_session is not None:
-            cls.future_session.terminate()
-
-    @classmethod
-    def setupKernelSession(cls):
-        cls.future_session = WolframLanguageFutureSession(
-            cls.KERNEL_PATH, kernel_loglevel=logging.INFO)
-        cls.future_session.set_parameter('STARTUP_READ_TIMEOUT', 5)
-        cls.future_session.set_parameter('TERMINATE_READ_TIMEOUT', 3)
-        cls.future_session.start()
-
+class TestSessionTimeout(TestCaseSettings):
     def test_evaluate_async_basic_inputform(self):
-        future = self.future_session.evaluate('1+1')
+        future = self.kernel_session.evaluate_future('1+1')
         self.assertEqual(future.result(timeout=1), 2)
 
     def test_evaluate_async_basic_wl(self):
-        future = self.future_session.evaluate(wl.Plus(1, 2))
+        future = self.kernel_session.evaluate_future(wl.Plus(1, 2))
         self.assertEqual(future.result(timeout=1), 3)
 
     def test_evaluate_async_wxf_inputform(self):
         wxf = export(wl.MinMax([1, -2, 3, 5]), target_format='wxf')
-        future = self.future_session.evaluate(wxf)
+        future = self.kernel_session.evaluate_future(wxf)
         self.assertEqual(future.result(timeout=1), [-2, 5])
 
     def test_evaluate_multiple_async(self):
-        with WolframLanguageFutureSession(self.KERNEL_PATH) as future_session:
-            future1 = future_session.evaluate('3+4')
+        with WolframLanguageSession(self.KERNEL_PATH) as kernel_session:
+            future1 = kernel_session.evaluate_future('3+4')
             result1 = future1.result(timeout=3)
             self.assertEqual(result1, 7)
-            future2 = future_session.evaluate('10+1')
+            future2 = kernel_session.evaluate_future('10+1')
             self.assertEqual(future2.result(timeout=1), 11)
-            future3 = future_session.evaluate('100+1')
+            future3 = kernel_session.evaluate_future('100+1')
             self.assertEqual(future3.result(timeout=1), 101)
 
     def test_many_failures_wrap_async(self):
-        future = self.future_session.evaluate_wrap(
+        future = self.kernel_session.evaluate_wrap_future(
             'ImportString["[1,2", "RawJSON"]; 1/0')
         res = future.result(timeout=1)
         self.assertFalse(res.success)
@@ -349,23 +328,15 @@ class TestFutureSession(TestCaseSettings):
              'Expecting end of array or a value separator.'),
             ('Import::jsonhintposandchar',
              "An error occurred near character 'EOF', at line 1:6"),
-            ('Power::infy', 'Infinite expression Infinity encountered.')
+            ('Power::infy', 'Infinite expression Power[0, -1] encountered.')
         ]
         self.assertListEqual(res.messages, expected_msgs)
 
     def test_valid_evaluate_wxf_async(self):
-        future = self.future_session.evaluate_wxf('Range[3]')
+        future = self.kernel_session.evaluate_wxf_future('Range[3]')
         wxf = future.result(timeout=1)
         result = binary_deserialize(wxf)
         self.assertEqual(result, [1, 2, 3])
-
-    def test_kwargs_parameters(self):
-        TestCaseSettings.class_kwargs_parameters(self,
-                                                 WolframLanguageFutureSession)
-
-    def test_bad_kwargs_parameters(self):
-        self.class_bad_kwargs_parameters(self, WolframLanguageFutureSession)
-
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestCaseSession(TestCaseSettings):
