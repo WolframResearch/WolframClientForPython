@@ -1,3 +1,8 @@
+# Version 1.0.0.dev5
+- major code change to ensure ZMQ sockets are isolated in a given thread. Add a new controller class, a `Thread`, that own the sockets connected to the kernel. Interaction with this thread is done through a Queue.
+- Evaluation methods now accept a timeout parameter.
+- rename evaluator parameters `STARTUP_READ_TIMEOUT` to `STARTUP_TIMEOUT`, and `TERMINATE_READ_TIMEOUT` to `TERMINATE_TIMEOUT`.
+
 # Version 1.0.0.dev4
 - Inconsistent class name `WolframCloudSessionFuture` replaced with `WolframCloudFutureSession`.
 - Rework completely `Dispatch` class. Add a `Dispatch` instance called `wolfram_encoder` representing the multi dispatch function that encodes Python object.
