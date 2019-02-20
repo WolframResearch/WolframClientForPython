@@ -144,9 +144,7 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
         await self._async_terminate(False)
 
     async def _async_terminate(self, gracefully):
-        try:
-            logger.info('Terminating asynchronous kernel session.')
-            future = super().stop_future(gracefully=gracefully)
-            await asyncio.wrap_future(future, loop=self._loop)
-        finally:
-            self.kernel_controller.join()
+        logger.info('Terminating asynchronous kernel session.')
+        future = super().stop_future(gracefully=gracefully)
+        await asyncio.wrap_future(future, loop=self._loop)
+        
