@@ -3,6 +3,7 @@
 - Merge `WolframLanguageFutureSession` into `WolframLanguageSession`. All evaluate methods have a future counterpart.
 - Evaluation methods now accept a timeout parameter.
 - rename evaluator parameters `STARTUP_READ_TIMEOUT` to `STARTUP_TIMEOUT`, and `TERMINATE_READ_TIMEOUT` to `TERMINATE_TIMEOUT`.
+- CPU consumption reduced to ~1% with the latest ZMQLink version.
 
 # Version 1.0.0.dev4
 - Inconsistent class name `WolframCloudSessionFuture` replaced with `WolframCloudFutureSession`.
