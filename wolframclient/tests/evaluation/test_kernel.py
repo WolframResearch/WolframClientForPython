@@ -84,11 +84,6 @@ class TestCase(TestCaseSettings):
         res = self.kernel_session.evaluate(wl.Plus(1, 2))
         self.assertEqual(res, 3)
 
-    def test_evaluate_wxf_inputform(self):
-        wxf = export(wl.MinMax([1, -2, 3, 5]), target_format='wxf')
-        res = self.kernel_session.evaluate(wxf)
-        self.assertEqual(res, [-2, 5])
-
     def test_evaluate_option(self):
         res = self.kernel_session.evaluate(
             wl.BinarySerialize(1, PerformanceGoal="Size"))
@@ -302,11 +297,6 @@ class TestSessionTimeout(TestCaseSettings):
     def test_evaluate_async_basic_wl(self):
         future = self.kernel_session.evaluate_future(wl.Plus(1, 2))
         self.assertEqual(future.result(timeout=1), 3)
-
-    def test_evaluate_async_wxf_inputform(self):
-        wxf = export(wl.MinMax([1, -2, 3, 5]), target_format='wxf')
-        future = self.kernel_session.evaluate_future(wxf)
-        self.assertEqual(future.result(timeout=1), [-2, 5])
 
     def test_evaluate_multiple_async(self):
         with WolframLanguageSession(self.KERNEL_PATH) as kernel_session:
