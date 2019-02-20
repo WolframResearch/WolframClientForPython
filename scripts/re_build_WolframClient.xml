@@ -4,7 +4,10 @@
 	<property name='system_id' value='### Must be set by Jenkins ###' />
 
 	<property name='app.name' value='${component}' />
+	<property name='inputDir' value='${basedir}/docs' />
 	<property name='language' value='### Must be set by Jenkins ###' />
+
+	<property name="appPath" value="${appPath.default}" />
 
 	<property environment='env' />
 	<import file='${env.RE_ANTLIBRARY_HOME}/ant-lib.xml' />
@@ -70,6 +73,10 @@
 
 	</target>
 
+	<!--
+		Installer Package
+	-->
+
 	<target name='Installer.WolframClientForPython.execute' extensionOf='Deploy.execute'>
 
 		<!-- Ensure all necessary modules are installed -->
@@ -97,6 +104,45 @@
 				<include name="*.tar.gz"/>
 			</fileset>
 		</copy>
+
+	</target>
+
+	<!--
+		Static Web Pages
+	-->
+
+	<target name='Web.WolframClientForPython.execute.check-custom' extensionOf='Web.execute.check-custom' >
+
+		<property name='Web.execute.has-custom' value='true' />
+
+	</target>
+
+	<target name='Web.WolframClientForPython.execute.custom' extensionOf='Web.execute.custom'>
+
+		<!-- Create a virtual environment to build docs in -->
+		<exec executable="python3.6">
+			<arg value="-m" />
+			<arg value="venv" />
+			<arg value="${tmp_directory}/venv" />
+		</exec>
+
+		<!-- Install pygments-mathematica and sphinx modules -->
+		<exec executable="${tmp_directory}/venv/bin/python">
+			<arg value="-m" />
+			<arg value="pip" />
+			<arg value="install" />
+			<arg value="numpy" />
+			<arg value="pygments-mathematica" />
+			<arg value="sphinx" />
+			<arg value="zmq" />
+		</exec>
+
+		<!-- Build docs using Bash script -->
+		<exec dir= "${basedir}/docs" executable="build_docs.sh">
+			<arg value="-b" />
+			<arg value="${files_directory}" />
+			<env key="PATH" path="${env.PATH}:${tmp_directory}/venv/bin"/>
+		</exec>
 
 	</target>
 
