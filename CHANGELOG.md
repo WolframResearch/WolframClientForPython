@@ -1,5 +1,6 @@
 # Version 1.0.0.dev5
-- major code change to ensure ZMQ sockets are isolated in a given thread. Add a new controller class, a `Thread`, that own the sockets connected to the kernel. Interaction with this thread is done through a Queue.
+- Introducing a new class `WolframEngineController`. Major code change to ensure ZMQ sockets are isolated in a given thread. Add a new controller class, a `Thread`, that own the sockets connected to the kernel. Interaction with this thread is done through a Queue.
+- Merge `WolframLanguageFutureSession` into `WolframLanguageSession`. All evaluate methods have a future counterpart.
 - Evaluation methods now accept a timeout parameter.
 - rename evaluator parameters `STARTUP_READ_TIMEOUT` to `STARTUP_TIMEOUT`, and `TERMINATE_READ_TIMEOUT` to `TERMINATE_TIMEOUT`.
 
