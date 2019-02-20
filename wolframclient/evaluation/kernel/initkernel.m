@@ -3,6 +3,7 @@
 (* Not useful since we apparently never receive multipart messages,
 no matter the total size (tested with 80MB) *)
 
+
 $IgnoreEOF=True;
 $HistoryLength=0;
 
@@ -186,47 +187,46 @@ $MinIdlePause=0.0001;
 $PauseIncrement=0.0001;
 $TaskSupportMinVersion = Infinity;
 
-If[$VersionNumber < $TaskSupportMinVersion,
-(* Before 12 need synchronous loop with Pause. *)
-evaluationLoop[uuidIn_String]:= With[
-	{maxPause=$MaxIdlePause, minPause=$MinIdlePause, incr=$PauseIncrement},
-	Block[{pause=0.001, msg},
-		SendAck[];
-		While[True,
-			msg = SocketReadByteArrayFunc[uuidIn, 1 (* NOWAIT *)];
-			If[Length[msg]>3, 
-				socketEventHandler[msg[[4;;]]];
-				pause=minPause,
-				pause=Min[maxPause, pause+incr];
-				Pause[pause];
+Which[
+	$VersionNumber < $TaskSupportMinVersion,
+	(* Low CPU wait but need synchronous loop. *)
+	evaluationLoop[socketIn_SocketObject]:= With[
+		{maxPause=$MaxIdlePause, minPause=$MinIdlePause, incr=$PauseIncrement, 
+		uuidIn=First@socketIn, poller={socketIn}},
+		Block[{msg},
+			SendAck[];
+			While[True,
+				msg = SocketReadByteArrayFunc[uuidIn, 1 (* NOWAIT *)];
+				If[Length[msg]>3, 
+					socketEventHandler[msg[[4;;]]];
+					,
+					SocketWaitNext[poller];
+				]
 			]
 		]
-	]
-];
-,
-(* Version 12+ with fixed asynchronous tasks *)
-evaluationLoop[uuidIn_String]:= With[
-	{maxPause=$MaxIdlePause, minPause=$MinIdlePause, incr=$PauseIncrement}, 
-	Block[{pause=0.001, msg},
-		$Task = SessionSubmit[ScheduledTask[
+	],
+	True,
+	(* Version with fixed asynchronous tasks *)
+	evaluationLoop[socketIn_SocketObject]:= With[
+		{maxPause=$MaxIdlePause, minPause=$MinIdlePause, incr=$PauseIncrement, 
+		uuidIn=First@socketIn, poller={socketIn}}, 
+		$Task = SessionSubmit[
+			ScheduledTask[
 			(
 				msg = SocketReadByteArrayFunc[uuidIn, 1 (* NOWAIT *)];
 				If[Length[msg]>3, 
 					socketEventHandler[msg[[4;;]]];
-					pause=minPause,
-					pause=Min[maxPause, pause+incr];
-					Pause[pause];
+					,
+					SocketWaitNext[poller];
 				]
 			),
 			0.0001 (*negligeable compared to IO operations ~1ms. We basically need 0 but can't use this value. *)
-		],
-		Method->"Idle",
-		HandlerFunctions-><|"TaskStarted"->SendAck[]|>
+			],
+			Method->"Idle",
+			HandlerFunctions-><|"TaskStarted"->SendAck[]|>
 		];
 	];
 ];
-];
-
 (* can be useful for loopback connections which are available only if a task can be used. 
 Does not kill the kernel *)
 ClientLibrary`disconnect[] := Quit[];
@@ -270,7 +270,7 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 		Quit[]
 	];
 	If[$LoggerSocket==None, ClientLibrary`DisableKernelLogging[]];
-	evaluationLoop[First@$InputSocket];
+	evaluationLoop[$InputSocket];
 ]
 
 End[];
