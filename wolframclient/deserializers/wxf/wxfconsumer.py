@@ -327,6 +327,7 @@ class WXFConsumer(object):
 
 class WXFConsumerNumpy(WXFConsumer):
     """ A WXF consumer that maps WXF array types to NumPy arrays. """
+
     def consume_array(self, current_token, tokens, **kwargs):
         arr = numpy.frombuffer(
             current_token.data,

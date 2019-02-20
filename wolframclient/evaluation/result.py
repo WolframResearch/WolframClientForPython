@@ -96,6 +96,7 @@ class WolframKernelEvaluationResult(WolframResultBase):
                 self.__class__.__name__, self.success, self.result,
                 self.messages)
 
+
 class WolframEvaluationResponse(WolframResultBase):
     """Result object associated with cloud kernel evaluation.
 
@@ -161,12 +162,14 @@ class WolframEvaluationResponse(WolframResultBase):
                 self.build_invalid_format()
         else:
             logger.fatal('Server invalid response %i: %s',
-                            self.http_response.status(),
-                            self.http_response.text())
+                         self.http_response.status(),
+                         self.http_response.text())
             raise RequestException(self.http_response)
 
     def parse_response(self):
-        raise NotImplementedError('%s does not implement parse_response method.' % (self.__class__.__name__, ))
+        raise NotImplementedError(
+            '%s does not implement parse_response method.' %
+            (self.__class__.__name__, ))
 
     def build_from_parsed_response(self):
         self._success = self.parsed_response['Success']
@@ -199,8 +202,10 @@ class WolframEvaluationResponse(WolframResultBase):
         self._result = None
         self._built = True
 
+
 class WolframEvaluationWXFResponse(WolframEvaluationResponse):
     """ Result object associated with cloud evaluation request WXF encoded. """
+
     def parse_response(self):
         wxf = self.http_response.content()
         try:
@@ -208,13 +213,16 @@ class WolframEvaluationWXFResponse(WolframEvaluationResponse):
         except WolframLanguageException as e:
             self.build_invalid_format(response_format_name='WXF')
 
+
 class WolframEvaluationJSONResponse(WolframEvaluationResponse):
     """ Result object associated with cloud evaluation request JSON encoded. """
+
     def parse_response(self):
         try:
             self.parsed_response = self.http_response.json()
         except json.JSONDecodeError as e:
             self.build_invalid_format(response_format_name='JSON')
+
 
 class WolframEvaluationResponseAsync(WolframEvaluationResponse):
     """Asynchronous result object associated with cloud evaluation request. """
@@ -234,7 +242,9 @@ class WolframEvaluationResponseAsync(WolframEvaluationResponse):
             raise RequestException(self.http_response, msg=msg)
 
     async def parse_response(self):
-        raise NotImplementedError('%s does not implement parse_response asynchronous method.' % (self.__class__.__name__, ))
+        raise NotImplementedError(
+            '%s does not implement parse_response asynchronous method.' %
+            (self.__class__.__name__, ))
 
     @property
     async def success(self):
@@ -280,22 +290,27 @@ class WolframEvaluationResponseAsync(WolframEvaluationResponse):
             return '{}<successful request, body not read>'.format(
                 self.__class__.__name__)
 
+
 class WolframEvaluationJSONResponseAsync(WolframEvaluationResponseAsync):
     """Asynchronous result object associated with cloud evaluation request encoded with JSON. """
+
     async def parse_response(self):
         try:
             self.parsed_response = await self.http_response.json()
         except json.JSONDecodeError as e:
             self.build_invalid_format(response_format_name='JSON')
 
+
 class WolframEvaluationWXFResponseAsync(WolframEvaluationResponseAsync):
     """Asynchronous result object associated with cloud evaluation request encoded with WXF. """
+
     async def parse_response(self):
         wxf = await self.http_response.content()
         try:
             self.parsed_response = binary_deserialize(wxf)
         except WolframLanguageException as e:
             self.build_invalid_format(response_format_name='WXF')
+
 
 class WolframAPIResponse(WolframResult):
     """Generic API response."""

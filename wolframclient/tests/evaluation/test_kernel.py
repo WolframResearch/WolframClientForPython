@@ -10,7 +10,6 @@ from wolframclient.evaluation import WolframLanguageSession
 from wolframclient.exception import WolframKernelException
 from wolframclient.language import wl, wlexpr
 from wolframclient.language.expression import WLFunction, WLSymbol
-from wolframclient.serializers import export
 from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config
 from wolframclient.utils.tests import TestCase as BaseTestCase
 from wolframclient.utils.tests import path_to_file_in_data_dir
@@ -327,6 +326,7 @@ class TestSessionTimeout(TestCaseSettings):
         wxf = future.result(timeout=1)
         result = binary_deserialize(wxf)
         self.assertEqual(result, [1, 2, 3])
+
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestCaseSession(TestCaseSettings):

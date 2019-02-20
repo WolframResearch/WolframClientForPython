@@ -13,7 +13,7 @@ from wolframclient.evaluation.cloud.base import (SecuredAuthenticationKey,
                                                  UserIDPassword)
 from wolframclient.exception import (AuthenticationException, RequestException,
                                      WolframLanguageException)
-from wolframclient.language import wl, wlexpr
+from wolframclient.language import wl
 from wolframclient.language.expression import WLFunction
 from wolframclient.tests.configure import (MSG_JSON_NOT_FOUND, json_config,
                                            secured_authentication_key, server,
@@ -45,7 +45,8 @@ class TestCaseSettings(BaseTestCase):
         cls.api_owner = json_config['ApiOwner']
         cls.user_cred = user_configuration
         cls.server = server
-        cls.cloud_session_async = WolframCloudAsyncSession(credentials=cls.sak, server=server)
+        cls.cloud_session_async = WolframCloudAsyncSession(
+            credentials=cls.sak, server=server)
 
     @classmethod
     def tearDownClass(cls):
@@ -73,7 +74,8 @@ class TestCase(TestCaseSettings):
 
     @run_in_loop
     async def test_section_authorized_oauth(self):
-        cloud_session = WolframCloudAsyncSession(credentials=self.sak, server=self.server)
+        cloud_session = WolframCloudAsyncSession(
+            credentials=self.sak, server=self.server)
         try:
             await cloud_session.start()
             self.assertEqual(cloud_session.authorized(), True)
@@ -83,7 +85,8 @@ class TestCase(TestCaseSettings):
 
     @run_in_loop
     async def test_section_authorized_oauth_with(self):
-        async with WolframCloudAsyncSession(credentials=self.sak, server=self.server) as cloud_session:
+        async with WolframCloudAsyncSession(
+                credentials=self.sak, server=self.server) as cloud_session:
             self.assertEqual(cloud_session.authorized(), True)
             self.assertEqual(cloud_session.anonymous(), False)
 
@@ -239,7 +242,8 @@ class TestCase(TestCaseSettings):
     @run_in_loop
     async def test_evaluate_string_disable(self):
         async with WolframCloudAsyncSession(
-                credentials=self.sak, server=self.server,
+                credentials=self.sak,
+                server=self.server,
                 inputform_string_evaluation=False) as session:
             res = await session.evaluate('Range[3]')
             self.assertEqual(res, 'Range[3]')
@@ -249,7 +253,8 @@ class TestCase(TestCaseSettings):
 
     @run_in_loop
     async def test_stop_start_restart_status(self):
-        session = WolframCloudAsyncSession(credentials=self.sak, server=self.server)
+        session = WolframCloudAsyncSession(
+            credentials=self.sak, server=self.server)
         try:
             self.assertFalse(session.started)
             self.assertTrue(session.stopped)

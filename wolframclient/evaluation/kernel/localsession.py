@@ -1,26 +1,29 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-from subprocess import PIPE
-from wolframclient.evaluation.base import WolframEvaluator
-from wolframclient.evaluation.kernel.kernelcontroller import WolframEngineController
-from wolframclient.evaluation.result import WolframKernelEvaluationResult
-from wolframclient.language import wl
-from wolframclient.serializers import export
-from wolframclient.utils import six
-from concurrent import futures
 
 import logging
+from concurrent import futures
+from subprocess import PIPE
+
+from wolframclient.evaluation.base import WolframEvaluator
+from wolframclient.evaluation.kernel.kernelcontroller import (
+    WolframEngineController)
+from wolframclient.serializers import export
+
 logger = logging.getLogger(__name__)
 
 __all__ = ['WolframLanguageSession']
+
 
 # Some callback methods for internal use.
 def do_get_wxf(result):
     return result.wxf
 
+
 def do_get_result(result):
     return result.get()
+
 
 class WolframLanguageSession(WolframEvaluator):
     """A session to a Wolfram Kernel enabling evaluation of Wolfram Language expressions.
@@ -86,6 +89,7 @@ class WolframLanguageSession(WolframEvaluator):
     with care as deadlocks can arise from misconfiguration.
 
     """
+
     def __init__(self,
                  kernel=None,
                  consumer=None,
@@ -96,18 +100,18 @@ class WolframLanguageSession(WolframEvaluator):
                  stderr=PIPE,
                  inputform_string_evaluation=True,
                  wxf_bytes_evaluation=True,
-                 controller_class = WolframEngineController,
+                 controller_class=WolframEngineController,
                  **kwargs):
         super().__init__(
             inputform_string_evaluation=inputform_string_evaluation)
-        self.kernel=kernel
-        self.consumer=None
-        self.initfile=None
-        self.kernel_loglevel=logging.NOTSET
-        self._stdin=stdin
-        self._stdout=stdout
-        self._stderr=stderr
-        self.wxf_bytes_evaluation=wxf_bytes_evaluation
+        self.kernel = kernel
+        self.consumer = None
+        self.initfile = None
+        self.kernel_loglevel = logging.NOTSET
+        self._stdin = stdin
+        self._stdout = stdout
+        self._stderr = stderr
+        self.wxf_bytes_evaluation = wxf_bytes_evaluation
         self.controller_class = controller_class
         self.kernel_controller = self.controller_class(
             kernel=kernel,
@@ -130,8 +134,7 @@ class WolframLanguageSession(WolframEvaluator):
             stdout=self._stdout,
             stderr=self._stderr,
             inputform_string_evaluation=self.inputform_string_evaluation,
-            controller_class = self.controller_class
-            **self.parameters)
+            controller_class=self.controller_class**self.parameters)
 
     @property
     def started(self):
@@ -153,7 +156,7 @@ class WolframLanguageSession(WolframEvaluator):
                 self.terminate()
             finally:
                 raise e
-                
+
     def start_future(self):
         """ Request the Wolfram Engine to start. Return a future object.
         
@@ -167,17 +170,16 @@ class WolframLanguageSession(WolframEvaluator):
         future.set_result(True)
         return future
 
-
     def stop(self):
         """ Request the Wolfram Engine to stop gracefully. """
         self._stop(gracefully=True)
-    
+
     def terminate(self):
         """ Request the Wolfram Engine to stop immediately. 
         
         Ongoing evaluations may be cancelled. """
         self._stop(gracefully=False)
-        
+
     def _stop(self, gracefully=True):
         # if the kernel is terminated the queue no more accept new tasks. Stop would hang.
         if not self.stopped:
@@ -216,9 +218,9 @@ class WolframLanguageSession(WolframEvaluator):
         future = futures.Future()
         wxf = export(self.normalize_input(expr), target_format='wxf', **kwargs)
         self.kernel_controller.evaluate_future(
-            wxf, 
-            future, 
-            result_update_callback=result_update_callback, 
+            wxf,
+            future,
+            result_update_callback=result_update_callback,
             **kwargs)
         return future
 
@@ -230,10 +232,8 @@ class WolframLanguageSession(WolframEvaluator):
         """
         self.ensure_started()
         return self.do_evaluate_future(
-            expr, 
-            result_update_callback=self.CALLBACK_GET, 
-            **kwargs)
-    
+            expr, result_update_callback=self.CALLBACK_GET, **kwargs)
+
     def evaluate_wxf_future(self, expr, **kwargs):
         """ Evaluate an expression and return a future object.
 
@@ -241,7 +241,8 @@ class WolframLanguageSession(WolframEvaluator):
         See :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wxf`.
         """
         self.ensure_started()
-        return self.do_evaluate_future(expr, result_update_callback=self.CALLBACK_GET_WXF, **kwargs)
+        return self.do_evaluate_future(
+            expr, result_update_callback=self.CALLBACK_GET_WXF, **kwargs)
 
     def evaluate_wrap_future(self, expr, **kwargs):
         """ Evaluate an expression and return a future object.
@@ -284,7 +285,7 @@ class WolframLanguageSession(WolframEvaluator):
 
     def __repr__(self):
         if self.started:
-            return '<%s: kernel controller=%s>' % (
-                self.__class__.__name__, self.kernel_controller)
+            return '<%s: kernel controller=%s>' % (self.__class__.__name__,
+                                                   self.kernel_controller)
         else:
             return '<%s: not started>' % self.__class__.__name__

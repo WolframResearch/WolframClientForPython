@@ -1,22 +1,31 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-from functools import wraps
+
 import logging
-from wolframclient.utils.api import zmq, time
+from functools import wraps
+
+from wolframclient.utils.api import time, zmq
 
 logger = logging.getLogger(__name__)
+
 
 class SocketException(Exception):
     pass
 
+
 class SocketAborted(SocketException):
     pass
+
 
 def abortable():
     def outer(recv_method):
         @wraps(recv_method)
-        def recv_abortable(socket, timeout=None, abort_check_period=.1, abort_event=None, **kwargs):
+        def recv_abortable(socket,
+                           timeout=None,
+                           abort_check_period=.1,
+                           abort_event=None,
+                           **kwargs):
             if not socket.bound:
                 raise SocketException('ZMQ socket not bound.')
             if timeout and timeout < 0:
@@ -26,7 +35,7 @@ def abortable():
             # fix inconsistencies
             if timeout and abort_check_period > timeout:
                 abort_check_period = timeout
-            abort_check_period = 1000.*abort_check_period
+            abort_check_period = 1000. * abort_check_period
             while True:
                 if socket.zmq_socket.poll(timeout=abort_check_period) > 0:
                     try:
@@ -45,12 +54,18 @@ def abortable():
                 % (socket.uri, time.perf_counter() - start, retry))
 
         return recv_abortable
+
     return outer
+
 
 class Socket(object):
     """ Wrapper around ZMQ socket """
 
-    def __init__(self, protocol='tcp', host='127.0.0.1', port=None, zmq_type=zmq.PAIR):
+    def __init__(self,
+                 protocol='tcp',
+                 host='127.0.0.1',
+                 port=None,
+                 zmq_type=zmq.PAIR):
         self.zmq_type = zmq_type
         self.uri = None
         self.bound = False
@@ -80,7 +95,8 @@ class Socket(object):
             self.uri = '%s://%s:%s' % (protocol, host, port)
             self.zmq_socket.bind(self.uri)
         else:
-            port = self.zmq_socket.bind_to_random_port('%s://%s' % (protocol, host))
+            port = self.zmq_socket.bind_to_random_port(
+                '%s://%s' % (protocol, host))
             self.uri = '%s://%s:%s' % (protocol, host, port)
         logger.debug('ZMQ socket bound to ' + self.uri)
         self.bound = True
@@ -100,7 +116,7 @@ class Socket(object):
 
     @abortable()
     def recv_abortable(self, **kwargs):
-    # def abortable_recv(self, timeout=None, abort_check_period=0.1, abort_event=None, copy=True):
+        # def abortable_recv(self, timeout=None, abort_check_period=0.1, abort_event=None, copy=True):
         """ Read a socket in a non-blocking fashion, until a timeout is reached, or until an abort Event is set."""
         return self.recv(**kwargs)
 

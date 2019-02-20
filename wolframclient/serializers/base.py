@@ -137,7 +137,7 @@ class FormatSerializer(Encoder):
             yield "Name", force_text(o.__name__)
         else:
             yield "Name", force_text(o.__class__.__name__)
-            
+
         yield "BuiltIn", inspect.isbuiltin(o),
 
         is_module = inspect.ismodule(o)

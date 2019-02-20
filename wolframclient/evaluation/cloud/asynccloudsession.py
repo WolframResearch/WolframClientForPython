@@ -14,8 +14,8 @@ from wolframclient.evaluation.cloud.asyncoauth import \
     XAuthAIOHttpAsyncSession as XAuthAsyncSession
 from wolframclient.evaluation.cloud.base import WolframAPICallBase
 from wolframclient.evaluation.cloud.server import WOLFRAM_PUBLIC_CLOUD_SERVER
-from wolframclient.evaluation.result import (
-    WolframAPIResponseBuilder, WolframEvaluationWXFResponseAsync)
+from wolframclient.evaluation.result import (WolframAPIResponseBuilder,
+                                             WolframEvaluationWXFResponseAsync)
 from wolframclient.exception import AuthenticationException
 from wolframclient.serializers import export
 from wolframclient.utils import six

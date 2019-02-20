@@ -261,7 +261,8 @@ class TestParalleleEvaluate(BaseTestCase):
 
     def test_parallel_evaluate_sizeone(self):
         exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
-        res = parallel_evaluate(exprs, evaluator_spec=self.KERNEL_PATH, max_evaluators=1)
+        res = parallel_evaluate(
+            exprs, evaluator_spec=self.KERNEL_PATH, max_evaluators=1)
         self.assertEqual(res,
                          ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"])
 
@@ -269,7 +270,9 @@ class TestParalleleEvaluate(BaseTestCase):
         exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
         res = parallel_evaluate(
             exprs,
-            evaluator_spec=[self.KERNEL_PATH, self.KERNEL_PATH, self.KERNEL_PATH],
+            evaluator_spec=[
+                self.KERNEL_PATH, self.KERNEL_PATH, self.KERNEL_PATH
+            ],
             max_evaluators=1)
         self.assertEqual(res,
                          ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"])
@@ -287,7 +290,8 @@ class TestParalleleEvaluate(BaseTestCase):
         cloud = WolframCloudAsyncSession(
             credentials=secured_authentication_key)
         exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
-        res = parallel_evaluate(exprs, evaluator_spec=[cloud, self.KERNEL_PATH, cloud])
+        res = parallel_evaluate(
+            exprs, evaluator_spec=[cloud, self.KERNEL_PATH, cloud])
         self.assertEqual(len(res), 10)
         for elem in res:
             self.assertTrue(isinstance(elem, six.string_types))

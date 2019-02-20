@@ -4,11 +4,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
 from subprocess import PIPE
-from threading import Event
-from functools import partial
+
 from wolframclient.evaluation.base import WolframAsyncEvaluator
 from wolframclient.evaluation.kernel.localsession import WolframLanguageSession
-from wolframclient.utils.api import asyncio, futures, time
+from wolframclient.utils.api import asyncio
 
 logger = logging.getLogger(__name__)
 
@@ -73,17 +72,23 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
             inputform_string_evaluation=self.inputform_string_evaluation,
             **self.parameters)
 
-    async def do_evaluate_future(self, expr, result_update_callback=None, **kwargs):
-        future = super().do_evaluate_future(expr, result_update_callback=result_update_callback, **kwargs)
+    async def do_evaluate_future(self,
+                                 expr,
+                                 result_update_callback=None,
+                                 **kwargs):
+        future = super().do_evaluate_future(
+            expr, result_update_callback=result_update_callback, **kwargs)
         return asyncio.wrap_future(future, loop=self._loop)
 
     async def evaluate_future(self, expr, **kwargs):
         await self.ensure_started()
-        return await self.do_evaluate_future(expr, result_update_callback=self.CALLBACK_GET, **kwargs)
-    
+        return await self.do_evaluate_future(
+            expr, result_update_callback=self.CALLBACK_GET, **kwargs)
+
     async def evaluate_wxf_future(self, expr, **kwargs):
         await self.ensure_started()
-        return await self.do_evaluate_future(expr, result_update_callback=self.CALLBACK_GET_WXF, **kwargs)
+        return await self.do_evaluate_future(
+            expr, result_update_callback=self.CALLBACK_GET_WXF, **kwargs)
 
     async def evaluate_wrap_future(self, expr, **kwargs):
         await self.ensure_started()
@@ -96,7 +101,7 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
         future = await self.evaluate_future(expr, **kwargs)
         await future
         return future.result()
-        
+
     async def evaluate_wxf(self, expr, **kwargs):
         """Evaluate an expression and return the WXF output asynchronously.
 
@@ -147,4 +152,3 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
         logger.info('Terminating asynchronous kernel session.')
         future = super().stop_future(gracefully=gracefully)
         await asyncio.wrap_future(future, loop=self._loop)
-        

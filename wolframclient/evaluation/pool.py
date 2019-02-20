@@ -75,7 +75,8 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         self._queue = asyncio.Queue(load_factor * poolsize, loop=self._loop)
         self.async_language_session_class = async_language_session_class
         self._evaluators = set()
-        if async_evaluators is None or isinstance(async_evaluators, six.string_types):
+        if async_evaluators is None or isinstance(async_evaluators,
+                                                  six.string_types):
             for _ in range(poolsize):
                 self._add_evaluator(async_evaluators, **kwargs)
         else:
@@ -286,7 +287,9 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         return len(self._started_tasks)
 
 
-def parallel_evaluate(expressions, evaluator_spec=None, max_evaluators=4,
+def parallel_evaluate(expressions,
+                      evaluator_spec=None,
+                      max_evaluators=4,
                       loop=None):
     """ Start a kernel pool and evaluate the expressions in parallel. 
     

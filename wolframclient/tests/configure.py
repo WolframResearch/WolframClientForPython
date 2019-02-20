@@ -54,7 +54,7 @@ def _parse_config(config):
         from wolframclient.evaluation import UserIDPassword
         if 'User' in cloud_config:
             user_cred = UserIDPassword(cloud_config['User']['id'],
-                                    cloud_config['User']['password'])
+                                       cloud_config['User']['password'])
         else:
             user_cred = None
     except KeyError as e:
@@ -67,7 +67,8 @@ def _parse_config(config):
             server_json['request_token_endpoint'],
             server_json['access_token_endpoint'],
             xauth_consumer_key=server_json.get('xauth_consumer_key', None),
-            xauth_consumer_secret=server_json.get('xauth_consumer_secret', None),
+            xauth_consumer_secret=server_json.get('xauth_consumer_secret',
+                                                  None),
             certificate=server_json.get('certificate', None))
     except KeyError as e:
         logger.warning('Failed to parse json config.', e)
