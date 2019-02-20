@@ -157,6 +157,9 @@ class WolframLanguageSession(WolframEvaluator):
                 raise e
                 
     def start_future(self):
+        """ Request the Wolfram Engine to start. Return a future object.
+        
+        The result of the future object is True when the kernel is ready to evaluate input."""
         self.stopped = False
         if self.kernel_controller.terminated:
             self.kernel_controller = self.kernel_controller.duplicate()
@@ -168,9 +171,13 @@ class WolframLanguageSession(WolframEvaluator):
 
 
     def stop(self):
+        """ Request the Wolfram Engine to stop gracefully. """
         self._stop(gracefully=True)
     
     def terminate(self):
+        """ Request the Wolfram Engine to stop immediately. 
+        
+        Ongoing evaluations may be cancelled. """
         self._stop(gracefully=False)
         
     def _stop(self, gracefully=True):
@@ -180,6 +187,12 @@ class WolframLanguageSession(WolframEvaluator):
             future.result()
 
     def stop_future(self, gracefully=True):
+        """ Request the Wolfram Engine to stop. Return a future object.
+        
+        The result of the future object is True when the controller thread is no more alive.
+        Set `gracefully` to `False` will request for an immediate stop, eventually cancelling ongoing
+        evaluations. 
+        """
         self.stopped = True
         if gracefully:
             return self.kernel_controller.stop()
@@ -215,6 +228,11 @@ class WolframLanguageSession(WolframEvaluator):
         return future
 
     def evaluate_future(self, expr, **kwargs):
+        """ Evaluate an expression and return a future object.
+
+        The future object result is the evaluated expression. See
+        :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate`.
+        """
         self.ensure_started()
         return self.do_evaluate_future(
             expr, 
@@ -222,10 +240,20 @@ class WolframLanguageSession(WolframEvaluator):
             **kwargs)
     
     def evaluate_wxf_future(self, expr, **kwargs):
+        """ Evaluate an expression and return a future object.
+
+        The future object result is the WXF serialization of the evaluated expression.
+        See :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wxf`.
+        """
         self.ensure_started()
         return self.do_evaluate_future(expr, result_update_callback=self.CALLBACK_GET_WXF, **kwargs)
 
     def evaluate_wrap_future(self, expr, **kwargs):
+        """ Evaluate an expression and return a future object.
+
+        The future object result is the result object with the evaluated expression and meta information.
+        See :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wrap`.
+        """
         self.ensure_started()
         return self.do_evaluate_future(expr, **kwargs)
 
@@ -245,6 +273,9 @@ class WolframLanguageSession(WolframEvaluator):
         return result.get()
 
     def evaluate_wxf(self, expr, timeout=None, **kwargs):
+        """ Evaluate an expression and return the serialized expression. 
+        
+        This method does not deserialize the Wolfram Engine input. """
         result = self._timed_out_eval(self.evaluate_wrap_future, expr, timeout=timeout, **kwargs)
         self.log_message_from_result(result)
         return result.wxf
