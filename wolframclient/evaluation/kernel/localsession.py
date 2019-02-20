@@ -13,6 +13,8 @@ from concurrent import futures
 import logging
 logger = logging.getLogger(__name__)
 
+__all__ = ['WolframLanguageSession']
+
 # Some callback methods for internal use.
 def do_get_wxf(result):
     return result.wxf
@@ -94,7 +96,7 @@ class WolframLanguageSession(WolframEvaluator):
                  stderr=PIPE,
                  inputform_string_evaluation=True,
                  wxf_bytes_evaluation=True,
-                 controller_class = KernelController,
+                 controller_class = WolframEngineController,
                  **kwargs):
         super().__init__(
             inputform_string_evaluation=inputform_string_evaluation)
@@ -140,7 +142,7 @@ class WolframLanguageSession(WolframEvaluator):
         
         Set `block` to :data:`True` (default is :data:`False`) to wait for the kernel to be up and running 
         before returning. Eventually set a timeout in seconds. If the timeout is reached a :data:`TimeoutError`
-        will be raised.
+        will be raised and the kernel is terminated.
         """
         try:
             future = self.start_future()
@@ -210,7 +212,7 @@ class WolframLanguageSession(WolframEvaluator):
     CALLBACK_GET_WXF = staticmethod(do_get_wxf)
     CALLBACK_GET = staticmethod(do_get_result)
 
-    def _do_evaluate_future(self, expr, result_update_callback=None, **kwargs):
+    def do_evaluate_future(self, expr, result_update_callback=None, **kwargs):
         future = futures.Future()
         wxf = export(self.normalize_input(expr), target_format='wxf', **kwargs)
         self.kernel_controller.evaluate_future(
@@ -227,7 +229,7 @@ class WolframLanguageSession(WolframEvaluator):
         :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate`.
         """
         self.ensure_started()
-        return self._do_evaluate_future(
+        return self.do_evaluate_future(
             expr, 
             result_update_callback=self.CALLBACK_GET, 
             **kwargs)
@@ -239,7 +241,7 @@ class WolframLanguageSession(WolframEvaluator):
         See :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wxf`.
         """
         self.ensure_started()
-        return self._do_evaluate_future(expr, result_update_callback=self.CALLBACK_GET_WXF, **kwargs)
+        return self.do_evaluate_future(expr, result_update_callback=self.CALLBACK_GET_WXF, **kwargs)
 
     def evaluate_wrap_future(self, expr, **kwargs):
         """ Evaluate an expression and return a future object.
@@ -248,28 +250,21 @@ class WolframLanguageSession(WolframEvaluator):
         See :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wrap`.
         """
         self.ensure_started()
-        return self._do_evaluate_future(expr, **kwargs)
+        return self.do_evaluate_future(expr, **kwargs)
 
-    def _timed_out_eval(self, method, expr, timeout=None, **kwargs):
-        if timeout and timeout > 0:
-            self.ensure_started()
-            expr = wl.TimeConstrained(self.normalize_input(expr), timeout + .1)
-        future = method(expr, **kwargs)
-        return future.result(timeout=timeout)
+    def evaluate_wrap(self, expr, **kwargs):
+        return self.evaluate_wrap_future(expr, **kwargs).result()
 
-    def evaluate_wrap(self, expr, timeout=None, **kwargs):
-        return self._timed_out_eval(self.evaluate_wrap_future, expr, timeout=timeout, **kwargs)
-
-    def evaluate(self, expr, timeout=None, **kwargs):
-        result = self._timed_out_eval(self.evaluate_wrap_future, expr, timeout=timeout, **kwargs)
+    def evaluate(self, expr, **kwargs):
+        result = self.evaluate_wrap(expr, **kwargs)
         self.log_message_from_result(result)
         return result.get()
 
-    def evaluate_wxf(self, expr, timeout=None, **kwargs):
+    def evaluate_wxf(self, expr, **kwargs):
         """ Evaluate an expression and return the serialized expression. 
         
         This method does not deserialize the Wolfram Engine input. """
-        result = self._timed_out_eval(self.evaluate_wrap_future, expr, timeout=timeout, **kwargs)
+        result = self.evaluate_wrap(expr, **kwargs)
         self.log_message_from_result(result)
         return result.wxf
 
