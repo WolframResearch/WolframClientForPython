@@ -3,7 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from subprocess import PIPE
 from wolframclient.evaluation.base import WolframEvaluator
-from wolframclient.evaluation.kernel.kernelcontroller import KernelController
+from wolframclient.evaluation.kernel.kernelcontroller import WolframEngineController
 from wolframclient.evaluation.result import WolframKernelEvaluationResult
 from wolframclient.language import wl
 from wolframclient.serializers import export
@@ -83,9 +83,6 @@ class WolframLanguageSession(WolframEvaluator):
     named parameters. Valid values are those accepted by subprocess.Popen (e.g :data:`sys.stdout`). Those parameters should be handled
     with care as deadlocks can arise from misconfiguration.
 
-    .. note ::
-        Wolfram Language sessions are **not thread-safe**, each thread must run its own instance.
-
     """
     def __init__(self,
                  kernel=None,
@@ -131,7 +128,6 @@ class WolframLanguageSession(WolframEvaluator):
             stdout=self._stdout,
             stderr=self._stderr,
             inputform_string_evaluation=self.inputform_string_evaluation,
-            wxf_bytes_evaluation=self.wxf_bytes_evaluation,
             controller_class = self.controller_class
             **self.parameters)
 
@@ -214,12 +210,9 @@ class WolframLanguageSession(WolframEvaluator):
     CALLBACK_GET_WXF = staticmethod(do_get_wxf)
     CALLBACK_GET = staticmethod(do_get_result)
 
-    def do_evaluate_future(self, expr, result_update_callback=None, **kwargs):
+    def _do_evaluate_future(self, expr, result_update_callback=None, **kwargs):
         future = futures.Future()
-        if self.wxf_bytes_evaluation and isinstance(expr, six.binary_type):
-            wxf = expr
-        else:
-            wxf = export(self.normalize_input(expr), target_format='wxf', **kwargs)
+        wxf = export(self.normalize_input(expr), target_format='wxf', **kwargs)
         self.kernel_controller.evaluate_future(
             wxf, 
             future, 
@@ -234,7 +227,7 @@ class WolframLanguageSession(WolframEvaluator):
         :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate`.
         """
         self.ensure_started()
-        return self.do_evaluate_future(
+        return self._do_evaluate_future(
             expr, 
             result_update_callback=self.CALLBACK_GET, 
             **kwargs)
@@ -246,7 +239,7 @@ class WolframLanguageSession(WolframEvaluator):
         See :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wxf`.
         """
         self.ensure_started()
-        return self.do_evaluate_future(expr, result_update_callback=self.CALLBACK_GET_WXF, **kwargs)
+        return self._do_evaluate_future(expr, result_update_callback=self.CALLBACK_GET_WXF, **kwargs)
 
     def evaluate_wrap_future(self, expr, **kwargs):
         """ Evaluate an expression and return a future object.
@@ -255,12 +248,12 @@ class WolframLanguageSession(WolframEvaluator):
         See :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wrap`.
         """
         self.ensure_started()
-        return self.do_evaluate_future(expr, **kwargs)
+        return self._do_evaluate_future(expr, **kwargs)
 
     def _timed_out_eval(self, method, expr, timeout=None, **kwargs):
         if timeout and timeout > 0:
             self.ensure_started()
-            expr = wl.TimeConstrained(expr, timeout)
+            expr = wl.TimeConstrained(self.normalize_input(expr), timeout + .1)
         future = method(expr, **kwargs)
         return future.result(timeout=timeout)
 
@@ -291,8 +284,8 @@ class WolframLanguageSession(WolframEvaluator):
     def set_parameter(self, parameter_name, parameter_value):
         self.kernel_controller.set_parameter(parameter_name, parameter_value)
 
-    get_parameter.__doc__ = KernelController.get_parameter.__doc__
-    set_parameter.__doc__ = KernelController.set_parameter.__doc__
+    get_parameter.__doc__ = WolframEngineController.get_parameter.__doc__
+    set_parameter.__doc__ = WolframEngineController.set_parameter.__doc__
 
     def __repr__(self):
         if self.started:

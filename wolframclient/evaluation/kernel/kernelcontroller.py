@@ -18,7 +18,7 @@ from wolframclient.evaluation.result import WolframKernelEvaluationResult
 if six.WINDOWS:
     from subprocess import STARTUPINFO, STARTF_USESHOWWINDOW
 
-__all__ = [ 'KernelController' ]
+__all__ = [ 'WolframEngineController' ]
 
 logger = logging.getLogger(__name__)
 
@@ -133,12 +133,21 @@ else:
     def find_default_kernel_path():
         return None
 
-find_default_kernel_path.__doc__ = """ Look for the most recent installed kernel. """
+find_default_kernel_path.__doc__ = """ Look for the most recent Wolfram Engine. """
 
+class WolframEngineController(Thread):
+    """ Control a Wolfram Engine from a Python thread.
 
+    A controller can start and stop a Wolfram Engine specified by its path `kernel`. It 
+    can evaluate expression, one at a time.
 
-class KernelController(Thread):
-    
+    Most methods from this class return instances of :class:`~concurrent.futures.Future`.
+
+    This class is a low level component of the library which is used by local evaluators.
+
+    ZMQ sockets are not thread safe, this class ensures encapsulation of them, while enabling
+    asynchronous operations.
+    """
     def __init__(self,
                  kernel=None,
                  initfile=None,
@@ -191,7 +200,7 @@ class KernelController(Thread):
             self.set_parameter(k, v)
         # this is a state: this event is set when the kernel will not serve any more evaluation.
         self._state_terminated = False
-        # lock controlling concurrent access to state above.
+        # lock controlling concurrent access to the state above.
         self._state_lock = RLock()
         # this is a trigger that will abort most blocking operations.
         self.trigger_termination_requested = Event()
@@ -407,9 +416,9 @@ class KernelController(Thread):
         self.kernel_socket_out.bind()
         self.kernel_socket_in.bind()
         if logger.isEnabledFor(logging.INFO):
-            logger.info('Kernel writes commands from socket: %s',
+            logger.info('Kernel writes commands to socket: %s',
                         self.kernel_socket_out)
-            logger.info('Kernel receives evaluated expressions to socket: %s',
+            logger.info('Kernel receives evaluated expressions from socket: %s',
                         self.kernel_socket_in)
         # start the kernel process
         cmd = [self.kernel, '-noprompt', "-initfile", self.initfile]
@@ -575,7 +584,6 @@ class KernelController(Thread):
                 future = None
                 task = None
                 self.tasks_queue.task_done()
-                logger.debug('Queue size: %s', self.tasks_queue.qsize())
                 task = self.tasks_queue.get()
                 payload, future, result_update_callback = task
         except (KeyboardInterrupt, RuntimeError, futures.CancelledError) as e:
@@ -584,30 +592,25 @@ class KernelController(Thread):
             raise e
         except Exception as e:
             self.trigger_termination_requested.set()
-            logger.info('[run] Exception occurred.')
             if future and not future.cancelled():
                 future.set_exception(e)
                 future = None
             else:
                 raise e
         finally:
-            logger.debug('Termination finally block')
             try:
                 if task:
                     self.tasks_queue.task_done()
                 self._cancel_tasks()
-                logger.info('[run] Finalizing.')
                 if self.trigger_termination_requested.is_set():
                     self._kernel_terminate()
                 else:
                     self._kernel_stop()
-                logger.info('[run] End finalizing, updating future.')
             except Exception as e:
                 if future:
                     future.set_exception(e)
                     future = None
             finally:
-                logger.debug('last finally block')
                 if future:
                     future.set_result(True)
     
@@ -623,5 +626,5 @@ class KernelController(Thread):
                 self.__class__.__name__, self.kernel_proc.pid,
                 self.kernel_socket_in.uri, self.kernel_socket_out.uri)
         else:
-            return '<%s: not started>' % self.__class__.__name__
+            return '<%s: %s>' % (self.__class__.__name__, self.name)
 

@@ -47,7 +47,6 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
                  stdout=PIPE,
                  stderr=PIPE,
                  inputform_string_evaluation=True,
-                 wxf_bytes_evaluation=True,
                  **kwargs):
         self._loop = loop or asyncio.get_event_loop()
         super().__init__(
@@ -59,7 +58,6 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
             stdout=stdout,
             stderr=stderr,
             inputform_string_evaluation=inputform_string_evaluation,
-            wxf_bytes_evaluation=wxf_bytes_evaluation,
             **kwargs)
 
     def duplicate(self):
@@ -73,7 +71,6 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
             stdout=self._stdout,
             stderr=self._stderr,
             inputform_string_evaluation=self.inputform_string_evaluation,
-            wxf_bytes_evaluation=self.wxf_bytes_evaluation,
             **self.parameters)
 
     async def do_evaluate_future(self, expr, result_update_callback=None, **kwargs):
