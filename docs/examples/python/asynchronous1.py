@@ -1,5 +1,5 @@
+import time
 from wolframclient.evaluation import WolframLanguageFutureSession
-from wolframclient.utils.api import time
 
 with WolframLanguageFutureSession() as future_session:
     start = time.perf_counter()

@@ -307,15 +307,16 @@ class TestCase(TestCaseSettings):
 
     # encode input parameters
 
+    def test_encode_empty_dict(self):
+        for target_format in ('wl', 'json', 'wxf'):
+            self.assertEqual(encode_api_inputs({}, target_format=target_format), {})
+
     def test_encode_wl(self):
         encoded = encode_api_inputs({'param1': {'k': [1, 2]}, 'param2': 'foo'})
         self.assertEqual(encoded, {
             'param1': b'<|"k" -> {1, 2}|>',
             'param2': 'foo'
         })
-
-    def test_encode_empty_dict(self):
-        self.assertEqual(encode_api_inputs({}, target_format='json'), {})
 
     def test_encode_json_dict(self):
         encoded = encode_api_inputs({

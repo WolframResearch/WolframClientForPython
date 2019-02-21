@@ -10,9 +10,10 @@ from wolframclient.utils.functional import composition
 
 def decorate(*func):
     def annotation(fn):
-        comp = composition(fn, *func)
-        return wraps(fn)(comp)
+        return wraps(fn)(composition(fn, *func))
+
     return annotation
+
 
 to_tuple = decorate(tuple)
 to_dict = decorate(Association)
