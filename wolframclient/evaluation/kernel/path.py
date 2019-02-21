@@ -55,8 +55,8 @@ def exe_path():
         return 'MacOS/WolframKernel'
 
 def find_default_kernel_path():
-    rel = exe_path()
     """ Look for the most recent installed kernel. """
+    rel = exe_path()
     for path in installation_directories():
         if rel:
             path = os.path_join(path, rel)
