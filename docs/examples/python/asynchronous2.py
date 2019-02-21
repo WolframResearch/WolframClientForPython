@@ -1,6 +1,6 @@
 import asyncio
+import time
 from wolframclient.evaluation import WolframLanguageAsyncSession
-from wolframclient.utils.api import time
 from wolframclient.language import wl
 
 async def delayed_evaluation(delay, async_session, expr):
