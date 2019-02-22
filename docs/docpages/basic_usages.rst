@@ -109,7 +109,7 @@ Evaluate :wlcode:`MinMax[{1, 5, -3, 9}]`, using the Wolfram Language function :w
     >>> session.evaluate(wl.MinMax([1, 5, -3, 9]))
     [-3, 9]
 
-Query `WolframAlpha <https://www.wolframalpha.com/>`_ for the distance between the Earth and the Sun using :wl:`WolframAlpha`.::
+Query `WolframAlpha <https://www.wolframalpha.com/>`_ for the distance between the Earth and the Sun using :wl:`WolframAlpha`::
 
     >>> distance = session.evaluate(wl.WolframAlpha("Earth distance from Sun", "Result"))
     Quantity[1.008045994315923, AstronomicalUnit]
@@ -162,6 +162,40 @@ The function :func:`~wolframclient.language.wlexpr` is particularly useful for d
 Evaluate an alternative representation of the previous expression::
 
     >>> session.evaluate(wl.Map(wlexpr('#^2&'), wl.Range(5)))
+
+Images and Graphics
+++++++++++++++++++++
+
+Apply `wl`:ListPlot` to arbitrary Python data::
+
+    >>> data = [-1, 2, 4, 5, 5.5]
+    >>> plot = wl.ListPlot(data)
+
+Wrap it into :wl:`Export` to produce a PNG image at a specified path::
+
+    >>> path = "/tmp/data.png"
+    >>> png_export = wl.Export(path, plot, "PNG")
+
+Evaluate the expression 
+
+    >>> session.evaluate(png_export)
+    '/tmp/data.png'
+
+Open the file::
+
+.. image :: ../examples/svg/basicarraylistplot.svg
+    :align: center
+    :alt: ListPlot graphic. If this image does not display, it might be that your browser does not support the SVG image format.
+
+Use PIL to load the image as a Python object::
+
+    >>> from PIL import Image
+    >>> img = Image.open('/tmp/data.png')
+
+Use the Wolfram Language to compute the image dimensions::
+
+    >>> session.evaluate(wl.ImageDimensions(img))
+    [360, 219]
 
 Persistence
 +++++++++++
