@@ -163,33 +163,36 @@ Evaluate an alternative representation of the previous expression::
 
     >>> session.evaluate(wl.Map(wlexpr('#^2&'), wl.Range(5)))
 
-Images and Graphics
+Data visualization
 ++++++++++++++++++++
 
-Apply `wl`:ListPlot` to arbitrary Python data::
+Create a :wl:`BarChart` from arbitrary Python data::
 
-    >>> data = [-1, 2, 4, 5, 5.5]
-    >>> plot = wl.ListPlot(data)
+    >>> data = [.3, 2, 4, 5, 5.5]
+    >>> graphic = wl.BarChart(data)
 
-Wrap it into :wl:`Export` to produce a PNG image at a specified path::
+Wrap it with :wl:`Export` to save the graphic to disc, as an image::
 
     >>> path = "/tmp/data.png"
-    >>> png_export = wl.Export(path, plot, "PNG")
+    >>> png_export = wl.Export(path, graphic, "PNG")
 
 Evaluate the expression 
 
     >>> session.evaluate(png_export)
     '/tmp/data.png'
 
-Open the file::
+Open the file:
 
-.. image :: ../examples/svg/basicarraylistplot.svg
+.. image :: ../examples/svg/barchart.svg
     :align: center
-    :alt: ListPlot graphic. If this image does not display, it might be that your browser does not support the SVG image format.
+    :alt: A graphic as an image. If this image does not display, it might be that your browser does not support the SVG image format.
 
-Use PIL to load the image as a Python object::
+Import PIL::
 
     >>> from PIL import Image
+
+Load the image as a Python object::
+
     >>> img = Image.open('/tmp/data.png')
 
 Use the Wolfram Language to compute the image dimensions::
@@ -200,10 +203,13 @@ Use the Wolfram Language to compute the image dimensions::
 Persistence
 +++++++++++
 
-Expressions evaluated in a given session are persistent. Define a function, and call it::
+Expressions evaluated in a given session are persistent. Define a function::
     
     >>> session.evaluate('f[x_] := x ^ 2')
     Null
+
+Call it::
+
     >>> session.evaluate('f[4]')
     16
 
@@ -557,13 +563,13 @@ The :func:`~wolframclient.serializers.export` function can serialize Python obje
 
 Expressions can be nested and mixed with serializable Python types::
 
-    >>> export(wl.Select(wl.PrimeQ, [1,2,3]))
-    b'Select[PrimeQ, {1, 2, 3}]'
+    >>> export(wl.Select([1,2,3], wl.PrimeQ))
+    b'Select[{1, 2, 3}, PrimeQ]'
 
 The :wl:`WXF` format is also supported. It is a binary format, thus not always human readable, but it is the most efficient way to exchange Wolfram Language expressions. Specify a `target_format` argument to serialize the previous expression to WXF::
 
-    >>> export(wl.Select(wl.PrimeQ, [1,2,3]), target_format='wxf')
-    b'8:f\x02s\x06Selects\x06PrimeQf\x03s\x04ListC\x01C\x02C\x03'
+    >>> export(wl.Select([1,2,3], wl.PrimeQ), target_format='wxf')
+    b'f\x02s\x06Selectf\x03s\x04ListC\x01C\x02C\x03s\x06PrimeQ'
 
 If the `stream` parameter is set to a string path, the serialized output is directly written to the file.
 
