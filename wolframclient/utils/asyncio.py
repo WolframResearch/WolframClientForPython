@@ -15,13 +15,8 @@ async def _run_with_id(i, cor):
 
 
 async def wait_all(*args):
-    #asyncio wait implementation that keeps order
-
-    done, _ = await asyncio.wait(
-        tuple(_run_with_id(i, coro) for i, coro in enumerate(iterate(*args))))
-
-    return tuple(
-        r for i, r in sorted(map(methodcaller('result'), done), key=first))
+    #deprecated
+    return await asyncio.gather(*iterate(*args))
 
 
 def run_in_loop(cor, loop=None):
