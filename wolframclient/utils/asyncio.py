@@ -10,13 +10,18 @@ from wolframclient.utils.decorators import to_tuple
 from wolframclient.utils.functional import first, iterate, map
 
 
-async def wait_all(args, **opts):
-    done = tuple(iterate(args))
-    if done:
-        done, _ = await asyncio.wait(done, **opts)
-        return tuple(map(methodcaller('result'), done))
+async def _run_with_id(i, cor):
+    return i, await cor
 
-    return done
+
+async def wait_all(*args):
+    #asyncio wait implementation that keeps order
+
+    done, _ = await asyncio.wait(
+        tuple(_run_with_id(i, coro) for i, coro in enumerate(iterate(*args))))
+
+    return tuple(
+        r for i, r in sorted(map(methodcaller('result'), done), key=first))
 
 
 def run_in_loop(cor, loop=None):
