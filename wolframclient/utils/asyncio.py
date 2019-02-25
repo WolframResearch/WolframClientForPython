@@ -9,11 +9,6 @@ from operator import methodcaller
 from wolframclient.utils.decorators import to_tuple
 from wolframclient.utils.functional import first, iterate, map
 
-
-async def _run_with_id(i, cor):
-    return i, await cor
-
-
 async def wait_all(*args):
     #deprecated
     return await asyncio.gather(*iterate(*args))
