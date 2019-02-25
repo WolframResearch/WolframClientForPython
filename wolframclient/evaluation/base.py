@@ -64,7 +64,7 @@ class WolframEvaluator(WolframEvaluatorBase):
         The list is provided as an iterable object. 
         """
         # for consistency with the async version, return a list.
-        return [*map(self.evaluate, expr_list)]
+        return list(map(self.evaluate, expr_list))
 
     def evaluate_wrap(self, expr):
         """ Evaluate a given Wolfram Language expression and return a result object with the result and meta information. """
