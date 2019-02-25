@@ -8,7 +8,6 @@ import warnings
 from wolframclient.language import wlexpr
 from wolframclient.language.expression import WLFunction
 from wolframclient.utils import six
-from wolframclient.utils.asyncio import wait_all
 from wolframclient.utils.functional import map
 
 

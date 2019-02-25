@@ -9,15 +9,11 @@ from operator import methodcaller
 from wolframclient.utils.decorators import to_tuple
 from wolframclient.utils.functional import first, iterate, map
 
-async def wait_all(*args):
-    #deprecated
-    return await asyncio.gather(*iterate(*args))
-
 
 def run_in_loop(cor, loop=None):
     @functools.wraps(cor)
     def wrapped(*args, **kwargs):
-        return first(syncronous_wait_all(cor(*args, **kwargs), loop=loop))
+        return get_event_loop(loop).run_until_complete(cor(*args, **kwargs))
 
     return wrapped
 
@@ -38,11 +34,6 @@ def get_event_loop(loop=None):
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         return loop
-
-
-@to_tuple
-def syncronous_wait_all(*args, loop=None):
-    yield from (loop or get_event_loop()).run_until_complete(wait_all(*args))
 
 
 def silence(*exceptions):
