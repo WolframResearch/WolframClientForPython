@@ -159,7 +159,7 @@ class FormatSerializer(Encoder):
 
         if callable(o):
             try:
-                yield "Arguments", first(inspect.getargspec(o))
+                yield "Arguments", map(force_text, first(inspect.getargspec(o)))
             except TypeError:
                 #this function can fail with TypeError unsupported callable
                 pass
