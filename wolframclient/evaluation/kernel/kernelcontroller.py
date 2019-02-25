@@ -194,7 +194,7 @@ class WolframEngineController(Thread):
         """
         try:
             return self.parameters.get(
-                parameter_name, self._DEFAULT_PARAMETERS.get(parameter_name))
+                parameter_name, self._DEFAULT_PARAMETERS[parameter_name])
         except KeyError:
             raise KeyError(
                 '%s is not one of the valid parameters: %s' %
