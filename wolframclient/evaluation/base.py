@@ -132,7 +132,9 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
         return await result.get()
 
     async def evaluate_many(self, expr_list):
-        return await wait_all(map(self.evaluate, expr_list), loop=self._loop)
+        return await asyncio.gather(
+            *map(self.evaluate, expr_list), 
+            loop=self._loop)
 
     async def evaluate_wrap(self, expr):
         raise NotImplementedError
