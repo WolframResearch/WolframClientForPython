@@ -134,7 +134,8 @@ class WolframLanguageSession(WolframEvaluator):
             stdout=self._stdout,
             stderr=self._stderr,
             inputform_string_evaluation=self.inputform_string_evaluation,
-            controller_class=self.controller_class**self.parameters)
+            controller_class=self.controller_class,
+            **self.parameters)
 
     @property
     def started(self):
