@@ -106,6 +106,8 @@ span.reldelimiter {
 footer.copyright {
     margin-top: 10px;
     padding-left: 10px;
+    font-size: .8em; 
+    color: #777;
 }
 
 div.sphinxsidebar {
