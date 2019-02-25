@@ -71,6 +71,7 @@ class TestCaseSettings(BaseTestCase):
         with testcase.assertRaises(KeyError):
             kernel_session = kernelclass(
                 cls.KERNEL_PATH, kernel_loglevel=logging.INFO, foo=1)
+            kernel_session.get_parameter('foo')
 
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
