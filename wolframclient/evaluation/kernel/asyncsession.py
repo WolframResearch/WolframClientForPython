@@ -14,8 +14,7 @@ logger = logging.getLogger(__name__)
 __all__ = ['WolframLanguageAsyncSession']
 
 
-class WolframLanguageAsyncSession(WolframLanguageSession,
-                                  WolframAsyncEvaluator):
+class WolframLanguageAsyncSession(WolframAsyncEvaluator, WolframLanguageSession):
     """Evaluate expressions asynchronously using coroutines.
 
     Asynchronous evaluations are provided through coroutines and the :mod:`asyncio` modules.
@@ -47,7 +46,6 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
                  stderr=PIPE,
                  inputform_string_evaluation=True,
                  **kwargs):
-        self._loop = loop or asyncio.get_event_loop()
         super().__init__(
             kernel=kernel,
             consumer=consumer,
@@ -57,6 +55,7 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
             stdout=stdout,
             stderr=stderr,
             inputform_string_evaluation=inputform_string_evaluation,
+            loop=loop,
             **kwargs)
 
     def duplicate(self):
@@ -117,6 +116,9 @@ class WolframLanguageAsyncSession(WolframLanguageSession,
         future = await self.evaluate_wrap_future(expr, **kwargs)
         await future
         return future.result()
+
+    async def evaluate_many(self, expr_list):
+        return await super().evaluate_many(expr_list)
 
     async def ensure_started(self):
         if not self.started:
