@@ -154,7 +154,11 @@ class WolframEngineController(Thread):
         # some parameters may be passed as kwargs
         self.parameters = {}
         for k, v in kwargs.items():
-            self.set_parameter(k, v)
+            try:
+                self.set_parameter(k, v)
+            # ignore kwargs unknowns key
+            except KeyError:
+                pass
         # this is a state: this event is set when the kernel will not serve any more evaluation.
         self._state_terminated = False
         # lock controlling concurrent access to the state above.
