@@ -91,6 +91,13 @@ class TestCoroutineSession(BaseTestCase):
         self.assertEqual(res.get(), [1, 2, 3])
 
     @run_in_loop
+    async def test_eval_many(self):
+        exprs = [('%s+%s' % (i,i)) for i in range(10)]
+        expected = [i+i for i in range(10)]
+        res = await self.async_session.evaluate_many(exprs)
+        self.assertEqual(res, expected)
+
+    @run_in_loop
     async def test_eval_start(self):
         try:
             async_session = WolframLanguageAsyncSession(
