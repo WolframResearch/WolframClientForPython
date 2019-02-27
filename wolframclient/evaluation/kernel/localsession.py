@@ -43,7 +43,7 @@ class WolframLanguageSession(WolframEvaluator):
             session.evaluate(long_evaluation, timeout=5)
 
     Asynchronous evaluation methods :meth:`~wolframclient.evaluation.kernel.localsession.WolframLanguageSession.evaluate_future` 
-    returns an instance of :class:`~concurrent.futures.Future` class wrapping the evaluation result.
+    returns an instance of :class:`~concurrent.futures.Future` class wrapping the evaluation result::
 
         with WolframLanguageSession() as session:
             future = session.evaluate_future('1+1')
