@@ -51,8 +51,10 @@ Evaluate :wlcode:`Map[#^2 &, {1,2,3}]`, by combining both methods. Insert :wlcod
 .. note :: 
     for more details about the Python representation of Wolfram Language expressions, refer to :ref:`the advanced usage section<adv-expression-representation>`.
 
-Evaluating Expressions
-==============================
+Expression Evaluation
+=======================
+
+The evaluation of Wolfram Language expressions directly from Python requires you to initialize a session either to a local Wolfram Engine or to the cloud. Local sessions are persistent, whereas cloud sessions only support "one-shot" evaluations, meaning that a fresh engine is used for each evaluation. Cloud session authentication is detailed in a dedicated :ref:`sub-section<ref-auth>` of this page.
 
 .. _ref-localkernel:
 
@@ -61,14 +63,15 @@ Local Evaluation
 
 The Wolfram Language session :class:`~wolframclient.evaluation.WolframLanguageSession` enables local evaluation of Wolfram Language code directly from Python. 
 
-A session must interact with a Wolfram Engine executable. The library automatically discover Wolfram Engines installed at the default location. A specific Wolfram Engine can be specified by its path. The executable is located in the top level directory returned by the Wolfram Language symbol :wl:`$InstallationDirectory`. The relative path from this directory depends on the operating system, typical values are:
+A session must interact with a Wolfram Engine executable. The library automatically discovers Wolfram Engines installed at the default location. A specific Wolfram Engine can be specified by its path. The executable is located relative to the top level directory returned by the Wolfram Language symbol :wl:`$InstallationDirectory`. The relative path from this directory depends on the operating system:
     
     * On `MacOS`: `Contents/MacOS/WolframKernel`
-    * On `Windows`: `wolfram.exe`
-    * On Linux: `Files/Executables/wolfram`
+    * On `Windows`: `WolframKernel.exe`
+    * On Linux: `Executables/WolframKernel`
 
-Initialization
-++++++++++++++
+
+Local Session Initialization
++++++++++++++++++++++++++++++
 
 Import :class:`~wolframclient.evaluation.WolframLanguageSession`::
     
@@ -86,11 +89,12 @@ On `MacOS`::
 
 On `Windows`::
 
-    >>> session = WolframLanguageSession('C:\\Program Files\\Wolfram Research\\Wolfram Desktop\\11.3\\wolfram.exe')
+    >>> session = WolframLanguageSession('C:\\Program Files\\Wolfram Research\\Wolfram Desktop\\11.3\\WolframKernel.exe')
 
 On `Linux`::
 
-    >>> session = WolframLanguageSession('/usr/local/Wolfram/Desktop/11.3/Files/Executables/wolfram')
+    >>> session = WolframLanguageSession('/usr/local/Wolfram/Desktop/11.3/Executables/WolframKernel')
+
 
 Expression Evaluation
 ++++++++++++++++++++++++++
@@ -126,10 +130,10 @@ Get the magnitude as a Python number using :wl:`QuantityMagnitude`::
 
 Associations are represented as Python dictionaries and vice versa.
 
-Evaluate :wlcode:`AssociationMap[Prime, {1, 3, 5}]`::
+Evaluate :wlcode:`AssociationMap[FromLetterNumber, {1, 3, 5}]`::
 
-    >>> session.evaluate(wl.AssociationMap(wl.Prime, [1, 3, 5]))
-    {1: 2, 3: 5, 5: 11}
+    >>> session.evaluate(wl.AssociationMap(wl.FromLetterNumber, [1, 3, 5]))
+    {1: 'a', 3: 'c', 5: 'e'}
 
 
 Options
@@ -200,6 +204,7 @@ Use the Wolfram Language to compute the image dimensions::
     >>> session.evaluate(wl.ImageDimensions(img))
     [360, 219]
 
+
 Persistence
 +++++++++++
 
@@ -222,34 +227,48 @@ From a Wolfram Language expression, it is possible to create a Python function t
     >>> str_reverse('abc')
     'cba'
 
-Define a Wolfram Language function that takes a list or a sequence of integers and only returns the primes::
+.. _ref-capital-distance:
 
-    >>> session.evaluate(wlexpr('selectPrimes[integers : List[__Integer]] := Select[integers, PrimeQ]'))
-    >>> session.evaluate(wlexpr('selectPrimes[integers___Integer] := selectPrimes[{integers}]'))
+Define a Wolfram Language function that takes two country names and returns the distance between their capital cities in kilometers:
+
+.. code-block :: wl
+
+    distance[country1_String, country2_String] := QuantityMagnitude[
+        GeoDistance[
+            EntityValue[Entity["Country", country1], "CapitalCity"], 
+            EntityValue[Entity["Country", country2], "CapitalCity"]
+        ],
+        "Kilometers"
+    ];
+
+Define the Wolfram Language function :wlexpr:`distance` for the current session::
+
+    >>> session.evaluate(wlexpr('''
+    ...     distance[country1_String, country2_String] := QuantityMagnitude[
+    ...         GeoDistance[
+    ...             EntityValue[Entity["Country", country1], "CapitalCity"],
+    ...             EntityValue[Entity["Country", country2], "CapitalCity"]
+    ...         ],
+    ...         "Kilometers"
+    ...     ];
+    ... '''))
     
 Create a Python function from it::
 
-    >>> selectPrimes = session.function(wlexpr('selectPrimes'))
+    >>> capital_distance = session.function(wlexpr('distance'))
 
-Alternatively use the Global expression constructor::
+Alternatively, use the Global expression constructor::
 
     >>> from wolframclient.language import Global
-    >>> selectPrimes = session.function(Global.selectPrimes)
+    >>> capital_distance = session.function(Global.distance)
 
-Apply the function to a list::
+Apply the function::
 
-    >>> selectPrimes([1,2,3,4])
-    [2, 3]
+    >>> capital_distance('France', 'Japan')
+    9740.93438174525
 
-Apply the function to a sequence of values::
-
-    >>> selectPrimes(2, 3, 4, 5)
-    [2, 3, 5]
-
-It also works with an iterator of integers::
-
-    >>> selectPrimes(range(100, 120))
-    [101, 103, 107, 109, 113]
+    >>> capital_distance('Canada', 'USA')
+    721.9965597052519
 
 The session is no more useful, so terminate it::
 
@@ -277,7 +296,7 @@ Manually terminate the session::
     >>> session.terminate()
 
 .. note::
-    non-terminated sessions usually result in orphan kernel processes, which ultimately lead to the inability to spawn any usable instance at all. Typically, this ends up with a WolframKernelException raised after a failure to communicate with the kernel.
+    non-terminated sessions usually result in orphan kernel processes, which ultimately lead to the inability to spawn any usable instance at all.
 
 Alternatively, delegate the handling of the life-cycle of a session using a `with` block::
 
@@ -286,9 +305,8 @@ Alternatively, delegate the handling of the life-cycle of a session using a `wit
     ...
     'cba'
 
+:ref:`The advanced usage section<adv-local-evaluation>` provides in-depth explanations and use cases of local evaluation.
 
-.. note :: 
-    for in-depth explanations and use cases of local evaluation, refer to :ref:`the advanced usage section<adv-local-evaluation>`.
 
 Wolfram Cloud Interactions
 ==============================
@@ -303,7 +321,7 @@ Authenticate
 Generate a Secured Authentication Key
 +++++++++++++++++++++++++++++++++++++
 
-Using a Wolfram Desktop, or a the Wolfram Public Cloud, generate a new authentication key called `pythonclientlibrary`:
+Using a Wolfram Desktop, or a the Wolfram Public Cloud, generate a new authentication key, and give it a name e.g. `pythonclientlibrary`:
 
 .. code-block :: wl
 
@@ -313,8 +331,9 @@ Get the key and secret as strings:
 
 .. code-block :: wl
 
-    sak["ConsumerKey"]
-    sak["ConsumerSecret"]
+    sak["ConsumerKey"]      (* "T2ghIEhpISDinIw=" *)
+    sak["ConsumerSecret"]   (* "VGhhdCdzIE1ZIHNlY3JldCE=" *)
+
 
 Start authenticated cloud session
 ++++++++++++++++++++++++++++++++++
@@ -323,9 +342,11 @@ Begin by importing the classes :class:`~wolframclient.evaluation.SecuredAuthenti
 
     >>> from wolframclient.evaluation import SecuredAuthenticationKey, WolframCloudSession
 
-Create a new instance of :class:`~wolframclient.evaluation.SecuredAuthenticationKey` with the consumer key and secret strings::
+Create a new instance of :class:`~wolframclient.evaluation.SecuredAuthenticationKey` with the consumer key and secret strings generated previously::
 
-    >>> sak = SecuredAuthenticationKey('my consumer key', 'my consumer secret')
+    >>> sak = SecuredAuthenticationKey(
+    ...     'T2ghIEhpISDinIw=',
+    ...     'VGhhdCdzIE1ZIHNlY3JldCE=')
 
 Using `sak`, start a new authenticated cloud session:: 
 
@@ -351,45 +372,73 @@ First import the :ref:`expression factory<ref-expressions>`::
 Using an authenticated session, evaluate Wolfram Language expressions::
 
     >>> session.evaluate(wl.Range(3))
-    '{1, 2, 3}'
+    {1, 2, 3}
 
     >>> session.evaluate(wl.StringReverse('abc'))
-    '"cba"'
+    'cba'
 
 Even if the authenticated session is a persistent object, each evaluation occurs independently, similarly to :wl:`CloudEvaluate`. This means that this is not the appropriate tool to work with variables and functions.
 
 Define a function `f`::
 
     >>> result = session.evaluate(wlexpr('f[x_]:=x+1'))
-    'Null'
+    Null
 
 Apply `f` to `1`. However, `f` is no longer defined, thus returning an unevaluated result::
 
     >>> result = session.evaluate(wlexpr('f[1]'))
-    'f[1]'
+    f[1]
 
 Cloud Functions
 ------------------
 
-From an :ref:`authenticated session<ref-auth>`, it is possible to build a cloud function to later use it with various parameters. Create a cloud function::
+From an :ref:`authenticated session<ref-auth>`, it is possible to build a cloud function to later use it with various parameters. 
+
+Create a cloud function from a built-in symbol::
 
     >>> wl_str_reverse = session.function(wl.StringReverse)
 
 Apply it to a first string::
 
     >>> wl_str_reverse("hello")
-    '"olleh"'
+    'olleh'
 
 Use the function again with a new argument::
 
     >>> wl_str_reverse("world.")
-    '".dlrow"'
+    '.dlrow'
 
-Functions may accept more than one input parameter. Define a cloud function that applies :wl:`Join` on all arguments it is given. Join multiple Python arrays::
+Define a :ref:`complex function<ref-capital-distance>` as a pure function suited for a usage in the cloud:
 
-    >>> wl_join = session.function(wlexpr('Join[##] &'))
-    >>> wl_join([0,1], ["a", "b"], [2, "c"])
-    '{0, 1, "a", "b", 2, "c"}'
+.. code-block :: wl 
+
+    QuantityMagnitude[
+        GeoDistance[
+            EntityValue[Entity["Country", #1], "CapitalCity"], 
+            EntityValue[Entity["Country", #2], "CapitalCity"]
+        ],
+        "Kilometers"
+    ] &
+
+Define the Python function::
+
+    >>> capital_distance = session.function(wlexpr('''
+    ...     QuantityMagnitude[
+    ...         GeoDistance[
+    ...             EntityValue[Entity["Country", #1], "CapitalCity"],
+    ...             EntityValue[Entity["Country", #2], "CapitalCity"]
+    ...         ],
+    ...         "Kilometers"
+    ...     ] &
+    ... '''))
+
+Apply it::
+
+    >>> capital_distance('France', 'Japan')
+    9740.93438174525
+
+    >>> capital_distance('Egypt', 'Peru')
+    12427.397501517393
 
 API
 ----
@@ -428,7 +477,10 @@ The API was deployed with default permissions, and as such is a private :wl:`Clo
 
 .. code-block :: wl
 
-    SetPermissions[CloudObject["api/private/xsquared"], SecuredAuthenticationKeys["pythonclientlibrary"] -> {"Read", "Execute"}]
+    SetPermissions[
+        CloudObject["api/private/xsquared"], 
+        SecuredAuthenticationKeys["pythonclientlibrary"] -> {"Read", "Execute"}
+    ]
 
 
 API Call from Python
@@ -470,7 +522,7 @@ Use WolframAPICall
 Add an input parameter::
 
     >>> call.add_parameter('x', 4)
-    WolframAPICall<api=('MyWolframID', 'api/private/xsquared')>
+    <WolframAPICall api=('MyWolframID', 'api/private/xsquared')>
 
 Perform the call::
 
