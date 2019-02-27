@@ -48,9 +48,9 @@ def installation_directories():
 
 def exe_path():
     if six.WINDOWS:
-        return 'wolfram.exe'
+        return 'WolframKernel.exe'
     elif six.LINUX:
-        return 'Files/Executables/wolfram'
+        return 'Executables/WolframKernel'
     elif six.MACOS:
         return 'MacOS/WolframKernel'
 
