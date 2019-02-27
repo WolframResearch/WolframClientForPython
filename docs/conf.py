@@ -57,8 +57,6 @@ extensions = [
     'sphinx.ext.githubpages',
     'sphinx.ext.intersphinx',
     'roles',
-    # 'sphinxcontrib.fulltoc',
-    # 'sphinxcontrib.inlinesyntaxhighlight',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
