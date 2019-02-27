@@ -22,7 +22,7 @@ async def wait_all(args, **opts):
 def run_in_loop(cor, loop=None):
     @functools.wraps(cor)
     def wrapped(*args, **kwargs):
-        return syncronous_wait_all(cor(*args, **kwargs), loop=loop)
+        return first(syncronous_wait_all(cor(*args, **kwargs), loop=loop))
 
     return wrapped
 

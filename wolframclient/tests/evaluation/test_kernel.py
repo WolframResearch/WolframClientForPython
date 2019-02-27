@@ -30,7 +30,7 @@ logger.setLevel(logging.INFO)
 class TestCaseSettings(BaseTestCase):
 
     if json_config:
-        KERNEL_PATH = json_config['kernel']
+        KERNEL_PATH = json_config.get('kernel', None)
 
     @classmethod
     def setUpClass(cls):

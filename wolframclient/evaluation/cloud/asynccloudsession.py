@@ -3,9 +3,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
-import ssl
 
-from aiohttp import BytesPayload, ClientSession, FormData
+
+from wolframclient.utils.api import aiohttp, ssl
 
 from wolframclient.evaluation.base import WolframAsyncEvaluator
 from wolframclient.evaluation.cloud.asyncoauth import \
@@ -29,23 +29,23 @@ __all__ = ['WolframCloudAsyncSession', 'WolframAPICallAsync']
 class WolframCloudAsyncSession(WolframAsyncEvaluator):
     def __init__(self,
                  credentials=None,
-                 server=WOLFRAM_PUBLIC_CLOUD_SERVER,
+                 server=None,
                  loop=None,
                  inputform_string_evaluation=True,
-                 oauth_session_class=OAuthAsyncSession,
-                 xauth_session_class=XAuthAsyncSession,
-                 http_sessionclass=ClientSession,
-                 ssl_context_class=ssl.SSLContext):
+                 oauth_session_class=None,
+                 xauth_session_class=None,
+                 http_sessionclass=None,
+                 ssl_context_class=None):
         super().__init__(
             loop, inputform_string_evaluation=inputform_string_evaluation)
-        self.server = server
+        self.server = server or WOLFRAM_PUBLIC_CLOUD_SERVER
         self.http_session = None
-        self.http_sessionclass = http_sessionclass
+        self.http_sessionclass = http_sessionclass or aiohttp.ClientSession
         self.credentials = credentials
         self.evaluation_api_url = evaluation_api_url(self.server)
-        self.xauth_session_class = xauth_session_class
-        self.oauth_session_class = oauth_session_class
-        self.ssl_context_class = ssl_context_class
+        self.xauth_session_class = xauth_session_class or XAuthAsyncSession
+        self.oauth_session_class = oauth_session_class or OAuthAsyncSession
+        self.ssl_context_class = ssl_context_class or ssl.SSLContext
         self.oauth_session = None
         if self.server.certificate is not None:
             self._ssl_context = self.ssl_context_class()
@@ -55,7 +55,7 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
             self._ssl_context = None
 
     def duplicate(self):
-        return WolframCloudAsyncSession(
+        return self.__class__(
             credentials=self.credentials,
             server=self.server,
             loop=self._loop,
@@ -198,7 +198,7 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
                 ssl=self._ssl_context)
 
     async def _call_evaluation_api(self, expr, **kwargs):
-        data = BytesPayload(export(expr, target_format='wl', **kwargs))
+        data = aiohttp.BytesPayload(export(expr, target_format='wl', **kwargs))
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(
                 'Sending expression to cloud server for evaluation: %s', data)
@@ -285,7 +285,7 @@ def encode_api_inputs(inputs, files={}, target_format='wl', **kwargs):
         raise ValueError(
             'Invalid encoding format %s. Choices are: %s' %
             (target_format, ', '.join(SUPPORTED_ENCODING_FORMATS.keys())))
-    form_data = FormData()
+    form_data = aiohttp.FormData()
     # files are specified by file pointer or bytes, or a tuple.
     for name, file_info in files.items():
         # tuple must contain: the filename, the data as bytes, the content type.

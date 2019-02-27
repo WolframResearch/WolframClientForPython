@@ -1,6 +1,6 @@
 import asyncio
+import time
 from wolframclient.evaluation import WolframEvaluatorPool
-from wolframclient.utils.api import time
 
 async def main():
     async with WolframEvaluatorPool() as pool:

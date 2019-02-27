@@ -2,40 +2,21 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import functools
+from functools import wraps
 
 from wolframclient.utils.datastructures import Association
 from wolframclient.utils.functional import composition
 
 
 def decorate(*func):
-    comp = composition(*func)
+    def annotation(fn):
+        return wraps(fn)(composition(fn, *func))
 
-    def multipass(fn):
-        def caller(*args, **opts):
-            return comp(fn(*args, **opts))
-
-        return caller
-
-    return multipass
+    return annotation
 
 
 to_tuple = decorate(tuple)
 to_dict = decorate(Association)
-
-
-def synchronized(lock):
-    """Synchronized call to the wrapped function using the provided `lock`."""
-
-    def wrap(fn):
-        @functools.wraps(fn)
-        def caller(*args, **kwargs):
-            with lock:
-                return fn(*args, **kwargs)
-
-        return caller
-
-    return wrap
 
 
 class cached_property(object):
