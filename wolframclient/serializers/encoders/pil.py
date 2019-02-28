@@ -44,7 +44,6 @@ SYS_IS_LE = sys.byteorder == 'little'
 
 
 def normalize_array(array):
-    # big endian
     endianness = array.dtype.byteorder
     # Ensure little endian
     if endianness == '>' or (endianness == '=' and not SYS_IS_LE):
