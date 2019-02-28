@@ -38,7 +38,7 @@ def _serialize_variables(variables):
     hidden = variables.get('__traceback_hidden_variables__', ())
 
     if hidden is True:
-        return wl.Sequence()
+        return 
 
     if not isinstance(hidden, (tuple, list)):
         hidden = ()
@@ -47,7 +47,7 @@ def _serialize_variables(variables):
                       for key, value in variables.items() if not key in hidden)
 
     if variables:
-        return wl.OpenerView([
+        yield wl.OpenerView([
             "Local variables",
             wl.Grid(
                 iterate(
@@ -58,8 +58,8 @@ def _serialize_variables(variables):
                 Alignment=wl.Left,
                 Frame=wl.LightGray)
         ])
-
-    return "No local variables"
+    else:
+        yield "No local variables"
 
 
 def _paginate(i, line):
@@ -93,24 +93,26 @@ def _serialize_frames(filename,
 
     yield wl.OpenerView([
         description,
-        wl.Column([
-            wl.Column(
-                iterate(
-                    (_paginate(pre_context_lineno + i, l)
-                     for i, l in enumerate(pre_context)),
-                    [
-                        wl.Item(
-                            _paginate(lineno, context_line),
-                            Background=wl.LightYellow)
-                    ],
-                    (_paginate(lineno + i + 1, l)
-                     for i, l in enumerate(post_context)),
-                ),
-                Background=[[wl.GrayLevel(0.95),
-                             wl.GrayLevel(1)]],
-                Frame=wl.LightGray),
-            _serialize_variables(variables)
-        ])
+        wl.Column(
+            iterate(
+                (wl.Column(
+                    iterate(
+                        (_paginate(pre_context_lineno + i, l)
+                         for i, l in enumerate(pre_context)),
+                        [
+                            wl.Item(
+                                _paginate(lineno, context_line),
+                                Background=wl.LightYellow)
+                        ],
+                        (_paginate(lineno + i + 1, l)
+                         for i, l in enumerate(post_context)),
+                    ),
+                    Background=[[wl.GrayLevel(0.95),
+                                 wl.GrayLevel(1)]],
+                    Frame=wl.LightGray), ),
+                _serialize_variables(variables)
+            )
+        )
     ], is_opened)
 
 
