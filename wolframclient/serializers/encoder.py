@@ -138,26 +138,12 @@ class DispatchUpdater(object):
 
     def _update_dispatch(self):
         if self.modules:
-            # check for imported modules and built in
-            imported_modules = sys.modules.keys()
-            for module in self.modules.intersection(imported_modules):
+            installed_modules = sys.modules.keys()
+            for module in self.modules.intersection(installed_modules):
                 for handler in self.registry[module]:
                     self.dispatch.update(safe_import_string(handler), force=True)
 
                 del self.registry[module]
-            # check for available module, not yet imported:
-            imported = set()
-            for module in self.modules:
-                try:
-                    pkg_resources.get_distribution(module)
-                    for handler in self.registry[module]:
-                        self.dispatch.update(safe_import_string(handler))
-                    del self.registry[module]
-                    imported.add(module)
-                except pkg_resources.DistributionNotFound:
-                    logger.warn('Module %s not found. Associated encoder will not be available.' % module)
-                    pass
-            for module in imported:
                 self.modules.remove(module)
 
     def _update_plugins(self):
