@@ -364,6 +364,7 @@ class WolframEngineController(Thread):
                 raise e
 
     _KERNEL_OK = b'OK'
+    _KERNEL_VERSION_NOT_SUPPORTED = 10
 
     def _kernel_start(self):
         """Start a new kernel process and open sockets to communicate with it."""
@@ -426,7 +427,7 @@ class WolframEngineController(Thread):
             # on the kernel side.
             response = self.kernel_socket_in.recv_abortable(
                 timeout=self.get_parameter('STARTUP_TIMEOUT'),
-                abort_event=self.trigger_termination_requested)
+                abort_event=_StartEvent(self.kernel_proc, self.trigger_termination_requested))
             if response == self._KERNEL_OK:
                 if logger.isEnabledFor(logging.INFO):
                     logger.info(
@@ -436,6 +437,8 @@ class WolframEngineController(Thread):
                 raise WolframKernelException(
                     'Kernel %s failed to start properly.' % self.kernel)
         except SocketException as se:
+            if self.kernel_proc.returncode == self._KERNEL_VERSION_NOT_SUPPORTED:
+                raise WolframKernelException('Wolfram Engine version is not supported. Please consult library prerequisites.')
             logger.info(se)
             raise WolframKernelException(
                 'Failed to communicate with kernel: %s. Startup timed out after %.2f seconds.'
@@ -596,3 +599,11 @@ class WolframEngineController(Thread):
                 self.kernel_socket_in.uri, self.kernel_socket_out.uri)
         else:
             return '<%s: %s>' % (self.__class__.__name__, self.name)
+
+class _StartEvent(object):
+    def __init__(self, subprocess, abort_event):
+        self.subprocess = subprocess
+        self.abort_event = abort_event
+    
+    def is_set(self):
+        return self.subprocess.poll() is not None or self.abort_event.is_set()

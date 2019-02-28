@@ -2,7 +2,9 @@
 
 (* Not useful since we apparently never receive multipart messages,
 no matter the total size (tested with 80MB) *)
-
+$NotSupportedVersionErrNo = 10;
+$MinVersionSupported = 11.3;
+If[$VersionNumber < $MinVersionSupported, Exit[$NotSupportedVersionErrNo]];
 
 $IgnoreEOF=True;
 $HistoryLength=0;
