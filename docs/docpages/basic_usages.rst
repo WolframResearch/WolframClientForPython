@@ -521,7 +521,7 @@ Use WolframAPICall
 
 Add an input parameter::
 
-    >>> call.add_parameter('x', 4)
+    >>> call.set_parameter('x', 4)
     <WolframAPICall api=('MyWolframID', 'api/private/xsquared')>
 
 Perform the call::

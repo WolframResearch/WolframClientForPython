@@ -378,7 +378,7 @@ class TestWolframAPI(TestCaseSettings):
     async def test_wolfram_api_call_str(self):
         api = (self.api_owner, 'api/private/stringreverse')
         apicall = WolframAPICallAsync(self.cloud_session_async, api)
-        apicall.add_parameter('str', 'abcde')
+        apicall.set_parameter('str', 'abcde')
         res = await apicall.perform()
         self.assertEqual('"edcba"', force_text(await res.get()))
 
@@ -387,8 +387,8 @@ class TestWolframAPI(TestCaseSettings):
         api = (self.api_owner, 'api/private/str_image_int')
         with open(self.get_data_path('32x2.png'), 'rb') as fp:
             apicall = WolframAPICallAsync(self.cloud_session_async, api)
-            apicall.add_parameter('str', 'abc')
-            apicall.add_parameter('int', 10)
+            apicall.set_parameter('str', 'abc')
+            apicall.set_parameter('int', 10)
             apicall.add_file_parameter('image', fp)
             result = await apicall.perform()
             res = json.loads(await result.get())
@@ -401,8 +401,8 @@ class TestWolframAPI(TestCaseSettings):
         with open(self.get_data_path('32x2.png'), 'rb') as fp:
             buffer = fp.read()
         apicall = WolframAPICallAsync(self.cloud_session_async, api)
-        apicall.add_parameter('str', 'abc')
-        apicall.add_parameter('int', 10)
+        apicall.set_parameter('str', 'abc')
+        apicall.set_parameter('int', 10)
         apicall.add_image_data_parameter('image', buffer)
         result = await apicall.perform()
         res = json.loads(await result.get())

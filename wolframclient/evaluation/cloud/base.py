@@ -125,7 +125,7 @@ class WolframAPICallBase(object):
         self.files = {}
         self.permission_key = permission_key
 
-    def add_parameter(self, name, value):
+    def set_parameter(self, name, value):
         """Add a new API input parameter from a serializable python object."""
         self.parameters[name] = value
         return self
