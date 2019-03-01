@@ -241,7 +241,7 @@ Define a Wolfram Language function that takes two country names and returns the 
         "Kilometers"
     ];
 
-Define the Wolfram Language function :wlexpr:`distance` for the current session::
+Define the Wolfram Language function :wlcode:`distance` for the current session::
 
     >>> session.evaluate(wlexpr('''
     ...     distance[country1_String, country2_String] := QuantityMagnitude[
