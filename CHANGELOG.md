@@ -1,9 +1,11 @@
 # Version 1.0.0.dev5
 - Introducing a new class `WolframEngineController`. Major code change to ensure ZMQ sockets are isolated in a given thread. Add a new controller class, a `Thread`, that own the sockets connected to the kernel. Interaction with this thread is done through a Queue.
 - Merge `WolframLanguageFutureSession` into `WolframLanguageSession`. All evaluate methods have a future counterpart.
-- Evaluation methods now accept a timeout parameter.
+- Merge `WolframCloudFutureSession` into `WolframCloudSession`. Add relevant future methods.
+- Rename `WolframAPICall` method `add_parameter` to `set_parameter` since setting is exactly what it does.
 - rename evaluator parameters `STARTUP_READ_TIMEOUT` to `STARTUP_TIMEOUT`, and `TERMINATE_READ_TIMEOUT` to `TERMINATE_TIMEOUT`.
 - CPU consumption reduced to ~1% with the latest ZMQLink version.
+- Local session checks for the Wolfram Engine version at startup and fails with a specific message.
 
 # Version 1.0.0.dev4
 - Inconsistent class name `WolframCloudSessionFuture` replaced with `WolframCloudFutureSession`.
