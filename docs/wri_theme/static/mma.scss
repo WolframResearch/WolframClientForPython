@@ -2,15 +2,16 @@
  * Copyright (c) 2016 rsmenon
  * Licensed under the MIT License (https://opensource.org/licenses/MIT)
  */
+/*  
+  dorianb: Update colors using the Wolfram Cloud color scheme.
+*/
 
-$light-gray: #aaaaaa;
-$dark-gray: #555555;
-$black: #353f42;
-$orange: #b66a4b;
-$magenta: #ab466a;
-$blue: #4b78b1;
-$cyan: #499A9F;
-$green: #6E8413;
+$light-gray: rgb(153, 153, 153);
+$dark-gray: rgb(102, 102, 102);
+$black: #000;
+$magenta: rgb(221, 17, 0);
+$blue: rgb(0, 44, 195);
+$green: rgb(67, 137, 88);
 
 .highlight-wl .highlight,
 .wlcode,
@@ -42,19 +43,19 @@ $green: #6E8413;
     color: $blue;
   }
   .o { // Operators
-    color: $dark-gray;
+    color: $black;
   }
   .m { // Numbers
     color: $black;
   }
   .p { // Groupings
-    color: $dark-gray;
+    color: $black;
   }
   .s { // Strings
     color: $dark-gray;
   }
   .vc { // Local scope variables
-    color: #5d9066;
+    color: $green;
   }
   .err { // Any unrecognized input that is not lexed correctly
     color: $dark-gray;
