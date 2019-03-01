@@ -1,0 +1,435 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>wolframclient.evaluation.kernel.localsession &#8212; Wolfram Client Library for Python 1.0.0.dev5 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+    
+    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css"/>
+    
+ 
+  </head><body>
+    <header class='main-header'>
+        <div class='header-content'>
+        
+            <div class='logo header left'>
+                <h1>
+                <a class='header' href="../../../../index.html">
+                    <span>
+                        <img class="logo align-left" 
+                            src="../../../../_static/wolf-python-subpage.png"
+                            title="https://www.wolfram.com/"
+                            height="70"
+                        />
+                    </span>
+                    <span class='header'>
+                        <span class='header darkgrey' style='font-size:.8em;'>
+                            Wolfram Client Library
+                        </span>
+                        <br>
+                        <span style='font-size:1em;'>for Python</span>
+                    </span>
+                </a>
+                </h1>
+            </div>
+            <div class="related header right" role="navigation" aria-label="related navigation">
+                <ul>
+                        <li class="right" style="margin-right: 10px">
+                            <span class='header right navigation'><a href="../../../../genindex.html" title="General Index"
+                            accesskey="I">
+                                index
+                        </a></span></li>
+                        <li class="right" >
+                            <span class='header right navigation'><a href="../../../../py-modindex.html" title="Python Module Index"
+                            >
+                                modules
+                        </a></span><span class='reldelimiter'>|</span></li>
+                    <li class="right">
+                        <span class='header right navigation darkgrey'>v 1.0.0.dev5</span>
+                        <span class='reldelimiter'>|</span>
+                    </li>
+                </ul>
+            </div>
+        
+        </div>
+    </header>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for wolframclient.evaluation.kernel.localsession</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">concurrent</span> <span class="k">import</span> <span class="n">futures</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">PIPE</span>
+
+<span class="kn">from</span> <span class="nn">wolframclient.evaluation.base</span> <span class="k">import</span> <span class="n">WolframEvaluator</span>
+<span class="kn">from</span> <span class="nn">wolframclient.evaluation.kernel.kernelcontroller</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">WolframEngineController</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">wolframclient.serializers</span> <span class="k">import</span> <span class="n">export</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;WolframLanguageSession&#39;</span><span class="p">]</span>
+
+
+<span class="c1"># Some callback methods for internal use.</span>
+<span class="k">def</span> <span class="nf">do_get_wxf</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">wxf</span>
+
+
+<span class="k">def</span> <span class="nf">do_get_result</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="WolframLanguageSession"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession">[docs]</a><span class="k">class</span> <span class="nc">WolframLanguageSession</span><span class="p">(</span><span class="n">WolframEvaluator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A session to a Wolfram Kernel enabling evaluation of Wolfram Language expressions.</span>
+
+<span class="sd">    Start a new session and send an expression for evaluation::</span>
+
+<span class="sd">        with WolframLanguageSession() as session:</span>
+<span class="sd">            session.evaluate(&#39;Range[3]&#39;)</span>
+
+<span class="sd">    Set `timeout` value to a number, to set an evaluation timeout in seconds. If the evaluation</span>
+<span class="sd">    time extends the timeout a :class:`~concurrent.futures.TimeoutError` is raised.</span>
+<span class="sd">    </span>
+<span class="sd">    Evaluate an expression taking 10 seconds to return, using a 5 second timeout::</span>
+
+<span class="sd">        long_evaluation = wl.Pause(10)</span>
+<span class="sd">        with WolframLanguageSession() as session:</span>
+<span class="sd">            session.evaluate(long_evaluation, timeout=5)</span>
+
+<span class="sd">    Asynchronous evaluation methods :meth:`~wolframclient.evaluation.kernel.localsession.WolframLanguageSession.evaluate_future` </span>
+<span class="sd">    returns an instance of :class:`~concurrent.futures.Future` class wrapping the evaluation result::</span>
+
+<span class="sd">        with WolframLanguageSession() as session:</span>
+<span class="sd">            future = session.evaluate_future(&#39;1+1&#39;)</span>
+<span class="sd">            result = future.result()</span>
+
+<span class="sd">    When `consumer` is set to a :class:`~wolframclient.deserializers.WXFConsumer` instance,</span>
+<span class="sd">    this instance is passed to :func:`~wolframclient.deserializers.binary_deserialize` when</span>
+<span class="sd">    deserializing the WXF output. </span>
+<span class="sd">    </span>
+<span class="sd">    By default packed arrays are deserialized as :class:`list`. Specify a consumer instance</span>
+<span class="sd">    that supports NumPy arrays :class:`~wolframclient.deserializers.WXFConsumerNumpy`::</span>
+
+<span class="sd">        from wolframclient.deserializers import WXFConsumerNumpy</span>
+
+<span class="sd">        with WolframLanguageSession(consumer=WXFConsumerNumpy()) as session:</span>
+<span class="sd">            numpy_array = session.evaluate(&#39;Range[3]&#39;)</span>
+
+<span class="sd">    Communication with a given kernel is based on ZMQ sockets:</span>
+
+<span class="sd">    * one `PUSH` socket to send expressions for evaluation</span>
+<span class="sd">    * one `PULL` socket to receive evaluation results</span>
+
+<span class="sd">    Kernel logging is disabled by default and is done through a third socket</span>
+<span class="sd">    (type `SUB`). The initial log level is specified by the parameter `kernel_loglevel`.</span>
+<span class="sd">    If the log level was not set at initialization, logging is not available for the entire</span>
+<span class="sd">    session.</span>
+
+<span class="sd">    The kernel associated with a given session provides the following</span>
+<span class="sd">    logging functions:</span>
+
+<span class="sd">    * ``ClientLibrary`debug`` corresponding to :py:meth:`logging.Logger.debug`</span>
+<span class="sd">    * ``ClientLibrary`info`` corresponding to :py:meth:`logging.Logger.info`</span>
+<span class="sd">    * ``ClientLibrary`warn`` corresponding to :py:meth:`logging.Logger.warning`</span>
+<span class="sd">    * ``ClientLibrary`error`` corresponding to :py:meth:`logging.Logger.error`</span>
+<span class="sd">    * ``ClientLibrary`SetDebugLogLevel[]`` send debug messages and above</span>
+<span class="sd">    * ``ClientLibrary`SetInfoLogLevel[]`` send info messages and above</span>
+<span class="sd">    * ``ClientLibrary`SetWarnLogLevel[]`` send warning messages and above</span>
+<span class="sd">    * ``ClientLibrary`SetErrorLogLevel[]`` only send error messages</span>
+<span class="sd">    * ``ClientLibrary`DisableKernelLogging[]`` stop sending error message to the logging socket</span>
+
+<span class="sd">    The standard input, output and error file handles can be specified with `stdin`, `stdout` and `stderr`</span>
+<span class="sd">    named parameters. Valid values are those accepted by subprocess.Popen (e.g :data:`sys.stdout`). Those parameters should be handled</span>
+<span class="sd">    with care as deadlocks can arise from misconfiguration.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">kernel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">consumer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">initfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">kernel_loglevel</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">NOTSET</span><span class="p">,</span>
+                 <span class="n">stdin</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span>
+                 <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span>
+                 <span class="n">stderr</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span>
+                 <span class="n">inputform_string_evaluation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">wxf_bytes_evaluation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">controller_class</span><span class="o">=</span><span class="n">WolframEngineController</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">inputform_string_evaluation</span><span class="o">=</span><span class="n">inputform_string_evaluation</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initfile</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel_loglevel</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">NOTSET</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stdin</span> <span class="o">=</span> <span class="n">stdin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stdout</span> <span class="o">=</span> <span class="n">stdout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stderr</span> <span class="o">=</span> <span class="n">stderr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wxf_bytes_evaluation</span> <span class="o">=</span> <span class="n">wxf_bytes_evaluation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">controller_class</span> <span class="o">=</span> <span class="n">controller_class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel_controller</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">controller_class</span><span class="p">(</span>
+            <span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span>
+            <span class="n">initfile</span><span class="o">=</span><span class="n">initfile</span><span class="p">,</span>
+            <span class="n">kernel_loglevel</span><span class="o">=</span><span class="n">kernel_loglevel</span><span class="p">,</span>
+            <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">,</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="n">stderr</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="WolframLanguageSession.duplicate"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.duplicate">[docs]</a>    <span class="k">def</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span>
+            <span class="n">kernel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">,</span>
+            <span class="n">consumer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="p">,</span>
+            <span class="n">initfile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">initfile</span><span class="p">,</span>
+            <span class="n">kernel_loglevel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_loglevel</span><span class="p">,</span>
+            <span class="n">stdin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stdin</span><span class="p">,</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stdout</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stderr</span><span class="p">,</span>
+            <span class="n">inputform_string_evaluation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inputform_string_evaluation</span><span class="p">,</span>
+            <span class="n">controller_class</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">controller_class</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">started</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_controller</span><span class="o">.</span><span class="n">started</span>
+
+<div class="viewcode-block" id="WolframLanguageSession.start"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Start a kernel controller, eventually restart a fresh on if the previous one was terminated. </span>
+<span class="sd">        </span>
+<span class="sd">        Set `block` to :data:`True` (default is :data:`False`) to wait for the kernel to be up and running </span>
+<span class="sd">        before returning. Eventually set a timeout in seconds. If the timeout is reached a :data:`TimeoutError`</span>
+<span class="sd">        will be raised and the kernel is terminated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">future</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_future</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">future</span> <span class="ow">and</span> <span class="n">block</span><span class="p">:</span>
+                <span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">e</span></div>
+
+<div class="viewcode-block" id="WolframLanguageSession.start_future"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.start_future">[docs]</a>    <span class="k">def</span> <span class="nf">start_future</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Request the Wolfram Engine to start. Return a future object.</span>
+<span class="sd">        </span>
+<span class="sd">        The result of the future object is True when the kernel is ready to evaluate input.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_controller</span><span class="o">.</span><span class="n">terminated</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kernel_controller</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_controller</span><span class="o">.</span><span class="n">duplicate</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_controller</span><span class="o">.</span><span class="n">request_kernel_start</span><span class="p">()</span>
+        <span class="n">future</span> <span class="o">=</span> <span class="n">futures</span><span class="o">.</span><span class="n">Future</span><span class="p">()</span>
+        <span class="n">future</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">future</span></div>
+
+<div class="viewcode-block" id="WolframLanguageSession.stop"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Request the Wolfram Engine to stop gracefully. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">(</span><span class="n">gracefully</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WolframLanguageSession.terminate"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.terminate">[docs]</a>    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Request the Wolfram Engine to stop immediately. </span>
+<span class="sd">        </span>
+<span class="sd">        Ongoing evaluations may be cancelled. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">(</span><span class="n">gracefully</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gracefully</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="c1"># if the kernel is terminated the queue no more accept new tasks. Stop would hang.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span><span class="p">:</span>
+            <span class="n">future</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_future</span><span class="p">(</span><span class="n">gracefully</span><span class="o">=</span><span class="n">gracefully</span><span class="p">)</span>
+            <span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+
+<div class="viewcode-block" id="WolframLanguageSession.stop_future"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.stop_future">[docs]</a>    <span class="k">def</span> <span class="nf">stop_future</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gracefully</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Request the Wolfram Engine to stop. Return a future object.</span>
+<span class="sd">        </span>
+<span class="sd">        The result of the future object is True when the controller thread is no more alive.</span>
+<span class="sd">        Set `gracefully` to `False` will request for an immediate stop, eventually cancelling ongoing</span>
+<span class="sd">        evaluations. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">gracefully</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_controller</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_controller</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="WolframLanguageSession.ensure_started"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageSession.ensure_started">[docs]</a>    <span class="k">def</span> <span class="nf">ensure_started</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="WolframLanguageSession.restart"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.restart">[docs]</a>    <span class="k">def</span> <span class="nf">restart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Restart a given evaluator by stopping it in case it was already started. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span></div>
+
+    <span class="n">CALLBACK_GET_WXF</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">do_get_wxf</span><span class="p">)</span>
+    <span class="n">CALLBACK_GET</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">do_get_result</span><span class="p">)</span>
+
+<div class="viewcode-block" id="WolframLanguageSession.do_evaluate_future"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageSession.do_evaluate_future">[docs]</a>    <span class="k">def</span> <span class="nf">do_evaluate_future</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">result_update_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">future</span> <span class="o">=</span> <span class="n">futures</span><span class="o">.</span><span class="n">Future</span><span class="p">()</span>
+        <span class="n">wxf</span> <span class="o">=</span> <span class="n">export</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wxf&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel_controller</span><span class="o">.</span><span class="n">evaluate_future</span><span class="p">(</span>
+            <span class="n">wxf</span><span class="p">,</span>
+            <span class="n">future</span><span class="p">,</span>
+            <span class="n">result_update_callback</span><span class="o">=</span><span class="n">result_update_callback</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">future</span></div>
+
+<div class="viewcode-block" id="WolframLanguageSession.evaluate_future"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.evaluate_future">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_future</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Evaluate an expression and return a future object.</span>
+
+<span class="sd">        The future object result is the evaluated expression. See</span>
+<span class="sd">        :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ensure_started</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_evaluate_future</span><span class="p">(</span>
+            <span class="n">expr</span><span class="p">,</span> <span class="n">result_update_callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CALLBACK_GET</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WolframLanguageSession.evaluate_wxf_future"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wxf_future">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wxf_future</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Evaluate an expression and return a future object.</span>
+
+<span class="sd">        The future object result is the WXF serialization of the evaluated expression.</span>
+<span class="sd">        See :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wxf`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ensure_started</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_evaluate_future</span><span class="p">(</span>
+            <span class="n">expr</span><span class="p">,</span> <span class="n">result_update_callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CALLBACK_GET_WXF</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WolframLanguageSession.evaluate_wrap_future"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wrap_future">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wrap_future</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Evaluate an expression and return a future object.</span>
+
+<span class="sd">        The future object result is the result object with the evaluated expression and meta information.</span>
+<span class="sd">        See :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wrap`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ensure_started</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_evaluate_future</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WolframLanguageSession.evaluate_wrap"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wrap">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_wrap_future</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="WolframLanguageSession.evaluate"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_wrap</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_message_from_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="WolframLanguageSession.evaluate_wxf"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wxf">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Evaluate an expression and return the serialized expression. </span>
+<span class="sd">        </span>
+<span class="sd">        This method does not deserialize the Wolfram Engine input. &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_wrap</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_message_from_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">wxf</span></div>
+
+<div class="viewcode-block" id="WolframLanguageSession.log_message_from_result"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageSession.log_message_from_result">[docs]</a>    <span class="k">def</span> <span class="nf">log_message_from_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">messages</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="WolframLanguageSession.get_parameter"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.get_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_controller</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="n">parameter_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WolframLanguageSession.set_parameter"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.set_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter_value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel_controller</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span><span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter_value</span><span class="p">)</span></div>
+
+    <span class="n">get_parameter</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">WolframEngineController</span><span class="o">.</span><span class="n">get_parameter</span><span class="o">.</span><span class="vm">__doc__</span>
+    <span class="n">set_parameter</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">WolframEngineController</span><span class="o">.</span><span class="n">set_parameter</span><span class="o">.</span><span class="vm">__doc__</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1">: kernel controller=</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                                                   <span class="bp">self</span><span class="o">.</span><span class="n">kernel_controller</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1">: not started&gt;&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class='overview toctree-l1'>
+    <a class="reference internal  _modules/wolframclient/evaluation/kernel/localsession" 
+        href="../../../../index.html">Overview</a>
+</div>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docpages/install.html">Installation and prerequisites</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/install.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/install.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docpages/basic_usages.html">Basic Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#expression-representation">Expression Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#expression-evaluation">Expression Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#wolfram-cloud-interactions">Wolfram Cloud Interactions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#serialization">Serialization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docpages/advanced_usages.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/advanced_usages.html#expression-representation">Expression Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/advanced_usages.html#local-kernel-evaluation">Local Kernel Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/advanced_usages.html#extending-serialization-writing-an-encoder">Extending serialization: Writing an Encoder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/advanced_usages.html#extending-wxf-parsing-writing-a-wxfconsumer">Extending WXF Parsing: Writing a WXFConsumer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docpages/public_api.html">Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/public_api.html#expression-representation">Expression Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/public_api.html#serialization">Serialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/public_api.html#deserialization">Deserialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/public_api.html#evaluating-expressions">Evaluating Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/public_api.html#cloud-api">Cloud API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/public_api.html#exceptions">Exceptions</a></li>
+</ul>
+</li>
+</ul>
+
+<div class='overview toctree-l1'>
+    <a class="reference internal  _modules/wolframclient/evaluation/kernel/localsession" 
+        href="../../../../docpages/toc.html">Table Of Contents</a>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><footer class='copyright'>
+    <div>
+        <span>&#169; Copyright 2019, Wolfram Research.</span>
+    </div>
+</footer>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+
+  </body>
+</html>

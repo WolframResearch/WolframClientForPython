@@ -12,18 +12,34 @@ wolframclient.evaluation.kernel.asyncsession module
     :undoc-members:
     :show-inheritance:
 
-wolframclient.evaluation.kernel.futuresession module
-----------------------------------------------------
+wolframclient.evaluation.kernel.kernelcontroller module
+-------------------------------------------------------
 
-.. automodule:: wolframclient.evaluation.kernel.futuresession
+.. automodule:: wolframclient.evaluation.kernel.kernelcontroller
     :members:
     :undoc-members:
     :show-inheritance:
 
-wolframclient.evaluation.kernel.kernelsession module
-----------------------------------------------------
+wolframclient.evaluation.kernel.localsession module
+---------------------------------------------------
 
-.. automodule:: wolframclient.evaluation.kernel.kernelsession
+.. automodule:: wolframclient.evaluation.kernel.localsession
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.evaluation.kernel.path module
+-------------------------------------------
+
+.. automodule:: wolframclient.evaluation.kernel.path
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wolframclient.evaluation.kernel.zmqsocket module
+------------------------------------------------
+
+.. automodule:: wolframclient.evaluation.kernel.zmqsocket
     :members:
     :undoc-members:
     :show-inheritance:

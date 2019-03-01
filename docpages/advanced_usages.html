@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Advanced Usage &#8212; Wolfram Client Library for Python 1.0.0.dev4 documentation</title>
+    <title>Advanced Usage &#8212; Wolfram Client Library for Python 1.0.0.dev5 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -70,7 +70,7 @@
                                 </span>
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.0.dev4</span>
+                        <span class='header right navigation darkgrey'>v 1.0.0.dev5</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -108,7 +108,7 @@
 </div>
 <p>The representation of a given expression using its string <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html" target="_blank">InputForm</a> is readable but ambiguous, since the context is resolved in the kernel during evaluation, and as such different kernels may return different results. See <a class="wl external reference" href="http://reference.wolfram.com/language/ref/$ContextPath.html" target="_blank">$ContextPath</a>.</p>
 <p>On the other hand, in the <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html" target="_blank">WXF</a> format, expressions are represented with their full names. Context must be fully specified for all symbols, the exception being the <code class="docutils literal notranslate"><span class="pre">System`</span></code> context, which can be omitted. As a consequence, in WXF a symbol with no context is always deserialized as a <code class="docutils literal notranslate"><span class="pre">System`</span></code> symbol.</p>
-<p>The method <a class="reference internal" href="../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate" title="wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate()</span></code></a> accepts two types of input:</p>
+<p>The method <code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate()</span></code> accepts two types of input:</p>
 <ul class="simple">
 <li>Python strings are treated as a string <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html" target="_blank">InputForm</a>; as such, context is resolved during evaluation. User-defined functions are most of the time automatically created with the <code class="docutils literal notranslate"><span class="pre">Global`</span></code> context.</li>
 <li>Serializable Python objects are serialized to WXF before evaluation; as such, context must be explicitly specified, except for <code class="docutils literal notranslate"><span class="pre">System`</span></code> symbols.</li>
@@ -177,7 +177,7 @@
 <span class="go">max[[&#39;hello&#39;, &#39;darkness&#39;, &#39;my&#39;, &#39;old&#39;, &#39;friend&#39;]]</span>
 </pre></div>
 </div>
-<p>It is important to understand that <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wlexpr" title="wolframclient.language.wlexpr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">wlexpr()</span></code></a> applied to a string is equivalent to evaluating <a class="wl external reference" href="http://reference.wolfram.com/language/ref/ToExpression.html" target="_blank">ToExpression</a> on top of the string input, and as such some context inference is performed when evaluating. In the above example, the <code class="xref py py-data docutils literal notranslate"><span class="pre">max</span></code> function explicit name is <code class="docutils literal notranslate"><span class="pre">Global`max</span></code>. When the Python object <code class="xref py py-data docutils literal notranslate"><span class="pre">wl.max</span></code> is passed to <a class="reference internal" href="../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate" title="wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate()</span></code></a>, it is serialized to <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html" target="_blank">WXF</a> first, which has strict context specification rules: the only context that can be omitted is the <code class="docutils literal notranslate"><span class="pre">System`</span></code> context. As a consequence, any symbol without context is attached to the <code class="docutils literal notranslate"><span class="pre">System`</span></code> context; <cite>max</cite> is thus <code class="docutils literal notranslate"><span class="pre">System`max</span></code>, which is not defined.</p>
+<p>It is important to understand that <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wlexpr" title="wolframclient.language.wlexpr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">wlexpr()</span></code></a> applied to a string is equivalent to evaluating <a class="wl external reference" href="http://reference.wolfram.com/language/ref/ToExpression.html" target="_blank">ToExpression</a> on top of the string input, and as such some context inference is performed when evaluating. In the above example, the <code class="xref py py-data docutils literal notranslate"><span class="pre">max</span></code> function explicit name is <code class="docutils literal notranslate"><span class="pre">Global`max</span></code>. When the Python object <code class="xref py py-data docutils literal notranslate"><span class="pre">wl.max</span></code> is passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate()</span></code>, it is serialized to <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html" target="_blank">WXF</a> first, which has strict context specification rules: the only context that can be omitted is the <code class="docutils literal notranslate"><span class="pre">System`</span></code> context. As a consequence, any symbol without context is attached to the <code class="docutils literal notranslate"><span class="pre">System`</span></code> context; <cite>max</cite> is thus <code class="docutils literal notranslate"><span class="pre">System`max</span></code>, which is not defined.</p>
 <p>Finally terminate the session:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 </pre></div>
@@ -215,15 +215,49 @@
 </div>
 <p>Messages are stored as tuples of two elements; the message name and the formatted message.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">eval</span><span class="o">.</span><span class="n">messages</span>
-<span class="go">[(&#39;Power::infy&#39;, &#39;Infinite expression Infinity encountered.&#39;)]</span>
+<span class="go">[(&#39;Power::infy&#39;, &#39;Infinite expression Power[0, -1] encountered.&#39;)]</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="asynchronous">
 <h4>Asynchronous<a class="headerlink" href="#asynchronous" title="Permalink to this headline">¶</a></h4>
-<div class="section" id="concurrent-future-api">
-<h5>Concurrent Future API<a class="headerlink" href="#concurrent-future-api" title="Permalink to this headline">¶</a></h5>
-<p>Some computations may take a significant time to finish, and the result might not be required immediately. Asynchronous evaluation is a way to start evaluations on a local kernel using a background task, without blocking the main Python execution. Asynchronous evaluation requires an instance of <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageFutureSession" title="wolframclient.evaluation.WolframLanguageFutureSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframLanguageFutureSession</span></code></a> which contains the same method as its synchronous counterpart, except that returned values are wrapped into <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> objects.</p>
+<p>Some computations may take a significant time to finish. The library provides various form of control on evaluations.</p>
+<div class="section" id="evaluate-future">
+<h5>Evaluate future<a class="headerlink" href="#evaluate-future" title="Permalink to this headline">¶</a></h5>
+<p>Evaluation methods all have a future based counterpart.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.evaluation</span> <span class="k">import</span> <span class="n">WolframLanguageSession</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">session</span> <span class="o">=</span> <span class="n">WolframLanguageSession</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">future</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">evaluate_future</span><span class="p">(</span><span class="s1">&#39;Pause[3]; 1+1&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The future object is immediately returned, the computation is done in the background. Return the evaluated expression:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+<p>Sometimes a fine control over the maximum duration of an evaluation is required. <a class="wl external reference" href="http://reference.wolfram.com/language/ref/TimeConstrained.html" target="_blank">TimeConstrained</a> ensures that a given evaluation duration is not exceeding a timeout in seconds. When the timeout is reached the symbol <a class="wl external reference" href="http://reference.wolfram.com/language/ref/$Aborted.html" target="_blank">$Aborted</a> is returned.</p>
+<p>Wrap an artificially long evaluation to last at most one second:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">long_eval</span> <span class="o">=</span> <span class="n">wl</span><span class="o">.</span><span class="n">Pause</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">timeconstrained_eval</span> <span class="o">=</span> <span class="n">wl</span><span class="o">.</span><span class="n">TimeConstrained</span><span class="p">(</span><span class="n">long_eval</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Evaluate the time constrained expression:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">timeconstrained_eval</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Check if the result is <a class="wl external reference" href="http://reference.wolfram.com/language/ref/$Aborted.html" target="_blank">$Aborted</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;$Aborted&#39;</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Terminate the session:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="concurrent-future">
+<h5>Concurrent Future<a class="headerlink" href="#concurrent-future" title="Permalink to this headline">¶</a></h5>
+<p>Sometimes, the result is not be required immediately. Asynchronous evaluation is a way to start evaluations on a local kernel as a background task, without blocking the main Python execution. Asynchronous evaluation methods are: <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_future" title="wolframclient.evaluation.WolframLanguageSession.evaluate_future"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_future()</span></code></a>, <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wrap_future" title="wolframclient.evaluation.WolframLanguageSession.evaluate_wrap_future"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_wrap_future()</span></code></a>, and <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wxf_future" title="wolframclient.evaluation.WolframLanguageSession.evaluate_wxf_future"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_wxf_future()</span></code></a>. They wrapped the evaluation result into a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> objects. The result is the one that would be returned by the non-future method (e.g <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_future" title="wolframclient.evaluation.WolframLanguageSession.evaluate_future"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_future()</span></code></a> returns the result of <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate" title="wolframclient.evaluation.WolframLanguageSession.evaluate"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate()</span></code></a>).</p>
 <p>Evaluate an artificially delayed code (using <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Pause.html" target="_blank">Pause</a>), and print the time elapsed at each step:</p>
 <div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
@@ -237,19 +271,19 @@
 10
 11
 12
-13</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="hll"><span class="kn">from</span> <span class="nn">wolframclient.evaluation</span> <span class="k">import</span> <span class="n">WolframLanguageFutureSession</span>
-</span><span class="kn">from</span> <span class="nn">wolframclient.utils.api</span> <span class="k">import</span> <span class="n">time</span>
+13</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="hll"><span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">perf_counter</span>
+</span><span class="kn">from</span> <span class="nn">wolframclient.evaluation</span> <span class="k">import</span> <span class="n">WolframLanguageSession</span>
 
-<span class="hll"><span class="k">with</span> <span class="n">WolframLanguageFutureSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">future_session</span><span class="p">:</span>
-</span>    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<span class="hll"><span class="k">with</span> <span class="n">WolframLanguageSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+</span>    <span class="n">start</span> <span class="o">=</span> <span class="n">perf_counter</span><span class="p">()</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Starting an evaluation delayed by 2 seconds.&#39;</span><span class="p">)</span>
-<span class="hll">    <span class="n">future</span> <span class="o">=</span> <span class="n">future_session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;Pause[2]; 1+1&#39;</span><span class="p">)</span>
+<span class="hll">    <span class="n">future</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">evaluate_future</span><span class="p">(</span><span class="s1">&#39;Pause[2]; 1+1&#39;</span><span class="p">)</span>
 </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;After </span><span class="si">%.04f</span><span class="s1">s, the code is running in the background, Python execution continues.&#39;</span> <span class="o">%</span>
-          <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span><span class="o">-</span><span class="n">start</span><span class="p">))</span>
+          <span class="p">(</span><span class="n">perf_counter</span><span class="p">()</span><span class="o">-</span><span class="n">start</span><span class="p">))</span>
     <span class="c1"># wait for up to 5 seconds.</span>
 <span class="hll">    <span class="n">expr</span> <span class="o">=</span> <span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">timeout</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
 </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;After </span><span class="si">%.02f</span><span class="s1">s, result was available. Kernel evaluation returned: </span><span class="si">%s</span><span class="s1">&#39;</span> 
-      <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span><span class="o">-</span><span class="n">start</span><span class="p">,</span> <span class="n">expr</span><span class="p">))</span>
+      <span class="o">%</span> <span class="p">(</span><span class="n">perf_counter</span><span class="p">()</span><span class="o">-</span><span class="n">start</span><span class="p">,</span> <span class="n">expr</span><span class="p">))</span>
 </pre></div>
 </td></tr></table></div>
 <p>The standard output should display:</p>
@@ -288,8 +322,8 @@ After 2.02s, result was available. Kernel evaluation returned: 2
 23
 24
 25</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="hll"><span class="kn">import</span> <span class="nn">asyncio</span>
-</span><span class="hll"><span class="kn">from</span> <span class="nn">wolframclient.evaluation</span> <span class="k">import</span> <span class="n">WolframLanguageAsyncSession</span>
-</span><span class="kn">from</span> <span class="nn">wolframclient.utils.api</span> <span class="k">import</span> <span class="n">time</span>
+</span><span class="hll"><span class="kn">import</span> <span class="nn">time</span>
+</span><span class="kn">from</span> <span class="nn">wolframclient.evaluation</span> <span class="k">import</span> <span class="n">WolframLanguageAsyncSession</span>
 <span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="k">import</span> <span class="n">wl</span>
 
 <span class="hll"><span class="k">async</span> <span class="k">def</span> <span class="nf">delayed_evaluation</span><span class="p">(</span><span class="n">delay</span><span class="p">,</span> <span class="n">async_session</span><span class="p">,</span> <span class="n">expr</span><span class="p">):</span>
@@ -347,8 +381,8 @@ After 2.04s, both evaluations finished returning: [1, 2, 3], 6
 25
 26
 27</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">wolframclient.evaluation</span> <span class="k">import</span> <span class="n">WolframLanguageAsyncSession</span>
-<span class="kn">from</span> <span class="nn">wolframclient.utils.api</span> <span class="k">import</span> <span class="n">time</span>
 <span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="k">import</span> <span class="n">wl</span>
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">delayed_evaluation</span><span class="p">(</span><span class="n">delay</span><span class="p">,</span> <span class="n">async_session</span><span class="p">,</span> <span class="n">expr</span><span class="p">):</span>
@@ -406,8 +440,8 @@ After 1.03s, both evaluations finished returning: hello, world!
 19
 20
 21</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
-<span class="hll"><span class="kn">from</span> <span class="nn">wolframclient.evaluation</span> <span class="k">import</span> <span class="n">WolframEvaluatorPool</span>
-</span><span class="kn">from</span> <span class="nn">wolframclient.utils.api</span> <span class="k">import</span> <span class="n">time</span>
+<span class="hll"><span class="kn">import</span> <span class="nn">time</span>
+</span><span class="kn">from</span> <span class="nn">wolframclient.evaluation</span> <span class="k">import</span> <span class="n">WolframEvaluatorPool</span>
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
 <span class="hll">    <span class="k">async</span> <span class="k">with</span> <span class="n">WolframEvaluatorPool</span><span class="p">()</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
@@ -482,18 +516,17 @@ After 1.03s, both evaluations finished returning: hello, world!
     <span class="c1"># this will trigger some log messages with the process ID, the sockets</span>
     <span class="c1"># address and the startup timer.</span>
     <span class="n">session</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-    <span class="c1"># Warning: Infinite expression Infinity encountered.</span>
+    <span class="c1"># Warning: Infinite expression Power[0, -1] encountered.</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;1/0&#39;</span><span class="p">)</span>
 <span class="k">finally</span><span class="p">:</span>
     <span class="n">session</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
 </pre></div>
 </td></tr></table></div>
 <p>The standard output should display:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>INFO:wolframclient.evaluation.kernel.kernelsession:Kernel receives commands from socket: &lt;Socket: host=127.0.0.1, port=63471&gt;
-INFO:wolframclient.evaluation.kernel.kernelsession:Kernel writes evaluated expressions to socket: &lt;Socket: host=127.0.0.1, port=63472&gt;
-INFO:wolframclient.evaluation.kernel.kernelsession:Kernel process started with PID: 37169
-INFO:wolframclient.evaluation.kernel.kernelsession:Kernel is ready. Startup took 1.54 seconds.
-WARNING:wolframclient.evaluation.kernel.kernelsession:Infinite expression Infinity encountered.
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>INFO:wolframclient.evaluation.kernel.kernelcontroller:Kernel writes commands to socket: &lt;Socket: uri=tcp://127.0.0.1:61335&gt;
+INFO:wolframclient.evaluation.kernel.kernelcontroller:Kernel receives evaluated expressions from socket: &lt;Socket: uri=tcp://127.0.0.1:61336&gt;
+INFO:wolframclient.evaluation.kernel.kernelcontroller:Kernel process started with PID: 54259
+INFO:wolframclient.evaluation.kernel.kernelcontroller:Kernel 54259 is ready. Startup took 1.74 seconds.
 </pre></div>
 </div>
 <p>It is also possible to log from within the kernel. This feature is disabled by default. When initializing a <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession" title="wolframclient.evaluation.WolframLanguageSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframLanguageSession</span></code></a>, the parameter <cite>kernel_loglevel</cite> can be specified with one of the following values to activate kernel logging: <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.DEBUG</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.INFO</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.WARNING</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.ERROR</span></code>.</p>
@@ -1050,7 +1083,7 @@ WARNING:wolframclient.evaluation.kernel.kernelsession:Infinite expression Infini
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper"><div class='overview toctree-l1'>
     <a class="reference internal  docpages/advanced_usages" 
-        href="overview.html">Overview</a>
+        href="../index.html">Overview</a>
 </div>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation and prerequisites</a><ul>
@@ -1060,7 +1093,7 @@ WARNING:wolframclient.evaluation.kernel.kernelsession:Infinite expression Infini
 </li>
 <li class="toctree-l1"><a class="reference internal" href="basic_usages.html">Basic Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="basic_usages.html#expression-representation">Expression Representation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="basic_usages.html#evaluating-expressions">Evaluating Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_usages.html#expression-evaluation">Expression Evaluation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="basic_usages.html#wolfram-cloud-interactions">Wolfram Cloud Interactions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="basic_usages.html#serialization">Serialization</a></li>
 </ul>
@@ -1083,6 +1116,10 @@ WARNING:wolframclient.evaluation.kernel.kernelsession:Infinite expression Infini
 </li>
 </ul>
 
+<div class='overview toctree-l1'>
+    <a class="reference internal  docpages/advanced_usages" 
+        href="toc.html">Table Of Contents</a>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <div class="searchformwrapper">

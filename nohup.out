@@ -1,0 +1,1569 @@
+test_class_dispatch (core_functions.TestCase) ... ok
+test_composition (core_functions.TestCase) ... ok
+test_dispatch (core_functions.TestCase) ... ok
+test_flatten (core_functions.TestCase) ... ok
+test_iterate (core_functions.TestCase) ... ok
+test_partition (core_functions.TestCase) ... ok
+test_riffle (core_functions.TestCase) ... ok
+testBasicString (deserializers.wxf_deserialize.TestCase) ... ok
+test_all_char (deserializers.wxf_deserialize.TestCase) ... ok
+test_bad_bignum (deserializers.wxf_deserialize.TestCase) ... ok
+test_bad_greedy_consumer (deserializers.wxf_deserialize.TestCase) ... ok
+test_bad_header_compress (deserializers.wxf_deserialize.TestCase) ... ok
+test_bad_header_separator (deserializers.wxf_deserialize.TestCase) ... ok
+test_bad_header_version (deserializers.wxf_deserialize.TestCase) ... ok
+test_bad_incomplete_consumer (deserializers.wxf_deserialize.TestCase) ... ok
+test_bad_wxf_buffer (deserializers.wxf_deserialize.TestCase) ... ok
+test_bigint_as_int (deserializers.wxf_deserialize.TestCase) ... ok
+test_bigreal_precision (deserializers.wxf_deserialize.TestCase) ... ok
+test_bigreal_precision_exponent (deserializers.wxf_deserialize.TestCase) ... ok
+test_binary_string (deserializers.wxf_deserialize.TestCase) ... ok
+test_compressed_input (deserializers.wxf_deserialize.TestCase) ... ok
+test_empty_binary_string (deserializers.wxf_deserialize.TestCase) ... ok
+test_empty_dict (deserializers.wxf_deserialize.TestCase) ... ok
+test_empty_lists (deserializers.wxf_deserialize.TestCase) ... ok
+test_empty_string (deserializers.wxf_deserialize.TestCase) ... ok
+test_int16 (deserializers.wxf_deserialize.TestCase) ... ok
+test_int32 (deserializers.wxf_deserialize.TestCase) ... ok
+test_int64 (deserializers.wxf_deserialize.TestCase) ... ok
+test_integer8 (deserializers.wxf_deserialize.TestCase) ... ok
+test_max_3bytes_unicode (deserializers.wxf_deserialize.TestCase) ... ok
+test_real (deserializers.wxf_deserialize.TestCase) ... ok
+test_rules (deserializers.wxf_deserialize.TestCase) ... ok
+test_simple_dict (deserializers.wxf_deserialize.TestCase) ... ok
+test_token_dimensions (deserializers.wxf_deserialize.TestCase) ... ok
+test_token_dimensions_negative (deserializers.wxf_deserialize.TestCase) ... ok
+test_token_dimensions_notint (deserializers.wxf_deserialize.TestCase) ... ok
+test_varint_parsing (deserializers.wxf_deserialize.TestCase) ... ok
+test_double_array (deserializers.wxf_deserialize.TestCaseArrayAsList) ... ok
+test_double_numeric_array (deserializers.wxf_deserialize.TestCaseArrayAsList) ... ok
+test_float_numeric_array (deserializers.wxf_deserialize.TestCaseArrayAsList) ... ok
+test_int16_array (deserializers.wxf_deserialize.TestCaseArrayAsList) ... ok
+test_int16_numeric_array (deserializers.wxf_deserialize.TestCaseArrayAsList) ... ok
+test_int32_array (deserializers.wxf_deserialize.TestCaseArrayAsList) ... ok
+test_int32_numeric_array (deserializers.wxf_deserialize.TestCaseArrayAsList) ... ok
+test_int64_array (deserializers.wxf_deserialize.TestCaseArrayAsList) ... ok
+test_int64_numeric_array (deserializers.wxf_deserialize.TestCaseArrayAsList) ... ok
+test_int8_array (deserializers.wxf_deserialize.TestCaseArrayAsList) ... ok
+test_int8_numeric_array (deserializers.wxf_deserialize.TestCaseArrayAsList) ... ok
+test_packedarray_ndim_complex (deserializers.wxf_deserialize.TestCaseArrayAsList) ... ok
+test_packedarray_ndim_int8 (deserializers.wxf_deserialize.TestCaseArrayAsList) ... ok
+test_uint16_numeric_array (deserializers.wxf_deserialize.TestCaseArrayAsList) ... ok
+test_uint32_numeric_array (deserializers.wxf_deserialize.TestCaseArrayAsList) ... ok
+test_uint64_numeric_array (deserializers.wxf_deserialize.TestCaseArrayAsList) ... ok
+test_uint8_numeric_array (deserializers.wxf_deserialize.TestCaseArrayAsList) ... ok
+test_zero_array_dimensions (deserializers.wxf_deserialize.TestCaseArrayAsList) ... ok
+test_zero_array_rank (deserializers.wxf_deserialize.TestCaseArrayAsList) ... ok
+test_double_array (deserializers.wxf_deserialize.TestCaseNumPyArray) ... ok
+test_double_numeric_array (deserializers.wxf_deserialize.TestCaseNumPyArray) ... ok
+test_float_numeric_array (deserializers.wxf_deserialize.TestCaseNumPyArray) ... ok
+test_int16_array (deserializers.wxf_deserialize.TestCaseNumPyArray) ... ok
+test_int16_numeric_array (deserializers.wxf_deserialize.TestCaseNumPyArray) ... ok
+test_int32_array (deserializers.wxf_deserialize.TestCaseNumPyArray) ... ok
+test_int32_numeric_array (deserializers.wxf_deserialize.TestCaseNumPyArray) ... ok
+test_int64_array (deserializers.wxf_deserialize.TestCaseNumPyArray) ... ok
+test_int64_numeric_array (deserializers.wxf_deserialize.TestCaseNumPyArray) ... ok
+test_int8_array (deserializers.wxf_deserialize.TestCaseNumPyArray) ... ok
+test_int8_numeric_array (deserializers.wxf_deserialize.TestCaseNumPyArray) ... ok
+test_numpy_1d_array (deserializers.wxf_deserialize.TestCaseNumPyArray) ... ok
+test_numpy_2d_array (deserializers.wxf_deserialize.TestCaseNumPyArray) ... ok
+test_numpy_packedarray (deserializers.wxf_deserialize.TestCaseNumPyArray) ... ok
+test_packedarray_ndim_complex (deserializers.wxf_deserialize.TestCaseNumPyArray) ... ok
+test_packedarray_ndim_int8 (deserializers.wxf_deserialize.TestCaseNumPyArray) ... ok
+test_uint16_numeric_array (deserializers.wxf_deserialize.TestCaseNumPyArray) ... ok
+test_uint32_numeric_array (deserializers.wxf_deserialize.TestCaseNumPyArray) ... ok
+test_uint64_numeric_array (deserializers.wxf_deserialize.TestCaseNumPyArray) ... ok
+test_uint8_numeric_array (deserializers.wxf_deserialize.TestCaseNumPyArray) ... ok
+test_append_no_base (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_bad_sak (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_encode_empty_dict (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_encode_json_dict (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_encode_wl (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_encode_wxf_dict (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_evaluate_function (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_evaluate_function_wl (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_evaluate_function_wl_option (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_evaluate_future_string_disable (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_evaluate_string (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_evaluate_string_disable (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_evaluate_wl_expr (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_evaluate_wl_expr_option (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_evaluate_wrap (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_extend (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_extend_some_empty (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_extend_some_empty_slashes (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_image_file (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_image_string_int (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_public_api_call (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_section_api_call_no_param (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_section_api_call_one_param (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_section_api_call_one_param_wrong (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_section_api_call_two_param (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_section_authorized_oauth (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_section_authorized_xauth (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_section_invalid_api_path (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_section_not_authorized (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_section_wl_error (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_simple_append (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_simple_append_end_slash (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_simple_append_start_slash (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_simple_append_two_slash (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_small_image_file (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_stop_start_restart_status (wolframclient.tests.evaluation.test_cloud.TestCase) ... ok
+test_wolfram_api_call_image (wolframclient.tests.evaluation.test_cloud.TestWolframAPI) ... ok
+test_wolfram_api_call_named_image (wolframclient.tests.evaluation.test_cloud.TestWolframAPI) ... ok
+test_wolfram_api_call_str (wolframclient.tests.evaluation.test_cloud.TestWolframAPI) ... ok
+test_wolfram_api_from_session (wolframclient.tests.evaluation.test_cloud.TestWolframAPI) ... ok
+test_wolfram_api_image_string_int (wolframclient.tests.evaluation.test_cloud.TestWolframAPI) ... ok
+test_auto_start_session (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_bad_kwargs_parameters (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_built_in_symbols (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_built_in_symbols_as_func (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_err_evaluate_wxf (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_evaluate_basic_inputform (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_evaluate_basic_wl (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_evaluate_global_func (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_evaluate_option (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_evaluate_variable_context (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_evaluate_variable_updates (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_evaluate_wxf_inputform (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_function_inputform (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_function_symbolic (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_images_in_expr (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_images_serialization (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_kwargs_parameters (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_malformed_expr (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_malformed_expr_wrap (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_many_failures (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_many_failures_wrap (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_one_eval_many_msg (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_one_eval_many_msg_wrap (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_one_msg (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_one_msg_wrap (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_pure_function_inputform (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_silenced_msg (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_stop_start_restart_status (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_valid_evaluate_wxf (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_wlexpr_wrapper (wolframclient.tests.evaluation.test_kernel.TestCase) ... ok
+test_default_loglevel (wolframclient.tests.evaluation.test_kernel.TestCaseInternalFunctions) ... ok
+test_set_loglevel (wolframclient.tests.evaluation.test_kernel.TestCaseInternalFunctions) ... ok
+test_kernel_init_bad_path (wolframclient.tests.evaluation.test_kernel.TestCaseSession) ... ok
+test_kernel_init_nonstring_path (wolframclient.tests.evaluation.test_kernel.TestCaseSession) ... ok
+test_terminated_session_autorestart (wolframclient.tests.evaluation.test_kernel.TestCaseSession) ... ok
+test_bad_kwargs_parameters (wolframclient.tests.evaluation.test_kernel.TestFutureSession) ... ok
+test_evaluate_async_basic_inputform (wolframclient.tests.evaluation.test_kernel.TestFutureSession) ... ok
+test_evaluate_async_basic_wl (wolframclient.tests.evaluation.test_kernel.TestFutureSession) ... ok
+test_evaluate_async_wxf_inputform (wolframclient.tests.evaluation.test_kernel.TestFutureSession) ... ok
+test_evaluate_multiple_async (wolframclient.tests.evaluation.test_kernel.TestFutureSession) ... ok
+test_kwargs_parameters (wolframclient.tests.evaluation.test_kernel.TestFutureSession) ... ok
+test_many_failures_wrap_async (wolframclient.tests.evaluation.test_kernel.TestFutureSession) ... ok
+test_valid_evaluate_wxf_async (wolframclient.tests.evaluation.test_kernel.TestFutureSession) ... ok
+test_bad_kwargs_parameters (wolframclient.tests.evaluation.test_coroutine.TestCoroutineSession) ... ok
+test_eval_inputform (wolframclient.tests.evaluation.test_coroutine.TestCoroutineSession) ... ok
+test_eval_parallel (wolframclient.tests.evaluation.test_coroutine.TestCoroutineSession) ... ok
+test_eval_start (wolframclient.tests.evaluation.test_coroutine.TestCoroutineSession) ... ok
+test_eval_wlsymbol (wolframclient.tests.evaluation.test_coroutine.TestCoroutineSession) ... ok
+test_eval_wrap (wolframclient.tests.evaluation.test_coroutine.TestCoroutineSession) ... ok
+test_eval_wxf (wolframclient.tests.evaluation.test_coroutine.TestCoroutineSession) ... ok
+test_kwargs_parameters (wolframclient.tests.evaluation.test_coroutine.TestCoroutineSession) ... ok
+test_eval_inputform (wolframclient.tests.evaluation.test_coroutine.TestKernelPool) ... ok
+test_eval_wlsymbol (wolframclient.tests.evaluation.test_coroutine.TestKernelPool) ... ok
+test_eval_wxf (wolframclient.tests.evaluation.test_coroutine.TestKernelPool) ... ok
+test_failed_expr (wolframclient.tests.evaluation.test_coroutine.TestKernelPool) ... ok
+test_pool_from_mixed_kernel_cloud_path (wolframclient.tests.evaluation.test_coroutine.TestKernelPool) ... --- Logging error ---
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 90, in _ensure_success_response
+    as_json = await response.json()
+  File "/usr/local/lib/python3.7/site-packages/aiohttp/client_reqrep.py", line 938, in json
+    headers=self.headers)
+aiohttp.client_exceptions.ContentTypeError: 0, message='Attempt to decode JSON with unexpected mimetype: text/html;charset=utf-8'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 162, in _async_start_kernel
+    await kernel.start()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 82, in start
+    raise e
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 77, in start
+    await self._authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 124, in _authenticate
+    await self.oauth_session.authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 140, in authenticate
+    await self.set_oauth_request_token()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 119, in set_oauth_request_token
+    await self._ensure_success_response(response)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 95, in _ensure_success_response
+    response, 'Request failed with status %i' % response.status)
+wolframclient.exception.AuthenticationException: <unprintable AuthenticationException object>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 983, in emit
+    msg = self.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 829, in format
+    return fmt.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 569, in format
+    record.message = record.getMessage()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 331, in getMessage
+    msg = msg % self.args
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/exception.py", line 23, in __str__
+    return '<%s>: %s' % (self.response.status(), self.msg or '')
+TypeError: 'int' object is not callable
+Call stack:
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 193, in _run_module_as_main
+    "__main__", mod_spec)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/__main__.py", line 8, in <module>
+    main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 58, in execute_from_command_line
+    return DispatchCommand(argv).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 53, in main
+    return self.handle(self.argv[1])
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 33, in handle
+    self.subcommand_args(), name=all_commands[attr]).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/utils.py", line 84, in main
+    return self.handle(*args, **cmd_options)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/commands/test.py", line 53, in handle
+    result = runner.run(suite)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/runner.py", line 176, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 663, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 615, in run
+    testMethod()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/asyncio.py", line 25, in wrapped
+    return syncronous_wait_all(cor(*args, **kwargs), loop=loop)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/functional.py", line 38, in <lambda>
+    return reduce(lambda f, g: lambda *args, **kw: f(g(*args, **kw)),
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/asyncio.py", line 50, in syncronous_wait_all
+    yield from (loop or get_event_loop()).run_until_complete(wait_all(*args))
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 555, in run_until_complete
+    self.run_forever()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 523, in run_forever
+    self._run_once()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 1758, in _run_once
+    handle._run()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 171, in _async_start_kernel
+    kernel, e)
+Unable to print the message and arguments - possible formatting error.
+Use the traceback above to help find the error.
+--- Logging error ---
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 90, in _ensure_success_response
+    as_json = await response.json()
+  File "/usr/local/lib/python3.7/site-packages/aiohttp/client_reqrep.py", line 938, in json
+    headers=self.headers)
+aiohttp.client_exceptions.ContentTypeError: 0, message='Attempt to decode JSON with unexpected mimetype: text/html;charset=utf-8'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 162, in _async_start_kernel
+    await kernel.start()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 82, in start
+    raise e
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 77, in start
+    await self._authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 124, in _authenticate
+    await self.oauth_session.authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 140, in authenticate
+    await self.set_oauth_request_token()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 119, in set_oauth_request_token
+    await self._ensure_success_response(response)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 95, in _ensure_success_response
+    response, 'Request failed with status %i' % response.status)
+wolframclient.exception.AuthenticationException: <unprintable AuthenticationException object>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 983, in emit
+    msg = self.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 829, in format
+    return fmt.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 569, in format
+    record.message = record.getMessage()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 331, in getMessage
+    msg = msg % self.args
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/exception.py", line 23, in __str__
+    return '<%s>: %s' % (self.response.status(), self.msg or '')
+TypeError: 'int' object is not callable
+Call stack:
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 193, in _run_module_as_main
+    "__main__", mod_spec)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/__main__.py", line 8, in <module>
+    main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 58, in execute_from_command_line
+    return DispatchCommand(argv).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 53, in main
+    return self.handle(self.argv[1])
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 33, in handle
+    self.subcommand_args(), name=all_commands[attr]).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/utils.py", line 84, in main
+    return self.handle(*args, **cmd_options)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/commands/test.py", line 53, in handle
+    result = runner.run(suite)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/runner.py", line 176, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 663, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 615, in run
+    testMethod()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/asyncio.py", line 25, in wrapped
+    return syncronous_wait_all(cor(*args, **kwargs), loop=loop)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/functional.py", line 38, in <lambda>
+    return reduce(lambda f, g: lambda *args, **kw: f(g(*args, **kw)),
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/asyncio.py", line 50, in syncronous_wait_all
+    yield from (loop or get_event_loop()).run_until_complete(wait_all(*args))
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 555, in run_until_complete
+    self.run_forever()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 523, in run_forever
+    self._run_once()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 1758, in _run_once
+    handle._run()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 171, in _async_start_kernel
+    kernel, e)
+Unable to print the message and arguments - possible formatting error.
+Use the traceback above to help find the error.
+ok
+test_pool_from_one_cloud (wolframclient.tests.evaluation.test_coroutine.TestKernelPool) ... --- Logging error ---
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 90, in _ensure_success_response
+    as_json = await response.json()
+  File "/usr/local/lib/python3.7/site-packages/aiohttp/client_reqrep.py", line 938, in json
+    headers=self.headers)
+aiohttp.client_exceptions.ContentTypeError: 0, message='Attempt to decode JSON with unexpected mimetype: text/html;charset=utf-8'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 162, in _async_start_kernel
+    await kernel.start()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 82, in start
+    raise e
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 77, in start
+    await self._authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 124, in _authenticate
+    await self.oauth_session.authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 140, in authenticate
+    await self.set_oauth_request_token()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 119, in set_oauth_request_token
+    await self._ensure_success_response(response)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 95, in _ensure_success_response
+    response, 'Request failed with status %i' % response.status)
+wolframclient.exception.AuthenticationException: <unprintable AuthenticationException object>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 983, in emit
+    msg = self.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 829, in format
+    return fmt.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 569, in format
+    record.message = record.getMessage()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 331, in getMessage
+    msg = msg % self.args
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/exception.py", line 23, in __str__
+    return '<%s>: %s' % (self.response.status(), self.msg or '')
+TypeError: 'int' object is not callable
+Call stack:
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 193, in _run_module_as_main
+    "__main__", mod_spec)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/__main__.py", line 8, in <module>
+    main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 58, in execute_from_command_line
+    return DispatchCommand(argv).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 53, in main
+    return self.handle(self.argv[1])
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 33, in handle
+    self.subcommand_args(), name=all_commands[attr]).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/utils.py", line 84, in main
+    return self.handle(*args, **cmd_options)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/commands/test.py", line 53, in handle
+    result = runner.run(suite)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/runner.py", line 176, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 663, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 615, in run
+    testMethod()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/asyncio.py", line 25, in wrapped
+    return syncronous_wait_all(cor(*args, **kwargs), loop=loop)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/functional.py", line 38, in <lambda>
+    return reduce(lambda f, g: lambda *args, **kw: f(g(*args, **kw)),
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/asyncio.py", line 50, in syncronous_wait_all
+    yield from (loop or get_event_loop()).run_until_complete(wait_all(*args))
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 555, in run_until_complete
+    self.run_forever()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 523, in run_forever
+    self._run_once()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 1758, in _run_once
+    handle._run()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 171, in _async_start_kernel
+    kernel, e)
+Unable to print the message and arguments - possible formatting error.
+Use the traceback above to help find the error.
+--- Logging error ---
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 90, in _ensure_success_response
+    as_json = await response.json()
+  File "/usr/local/lib/python3.7/site-packages/aiohttp/client_reqrep.py", line 938, in json
+    headers=self.headers)
+aiohttp.client_exceptions.ContentTypeError: 0, message='Attempt to decode JSON with unexpected mimetype: text/html;charset=utf-8'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 162, in _async_start_kernel
+    await kernel.start()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 82, in start
+    raise e
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 77, in start
+    await self._authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 124, in _authenticate
+    await self.oauth_session.authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 140, in authenticate
+    await self.set_oauth_request_token()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 119, in set_oauth_request_token
+    await self._ensure_success_response(response)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 95, in _ensure_success_response
+    response, 'Request failed with status %i' % response.status)
+wolframclient.exception.AuthenticationException: <unprintable AuthenticationException object>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 983, in emit
+    msg = self.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 829, in format
+    return fmt.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 569, in format
+    record.message = record.getMessage()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 331, in getMessage
+    msg = msg % self.args
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/exception.py", line 23, in __str__
+    return '<%s>: %s' % (self.response.status(), self.msg or '')
+TypeError: 'int' object is not callable
+Call stack:
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 193, in _run_module_as_main
+    "__main__", mod_spec)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/__main__.py", line 8, in <module>
+    main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 58, in execute_from_command_line
+    return DispatchCommand(argv).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 53, in main
+    return self.handle(self.argv[1])
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 33, in handle
+    self.subcommand_args(), name=all_commands[attr]).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/utils.py", line 84, in main
+    return self.handle(*args, **cmd_options)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/commands/test.py", line 53, in handle
+    result = runner.run(suite)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/runner.py", line 176, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 663, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 615, in run
+    testMethod()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/asyncio.py", line 25, in wrapped
+    return syncronous_wait_all(cor(*args, **kwargs), loop=loop)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/functional.py", line 38, in <lambda>
+    return reduce(lambda f, g: lambda *args, **kw: f(g(*args, **kw)),
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/asyncio.py", line 50, in syncronous_wait_all
+    yield from (loop or get_event_loop()).run_until_complete(wait_all(*args))
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 555, in run_until_complete
+    self.run_forever()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 523, in run_forever
+    self._run_once()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 1758, in _run_once
+    handle._run()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 171, in _async_start_kernel
+    kernel, e)
+Unable to print the message and arguments - possible formatting error.
+Use the traceback above to help find the error.
+--- Logging error ---
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 90, in _ensure_success_response
+    as_json = await response.json()
+  File "/usr/local/lib/python3.7/site-packages/aiohttp/client_reqrep.py", line 938, in json
+    headers=self.headers)
+aiohttp.client_exceptions.ContentTypeError: 0, message='Attempt to decode JSON with unexpected mimetype: text/html;charset=utf-8'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 162, in _async_start_kernel
+    await kernel.start()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 82, in start
+    raise e
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 77, in start
+    await self._authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 124, in _authenticate
+    await self.oauth_session.authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 140, in authenticate
+    await self.set_oauth_request_token()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 119, in set_oauth_request_token
+    await self._ensure_success_response(response)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 95, in _ensure_success_response
+    response, 'Request failed with status %i' % response.status)
+wolframclient.exception.AuthenticationException: <unprintable AuthenticationException object>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 983, in emit
+    msg = self.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 829, in format
+    return fmt.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 569, in format
+    record.message = record.getMessage()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 331, in getMessage
+    msg = msg % self.args
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/exception.py", line 23, in __str__
+    return '<%s>: %s' % (self.response.status(), self.msg or '')
+TypeError: 'int' object is not callable
+Call stack:
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 193, in _run_module_as_main
+    "__main__", mod_spec)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/__main__.py", line 8, in <module>
+    main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 58, in execute_from_command_line
+    return DispatchCommand(argv).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 53, in main
+    return self.handle(self.argv[1])
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 33, in handle
+    self.subcommand_args(), name=all_commands[attr]).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/utils.py", line 84, in main
+    return self.handle(*args, **cmd_options)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/commands/test.py", line 53, in handle
+    result = runner.run(suite)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/runner.py", line 176, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 663, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 615, in run
+    testMethod()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/asyncio.py", line 25, in wrapped
+    return syncronous_wait_all(cor(*args, **kwargs), loop=loop)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/functional.py", line 38, in <lambda>
+    return reduce(lambda f, g: lambda *args, **kw: f(g(*args, **kw)),
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/asyncio.py", line 50, in syncronous_wait_all
+    yield from (loop or get_event_loop()).run_until_complete(wait_all(*args))
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 555, in run_until_complete
+    self.run_forever()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 523, in run_forever
+    self._run_once()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 1758, in _run_once
+    handle._run()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 171, in _async_start_kernel
+    kernel, e)
+Unable to print the message and arguments - possible formatting error.
+Use the traceback above to help find the error.
+--- Logging error ---
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 90, in _ensure_success_response
+    as_json = await response.json()
+  File "/usr/local/lib/python3.7/site-packages/aiohttp/client_reqrep.py", line 938, in json
+    headers=self.headers)
+aiohttp.client_exceptions.ContentTypeError: 0, message='Attempt to decode JSON with unexpected mimetype: text/html;charset=utf-8'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 162, in _async_start_kernel
+    await kernel.start()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 82, in start
+    raise e
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 77, in start
+    await self._authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 124, in _authenticate
+    await self.oauth_session.authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 140, in authenticate
+    await self.set_oauth_request_token()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 119, in set_oauth_request_token
+    await self._ensure_success_response(response)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 95, in _ensure_success_response
+    response, 'Request failed with status %i' % response.status)
+wolframclient.exception.AuthenticationException: <unprintable AuthenticationException object>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 983, in emit
+    msg = self.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 829, in format
+    return fmt.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 569, in format
+    record.message = record.getMessage()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 331, in getMessage
+    msg = msg % self.args
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/exception.py", line 23, in __str__
+    return '<%s>: %s' % (self.response.status(), self.msg or '')
+TypeError: 'int' object is not callable
+Call stack:
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 193, in _run_module_as_main
+    "__main__", mod_spec)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/__main__.py", line 8, in <module>
+    main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 58, in execute_from_command_line
+    return DispatchCommand(argv).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 53, in main
+    return self.handle(self.argv[1])
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 33, in handle
+    self.subcommand_args(), name=all_commands[attr]).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/utils.py", line 84, in main
+    return self.handle(*args, **cmd_options)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/commands/test.py", line 53, in handle
+    result = runner.run(suite)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/runner.py", line 176, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 663, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 615, in run
+    testMethod()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/asyncio.py", line 25, in wrapped
+    return syncronous_wait_all(cor(*args, **kwargs), loop=loop)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/functional.py", line 38, in <lambda>
+    return reduce(lambda f, g: lambda *args, **kw: f(g(*args, **kw)),
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/asyncio.py", line 50, in syncronous_wait_all
+    yield from (loop or get_event_loop()).run_until_complete(wait_all(*args))
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 555, in run_until_complete
+    self.run_forever()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 523, in run_forever
+    self._run_once()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 1758, in _run_once
+    handle._run()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 171, in _async_start_kernel
+    kernel, e)
+Unable to print the message and arguments - possible formatting error.
+Use the traceback above to help find the error.
+ERROR
+test_pool_from_one_kernel (wolframclient.tests.evaluation.test_coroutine.TestKernelPool) ... ok
+test_parallel_evaluate_cloud (wolframclient.tests.evaluation.test_coroutine.TestParalleleEvaluate) ... --- Logging error ---
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 90, in _ensure_success_response
+    as_json = await response.json()
+  File "/usr/local/lib/python3.7/site-packages/aiohttp/client_reqrep.py", line 938, in json
+    headers=self.headers)
+aiohttp.client_exceptions.ContentTypeError: 0, message='Attempt to decode JSON with unexpected mimetype: text/html;charset=utf-8'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 162, in _async_start_kernel
+    await kernel.start()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 82, in start
+    raise e
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 77, in start
+    await self._authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 124, in _authenticate
+    await self.oauth_session.authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 140, in authenticate
+    await self.set_oauth_request_token()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 119, in set_oauth_request_token
+    await self._ensure_success_response(response)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 95, in _ensure_success_response
+    response, 'Request failed with status %i' % response.status)
+wolframclient.exception.AuthenticationException: <unprintable AuthenticationException object>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 983, in emit
+    msg = self.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 829, in format
+    return fmt.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 569, in format
+    record.message = record.getMessage()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 331, in getMessage
+    msg = msg % self.args
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/exception.py", line 23, in __str__
+    return '<%s>: %s' % (self.response.status(), self.msg or '')
+TypeError: 'int' object is not callable
+Call stack:
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 193, in _run_module_as_main
+    "__main__", mod_spec)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/__main__.py", line 8, in <module>
+    main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 58, in execute_from_command_line
+    return DispatchCommand(argv).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 53, in main
+    return self.handle(self.argv[1])
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 33, in handle
+    self.subcommand_args(), name=all_commands[attr]).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/utils.py", line 84, in main
+    return self.handle(*args, **cmd_options)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/commands/test.py", line 53, in handle
+    result = runner.run(suite)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/runner.py", line 176, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 663, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 615, in run
+    testMethod()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/tests/evaluation/test_coroutine.py", line 281, in test_parallel_evaluate_cloud
+    res = parallel_evaluate(exprs, evaluator_spec=cloud)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 304, in parallel_evaluate
+    loop.run_until_complete(pool.start())
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 555, in run_until_complete
+    self.run_forever()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 523, in run_forever
+    self._run_once()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 1758, in _run_once
+    handle._run()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 171, in _async_start_kernel
+    kernel, e)
+Unable to print the message and arguments - possible formatting error.
+Use the traceback above to help find the error.
+--- Logging error ---
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 90, in _ensure_success_response
+    as_json = await response.json()
+  File "/usr/local/lib/python3.7/site-packages/aiohttp/client_reqrep.py", line 938, in json
+    headers=self.headers)
+aiohttp.client_exceptions.ContentTypeError: 0, message='Attempt to decode JSON with unexpected mimetype: text/html;charset=utf-8'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 162, in _async_start_kernel
+    await kernel.start()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 82, in start
+    raise e
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 77, in start
+    await self._authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 124, in _authenticate
+    await self.oauth_session.authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 140, in authenticate
+    await self.set_oauth_request_token()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 119, in set_oauth_request_token
+    await self._ensure_success_response(response)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 95, in _ensure_success_response
+    response, 'Request failed with status %i' % response.status)
+wolframclient.exception.AuthenticationException: <unprintable AuthenticationException object>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 983, in emit
+    msg = self.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 829, in format
+    return fmt.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 569, in format
+    record.message = record.getMessage()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 331, in getMessage
+    msg = msg % self.args
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/exception.py", line 23, in __str__
+    return '<%s>: %s' % (self.response.status(), self.msg or '')
+TypeError: 'int' object is not callable
+Call stack:
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 193, in _run_module_as_main
+    "__main__", mod_spec)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/__main__.py", line 8, in <module>
+    main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 58, in execute_from_command_line
+    return DispatchCommand(argv).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 53, in main
+    return self.handle(self.argv[1])
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 33, in handle
+    self.subcommand_args(), name=all_commands[attr]).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/utils.py", line 84, in main
+    return self.handle(*args, **cmd_options)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/commands/test.py", line 53, in handle
+    result = runner.run(suite)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/runner.py", line 176, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 663, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 615, in run
+    testMethod()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/tests/evaluation/test_coroutine.py", line 281, in test_parallel_evaluate_cloud
+    res = parallel_evaluate(exprs, evaluator_spec=cloud)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 304, in parallel_evaluate
+    loop.run_until_complete(pool.start())
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 555, in run_until_complete
+    self.run_forever()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 523, in run_forever
+    self._run_once()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 1758, in _run_once
+    handle._run()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 171, in _async_start_kernel
+    kernel, e)
+Unable to print the message and arguments - possible formatting error.
+Use the traceback above to help find the error.
+--- Logging error ---
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 90, in _ensure_success_response
+    as_json = await response.json()
+  File "/usr/local/lib/python3.7/site-packages/aiohttp/client_reqrep.py", line 938, in json
+    headers=self.headers)
+aiohttp.client_exceptions.ContentTypeError: 0, message='Attempt to decode JSON with unexpected mimetype: text/html;charset=utf-8'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 162, in _async_start_kernel
+    await kernel.start()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 82, in start
+    raise e
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 77, in start
+    await self._authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 124, in _authenticate
+    await self.oauth_session.authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 140, in authenticate
+    await self.set_oauth_request_token()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 119, in set_oauth_request_token
+    await self._ensure_success_response(response)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 95, in _ensure_success_response
+    response, 'Request failed with status %i' % response.status)
+wolframclient.exception.AuthenticationException: <unprintable AuthenticationException object>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 983, in emit
+    msg = self.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 829, in format
+    return fmt.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 569, in format
+    record.message = record.getMessage()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 331, in getMessage
+    msg = msg % self.args
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/exception.py", line 23, in __str__
+    return '<%s>: %s' % (self.response.status(), self.msg or '')
+TypeError: 'int' object is not callable
+Call stack:
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 193, in _run_module_as_main
+    "__main__", mod_spec)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/__main__.py", line 8, in <module>
+    main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 58, in execute_from_command_line
+    return DispatchCommand(argv).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 53, in main
+    return self.handle(self.argv[1])
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 33, in handle
+    self.subcommand_args(), name=all_commands[attr]).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/utils.py", line 84, in main
+    return self.handle(*args, **cmd_options)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/commands/test.py", line 53, in handle
+    result = runner.run(suite)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/runner.py", line 176, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 663, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 615, in run
+    testMethod()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/tests/evaluation/test_coroutine.py", line 281, in test_parallel_evaluate_cloud
+    res = parallel_evaluate(exprs, evaluator_spec=cloud)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 304, in parallel_evaluate
+    loop.run_until_complete(pool.start())
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 555, in run_until_complete
+    self.run_forever()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 523, in run_forever
+    self._run_once()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 1758, in _run_once
+    handle._run()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 171, in _async_start_kernel
+    kernel, e)
+Unable to print the message and arguments - possible formatting error.
+Use the traceback above to help find the error.
+--- Logging error ---
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 90, in _ensure_success_response
+    as_json = await response.json()
+  File "/usr/local/lib/python3.7/site-packages/aiohttp/client_reqrep.py", line 938, in json
+    headers=self.headers)
+aiohttp.client_exceptions.ContentTypeError: 0, message='Attempt to decode JSON with unexpected mimetype: text/html;charset=utf-8'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 162, in _async_start_kernel
+    await kernel.start()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 82, in start
+    raise e
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 77, in start
+    await self._authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 124, in _authenticate
+    await self.oauth_session.authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 140, in authenticate
+    await self.set_oauth_request_token()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 119, in set_oauth_request_token
+    await self._ensure_success_response(response)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 95, in _ensure_success_response
+    response, 'Request failed with status %i' % response.status)
+wolframclient.exception.AuthenticationException: <unprintable AuthenticationException object>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 983, in emit
+    msg = self.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 829, in format
+    return fmt.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 569, in format
+    record.message = record.getMessage()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 331, in getMessage
+    msg = msg % self.args
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/exception.py", line 23, in __str__
+    return '<%s>: %s' % (self.response.status(), self.msg or '')
+TypeError: 'int' object is not callable
+Call stack:
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 193, in _run_module_as_main
+    "__main__", mod_spec)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/__main__.py", line 8, in <module>
+    main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 58, in execute_from_command_line
+    return DispatchCommand(argv).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 53, in main
+    return self.handle(self.argv[1])
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 33, in handle
+    self.subcommand_args(), name=all_commands[attr]).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/utils.py", line 84, in main
+    return self.handle(*args, **cmd_options)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/commands/test.py", line 53, in handle
+    result = runner.run(suite)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/runner.py", line 176, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 663, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 615, in run
+    testMethod()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/tests/evaluation/test_coroutine.py", line 281, in test_parallel_evaluate_cloud
+    res = parallel_evaluate(exprs, evaluator_spec=cloud)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 304, in parallel_evaluate
+    loop.run_until_complete(pool.start())
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 555, in run_until_complete
+    self.run_forever()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 523, in run_forever
+    self._run_once()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 1758, in _run_once
+    handle._run()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 171, in _async_start_kernel
+    kernel, e)
+Unable to print the message and arguments - possible formatting error.
+Use the traceback above to help find the error.
+ERROR
+test_parallel_evaluate_local (wolframclient.tests.evaluation.test_coroutine.TestParalleleEvaluate) ... ok
+test_parallel_evaluate_mixed (wolframclient.tests.evaluation.test_coroutine.TestParalleleEvaluate) ... --- Logging error ---
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 90, in _ensure_success_response
+    as_json = await response.json()
+  File "/usr/local/lib/python3.7/site-packages/aiohttp/client_reqrep.py", line 938, in json
+    headers=self.headers)
+aiohttp.client_exceptions.ContentTypeError: 0, message='Attempt to decode JSON with unexpected mimetype: text/html;charset=utf-8'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 162, in _async_start_kernel
+    await kernel.start()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 82, in start
+    raise e
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 77, in start
+    await self._authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 124, in _authenticate
+    await self.oauth_session.authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 140, in authenticate
+    await self.set_oauth_request_token()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 119, in set_oauth_request_token
+    await self._ensure_success_response(response)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 95, in _ensure_success_response
+    response, 'Request failed with status %i' % response.status)
+wolframclient.exception.AuthenticationException: <unprintable AuthenticationException object>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 983, in emit
+    msg = self.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 829, in format
+    return fmt.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 569, in format
+    record.message = record.getMessage()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 331, in getMessage
+    msg = msg % self.args
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/exception.py", line 23, in __str__
+    return '<%s>: %s' % (self.response.status(), self.msg or '')
+TypeError: 'int' object is not callable
+Call stack:
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 193, in _run_module_as_main
+    "__main__", mod_spec)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/__main__.py", line 8, in <module>
+    main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 58, in execute_from_command_line
+    return DispatchCommand(argv).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 53, in main
+    return self.handle(self.argv[1])
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 33, in handle
+    self.subcommand_args(), name=all_commands[attr]).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/utils.py", line 84, in main
+    return self.handle(*args, **cmd_options)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/commands/test.py", line 53, in handle
+    result = runner.run(suite)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/runner.py", line 176, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 663, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 615, in run
+    testMethod()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/tests/evaluation/test_coroutine.py", line 290, in test_parallel_evaluate_mixed
+    res = parallel_evaluate(exprs, evaluator_spec=[cloud, self.KERNEL_PATH, cloud])
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 304, in parallel_evaluate
+    loop.run_until_complete(pool.start())
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 555, in run_until_complete
+    self.run_forever()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 523, in run_forever
+    self._run_once()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 1758, in _run_once
+    handle._run()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 171, in _async_start_kernel
+    kernel, e)
+Unable to print the message and arguments - possible formatting error.
+Use the traceback above to help find the error.
+--- Logging error ---
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 90, in _ensure_success_response
+    as_json = await response.json()
+  File "/usr/local/lib/python3.7/site-packages/aiohttp/client_reqrep.py", line 938, in json
+    headers=self.headers)
+aiohttp.client_exceptions.ContentTypeError: 0, message='Attempt to decode JSON with unexpected mimetype: text/html;charset=utf-8'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 162, in _async_start_kernel
+    await kernel.start()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 82, in start
+    raise e
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 77, in start
+    await self._authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 124, in _authenticate
+    await self.oauth_session.authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 140, in authenticate
+    await self.set_oauth_request_token()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 119, in set_oauth_request_token
+    await self._ensure_success_response(response)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 95, in _ensure_success_response
+    response, 'Request failed with status %i' % response.status)
+wolframclient.exception.AuthenticationException: <unprintable AuthenticationException object>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 983, in emit
+    msg = self.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 829, in format
+    return fmt.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 569, in format
+    record.message = record.getMessage()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 331, in getMessage
+    msg = msg % self.args
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/exception.py", line 23, in __str__
+    return '<%s>: %s' % (self.response.status(), self.msg or '')
+TypeError: 'int' object is not callable
+Call stack:
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 193, in _run_module_as_main
+    "__main__", mod_spec)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/__main__.py", line 8, in <module>
+    main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 58, in execute_from_command_line
+    return DispatchCommand(argv).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 53, in main
+    return self.handle(self.argv[1])
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 33, in handle
+    self.subcommand_args(), name=all_commands[attr]).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/utils.py", line 84, in main
+    return self.handle(*args, **cmd_options)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/commands/test.py", line 53, in handle
+    result = runner.run(suite)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/runner.py", line 176, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 663, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 615, in run
+    testMethod()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/tests/evaluation/test_coroutine.py", line 290, in test_parallel_evaluate_mixed
+    res = parallel_evaluate(exprs, evaluator_spec=[cloud, self.KERNEL_PATH, cloud])
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 304, in parallel_evaluate
+    loop.run_until_complete(pool.start())
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 555, in run_until_complete
+    self.run_forever()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 523, in run_forever
+    self._run_once()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 1758, in _run_once
+    handle._run()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 171, in _async_start_kernel
+    kernel, e)
+Unable to print the message and arguments - possible formatting error.
+Use the traceback above to help find the error.
+--- Logging error ---
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 90, in _ensure_success_response
+    as_json = await response.json()
+  File "/usr/local/lib/python3.7/site-packages/aiohttp/client_reqrep.py", line 938, in json
+    headers=self.headers)
+aiohttp.client_exceptions.ContentTypeError: 0, message='Attempt to decode JSON with unexpected mimetype: text/html;charset=utf-8'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 162, in _async_start_kernel
+    await kernel.start()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 82, in start
+    raise e
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 77, in start
+    await self._authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asynccloudsession.py", line 124, in _authenticate
+    await self.oauth_session.authenticate()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 140, in authenticate
+    await self.set_oauth_request_token()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 119, in set_oauth_request_token
+    await self._ensure_success_response(response)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/cloud/asyncoauth.py", line 95, in _ensure_success_response
+    response, 'Request failed with status %i' % response.status)
+wolframclient.exception.AuthenticationException: <unprintable AuthenticationException object>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 983, in emit
+    msg = self.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 829, in format
+    return fmt.format(record)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 569, in format
+    record.message = record.getMessage()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/logging/__init__.py", line 331, in getMessage
+    msg = msg % self.args
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/exception.py", line 23, in __str__
+    return '<%s>: %s' % (self.response.status(), self.msg or '')
+TypeError: 'int' object is not callable
+Call stack:
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 193, in _run_module_as_main
+    "__main__", mod_spec)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/__main__.py", line 8, in <module>
+    main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 58, in execute_from_command_line
+    return DispatchCommand(argv).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 53, in main
+    return self.handle(self.argv[1])
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/dispatch.py", line 33, in handle
+    self.subcommand_args(), name=all_commands[attr]).main()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/utils.py", line 84, in main
+    return self.handle(*args, **cmd_options)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/cli/commands/test.py", line 53, in handle
+    result = runner.run(suite)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/runner.py", line 176, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/suite.py", line 122, in run
+    test(result)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 663, in __call__
+    return self.run(*args, **kwds)
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/unittest/case.py", line 615, in run
+    testMethod()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/tests/evaluation/test_coroutine.py", line 290, in test_parallel_evaluate_mixed
+    res = parallel_evaluate(exprs, evaluator_spec=[cloud, self.KERNEL_PATH, cloud])
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 304, in parallel_evaluate
+    loop.run_until_complete(pool.start())
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 555, in run_until_complete
+    self.run_forever()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 523, in run_forever
+    self._run_once()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 1758, in _run_once
+    handle._run()
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 171, in _async_start_kernel
+    kernel, e)
+Unable to print the message and arguments - possible formatting error.
+Use the traceback above to help find the error.
+ok
+test_parallel_evaluate_sizeone (wolframclient.tests.evaluation.test_coroutine.TestParalleleEvaluate) ... ok
+test_bad_sak (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_bad_sak_with (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_evaluate_function (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_evaluate_function_wl (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_evaluate_function_wl_option (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_evaluate_string (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_evaluate_string_concurrently (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_evaluate_string_disable (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_evaluate_wl_expr (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_evaluate_wl_expr_option (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_evaluate_wrap (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_image_file (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_image_string_int (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_need_auth_err (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_public_api_call (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_section_api_call_no_param (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_section_api_call_one_param (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_section_api_call_one_param_wrong (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_section_api_call_two_param (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_section_authorized_oauth (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_section_authorized_oauth_with (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_section_authorized_xauth (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_section_authorized_xauth_with (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_section_invalid_api_path (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_section_not_authorized (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_section_wl_error (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_small_image_file (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_stop_start_restart_status (wolframclient.tests.evaluation.test_async_cloud.TestCase) ... ok
+test_wolfram_api_call_image (wolframclient.tests.evaluation.test_async_cloud.TestWolframAPI) ... ok
+test_wolfram_api_call_named_image (wolframclient.tests.evaluation.test_async_cloud.TestWolframAPI) ... ok
+test_wolfram_api_call_str (wolframclient.tests.evaluation.test_async_cloud.TestWolframAPI) ... ok
+test_wolfram_api_from_session (wolframclient.tests.evaluation.test_async_cloud.TestWolframAPI) ... ok
+test_wolfram_api_image_string_int (wolframclient.tests.evaluation.test_async_cloud.TestWolframAPI) ... ok
+test_wolfram_api_imagebytes_string_int (wolframclient.tests.evaluation.test_async_cloud.TestWolframAPI) ... ok
+test_encode_class_mix (serializers.encoder.TestCase) ... ok
+test_encode_not_registered (serializers.encoder.TestCase) ... ok
+test_encode_parent_class (serializers.encoder.TestCase) ... ok
+test_encode_sub_class (serializers.encoder.TestCase) ... ok
+test_encode_sub_sub_class (serializers.encoder.TestCase) ... ok
+test_encode_sub_sub_class_no_mapping (serializers.encoder.TestCase) ... ok
+test_register_twice_force (serializers.encoder.TestCase) ... ok
+test_register_twice_no_force (serializers.encoder.TestCase) ... ok
+test_dataframe_from_1elem_dict (serializers.pandas.PandasDataFrameTestCase) ... ok
+test_dataframe_from_dict_as_assoc (serializers.pandas.PandasDataFrameTestCase) ... ok
+test_dataframe_from_dict_as_dataset (serializers.pandas.PandasDataFrameTestCase) ... ok
+test_empty_dataframe (serializers.pandas.PandasDataFrameTestCase) ... ok
+test_empty_series (serializers.pandas.PandasSeriesTestCase) ... ok
+test_index_nan_series_as_assoc (serializers.pandas.PandasSeriesTestCase) ... ok
+test_index_series_as_assoc (serializers.pandas.PandasSeriesTestCase) ... ok
+test_index_series_as_dataset (serializers.pandas.PandasSeriesTestCase) ... ok
+test_index_series_as_list (serializers.pandas.PandasSeriesTestCase) ... ok
+test_multiindex_as_assoc (serializers.pandas.PandasSeriesTestCase) ... ok
+test_multiindex_as_dataset (serializers.pandas.PandasSeriesTestCase) ... ok
+test_sparse_array_as_numpy (serializers.pandas.PandasSeriesTestCase) ... ok
+test_sparse_from_dict__as_dataset (serializers.pandas.PandasSeriesTestCase) ... ok
+test_sparse_from_dict__as_list (serializers.pandas.PandasSeriesTestCase) ... ok
+test_sparse_from_dict_as_assoc (serializers.pandas.PandasSeriesTestCase) ... ok
+test_sparse_from_dict_indexed_as_assoc (serializers.pandas.PandasSeriesTestCase) ... ok
+test_sparse_from_dict_indexed_as_dataset (serializers.pandas.PandasSeriesTestCase) ... ok
+test_sparse_from_dict_indexed_as_list (serializers.pandas.PandasSeriesTestCase) ... ok
+test_timeseries (serializers.pandas.PandasSeriesTestCase) ... ok
+test_export (serializers.wl_export.TestCase) ... ok
+test_serialization_custom (serializers.wl_export.TestCase) ... ok
+test_bool_img (serializers.wl_pil.TestCase) ... ok
+test_mode_L (serializers.wl_pil.TestCase) ... ok
+test_png_mode_I (serializers.wl_pil.TestCase) ... ok
+test_buffer (serializers.wl_serialization.TestCase) ... ok
+test_date (serializers.wl_serialization.TestCase) ... ok
+test_datetime (serializers.wl_serialization.TestCase) ... ok
+test_encoding (serializers.wl_serialization.TestCase) ... ok
+test_hashing (serializers.wl_serialization.TestCase) ... ok
+test_input_form (serializers.wl_serialization.TestCase) ... ok
+test_numeric (serializers.wl_serialization.TestCase) ... ok
+test_serialization (serializers.wl_serialization.TestCase) ... ok
+test_symbol_factory (serializers.wl_serialization.TestCase) ... ok
+test_time (serializers.wl_serialization.TestCase) ... ok
+test_timedelta (serializers.wl_serialization.TestCase) ... ok
+test_compress (serializers.wxf_compress.TestCase) ... ok
+test_multi_write_compress (serializers.wxf_compress.TestCase) ... ok
+test_uncompress (serializers.wxf_compress.TestCase) ... ok
+test_uncompress_exact_len (serializers.wxf_compress.TestCase) ... ok
+test_uncompress_exact_len_err (serializers.wxf_compress.TestCase) ... ok
+test_custom_encoder (serializers.wxf_encoder.TestCase)
+test re-entrant calls ... ok
+test_bad_options (serializers.wxf_numpy.TestCase) ... ok
+test_dimensions (serializers.wxf_numpy.TestCase) ... ok
+test_int16 (serializers.wxf_numpy.TestCase) ... ok
+test_int32 (serializers.wxf_numpy.TestCase) ... ok
+test_int64 (serializers.wxf_numpy.TestCase) ... ok
+test_int8_Both (serializers.wxf_numpy.TestCase) ... ok
+test_int8_PA (serializers.wxf_numpy.TestCase) ... ok
+test_int8_RA (serializers.wxf_numpy.TestCase) ... ok
+test_numpy_float128 (serializers.wxf_numpy.TestCase) ... ok
+test_numpy_float16 (serializers.wxf_numpy.TestCase) ... ok
+test_numpy_float32 (serializers.wxf_numpy.TestCase) ... ok
+test_numpy_float64 (serializers.wxf_numpy.TestCase) ... ok
+test_numpy_integers (serializers.wxf_numpy.TestCase) ... ok
+test_uint16_RA (serializers.wxf_numpy.TestCase) ... ok
+test_uint32_RA (serializers.wxf_numpy.TestCase) ... ok
+test_uint64_RA (serializers.wxf_numpy.TestCase) ... ok
+test_uint8_PA (serializers.wxf_numpy.TestCase) ... ok
+test_uint8_RA (serializers.wxf_numpy.TestCase) ... ok
+test_zero_dimension (serializers.wxf_numpy.TestCase) ... ok
+testBasicString (serializers.wxf_serialization.TestCase) ... ok
+testBinaryString (serializers.wxf_serialization.TestCase) ... ok
+testWrongStringType (serializers.wxf_serialization.TestCase) ... ok
+test_all_char (serializers.wxf_serialization.TestCase) ... ok
+test_big_real (serializers.wxf_serialization.TestCase) ... ok
+test_bigint_as_int (serializers.wxf_serialization.TestCase) ... ok
+test_default (serializers.wxf_serialization.TestCase) ... ok
+test_dicts (serializers.wxf_serialization.TestCase) ... ok
+test_empty_dict (serializers.wxf_serialization.TestCase) ... ok
+test_empty_list (serializers.wxf_serialization.TestCase) ... ok
+test_empty_lists (serializers.wxf_serialization.TestCase) ... ok
+test_export (serializers.wxf_serialization.TestCase) ... ok
+test_high_surrogates (serializers.wxf_serialization.TestCase) ... ok
+test_int16 (serializers.wxf_serialization.TestCase) ... ok
+test_int32 (serializers.wxf_serialization.TestCase) ... ok
+test_int64 (serializers.wxf_serialization.TestCase) ... ok
+test_int8 (serializers.wxf_serialization.TestCase) ... ok
+test_max_3bytes_unicode (serializers.wxf_serialization.TestCase) ... ok
+test_max_bytes (serializers.wxf_serialization.TestCase) ... ok
+test_no_enforcing_valid (serializers.wxf_serialization.TestCase) ... ok
+test_one_byte (serializers.wxf_serialization.TestCase) ... ok
+test_real (serializers.wxf_serialization.TestCase) ... ok
+test_real0 (serializers.wxf_serialization.TestCase) ... ok
+test_simple_dict (serializers.wxf_serialization.TestCase) ... ok
+test_simple_list (serializers.wxf_serialization.TestCase) ... ok
+test_small_compression (serializers.wxf_serialization.TestCase) ... ok
+test_small_real (serializers.wxf_serialization.TestCase) ... ok
+test_string_compression (serializers.wxf_serialization.TestCase) ... ok
+test_three_bytes (serializers.wxf_serialization.TestCase) ... ok
+test_two_bytes (serializers.wxf_serialization.TestCase) ... ok
+test_unicode (serializers.wxf_serialization.TestCase) ... ok
+test_zero (serializers.wxf_serialization.TestCase) ... ok
+test_str_trim_above_limit (test_utils.TestCase) ... ok
+test_str_trim_eq_limit (test_utils.TestCase) ... ok
+test_str_trim_no_limit (test_utils.TestCase) ... ok
+
+======================================================================
+ERROR: test_pool_from_one_cloud (wolframclient.tests.evaluation.test_coroutine.TestKernelPool)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/asyncio.py", line 25, in wrapped
+    return syncronous_wait_all(cor(*args, **kwargs), loop=loop)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/functional.py", line 38, in <lambda>
+    return reduce(lambda f, g: lambda *args, **kw: f(g(*args, **kw)),
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/asyncio.py", line 50, in syncronous_wait_all
+    yield from (loop or get_event_loop()).run_until_complete(wait_all(*args))
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 568, in run_until_complete
+    return future.result()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/utils/asyncio.py", line 17, in wait_all
+    return tuple(map(methodcaller('result'), done))
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/tests/evaluation/test_coroutine.py", line 213, in test_pool_from_one_cloud
+    TERMINATE_READ_TIMEOUT=3) as pool:
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/base.py", line 186, in __aenter__
+    await self.start()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 210, in start
+    raise WolframKernelException('Failed to start any kernel.')
+wolframclient.exception.WolframKernelException: Failed to start any kernel.
+
+======================================================================
+ERROR: test_parallel_evaluate_cloud (wolframclient.tests.evaluation.test_coroutine.TestParalleleEvaluate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/tests/evaluation/test_coroutine.py", line 281, in test_parallel_evaluate_cloud
+    res = parallel_evaluate(exprs, evaluator_spec=cloud)
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 304, in parallel_evaluate
+    loop.run_until_complete(pool.start())
+  File "/usr/local/Cellar/python/3.7.0/Frameworks/Python.framework/Versions/3.7/lib/python3.7/asyncio/base_events.py", line 568, in run_until_complete
+    return future.result()
+  File "/Users/dorianb/Work/Matematica/Workspaces/WolframClientForPython/wolframclient/evaluation/pool.py", line 210, in start
+    raise WolframKernelException('Failed to start any kernel.')
+wolframclient.exception.WolframKernelException: Failed to start any kernel.
+
+----------------------------------------------------------------------
+Ran 316 tests in 68.511s
+
+FAILED (errors=2)
+xauth not available. Test skipped.
+xauth not available. Test skipped.
+xauth not available. Test skipped.

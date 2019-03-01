@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.utils.asyncio &#8212; Wolfram Client Library for Python 1.0.0.dev4 documentation</title>
+    <title>wolframclient.utils.asyncio &#8212; Wolfram Client Library for Python 1.0.0.dev5 documentation</title>
     <link rel="stylesheet" href="../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.0.dev4</span>
+                        <span class='header right navigation darkgrey'>v 1.0.0.dev5</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -78,25 +78,14 @@
 
 <span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">import</span> <span class="nn">functools</span>
-<span class="kn">from</span> <span class="nn">operator</span> <span class="k">import</span> <span class="n">methodcaller</span>
 
-<span class="kn">from</span> <span class="nn">wolframclient.utils.decorators</span> <span class="k">import</span> <span class="n">to_tuple</span>
-<span class="kn">from</span> <span class="nn">wolframclient.utils.functional</span> <span class="k">import</span> <span class="n">first</span><span class="p">,</span> <span class="n">iterate</span><span class="p">,</span> <span class="nb">map</span>
-
-
-<div class="viewcode-block" id="wait_all"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.utils.asyncio.wait_all">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">wait_all</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
-    <span class="n">done</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">iterate</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
-        <span class="n">done</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">done</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">methodcaller</span><span class="p">(</span><span class="s1">&#39;result&#39;</span><span class="p">),</span> <span class="n">done</span><span class="p">))</span>
-
-    <span class="k">return</span> <span class="n">done</span></div>
+<span class="kn">from</span> <span class="nn">wolframclient.utils.functional</span> <span class="k">import</span> <span class="n">first</span><span class="p">,</span> <span class="n">iterate</span>
 
 
 <div class="viewcode-block" id="run_in_loop"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.utils.asyncio.run_in_loop">[docs]</a><span class="k">def</span> <span class="nf">run_in_loop</span><span class="p">(</span><span class="n">cor</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">cor</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">syncronous_wait_all</span><span class="p">(</span><span class="n">cor</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="n">loop</span><span class="o">=</span><span class="n">loop</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">get_event_loop</span><span class="p">(</span><span class="n">loop</span><span class="p">)</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">cor</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">wrapped</span></div>
 
@@ -117,11 +106,6 @@
         <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">new_event_loop</span><span class="p">()</span>
         <span class="n">asyncio</span><span class="o">.</span><span class="n">set_event_loop</span><span class="p">(</span><span class="n">loop</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">loop</span></div>
-
-
-<div class="viewcode-block" id="syncronous_wait_all"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.utils.asyncio.syncronous_wait_all">[docs]</a><span class="nd">@to_tuple</span>
-<span class="k">def</span> <span class="nf">syncronous_wait_all</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="k">yield from</span> <span class="p">(</span><span class="n">loop</span> <span class="ow">or</span> <span class="n">get_event_loop</span><span class="p">())</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">wait_all</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="silence"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.utils.asyncio.silence">[docs]</a><span class="k">def</span> <span class="nf">silence</span><span class="p">(</span><span class="o">*</span><span class="n">exceptions</span><span class="p">):</span>
@@ -155,7 +139,7 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper"><div class='overview toctree-l1'>
     <a class="reference internal  _modules/wolframclient/utils/asyncio" 
-        href="../../../docpages/overview.html">Overview</a>
+        href="../../../index.html">Overview</a>
 </div>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../docpages/install.html">Installation and prerequisites</a><ul>
@@ -165,7 +149,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../docpages/basic_usages.html">Basic Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../docpages/basic_usages.html#expression-representation">Expression Representation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../docpages/basic_usages.html#evaluating-expressions">Evaluating Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../docpages/basic_usages.html#expression-evaluation">Expression Evaluation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../docpages/basic_usages.html#wolfram-cloud-interactions">Wolfram Cloud Interactions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../docpages/basic_usages.html#serialization">Serialization</a></li>
 </ul>
@@ -188,6 +172,10 @@
 </li>
 </ul>
 
+<div class='overview toctree-l1'>
+    <a class="reference internal  _modules/wolframclient/utils/asyncio" 
+        href="../../../docpages/toc.html">Table Of Contents</a>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <div class="searchformwrapper">

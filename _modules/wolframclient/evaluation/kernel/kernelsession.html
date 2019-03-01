@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.evaluation.kernel.kernelsession &#8212; Wolfram Client Library for Python 1.0.0.dev4 documentation</title>
+    <title>wolframclient.evaluation.kernel.kernelsession &#8212; Wolfram Client Library for Python 1.0.0.dev5 documentation</title>
     <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.0.dev4</span>
+                        <span class='header right navigation darkgrey'>v 1.0.0.dev5</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -94,14 +94,6 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;WolframLanguageSession&#39;</span><span class="p">]</span>
-
-<span class="n">TO_PY_LOG_LEVEL</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="mi">1</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
-    <span class="mi">2</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
-    <span class="mi">3</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">WARN</span><span class="p">,</span>
-    <span class="mi">4</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">FATAL</span>
-<span class="p">}</span>
-<span class="n">FROM_PY_LOG_LEVEL</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">v</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">TO_PY_LOG_LEVEL</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
 
 
 <span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">WINDOWS</span> <span class="ow">or</span> <span class="n">six</span><span class="o">.</span><span class="n">LINUX</span><span class="p">:</span>
@@ -154,63 +146,8 @@
 <span class="n">find_default_kernel_path</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot; Look for the most recent installed kernel. &quot;&quot;&quot;</span>
 
 
-<span class="k">class</span> <span class="nc">KernelLogger</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Asynchronous logger for kernel messages. </span>
-<span class="sd">    </span>
-<span class="sd">    A consumer of messages read from a PUB/SUB socket that turn them into log messages as expected</span>
-<span class="sd">    by the :mod:`logging` module.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">MAX_MESSAGE_BEFORE_QUIT</span> <span class="o">=</span> <span class="mi">32</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">WARN</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span> <span class="o">=</span> <span class="n">Socket</span><span class="p">(</span><span class="n">zmq_type</span><span class="o">=</span><span class="n">zmq</span><span class="o">.</span><span class="n">SUB</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
-        <span class="c1"># Subscribe to all since we want all log messages.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">zmq_socket</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">SUBSCRIBE</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Initializing Kernel logger on socket &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">uri</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">KernelLogger</span><span class="p">,</span>
-              <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;wolframkernel-logger-</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
-                             <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">port</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span>
-            <span class="s1">&#39;WolframKernel-</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">port</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Start receiving kernel logger messages.&#39;</span><span class="p">)</span>
-        <span class="n">msg_after_quit</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">zmq_socket</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">zmq_socket</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">while</span> <span class="n">msg_after_quit</span> <span class="o">&lt;</span> <span class="n">KernelLogger</span><span class="o">.</span><span class="n">MAX_MESSAGE_BEFORE_QUIT</span><span class="p">:</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="n">zmq_socket</span><span class="o">.</span><span class="n">recv_json</span><span class="p">(</span><span class="n">flags</span><span class="o">=</span><span class="n">zmq</span><span class="o">.</span><span class="n">NOBLOCK</span><span class="p">)</span>
-                    <span class="n">level</span> <span class="o">=</span> <span class="n">TO_PY_LOG_LEVEL</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;level&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-                    <span class="n">msg_text</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-                        <span class="s1">&#39;msg&#39;</span><span class="p">,</span> <span class="s1">&#39;Malformed kernel message. Missing key &quot;msg&quot;.&#39;</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="n">msg_text</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
-                        <span class="n">msg_after_quit</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="k">except</span> <span class="n">zmq</span><span class="o">.</span><span class="n">Again</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
-                        <span class="k">break</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="o">.</span><span class="mi">01</span><span class="p">)</span>
-                <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Invalid message: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">doc</span><span class="p">)</span>
-        <span class="c1"># no matter what we try to close the socket:</span>
-        <span class="k">finally</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Terminating kernel logger thread.&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">msg_after_quit</span> <span class="o">==</span> <span class="n">KernelLogger</span><span class="o">.</span><span class="n">MAX_MESSAGE_BEFORE_QUIT</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s1">&#39;The maximum number of messages to log after a session finishes has been reached. </span><span class="se">\</span>
-<span class="s1">                Some messages may have been discarded.&#39;</span><span class="p">)</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s1">&#39;Failed to close ZMQ logging socket.&#39;</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="WolframLanguageSession"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession">[docs]</a><span class="k">class</span> <span class="nc">WolframLanguageSession</span><span class="p">(</span><span class="n">WolframEvaluator</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession">[docs]</a><span class="k">class</span> <span class="nc">WolframLanguageSession</span><span class="p">(</span><span class="n">WolframEvaluator</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A session to a Wolfram Kernel enabling evaluation of Wolfram Language expressions.</span>
 
 <span class="sd">    Start a new session and send an expression for evaluation::</span>
@@ -266,8 +203,6 @@
                  <span class="n">kernel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">consumer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">initfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">in_socket</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">out_socket</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">kernel_loglevel</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">NOTSET</span><span class="p">,</span>
                  <span class="n">stdin</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span>
                  <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span>
@@ -302,14 +237,8 @@
         <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Initializing kernel </span><span class="si">%s</span><span class="s1"> using script: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
                          <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">initfile</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">in_socket</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">in_socket</span><span class="p">,</span> <span class="n">Socket</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s1">&#39;Expecting kernel input socket to be a Socket instance.&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">out_socket</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out_socket</span><span class="p">,</span> <span class="n">Socket</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s1">&#39;Expecting kernel output socket to be a Socket instance.&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out_socket</span> <span class="o">=</span> <span class="n">out_socket</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">in_socket</span> <span class="o">=</span> <span class="n">in_socket</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_socket</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_socket</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="o">=</span> <span class="n">consumer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kernel_proc</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loglevel</span> <span class="o">=</span> <span class="n">kernel_loglevel</span>
@@ -324,14 +253,12 @@
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
-<div class="viewcode-block" id="WolframLanguageSession.duplicate"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.duplicate">[docs]</a>    <span class="k">def</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.duplicate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.duplicate">[docs]</a>    <span class="k">def</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Build a new object using the same configuration as the current one. &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">WolframLanguageSession</span><span class="p">(</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">,</span>
             <span class="n">consumer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="p">,</span>
             <span class="n">initfile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">initfile</span><span class="p">,</span>
-            <span class="n">in_socket</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">in_socket</span><span class="p">,</span>
-            <span class="n">out_socket</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">out_socket</span><span class="p">,</span>
             <span class="n">kernel_loglevel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loglevel</span><span class="p">,</span>
             <span class="n">stdin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stdin</span><span class="p">,</span>
             <span class="n">stdout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stdout</span><span class="p">,</span>
@@ -341,20 +268,20 @@
             <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span></div>
 
     <span class="n">_DEFAULT_PARAMETERS</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;STARTUP_READ_TIMEOUT&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+        <span class="s1">&#39;STARTUP_TIMEOUT&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
         <span class="s1">&#39;STARTUP_RETRY_SLEEP_TIME&#39;</span><span class="p">:</span> <span class="mf">0.001</span><span class="p">,</span>
-        <span class="s1">&#39;TERMINATE_READ_TIMEOUT&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s1">&#39;TERMINATE_TIMEOUT&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
         <span class="s1">&#39;HIDE_SUBPROCESS_WINDOW&#39;</span><span class="p">:</span> <span class="kc">True</span>
     <span class="p">}</span>
 
-<div class="viewcode-block" id="WolframLanguageSession.get_parameter"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.get_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.get_parameter"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.get_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the value of a given session parameter.</span>
 
 <span class="sd">        Session parameters are:</span>
 
-<span class="sd">        * ``&#39;STARTUP_READ_TIMEOUT&#39;``: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.</span>
+<span class="sd">        * ``&#39;STARTUP_TIMEOUT&#39;``: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.</span>
 <span class="sd">        * ``&#39;STARTUP_RETRY_SLEEP_TIME&#39;``: time to sleep, in seconds, before checking that the initialized kernel has responded. Default is 1 ms.</span>
-<span class="sd">        * ``&#39;TERMINATE_READ_TIMEOUT&#39;``: time to wait, in seconds, after the ``Quit[]`` command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.</span>
+<span class="sd">        * ``&#39;TERMINATE_TIMEOUT&#39;``: time to wait, in seconds, after the ``Quit[]`` command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
@@ -364,14 +291,14 @@
                 <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> is not one of the valid parameters: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
                 <span class="p">(</span><span class="n">parameter_name</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_PARAMETERS</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span></div>
 
-<div class="viewcode-block" id="WolframLanguageSession.set_parameter"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.set_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter_value</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.set_parameter"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.set_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter_value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set a new value for a given parameter. The new value only applies for this session.</span>
 
 <span class="sd">        Session parameters are:</span>
 
-<span class="sd">        * ``&#39;STARTUP_READ_TIMEOUT&#39;``: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.</span>
+<span class="sd">        * ``&#39;STARTUP_TIMEOUT&#39;``: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.</span>
 <span class="sd">        * ``&#39;STARTUP_RETRY_SLEEP_TIME&#39;``: time to sleep, in seconds, before checking that the initialized kernel has responded. Default is 1 ms.</span>
-<span class="sd">        * ``&#39;TERMINATE_READ_TIMEOUT&#39;``: time to wait, in seconds, after the ``Quit[]`` command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.</span>
+<span class="sd">        * ``&#39;TERMINATE_TIMEOUT&#39;``: time to wait, in seconds, after the ``Quit[]`` command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">parameter_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_PARAMETERS</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
@@ -379,11 +306,11 @@
                 <span class="p">(</span><span class="n">parameter_name</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_PARAMETERS</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameter_value</span></div>
 
-<div class="viewcode-block" id="WolframLanguageSession.terminate"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.terminate">[docs]</a>    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.terminate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.terminate">[docs]</a>    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Immediately stop the current session.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">(</span><span class="n">gracefully</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="WolframLanguageSession.stop"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.stop"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="p">(</span><span class="n">gracefully</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gracefully</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -414,11 +341,11 @@
                     <span class="k">try</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">kernel_proc</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span>
                             <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span>
-                                <span class="s1">&#39;TERMINATE_READ_TIMEOUT&#39;</span><span class="p">))</span>
+                                <span class="s1">&#39;TERMINATE_TIMEOUT&#39;</span><span class="p">))</span>
                     <span class="k">except</span><span class="p">:</span>
                         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                             <span class="s1">&#39;Kernel process failed to stop after </span><span class="si">%.02f</span><span class="s1"> seconds. Killing it.&#39;</span>
-                            <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;TERMINATE_READ_TIMEOUT&#39;</span><span class="p">))</span>
+                            <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;TERMINATE_TIMEOUT&#39;</span><span class="p">))</span>
                         <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="c1"># Kill process if not already terminated.</span>
                 <span class="c1"># Wait for it to cleanly stop if the Quit command was successfully sent,</span>
@@ -483,7 +410,7 @@
                 <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_socket</span><span class="o">.</span><span class="n">bound</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_socket</span>
                 <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_socket</span><span class="o">.</span><span class="n">bound</span><span class="p">)</span>
 
-<div class="viewcode-block" id="WolframLanguageSession.start"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.start"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -558,8 +485,8 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># First message must be &quot;OK&quot;, acknowledging everything is up and running</span>
             <span class="c1"># on the kernel side.</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_socket</span><span class="o">.</span><span class="n">read_timeout</span><span class="p">(</span>
-                <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;STARTUP_READ_TIMEOUT&#39;</span><span class="p">),</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_socket</span><span class="o">.</span><span class="n">recv_abortable</span><span class="p">(</span>
+                <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;STARTUP_TIMEOUT&#39;</span><span class="p">),</span>
                 <span class="n">retry_sleep_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span>
                     <span class="s1">&#39;STARTUP_RETRY_SLEEP_TIME&#39;</span><span class="p">),</span>
                 <span class="n">sleep</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_socket_read_sleep_func</span><span class="p">)</span>
@@ -577,7 +504,7 @@
                 <span class="s1">&#39;Failed to communicate with the kernel </span><span class="si">%s</span><span class="s1">. Could not read from ZMQ socket.&#39;</span>
                 <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">)</span>
 
-<div class="viewcode-block" id="WolframLanguageSession.ensure_started"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageSession.ensure_started">[docs]</a>    <span class="k">def</span> <span class="nf">ensure_started</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.ensure_started"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.ensure_started">[docs]</a>    <span class="k">def</span> <span class="nf">ensure_started</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span><span class="p">:</span>
@@ -596,7 +523,7 @@
         <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_evaluate</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="WolframLanguageSession.do_evaluate"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.do_evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">do_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.do_evaluate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.do_evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">do_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Send an expression to the kernel for evaluation. Return a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
@@ -632,12 +559,12 @@
         <span class="k">return</span> <span class="n">WolframKernelEvaluationResult</span><span class="p">(</span>
             <span class="n">wxf_result</span><span class="p">,</span> <span class="n">errmsg</span><span class="p">,</span> <span class="n">consumer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="WolframLanguageSession.log_message_from_result"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageSession.log_message_from_result">[docs]</a>    <span class="k">def</span> <span class="nf">log_message_from_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.log_message_from_result"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.log_message_from_result">[docs]</a>    <span class="k">def</span> <span class="nf">log_message_from_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">messages</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="WolframLanguageSession.evaluate_wxf"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wxf">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.evaluate_wxf"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate_wxf">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Send an expression to the kernel for evaluation and return the raw result still encoded as WXF.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_ensure_started</span><span class="p">(</span>
@@ -645,13 +572,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">log_message_from_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">wxf</span></div>
 
-<div class="viewcode-block" id="WolframLanguageSession.evaluate_wrap"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wrap">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Similar to :func:`~wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.</span>
+<div class="viewcode-block" id="WolframLanguageSession.evaluate_wrap"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate_wrap">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Similar to :func:`~wolframclient.evaluation.kernel.localsession.WolframLanguageSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframKernelEvaluationResult`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_ensure_started</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="WolframLanguageSession.evaluate"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageSession.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.evaluate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Send an expression to the kernel for evaluation.</span>
 
 <span class="sd">        The `expr` is an instance of a Python object serializable as WXF by :func:`~wolframclient.serializers.export`.</span>
@@ -663,7 +590,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">log_message_from_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="WolframLanguageSession.default_kernel_path"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageSession.default_kernel_path">[docs]</a>    <span class="k">def</span> <span class="nf">default_kernel_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageSession.default_kernel_path"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.default_kernel_path">[docs]</a>    <span class="k">def</span> <span class="nf">default_kernel_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">find_default_kernel_path</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -674,77 +601,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1">: not started&gt;&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span></div>
 
-
-<span class="k">class</span> <span class="nc">SocketException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="k">pass</span>
-
-
-<span class="k">class</span> <span class="nc">Socket</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">zmq_type</span><span class="o">=</span><span class="n">zmq</span><span class="o">.</span><span class="n">PAIR</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_use_random_port</span> <span class="o">=</span> <span class="n">port</span> <span class="ow">is</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="s1">&#39;tcp://</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="s1">&#39;tcp://&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">zmq_type</span> <span class="o">=</span> <span class="n">zmq_type</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bound</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">zmq_socket</span> <span class="o">=</span> <span class="n">zmq</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq_type</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="kc">False</span>
-
-    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bound</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">SocketException</span><span class="p">(</span><span class="s1">&#39;Already bounded.&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">SocketException</span><span class="p">(</span><span class="s1">&#39;Socket has been closed.&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">zmq_socket</span> <span class="o">=</span> <span class="n">zmq</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zmq_type</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_random_port</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Binding socket using random port.&#39;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmq_socket</span><span class="o">.</span><span class="n">bind_to_random_port</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="s1">&#39;tcp://</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">zmq_socket</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;ZMQ socket bound to &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bound</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmq_socket</span>
-
-    <span class="k">def</span> <span class="nf">read_timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                     <span class="n">timeout</span><span class="o">=</span><span class="mf">2.</span><span class="p">,</span>
-                     <span class="n">retry_sleep_time</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
-                     <span class="n">sleep</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Read a socket in a non-blocking fashion, until a timeout is reached, retrying at a given interval.</span>
-<span class="sd">        The sleep function is passed as a parameter and can be conveniently modified to support Event based interruption.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">bound</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">SocketException</span><span class="p">(</span><span class="s1">&#39;ZMQ socket not bound.&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">timeout</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Timeout must be a positive number.&#39;</span><span class="p">)</span>
-        <span class="n">retry</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-        <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="n">timeout</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmq_socket</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="n">flags</span><span class="o">=</span><span class="n">zmq</span><span class="o">.</span><span class="n">NOBLOCK</span><span class="p">)</span>
-            <span class="k">except</span> <span class="n">zmq</span><span class="o">.</span><span class="n">Again</span><span class="p">:</span>
-                <span class="n">retry</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">sleep</span><span class="p">(</span><span class="n">retry_sleep_time</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">TimeoutError</span><span class="p">:</span>
-                    <span class="k">break</span>
-        <span class="k">raise</span> <span class="n">SocketException</span><span class="p">(</span>
-            <span class="s1">&#39;Read time out. Failed to read any message from socket </span><span class="si">%s</span><span class="s1"> after </span><span class="si">%.1f</span><span class="s1"> seconds and </span><span class="si">%i</span><span class="s1"> retries.&#39;</span>
-            <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="n">retry</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">zmq_socket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bound</span> <span class="o">=</span> <span class="kc">False</span>
-
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bound</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;&lt;Socket: host=</span><span class="si">%s</span><span class="s1">, port=</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;&lt;Socket (not bounded): host=</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span>
 </pre></div>
 
           </div>
@@ -753,7 +609,7 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper"><div class='overview toctree-l1'>
     <a class="reference internal  _modules/wolframclient/evaluation/kernel/kernelsession" 
-        href="../../../../docpages/overview.html">Overview</a>
+        href="../../../../index.html">Overview</a>
 </div>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../docpages/install.html">Installation and prerequisites</a><ul>
@@ -763,7 +619,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../docpages/basic_usages.html">Basic Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#expression-representation">Expression Representation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#evaluating-expressions">Evaluating Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#expression-evaluation">Expression Evaluation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#wolfram-cloud-interactions">Wolfram Cloud Interactions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#serialization">Serialization</a></li>
 </ul>
@@ -786,6 +642,10 @@
 </li>
 </ul>
 
+<div class='overview toctree-l1'>
+    <a class="reference internal  _modules/wolframclient/evaluation/kernel/kernelsession" 
+        href="../../../../docpages/toc.html">Table Of Contents</a>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <div class="searchformwrapper">

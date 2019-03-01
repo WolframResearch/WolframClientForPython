@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.evaluation.kernel.asyncsession &#8212; Wolfram Client Library for Python 1.0.0.dev4 documentation</title>
+    <title>wolframclient.evaluation.kernel.asyncsession &#8212; Wolfram Client Library for Python 1.0.0.dev5 documentation</title>
     <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.0.dev4</span>
+                        <span class='header right navigation darkgrey'>v 1.0.0.dev5</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -78,20 +78,18 @@
 
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">PIPE</span>
-<span class="kn">from</span> <span class="nn">threading</span> <span class="k">import</span> <span class="n">Event</span>
 
 <span class="kn">from</span> <span class="nn">wolframclient.evaluation.base</span> <span class="k">import</span> <span class="n">WolframAsyncEvaluator</span>
-<span class="kn">from</span> <span class="nn">wolframclient.evaluation.kernel.kernelsession</span> <span class="k">import</span> <span class="p">(</span>
-    <span class="n">WolframLanguageSession</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">wolframclient.utils.api</span> <span class="k">import</span> <span class="n">asyncio</span><span class="p">,</span> <span class="n">futures</span>
+<span class="kn">from</span> <span class="nn">wolframclient.evaluation.kernel.localsession</span> <span class="k">import</span> <span class="n">WolframLanguageSession</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils.api</span> <span class="k">import</span> <span class="n">asyncio</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;WolframLanguageAsyncSession&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="WolframLanguageAsyncSession"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageAsyncSession">[docs]</a><span class="k">class</span> <span class="nc">WolframLanguageAsyncSession</span><span class="p">(</span><span class="n">WolframLanguageSession</span><span class="p">,</span>
-                                  <span class="n">WolframAsyncEvaluator</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageAsyncSession"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageAsyncSession">[docs]</a><span class="k">class</span> <span class="nc">WolframLanguageAsyncSession</span><span class="p">(</span><span class="n">WolframAsyncEvaluator</span><span class="p">,</span>
+                                  <span class="n">WolframLanguageSession</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Evaluate expressions asynchronously using coroutines.</span>
 
 <span class="sd">    Asynchronous evaluations are provided through coroutines and the :mod:`asyncio` modules.</span>
@@ -117,94 +115,85 @@
                  <span class="n">consumer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">initfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">in_socket</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">out_socket</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">kernel_loglevel</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">NOTSET</span><span class="p">,</span>
                  <span class="n">stdin</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span>
                  <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span>
                  <span class="n">stderr</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span>
                  <span class="n">inputform_string_evaluation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                 <span class="n">wxf_bytes_evaluation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">loop</span> <span class="ow">or</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span>
             <span class="n">consumer</span><span class="o">=</span><span class="n">consumer</span><span class="p">,</span>
             <span class="n">initfile</span><span class="o">=</span><span class="n">initfile</span><span class="p">,</span>
-            <span class="n">in_socket</span><span class="o">=</span><span class="n">in_socket</span><span class="p">,</span>
-            <span class="n">out_socket</span><span class="o">=</span><span class="n">out_socket</span><span class="p">,</span>
             <span class="n">kernel_loglevel</span><span class="o">=</span><span class="n">kernel_loglevel</span><span class="p">,</span>
             <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">,</span>
             <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span>
             <span class="n">stderr</span><span class="o">=</span><span class="n">stderr</span><span class="p">,</span>
             <span class="n">inputform_string_evaluation</span><span class="o">=</span><span class="n">inputform_string_evaluation</span><span class="p">,</span>
-            <span class="n">wxf_bytes_evaluation</span><span class="o">=</span><span class="n">wxf_bytes_evaluation</span><span class="p">,</span>
+            <span class="n">loop</span><span class="o">=</span><span class="n">loop</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">thread_pool_exec</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="c1"># event shared with timed out socket read function, to cancel</span>
-        <span class="c1"># zmq operation at startup.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">event_abort</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
 
 <div class="viewcode-block" id="WolframLanguageAsyncSession.duplicate"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageAsyncSession.duplicate">[docs]</a>    <span class="k">def</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">WolframLanguageAsyncSession</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">,</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span>
+            <span class="n">kernel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">,</span>
             <span class="n">loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">,</span>
             <span class="n">consumer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="p">,</span>
             <span class="n">initfile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">initfile</span><span class="p">,</span>
-            <span class="n">in_socket</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">in_socket</span><span class="p">,</span>
-            <span class="n">out_socket</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">out_socket</span><span class="p">,</span>
-            <span class="n">kernel_loglevel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loglevel</span><span class="p">,</span>
+            <span class="n">kernel_loglevel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_loglevel</span><span class="p">,</span>
             <span class="n">stdin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stdin</span><span class="p">,</span>
             <span class="n">stdout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stdout</span><span class="p">,</span>
             <span class="n">stderr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stderr</span><span class="p">,</span>
             <span class="n">inputform_string_evaluation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inputform_string_evaluation</span><span class="p">,</span>
-            <span class="n">wxf_bytes_evaluation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wxf_bytes_evaluation</span><span class="p">,</span>
             <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_socket_read_sleep_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_abort</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">event_abort</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TimeoutError</span>
+<div class="viewcode-block" id="WolframLanguageAsyncSession.do_evaluate_future"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageAsyncSession.do_evaluate_future">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_evaluate_future</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                 <span class="n">expr</span><span class="p">,</span>
+                                 <span class="n">result_update_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">future</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">do_evaluate_future</span><span class="p">(</span>
+            <span class="n">expr</span><span class="p">,</span> <span class="n">result_update_callback</span><span class="o">=</span><span class="n">result_update_callback</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wrap_future</span><span class="p">(</span><span class="n">future</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_get_exec_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">thread_pool_exec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">thread_pool_exec</span> <span class="o">=</span> <span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">thread_pool_exec</span>
+<div class="viewcode-block" id="WolframLanguageAsyncSession.evaluate_future"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageAsyncSession.evaluate_future">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">evaluate_future</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_started</span><span class="p">()</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_evaluate_future</span><span class="p">(</span>
+            <span class="n">expr</span><span class="p">,</span> <span class="n">result_update_callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CALLBACK_GET</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WolframLanguageAsyncSession.evaluate_wxf_future"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageAsyncSession.evaluate_wxf_future">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">evaluate_wxf_future</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_started</span><span class="p">()</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_evaluate_future</span><span class="p">(</span>
+            <span class="n">expr</span><span class="p">,</span> <span class="n">result_update_callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CALLBACK_GET_WXF</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WolframLanguageAsyncSession.evaluate_wrap_future"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageAsyncSession.evaluate_wrap_future">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">evaluate_wrap_future</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_started</span><span class="p">()</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_evaluate_future</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="WolframLanguageAsyncSession.evaluate"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageAsyncSession.evaluate">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Evaluate :meth:`~wolframclient.evaluation.WolframLanguageSession.evaluate`</span>
-<span class="sd">        asynchronously.</span>
+        <span class="sd">&quot;&quot;&quot;Evaluate an expression asynchronously.</span>
 
 <span class="sd">        This method is a coroutine.&quot;&quot;&quot;</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_started</span><span class="p">()</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_async_evaluate</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">do_evaluate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span>
-                                            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log_message_from_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">()</span></div>
+        <span class="n">future</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_future</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">future</span>
+        <span class="k">return</span> <span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="WolframLanguageAsyncSession.evaluate_wxf"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageAsyncSession.evaluate_wxf">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">evaluate_wxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Evaluate :meth:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wxf`</span>
-<span class="sd">        asynchronously.</span>
+        <span class="sd">&quot;&quot;&quot;Evaluate an expression and return the WXF output asynchronously.</span>
 
 <span class="sd">        This method is a coroutine.&quot;&quot;&quot;</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_started</span><span class="p">()</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_async_evaluate</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">do_evaluate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span>
-                                            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log_message_from_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">wxf</span></div>
+        <span class="n">future</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_wxf_future</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">future</span>
+        <span class="k">return</span> <span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="WolframLanguageAsyncSession.evaluate_wrap"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageAsyncSession.evaluate_wrap">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">evaluate_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Evaluate :meth:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wrap`</span>
-<span class="sd">        asynchronously.</span>
+        <span class="sd">&quot;&quot;&quot;Evaluate an expression and return a result object asynchronously.</span>
 
 <span class="sd">        This method is a coroutine.&quot;&quot;&quot;</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_started</span><span class="p">()</span>
-        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_async_evaluate</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">do_evaluate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="n">future</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_wrap_future</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">future</span>
+        <span class="k">return</span> <span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">()</span></div>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_async_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_exec_pool</span><span class="p">(),</span> <span class="n">func</span><span class="p">,</span>
-                                                <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="viewcode-block" id="WolframLanguageAsyncSession.evaluate_many"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageAsyncSession.evaluate_many">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">evaluate_many</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr_list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">evaluate_many</span><span class="p">(</span><span class="n">expr_list</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="WolframLanguageAsyncSession.ensure_started"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageAsyncSession.ensure_started">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">ensure_started</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">:</span>
@@ -212,50 +201,34 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">()</span></div>
 
+<div class="viewcode-block" id="WolframLanguageAsyncSession.restart"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageAsyncSession.restart">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">restart</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+
 <div class="viewcode-block" id="WolframLanguageAsyncSession.start"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageAsyncSession.start">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Asynchronously start the session.</span>
 <span class="sd">        </span>
 <span class="sd">        This method is a coroutine.&quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_exec_pool</span><span class="p">(),</span>
-                                             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_start</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
-            <span class="k">raise</span> <span class="n">e</span></div>
+        <span class="n">future</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">start_future</span><span class="p">()</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wrap_future</span><span class="p">(</span><span class="n">future</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="WolframLanguageAsyncSession.stop"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageAsyncSession.stop">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># signal socket read with timeout function to abort current operation.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">event_abort</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_async_terminate</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span></div>
+        <span class="sd">&quot;&quot;&quot;Asynchronously stop the session (gracefully termination).</span>
+<span class="sd">        </span>
+<span class="sd">        This method is a coroutine.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_async_terminate</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="WolframLanguageAsyncSession.terminate"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageAsyncSession.terminate">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_async_terminate</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">terminate</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span></div>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_async_terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sync_stop_func</span><span class="p">,</span> <span class="n">wait</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Asynchronously terminate the session.</span>
 <span class="sd">        </span>
 <span class="sd">        This method is a coroutine.&quot;&quot;&quot;</span>
-        <span class="c1"># Check that the thread pool was created, otherwise it&#39;s an initialized session</span>
-        <span class="c1"># that was never started, and use it to asynchronously stop the kernel.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">thread_pool_exec</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Terminating asynchronous kernel session.&#39;</span><span class="p">)</span>
-                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_exec_pool</span><span class="p">(),</span>
-                                                 <span class="n">sync_stop_func</span><span class="p">)</span>
-            <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">CancelledError</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Cancelled terminate task.&#39;</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                    <span class="s1">&#39;Failed to terminate kernel asynchronously: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">e</span><span class="p">)</span>
-            <span class="c1"># kernel stopped. Joining thread.</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">thread_pool_exec</span><span class="o">.</span><span class="n">shutdown</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="n">wait</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">thread_pool_exec</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Thread pool executor error on shutdown: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
-        <span class="c1"># synchronous termination required if the kernel is still not terminated.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">:</span>
-            <span class="n">sync_stop_func</span><span class="p">()</span></div>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_async_terminate</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_async_terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gracefully</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Terminating asynchronous kernel session.&#39;</span><span class="p">)</span>
+        <span class="n">future</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">stop_future</span><span class="p">(</span><span class="n">gracefully</span><span class="o">=</span><span class="n">gracefully</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wrap_future</span><span class="p">(</span><span class="n">future</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -264,7 +237,7 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper"><div class='overview toctree-l1'>
     <a class="reference internal  _modules/wolframclient/evaluation/kernel/asyncsession" 
-        href="../../../../docpages/overview.html">Overview</a>
+        href="../../../../index.html">Overview</a>
 </div>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../docpages/install.html">Installation and prerequisites</a><ul>
@@ -274,7 +247,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../docpages/basic_usages.html">Basic Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#expression-representation">Expression Representation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#evaluating-expressions">Evaluating Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#expression-evaluation">Expression Evaluation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#wolfram-cloud-interactions">Wolfram Cloud Interactions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#serialization">Serialization</a></li>
 </ul>
@@ -297,6 +270,10 @@
 </li>
 </ul>
 
+<div class='overview toctree-l1'>
+    <a class="reference internal  _modules/wolframclient/evaluation/kernel/asyncsession" 
+        href="../../../../docpages/toc.html">Table Of Contents</a>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <div class="searchformwrapper">

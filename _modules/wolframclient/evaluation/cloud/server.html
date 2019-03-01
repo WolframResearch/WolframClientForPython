@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.evaluation.cloud.server &#8212; Wolfram Client Library for Python 1.0.0.dev4 documentation</title>
+    <title>wolframclient.evaluation.cloud.server &#8212; Wolfram Client Library for Python 1.0.0.dev5 documentation</title>
     <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.0.dev4</span>
+                        <span class='header right navigation darkgrey'>v 1.0.0.dev5</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -108,7 +108,13 @@
                 <span class="s1">&#39;Invalid certificate. Must be a string type or None.&#39;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="WolframServer.is_xauth"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframServer.is_xauth">[docs]</a>    <span class="k">def</span> <span class="nf">is_xauth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">xauth_consumer_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">xauth_consumer_secret</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">xauth_consumer_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">xauth_consumer_secret</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1">: cloudbase=</span><span class="si">%s</span><span class="s1">, request_token=</span><span class="si">%s</span><span class="s1">, access_token=</span><span class="si">%s</span><span class="s1">, certificate=</span><span class="si">%s</span><span class="s1">, xauth support=</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cloudbase</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">request_token_endpoint</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">access_token_endpoint</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">certificate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_xauth</span><span class="p">())</span></div>
 
 
 <span class="c1"># A built-in instance representing the Wolfram public Cloud.</span>
@@ -126,7 +132,7 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper"><div class='overview toctree-l1'>
     <a class="reference internal  _modules/wolframclient/evaluation/cloud/server" 
-        href="../../../../docpages/overview.html">Overview</a>
+        href="../../../../index.html">Overview</a>
 </div>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../docpages/install.html">Installation and prerequisites</a><ul>
@@ -136,7 +142,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../docpages/basic_usages.html">Basic Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#expression-representation">Expression Representation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#evaluating-expressions">Evaluating Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#expression-evaluation">Expression Evaluation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#wolfram-cloud-interactions">Wolfram Cloud Interactions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#serialization">Serialization</a></li>
 </ul>
@@ -159,6 +165,10 @@
 </li>
 </ul>
 
+<div class='overview toctree-l1'>
+    <a class="reference internal  _modules/wolframclient/evaluation/cloud/server" 
+        href="../../../../docpages/toc.html">Table Of Contents</a>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <div class="searchformwrapper">

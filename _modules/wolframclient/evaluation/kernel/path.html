@@ -1,0 +1,208 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>wolframclient.evaluation.kernel.path &#8212; Wolfram Client Library for Python 1.0.0.dev5 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+    
+    <link rel="stylesheet" href="https://www.wolframcdn.com/fonts/source-sans-pro/1.0/global.css"/>
+    
+ 
+  </head><body>
+    <header class='main-header'>
+        <div class='header-content'>
+        
+            <div class='logo header left'>
+                <h1>
+                <a class='header' href="../../../../index.html">
+                    <span>
+                        <img class="logo align-left" 
+                            src="../../../../_static/wolf-python-subpage.png"
+                            title="https://www.wolfram.com/"
+                            height="70"
+                        />
+                    </span>
+                    <span class='header'>
+                        <span class='header darkgrey' style='font-size:.8em;'>
+                            Wolfram Client Library
+                        </span>
+                        <br>
+                        <span style='font-size:1em;'>for Python</span>
+                    </span>
+                </a>
+                </h1>
+            </div>
+            <div class="related header right" role="navigation" aria-label="related navigation">
+                <ul>
+                        <li class="right" style="margin-right: 10px">
+                            <span class='header right navigation'><a href="../../../../genindex.html" title="General Index"
+                            accesskey="I">
+                                index
+                        </a></span></li>
+                        <li class="right" >
+                            <span class='header right navigation'><a href="../../../../py-modindex.html" title="Python Module Index"
+                            >
+                                modules
+                        </a></span><span class='reldelimiter'>|</span></li>
+                    <li class="right">
+                        <span class='header right navigation darkgrey'>v 1.0.0.dev5</span>
+                        <span class='reldelimiter'>|</span>
+                    </li>
+                </ul>
+            </div>
+        
+        </div>
+    </header>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for wolframclient.evaluation.kernel.path</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+
+<span class="kn">from</span> <span class="nn">wolframclient.utils</span> <span class="k">import</span> <span class="n">six</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils.api</span> <span class="k">import</span> <span class="n">os</span>
+
+
+<div class="viewcode-block" id="explore_paths"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.path.explore_paths">[docs]</a><span class="k">def</span> <span class="nf">explore_paths</span><span class="p">(</span><span class="o">*</span><span class="n">paths</span><span class="p">):</span>
+    <span class="n">highest_version</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">best_path</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">root</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">version</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+                <span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path_join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">full_path</span><span class="p">):</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">v_num</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="n">v_num</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
+                    <span class="k">if</span> <span class="n">v_num</span> <span class="o">&gt;</span> <span class="n">highest_version</span> <span class="ow">and</span> <span class="n">v_num</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">highest_version</span> <span class="o">=</span> <span class="n">v_num</span>
+                        <span class="n">best_path</span> <span class="o">=</span> <span class="n">full_path</span>
+    <span class="k">if</span> <span class="n">best_path</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">best_path</span></div>
+
+
+<div class="viewcode-block" id="installation_directories"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.path.installation_directories">[docs]</a><span class="k">def</span> <span class="nf">installation_directories</span><span class="p">():</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;WOLFRAM_INSTALLATION_DIRECTORY&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">env</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">env</span>
+
+    <span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">WINDOWS</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">explore_paths</span><span class="p">(</span>
+                <span class="s1">&#39;C:</span><span class="se">\\</span><span class="s1">Program Files</span><span class="se">\\</span><span class="s1">Wolfram Research</span><span class="se">\\</span><span class="s1">Wolfram Desktop&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;C:</span><span class="se">\\</span><span class="s1">Program Files</span><span class="se">\\</span><span class="s1">Wolfram Research</span><span class="se">\\</span><span class="s1">Mathematica&#39;</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">p</span>
+
+    <span class="k">elif</span> <span class="n">six</span><span class="o">.</span><span class="n">LINUX</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">explore_paths</span><span class="p">(</span><span class="s1">&#39;/usr/local/Wolfram/Desktop&#39;</span>
+                               <span class="s1">&#39;/usr/local/Wolfram/Mathematica&#39;</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">p</span>
+
+    <span class="k">elif</span> <span class="n">six</span><span class="o">.</span><span class="n">MACOS</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="s1">&#39;/Applications/Wolfram Desktop.app/Contents&#39;</span>
+        <span class="k">yield</span> <span class="s1">&#39;/Applications/Mathematica.app/Contents&#39;</span></div>
+
+
+<div class="viewcode-block" id="exe_path"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.path.exe_path">[docs]</a><span class="k">def</span> <span class="nf">exe_path</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">WINDOWS</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;WolframKernel.exe&#39;</span>
+    <span class="k">elif</span> <span class="n">six</span><span class="o">.</span><span class="n">LINUX</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;Executables/WolframKernel&#39;</span>
+    <span class="k">elif</span> <span class="n">six</span><span class="o">.</span><span class="n">MACOS</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;MacOS/WolframKernel&#39;</span></div>
+
+
+<div class="viewcode-block" id="find_default_kernel_path"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.path.find_default_kernel_path">[docs]</a><span class="k">def</span> <span class="nf">find_default_kernel_path</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Look for the most recent installed kernel. &quot;&quot;&quot;</span>
+    <span class="n">rel</span> <span class="o">=</span> <span class="n">exe_path</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">installation_directories</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">rel</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path_join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">rel</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">path</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class='overview toctree-l1'>
+    <a class="reference internal  _modules/wolframclient/evaluation/kernel/path" 
+        href="../../../../index.html">Overview</a>
+</div>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docpages/install.html">Installation and prerequisites</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/install.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/install.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docpages/basic_usages.html">Basic Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#expression-representation">Expression Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#expression-evaluation">Expression Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#wolfram-cloud-interactions">Wolfram Cloud Interactions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#serialization">Serialization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docpages/advanced_usages.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/advanced_usages.html#expression-representation">Expression Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/advanced_usages.html#local-kernel-evaluation">Local Kernel Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/advanced_usages.html#extending-serialization-writing-an-encoder">Extending serialization: Writing an Encoder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/advanced_usages.html#extending-wxf-parsing-writing-a-wxfconsumer">Extending WXF Parsing: Writing a WXFConsumer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docpages/public_api.html">Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/public_api.html#expression-representation">Expression Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/public_api.html#serialization">Serialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/public_api.html#deserialization">Deserialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/public_api.html#evaluating-expressions">Evaluating Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/public_api.html#cloud-api">Cloud API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/public_api.html#exceptions">Exceptions</a></li>
+</ul>
+</li>
+</ul>
+
+<div class='overview toctree-l1'>
+    <a class="reference internal  _modules/wolframclient/evaluation/kernel/path" 
+        href="../../../../docpages/toc.html">Table Of Contents</a>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><footer class='copyright'>
+    <div>
+        <span>&#169; Copyright 2019, Wolfram Research.</span>
+    </div>
+</footer>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+
+  </body>
+</html>

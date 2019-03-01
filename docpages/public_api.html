@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Guide &#8212; Wolfram Client Library for Python 1.0.0.dev4 documentation</title>
+    <title>Guide &#8212; Wolfram Client Library for Python 1.0.0.dev5 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -63,7 +63,7 @@
                                 </span>
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.0.dev4</span>
+                        <span class='header right navigation darkgrey'>v 1.0.0.dev5</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -512,11 +512,26 @@ use <a class="reference internal" href="../api/wolframclient.deserializers.wxf.h
 <h2>Evaluating Expressions<a class="headerlink" href="#evaluating-expressions" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt>
-<em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframLanguageSession</code><span class="sig-paren">(</span><em>kernel=None</em>, <em>consumer=None</em>, <em>initfile=None</em>, <em>in_socket=None</em>, <em>out_socket=None</em>, <em>kernel_loglevel=0</em>, <em>stdin=-1</em>, <em>stdout=-1</em>, <em>stderr=-1</em>, <em>inputform_string_evaluation=True</em>, <em>wxf_bytes_evaluation=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession"><span class="viewcode-link">[source]</span></a></dt>
+<em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframLanguageSession</code><span class="sig-paren">(</span><em>kernel=None</em>, <em>consumer=None</em>, <em>initfile=None</em>, <em>kernel_loglevel=0</em>, <em>stdin=-1</em>, <em>stdout=-1</em>, <em>stderr=-1</em>, <em>inputform_string_evaluation=True</em>, <em>wxf_bytes_evaluation=True</em>, <em>controller_class=&lt;class 'wolframclient.evaluation.kernel.kernelcontroller.WolframEngineController'&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>A session to a Wolfram Kernel enabling evaluation of Wolfram Language expressions.</p>
 <p>Start a new session and send an expression for evaluation:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">WolframLanguageSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
     <span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;Range[3]&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Set <cite>timeout</cite> value to a number, to set an evaluation timeout in seconds. If the evaluation
+time extends the timeout a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.TimeoutError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeoutError</span></code></a> is raised.</p>
+<p>Evaluate an expression taking 10 seconds to return, using a 5 second timeout:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">long_evaluation</span> <span class="o">=</span> <span class="n">wl</span><span class="o">.</span><span class="n">Pause</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">WolframLanguageSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">long_evaluation</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Asynchronous evaluation methods <a class="reference internal" href="../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.localsession.WolframLanguageSession.evaluate_future" title="wolframclient.evaluation.kernel.localsession.WolframLanguageSession.evaluate_future"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate_future()</span></code></a> 
+returns an instance of <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> class wrapping the evaluation result:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">WolframLanguageSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="n">future</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">evaluate_future</span><span class="p">(</span><span class="s1">&#39;1+1&#39;</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>When <cite>consumer</cite> is set to a <a class="reference internal" href="../api/wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumer" title="wolframclient.deserializers.WXFConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumer</span></code></a> instance,
@@ -555,96 +570,126 @@ logging functions:</p>
 <p>The standard input, output and error file handles can be specified with <cite>stdin</cite>, <cite>stdout</cite> and <cite>stderr</cite>
 named parameters. Valid values are those accepted by subprocess.Popen (e.g <a class="reference external" href="https://docs.python.org/3/library/sys.html#sys.stdout" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">sys.stdout</span></code></a>). Those parameters should be handled
 with care as deadlocks can arise from misconfiguration.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Wolfram Language sessions are <strong>not thread-safe</strong>, each thread must run its own instance.</p>
-</div>
 <dl class="method">
 <dt>
-<code class="descname">do_evaluate</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession.do_evaluate"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Send an expression to the kernel for evaluation. Return a <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframKernelEvaluationResult" title="wolframclient.evaluation.result.WolframKernelEvaluationResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframKernelEvaluationResult</span></code></a>.</p>
+<code class="descname">duplicate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.duplicate"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Build a new instance using the same configuration as the one being duplicated.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
-<code class="descname">duplicate</code><span class="sig-paren">(</span><em>session</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession.duplicate"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Build a new object using the same configuration as the current one.</p>
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.evaluate"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Evaluate a given Wolfram Language expression.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
-<code class="descname">evaluate</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession.evaluate"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Send an expression to the kernel for evaluation.</p>
-<p>The <cite>expr</cite> is an instance of a Python object serializable as WXF by <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a>.</p>
-<p><cite>kwargs</cite> are passed to <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a>.</p>
+<code class="descname">evaluate_future</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.evaluate_future"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Evaluate an expression and return a future object.</p>
+<p>The future object result is the evaluated expression. See
+<a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate" title="wolframclient.evaluation.WolframLanguageSession.evaluate"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate()</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
-<code class="descname">evaluate_wrap</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession.evaluate_wrap"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Similar to <a class="reference internal" href="../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate" title="wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate()</span></code></a> but return the result as a <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframKernelEvaluationResult" title="wolframclient.evaluation.result.WolframKernelEvaluationResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframKernelEvaluationResult</span></code></a>.</p>
+<code class="descname">evaluate_wrap</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.evaluate_wrap"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Evaluate a given Wolfram Language expression and return a result object with the result and meta information.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
-<code class="descname">evaluate_wxf</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession.evaluate_wxf"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Send an expression to the kernel for evaluation and return the raw result still encoded as WXF.</p>
+<code class="descname">evaluate_wrap_future</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.evaluate_wrap_future"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Evaluate an expression and return a future object.</p>
+<p>The future object result is the result object with the evaluated expression and meta information.
+See <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wrap" title="wolframclient.evaluation.WolframLanguageSession.evaluate_wrap"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_wrap()</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
-<code class="descname">get_parameter</code><span class="sig-paren">(</span><em>parameter_name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession.get_parameter"><span class="viewcode-link">[source]</span></a></dt>
+<code class="descname">evaluate_wxf</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.evaluate_wxf"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Evaluate an expression and return the serialized expression.</p>
+<p>This method does not deserialize the Wolfram Engine input.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">evaluate_wxf_future</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.evaluate_wxf_future"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Evaluate an expression and return a future object.</p>
+<p>The future object result is the WXF serialization of the evaluated expression.
+See <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wxf" title="wolframclient.evaluation.WolframLanguageSession.evaluate_wxf"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_wxf()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">get_parameter</code><span class="sig-paren">(</span><em>parameter_name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.get_parameter"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Return the value of a given session parameter.</p>
 <p>Session parameters are:</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">'STARTUP_READ_TIMEOUT'</span></code>: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.</li>
-<li><code class="docutils literal notranslate"><span class="pre">'STARTUP_RETRY_SLEEP_TIME'</span></code>: time to sleep, in seconds, before checking that the initialized kernel has responded. Default is 1 ms.</li>
-<li><code class="docutils literal notranslate"><span class="pre">'TERMINATE_READ_TIMEOUT'</span></code>: time to wait, in seconds, after the <code class="docutils literal notranslate"><span class="pre">Quit[]</span></code> command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.</li>
+<li><code class="docutils literal notranslate"><span class="pre">'STARTUP_TIMEOUT'</span></code>: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.</li>
+<li><code class="docutils literal notranslate"><span class="pre">'TERMINATE_TIMEOUT'</span></code>: time to wait, in seconds, after the <code class="docutils literal notranslate"><span class="pre">Quit[]</span></code> command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.</li>
 </ul>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="descname">pid</code></dt>
-<dd><p>Return the PID of the Wolfram Kernel process, if any, or None.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
-<code class="descname">set_parameter</code><span class="sig-paren">(</span><em>parameter_name</em>, <em>parameter_value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession.set_parameter"><span class="viewcode-link">[source]</span></a></dt>
+<code class="descname">restart</code><span class="sig-paren">(</span><em>block=True</em>, <em>timeout=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.restart"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Restart a given evaluator by stopping it in case it was already started.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">set_parameter</code><span class="sig-paren">(</span><em>parameter_name</em>, <em>parameter_value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.set_parameter"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Set a new value for a given parameter. The new value only applies for this session.</p>
 <p>Session parameters are:</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">'STARTUP_READ_TIMEOUT'</span></code>: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.</li>
-<li><code class="docutils literal notranslate"><span class="pre">'STARTUP_RETRY_SLEEP_TIME'</span></code>: time to sleep, in seconds, before checking that the initialized kernel has responded. Default is 1 ms.</li>
-<li><code class="docutils literal notranslate"><span class="pre">'TERMINATE_READ_TIMEOUT'</span></code>: time to wait, in seconds, after the <code class="docutils literal notranslate"><span class="pre">Quit[]</span></code> command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.</li>
+<li><code class="docutils literal notranslate"><span class="pre">'STARTUP_TIMEOUT'</span></code>: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.</li>
+<li><code class="docutils literal notranslate"><span class="pre">'TERMINATE_TIMEOUT'</span></code>: time to wait, in seconds, after the <code class="docutils literal notranslate"><span class="pre">Quit[]</span></code> command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.</li>
 </ul>
 </dd></dl>
 
 <dl class="method">
 <dt>
-<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession.start"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Start the evaluator.</p>
-<p>Once this function was called, the evaluator must be ready to evaluate incoming expressions.</p>
+<code class="descname">start</code><span class="sig-paren">(</span><em>block=True</em>, <em>timeout=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.start"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Start a kernel controller, eventually restart a fresh on if the previous one was terminated.</p>
+<p>Set <cite>block</cite> to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">True</span></code></a> (default is <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">False</span></code></a>) to wait for the kernel to be up and running 
+before returning. Eventually set a timeout in seconds. If the timeout is reached a <code class="xref py py-data docutils literal notranslate"><span class="pre">TimeoutError</span></code>
+will be raised and the kernel is terminated.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
-<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession.stop"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Gracefully stop the evaluator. Try to stop the evaluator, but wait for current evaluation to finish first.</p>
+<code class="descname">start_future</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.start_future"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Request the Wolfram Engine to start. Return a future object.</p>
+<p>The result of the future object is True when the kernel is ready to evaluate input.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
-<code class="descname">terminate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/kernelsession.html#WolframLanguageSession.terminate"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Immediately stop the current session.</p>
+<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.stop"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Request the Wolfram Engine to stop gracefully.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">stop_future</code><span class="sig-paren">(</span><em>gracefully=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.stop_future"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Request the Wolfram Engine to stop. Return a future object.</p>
+<p>The result of the future object is True when the controller thread is no more alive.
+Set <cite>gracefully</cite> to <cite>False</cite> will request for an immediate stop, eventually cancelling ongoing
+evaluations.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">terminate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.terminate"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Request the Wolfram Engine to stop immediately.</p>
+<p>Ongoing evaluations may be cancelled.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt>
-<em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframLanguageAsyncSession</code><span class="sig-paren">(</span><em>kernel=None</em>, <em>consumer=None</em>, <em>loop=None</em>, <em>initfile=None</em>, <em>in_socket=None</em>, <em>out_socket=None</em>, <em>kernel_loglevel=0</em>, <em>stdin=-1</em>, <em>stdout=-1</em>, <em>stderr=-1</em>, <em>inputform_string_evaluation=True</em>, <em>wxf_bytes_evaluation=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession"><span class="viewcode-link">[source]</span></a></dt>
+<em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframLanguageAsyncSession</code><span class="sig-paren">(</span><em>kernel=None</em>, <em>consumer=None</em>, <em>loop=None</em>, <em>initfile=None</em>, <em>kernel_loglevel=0</em>, <em>stdin=-1</em>, <em>stdout=-1</em>, <em>stderr=-1</em>, <em>inputform_string_evaluation=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Evaluate expressions asynchronously using coroutines.</p>
 <p>Asynchronous evaluations are provided through coroutines and the <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> modules.</p>
 <p>Instances of this class can be managed with an asynchronous context manager:</p>
@@ -663,31 +708,65 @@ complexity of the code without any real drawback.</p>
 <dl class="method">
 <dt>
 <code class="descname">duplicate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession.duplicate"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Build a new object using the same configuration as the current one.</p>
+<dd><p>Build a new instance using the same configuration as the one being duplicated.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">evaluate</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession.evaluate"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Evaluate <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate" title="wolframclient.evaluation.WolframLanguageSession.evaluate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate()</span></code></a>
-asynchronously.</p>
+<dd><p>Evaluate an expression asynchronously.</p>
 <p>This method is a coroutine.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">evaluate_future</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession.evaluate_future"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Evaluate an expression and return a future object.</p>
+<p>The future object result is the evaluated expression. See
+<a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate" title="wolframclient.evaluation.WolframLanguageSession.evaluate"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">evaluate_many</code><span class="sig-paren">(</span><em>expr_list</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession.evaluate_many"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Evaluate a given list of Wolfram Language expression.</p>
+<p>The list is provided as an iterable object.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">evaluate_wrap</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession.evaluate_wrap"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Evaluate <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wrap" title="wolframclient.evaluation.WolframLanguageSession.evaluate_wrap"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate_wrap()</span></code></a>
-asynchronously.</p>
+<dd><p>Evaluate an expression and return a result object asynchronously.</p>
 <p>This method is a coroutine.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
+<code class="descname">evaluate_wrap_future</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession.evaluate_wrap_future"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Evaluate an expression and return a future object.</p>
+<p>The future object result is the result object with the evaluated expression and meta information.
+See <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wrap" title="wolframclient.evaluation.WolframLanguageSession.evaluate_wrap"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_wrap()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
 <code class="descname">evaluate_wxf</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession.evaluate_wxf"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Evaluate <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wxf" title="wolframclient.evaluation.WolframLanguageSession.evaluate_wxf"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate_wxf()</span></code></a>
-asynchronously.</p>
+<dd><p>Evaluate an expression and return the WXF output asynchronously.</p>
 <p>This method is a coroutine.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">evaluate_wxf_future</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession.evaluate_wxf_future"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Evaluate an expression and return a future object.</p>
+<p>The future object result is the WXF serialization of the evaluated expression.
+See <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wxf" title="wolframclient.evaluation.WolframLanguageSession.evaluate_wxf"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_wxf()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">restart</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession.restart"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Restart a given evaluator by stopping it in case it was already started.</p>
 </dd></dl>
 
 <dl class="method">
@@ -700,50 +779,15 @@ asynchronously.</p>
 <dl class="method">
 <dt>
 <code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession.stop"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Gracefully stop the evaluator. Try to stop the evaluator, but wait for current evaluation to finish first.</p>
+<dd><p>Asynchronously stop the session (gracefully termination).</p>
+<p>This method is a coroutine.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">terminate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession.terminate"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Immediately stop the current session.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt>
-<em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframLanguageFutureSession</code><span class="sig-paren">(</span><em>kernel=None</em>, <em>consumer=None</em>, <em>initfile=None</em>, <em>in_socket=None</em>, <em>out_socket=None</em>, <em>kernel_loglevel=0</em>, <em>stdin=-1</em>, <em>stdout=-1</em>, <em>stderr=-1</em>, <em>inputform_string_evaluation=True</em>, <em>wxf_bytes_evaluation=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/futuresession.html#WolframLanguageFutureSession"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Evaluate expressions asynchronously and return Future instances.</p>
-<p>Asynchronous evaluations are backed by the <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#module-concurrent.futures" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">concurrent.futures</span></code></a> module, especially the <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> class.</p>
-<p>Contrary to <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageAsyncSession" title="wolframclient.evaluation.WolframLanguageAsyncSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframLanguageAsyncSession</span></code></a>, none of the methods of this class
-is a coroutine. Evaluation methods are synchronous; they start the evaluation as a background task in a thread, and immediately return
-a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> objects, that can later be awaited.</p>
-<dl class="method">
-<dt>
-<code class="descname">evaluate</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/futuresession.html#WolframLanguageFutureSession.evaluate"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Evaluate <a class="reference internal" href="../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate" title="wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate()</span></code></a>
-asynchronously and return a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> object.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="descname">evaluate_wrap</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/futuresession.html#WolframLanguageFutureSession.evaluate_wrap"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Evaluate <a class="reference internal" href="../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate_wrap" title="wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate_wrap"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate_wrap()</span></code></a>
-asynchronously and return a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> object.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="descname">evaluate_wxf</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/futuresession.html#WolframLanguageFutureSession.evaluate_wxf"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Evaluate <a class="reference internal" href="../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate_wxf" title="wolframclient.evaluation.kernel.kernelsession.WolframLanguageSession.evaluate_wxf"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate_wxf()</span></code></a>
-asynchronously and return a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> object.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="descname">terminate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/futuresession.html#WolframLanguageFutureSession.terminate"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Terminate the current session. This is a synchronous method.</p>
+<dd><p>Asynchronously terminate the session.</p>
+<p>This method is a coroutine.</p>
 </dd></dl>
 
 </dd></dl>
@@ -834,7 +878,7 @@ likely contains an error message.</p>
 <h2>Cloud API<a class="headerlink" href="#cloud-api" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt>
-<em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframCloudSession</code><span class="sig-paren">(</span><em>credentials=None</em>, <em>server=&lt;wolframclient.evaluation.cloud.server.WolframServer object&gt;</em>, <em>inputform_string_evaluation=True</em>, <em>oauth_session_class=&lt;class 'wolframclient.evaluation.cloud.oauth.OAuth1RequestsSyncSession'&gt;</em>, <em>xauth_session_class=&lt;class 'wolframclient.evaluation.cloud.oauth.XAuthRequestsSyncSession'&gt;</em>, <em>http_sessionclass=&lt;class 'requests.sessions.Session'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession"><span class="viewcode-link">[source]</span></a></dt>
+<em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframCloudSession</code><span class="sig-paren">(</span><em>credentials=None</em>, <em>server=None</em>, <em>inputform_string_evaluation=True</em>, <em>oauth_session_class=None</em>, <em>xauth_session_class=None</em>, <em>http_sessionclass=None</em>, <em>max_workers=4</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Represent a session to a given cloud enabling simple API call.</p>
 <p>This is the central class of the cloud evaluation package. It is initialized with a server instance
 representing a given cloud. By default a session targets the Wolfram public cloud.</p>
@@ -847,6 +891,7 @@ supports two forms of authentication:</p>
 <p>Calling an API is done through the method <a class="reference internal" href="../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.call" title="wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.call"><code class="xref py py-func docutils literal notranslate"><span class="pre">call()</span></code></a>
 which will return an instance of <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframAPIResponse" title="wolframclient.evaluation.result.WolframAPIResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframAPIResponse</span></code></a>.
 It is strongly advised to re-use a session to make multiple calls to mitigate the cost of initialization.</p>
+<p><cite>max_workers</cite> can be specified and is passed to the ThreadPoolExecutor used for future methods.</p>
 <dl class="method">
 <dt>
 <code class="descname">call</code><span class="sig-paren">(</span><em>api</em>, <em>input_parameters={}</em>, <em>files={}</em>, <em>target_format='wl'</em>, <em>permissions_key=None</em>, <em>**kwargv</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.call"><span class="viewcode-link">[source]</span></a></dt>
@@ -874,6 +919,19 @@ and get access to a given resource.</p>
 
 <dl class="method">
 <dt>
+<code class="descname">call_future</code><span class="sig-paren">(</span><em>api</em>, <em>input_parameters={}</em>, <em>target_format='wl'</em>, <em>permissions_key=None</em>, <em>**kwargv</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.call_future"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Call a given API asynchronously. Returns a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">concurrent.futures.Future</span></code></a> object.</p>
+<p>See <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudSession.call" title="wolframclient.evaluation.WolframCloudSession.call"><code class="xref py py-func docutils literal notranslate"><span class="pre">WolframCloudSession.call()</span></code></a> for more details about input parameters.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">duplicate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.duplicate"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Build a new instance using the same configuration as the one being duplicated.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
 <code class="descname">evaluate</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.evaluate"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Send <cite>expr</cite> to the cloud for evaluation, return the result.</p>
 <p><cite>expr</cite> can be a Python object serializable by <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a>,
@@ -882,8 +940,24 @@ or a the string InputForm of an expression to evaluate.</p>
 
 <dl class="method">
 <dt>
+<code class="descname">evaluate_future</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.evaluate_future"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Send <cite>expr</cite> to the cloud for asynchronous evaluation.</p>
+<p>Returns a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">concurrent.futures.Future</span></code></a> object.</p>
+<p><cite>expr</cite> can be a Python object serializable by <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a>,
+or a the string InputForm of an expression to evaluate.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
 <code class="descname">evaluate_wrap</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.evaluate_wrap"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Similar to <a class="reference internal" href="../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate" title="wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate()</span></code></a> but return the result as a <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframEvaluationJSONResponse" title="wolframclient.evaluation.result.WolframEvaluationJSONResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframEvaluationJSONResponse</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">evaluate_wrap_future</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.evaluate_wrap_future"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Asynchronously call <cite>evaluate_wrap</cite>.</p>
+<p>Returns a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">concurrent.futures.Future</span></code></a> object.</p>
 </dd></dl>
 
 <dl class="method">
@@ -921,6 +995,12 @@ or a the string InputForm of an expression to evaluate.</p>
 <dt>
 <code class="descname">perform</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframAPICall.perform"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Make the API call, return the result.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">perform_future</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframAPICall.perform_future"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Make the API call asynchronously, return a future object.</p>
 </dd></dl>
 
 </dd></dl>
@@ -963,7 +1043,7 @@ or a the string InputForm of an expression to evaluate.</p>
 
 <dl class="class">
 <dt>
-<em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframCloudAsyncSession</code><span class="sig-paren">(</span><em>credentials=None</em>, <em>server=&lt;wolframclient.evaluation.cloud.server.WolframServer object&gt;</em>, <em>loop=None</em>, <em>inputform_string_evaluation=True</em>, <em>oauth_session_class=&lt;class 'wolframclient.evaluation.cloud.asyncoauth.OAuth1AIOHttpAsyncSession'&gt;</em>, <em>xauth_session_class=&lt;class 'wolframclient.evaluation.cloud.asyncoauth.XAuthAIOHttpAsyncSession'&gt;</em>, <em>http_sessionclass=&lt;class 'aiohttp.client.ClientSession'&gt;</em>, <em>ssl_context_class=&lt;class 'ssl.SSLContext'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/asynccloudsession.html#WolframCloudAsyncSession"><span class="viewcode-link">[source]</span></a></dt>
+<em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframCloudAsyncSession</code><span class="sig-paren">(</span><em>credentials=None</em>, <em>server=None</em>, <em>loop=None</em>, <em>inputform_string_evaluation=True</em>, <em>oauth_session_class=None</em>, <em>xauth_session_class=None</em>, <em>http_sessionclass=None</em>, <em>ssl_context_class=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/asynccloudsession.html#WolframCloudAsyncSession"><span class="viewcode-link">[source]</span></a></dt>
 <dd><dl class="method">
 <dt>
 <code class="descname">call</code><span class="sig-paren">(</span><em>api</em>, <em>input_parameters={}</em>, <em>files={}</em>, <em>target_format='wl'</em>, <em>permissions_key=None</em>, <em>**kwargv</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/asynccloudsession.html#WolframCloudAsyncSession.call"><span class="viewcode-link">[source]</span></a></dt>
@@ -987,6 +1067,12 @@ of the parameters associated to their value.</p>
 </div>
 <p>It’s possible to pass a <code class="docutils literal notranslate"><span class="pre">PermissionsKey</span></code> to the server along side to the query,
 and get access to a given resource.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">duplicate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/asynccloudsession.html#WolframCloudAsyncSession.duplicate"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Build a new instance using the same configuration as the one being duplicated.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1063,7 +1149,7 @@ and will automatically serialize to a failure box when evaluated in a Wolfram De
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper"><div class='overview toctree-l1'>
     <a class="reference internal  docpages/public_api" 
-        href="overview.html">Overview</a>
+        href="../index.html">Overview</a>
 </div>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation and prerequisites</a><ul>
@@ -1073,7 +1159,7 @@ and will automatically serialize to a failure box when evaluated in a Wolfram De
 </li>
 <li class="toctree-l1"><a class="reference internal" href="basic_usages.html">Basic Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="basic_usages.html#expression-representation">Expression Representation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="basic_usages.html#evaluating-expressions">Evaluating Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_usages.html#expression-evaluation">Expression Evaluation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="basic_usages.html#wolfram-cloud-interactions">Wolfram Cloud Interactions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="basic_usages.html#serialization">Serialization</a></li>
 </ul>
@@ -1096,6 +1182,10 @@ and will automatically serialize to a failure box when evaluated in a Wolfram De
 </li>
 </ul>
 
+<div class='overview toctree-l1'>
+    <a class="reference internal  docpages/public_api" 
+        href="toc.html">Table Of Contents</a>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <div class="searchformwrapper">

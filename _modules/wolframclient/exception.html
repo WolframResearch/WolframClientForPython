@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.exception &#8212; Wolfram Client Library for Python 1.0.0.dev4 documentation</title>
+    <title>wolframclient.exception &#8212; Wolfram Client Library for Python 1.0.0.dev5 documentation</title>
     <link rel="stylesheet" href="../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.0.dev4</span>
+                        <span class='header right navigation darkgrey'>v 1.0.0.dev5</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -94,7 +94,10 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Failed to decode request body.&#39;</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1">&gt;: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1">&gt;: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1">&gt;: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="AuthenticationException"><a class="viewcode-back" href="../../docpages/public_api.html#wolframclient.exception.AuthenticationException">[docs]</a><span class="k">class</span> <span class="nc">AuthenticationException</span><span class="p">(</span><span class="n">RequestException</span><span class="p">):</span>
@@ -120,8 +123,9 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">error</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;WolframEvaluationException&lt;error=</span><span class="si">%s</span><span class="s1">, expr=</span><span class="si">%s</span><span class="s1">, messages=</span><span class="si">%i</span><span class="s1">&gt;:&#39;</span> <span class="o">%</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">,</span> <span class="n">str_trim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">messages</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1"> error=</span><span class="si">%s</span><span class="s1">, expr=</span><span class="si">%s</span><span class="s1">, messages=</span><span class="si">%i</span><span class="s1">&gt;:&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">,</span> <span class="n">str_trim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">),</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">messages</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="SocketException"><a class="viewcode-back" href="../../docpages/public_api.html#wolframclient.exception.SocketException">[docs]</a><span class="k">class</span> <span class="nc">SocketException</span><span class="p">(</span><span class="n">WolframLanguageException</span><span class="p">):</span>
@@ -144,7 +148,7 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper"><div class='overview toctree-l1'>
     <a class="reference internal  _modules/wolframclient/exception" 
-        href="../../docpages/overview.html">Overview</a>
+        href="../../index.html">Overview</a>
 </div>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../docpages/install.html">Installation and prerequisites</a><ul>
@@ -154,7 +158,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../docpages/basic_usages.html">Basic Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../docpages/basic_usages.html#expression-representation">Expression Representation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../docpages/basic_usages.html#evaluating-expressions">Evaluating Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../docpages/basic_usages.html#expression-evaluation">Expression Evaluation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../docpages/basic_usages.html#wolfram-cloud-interactions">Wolfram Cloud Interactions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../docpages/basic_usages.html#serialization">Serialization</a></li>
 </ul>
@@ -177,6 +181,10 @@
 </li>
 </ul>
 
+<div class='overview toctree-l1'>
+    <a class="reference internal  _modules/wolframclient/exception" 
+        href="../../docpages/toc.html">Table Of Contents</a>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <div class="searchformwrapper">

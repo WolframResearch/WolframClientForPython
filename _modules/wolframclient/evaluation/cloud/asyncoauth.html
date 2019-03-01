@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.evaluation.cloud.asyncoauth &#8212; Wolfram Client Library for Python 1.0.0.dev4 documentation</title>
+    <title>wolframclient.evaluation.cloud.asyncoauth &#8212; Wolfram Client Library for Python 1.0.0.dev5 documentation</title>
     <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.0.dev4</span>
+                        <span class='header right navigation darkgrey'>v 1.0.0.dev5</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -77,15 +77,12 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">ssl</span>
-
-<span class="kn">from</span> <span class="nn">aiohttp</span> <span class="k">import</span> <span class="n">FormData</span><span class="p">,</span> <span class="n">StringPayload</span>
 
 <span class="kn">from</span> <span class="nn">wolframclient.evaluation.cloud.base</span> <span class="k">import</span> <span class="p">(</span><span class="n">OAuthAsyncSessionBase</span><span class="p">,</span>
                                                  <span class="n">UserIDPassword</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">wolframclient.exception</span> <span class="k">import</span> <span class="n">AuthenticationException</span>
 <span class="kn">from</span> <span class="nn">wolframclient.utils</span> <span class="k">import</span> <span class="n">six</span>
-<span class="kn">from</span> <span class="nn">wolframclient.utils.api</span> <span class="k">import</span> <span class="n">oauth</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils.api</span> <span class="k">import</span> <span class="n">aiohttp</span><span class="p">,</span> <span class="n">oauth</span><span class="p">,</span> <span class="n">ssl</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -99,16 +96,16 @@
                  <span class="n">consumer_key</span><span class="p">,</span>
                  <span class="n">consumer_secret</span><span class="p">,</span>
                  <span class="n">signature_method</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">client_class</span><span class="o">=</span><span class="n">oauth</span><span class="o">.</span><span class="n">Client</span><span class="p">,</span>
-                 <span class="n">ssl_context_class</span><span class="o">=</span><span class="n">ssl</span><span class="o">.</span><span class="n">SSLContext</span><span class="p">):</span>
+                 <span class="n">client_class</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">ssl_context_class</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">server</span><span class="p">,</span>
             <span class="n">consumer_key</span><span class="p">,</span>
             <span class="n">consumer_secret</span><span class="p">,</span>
             <span class="n">signature_method</span><span class="o">=</span><span class="n">signature_method</span><span class="p">,</span>
-            <span class="n">client_class</span><span class="o">=</span><span class="n">client_class</span><span class="p">)</span>
+            <span class="n">client_class</span><span class="o">=</span><span class="n">client_class</span> <span class="ow">or</span> <span class="n">oauth</span><span class="o">.</span><span class="n">Client</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span> <span class="o">=</span> <span class="n">http_session</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ssl_context_class</span> <span class="o">=</span> <span class="n">ssl_context_class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ssl_context_class</span> <span class="o">=</span> <span class="n">ssl_context_class</span> <span class="ow">or</span> <span class="n">ssl</span><span class="o">.</span><span class="n">SSLContext</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">certificate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ssl_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ssl_context_class</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ssl_context</span><span class="o">.</span><span class="n">load_verify_locations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">certificate</span><span class="p">)</span>
@@ -127,8 +124,9 @@
         <span class="n">sign_body</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="c1"># Payload Instances are not encoded (e.g: octet stream). Only FormData are.</span>
-        <span class="n">form_encoded</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">FormData</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">is_multipart</span>
-        <span class="n">multipart</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">FormData</span><span class="p">)</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">is_multipart</span>
+        <span class="n">form_encoded</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+                                  <span class="n">aiohttp</span><span class="o">.</span><span class="n">FormData</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">is_multipart</span>
+        <span class="n">multipart</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">FormData</span><span class="p">)</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">is_multipart</span>
         <span class="c1"># only form encoded body are signed.</span>
         <span class="c1"># Non multipart FormData are url encoded: need signed request. We need to get back the body</span>
         <span class="c1"># as a string.</span>
@@ -152,7 +150,7 @@
         <span class="k">if</span> <span class="n">multipart</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">form_encoded</span><span class="p">:</span>
             <span class="n">body</span> <span class="o">=</span> <span class="n">data</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">body</span> <span class="o">=</span> <span class="n">StringPayload</span><span class="p">(</span><span class="n">signed_body</span><span class="p">)</span>
+            <span class="n">body</span> <span class="o">=</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">StringPayload</span><span class="p">(</span><span class="n">signed_body</span><span class="p">)</span>
         <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
             <span class="n">method</span><span class="p">,</span> <span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">req_headers</span><span class="p">,</span> <span class="n">ssl</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ssl_context</span><span class="p">)</span></div>
 
@@ -251,10 +249,6 @@
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;xauth authentication of user </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
                          <span class="bp">self</span><span class="o">.</span><span class="n">xauth_credentials</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
         <span class="n">client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_class</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">consumer_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer_secret</span><span class="p">)</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;x_auth_username&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xauth_credentials</span><span class="o">.</span><span class="n">user</span>
-        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;x_auth_password&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xauth_credentials</span><span class="o">.</span><span class="n">password</span>
-        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;x_auth_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;client_auth&quot;</span>
 
         <span class="c1"># avoid dumping password in log files.</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
@@ -263,7 +257,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">access_token_endpoint</span><span class="p">,</span>
             <span class="s1">&#39;POST&#39;</span><span class="p">,</span>
             <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DEFAULT_CONTENT_TYPE</span><span class="p">,</span>
-            <span class="n">body</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">body</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;x_auth_username&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">xauth_credentials</span><span class="o">.</span><span class="n">user</span><span class="p">,</span>
+                <span class="s2">&quot;x_auth_password&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">xauth_credentials</span><span class="o">.</span><span class="n">password</span><span class="p">,</span>
+                <span class="s2">&quot;x_auth_mode&quot;</span><span class="p">:</span> <span class="s2">&quot;client_auth&quot;</span><span class="p">,</span>
+            <span class="p">})</span>
 
         <span class="n">logging</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">NOTSET</span><span class="p">)</span>
 
@@ -278,10 +276,7 @@
 
 <span class="k">class</span> <span class="nc">_AsyncBytesIO</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_bytes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">initial_bytes</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">six</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">initial_bytes</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">six</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">six</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">initial_bytes</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -297,7 +292,7 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper"><div class='overview toctree-l1'>
     <a class="reference internal  _modules/wolframclient/evaluation/cloud/asyncoauth" 
-        href="../../../../docpages/overview.html">Overview</a>
+        href="../../../../index.html">Overview</a>
 </div>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../docpages/install.html">Installation and prerequisites</a><ul>
@@ -307,7 +302,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../docpages/basic_usages.html">Basic Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#expression-representation">Expression Representation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#evaluating-expressions">Evaluating Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#expression-evaluation">Expression Evaluation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#wolfram-cloud-interactions">Wolfram Cloud Interactions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../docpages/basic_usages.html#serialization">Serialization</a></li>
 </ul>
@@ -330,6 +325,10 @@
 </li>
 </ul>
 
+<div class='overview toctree-l1'>
+    <a class="reference internal  _modules/wolframclient/evaluation/cloud/asyncoauth" 
+        href="../../../../docpages/toc.html">Table Of Contents</a>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <div class="searchformwrapper">

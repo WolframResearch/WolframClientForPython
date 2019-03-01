@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.evaluation.pool &#8212; Wolfram Client Library for Python 1.0.0.dev4 documentation</title>
+    <title>wolframclient.evaluation.pool &#8212; Wolfram Client Library for Python 1.0.0.dev5 documentation</title>
     <link rel="stylesheet" href="../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.0.dev4</span>
+                        <span class='header right navigation darkgrey'>v 1.0.0.dev5</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -149,7 +149,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_queue</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Queue</span><span class="p">(</span><span class="n">load_factor</span> <span class="o">*</span> <span class="n">poolsize</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">async_language_session_class</span> <span class="o">=</span> <span class="n">async_language_session_class</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_evaluators</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">async_evaluators</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">async_evaluators</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">async_evaluators</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">async_evaluators</span><span class="p">,</span>
+                                                  <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">poolsize</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_add_evaluator</span><span class="p">(</span><span class="n">async_evaluators</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -352,14 +353,17 @@
         <span class="k">return</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">tasks</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;WolframEvaluatorPool&lt;</span><span class="si">%i</span><span class="s1">/</span><span class="si">%i</span><span class="s1"> started evaluators, cumulating </span><span class="si">%i</span><span class="s1"> evaluations&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span>
-            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_started_tasks</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">requestedsize</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_count</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%i</span><span class="s1">/</span><span class="si">%i</span><span class="s1"> started evaluators, cumulating </span><span class="si">%i</span><span class="s1"> evaluations&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_started_tasks</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">requestedsize</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_count</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_started_tasks</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="parallel_evaluate"><a class="viewcode-back" href="../../../docpages/public_api.html#wolframclient.evaluation.pool.parallel_evaluate">[docs]</a><span class="k">def</span> <span class="nf">parallel_evaluate</span><span class="p">(</span><span class="n">expressions</span><span class="p">,</span> <span class="n">evaluator_spec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_evaluators</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+<div class="viewcode-block" id="parallel_evaluate"><a class="viewcode-back" href="../../../docpages/public_api.html#wolframclient.evaluation.pool.parallel_evaluate">[docs]</a><span class="k">def</span> <span class="nf">parallel_evaluate</span><span class="p">(</span><span class="n">expressions</span><span class="p">,</span>
+                      <span class="n">evaluator_spec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                      <span class="n">max_evaluators</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
                       <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Start a kernel pool and evaluate the expressions in parallel. </span>
 <span class="sd">    </span>
@@ -387,7 +391,7 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper"><div class='overview toctree-l1'>
     <a class="reference internal  _modules/wolframclient/evaluation/pool" 
-        href="../../../docpages/overview.html">Overview</a>
+        href="../../../index.html">Overview</a>
 </div>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../docpages/install.html">Installation and prerequisites</a><ul>
@@ -397,7 +401,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../docpages/basic_usages.html">Basic Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../docpages/basic_usages.html#expression-representation">Expression Representation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../docpages/basic_usages.html#evaluating-expressions">Evaluating Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../docpages/basic_usages.html#expression-evaluation">Expression Evaluation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../docpages/basic_usages.html#wolfram-cloud-interactions">Wolfram Cloud Interactions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../docpages/basic_usages.html#serialization">Serialization</a></li>
 </ul>
@@ -420,6 +424,10 @@
 </li>
 </ul>
 
+<div class='overview toctree-l1'>
+    <a class="reference internal  _modules/wolframclient/evaluation/pool" 
+        href="../../../docpages/toc.html">Table Of Contents</a>
+</div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <div class="searchformwrapper">

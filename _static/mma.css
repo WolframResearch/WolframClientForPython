@@ -2,6 +2,9 @@
  * Copyright (c) 2016 rsmenon
  * Licensed under the MIT License (https://opensource.org/licenses/MIT)
  */
+/*  
+  dorianb: Update colors using the Wolfram Cloud color scheme.
+*/
 .highlight-wl .highlight .c,
 .wlcode .c,
 .language-mathematica .c,
@@ -10,7 +13,7 @@
 .language-wl .c,
 .language-wolfram .c,
 .language-wolfram-language .c {
-  color: #aaaaaa;
+  color: #999999;
   font-style: italic;
 }
 .highlight-wl .highlight .nb,
@@ -21,7 +24,7 @@
 .language-wl .nb,
 .language-wolfram .nb,
 .language-wolfram-language .nb {
-  color: #353f42;
+  color: #000;
 }
 .highlight-wl .highlight .ne,
 .wlcode .ne,
@@ -31,7 +34,7 @@
 .language-wl .ne,
 .language-wolfram .ne,
 .language-wolfram-language .ne {
-  color: #ab466a;
+  color: #dd1100;
 }
 .highlight-wl .highlight .nf,
 .wlcode .nf,
@@ -41,7 +44,7 @@
 .language-wl .nf,
 .language-wolfram .nf,
 .language-wolfram-language .nf {
-  color: #6E8413;
+  color: #438958;
   font-style: italic;
 }
 .highlight-wl .highlight .nt,
@@ -52,7 +55,7 @@
 .language-wl .nt,
 .language-wolfram .nt,
 .language-wolfram-language .nt {
-  color: #6E8413;
+  color: #438958;
   font-style: italic;
 }
 .highlight-wl .highlight .nv,
@@ -63,7 +66,7 @@
 .language-wl .nv,
 .language-wolfram .nv,
 .language-wolfram-language .nv {
-  color: #4b78b1;
+  color: #002cc3;
 }
 .highlight-wl .highlight .o,
 .wlcode .o,
@@ -73,7 +76,7 @@
 .language-wl .o,
 .language-wolfram .o,
 .language-wolfram-language .o {
-  color: #555555;
+  color: #000;
 }
 .highlight-wl .highlight .m,
 .wlcode .m,
@@ -83,7 +86,7 @@
 .language-wl .m,
 .language-wolfram .m,
 .language-wolfram-language .m {
-  color: #353f42;
+  color: #000;
 }
 .highlight-wl .highlight .p,
 .wlcode .p,
@@ -93,7 +96,7 @@
 .language-wl .p,
 .language-wolfram .p,
 .language-wolfram-language .p {
-  color: #555555;
+  color: #000;
 }
 .highlight-wl .highlight .s,
 .wlcode .s,
@@ -103,7 +106,7 @@
 .language-wl .s,
 .language-wolfram .s,
 .language-wolfram-language .s {
-  color: #555555;
+  color: #666666;
 }
 .highlight-wl .highlight .vc,
 .wlcode .vc,
@@ -113,7 +116,7 @@
 .language-wl .vc,
 .language-wolfram .vc,
 .language-wolfram-language .vc {
-  color: #5d9066;
+  color: #438958;
 }
 .highlight-wl .highlight .err,
 .wlcode .err,
@@ -123,5 +126,5 @@
 .language-wl .err,
 .language-wolfram .err,
 .language-wolfram-language .err {
-  color: #555555;
+  color: #666666;
 }
