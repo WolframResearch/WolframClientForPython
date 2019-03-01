@@ -9,7 +9,7 @@ import unittest
 from wolframclient.evaluation.cloud.base import (SecuredAuthenticationKey,
                                                  UserIDPassword)
 from wolframclient.evaluation.cloud.cloudsession import (
-    WolframAPICall, WolframCloudFutureSession, WolframCloudSession,
+    WolframAPICall, WolframCloudSession,
     encode_api_inputs)
 from wolframclient.exception import (AuthenticationException,
                                      WolframLanguageException)
@@ -45,8 +45,6 @@ class TestCaseSettings(BaseTestCase):
         cls.server = server
         cls.cloud_session = WolframCloudSession(
             credentials=cls.sak, server=cls.server)
-        cls.cloud_session_future = WolframCloudFutureSession(
-            credentials=cls.sak, server=cls.server)
 
     @classmethod
     def tearDownClass(cls):
@@ -56,9 +54,7 @@ class TestCaseSettings(BaseTestCase):
     def tearDownCloudSession(cls):
         if cls.cloud_session is not None:
             cls.cloud_session.stop()
-        if cls.cloud_session_future is not None:
-            cls.cloud_session_future.terminate()
-
+        
     def get_data_path(self, filename):
         """Return full path of a file in ./data/directory"""
         current_file_dir = os.path.dirname(__file__)
@@ -214,17 +210,28 @@ class TestCase(TestCaseSettings):
         self.assertEqual(
             f([[1]], 1, Padding=1), [[1, 1, 1], [1, 1, 1], [1, 1, 1]])
 
-    def test_evaluate_string(self):
-        res1 = self.cloud_session_future.evaluate('Range[1]')
-        res2 = self.cloud_session_future.evaluate('Range[2]')
+    def test_evaluate_strings_future(self):
+        res1 = self.cloud_session.evaluate_future('Range[1]')
+        res2 = self.cloud_session.evaluate_future('Range[2]')
 
         self.assertEqual(res1.result(), [1])
         self.assertEqual(res2.result(), [1, 2])
 
-    def test_evaluate_string(self):
-        res = self.cloud_session_future.evaluate('Range[3]')
+    def test_evaluate_range_future(self):
+        res = self.cloud_session.evaluate_future('Range[3]')
         self.assertEqual(res.result(), [1, 2, 3])
 
+    def test_duplicate(self):
+        session=None
+        try:
+            session = self.cloud_session.duplicate()
+            res = session.evaluate('1+1')
+            self.assertEqual(res, 2)
+            res = session.evaluate_future('2+2')
+            self.assertEqual(res.result(), 4)
+        finally:
+            if session:
+                session.terminate()
 
 # inputform evaluation option disabled
 
@@ -240,19 +247,18 @@ class TestCase(TestCaseSettings):
             self.assertEqual(res, WLFunction('f', 'abc'))
 
     def test_evaluate_future_string_disable(self):
-        with WolframCloudFutureSession(
+        with WolframCloudSession(
                 credentials=self.sak,
                 server=self.server,
                 inputform_string_evaluation=False) as session:
-            res = session.evaluate('Range[3]')
+            res = session.evaluate_future('Range[3]')
             self.assertEqual(res.result(), 'Range[3]')
-            func = session.function('f')
+            func = session.function_future('f')
             res = func('abc')
             self.assertEqual(res.result(), WLFunction('f', 'abc'))
 
     def test_stop_start_restart_status(self):
         self._stop_start_restart_status(WolframCloudSession)
-        self._stop_start_restart_status(WolframCloudFutureSession)
 
     def _stop_start_restart_status(self, eval_class):
         session = None
@@ -401,3 +407,22 @@ class TestWolframAPI(TestCaseSettings):
         result = apicall.perform().get()
         res = json.loads(result)
         self.assertListEqual(res, ['abc', [32, 2], 10])
+
+    def test_wolfram_api_call_async(self):
+        api = (self.api_owner, 'api/private/stringreverse')
+        apicall = WolframAPICall(self.cloud_session, api)
+        apicall.set_parameter('str', 'abcde')
+        future = apicall.perform_future()
+        res = future.result()
+        self.assertEqual('"edcba"', force_text(res.get()))
+
+    def test_wolfram_api_from_session(self):
+        api = (self.api_owner, 'api/private/stringreverse')
+        apicall = self.cloud_session.wolfram_api_call(api)
+        apicall.set_parameter('str', 'abcde')
+        future = apicall.perform_future()
+        res = future.result()
+        self.assertEqual('"edcba"', force_text(res.get()))
+
+        res = apicall.perform()
+        self.assertEqual('"edcba"', force_text(res.get()))

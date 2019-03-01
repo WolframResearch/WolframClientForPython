@@ -173,6 +173,10 @@ class WolframAPICallBase(object):
     def perform(self, **kwargs):
         """Make the API call, return the result."""
         raise NotImplementedError
+    
+    def perform_future(self, **kwargs):
+        """Make the API call asynchronously, return a future object."""
+        raise NotImplementedError
 
     def __repr__(self):
         return '<%s api=%s>' % (
