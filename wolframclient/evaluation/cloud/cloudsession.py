@@ -23,9 +23,7 @@ from wolframclient.utils.url import evaluation_api_url, user_api_url
 
 logger = logging.getLogger(__name__)
 
-__all__ = [
-    'WolframCloudSession', 'WolframAPICall'
-]
+__all__ = ['WolframCloudSession', 'WolframAPICall']
 
 
 class WolframCloudSession(WolframEvaluator):
@@ -48,13 +46,13 @@ class WolframCloudSession(WolframEvaluator):
     """
 
     def __init__(self,
-                credentials=None,
-                server=None,
-                inputform_string_evaluation=True,
-                oauth_session_class=None,
-                xauth_session_class=None,
-                http_sessionclass=None,
-                max_workers=4):
+                 credentials=None,
+                 server=None,
+                 inputform_string_evaluation=True,
+                 oauth_session_class=None,
+                 xauth_session_class=None,
+                 http_sessionclass=None,
+                 max_workers=4):
         super().__init__(
             inputform_string_evaluation=inputform_string_evaluation)
         self.server = server or WOLFRAM_PUBLIC_CLOUD_SERVER
@@ -78,8 +76,7 @@ class WolframCloudSession(WolframEvaluator):
             oauth_session_class=self.oauth_session_class,
             xauth_session_class=self.xauth_session_class,
             http_sessionclass=self.http_sessionclass,
-            max_workers=self._max_workers
-        )
+            max_workers=self._max_workers)
 
     @property
     def started(self):
@@ -249,11 +246,11 @@ class WolframCloudSession(WolframEvaluator):
         return self._pool
 
     def call_future(self,
-             api,
-             input_parameters={},
-             target_format='wl',
-             permissions_key=None,
-             **kwargv):
+                    api,
+                    input_parameters={},
+                    target_format='wl',
+                    permissions_key=None,
+                    **kwargv):
         """Call a given API asynchronously. Returns a :class:`concurrent.futures.Future` object.
 
         See :func:`WolframCloudSession.call` for more details about input parameters.
@@ -290,7 +287,7 @@ class WolframCloudSession(WolframEvaluator):
 
 
 # class WolframCloudFutureSession(WolframCloudSession):
-#     """ Am asynchronous Wolfram cloud session wrapping API calls and cloud evaluations 
+#     """ Am asynchronous Wolfram cloud session wrapping API calls and cloud evaluations
 #     in future objects.
 
 #     `max_workers` can be specified and is passed to the ThreadPoolExecutor.
@@ -379,7 +376,7 @@ class WolframAPICall(WolframAPICallBase):
             files=self.files,
             permissions_key=self.permission_key,
             **kwargs)
-        
+
     def perform_future(self, **kwargs):
         return self.target.call_future(
             self.api,
@@ -402,9 +399,7 @@ def _encode_inputs_as_wxf(inputs, multipart, **kwargs):
 def _encode_inputs_as_json(inputs, multipart, **kwargs):
     for name, value in inputs.items():
         yield '%s__json' % name, _to_multipart(
-            name,
-            json.dumps(value, **kwargs),
-            multipart=multipart)
+            name, json.dumps(value, **kwargs), multipart=multipart)
 
 
 @to_dict

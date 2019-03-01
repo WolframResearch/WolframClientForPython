@@ -38,8 +38,9 @@ class WolframServer(object):
 
     def __repr__(self):
         return '<%s: cloudbase=%s, request_token=%s, access_token=%s, certificate=%s, xauth support=%s>' % (
-            self.__class__.__name__, self.cloudbase, self.request_token_endpoint, self.access_token_endpoint, self.certificate, self.is_xauth())
-
+            self.__class__.__name__, self.cloudbase,
+            self.request_token_endpoint, self.access_token_endpoint,
+            self.certificate, self.is_xauth())
 
 
 # A built-in instance representing the Wolfram public Cloud.

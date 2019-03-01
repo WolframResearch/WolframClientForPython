@@ -10,7 +10,6 @@ from wolframclient.utils.tests import TestCase as BaseTestCase
 
 
 class TestCase(BaseTestCase):
-    
     def test_composition(self):
         self.assertEqual(composition()(1), 1)
         self.assertEqual(composition(lambda s: s + 2)(1), 3)

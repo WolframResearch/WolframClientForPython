@@ -110,6 +110,7 @@ class WolframEvaluator(WolframEvaluatorBase):
         is evaluated using the underlying Wolfram evaluator.
         """
         normalized_expr = self.normalize_input(expr)
+
         def inner(*args, **opts):
             return self.evaluate(WLFunction(normalized_expr, *args, **opts))
 
@@ -118,11 +119,12 @@ class WolframEvaluator(WolframEvaluatorBase):
     def function_future(self, expr):
         """Return a python function from a Wolfram Language function `expr`, that evaluates asynchronously, returning a future object. """
         normalized_expr = self.normalize_input(expr)
+
         def inner(*args, **opts):
-            return self.evaluate_future(WLFunction(normalized_expr, *args, **opts))
+            return self.evaluate_future(
+                WLFunction(normalized_expr, *args, **opts))
 
         return inner
-
 
     def __enter__(self):
         """Evaluator must be usable with context managers."""
@@ -153,8 +155,7 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
 
     async def evaluate_many(self, expr_list):
         return await asyncio.gather(
-            *map(self.evaluate, expr_list), 
-            loop=self._loop)
+            *map(self.evaluate, expr_list), loop=self._loop)
 
     async def evaluate_wrap(self, expr):
         raise NotImplementedError

@@ -4,10 +4,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import asyncio
 import functools
-from operator import methodcaller
 
-from wolframclient.utils.decorators import to_tuple
-from wolframclient.utils.functional import first, iterate, map
+from wolframclient.utils.functional import first, iterate
 
 
 def run_in_loop(cor, loop=None):

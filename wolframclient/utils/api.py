@@ -156,12 +156,10 @@ aiohttp = API(
     RouteTableDef='aiohttp.web.RouteTableDef',
     Application='aiohttp.web.Application',
     run_app='aiohttp.web.run_app',
-    BytesPayload='aiohttp.BytesPayload', 
-    ClientSession='aiohttp.ClientSession', 
-    FormData='aiohttp.FormData', 
-    StringPayload='aiohttp.StringPayload', 
+    BytesPayload='aiohttp.BytesPayload',
+    ClientSession='aiohttp.ClientSession',
+    FormData='aiohttp.FormData',
+    StringPayload='aiohttp.StringPayload',
 )
 
-ssl = API(
-    SSLContext='ssl.SSLContext',
-)
+ssl = API(SSLContext='ssl.SSLContext', )

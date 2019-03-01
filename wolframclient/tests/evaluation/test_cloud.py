@@ -9,8 +9,7 @@ import unittest
 from wolframclient.evaluation.cloud.base import (SecuredAuthenticationKey,
                                                  UserIDPassword)
 from wolframclient.evaluation.cloud.cloudsession import (
-    WolframAPICall, WolframCloudSession,
-    encode_api_inputs)
+    WolframAPICall, WolframCloudSession, encode_api_inputs)
 from wolframclient.exception import (AuthenticationException,
                                      WolframLanguageException)
 from wolframclient.language import wl
@@ -54,7 +53,7 @@ class TestCaseSettings(BaseTestCase):
     def tearDownCloudSession(cls):
         if cls.cloud_session is not None:
             cls.cloud_session.stop()
-        
+
     def get_data_path(self, filename):
         """Return full path of a file in ./data/directory"""
         current_file_dir = os.path.dirname(__file__)
@@ -222,7 +221,7 @@ class TestCase(TestCaseSettings):
         self.assertEqual(res.result(), [1, 2, 3])
 
     def test_duplicate(self):
-        session=None
+        session = None
         try:
             session = self.cloud_session.duplicate()
             res = session.evaluate('1+1')
@@ -232,6 +231,7 @@ class TestCase(TestCaseSettings):
         finally:
             if session:
                 session.terminate()
+
 
 # inputform evaluation option disabled
 
@@ -320,7 +320,8 @@ class TestCase(TestCaseSettings):
 
     def test_encode_empty_dict(self):
         for target_format in ('wl', 'json', 'wxf'):
-            self.assertEqual(encode_api_inputs({}, target_format=target_format), {})
+            self.assertEqual(
+                encode_api_inputs({}, target_format=target_format), {})
 
     def test_encode_wl(self):
         encoded = encode_api_inputs({'param1': {'k': [1, 2]}, 'param2': 'foo'})

@@ -5,6 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.utils import six
 from wolframclient.utils.api import os
 
+
 def explore_paths(*paths):
     highest_version = -1
     best_path = None
@@ -23,6 +24,7 @@ def explore_paths(*paths):
     if best_path:
         yield best_path
 
+
 def installation_directories():
     env = os.environ.get('WOLFRAM_INSTALLATION_DIRECTORY', None)
     if env:
@@ -30,21 +32,19 @@ def installation_directories():
 
     if six.WINDOWS:
         for p in explore_paths(
-            'C:\\Program Files\\Wolfram Research\\Wolfram Desktop',
-            'C:\\Program Files\\Wolfram Research\\Mathematica'
-            ):
+                'C:\\Program Files\\Wolfram Research\\Wolfram Desktop',
+                'C:\\Program Files\\Wolfram Research\\Mathematica'):
             yield p
 
     elif six.LINUX:
-        for p in explore_paths(
-            '/usr/local/Wolfram/Desktop'
-            '/usr/local/Wolfram/Mathematica'
-            ):
+        for p in explore_paths('/usr/local/Wolfram/Desktop'
+                               '/usr/local/Wolfram/Mathematica'):
             yield p
 
     elif six.MACOS:
         yield '/Applications/Wolfram Desktop.app/Contents'
         yield '/Applications/Mathematica.app/Contents'
+
 
 def exe_path():
     if six.WINDOWS:
@@ -53,6 +53,7 @@ def exe_path():
         return 'Executables/WolframKernel'
     elif six.MACOS:
         return 'MacOS/WolframKernel'
+
 
 def find_default_kernel_path():
     """ Look for the most recent installed kernel. """

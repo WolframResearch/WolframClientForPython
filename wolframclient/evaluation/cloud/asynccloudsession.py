@@ -4,9 +4,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
 
-
-from wolframclient.utils.api import aiohttp, ssl
-
 from wolframclient.evaluation.base import WolframAsyncEvaluator
 from wolframclient.evaluation.cloud.asyncoauth import \
     OAuth1AIOHttpAsyncSession as OAuthAsyncSession
@@ -19,6 +16,7 @@ from wolframclient.evaluation.result import (WolframAPIResponseBuilder,
 from wolframclient.exception import AuthenticationException
 from wolframclient.serializers import export
 from wolframclient.utils import six
+from wolframclient.utils.api import aiohttp, ssl
 from wolframclient.utils.url import evaluation_api_url, user_api_url
 
 logger = logging.getLogger(__name__)

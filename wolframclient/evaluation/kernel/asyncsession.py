@@ -14,7 +14,8 @@ logger = logging.getLogger(__name__)
 __all__ = ['WolframLanguageAsyncSession']
 
 
-class WolframLanguageAsyncSession(WolframAsyncEvaluator, WolframLanguageSession):
+class WolframLanguageAsyncSession(WolframAsyncEvaluator,
+                                  WolframLanguageSession):
     """Evaluate expressions asynchronously using coroutines.
 
     Asynchronous evaluations are provided through coroutines and the :mod:`asyncio` modules.

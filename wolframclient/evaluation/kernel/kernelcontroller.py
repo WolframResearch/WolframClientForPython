@@ -9,9 +9,9 @@ from queue import Queue
 from subprocess import PIPE, Popen
 from threading import Event, RLock, Thread
 
+from wolframclient.evaluation.kernel.path import find_default_kernel_path
 from wolframclient.evaluation.kernel.zmqsocket import Socket, SocketException
 from wolframclient.evaluation.result import WolframKernelEvaluationResult
-from wolframclient.evaluation.kernel.path import find_default_kernel_path
 from wolframclient.exception import WolframKernelException
 from wolframclient.utils import six
 from wolframclient.utils.api import json, os, time, zmq
@@ -427,7 +427,8 @@ class WolframEngineController(Thread):
             # on the kernel side.
             response = self.kernel_socket_in.recv_abortable(
                 timeout=self.get_parameter('STARTUP_TIMEOUT'),
-                abort_event=_StartEvent(self.kernel_proc, self.trigger_termination_requested))
+                abort_event=_StartEvent(self.kernel_proc,
+                                        self.trigger_termination_requested))
             if response == self._KERNEL_OK:
                 if logger.isEnabledFor(logging.INFO):
                     logger.info(
@@ -438,7 +439,9 @@ class WolframEngineController(Thread):
                     'Kernel %s failed to start properly.' % self.kernel)
         except SocketException as se:
             if self.kernel_proc.returncode == self._KERNEL_VERSION_NOT_SUPPORTED:
-                raise WolframKernelException('Wolfram Engine version is not supported. Please consult library prerequisites.')
+                raise WolframKernelException(
+                    'Wolfram Engine version is not supported. Please consult library prerequisites.'
+                )
             logger.info(se)
             raise WolframKernelException(
                 'Failed to communicate with kernel: %s. Startup timed out after %.2f seconds.'
@@ -600,10 +603,11 @@ class WolframEngineController(Thread):
         else:
             return '<%s: %s>' % (self.__class__.__name__, self.name)
 
+
 class _StartEvent(object):
     def __init__(self, subprocess, abort_event):
         self.subprocess = subprocess
         self.abort_event = abort_event
-    
+
     def is_set(self):
         return self.subprocess.poll() is not None or self.abort_event.is_set()

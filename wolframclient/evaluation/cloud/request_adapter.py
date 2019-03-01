@@ -5,6 +5,7 @@ from wolframclient.utils.encoding import force_text
 
 __all__ = ['wrap_response']
 
+
 class HTTPResponseAdapterBase(object):
     """ Unify various request classes as a unique API. """
 
@@ -40,8 +41,10 @@ class HTTPResponseAdapterBase(object):
         """ Headers as a dict. """
         return self.response.headers
 
+
 class RequestsHTTPRequestAdapter(HTTPResponseAdapterBase):
     pass
+
 
 class AIOHttpHTTPRequestAdapter(HTTPResponseAdapterBase):
 
