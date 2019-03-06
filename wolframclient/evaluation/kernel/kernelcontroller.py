@@ -20,7 +20,7 @@ from wolframclient.utils.encoding import force_text
 if six.WINDOWS:
     from subprocess import STARTUPINFO, STARTF_USESHOWWINDOW
 
-__all__ = ['WolframEngineController']
+__all__ = ['WolframKernelController']
 
 logger = logging.getLogger(__name__)
 
@@ -91,10 +91,10 @@ class KernelLogger(Thread):
                 logger.fatal('Failed to close ZMQ logging socket.')
 
 
-class WolframEngineController(Thread):
-    """ Control a Wolfram Engine from a Python thread.
+class WolframKernelController(Thread):
+    """ Control a Wolfram kernel from a Python thread.
 
-    A controller can start and stop a Wolfram Engine specified by its path `kernel`. It 
+    A controller can start and stop a Wolfram kernel specified by its path `kernel`. It
     can evaluate expression, one at a time.
 
     Most methods from this class return instances of :class:`~concurrent.futures.Future`.
@@ -115,7 +115,7 @@ class WolframEngineController(Thread):
                  stderr=PIPE,
                  **kwargs):
         self.id = _thread_counter()
-        super().__init__(name='wolfram-engine-%i' % self.id)
+        super().__init__(name='wolfram-kernel-%i' % self.id)
         if kernel is None:
             kernel = self.default_kernel_path()
         if isinstance(kernel, six.string_types):
@@ -386,7 +386,7 @@ class WolframEngineController(Thread):
         cmd = [self.kernel, '-noprompt', "-initfile", self.initfile]
         if self.loglevel != logging.NOTSET:
             self.kernel_logger = KernelLogger(
-                name='wolfram-engine-logger-%i' % self.id, level=self.loglevel)
+                name='wolfram-kernel-logger-%i' % self.id, level=self.loglevel)
             self.kernel_logger.start()
             cmd.append('-run')
             cmd.append(
@@ -440,7 +440,7 @@ class WolframEngineController(Thread):
         except SocketException as se:
             if self.kernel_proc.returncode == self._KERNEL_VERSION_NOT_SUPPORTED:
                 raise WolframKernelException(
-                    'Wolfram Engine version is not supported. Please consult library prerequisites.'
+                    'Wolfram kernel version is not supported. Please consult library prerequisites.'
                 )
             logger.info(se)
             raise WolframKernelException(

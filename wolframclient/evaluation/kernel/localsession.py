@@ -8,7 +8,7 @@ from subprocess import PIPE
 
 from wolframclient.evaluation.base import WolframEvaluator
 from wolframclient.evaluation.kernel.kernelcontroller import (
-    WolframEngineController)
+    WolframKernelController)
 from wolframclient.serializers import export
 
 logger = logging.getLogger(__name__)
@@ -100,7 +100,7 @@ class WolframLanguageSession(WolframEvaluator):
                  stderr=PIPE,
                  inputform_string_evaluation=True,
                  wxf_bytes_evaluation=True,
-                 controller_class=WolframEngineController,
+                 controller_class=WolframKernelController,
                  **kwargs):
         super().__init__(
             inputform_string_evaluation=inputform_string_evaluation)
@@ -159,7 +159,7 @@ class WolframLanguageSession(WolframEvaluator):
                 raise e
 
     def start_future(self):
-        """ Request the Wolfram Engine to start. Return a future object.
+        """ Request the Wolfram Kernel to start. Return a future object.
         
         The result of the future object is True when the kernel is ready to evaluate input."""
         self.stopped = False
@@ -172,11 +172,11 @@ class WolframLanguageSession(WolframEvaluator):
         return future
 
     def stop(self):
-        """ Request the Wolfram Engine to stop gracefully. """
+        """ Request the Wolfram Kernel to stop gracefully. """
         self._stop(gracefully=True)
 
     def terminate(self):
-        """ Request the Wolfram Engine to stop immediately. 
+        """ Request the Wolfram Kernel to stop immediately.
         
         Ongoing evaluations may be cancelled. """
         self._stop(gracefully=False)
@@ -188,7 +188,7 @@ class WolframLanguageSession(WolframEvaluator):
             future.result()
 
     def stop_future(self, gracefully=True):
-        """ Request the Wolfram Engine to stop. Return a future object.
+        """ Request the Wolfram Kernel to stop. Return a future object.
         
         The result of the future object is True when the controller thread is no more alive.
         Set `gracefully` to `False` will request for an immediate stop, eventually cancelling ongoing
@@ -265,7 +265,7 @@ class WolframLanguageSession(WolframEvaluator):
     def evaluate_wxf(self, expr, **kwargs):
         """ Evaluate an expression and return the serialized expression. 
         
-        This method does not deserialize the Wolfram Engine input. """
+        This method does not deserialize the Wolfram Kernel input. """
         result = self.evaluate_wrap(expr, **kwargs)
         self.log_message_from_result(result)
         return result.wxf
@@ -281,8 +281,8 @@ class WolframLanguageSession(WolframEvaluator):
     def set_parameter(self, parameter_name, parameter_value):
         self.kernel_controller.set_parameter(parameter_name, parameter_value)
 
-    get_parameter.__doc__ = WolframEngineController.get_parameter.__doc__
-    set_parameter.__doc__ = WolframEngineController.set_parameter.__doc__
+    get_parameter.__doc__ = WolframKernelController.get_parameter.__doc__
+    set_parameter.__doc__ = WolframKernelController.set_parameter.__doc__
 
     def __repr__(self):
         if self.started:

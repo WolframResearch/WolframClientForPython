@@ -29,12 +29,12 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
     If the number of evaluators is less than the requested pool size (`poolsize`), elements are duplicated until the requested number of 
     evaluators is reached.
 
-    Create a pool from a Wolfram Engine default location::
+    Create a pool from a Wolfram Kernel default location::
 
         async with WolframEvaluatorPool() as pool:
             await pool.evaluate('$InstallationDirectory')
 
-    Create a pool from a specific Wolfram Engine::
+    Create a pool from a specific Wolfram Kernel::
 
         async with WolframEvaluatorPool('/path/to/local/kernel') as pool:
             await pool.evaluate('1+1')
