@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 __all__ = [
     'WolframResult', 'WolframAPIResponseBuilder', 'WolframAPIResponse',
-    'WolframEvaluationJSONResponse', 'WolframKernelEvaluationResult'
+    'WolframCloudEvaluationJSONResponse', 'WolframKernelEvaluationResult'
 ]
 
 
@@ -52,9 +52,11 @@ class WolframResult(WolframResultBase):
             return '{}<success={}, failure={}>'.format(
                 self.__class__.__name__, self.success, self.failure)
 
+
 class WolframAsyncResult(WolframResultBase):
     async def get(self):
         raise NotImplementedError
+
 
 class WolframEvaluationResultBase(WolframResultBase):
     def __init__(self):
@@ -234,7 +236,7 @@ class WolframKernelEvaluationResult(WolframEvaluationResultBase):
         return binary_deserialize(super().result, consumer=self.consumer)
 
 
-class WolframEvaluationResponse(WolframEvaluationResultBase):
+class WolframCloudEvaluationResponse(WolframEvaluationResultBase):
     """Result object associated with cloud kernel evaluation.
 
     The response body associated to this type of result is encoded.
@@ -268,7 +270,7 @@ class WolframEvaluationResponse(WolframEvaluationResultBase):
 
 
 
-class WolframEvaluationWXFResponse(WolframEvaluationResponse):
+class WolframCloudEvaluationWXFResponse(WolframCloudEvaluationResponse):
     """ Result object associated with cloud evaluation request WXF encoded. """
 
     def parse_response(self):
@@ -279,7 +281,7 @@ class WolframEvaluationWXFResponse(WolframEvaluationResponse):
             self.build_invalid_format(response_format_name='WXF')
 
 
-class WolframEvaluationJSONResponse(WolframEvaluationResponse):
+class WolframCloudEvaluationJSONResponse(WolframCloudEvaluationResponse):
     """ Result object associated with cloud evaluation request JSON encoded. """
 
     def parse_response(self):
@@ -289,7 +291,7 @@ class WolframEvaluationJSONResponse(WolframEvaluationResponse):
             self.build_invalid_format(response_format_name='JSON')
 
 
-class WolframEvaluationResponseAsync(WolframEvaluationResponse):
+class WolframCloudEvaluationResponseAsync(WolframCloudEvaluationResponse):
     """Asynchronous result object associated with cloud evaluation request. """
 
     async def build(self):
@@ -340,7 +342,7 @@ class WolframEvaluationResponseAsync(WolframEvaluationResponse):
                 'Cloud evaluation failed.', messages=self._failure)
 
 
-class WolframEvaluationJSONResponseAsync(WolframEvaluationResponseAsync):
+class WolframEvaluationJSONResponseAsync(WolframCloudEvaluationResponseAsync):
     """Asynchronous result object associated with cloud evaluation request encoded with JSON. """
 
     async def parse_response(self):
@@ -350,7 +352,7 @@ class WolframEvaluationJSONResponseAsync(WolframEvaluationResponseAsync):
             self.build_invalid_format(response_format_name='JSON')
 
 
-class WolframEvaluationWXFResponseAsync(WolframEvaluationResponseAsync):
+class WolframEvaluationWXFResponseAsync(WolframCloudEvaluationResponseAsync):
     """Asynchronous result object associated with cloud evaluation request encoded with WXF. """
 
     async def parse_response(self):
