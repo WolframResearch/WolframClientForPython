@@ -43,12 +43,13 @@ class OAuthRequestsSyncSessionBase(OAuthSessionBase):
         try:
             as_json = response.json()
             msg = as_json.get('message', None)
+            raise AuthenticationException(response, msg)
         # msg is None if response is not JSON, but it's fine.
-        except:
+        except Exception:
+            msg = 'Request failed with status %i' % response.status_code
             raise AuthenticationException(
                 response,
-                'Request failed with status %i' % response.status_code)
-        raise AuthenticationException(response, msg)
+                msg=msg)
 
     def signed_request(self, uri, headers={}, body={}, files={},
                        method='POST'):
