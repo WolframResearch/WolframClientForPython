@@ -6,15 +6,18 @@ import logging
 from functools import wraps
 
 from wolframclient.utils.api import time, zmq
-
+from wolframclient.exception import WolframLanguageException
 logger = logging.getLogger(__name__)
 
 
-class SocketException(Exception):
+class SocketException(WolframLanguageException):
     pass
 
 
 class SocketAborted(SocketException):
+    pass
+
+class SocketOperationTimeout(SocketException):
     pass
 
 
@@ -46,10 +49,10 @@ def abortable():
                 retry += 1
                 if abort_event:
                     if abort_event.is_set():
-                        raise SocketAborted()
+                        raise SocketAborted('Socket operation aborted.')
                 if timeout and (time.perf_counter() - start > timeout):
                     break
-            raise SocketException(
+            raise SocketOperationTimeout(
                 'Failed to read any message from socket %s after %.1f seconds and %i retries.'
                 % (socket.uri, time.perf_counter() - start, retry))
 

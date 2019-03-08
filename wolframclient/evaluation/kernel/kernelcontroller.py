@@ -10,7 +10,7 @@ from subprocess import PIPE, Popen
 from threading import Event, RLock, Thread
 
 from wolframclient.evaluation.kernel.path import find_default_kernel_path
-from wolframclient.evaluation.kernel.zmqsocket import Socket, SocketException
+from wolframclient.evaluation.kernel.zmqsocket import Socket, SocketAborted, SocketOperationTimeout
 from wolframclient.evaluation.result import WolframKernelEvaluationResult
 from wolframclient.exception import WolframKernelException
 from wolframclient.utils import six
@@ -437,15 +437,14 @@ class WolframKernelController(Thread):
             else:
                 raise WolframKernelException(
                     'Kernel %s failed to start properly.' % self.kernel)
-        except SocketException as se:
+        except (SocketAborted, SocketOperationTimeout) as se:
             if self.kernel_proc.returncode == self._KERNEL_VERSION_NOT_SUPPORTED:
                 raise WolframKernelException(
                     'Wolfram kernel version is not supported. Please consult library prerequisites.'
                 )
-            logger.info(se)
+            logger.warning('Socket exception: %s', se)
             raise WolframKernelException(
-                'Failed to communicate with kernel: %s. Startup timed out after %.2f seconds.'
-                % (self.kernel, self.get_parameter('STARTUP_TIMEOUT')))
+                'Failed to communicate with kernel: %s.' % self.kernel)
 
     @property
     def pid(self):
