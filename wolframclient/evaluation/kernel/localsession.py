@@ -273,7 +273,7 @@ class WolframLanguageSession(WolframEvaluator):
     def log_message_from_result(self, result):
         if not result.success:
             for msg in result.messages:
-                logger.warning(msg[1])
+                logger.warning(msg)
 
     def get_parameter(self, parameter_name):
         return self.kernel_controller.get_parameter(parameter_name)
