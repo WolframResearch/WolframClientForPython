@@ -357,7 +357,7 @@ class WolframKernelController(Thread):
         try:
             self._kernel_start()
         except Exception as e:
-            logger.warn('Failed to start.')
+            logger.warning('Failed to start.')
             try:
                 self._kernel_terminate()
             finally:
