@@ -21,9 +21,15 @@ class RequestException(WolframLanguageException):
 
     def __str__(self):
         if hasattr(self.response, 'status'):
-            return '<%s>: %s' % (self.response.status, self.msg or '')
+            if callable(self.status):
+                status = self.response.status()
+            else:
+                status = self.response.status
+        elif hasattr(self.response, 'status_code'):
+            status = self.response.status_code
         else:
-            return '<%s>: %s' % (self.response.status(), self.msg or '')
+            status = 'N/A'
+        return '<status: %s> %s' % (status, self.msg or '')
 
 
 class AuthenticationException(RequestException):
