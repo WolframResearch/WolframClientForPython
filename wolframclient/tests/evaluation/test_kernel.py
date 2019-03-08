@@ -120,7 +120,7 @@ class TestCase(TestCaseSettings):
         self.assertFalse(res.success)
         self.assertListEqual(
             res.messages,
-            [('Power::infy', 'Infinite expression Power[0, -1] encountered.')])
+            ['Infinite expression Power[0, -1] encountered.'])
 
     def test_silenced_msg(self):
         off = self.kernel_session.evaluate('Off[Power::infy]')
@@ -140,12 +140,11 @@ class TestCase(TestCaseSettings):
             'ImportString["[1,2", "RawJSON"]')
         self.assertFalse(res.success)
         expected_msgs = [
-            ('Import::jsonarraymissingsep',
+            (wl.MessageName(wl.Import,'jsonarraymissingsep'),
              'Expecting end of array or a value separator.'),
-            ('Import::jsonhintposandchar',
-             "An error occurred near character 'EOF', at line 1:6")
-        ]
-        self.assertListEqual(res.messages, expected_msgs)
+            (wl.MessageName(wl.Import,'jsonhintposandchar'),
+             "An error occurred near character 'EOF', at line 1:6")]
+        self.assertListEqual(list(res.iter_messages_tuple()), expected_msgs)
 
     def test_many_failures(self):
         res = self.kernel_session.evaluate(
@@ -157,13 +156,24 @@ class TestCase(TestCaseSettings):
             'ImportString["[1,2", "RawJSON"]; 1/0')
         self.assertFalse(res.success)
         expected_msgs = [
-            ('Import::jsonarraymissingsep',
-             'Expecting end of array or a value separator.'),
-            ('Import::jsonhintposandchar',
-             "An error occurred near character 'EOF', at line 1:6"),
-            ('Power::infy', 'Infinite expression Power[0, -1] encountered.')
+            'Expecting end of array or a value separator.',
+            "An error occurred near character 'EOF', at line 1:6",
+            'Infinite expression Power[0, -1] encountered.'];
+        expected_msgs_name = [
+            wl.MessageName(wl.Import, 'jsonarraymissingsep'),
+            wl.MessageName(wl.Import, 'jsonhintposandchar'),
+            wl.MessageName(wl.Power, 'infy')
         ]
+
+        expected_tuples = list(zip(expected_msgs_name, expected_msgs))
+
         self.assertListEqual(res.messages, expected_msgs)
+        self.assertListEqual(list(res.iter_messages()), expected_msgs)
+
+        self.assertListEqual(res.messages_name, expected_msgs_name)
+        self.assertListEqual(list(res.iter_messages_name()), expected_msgs_name)
+
+        self.assertListEqual(list(res.iter_messages_tuple()), expected_tuples)
 
     def test_valid_evaluate_wxf(self):
         wxf = self.kernel_session.evaluate_wxf('Range[3]')
@@ -320,13 +330,23 @@ class TestSessionTimeout(TestCaseSettings):
         res = future.result(timeout=1)
         self.assertFalse(res.success)
         expected_msgs = [
-            ('Import::jsonarraymissingsep',
-             'Expecting end of array or a value separator.'),
-            ('Import::jsonhintposandchar',
-             "An error occurred near character 'EOF', at line 1:6"),
-            ('Power::infy', 'Infinite expression Power[0, -1] encountered.')
+            'Expecting end of array or a value separator.',
+            "An error occurred near character 'EOF', at line 1:6",
+            'Infinite expression Power[0, -1] encountered.'];
+        expected_msgs_name = [
+            wl.MessageName(wl.Import, 'jsonarraymissingsep'),
+            wl.MessageName(wl.Import, 'jsonhintposandchar'),
+            wl.MessageName(wl.Power, 'infy')
         ]
+        expected_tuples = list(zip(expected_msgs_name, expected_msgs))
+
         self.assertListEqual(res.messages, expected_msgs)
+        self.assertListEqual(list(res.iter_messages()), expected_msgs)
+
+        self.assertListEqual(res.messages_name, expected_msgs_name)
+        self.assertListEqual(list(res.iter_messages_name()), expected_msgs_name)
+
+        self.assertListEqual(list(res.iter_messages_tuple()), expected_tuples)
 
     def test_valid_evaluate_wxf_async(self):
         future = self.kernel_session.evaluate_wxf_future('Range[3]')

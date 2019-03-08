@@ -52,67 +52,25 @@ class WolframResult(WolframResultBase):
             return '{}<success={}, failure={}>'.format(
                 self.__class__.__name__, self.success, self.failure)
 
-
 class WolframAsyncResult(WolframResultBase):
     async def get(self):
         raise NotImplementedError
 
-
-class WolframKernelEvaluationResult(WolframResultBase):
-    """A Wolfram result with WXF encoded data.
-
-    Messages can be issued during a kernel evaluation. Those are
-    stored as `messages`. If any message was returned by the kernel
-    then the success status is automatically set to `False`.
-
-    The final Python expression is lazily computed when accessing the
-    field `result`. The WXF bytes holding the evaluation result are
-    stored in `wxf` and thus can be parsed with a customized parser if
-    necessary.
-    """
-
-    def __init__(self, wxf, msgs, consumer=None):
-        self.success = len(msgs) == 0
-        self.failure = None
-        self.messages = msgs
-        self.wxf = wxf
-        self.consumer = consumer
-
-    @cached_property
-    def result(self):
-        return binary_deserialize(self.wxf, consumer=self.consumer)
-
-    def get(self):
-        """Kernel evaluation never fails even if the evaluated expression is a failure object."""
-        return self.result
-
-    def __repr__(self):
-        if self.success:
-            return '{}<success={}, result={}>'.format(
-                self.__class__.__name__, self.success, self.result)
-        else:
-            # msgs = '\n\t'.join(self.messages)
-            return '{}<success={}, result={}, messages={}>'.format(
-                self.__class__.__name__, self.success, self.result,
-                self.messages)
-
-
-class WolframEvaluationResponse(WolframResultBase):
-    """Result object associated with cloud kernel evaluation.
-
-    The response body associated to this type of result is encoded.
-    Other fields provide additional information. The HTTP response object is
-    stored as `http_response` and when HTTP error occurred it is stored in `request_error`.
-    """
-
-    def __init__(self, response):
-        self.http_response = wrap_response(response)
-        self.request_error = self.http_response.status() != 200
+class WolframEvaluationResultBase(WolframResultBase):
+    def __init__(self):
         self._built = False
+        self._success = False
+        self._failure = None
+        self._messages = None
+        self._messages_name = None
+        self._output = None
+        self._result = None
+        self._is_message_failure = False
         self.parsed_response = None
 
     @property
     def success(self):
+        """ Evaluations succeed when it returns a result and no message is issued. """
         if not self._built:
             self.build()
         return self._success
@@ -124,83 +82,190 @@ class WolframEvaluationResponse(WolframResultBase):
         return self._failure
 
     @property
+    def messages(self):
+        """ A list of the messages issued during the evaluation. """
+        if not self._built:
+            self.build()
+        return self._messages
+
+    @property
+    def messages_name(self):
+        """ A list of the name of all the messages issued during the evaluation. """
+        if not self._built:
+            self.build()
+        return self._messages_name
+
+    def iter_messages(self):
+        """
+        Iterator over all text messages issued during the evaluation.
+        :return: message text as a string.
+        """
+        if self.messages:
+            yield from self.messages
+
+    def iter_messages_name(self):
+        if self.messages:
+            yield from self.messages_name
+
+    def iter_messages_tuple(self):
+        """ Iterator over all messages returned as a tuple: (message name, message text)"""
+        if self.messages and self.messages_name:
+            yield from zip(self.iter_messages_name(), self.iter_messages())
+
+    @property
+    def output(self):
+        """ A list of all content that got printed during evaluation e.g. using :wl:`Print`. """
+        if not self._built:
+            self.build()
+        return self._output
+
+    def iter_output(self):
+        """ Iterator over all printed output."""
+        if self.output:
+            yield from self.output
+
+    @property
     def result(self):
         if not self._built:
             self.build()
         return self._result
 
-    def get(self):
-        """Return the result or raise an exception based on the success status."""
+    @property
+    def is_message_failure(self):
         if not self._built:
             self.build()
-        if self.success:
-            return self.result
-        elif self.is_kernel_message:
-            if logger.isEnabledFor(logging.WARNING):
-                for msg in self.failure:
-                    logger.warning(msg)
+        return self._is_message_failure
+
+    def build(self):
+        self.parse_response()
+        if self.parsed_response:
+            self.build_from_parsed_response()
+        # make sure to always build a response, here a generic one.
+        elif not self._built:
+            self.build_invalid_format()
+
+    def get(self):
+        """Return the result or raise an exception."""
+        if not self._built:
+            self.build()
+        if self.success or self._is_message_failure:
             return self.result
         else:
             raise WolframEvaluationException(
-                'Cloud evaluation failed.', messages=self.failure)
+                'Evaluation failed.', result=self.result, messages=self.failure)
+
+    def parse_response(self):
+        """ Parse the result input and set the attribute `parsed_response`.
+
+        The result input can be encoded in various formats such as WXF, JSON, etc.
+        The `parsed_response` dict is expected to have keys corresponding to those of the association returned by
+        :wl:`EvaluationData`.
+        """
+        raise NotImplementedError(
+            '%s does not implement parse_response method.' %
+            (self.__class__.__name__,))
+
+    def build_invalid_format(self, response_format_name=None):
+        """ Build a result object for invalid format cases. """
+        logger.fatal('Invalid format. Failed to parse result.')
+        self._success = False
+        if response_format_name:
+            self._failure = 'Failed to decode response encoded with %s' % response_format_name
+        else:
+            self._failure = 'Failed to decode response.'
+        self._built = True
+
+    def build_from_parsed_response(self):
+        self._success = self.parsed_response['Success']
+        self._result = self.parsed_response['Result']
+        self._output = self.parsed_response.get('Output', [])
+        if not self._success:
+            self._failure = self.parsed_response['FailureType']
+            if self._failure  == 'MessageFailure':
+                self._is_message_failure = True
+                self._messages_name = self.parsed_response['Messages']
+                self._messages = self.parsed_response['MessagesText']
+            else:
+                logger.warning('Evaluation failed.')
+                for msg in self.parsed_response.get('MessagesText', []):
+                    logger.warning(msg)
+                self._is_message_failure = False
+
+        self._built = True
 
     def __repr__(self):
-        if self.success or not self.request_error:
-            return '{}<success={}, expression={}>'.format(
-                self.__class__.__name__, self.success, self.result)
+        if self.success:
+            return '{}<expression={}>'.format(
+                self.__class__.__name__, self.result)
+        elif self.is_message_failure:
+            return '{}<success={}, result={}, messages={}>'.format(
+                self.__class__.__name__, self.success, self.result, self.messages)
         else:
+            return '{}<failure={}>'.format(
+                self.__class__.__name__, self.failure)
+
+class WolframKernelEvaluationResult(WolframEvaluationResultBase):
+    """A Wolfram result with WXF encoded data.
+
+    Messages can be issued during a kernel evaluation. Those are stored as `messages`. If any message was returned by
+    the kernel then the success status is `False`.
+
+    The evaluation result is lazily computed when accessing the field `result`. The WXF bytes holding the evaluation
+    result are stored in `wxf` and thus can be later parsed with a customized parser if necessary.
+
+    All strings printed during the evaluation (e.g. Print["something"]) are stored in property `output` as a list.
+    The dict holding evaluation data is available in `evaluation_data`.
+    """
+
+    def __init__(self, wxf_eval_data, consumer=None):
+        super().__init__()
+        self.wxf_evaluation_data = wxf_eval_data
+        # store the expression result serialized.
+        self.wxf = None
+        self.consumer = consumer
+
+    def parse_response(self):
+        self.parsed_response = binary_deserialize(self.wxf_evaluation_data)
+        self.wxf = self.parsed_response['Result']
+
+    @cached_property
+    def result(self):
+        # Kernel evaluation encode the result as WXF. Lazily decoding it using the user consumer.
+        return binary_deserialize(super().result, consumer=self.consumer)
+
+
+class WolframEvaluationResponse(WolframEvaluationResultBase):
+    """Result object associated with cloud kernel evaluation.
+
+    The response body associated to this type of result is encoded.
+    Other fields provide additional information. The HTTP response object is
+    stored as `http_response` and when HTTP error occurred it is stored in `request_error`.
+    """
+
+    def __init__(self, response):
+        super().__init__()
+        self.http_response = wrap_response(response)
+        self.request_error = self.http_response.status() != 200
+
+    def __repr__(self):
+        if self._built and not self.request_error:
+            return super().__repr__()
+        elif self.request_error:
             return '{}<request error {}>'.format(self.__class__.__name__,
                                                  self.http_response.status())
+        else:
+            return '{}<successful request, request body not yet parsed>'.format(
+                self.__class__.__name__)
 
     def build(self):
         if not self.request_error:
-            self.parse_response()
-            if self.parsed_response:
-                self.build_from_parsed_response()
-            # make sure to always build a response, here a generic one.
-            elif not self._built:
-                self.build_invalid_format()
+            super().build()
         else:
             logger.fatal('Server invalid response %i: %s',
                          self.http_response.status(),
                          self.http_response.text())
             raise RequestException(self.http_response)
 
-    def parse_response(self):
-        raise NotImplementedError(
-            '%s does not implement parse_response method.' %
-            (self.__class__.__name__, ))
-
-    def build_from_parsed_response(self):
-        self._success = self.parsed_response['Success']
-        self._result = self.parsed_response['Result']
-        if not self._success:
-            failure_type = self.parsed_response['FailureType']
-            if failure_type == 'MessageFailure':
-                self.is_kernel_message = True
-                self._failure = self.parsed_response['MessagesText']
-            else:
-                logger.warning('Evaluation failed.')
-                for msg in self.parsed_response.get('MessagesText', []):
-                    logger.warning(msg)
-                self.is_kernel_message = False
-                self._failure = failure_type
-
-        self._built = True
-
-    def build_invalid_format(self, response_format_name=None):
-        """ Build a response object for invalid format server response.
-
-        This method does not use the request object.
-        """
-        logger.fatal('Server returned invalid format. Parsing failed.')
-        self._success = False
-        if response_format_name:
-            self._failure = 'Failed to decode server response encoded with %s' % response_format_name
-        else:
-            self._failure = 'Failed to decode server response.'
-        self._result = None
-        self._built = True
 
 
 class WolframEvaluationWXFResponse(WolframEvaluationResponse):
@@ -268,27 +333,11 @@ class WolframEvaluationResponseAsync(WolframEvaluationResponse):
         """Return the result or raise an exception based on the success status."""
         if not self._built:
             await self.build()
-        if self._success:
-            return self._result
-        elif self.is_kernel_message:
-            if logger.isEnabledFor(logging.WARNING):
-                for msg in self._failure:
-                    logger.warning(msg)
+        if self._success or self._is_message_failure:
             return self._result
         else:
             raise WolframEvaluationException(
                 'Cloud evaluation failed.', messages=self._failure)
-
-    def __repr__(self):
-        if self._built and (not self.request_error or self._success):
-            return '{}<successful request={}, expression={}>'.format(
-                self.__class__.__name__, self._success, self._result)
-        elif self.request_error:
-            return '{}<request error {}>'.format(self.__class__.__name__,
-                                                 self.http_response.status())
-        else:
-            return '{}<successful request, body not read>'.format(
-                self.__class__.__name__)
 
 
 class WolframEvaluationJSONResponseAsync(WolframEvaluationResponseAsync):

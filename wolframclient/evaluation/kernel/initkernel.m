@@ -106,6 +106,9 @@ readableTiming[timing_] := Which[
 	ToString[N[timing]] <> "s"
 ];
 
+
+SetAttributes[fmtmsg, HoldRest];
+
 fmtmsg[msg_String, args___] := TemplateApply[msg, {args}];
 
 fmtmsg[msg_MessageName, args___] := Module[
@@ -120,67 +123,28 @@ fmtmsg[msg_, args___] := TemplateApply[
 	"Invalid message `` with arguments ``", 
 	{ToString[Unevaluated[msg]], {args}}];
 
-writemsg[Hold[Message[msg_MessageName, args___], _]] := writemsg[
-	ToString[Unevaluated[msg], InputForm], 
-	fmtmsg[msg, args]
-];
-writemsg[msgname_String, msg_String] := (
-	ClientLibrary`warn[msg];
-	WriteString[$OutputSocket, 
-		Developer`WriteRawJSONString[{msgname, msg}, "Compact"->True]
-	];
-);
-
-serialize[expr_] := BinarySerialize[expr];
+fmtmsg[Hold[Message[msg_MessageName, args___]]] := fmtmsg[msg, args];
 
 socketEventHandler[data_] := Block[
-	{expr=$Failed, msgs = Internal`Bag[], msgCount, $MessageList={}},
-	(* Setup a handler for all messages, and keep only those that haven't been silenced.
-	The handler must deal with expressions of the form: 
-		Hold[msg_, True|False]
-	The boolean value indicates the silenced status On/Off. *)
-	Internal`HandlerBlock[
-		{"Message", Function[msg, If[TrueQ[Last[msg]],Internal`StuffBag[msgs,msg]]]},
-		expr = timed[BinaryDeserialize[data], "Expression evaluation"];
-		(* If[$LogLevel <= $DEBUG,  *)
-			ClientLibrary`debug["deserialized expr:", expr]
-		(* ]; *)
-	];
-	(* Check how many messages were thrown during evaluation.
-	Cap it with a default value to avoid overflow. *)
-	msgCount = Internal`BagLength[msgs];
-	If[msgCount > 0, 
-		ClientLibrary`info["Message count: ", msgCount]
-	];
-	Which[
-		msgCount == 0,
-		WriteString[$OutputSocket, "0"]
-		,
-		msgCount <= $MaxMessagesReturned,
-		WriteString[$OutputSocket, ToString[msgCount]];
-		Scan[
-			writemsg,
-			Internal`BagPart[msgs, All]
+	{expr},
+	ClientLibrary`debug["Evaluating a new expression."];
+	expr = EvaluationData[BinarySerialize[BinaryDeserialize[data]]];
+	(* Produce inline InputForm string messages. *)
+	AssociateTo[
+		expr,
+		"MessagesText" -> Map[
+			fmtmsg,
+			expr["MessagesExpressions"]
 		]
-		,
-		msgCount > $MaxMessagesReturned,
-		WriteString[$OutputSocket, ToString[$MaxMessagesReturned+1]];
-		Scan[
-			writemsg,
-			Internal`BagPart[msgs, ;;$MaxMessagesReturned]
-		];
-		writemsg[TemplateApply["`` more messages issued during evaluation.", {msgCount-$MaxMessagesReturned}]];
-		,
-		_,
-		ClientLibrary`error["Unexpected message count. Ignoring all messages."];
-		WriteString[$OutputSocket, "0"];
 	];
+	ClientLibrary`debug["Done evaluating."];
 	SocketWriteByteArrayFunc[
 		$OutputSocket,
-		serialize[expr]
+		BinarySerialize[expr]
 	];
-	ClientLibrary`debug["End of evaluation."];
+	ClientLibrary`debug["Done responding."];
 ];
+
 
 SendAck[] := WriteString[$OutputSocket, "OK"]
 

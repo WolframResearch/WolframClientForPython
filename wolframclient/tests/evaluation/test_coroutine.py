@@ -246,13 +246,8 @@ class TestKernelPool(BaseTestCase):
             for i in range(1, 11)
         ]
         res = await asyncio.gather(*tasks)
-        #  TODO: update this later when cloud evaluate wxf properly.
-        # self.assertEqual({*res},
-        #                  {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"})
-        self.assertEqual(len(res), 10)
-        for elem in res:
-            self.assertTrue(isinstance(elem, six.string_types))
-
+        self.assertEqual({*res},
+            {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"})
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestParalleleEvaluate(BaseTestCase):

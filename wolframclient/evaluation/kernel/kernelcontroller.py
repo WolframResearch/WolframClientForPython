@@ -493,31 +493,16 @@ class WolframKernelController(Thread):
             logger.debug('Expression sent to kernel in %.06fsec',
                          time.perf_counter() - start)
             start = time.perf_counter()
-        # read the message as bytes.
-        msg_count = self.kernel_socket_in.recv_abortable(
-            abort_event=self.trigger_termination_requested)
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('Message count received from kernel after %.06fsec',
-                         time.perf_counter() - start)
-        try:
-            msg_count_as_int = int(msg_count)
-        except ValueError:
-            raise WolframKernelException(
-                'Unexpected message count returned by Kernel %s' % msg_count)
-        # TODO use EvaluationData to get one message with result and metadata.
-        errmsg = []
-        for i in range(msg_count_as_int):
-            json_msg = self.kernel_socket_in.recv_json_abortable()
-            errmsg.append((json_msg[0], force_text(json_msg[1])))
-            logger.warn(json_msg)
-
-        wxf_result = self.kernel_socket_in.recv_abortable(copy=False)
+        wxf_eval_data = self.kernel_socket_in.recv_abortable(copy=False)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('Expression received from kernel after %.06fsec',
                          time.perf_counter() - start)
         self.evaluation_count += 1
         result = WolframKernelEvaluationResult(
-            wxf_result.buffer, errmsg, consumer=self.consumer)
+            wxf_eval_data.buffer, consumer=self.consumer)
+        if logger.isEnabledFor(logging.WARNING):
+            for msg in result.iter_messages():
+                logger.warning(msg)
         if result_update_callback:
             result = result_update_callback(result)
         future.set_result(result)
