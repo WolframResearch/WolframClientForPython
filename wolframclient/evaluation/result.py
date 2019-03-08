@@ -106,7 +106,7 @@ class WolframEvaluationResultBase(WolframResultBase):
             yield from self.messages
 
     def iter_messages_name(self):
-        if self.messages:
+        if self.messages_name:
             yield from self.messages_name
 
     def iter_messages_tuple(self):
@@ -146,15 +146,20 @@ class WolframEvaluationResultBase(WolframResultBase):
         elif not self._built:
             self.build_invalid_format()
 
-    def get(self):
-        """Return the result or raise an exception."""
-        if not self._built:
-            self.build()
-        if self.success or self._is_message_failure:
+    def get(self, silent=True):
+        """Return the result or raise an exception.
+
+        `silent` can be set to False to log all messages with warning severity. """
+        if self.success:
+            return self.result
+        elif self.is_message_failure:
+            if not silent:
+                for msg in self.iter_messages():
+                    logger.warning(msg)
             return self.result
         else:
             raise WolframEvaluationException(
-                'Evaluation failed.', result=self.result, messages=self.failure)
+                'Evaluation failed.', messages=self.failure)
 
     def parse_response(self):
         """ Parse the result input and set the attribute `parsed_response`.
@@ -189,8 +194,6 @@ class WolframEvaluationResultBase(WolframResultBase):
                 self._messages = self.parsed_response['MessagesText']
             else:
                 logger.warning('Evaluation failed.')
-                for msg in self.parsed_response.get('MessagesText', []):
-                    logger.warning(msg)
                 self._is_message_failure = False
 
         self._built = True
@@ -258,6 +261,9 @@ class WolframCloudEvaluationResponse(WolframEvaluationResultBase):
         else:
             return '{}<successful request, request body not yet parsed>'.format(
                 self.__class__.__name__)
+
+    def get(self, silent=False):
+        return super().get(silent)
 
     def build(self):
         if not self.request_error:
@@ -331,15 +337,82 @@ class WolframCloudEvaluationResponseAsync(WolframCloudEvaluationResponse):
             await self.build()
         return self._result
 
-    async def get(self):
-        """Return the result or raise an exception based on the success status."""
+    @property
+    async def is_message_failure(self):
         if not self._built:
             await self.build()
-        if self._success or self._is_message_failure:
-            return self._result
+        return self.is_message_failure
+
+    @property
+    async def messages(self):
+        """ A list of the messages issued during the evaluation. """
+        if not self._built:
+            await self.build()
+        return self._messages
+
+    @property
+    async def messages_name(self):
+        """ A list of the name of all the messages issued during the evaluation. """
+        if not self._built:
+            await self.build()
+        return self._messages_name
+
+    async def iter_messages(self):
+        """
+        Iterator over all text messages issued during the evaluation.
+        :return: message text as a string.
+        """
+        msgs = await self.messages
+        if msgs:
+            for msg in msgs:
+                yield msg
+
+    async def iter_messages_name(self):
+        names = await self.messages_name
+        if names:
+            for name in names:
+                yield name
+
+    async def iter_messages_tuple(self):
+        """ Iterator over all messages returned as a tuple: (message name, message text)"""
+        msg = await self.messages
+        names = await self.messages_name
+        if msg and names:
+            for tuple_msg in zip(names, msg):
+                yield tuple_msg
+
+    @property
+    async def output(self):
+        """ A list of all content that got printed during evaluation e.g. using :wl:`Print`. """
+        if not self._built:
+            await self.build()
+        return self._output
+
+    async def iter_output(self):
+        """ Iterator over all printed output."""
+        output = await self.output
+        if output:
+            for line in self.output:
+                yield line
+
+    @property
+    async def is_message_failure(self):
+        if not self._built:
+            await self.build()
+        return self._is_message_failure
+
+    async def get(self, silent=False):
+        """Return the result or raise an exception based on the success status."""
+        if await self.success:
+            return await self.result
+        elif await self.is_message_failure:
+            if not silent:
+                for msg in self.iter_messages():
+                        logger.warning(msg)
+                return self.result
         else:
             raise WolframEvaluationException(
-                'Cloud evaluation failed.', messages=self._failure)
+                'Evaluation failed.', messages=self.failure)
 
 
 class WolframEvaluationJSONResponseAsync(WolframCloudEvaluationResponseAsync):
