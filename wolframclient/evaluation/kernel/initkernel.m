@@ -65,8 +65,7 @@ log[level_Integer, msg_String] /; level >= $LogLevel  := If[$LoggerSocket =!= No
 			"ToByteString" -> True, "Compact" -> True],
 			"ISOLatin1"
 		]
-	];
-	Print[msg]
+	]
 ];
 
 log[level_Integer, args__] /; level >= $LogLevel := log[
@@ -123,7 +122,19 @@ fmtmsg[msg_, args___] := TemplateApply[
 	"Invalid message `` with arguments ``", 
 	{ToString[Unevaluated[msg]], {args}}];
 
-fmtmsg[Hold[Message[msg_MessageName, args___]]] := fmtmsg[msg, args];
+fmtmsg[Hold[Message[msg_MessageName, args___], ___]] := fmtmsg[msg, args];
+
+addMessageHandler[] := Internal`AddHandler[
+	"Message",
+ 	Function[msg,
+  	If[TrueQ[Last[msg]], ClientLibrary`warn[fmtmsg[msg]]]
+ 	]
+];
+
+addPrintHandler[] := Internal`AddHandler[
+	"Wolfram.System.Print",
+ 	Composition[ClientLibrary`info, ReleaseHold]
+];
 
 socketEventHandler[data_] := Block[
 	{expr},
@@ -218,6 +229,8 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String, logsocket_Strin
 		,
 		ClientLibrary`info["Connected to logging socket:", logsocket];
 		setLogLevel[loglevel];
+		addMessageHandler[];
+		addPrintHandler[];
 		SlaveKernelPrivateStart[inputsocket, outputsocket]
 	];
 );
@@ -235,7 +248,9 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 		Print["Failed to connect to input socket ", inputsocket];
 		Quit[]
 	];
-	If[$LoggerSocket==None, ClientLibrary`DisableKernelLogging[]];
+	If[$LoggerSocket==None,
+		ClientLibrary`DisableKernelLogging[]
+	];
 	evaluationLoop[$InputSocket];
 ]
 
