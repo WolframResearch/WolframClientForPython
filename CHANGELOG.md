@@ -6,6 +6,7 @@
 - rename evaluator parameters `STARTUP_READ_TIMEOUT` to `STARTUP_TIMEOUT`, and `TERMINATE_READ_TIMEOUT` to `TERMINATE_TIMEOUT`.
 - CPU consumption reduced to ~1% with the latest ZMQLink version.
 - Local session checks for the Wolfram Kernel version at startup and fails with a specific message.
+- Local session supports instant logging for messages, with severity `warn`, and prints, with severity `info`. This only works for kernel with a `kernel_loglevel` set on initialization, and allows real time feedbacks, even if the kernel evaluation is not yet completed.
 
 # Version 1.0.0.dev4
 - Inconsistent class name `WolframCloudSessionFuture` replaced with `WolframCloudFutureSession`.
