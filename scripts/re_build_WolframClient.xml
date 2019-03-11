@@ -17,19 +17,12 @@
 	-->
 	<target name='Component.WolframClientForPython.execute' extensionOf='Component.execute'>
 
-		<!-- Copy wolframclient directoy -->
-		<copy todir='${files_directory}/${component}/wolframclient'>
-			<fileset dir='${basedir}/wolframclient' />
-		</copy>
-
-		<!-- Copy PacletInfo file -->
-		<copy todir='${files_directory}/${component}'
-				file='${basedir}/PacletInfo.m' />
-
-		<!-- Copy python script(s) in base directory -->
+		<!-- Copy all files and the wolframclient folder in base directory -->
 		<copy todir='${files_directory}/${component}'>
-			<fileset dir='${basedir}'>
-				<include name="*.py"/>
+			<fileset dir='${basedir}' >
+				<exclude name='.*' />
+				<exclude name='scripts/' />
+				<exclude name='docs/' />
 			</fileset>
 		</copy>
 
@@ -47,7 +40,7 @@
 			files in there....
 		-->
 
-	<property name='keep.files_directory' value='true' />
+		<property name='keep.files_directory' value='true' />
 
 	</target>
 
@@ -144,6 +137,34 @@
 			<env key="PATH" path="${env.PATH}:${tmp_directory}/venv/bin"/>
 		</exec>
 
+	</target>
+
+	<!--
+		Deploy Web Pages
+	-->
+
+	<target name='Deploy.WolframClientForPython.execute' extensionOf='Deploy.execute'>
+
+		<path id='ghpages.id'> 
+			<fileset dir='${checkout_directory}'>
+				<include name="ghpages/*"/>
+			</fileset>
+		</path>
+
+		<property name='pages' refid='ghpages.id'/> 
+		<property name='src' value='${pages}' />
+
+		<property name='host' value='buildmgr@webtst4.wolfram.com' />
+		<property name='dest' value='/www/sites/reference.wolfram.com/htdocs/language/WolframClientForPython' />
+
+		<condition property='scp.cmd' value='pscp' else='scp'>
+			<os family='windows'/>
+		</condition>
+
+		<echo message="copy ${src} to ${host}:${dest}" />
+		<exec executable='${scp.cmd}' failonerror='true' searchpath='true'>
+			<arg line='${args} ${src} ${host}:${dest}' />
+		</exec>
 	</target>
 
 </project>
