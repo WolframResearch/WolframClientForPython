@@ -21,7 +21,7 @@ class RequestException(WolframLanguageException):
 
     def __str__(self):
         if hasattr(self.response, 'status'):
-            if callable(self.status):
+            if callable(self.response.status):
                 status = self.response.status()
             else:
                 status = self.response.status
