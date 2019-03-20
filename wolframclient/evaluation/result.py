@@ -612,10 +612,12 @@ class WolframAPIResponse400(WolframAPIFailureResponse):
         if fields is not None:
             self._fields = set(fields.keys())
             logger.warning('Fields in error: %s', self._fields)
-            self._fields_in_error = [
-                (field, err)
-                for field, err in fields.items()
-                if err.get('Failure', None) is not None]
+            self._fields_in_error = []
+            for field, err in fields.items():
+                failure = err.get('Failure', None)
+                if failure is not None:
+                    self._fields_in_error.append((field, failure))
+
 
 
 class WolframAPIResponse400Async(WolframAPIResponse400,
