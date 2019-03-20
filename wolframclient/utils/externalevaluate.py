@@ -6,7 +6,7 @@ import ast
 import logging
 import sys
 import zmq
-
+from wolframclient.utils.importutils import import_string
 from wolframclient.deserializers import binary_deserialize
 from wolframclient.language import wl
 from wolframclient.language.decorators import to_wl
@@ -138,6 +138,7 @@ def evaluate_message(context,
                      input=None,
                      return_type=None,
                      function=None,
+                     is_module=False,
                      args=None,
                      **opts):
 
@@ -146,7 +147,10 @@ def evaluate_message(context,
     if function and args is not None:
         #then we have a function call to do
         #first get the function object we need to call
-        func = execute_from_string(function, context)
+        if is_module:
+            func = import_string(function)
+        else:
+            func = execute_from_string(function, context)
         #get the full argument types (possibly calling a serialization function if necessary)
         #finally call the function and assign the output
         return func(*args)
