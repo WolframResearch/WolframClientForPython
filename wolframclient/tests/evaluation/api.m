@@ -72,3 +72,26 @@ api = APIFunction[{"str" -> "String", "image" -> "Image",
   "JSON"
 ];
 CloudDeploy[api, CloudObject["api/private/str_image_int"]];
+
+CloudDeploy[
+ APIFunction[{"x" -> "String", "y" -> "String"},
+	 {#x, #y} &,
+  "WXF"
+  ],
+ CloudObject["api/private/two_parameters_out_wxf"]
+];
+
+CloudDeploy[
+ APIFunction[{"x" -> "String", "y" -> "String"},
+	 {#x, #y} &
+  ],
+ CloudObject["api/private/two_parameters_out_default"]
+];
+
+CloudDeploy[
+ APIFunction[{"x" -> "String", "y" -> "String"},
+	 {#x, #y} &,
+  "JSON"
+  ],
+ CloudObject["api/private/two_parameters_out_json"]
+];
