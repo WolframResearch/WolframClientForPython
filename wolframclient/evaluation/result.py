@@ -9,7 +9,6 @@ from wolframclient.evaluation.cloud.request_adapter import wrap_response
 from wolframclient.exception import (
     RequestException, WolframEvaluationException, WolframLanguageException, WolframParserException)
 from wolframclient.utils import six
-from wolframclient.utils.json import is_json
 from wolframclient.utils.api import json
 from wolframclient.utils.decorators import cached_property
 
