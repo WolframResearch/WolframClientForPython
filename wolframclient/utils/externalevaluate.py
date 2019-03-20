@@ -5,7 +5,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 import ast
 import logging
 import sys
-
 import zmq
 
 from wolframclient.deserializers import binary_deserialize
