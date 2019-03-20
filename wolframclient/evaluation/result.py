@@ -502,7 +502,6 @@ class WolframAPIResponse200(WolframAPIResponse):
     def __init__(self, response, decoder=None):
         super().__init__(response, decoder=decoder)
         self.success = True
-        self._failure = None
 
     def build(self):
         self._built = True
