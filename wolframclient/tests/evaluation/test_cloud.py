@@ -118,7 +118,7 @@ class TestCase(TestCaseSettings):
         response = cloud_session.call((self.api_owner, url),
                                       input_parameters={'i': 5})
         self.assertTrue(response.success)
-        self.assertEqual(json.loads(response.get()), list(range(1, 6)))
+        self.assertEqual(response.get(), list(range(1, 6)))
 
     def test_section_api_call_two_param(self):
         api = (self.api_owner, 'api/private/range/formated/json')
@@ -132,7 +132,7 @@ class TestCase(TestCaseSettings):
         if not response.success:
             logger.warning(response.failure)
         expected = list(range(v_min, v_max, step))
-        self.assertListEqual(expected, json.loads(response.get()))
+        self.assertListEqual(expected, response.get())
 
     def test_section_invalid_api_path(self):
         with self.assertRaises(WolframLanguageException):
@@ -152,7 +152,7 @@ class TestCase(TestCaseSettings):
         with open(self.get_data_path('32x2.png'), 'rb') as fp:
             response = self.cloud_session.call(api, files={'image': fp})
             self.assertTrue(response.success)
-            res = json.loads(response.get())
+            res = response.get()
             self.assertListEqual(res, [32, 2])
 
     def test_image_file(self):
@@ -160,7 +160,7 @@ class TestCase(TestCaseSettings):
         with open(self.get_data_path('500x200.png'), 'rb') as fp:
             response = self.cloud_session.call(api, files={'image': fp})
             self.assertTrue(response.success)
-            res = json.loads(response.get())
+            res = response.get()
             self.assertListEqual(res, [500, 200])
 
     def test_image_string_int(self):
@@ -174,7 +174,7 @@ class TestCase(TestCaseSettings):
                 },
                 files={'image': fp})
             self.assertTrue(response.success)
-            res = json.loads(response.get())
+            res = response.get()
             self.assertListEqual(res, ['abc', [32, 2], 10])
 
     ### Evaluation
@@ -366,7 +366,7 @@ class TestWolframAPI(TestCaseSettings):
             apicall.add_file_parameter('image', fp)
             res = apicall.perform()
             self.assertTrue(res.success)
-            res = json.loads(res.get())
+            res = res.get()
             self.assertListEqual(res, [32, 2])
 
     def test_wolfram_api_call_named_image(self):
@@ -376,7 +376,7 @@ class TestWolframAPI(TestCaseSettings):
             apicall.add_file_parameter('image', fp, filename='testimage')
             res = apicall.perform()
             self.assertTrue(res.success)
-            res = json.loads(res.get())
+            res = res.get()
             self.assertListEqual(res, [32, 2])
 
     def test_wolfram_api_from_session(self):
@@ -386,7 +386,7 @@ class TestWolframAPI(TestCaseSettings):
             apicall.add_file_parameter('image', fp)
             res = apicall.perform()
             self.assertTrue(res.success)
-            res = json.loads(res.get())
+            res = res.get()
             self.assertListEqual(res, [32, 2])
 
     def test_wolfram_api_call_str(self):
@@ -398,7 +398,6 @@ class TestWolframAPI(TestCaseSettings):
 
     def test_wolfram_api_image_string_int(self):
         api = (self.api_owner, 'api/private/str_image_int')
-        buffer = None
         with open(self.get_data_path('32x2.png'), 'rb') as fp:
             buffer = fp.read()
         apicall = WolframAPICall(self.cloud_session, api)
@@ -406,7 +405,7 @@ class TestWolframAPI(TestCaseSettings):
         apicall.set_parameter('int', 10)
         apicall.add_image_data_parameter('image', buffer)
         result = apicall.perform().get()
-        res = json.loads(result)
+        res = result
         self.assertListEqual(res, ['abc', [32, 2], 10])
 
     def test_wolfram_api_call_async(self):
@@ -427,3 +426,12 @@ class TestWolframAPI(TestCaseSettings):
 
         res = apicall.perform()
         self.assertEqual('"edcba"', force_text(res.get()))
+
+    def test_api_invalid_input(self):
+        api_urls= ('api/private/two_parameters_out_json', 'api/private/two_parameters_out_wxf', 'api/private/two_parameters_out_default')
+        for url in api_urls:
+            api = (self.api_owner, url)
+            apicall = WolframAPICall(self.cloud_session, api)
+            apicall.set_parameter('x', 'abc')
+            res = apicall.perform()
+            self.assertFalse(res.success)
