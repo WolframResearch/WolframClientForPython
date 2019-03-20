@@ -184,9 +184,9 @@ def start_zmq_instance(port=None, write_to_stdout=True, **opts):
         sock.bind_to_random_port('tcp://127.0.0.1')
 
     if write_to_stdout:
-        #output the port as json for Mathematica to grab
-
-        print(force_text(sock.getsockopt(zmq.LAST_ENDPOINT)))
+        sys.stdout.write(force_text(sock.getsockopt(zmq.LAST_ENDPOINT)))
+        sys.stdout.write('\n')
+        sys.stdout.flush()
 
     return sock
 
