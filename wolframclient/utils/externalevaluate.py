@@ -6,6 +6,7 @@ import ast
 import logging
 import sys
 import zmq
+import os
 from wolframclient.utils.importutils import import_string
 from wolframclient.deserializers import binary_deserialize
 from wolframclient.language import wl
@@ -189,7 +190,7 @@ def start_zmq_instance(port=None, write_to_stdout=True, **opts):
 
     if write_to_stdout:
         sys.stdout.write(force_text(sock.getsockopt(zmq.LAST_ENDPOINT)))
-        sys.stdout.write('\n')
+        sys.stdout.write(os.linesep) #writes \n
         sys.stdout.flush()
 
     return sock
