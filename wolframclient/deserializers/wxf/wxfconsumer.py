@@ -138,12 +138,11 @@ class WXFConsumer(object):
         return (self.next_expression(tokens, **kwargs),
                 self.next_expression(tokens, **kwargs))
 
+    # Only symbols that round trip are allowed in this list.
     BUILTIN_SYMBOL = {
         'True': True,
         'False': False,
         'None': None,
-        'Null': None,
-        'Pi': math.pi,
         'Indeterminate': float('NaN')
     }
 
