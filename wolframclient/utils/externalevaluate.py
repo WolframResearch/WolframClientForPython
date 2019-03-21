@@ -4,19 +4,20 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import ast
 import logging
-import sys
 import os
-from wolframclient.utils.api import zmq
-from wolframclient.utils.importutils import import_string
+import sys
+
 from wolframclient.deserializers import binary_deserialize
 from wolframclient.language import wl
 from wolframclient.language.decorators import to_wl
 from wolframclient.language.side_effects import side_effect_logger
 from wolframclient.serializers import export
 from wolframclient.utils import six
+from wolframclient.utils.api import zmq
 from wolframclient.utils.datastructures import Settings
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import last
+from wolframclient.utils.importutils import import_string
 
 HIDDEN_VARIABLES = [
     '__loader__', '__builtins__', '__traceback_hidden_variables__',
@@ -190,7 +191,7 @@ def start_zmq_instance(port=None, write_to_stdout=True, **opts):
 
     if write_to_stdout:
         sys.stdout.write(force_text(sock.getsockopt(zmq.LAST_ENDPOINT)))
-        sys.stdout.write(os.linesep) #writes \n
+        sys.stdout.write(os.linesep)  #writes \n
         sys.stdout.flush()
 
     return sock
