@@ -67,6 +67,7 @@ zmq = API(
     SUB='zmq.SUB',
     SUBSCRIBE='zmq.SUBSCRIBE',
     NOBLOCK='zmq.NOBLOCK',
+    LAST_ENDPOINT='zmq.LAST_ENDPOINT',
     Again='zmq.Again')
 
 time = API(perf_counter=('time.perf_counter', 'time.time'), sleep='time.sleep')
@@ -163,4 +164,9 @@ aiohttp = API(
 
 ssl = API(
     SSLContext='ssl.SSLContext',
+)
+
+externalevaluate = API(
+    execute_from_file = 'wolframclient.utils.externalevaluate.execute_from_file',
+    start_zmq_loop    = 'wolframclient.utils.externalevaluate.start_zmq_loop',
 )

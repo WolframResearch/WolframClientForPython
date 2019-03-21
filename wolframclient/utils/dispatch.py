@@ -47,8 +47,9 @@ class Dispatch(object):
             @dispatcher.dispatch((bytes, bytearray))
             def my_func(...)
 
-        Implementation must be unique. Registering the same combination of types will raise an error, 
-        except if `force` is set to :data:`True`, in which case the mapping is updated.
+        Implementation must be unique. By default, registering the same combination of types will raise an error.
+        Set `replace_existing` to :data:`True` to update the current mapping.
+        Or, set `keep_existing` to :data:`True` to ignore duplicate registration and keep the existing mapping.
         """
 
         def register(func):
@@ -56,10 +57,12 @@ class Dispatch(object):
 
         return register
 
-    def update(self, dispatch, force=False):
+    def update(self, dispatch, **opts):
         """ Update current mapping with the one from `dispatch`.
         
-        `dispatch` can be a Dispatch instance or a :class:`dict`. """
+        `dispatch` can be a Dispatch instance or a :class:`dict`.
+        `**opts` are passed to :meth:`~wolframclient.utils.dispatch.Dispatch.register`
+         """
         if isinstance(dispatch, Dispatch):
             dispatchmapping = dispatch.dispatch_dict
         elif isinstance(dispatch, dict):
@@ -67,7 +70,7 @@ class Dispatch(object):
         else:
             raise ValueError('%s is not an instance of Dispatch' % dispatch)
         for t, function in dispatchmapping.items():
-            self.register(function, t, force=force)
+            self.register(function, t, **opts)
 
     def validate_types(self, types):
         for t in frozenset(flatten(types)):
@@ -75,19 +78,23 @@ class Dispatch(object):
                 raise ValueError('%s is not a class' % t)
             yield t
 
-    def register(self, function, types=object, force=False):
+    def register(self, function, types=object, keep_existing=False, replace_existing=False):
         """ Equivalent to annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch` but as 
         a function.
         """
         if not callable(function):
             raise ValueError('Function %s is not callable' % function)
+        if keep_existing and replace_existing:
+            raise ValueError('Option values keep_existing and replace_existing cannot be both True.')
 
         self.clear_cache()
 
         for t in self.validate_types(types):
-            if not force and t in self.dispatch_dict:
-                raise TypeError(
-                    "Duplicated registration for input type(s): %s" % (t, ))
+            if replace_existing:
+                self.dispatch_dict[t] = function
+            elif t in self.dispatch_dict:
+                if not keep_existing:
+                    raise TypeError("Duplicated registration for input type(s): %s" % (t, ))
             else:
                 self.dispatch_dict[t] = function
 
