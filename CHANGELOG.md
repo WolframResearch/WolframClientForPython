@@ -3,6 +3,7 @@
 - Merge `WolframLanguageFutureSession` into `WolframLanguageSession`. All evaluate methods have a future counterpart.
 - Merge `WolframCloudFutureSession` into `WolframCloudSession`. Add relevant future methods.
 - Rename `WolframAPICall` method `add_parameter` to `set_parameter` since setting is exactly what it does.
+- Result of API call, the `WolframAPIResponse` family of classes, now automatically deserialize the response content using the content-type, if it's `WXF` or `JSON`. The content type remains accessible in the `response` member of those classes.
 - rename evaluator parameters `STARTUP_READ_TIMEOUT` to `STARTUP_TIMEOUT`, and `TERMINATE_READ_TIMEOUT` to `TERMINATE_TIMEOUT`.
 - CPU consumption reduced to ~1% with the latest ZMQLink version.
 - Local session checks for the Wolfram Kernel version at startup and fails with a specific message.
@@ -26,7 +27,6 @@
     - add new implementation of `WolframCloudAsyncSession` based on asyncio and coroutines.
 - Cloud session named option `authentication` renamed `credentials`.
 - Significant improvement of `PIL.Image` support. Speed up serialization and deserialization of images, and add support for more input formats.
-
 
 # Version 1.0.0.dev2
 First released version of the library as a release candidate.
