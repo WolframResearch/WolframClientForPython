@@ -92,12 +92,11 @@ class Dispatch(object):
         for t in self.validate_types(types):
             if replace_existing:
                 self.dispatch_dict[t] = function
+            elif t in self.dispatch_dict:
+                if not keep_existing:
+                    raise TypeError("Duplicated registration for input type(s): %s" % (t, ))
             else:
-                if t in self.dispatch_dict:
-                    if not keep_existing:
-                        raise TypeError("Duplicated registration for input type(s): %s" % (t, ))
-                else:
-                    self.dispatch_dict[t] = function
+                self.dispatch_dict[t] = function
 
         return function
 
