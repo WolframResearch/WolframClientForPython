@@ -82,7 +82,7 @@ class WXFConsumer(object):
         except KeyError:
             raise WolframParserException(
                 'Class %s does not implement any consumer method for WXF token %s'
-                % s(cls.__name__, token))
+                % (self.__class__.__name__, wxf_type))
         return getattr(self, func)
 
     _LIST = WLSymbol('List')
