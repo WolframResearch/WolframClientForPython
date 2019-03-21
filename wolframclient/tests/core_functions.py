@@ -110,13 +110,9 @@ class TestCase(BaseTestCase):
         def implementation(self, o):
             return o * 2
 
-        @normalizer.dispatch(int, force = True)
-        def implementation(self, o):
-            return o * 3
-
         class Foo(object):
             attr = normalizer.as_method()
 
         self.assertEqual(Foo().attr('Ric'), 'Hello Ric')
-        self.assertEqual(Foo().attr(2), 6)
+        self.assertEqual(Foo().attr(2), 4)
         self.assertEqual(Foo().attr(None), None)
