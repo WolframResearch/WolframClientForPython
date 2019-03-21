@@ -5,7 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import os
 
 from wolframclient.cli.utils import SimpleCommand
-from wolframclient.utils.api import externalevaluate
+from wolframclient.utils.api import externalevaluate as ev
 
 
 class Command(SimpleCommand):
@@ -18,4 +18,4 @@ class Command(SimpleCommand):
         if installpath:
             os.environ['WOLFRAM_INSTALLATION_DIRECTORY'] = installpath
 
-        externalevaluate.start_zmq_loop(port=port)
+        ev.start_zmq_loop(port=port)
