@@ -9,7 +9,7 @@ from wolframclient.evaluation.cloud import (
 from wolframclient.evaluation.result import (
     WolframAPIResponse, WolframAPIResponseAsync, WolframCloudEvaluationJSONResponse,
     WolframEvaluationJSONResponseAsync, WolframKernelEvaluationResult,
-    WolframResult, WolframResultBase)
+    WolframResult)
 
 from wolframclient.evaluation.kernel import WolframLanguageSession, WolframLanguageAsyncSession
 from wolframclient.evaluation.pool import WolframEvaluatorPool, parallel_evaluate

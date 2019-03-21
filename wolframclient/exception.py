@@ -70,5 +70,6 @@ class WolframParserException(WolframLanguageException):
 
 __all__ = [
     'WolframLanguageException', 'RequestException', 'AuthenticationException',
-    'WolframKernelException', 'SocketException', 'WolframParserException'
+    'WolframKernelException', 'SocketException', 'WolframParserException',
+    'WolframEvaluationException'
 ]
