@@ -8,7 +8,7 @@
 - CPU consumption reduced to ~1% with the latest ZMQLink version.
 - Local session checks for the Wolfram Kernel version at startup and fails with a specific message.
 - Local session supports instant logging for messages, with severity `warn`, and prints, with severity `info`. This only works for kernel with a `kernel_loglevel` set on initialization, and allows real time feedbacks, even if the kernel evaluation is not yet completed.
-- Change mapping of WXF symbols to Python objects. The only symbols that are deserialized to Python objects are the one that round trips: `None`, `True`, `False`. `Pi` and `Null` are no more deserialized to, respectively, `math.pi` and `None`.
+- Change mapping of WXF symbols to Python objects. The only symbols that are deserialized to Python objects are the one that round trips: `Null`, `True`, `False`. `Pi` and `None` are no more deserialized to, respectively, `math.pi` and `None`.
 
 # Version 1.0.0.dev4
 - Inconsistent class name `WolframCloudSessionFuture` replaced with `WolframCloudFutureSession`.

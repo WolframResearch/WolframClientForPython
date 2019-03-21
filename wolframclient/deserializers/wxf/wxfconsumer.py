@@ -142,7 +142,7 @@ class WXFConsumer(object):
     BUILTIN_SYMBOL = {
         'True': True,
         'False': False,
-        'None': None,
+        'Null': None,
         'Indeterminate': float('NaN')
     }
 
