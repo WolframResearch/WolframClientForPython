@@ -134,7 +134,7 @@ class TestCase(BaseTestCase):
                 return o * 4
 
         # already mapped.
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             @normalizer.dispatch(int)
             def implementation(self, o):
                 return o * 4
