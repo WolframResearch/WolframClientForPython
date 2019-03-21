@@ -138,13 +138,14 @@ class WXFConsumer(object):
         return (self.next_expression(tokens, **kwargs),
                 self.next_expression(tokens, **kwargs))
 
-    # Only symbols that round trip are allowed in this list.
     BUILTIN_SYMBOL = {
         'True': True,
         'False': False,
         'Null': None,
         'Indeterminate': float('NaN')
     }
+    """ See documentation of :func:`~wolframclient.serializers.encoders.builtin.encode_none` for more information
+        about the mapping of None and Null. """
 
     def consume_symbol(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *symbol* as a :class:`~wolframclient.language.expression.WLSymbol`"""
