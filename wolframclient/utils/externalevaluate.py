@@ -5,8 +5,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 import ast
 import logging
 import sys
-import zmq
 import os
+from wolframclient.utils.api import zmq
 from wolframclient.utils.importutils import import_string
 from wolframclient.deserializers import binary_deserialize
 from wolframclient.language import wl

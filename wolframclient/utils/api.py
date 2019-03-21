@@ -67,6 +67,7 @@ zmq = API(
     SUB='zmq.SUB',
     SUBSCRIBE='zmq.SUBSCRIBE',
     NOBLOCK='zmq.NOBLOCK',
+    LAST_ENDPOINT='zmq.LAST_ENDPOINT',
     Again='zmq.Again')
 
 time = API(perf_counter=('time.perf_counter', 'time.time'), sleep='time.sleep')
