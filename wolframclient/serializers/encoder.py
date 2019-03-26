@@ -54,10 +54,11 @@ wolfram_encoder.__doc__ = """
         >>> export(MyPythonClass(1,2))
         b'MyWolframFunction[1, 2]'
 
-    Alternatively, apply :meth:`~wolframclient.utils.dispatch.Dispatch.register` to a function and its associated type(s) achieves the 
-    same result.
+    Alternatively, apply :meth:`~wolframclient.utils.dispatch.Dispatch.register` to a function and its associated 
+    type(s) achieves the same result.
 
-    It is not possible to associate two encoders with the same type, but it's possible to remove a mapping. First, unregister the previous encoder::
+    It is not possible to associate two encoders with the same type, but it's possible to remove a mapping. First, 
+    unregister the previous encoder::
 
         wolfram_encoder.unregister(MyPythonClass)
 
@@ -68,8 +69,9 @@ wolfram_encoder.__doc__ = """
     **Update with a dispatcher:**
 
 
-    An other way to extend supported types is to create a new :class:`~wolframclient.utils.dispatch.Dispatch`, map various
-    types and encoders, and ultimatelly update :data:`wolfram_encoder` using :meth:`~wolframclient.utils.dispatch.Dispatch.update`.
+    An other way to extend supported types is to create a new :class:`~wolframclient.utils.dispatch.Dispatch`, map 
+    various types and encoders, and ultimatelly update :data:`wolfram_encoder` using 
+    :meth:`~wolframclient.utils.dispatch.Dispatch.update`.
 
     Create a new dispatcher, and register :data:`MyPythonClass`::
 
@@ -90,16 +92,17 @@ wolfram_encoder.__doc__ = """
     **Define plugins:**
 
 
-    The library supports an entry point dedicated to new encoders: `wolframclient_serializers_encoder`. The library use this entry point to
-    loads plugins at runtime, as separated libraries.
-    For more information about entry points, refer to the documentation page: https://packaging.python.org/specifications/entry-points/
+    The library supports an entry point dedicated to new encoders: `wolframclient_serializers_encoder`. The library use 
+    this entry point to loads plugins at runtime, as separated libraries.
+    For more information about entry points, refer to the documentation page: 
+    https://packaging.python.org/specifications/entry-points/
 
-    The plugin name must be unique and the value must reference a dispatcher instance. This instance is loaded and used to update 
-    :data:`wolfram_encoder`. A plugin is a simple way to distribute encoders as a separe library. 
+    The plugin name must be unique and the value must reference a dispatcher instance. This instance is loaded and used 
+    to update :data:`wolfram_encoder`. A plugin is a simple way to distribute encoders as a separe library. 
     
-    One type must have a unique encoder associated to it, as a consequence, two plugins registering an encoder for the same type are incompatible.
-    it is strongly advised to create one plugin for each existing Python library. e.g.: have one plugin dedicated to Numpy, and one to Pandas which 
-    makes heavy use of Numpy arrays.
+    One type must have a unique encoder associated to it, as a consequence, two plugins registering an encoder for the 
+    same type are incompatible. it is strongly advised to create one plugin for each existing Python library. 
+    e.g.: have one plugin dedicated to Numpy, and one to Pandas which makes heavy use of Numpy arrays.
     """
 
 
@@ -141,7 +144,7 @@ class DispatchUpdater(object):
             installed_modules = sys.modules.keys()
             for module in self.modules.intersection(installed_modules):
                 for handler in self.registry[module]:
-                    self.dispatch.update(safe_import_string(handler), force=True)
+                    self.dispatch.update(safe_import_string(handler), keep_existing=True)
 
                 del self.registry[module]
                 self.modules.remove(module)

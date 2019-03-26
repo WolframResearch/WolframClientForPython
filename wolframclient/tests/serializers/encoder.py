@@ -77,7 +77,7 @@ class TestCase(BaseTestCase):
                 return s.serialize_symbol('subsubfooAGAIN')
 
     def test_register_twice_force(self):
-        @wolfram_encoder.dispatch(subsubfoo, force=True)
+        @wolfram_encoder.dispatch(subsubfoo, replace_existing=True)
         def encode_subsubfoo_again(s, o):
             return s.serialize_symbol('subsubfooFORCE')
 
