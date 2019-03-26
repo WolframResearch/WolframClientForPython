@@ -11,9 +11,9 @@ from wolframclient.evaluation.cloud.oauth import \
 from wolframclient.evaluation.cloud.oauth import \
     XAuthRequestsSyncSession as XAuthSession
 from wolframclient.evaluation.cloud.server import WOLFRAM_PUBLIC_CLOUD_SERVER
-from wolframclient.evaluation.result import (WolframAPIResponseBuilder,
-                                             WolframCloudEvaluationJSONResponse,
-                                             WolframCloudEvaluationWXFResponse)
+from wolframclient.evaluation.result import (
+    WolframAPIResponseBuilder, WolframCloudEvaluationJSONResponse,
+    WolframCloudEvaluationWXFResponse)
 from wolframclient.exception import AuthenticationException
 from wolframclient.serializers import export
 from wolframclient.utils import six

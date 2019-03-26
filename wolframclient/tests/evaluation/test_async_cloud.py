@@ -19,7 +19,6 @@ from wolframclient.tests.configure import (MSG_JSON_NOT_FOUND, json_config,
                                            secured_authentication_key, server,
                                            user_configuration)
 from wolframclient.utils import six
-from wolframclient.utils.api import json
 from wolframclient.utils.asyncio import get_event_loop, run_in_loop
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.tests import TestCase as BaseTestCase
@@ -168,8 +167,7 @@ class TestCase(TestCaseSettings):
             response = await cloud_session.call((self.api_owner, url),
                                                 input_parameters={'i': 5})
             self.assertTrue(response.success)
-            self.assertEqual(
-                await response.get(), list(range(1, 6)))
+            self.assertEqual(await response.get(), list(range(1, 6)))
         finally:
             await cloud_session.terminate()
 
@@ -409,7 +407,9 @@ class TestWolframAPI(TestCaseSettings):
 
     @run_in_loop
     async def test_api_invalid_input(self):
-        api_urls= ('api/private/two_parameters_out_json', 'api/private/two_parameters_out_wxf', 'api/private/two_parameters_out_default')
+        api_urls = ('api/private/two_parameters_out_json',
+                    'api/private/two_parameters_out_wxf',
+                    'api/private/two_parameters_out_default')
         for url in api_urls:
             api = (self.api_owner, url)
             apicall = WolframAPICallAsync(self.cloud_session_async, api)

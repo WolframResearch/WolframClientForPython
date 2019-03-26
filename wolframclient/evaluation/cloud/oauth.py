@@ -47,9 +47,7 @@ class OAuthRequestsSyncSessionBase(OAuthSessionBase):
         # msg is None if response is not JSON, but it's fine.
         except Exception:
             msg = 'Request failed with status %i' % response.status_code
-            raise AuthenticationException(
-                response,
-                msg=msg)
+            raise AuthenticationException(response, msg=msg)
 
     def signed_request(self, uri, headers={}, body={}, files={},
                        method='POST'):

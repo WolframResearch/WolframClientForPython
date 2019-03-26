@@ -144,7 +144,8 @@ class DispatchUpdater(object):
             installed_modules = sys.modules.keys()
             for module in self.modules.intersection(installed_modules):
                 for handler in self.registry[module]:
-                    self.dispatch.update(safe_import_string(handler), keep_existing=True)
+                    self.dispatch.update(
+                        safe_import_string(handler), keep_existing=True)
 
                 del self.registry[module]
                 self.modules.remove(module)

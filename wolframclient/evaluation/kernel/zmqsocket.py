@@ -5,8 +5,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 import logging
 from functools import wraps
 
-from wolframclient.utils.api import time, zmq
 from wolframclient.exception import WolframLanguageException
+from wolframclient.utils.api import time, zmq
+
 logger = logging.getLogger(__name__)
 
 
@@ -16,6 +17,7 @@ class SocketException(WolframLanguageException):
 
 class SocketAborted(SocketException):
     pass
+
 
 class SocketOperationTimeout(SocketException):
     pass

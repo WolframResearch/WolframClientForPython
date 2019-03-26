@@ -128,12 +128,15 @@ class TestCase(BaseTestCase):
 
         # inconsistent option values
         with self.assertRaises(ValueError):
-            @normalizer.dispatch(int, replace_existing=True, keep_existing=True)
+
+            @normalizer.dispatch(
+                int, replace_existing=True, keep_existing=True)
             def implementation(self, o):
                 return o * 4
 
         # already mapped.
         with self.assertRaises(TypeError):
+
             @normalizer.dispatch(int)
             def implementation(self, o):
                 return o * 4

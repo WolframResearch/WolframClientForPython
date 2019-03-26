@@ -247,7 +247,8 @@ class TestKernelPool(BaseTestCase):
         ]
         res = await asyncio.gather(*tasks)
         self.assertEqual({*res},
-            {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"})
+                         {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"})
+
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestParalleleEvaluate(BaseTestCase):

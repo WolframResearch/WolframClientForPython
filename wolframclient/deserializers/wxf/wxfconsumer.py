@@ -3,7 +3,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import decimal
-import math
 import re
 
 from wolframclient.exception import WolframParserException

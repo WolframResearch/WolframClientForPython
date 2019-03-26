@@ -10,12 +10,12 @@ from subprocess import PIPE, Popen
 from threading import Event, RLock, Thread
 
 from wolframclient.evaluation.kernel.path import find_default_kernel_path
-from wolframclient.evaluation.kernel.zmqsocket import Socket, SocketAborted, SocketOperationTimeout
+from wolframclient.evaluation.kernel.zmqsocket import (Socket, SocketAborted,
+                                                       SocketOperationTimeout)
 from wolframclient.evaluation.result import WolframKernelEvaluationResult
 from wolframclient.exception import WolframKernelException
 from wolframclient.utils import six
 from wolframclient.utils.api import json, os, time, zmq
-from wolframclient.utils.encoding import force_text
 
 if six.WINDOWS:
     from subprocess import STARTUPINFO, STARTF_USESHOWWINDOW

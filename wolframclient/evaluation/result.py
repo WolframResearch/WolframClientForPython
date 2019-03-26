@@ -7,7 +7,8 @@ import logging
 from wolframclient.deserializers import binary_deserialize
 from wolframclient.evaluation.cloud.request_adapter import wrap_response
 from wolframclient.exception import (
-    RequestException, WolframEvaluationException, WolframLanguageException, WolframParserException)
+    RequestException, WolframEvaluationException, WolframLanguageException,
+    WolframParserException)
 from wolframclient.utils import six
 from wolframclient.utils.api import json
 from wolframclient.utils.decorators import cached_property
@@ -17,9 +18,8 @@ logger = logging.getLogger(__name__)
 __all__ = [
     'WolframResult', 'WolframAPIResponseBuilder', 'WolframAPIResponse',
     'WolframCloudEvaluationWXFResponse', 'WolframCloudEvaluationJSONResponse',
-    'WolframKernelEvaluationResult',
-    'WolframAPIResponseAsync', 'WolframEvaluationJSONResponseAsync',
-    'WolframEvaluationWXFResponseAsync'
+    'WolframKernelEvaluationResult', 'WolframAPIResponseAsync',
+    'WolframEvaluationJSONResponseAsync', 'WolframEvaluationWXFResponseAsync'
 ]
 
 
@@ -174,7 +174,7 @@ class WolframEvaluationResultBase(WolframResultBase):
         """
         raise NotImplementedError(
             '%s does not implement parse_response method.' %
-            (self.__class__.__name__,))
+            (self.__class__.__name__, ))
 
     def build_invalid_format(self, response_format_name=None):
         """ Build a result object for invalid format cases. """
@@ -192,7 +192,7 @@ class WolframEvaluationResultBase(WolframResultBase):
         self._output = self.parsed_response.get('Output', [])
         if not self._success:
             self._failure = self.parsed_response['FailureType']
-            if self._failure  == 'MessageFailure':
+            if self._failure == 'MessageFailure':
                 self._is_message_failure = True
                 self._messages_name = self.parsed_response['Messages']
                 self._messages = self.parsed_response['MessagesText']
@@ -204,14 +204,16 @@ class WolframEvaluationResultBase(WolframResultBase):
 
     def __repr__(self):
         if self.success:
-            return '{}<expression={}>'.format(
-                self.__class__.__name__, self.result)
+            return '{}<expression={}>'.format(self.__class__.__name__,
+                                              self.result)
         elif self.is_message_failure:
             return '{}<success={}, result={}, messages={}>'.format(
-                self.__class__.__name__, self.success, self.result, self.messages)
+                self.__class__.__name__, self.success, self.result,
+                self.messages)
         else:
-            return '{}<failure={}>'.format(
-                self.__class__.__name__, self.failure)
+            return '{}<failure={}>'.format(self.__class__.__name__,
+                                           self.failure)
+
 
 class WolframKernelEvaluationResult(WolframEvaluationResultBase):
     """A Wolfram result with WXF encoded data.
@@ -277,7 +279,6 @@ class WolframCloudEvaluationResponse(WolframEvaluationResultBase):
                          self.http_response.status(),
                          self.http_response.text())
             raise RequestException(self.http_response)
-
 
 
 class WolframCloudEvaluationWXFResponse(WolframCloudEvaluationResponse):
@@ -412,7 +413,7 @@ class WolframCloudEvaluationResponseAsync(WolframCloudEvaluationResponse):
         elif await self.is_message_failure:
             if not silent:
                 for msg in self.iter_messages():
-                        logger.warning(msg)
+                    logger.warning(msg)
                 return self.result
         else:
             raise WolframEvaluationException(
@@ -474,7 +475,6 @@ class WolframAPIResponse(WolframResult):
         if not self._built:
             self.build()
         return self._failure
-
 
     def __repr__(self):
         return '<%s:success=%s>' % (self.__class__.__name__, self.success)
@@ -606,7 +606,9 @@ class WolframAPIResponse400(WolframAPIFailureResponse):
 
     def _unexpected_content_type(self):
         return RequestException(
-            self.response, msg='Unexpected content type %s. Expecting JSON or WXF.' % self.content_type)
+            self.response,
+            msg='Unexpected content type %s. Expecting JSON or WXF.' %
+            self.content_type)
 
     def _update_from_response(self):
         self._failure = self.parsed_response.get('Failure', None)
@@ -622,14 +624,14 @@ class WolframAPIResponse400(WolframAPIFailureResponse):
                     self._fields_in_error.append((field, failure))
 
 
-
 class WolframAPIResponse400Async(WolframAPIResponse400,
                                  WolframAPIResponseAsync):
     async def build(self):
         # ignoring content-type. Must be JSON. Make sure it's robust enough.
         try:
             if self.decoder:
-                self.parsed_response = self.decoder(await self.response.content())
+                self.parsed_response = self.decoder(await
+                                                    self.response.content())
             else:
                 raise self._unexpected_content_type()
         except json.JSONDecodeError as e:
@@ -644,6 +646,7 @@ class WolframAPIResponse400Async(WolframAPIResponse400,
         if not self._built:
             await self.build()
         return self._fields_in_error
+
 
 class WolframAPIResponse401(WolframAPIFailureResponse):
     def build(self):

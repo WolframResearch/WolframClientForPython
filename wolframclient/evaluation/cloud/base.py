@@ -180,10 +180,8 @@ class WolframAPICallBase(object):
 
     def __repr__(self):
         return '<%s api=%s, parameters=%s>' % (
-            self.__class__.__name__,
-            self.api,
-            set().union(self.parameters.keys(), self.files.keys()) or None
-            )
+            self.__class__.__name__, self.api,
+            set().union(self.parameters.keys(), self.files.keys()) or None)
 
     def __str__(self):
         return repr(self)

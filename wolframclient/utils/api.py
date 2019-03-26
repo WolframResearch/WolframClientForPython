@@ -163,11 +163,9 @@ aiohttp = API(
     StringPayload='aiohttp.StringPayload',
 )
 
-ssl = API(
-    SSLContext='ssl.SSLContext',
-)
+ssl = API(SSLContext='ssl.SSLContext', )
 
 externalevaluate = API(
-    execute_from_file = 'wolframclient.utils.externalevaluate.execute_from_file',
-    start_zmq_loop    = 'wolframclient.utils.externalevaluate.start_zmq_loop',
+    execute_from_file='wolframclient.utils.externalevaluate.execute_from_file',
+    start_zmq_loop='wolframclient.utils.externalevaluate.start_zmq_loop',
 )

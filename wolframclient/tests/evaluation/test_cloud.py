@@ -18,7 +18,6 @@ from wolframclient.tests.configure import (MSG_JSON_NOT_FOUND, json_config,
                                            secured_authentication_key, server,
                                            user_configuration)
 from wolframclient.utils import six
-from wolframclient.utils.api import json
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.tests import TestCase as BaseTestCase
 from wolframclient.utils.url import url_join
@@ -428,7 +427,9 @@ class TestWolframAPI(TestCaseSettings):
         self.assertEqual('"edcba"', force_text(res.get()))
 
     def test_api_invalid_input(self):
-        api_urls= ('api/private/two_parameters_out_json', 'api/private/two_parameters_out_wxf', 'api/private/two_parameters_out_default')
+        api_urls = ('api/private/two_parameters_out_json',
+                    'api/private/two_parameters_out_wxf',
+                    'api/private/two_parameters_out_default')
         for url in api_urls:
             api = (self.api_owner, url)
             apicall = WolframAPICall(self.cloud_session, api)
