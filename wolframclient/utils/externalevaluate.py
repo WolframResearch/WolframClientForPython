@@ -57,7 +57,7 @@ class EvaluationContext(Mapping):
         return self.read[v]
 
     def __setitem__(self, k, v):
-        self.write[k] = v 
+        self.read[k] = self.write[k] = v
 
     def __iter__(self):
         return iter(self.read)
