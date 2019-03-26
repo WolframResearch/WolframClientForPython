@@ -74,16 +74,16 @@ def execute_from_file(path, *args, **opts):
         return execute_from_string(force_text(f.read()), *args, **opts)
 
 
-def execute_from_string(string, globals = {}, **opts):
+def execute_from_string(code, globals = {}, **opts):
 
     __traceback_hidden_variables__ = True
 
     #this is creating a custom __loader__ that is returning the source code
     #traceback serializers is inspecting global variables and looking for a standard loader that can return source code.
 
-    context = EvaluationContext(code = string, **opts)
+    context = EvaluationContext(code = code, **opts)
 
-    expressions = list(ast.parse(string).body)
+    expressions = list(ast.parse(code).body)
 
     if not expressions:
         return wl.Null
