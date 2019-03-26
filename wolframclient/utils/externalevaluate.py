@@ -19,6 +19,11 @@ from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import last
 from wolframclient.utils.importutils import import_string
 
+if six.PY_35:
+    from collections.abc import Mapping
+else:
+    from collections import Mapping
+
 HIDDEN_VARIABLES = [
     '__loader__', '__builtins__', '__traceback_hidden_variables__',
     'absolute_import', 'print_function', 'unicode_literals'
@@ -30,7 +35,36 @@ EXPORT_KWARGS = {
 }
 
 
-class UnprintableContext(dict):
+class EvaluationContext(Mapping):
+
+    def __init__(self, code, session_data = {}, context = None, **extra):
+
+        self.code = code
+        self.read = {
+            '__loader__': Settings(get_source=self.get_source),
+            '__traceback_hidden_variables__': HIDDEN_VARIABLES
+        }
+        self.read.update(session_data)
+        if context:
+            self.read.update(context)
+
+        self.write = session_data
+
+    def get_source(self, *args, **opts):
+        return self.code
+
+    def __getitem__(self, v):
+        return self.read[v]
+
+    def __setitem__(self, k, v):
+        self.write[k] = v 
+
+    def __iter__(self):
+        return iter(self.read)
+
+    def __len__(self):
+        return len(self.read)
+
     def __repr__(self):
         return '<evaluation context>'
 
@@ -40,22 +74,19 @@ def execute_from_file(path, *args, **opts):
         return execute_from_string(force_text(f.read()), *args, **opts)
 
 
-def execute_from_string(string, context=UnprintableContext()):
+def execute_from_string(string, globals = {}, **opts):
 
     __traceback_hidden_variables__ = True
 
     #this is creating a custom __loader__ that is returning the source code
     #traceback serializers is inspecting global variables and looking for a standard loader that can return source code.
 
-    current = UnprintableContext(context or ())
-    current['__loader__'] = Settings(
-        get_source=lambda module, code=string: code)
-    current['__traceback_hidden_variables__'] = HIDDEN_VARIABLES
+    context = EvaluationContext(code = string, **opts)
 
     expressions = list(ast.parse(string).body)
 
     if not expressions:
-        return
+        return wl.Null
 
     result = None
 
@@ -63,18 +94,12 @@ def execute_from_string(string, context=UnprintableContext()):
         result = expressions.pop(-1)
 
     if expressions:
-        exec(compile(ast.Module(expressions), '', 'exec'), current)
+        exec(compile(ast.Module(expressions), '', 'exec'), globals, context)
 
     if result:
-        result = eval(
-            compile(ast.Expression(result.value), '', 'eval'), current)
+        return eval(compile(ast.Expression(result.value), '', 'eval'), globals, context)
     else:
-        result = wl.Null
-
-    if context is not None:
-        context.update(current)
-
-    return result
+        return wl.Null
 
 
 class SideEffectSender(logging.Handler):
@@ -136,44 +161,35 @@ class StdoutProxy:
         self.stream.write(export(self.keep_listening(expr), **EXPORT_KWARGS))
 
 
-def evaluate_message(context,
-                     input=None,
+def evaluate_message(input=None,
                      return_type=None,
-                     function=None,
-                     is_module=False,
                      args=None,
                      **opts):
 
     __traceback_hidden_variables__ = True
 
-    if function and args is not None:
+    if isinstance(input, six.string_types):
+        result = execute_from_string(input, **opts)
+
+    if isinstance(args, (list, tuple)):
         #then we have a function call to do
         #first get the function object we need to call
-        if is_module:
-            func = import_string(function)
-        else:
-            func = execute_from_string(function, context)
-        #get the full argument types (possibly calling a serialization function if necessary)
-        #finally call the function and assign the output
-        return func(*args)
+        result = result(*args)
 
-    if isinstance(input, six.string_types):
-        result = execute_from_string(input, context)
+    if return_type == 'string':
+        # bug 354267 repr returns a 'str' even on py2 (i.e. bytes).
+        result = force_text(repr(result))
 
-        if return_type == 'string':
-            # bug 354267 repr returns a 'str' even on py2 (i.e. bytes).
-            return force_text(repr(result))
-
-        return result
+    return result
 
 
 @to_wl(**EXPORT_KWARGS)
-def handle_message(socket, context=UnprintableContext()):
+def handle_message(socket):
 
     __traceback_hidden_variables__ = True
 
     message = binary_deserialize(socket.recv())
-    result = evaluate_message(context=context, **message)
+    result  = evaluate_message(**message)
 
     sys.stdout.flush()
     return result
