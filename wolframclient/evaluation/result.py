@@ -45,7 +45,6 @@ class WolframResult(WolframResultBase):
         if self.success:
             return self.result
         else:
-
             raise WolframLanguageException(self.failure)
 
     def __repr__(self):
@@ -460,7 +459,7 @@ class WolframAPIResponse(WolframResult):
         self.status = response.status()
         self.parsed_response = None
         self.success = None
-        self.failure = None
+        self._failure = None
         self._built = False
 
     def build(self):
@@ -469,7 +468,13 @@ class WolframAPIResponse(WolframResult):
     def get(self):
         if not self._built:
             self.build()
-        return super().get()
+        return self._get()
+
+    def _get(self):
+        if self.success:
+            return self.result
+        else:
+            raise WolframLanguageException(self._failure)
 
     def failure(self):
         if not self._built:
@@ -482,8 +487,9 @@ class WolframAPIResponse(WolframResult):
 
 class WolframAPIResponseAsync(WolframAPIResponse):
     async def get(self):
-        await self.build()
-        return super(WolframAPIResponse, self).get()
+        if not self._built:
+            await self.build()
+        return self._get()
 
     async def build(self):
         raise NotImplementedError
