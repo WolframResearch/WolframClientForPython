@@ -102,6 +102,20 @@ class TestCase(TestCaseSettings):
                                            input_parameters={'str': 'abcde'})
         self.assertEqual('"edcba"', force_text(response.get()))
 
+    def test_section_api_permission_key(self):
+        with WolframCloudSession(server=server) as cloud:
+            url = 'api/public/permkey_stringreverse_wxf'
+            response = cloud.call((self.api_owner, url),
+                                  input_parameters={'str': 'abcde'},
+                                  permissions_key='my_key')
+            self.assertEqual('edcba', response.get())
+
+    # currently missing key result in a webpage with an input field for the key.
+    # def test_section_api_missing_permission_key(self):
+    #     url = 'api/public/permkey_stringreverse_wxf'
+    #     with self.assertRaises(AuthenticationException):
+    #         self.cloud_session.call((self.api_owner, url), input_parameters={'str': 'abcde'})
+
     def test_section_api_call_one_param_wrong(self):
         url = 'api/private/stringreverse'
         response = self.cloud_session.call((self.api_owner, url))
@@ -436,3 +450,12 @@ class TestWolframAPI(TestCaseSettings):
             apicall.set_parameter('x', 'abc')
             res = apicall.perform()
             self.assertFalse(res.success)
+
+    def test_api_permission_key(self):
+        with WolframCloudSession(server=server) as cloud:
+            url = 'api/public/permkey_stringreverse_wxf'
+            api = (self.api_owner, url)
+            apicall = WolframAPICall(cloud, api, permission_key='my_key')
+            apicall.set_parameter('str', 'abcde')
+            response = apicall.perform()
+            self.assertEqual('edcba', response.get())

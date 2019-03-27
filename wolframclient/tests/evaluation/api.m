@@ -26,6 +26,18 @@ CloudDeploy[
 	co
 ]
 
+
+co = CloudObject["api/public/permkey_stringreverse_wxf"];
+CloudDeploy[
+	APIFunction[
+		{"str" -> "String"},
+		StringReverse[#str] &,
+    "WXF"
+	],
+	co,
+  Permissions -> {PermissionsKey["my_key"] -> "Execute"}
+]
+
 co = CloudObject["api/private/range/formated/json"];
 CloudDeploy[APIFunction[
   {"max" -> "Integer", "min" -> "Integer" -> 1, 
