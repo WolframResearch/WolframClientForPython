@@ -10,6 +10,7 @@ from wolframclient.exception import (
     RequestException, WolframEvaluationException, WolframLanguageException,
     WolframParserException)
 from wolframclient.utils import six
+from wolframclient.utils.logger import  str_trim
 from wolframclient.utils.api import json
 from wolframclient.utils.decorators import cached_property
 
@@ -587,15 +588,14 @@ class WolframAPIResponse400(WolframAPIFailureResponse):
         self._fields_in_error = None
 
     def build(self):
-        # ignoring content-type. Must be JSON. Make sure it's robust enough.
         try:
             if self.decoder:
                 self.parsed_response = self.decoder(self.response.content())
             else:
-                raise self.unexpected_content_type()
+                self.parsed_response = self._unexpected_content_type()
         except (json.JSONDecodeError, WolframParserException):
             logger.fatal('Failed to parse server response as %s:\n%s',
-                         self.content_type, self.response.content())
+                         self.content_type, str_trim(self.response.content(), max_char=200))
             raise self._failed_to_parse()
         self._update_from_response()
         self._built = True
@@ -611,10 +611,10 @@ class WolframAPIResponse400(WolframAPIFailureResponse):
             self.response, msg='Failed to parse server response.')
 
     def _unexpected_content_type(self):
-        return RequestException(
-            self.response,
-            msg='Unexpected content type %s. Expecting JSON or WXF.' %
-            self.content_type)
+        logger.warning('Response content-type: %s is not supported. Cannot decode content: %s', self.content_type, str_trim(self.response.content()))
+        return {
+            'Failure': 'Cannot decode server response. No decoder found for content-type: %s.' % self.content_type
+        }
 
     def _update_from_response(self):
         self._failure = self.parsed_response.get('Failure', None)
@@ -639,13 +639,19 @@ class WolframAPIResponse400Async(WolframAPIResponse400,
                 self.parsed_response = self.decoder(await
                                                     self.response.content())
             else:
-                raise self._unexpected_content_type()
+                self.parsed_response = await self._unexpected_content_type()
         except json.JSONDecodeError as e:
             logger.fatal('Failed to parse server response as %s:\n%s',
                          self.content_type, await self.response.content())
             raise self._failed_to_parse()
         self._update_from_response()
         self._built = True
+
+    async def _unexpected_content_type(self):
+        logger.warning('Response content-type: %s is not supported. Cannot decode content: %s', self.content_type, str_trim(await self.response.content()))
+        return {
+            'Failure': 'Cannot decode server response. No decoder found for content-type: %s.' % self.content_type
+        }
 
     async def fields_in_error(self):
         """Return all the fields in error with their message as a list of tuples"""
