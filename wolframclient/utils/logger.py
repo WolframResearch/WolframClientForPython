@@ -13,7 +13,7 @@ if six.PY2:
             filename=path,
             filemode='a',
             format='%(asctime)s, %(name)s %(levelname)s %(message)s',
-            level=level or logging.INFO)
+            level=(level is not None) or logging.INFO)
 else:
 
     def setup_logging_to_file(path, level=None):
@@ -21,7 +21,7 @@ else:
         logging.basicConfig(
             format=u'%(asctime)s, %(name)s %(levelname)s %(message)s',
             handlers=[logging.FileHandler(path, mode='a', encoding='utf-8')],
-            level=level or logging.INFO)
+            level=(level is not None) or logging.INFO)
 
 
 def str_trim(o, max_char=80):
