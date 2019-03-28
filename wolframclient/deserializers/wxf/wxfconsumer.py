@@ -77,7 +77,7 @@ class WXFConsumer(object):
 
     def _consumer_from_type(self, wxf_type):
         try:
-            func = WXFConsumer._mapping[wxf_type]
+            func = self._mapping[wxf_type]
         except KeyError:
             raise WolframParserException(
                 'Class %s does not implement any consumer method for WXF token %s'
