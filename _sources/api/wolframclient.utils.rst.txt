@@ -60,6 +60,14 @@ wolframclient.utils.encoding module
     :undoc-members:
     :show-inheritance:
 
+wolframclient.utils.externalevaluate module
+-------------------------------------------
+
+.. automodule:: wolframclient.utils.externalevaluate
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 wolframclient.utils.functional module
 -------------------------------------
 

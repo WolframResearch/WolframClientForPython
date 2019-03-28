@@ -20,6 +20,14 @@ wolframclient.cli.commands.refactor module
     :undoc-members:
     :show-inheritance:
 
+wolframclient.cli.commands.start\_externalevaluate module
+---------------------------------------------------------
+
+.. automodule:: wolframclient.cli.commands.start_externalevaluate
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 wolframclient.cli.commands.test module
 --------------------------------------
 

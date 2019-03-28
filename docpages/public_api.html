@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Guide &#8212; Wolfram Client Library for Python 1.0.0.dev5 documentation</title>
+    <title>Guide &#8212; Wolfram Client Library for Python 1.0.0 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -63,7 +63,7 @@
                                 </span>
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.0.dev5</span>
+                        <span class='header right navigation darkgrey'>v 1.0.0</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -437,9 +437,10 @@ it to the types passed as argument of the annotation.</p>
 <span class="go">b&#39;MyWolframFunction[1, 2]&#39;</span>
 </pre></div>
 </div>
-<p>Alternatively, apply <a class="reference internal" href="../api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.register" title="wolframclient.utils.dispatch.Dispatch.register"><code class="xref py py-meth docutils literal notranslate"><span class="pre">register()</span></code></a> to a function and its associated type(s) achieves the 
-same result.</p>
-<p>It is not possible to associate two encoders with the same type, but it’s possible to remove a mapping. First, unregister the previous encoder:</p>
+<p>Alternatively, apply <a class="reference internal" href="../api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.register" title="wolframclient.utils.dispatch.Dispatch.register"><code class="xref py py-meth docutils literal notranslate"><span class="pre">register()</span></code></a> to a function and its associated 
+type(s) achieves the same result.</p>
+<p>It is not possible to associate two encoders with the same type, but it’s possible to remove a mapping. First, 
+unregister the previous encoder:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wolfram_encoder</span><span class="o">.</span><span class="n">unregister</span><span class="p">(</span><span class="n">MyPythonClass</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -448,8 +449,9 @@ same result.</p>
 </pre></div>
 </div>
 <p><strong>Update with a dispatcher:</strong></p>
-<p>An other way to extend supported types is to create a new <a class="reference internal" href="../api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch" title="wolframclient.utils.dispatch.Dispatch"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dispatch</span></code></a>, map various
-types and encoders, and ultimatelly update <code class="xref py py-data docutils literal notranslate"><span class="pre">wolfram_encoder</span></code> using <a class="reference internal" href="../api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.update" title="wolframclient.utils.dispatch.Dispatch.update"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update()</span></code></a>.</p>
+<p>An other way to extend supported types is to create a new <a class="reference internal" href="../api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch" title="wolframclient.utils.dispatch.Dispatch"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dispatch</span></code></a>, map 
+various types and encoders, and ultimatelly update <code class="xref py py-data docutils literal notranslate"><span class="pre">wolfram_encoder</span></code> using 
+<a class="reference internal" href="../api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.update" title="wolframclient.utils.dispatch.Dispatch.update"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update()</span></code></a>.</p>
 <p>Create a new dispatcher, and register <code class="xref py py-data docutils literal notranslate"><span class="pre">MyPythonClass</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">wolframclient.utils.dispatch</span> <span class="k">import</span> <span class="n">Dispatch</span>
 
@@ -467,14 +469,15 @@ types and encoders, and ultimatelly update <code class="xref py py-data docutils
 </pre></div>
 </div>
 <p><strong>Define plugins:</strong></p>
-<p>The library supports an entry point dedicated to new encoders: <cite>wolframclient_serializers_encoder</cite>. The library use this entry point to
-loads plugins at runtime, as separated libraries.
-For more information about entry points, refer to the documentation page: <a class="reference external" href="https://packaging.python.org/specifications/entry-points/">https://packaging.python.org/specifications/entry-points/</a></p>
-<p>The plugin name must be unique and the value must reference a dispatcher instance. This instance is loaded and used to update 
-<code class="xref py py-data docutils literal notranslate"><span class="pre">wolfram_encoder</span></code>. A plugin is a simple way to distribute encoders as a separe library.</p>
-<p>One type must have a unique encoder associated to it, as a consequence, two plugins registering an encoder for the same type are incompatible.
-it is strongly advised to create one plugin for each existing Python library. e.g.: have one plugin dedicated to Numpy, and one to Pandas which 
-makes heavy use of Numpy arrays.</p>
+<p>The library supports an entry point dedicated to new encoders: <cite>wolframclient_serializers_encoder</cite>. The library use 
+this entry point to loads plugins at runtime, as separated libraries.
+For more information about entry points, refer to the documentation page: 
+<a class="reference external" href="https://packaging.python.org/specifications/entry-points/">https://packaging.python.org/specifications/entry-points/</a></p>
+<p>The plugin name must be unique and the value must reference a dispatcher instance. This instance is loaded and used 
+to update <code class="xref py py-data docutils literal notranslate"><span class="pre">wolfram_encoder</span></code>. A plugin is a simple way to distribute encoders as a separe library.</p>
+<p>One type must have a unique encoder associated to it, as a consequence, two plugins registering an encoder for the 
+same type are incompatible. it is strongly advised to create one plugin for each existing Python library. 
+e.g.: have one plugin dedicated to Numpy, and one to Pandas which makes heavy use of Numpy arrays.</p>
 </dd></dl>
 
 </div>
@@ -512,7 +515,7 @@ use <a class="reference internal" href="../api/wolframclient.deserializers.wxf.h
 <h2>Evaluating Expressions<a class="headerlink" href="#evaluating-expressions" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt>
-<em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframLanguageSession</code><span class="sig-paren">(</span><em>kernel=None</em>, <em>consumer=None</em>, <em>initfile=None</em>, <em>kernel_loglevel=0</em>, <em>stdin=-1</em>, <em>stdout=-1</em>, <em>stderr=-1</em>, <em>inputform_string_evaluation=True</em>, <em>wxf_bytes_evaluation=True</em>, <em>controller_class=&lt;class 'wolframclient.evaluation.kernel.kernelcontroller.WolframEngineController'&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession"><span class="viewcode-link">[source]</span></a></dt>
+<em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframLanguageSession</code><span class="sig-paren">(</span><em>kernel=None</em>, <em>consumer=None</em>, <em>initfile=None</em>, <em>kernel_loglevel=0</em>, <em>stdin=-1</em>, <em>stdout=-1</em>, <em>stderr=-1</em>, <em>inputform_string_evaluation=True</em>, <em>wxf_bytes_evaluation=True</em>, <em>controller_class=&lt;class 'wolframclient.evaluation.kernel.kernelcontroller.WolframKernelController'&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>A session to a Wolfram Kernel enabling evaluation of Wolfram Language expressions.</p>
 <p>Start a new session and send an expression for evaluation:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">WolframLanguageSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
@@ -608,7 +611,7 @@ See <a class="reference internal" href="../api/wolframclient.evaluation.html#wol
 <dt>
 <code class="descname">evaluate_wxf</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.evaluate_wxf"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Evaluate an expression and return the serialized expression.</p>
-<p>This method does not deserialize the Wolfram Engine input.</p>
+<p>This method does not deserialize the Wolfram Kernel input.</p>
 </dd></dl>
 
 <dl class="method">
@@ -659,20 +662,20 @@ will be raised and the kernel is terminated.</p>
 <dl class="method">
 <dt>
 <code class="descname">start_future</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.start_future"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Request the Wolfram Engine to start. Return a future object.</p>
+<dd><p>Request the Wolfram Kernel to start. Return a future object.</p>
 <p>The result of the future object is True when the kernel is ready to evaluate input.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.stop"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Request the Wolfram Engine to stop gracefully.</p>
+<dd><p>Request the Wolfram Kernel to stop gracefully.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">stop_future</code><span class="sig-paren">(</span><em>gracefully=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.stop_future"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Request the Wolfram Engine to stop. Return a future object.</p>
+<dd><p>Request the Wolfram Kernel to stop. Return a future object.</p>
 <p>The result of the future object is True when the controller thread is no more alive.
 Set <cite>gracefully</cite> to <cite>False</cite> will request for an immediate stop, eventually cancelling ongoing
 evaluations.</p>
@@ -681,7 +684,7 @@ evaluations.</p>
 <dl class="method">
 <dt>
 <code class="descname">terminate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.terminate"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Request the Wolfram Engine to stop immediately.</p>
+<dd><p>Request the Wolfram Kernel to stop immediately.</p>
 <p>Ongoing evaluations may be cancelled.</p>
 </dd></dl>
 
@@ -802,12 +805,12 @@ an instance of <a class="reference internal" href="../api/wolframclient.evaluati
 in the form of an iterable object, yielding above mentioned specification.
 If the number of evaluators is less than the requested pool size (<cite>poolsize</cite>), elements are duplicated until the requested number of 
 evaluators is reached.</p>
-<p>Create a pool from a Wolfram Engine default location:</p>
+<p>Create a pool from a Wolfram Kernel default location:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">with</span> <span class="n">WolframEvaluatorPool</span><span class="p">()</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
     <span class="k">await</span> <span class="n">pool</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;$InstallationDirectory&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Create a pool from a specific Wolfram Engine:</p>
+<p>Create a pool from a specific Wolfram Kernel:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">with</span> <span class="n">WolframEvaluatorPool</span><span class="p">(</span><span class="s1">&#39;/path/to/local/kernel&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
     <span class="k">await</span> <span class="n">pool</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;1+1&#39;</span><span class="p">)</span>
 </pre></div>
@@ -869,8 +872,25 @@ likely contains an error message.</p>
 
 <dl class="class">
 <dt>
-<em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframEvaluationJSONResponse</code><span class="sig-paren">(</span><em>response</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/result.html#WolframEvaluationJSONResponse"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Result object associated with cloud evaluation request JSON encoded.</p>
+<em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframAPIResponse</code><span class="sig-paren">(</span><em>response</em>, <em>decoder=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/result.html#WolframAPIResponse"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Generic API response.</p>
+<dl class="method">
+<dt>
+<code class="descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/result.html#WolframAPIResponse.get"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Return the result or raise an exception based on the success status.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframAPIResponseAsync</code><span class="sig-paren">(</span><em>response</em>, <em>decoder=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/result.html#WolframAPIResponseAsync"><span class="viewcode-link">[source]</span></a></dt>
+<dd><dl class="method">
+<dt>
+<code class="descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/result.html#WolframAPIResponseAsync.get"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Return the result or raise an exception based on the success status.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -950,7 +970,7 @@ or a the string InputForm of an expression to evaluate.</p>
 <dl class="method">
 <dt>
 <code class="descname">evaluate_wrap</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.evaluate_wrap"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Similar to <a class="reference internal" href="../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate" title="wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate()</span></code></a> but return the result as a <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframEvaluationJSONResponse" title="wolframclient.evaluation.result.WolframEvaluationJSONResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframEvaluationJSONResponse</span></code></a>.</p>
+<dd><p>Similar to <a class="reference internal" href="../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate" title="wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate()</span></code></a> but return the result as a <code class="xref py py-class docutils literal notranslate"><span class="pre">WolframEvaluationJSONResponse</span></code>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1011,32 +1031,8 @@ or a the string InputForm of an expression to evaluate.</p>
 <dd><p>Generic API response.</p>
 <dl class="method">
 <dt>
-<code class="descname">error_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/result.html#WolframAPIResponse.error_report"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Return all the fields in error with their report as a list of tuples.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="descname">fields_in_error</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/result.html#WolframAPIResponse.fields_in_error"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Return all the fields in error with their message as a list of tuples</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
 <code class="descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/result.html#WolframAPIResponse.get"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Return the result or raise an exception based on the success status.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="descname">iter_error</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/result.html#WolframAPIResponse.iter_error"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Generator of tuples made from the field name and the associated error message</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="descname">iter_full_error_report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/result.html#WolframAPIResponse.iter_full_error_report"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Generator of tuples made from the field name and the associated entire error report.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1086,7 +1082,7 @@ or a the string InputForm of an expression to evaluate.</p>
 <dl class="method">
 <dt>
 <code class="descname">evaluate_wrap</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/asynccloudsession.html#WolframCloudAsyncSession.evaluate_wrap"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Similar to <a class="reference internal" href="../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.asynccloudsession.WolframCloudAsyncSession.evaluate" title="wolframclient.evaluation.cloud.asynccloudsession.WolframCloudAsyncSession.evaluate"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate()</span></code></a> but return the result as a <code class="xref py py-class docutils literal notranslate"><span class="pre">WolframEvaluationJSONResponseAsync</span></code>.</p>
+<dd><p>Similar to <a class="reference internal" href="../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.asynccloudsession.WolframCloudAsyncSession.evaluate" title="wolframclient.evaluation.cloud.asynccloudsession.WolframCloudAsyncSession.evaluate"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate()</span></code></a> but return the result as a <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframEvaluationJSONResponseAsync" title="wolframclient.evaluation.result.WolframEvaluationJSONResponseAsync"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframEvaluationJSONResponseAsync</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
