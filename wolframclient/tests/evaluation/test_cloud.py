@@ -190,6 +190,27 @@ class TestCase(TestCaseSettings):
             res = response.get()
             self.assertListEqual(res, ['abc', [32, 2], 10])
 
+    def test_xml_valid_response(self):
+        api = (self.api_owner, 'api/private/rangeXML')
+        response = self.cloud_session.call(api, input_parameters={'i': 5})
+        self.assertTrue(response.success)
+        self.assertEqual(response.status, 200)
+
+    def test_xml_invalid_response(self):
+        api = (self.api_owner, 'api/private/rangeXML')
+        response = self.cloud_session.call(api)
+        self.assertFalse(response.success)
+        self.assertEqual(response.status, 400)
+        with self.assertRaises(WolframLanguageException):
+            response.get()
+
+    def test_image_png(self):
+        api = (self.api_owner, 'api/private/randomimagepng')
+        response = self.cloud_session.call(api, input_parameters={'size': 3})
+        self.assertEqual(response.status, 200)
+        self.assertEqual(response.content_type, 'image/png')
+        self.assertTrue(isinstance(response.get(), six.binary_type))
+
     ### Evaluation
 
     def test_evaluate_string(self):
