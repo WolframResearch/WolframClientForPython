@@ -77,7 +77,7 @@ class WXFConsumer(object):
 
     def _consumer_from_type(self, wxf_type):
         try:
-            func = WXFConsumer._mapping[wxf_type]
+            func = self._mapping[wxf_type]
         except KeyError:
             raise WolframParserException(
                 'Class %s does not implement any consumer method for WXF token %s'
@@ -149,8 +149,8 @@ class WXFConsumer(object):
     def consume_symbol(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *symbol* as a :class:`~wolframclient.language.expression.WLSymbol`"""
         try:
-            return WXFConsumer.BUILTIN_SYMBOL[current_token.data]
-        except:
+            return self.BUILTIN_SYMBOL[current_token.data]
+        except KeyError:
             return WLSymbol(current_token.data)
 
     def consume_bigint(self, current_token, tokens, **kwargs):
