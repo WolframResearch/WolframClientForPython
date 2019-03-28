@@ -149,8 +149,8 @@ class WXFConsumer(object):
     def consume_symbol(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *symbol* as a :class:`~wolframclient.language.expression.WLSymbol`"""
         try:
-            return WXFConsumer.BUILTIN_SYMBOL[current_token.data]
-        except:
+            return self.BUILTIN_SYMBOL[current_token.data]
+        except KeyError:
             return WLSymbol(current_token.data)
 
     def consume_bigint(self, current_token, tokens, **kwargs):
