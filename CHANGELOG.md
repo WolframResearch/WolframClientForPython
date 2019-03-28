@@ -1,4 +1,4 @@
-# Version 1.0.0.dev5
+# Version 1.0.0
 - Introducing a new class `WolframKernelController`. Major code change to ensure ZMQ sockets are isolated in a given thread. Add a new controller class, a `Thread`, that own the sockets connected to the kernel. Interaction with this thread is done through a Queue.
 - Merge `WolframLanguageFutureSession` into `WolframLanguageSession`. All evaluate methods have a future counterpart.
 - Merge `WolframCloudFutureSession` into `WolframCloudSession`. Add relevant future methods.
