@@ -3,7 +3,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import decimal
-import math
 import re
 
 from wolframclient.exception import WolframParserException
@@ -82,7 +81,7 @@ class WXFConsumer(object):
         except KeyError:
             raise WolframParserException(
                 'Class %s does not implement any consumer method for WXF token %s'
-                % s(cls.__name__, token))
+                % (self.__class__.__name__, wxf_type))
         return getattr(self, func)
 
     _LIST = WLSymbol('List')
@@ -141,11 +140,11 @@ class WXFConsumer(object):
     BUILTIN_SYMBOL = {
         'True': True,
         'False': False,
-        'None': None,
         'Null': None,
-        'Pi': math.pi,
         'Indeterminate': float('NaN')
     }
+    """ See documentation of :func:`~wolframclient.serializers.encoders.builtin.encode_none` for more information
+        about the mapping of None and Null. """
 
     def consume_symbol(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *symbol* as a :class:`~wolframclient.language.expression.WLSymbol`"""
@@ -327,6 +326,7 @@ class WXFConsumer(object):
 
 class WXFConsumerNumpy(WXFConsumer):
     """ A WXF consumer that maps WXF array types to NumPy arrays. """
+
     def consume_array(self, current_token, tokens, **kwargs):
         arr = numpy.frombuffer(
             current_token.data,

@@ -18,8 +18,6 @@ import wolframclient
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-# import os
 
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.insert(0, os.path.abspath('roles'))
@@ -57,8 +55,6 @@ extensions = [
     'sphinx.ext.githubpages',
     'sphinx.ext.intersphinx',
     'roles',
-    # 'sphinxcontrib.fulltoc',
-    # 'sphinxcontrib.inlinesyntaxhighlight',
 ]
 
 # Add any paths that contain templates here, relative to this directory.

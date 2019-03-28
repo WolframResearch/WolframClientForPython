@@ -125,7 +125,7 @@ class WolframAPICallBase(object):
         self.files = {}
         self.permission_key = permission_key
 
-    def add_parameter(self, name, value):
+    def set_parameter(self, name, value):
         """Add a new API input parameter from a serializable python object."""
         self.parameters[name] = value
         return self
@@ -174,11 +174,14 @@ class WolframAPICallBase(object):
         """Make the API call, return the result."""
         raise NotImplementedError
 
+    def perform_future(self, **kwargs):
+        """Make the API call asynchronously, return a future object."""
+        raise NotImplementedError
+
     def __repr__(self):
-        return '<%s api=%s>' % (
-            self.__class__.__name__,
-            self.api,
-        )
+        return '<%s api=%s, parameters=%s>' % (
+            self.__class__.__name__, self.api,
+            set().union(self.parameters.keys(), self.files.keys()) or None)
 
     def __str__(self):
         return repr(self)

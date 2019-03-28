@@ -4,13 +4,11 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
 
-from wolframclient.utils.api import aiohttp, ssl
-
 from wolframclient.evaluation.cloud.base import (OAuthAsyncSessionBase,
                                                  UserIDPassword)
 from wolframclient.exception import AuthenticationException
 from wolframclient.utils import six
-from wolframclient.utils.api import oauth
+from wolframclient.utils.api import aiohttp, oauth, ssl
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +50,8 @@ class OAuthAIOHttpAsyncSessionBase(OAuthAsyncSessionBase):
         sign_body = False
 
         # Payload Instances are not encoded (e.g: octet stream). Only FormData are.
-        form_encoded = isinstance(data, aiohttp.FormData) and not data.is_multipart
+        form_encoded = isinstance(data,
+                                  aiohttp.FormData) and not data.is_multipart
         multipart = isinstance(data, aiohttp.FormData) and data.is_multipart
         # only form encoded body are signed.
         # Non multipart FormData are url encoded: need signed request. We need to get back the body

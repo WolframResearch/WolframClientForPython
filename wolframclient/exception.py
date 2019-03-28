@@ -20,7 +20,16 @@ class RequestException(WolframLanguageException):
                 self.msg = 'Failed to decode request body.'
 
     def __str__(self):
-        return '<%s>: %s' % (self.response.status(), self.msg or '')
+        if hasattr(self.response, 'status'):
+            if callable(self.response.status):
+                status = self.response.status()
+            else:
+                status = self.response.status
+        elif hasattr(self.response, 'status_code'):
+            status = self.response.status_code
+        else:
+            status = 'N/A'
+        return '<status: %s> %s' % (status, self.msg or '')
 
 
 class AuthenticationException(RequestException):
@@ -61,5 +70,6 @@ class WolframParserException(WolframLanguageException):
 
 __all__ = [
     'WolframLanguageException', 'RequestException', 'AuthenticationException',
-    'WolframKernelException', 'SocketException', 'WolframParserException'
+    'WolframKernelException', 'SocketException', 'WolframParserException',
+    'WolframEvaluationException'
 ]

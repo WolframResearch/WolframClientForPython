@@ -130,7 +130,6 @@ class FormatSerializer(Encoder):
             tzinfo.utcoffset(
                 date or datetime.datetime.utcnow()).total_seconds() / 3600)
 
-
     def _serialize_external_object(self, o):
 
         yield "System", "Python"
@@ -140,7 +139,7 @@ class FormatSerializer(Encoder):
             yield "Name", force_text(o.__name__)
         else:
             yield "Name", force_text(o.__class__.__name__)
-            
+
         is_module = inspect.ismodule(o)
 
         yield "IsModule", is_module
@@ -157,13 +156,16 @@ class FormatSerializer(Encoder):
 
         if callable(o):
             try:
-                yield "Arguments", map(force_text, first(inspect.getargspec(o)))
+                yield "Arguments", map(force_text, first(
+                    inspect.getargspec(o)))
             except TypeError:
                 #this function can fail with TypeError unsupported callable
                 pass
 
     def serialize_external_object(self, obj):
         return self.serialize_function(
-            self.serialize_symbol(callable(obj) and b'ExternalFunction' or b'ExternalObject'), (self.serialize_mapping(
+            self.serialize_symbol(
+                callable(obj) and b'ExternalFunction' or b'ExternalObject'),
+            (self.serialize_mapping(
                 (self.encode(key), self.encode(value))
                 for key, value in self._serialize_external_object(obj)), ))

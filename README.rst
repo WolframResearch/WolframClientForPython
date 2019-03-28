@@ -23,8 +23,8 @@ Links
 #############
 
 * `Installation instructions <https://wolframresearch.github.io/WolframClientForPython/docpages/install.html>`_
-* `Introduction <https://wolframresearch.github.io/WolframClientForPython/docpages/basic_usages.html>`_
-* `Documentation <https://wolfr.am/wolframclientdoc>`_
+* `Introduction <https://reference.wolfram.com/language/WolframClientForPython/docpages/install.html>`_
+* `Documentation <https://reference.wolfram.com/language/WolframClientForPython>`_
 * `Changelog <https://github.com/WolframResearch/WolframClientForPython/blob/master/CHANGELOG.md>`_
 * `Contributor guidelines <https://github.com/WolframResearch/WolframClientForPython/blob/master/CONTRIBUTING.md>`_
 * `License <https://github.com/WolframResearch/WolframClientForPython/blob/master/LICENSE>`_

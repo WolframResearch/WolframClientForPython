@@ -58,7 +58,7 @@ class WXFParser(object):
         """WXF parser returning Python object from a WXF encoded byte sequence.
         """
         self.context = SerializationContext()
-        if isinstance(wxf_input, six.binary_type):
+        if isinstance(wxf_input, (six.binary_type, six.buffer_types)):
             self.reader = six.BytesIO(wxf_input)
         elif hasattr(wxf_input, 'read'):
             self.reader = wxf_input

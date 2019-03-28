@@ -151,15 +151,51 @@ Messages may be issued during evaluation. By default, the above evaluation metho
 Messages are stored as tuples of two elements; the message name and the formatted message. 
 
     >>> eval.messages
-    [('Power::infy', 'Infinite expression Infinity encountered.')]
+    [('Power::infy', 'Infinite expression Power[0, -1] encountered.')]
 
 Asynchronous
 ------------
 
-Concurrent Future API
-^^^^^^^^^^^^^^^^^^^^^
+Some computations may take a significant time to finish. The library provides various form of control on evaluations.
 
-Some computations may take a significant time to finish, and the result might not be required immediately. Asynchronous evaluation is a way to start evaluations on a local kernel using a background task, without blocking the main Python execution. Asynchronous evaluation requires an instance of :class:`~wolframclient.evaluation.WolframLanguageFutureSession` which contains the same method as its synchronous counterpart, except that returned values are wrapped into :class:`~concurrent.futures.Future` objects.
+Evaluate future
+^^^^^^^^^^^^^^^^
+
+Evaluation methods all have a future based counterpart.
+
+    >>> from wolframclient.evaluation import WolframLanguageSession
+    >>> session = WolframLanguageSession()
+    >>> future = session.evaluate_future('Pause[3]; 1+1')
+
+The future object is immediately returned, the computation is done in the background. Return the evaluated expression::
+
+    >>> future.result()
+    2
+
+Sometimes a fine control over the maximum duration of an evaluation is required. :wl:`TimeConstrained` ensures that a given evaluation duration is not exceeding a timeout in seconds. When the timeout is reached the symbol :wl:`$Aborted` is returned.
+
+Wrap an artificially long evaluation to last at most one second::
+
+    >>> long_eval = wl.Pause(10)
+    >>> timeconstrained_eval = wl.TimeConstrained(long_eval, 1)
+
+Evaluate the time constrained expression::
+
+    >>> result = session.evaluate(timeconstrained_eval)
+    
+Check if the result is :wl:`$Aborted`::
+
+    >>> result.name == '$Aborted'
+    True
+
+Terminate the session::
+
+    >>> session.terminate()
+
+Concurrent Future 
+^^^^^^^^^^^^^^^^^^
+
+Sometimes, the result is not be required immediately. Asynchronous evaluation is a way to start evaluations on a local kernel as a background task, without blocking the main Python execution. Asynchronous evaluation methods are: :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate_future`, :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wrap_future`, and :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wxf_future`. They wrapped the evaluation result into a :class:`~concurrent.futures.Future` objects. The result is the one that would be returned by the non-future method (e.g :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate_future` returns the result of :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate`).
 
 Evaluate an artificially delayed code (using :wl:`Pause`), and print the time elapsed at each step:  
 
@@ -261,11 +297,10 @@ The standard output should display:
 
 .. code-block :: text
 
-    INFO:wolframclient.evaluation.kernel.kernelsession:Kernel receives commands from socket: <Socket: host=127.0.0.1, port=63471>
-    INFO:wolframclient.evaluation.kernel.kernelsession:Kernel writes evaluated expressions to socket: <Socket: host=127.0.0.1, port=63472>
-    INFO:wolframclient.evaluation.kernel.kernelsession:Kernel process started with PID: 37169
-    INFO:wolframclient.evaluation.kernel.kernelsession:Kernel is ready. Startup took 1.54 seconds.
-    WARNING:wolframclient.evaluation.kernel.kernelsession:Infinite expression Infinity encountered.
+    INFO:wolframclient.evaluation.kernel.kernelcontroller:Kernel writes commands to socket: <Socket: uri=tcp://127.0.0.1:61335>
+    INFO:wolframclient.evaluation.kernel.kernelcontroller:Kernel receives evaluated expressions from socket: <Socket: uri=tcp://127.0.0.1:61336>
+    INFO:wolframclient.evaluation.kernel.kernelcontroller:Kernel process started with PID: 54259
+    INFO:wolframclient.evaluation.kernel.kernelcontroller:Kernel 54259 is ready. Startup took 1.74 seconds.
 
 It is also possible to log from within the kernel. This feature is disabled by default. When initializing a :class:`~wolframclient.evaluation.WolframLanguageSession`, the parameter `kernel_loglevel` can be specified with one of the following values to activate kernel logging: :class:`logging.DEBUG`, :class:`logging.INFO`, :class:`logging.WARNING`, :class:`logging.ERROR`. 
 

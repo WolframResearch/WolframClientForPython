@@ -13,13 +13,12 @@ from wolframclient.evaluation.cloud.base import (SecuredAuthenticationKey,
                                                  UserIDPassword)
 from wolframclient.exception import (AuthenticationException, RequestException,
                                      WolframLanguageException)
-from wolframclient.language import wl, wlexpr
+from wolframclient.language import wl
 from wolframclient.language.expression import WLFunction
 from wolframclient.tests.configure import (MSG_JSON_NOT_FOUND, json_config,
                                            secured_authentication_key, server,
                                            user_configuration)
 from wolframclient.utils import six
-from wolframclient.utils.api import json
 from wolframclient.utils.asyncio import get_event_loop, run_in_loop
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.tests import TestCase as BaseTestCase
@@ -45,7 +44,8 @@ class TestCaseSettings(BaseTestCase):
         cls.api_owner = json_config['ApiOwner']
         cls.user_cred = user_configuration
         cls.server = server
-        cls.cloud_session_async = WolframCloudAsyncSession(credentials=cls.sak, server=server)
+        cls.cloud_session_async = WolframCloudAsyncSession(
+            credentials=cls.sak, server=server)
 
     @classmethod
     def tearDownClass(cls):
@@ -73,7 +73,8 @@ class TestCase(TestCaseSettings):
 
     @run_in_loop
     async def test_section_authorized_oauth(self):
-        cloud_session = WolframCloudAsyncSession(credentials=self.sak, server=self.server)
+        cloud_session = WolframCloudAsyncSession(
+            credentials=self.sak, server=self.server)
         try:
             await cloud_session.start()
             self.assertEqual(cloud_session.authorized(), True)
@@ -83,7 +84,8 @@ class TestCase(TestCaseSettings):
 
     @run_in_loop
     async def test_section_authorized_oauth_with(self):
-        async with WolframCloudAsyncSession(credentials=self.sak, server=self.server) as cloud_session:
+        async with WolframCloudAsyncSession(
+                credentials=self.sak, server=self.server) as cloud_session:
             self.assertEqual(cloud_session.authorized(), True)
             self.assertEqual(cloud_session.anonymous(), False)
 
@@ -148,6 +150,23 @@ class TestCase(TestCaseSettings):
         self.assertEqual('"edcba"', force_text(await response.get()))
 
     @run_in_loop
+    async def test_section_api_permission_key(self):
+        async with WolframCloudAsyncSession(server=server) as cloud:
+            url = 'api/public/permkey_stringreverse_wxf'
+            response = await cloud.call((self.api_owner, url),
+                                  input_parameters={'str': 'abcde'},
+                                  permissions_key='my_key')
+            self.assertEqual('edcba', await response.get())
+
+    # currently missing key result in a webpage with an input field for the key.
+    # @run_in_loop
+    # async def test_section_api_missing_permission_key(self):
+    #     url = 'api/public/permkey_stringreverse_wxf'
+    #     with self.assertRaises(AuthenticationException):
+    #         await self.cloud_session_async.call((self.api_owner, url), input_parameters={'str': 'abcde'})
+
+
+    @run_in_loop
     async def test_section_api_call_one_param_wrong(self):
         url = 'api/private/stringreverse'
         response = await self.cloud_session_async.call((self.api_owner, url))
@@ -165,8 +184,7 @@ class TestCase(TestCaseSettings):
             response = await cloud_session.call((self.api_owner, url),
                                                 input_parameters={'i': 5})
             self.assertTrue(response.success)
-            self.assertEqual(
-                json.loads(await response.get()), list(range(1, 6)))
+            self.assertEqual(await response.get(), list(range(1, 6)))
         finally:
             await cloud_session.terminate()
 
@@ -183,7 +201,7 @@ class TestCase(TestCaseSettings):
         if not response.success:
             logger.warning(await response.failure)
         expected = list(range(v_min, v_max, step))
-        self.assertListEqual(expected, json.loads(await response.get()))
+        self.assertListEqual(expected, await response.get())
 
     @run_in_loop
     async def test_section_invalid_api_path(self):
@@ -208,7 +226,7 @@ class TestCase(TestCaseSettings):
             response = await self.cloud_session_async.call(
                 api, files={'image': fp})
             self.assertTrue(response.success)
-            res = json.loads(await response.get())
+            res = await response.get()
             self.assertListEqual(res, [32, 2])
 
     @run_in_loop
@@ -218,7 +236,7 @@ class TestCase(TestCaseSettings):
             response = await self.cloud_session_async.call(
                 api, files={'image': fp})
             self.assertTrue(response.success)
-            res = json.loads(await response.get())
+            res = await response.get()
             self.assertListEqual(res, [500, 200])
 
     @run_in_loop
@@ -233,13 +251,31 @@ class TestCase(TestCaseSettings):
                 },
                 files={'image': fp})
             self.assertTrue(response.success)
-            res = json.loads(await response.get())
+            res = await response.get()
             self.assertListEqual(res, ['abc', [32, 2], 10])
+
+    @run_in_loop
+    async def test_xml_valid_response(self):
+        api = ('dorianb', 'api/private/rangeXML')
+        response = await self.cloud_session_async.call(api, input_parameters={'i': 5})
+        self.assertTrue(response.success)
+        self.assertEqual(response.status, 200)
+
+    @run_in_loop
+    async def test_xml_invalid_response(self):
+        api = ('dorianb', 'api/private/rangeXML')
+        response = await self.cloud_session_async.call(api)
+        self.assertFalse(response.success)
+        self.assertEqual(response.status, 400)
+        with self.assertRaises(WolframLanguageException):
+            await response.get()
+
 
     @run_in_loop
     async def test_evaluate_string_disable(self):
         async with WolframCloudAsyncSession(
-                credentials=self.sak, server=self.server,
+                credentials=self.sak,
+                server=self.server,
                 inputform_string_evaluation=False) as session:
             res = await session.evaluate('Range[3]')
             self.assertEqual(res, 'Range[3]')
@@ -249,7 +285,8 @@ class TestCase(TestCaseSettings):
 
     @run_in_loop
     async def test_stop_start_restart_status(self):
-        session = WolframCloudAsyncSession(credentials=self.sak, server=self.server)
+        session = WolframCloudAsyncSession(
+            credentials=self.sak, server=self.server)
         try:
             self.assertFalse(session.started)
             self.assertTrue(session.stopped)
@@ -344,7 +381,7 @@ class TestWolframAPI(TestCaseSettings):
             apicall.add_file_parameter('image', fp)
             res = await apicall.perform()
             self.assertTrue(res.success)
-            res = json.loads(await res.get())
+            res = await res.get()
             self.assertListEqual(res, [32, 2])
 
     @run_in_loop
@@ -355,7 +392,7 @@ class TestWolframAPI(TestCaseSettings):
             apicall.add_file_parameter('image', fp, filename='testimage')
             res = await apicall.perform()
             self.assertTrue(res.success)
-            res = json.loads(await res.get())
+            res = await res.get()
             self.assertListEqual(res, [32, 2])
 
     @run_in_loop
@@ -366,14 +403,14 @@ class TestWolframAPI(TestCaseSettings):
             apicall.add_file_parameter('image', fp)
             res = await apicall.perform()
             self.assertTrue(res.success)
-            res = json.loads(await res.get())
+            res = await res.get()
             self.assertListEqual(res, [32, 2])
 
     @run_in_loop
     async def test_wolfram_api_call_str(self):
         api = (self.api_owner, 'api/private/stringreverse')
         apicall = WolframAPICallAsync(self.cloud_session_async, api)
-        apicall.add_parameter('str', 'abcde')
+        apicall.set_parameter('str', 'abcde')
         res = await apicall.perform()
         self.assertEqual('"edcba"', force_text(await res.get()))
 
@@ -382,23 +419,44 @@ class TestWolframAPI(TestCaseSettings):
         api = (self.api_owner, 'api/private/str_image_int')
         with open(self.get_data_path('32x2.png'), 'rb') as fp:
             apicall = WolframAPICallAsync(self.cloud_session_async, api)
-            apicall.add_parameter('str', 'abc')
-            apicall.add_parameter('int', 10)
+            apicall.set_parameter('str', 'abc')
+            apicall.set_parameter('int', 10)
             apicall.add_file_parameter('image', fp)
             result = await apicall.perform()
-            res = json.loads(await result.get())
+            res = await result.get()
             self.assertListEqual(res, ['abc', [32, 2], 10])
 
     @run_in_loop
     async def test_wolfram_api_imagebytes_string_int(self):
         api = (self.api_owner, 'api/private/str_image_int')
-        buffer = None
         with open(self.get_data_path('32x2.png'), 'rb') as fp:
             buffer = fp.read()
         apicall = WolframAPICallAsync(self.cloud_session_async, api)
-        apicall.add_parameter('str', 'abc')
-        apicall.add_parameter('int', 10)
+        apicall.set_parameter('str', 'abc')
+        apicall.set_parameter('int', 10)
         apicall.add_image_data_parameter('image', buffer)
         result = await apicall.perform()
-        res = json.loads(await result.get())
+        res = await result.get()
         self.assertListEqual(res, ['abc', [32, 2], 10])
+
+    @run_in_loop
+    async def test_api_invalid_input(self):
+        api_urls = ('api/private/two_parameters_out_json',
+                    'api/private/two_parameters_out_wxf',
+                    'api/private/two_parameters_out_default')
+        for url in api_urls:
+            api = (self.api_owner, url)
+            apicall = WolframAPICallAsync(self.cloud_session_async, api)
+            apicall.set_parameter('x', 'abc')
+            res = await apicall.perform()
+            self.assertFalse(res.success)
+
+    @run_in_loop
+    async def test_api_permission_key(self):
+        async with WolframCloudAsyncSession(server=server) as cloud:
+            url = 'api/public/permkey_stringreverse_wxf'
+            api = (self.api_owner, url)
+            apicall = WolframAPICallAsync(cloud, api, permission_key='my_key')
+            apicall.set_parameter('str', 'abcde')
+            response = await apicall.perform()
+            self.assertEqual('edcba', await response.get())
