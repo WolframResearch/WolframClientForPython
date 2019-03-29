@@ -86,7 +86,7 @@ def execute_from_string(code, globals = {}, **opts):
     expressions = list(ast.parse(code).body)
 
     if not expressions:
-        return wl.Null
+        return 
 
     result = None
 
