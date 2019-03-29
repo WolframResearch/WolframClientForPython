@@ -81,14 +81,12 @@ def execute_from_string(code, globals = {}, **opts):
     #this is creating a custom __loader__ that is returning the source code
     #traceback serializers is inspecting global variables and looking for a standard loader that can return source code.
 
-    context = EvaluationContext(code = code, **opts)
-
+    context     = EvaluationContext(code = code, **opts)
+    result      = None
     expressions = list(ast.parse(code).body)
 
     if not expressions:
         return 
-
-    result = None
 
     if isinstance(last(expressions), ast.Expr):
         result = expressions.pop(-1)
