@@ -93,7 +93,7 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;WolframEvaluatorPool&#39;</span><span class="p">,</span> <span class="s1">&#39;parallel_evaluate&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="WolframEvaluatorPool"><a class="viewcode-back" href="../../../docpages/public_api.html#wolframclient.evaluation.pool.WolframEvaluatorPool">[docs]</a><span class="k">class</span> <span class="nc">WolframEvaluatorPool</span><span class="p">(</span><span class="n">WolframAsyncEvaluator</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframEvaluatorPool"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.pool.WolframEvaluatorPool">[docs]</a><span class="k">class</span> <span class="nc">WolframEvaluatorPool</span><span class="p">(</span><span class="n">WolframAsyncEvaluator</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A pool of kernels to dispatch one-shot evaluations asynchronously.</span>
 
 <span class="sd">    Evaluators can be specified in various ways: as a string representing the path to a local kernel,</span>
@@ -264,7 +264,7 @@
     <span class="k">def</span> <span class="nf">started</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_started_tasks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
 
-<div class="viewcode-block" id="WolframEvaluatorPool.start"><a class="viewcode-back" href="../../../docpages/public_api.html#wolframclient.evaluation.pool.WolframEvaluatorPool.start">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframEvaluatorPool.start"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.pool.WolframEvaluatorPool.start">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Start a pool of kernels and wait for at least one of them to </span>
 <span class="sd">        be ready for evaluation.</span>
 
@@ -361,7 +361,7 @@
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_started_tasks</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="parallel_evaluate"><a class="viewcode-back" href="../../../docpages/public_api.html#wolframclient.evaluation.pool.parallel_evaluate">[docs]</a><span class="k">def</span> <span class="nf">parallel_evaluate</span><span class="p">(</span><span class="n">expressions</span><span class="p">,</span>
+<div class="viewcode-block" id="parallel_evaluate"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.pool.parallel_evaluate">[docs]</a><span class="k">def</span> <span class="nf">parallel_evaluate</span><span class="p">(</span><span class="n">expressions</span><span class="p">,</span>
                       <span class="n">evaluator_spec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                       <span class="n">max_evaluators</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
                       <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
