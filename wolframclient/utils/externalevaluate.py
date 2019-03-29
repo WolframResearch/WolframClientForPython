@@ -98,8 +98,6 @@ def execute_from_string(code, globals = {}, **opts):
 
     if result:
         return eval(compile(ast.Expression(result.value), '', 'eval'), globals, context)
-    else:
-        return wl.Null
 
 
 class SideEffectSender(logging.Handler):
