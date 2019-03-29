@@ -72,5 +72,6 @@ echo "Compile mma.scss to ./_build/html/_static/mma.css"
 sass ./wri_theme/static/mma.scss > "./_build/html/_static/mma.css"
 
 if [[ ! -z "${target}" ]]; then
+    echo "Copying _build to target: ${target}"
     cp -r "./_build/html/." "${target}"
 fi
