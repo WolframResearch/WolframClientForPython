@@ -36,7 +36,7 @@ while [ "$#" -gt 0 ]; do
         --all) all=1; shift 1;;
         --build=*) target="${1#*=}"; shift 1;;
         --help) help 0;;
-        -*) echo "unknow option: $1"; exit 1;;
+        -*) echo "unknown option: $1"; exit 1;;
         *) echo "unexpected argument: $1"; exit 1;;
     esac
 done
