@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.evaluation.result &#8212; Wolfram Client Library for Python 1.0.0 documentation</title>
+    <title>wolframclient.evaluation.result &#8212; Wolfram Client Library for Python 1.0.1 documentation</title>
     <link rel="stylesheet" href="../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.0</span>
+                        <span class='header right navigation darkgrey'>v 1.0.1</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -102,7 +102,7 @@
     <span class="k">pass</span>
 
 
-<div class="viewcode-block" id="WolframResult"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframResult">[docs]</a><span class="k">class</span> <span class="nc">WolframResult</span><span class="p">(</span><span class="n">WolframResultBase</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframResult"><a class="viewcode-back" href="../../../docpages/public_api.html#wolframclient.evaluation.result.WolframResult">[docs]</a><span class="k">class</span> <span class="nc">WolframResult</span><span class="p">(</span><span class="n">WolframResultBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Most generic result object.</span>
 
 <span class="sd">    The actual result is returned via method :func:`~wolframclient.evaluation.result.WolframResult.get`.</span>
@@ -115,7 +115,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">failure</span> <span class="o">=</span> <span class="n">failure</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">result</span>
 
-<div class="viewcode-block" id="WolframResult.get"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframResult.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframResult.get"><a class="viewcode-back" href="../../../docpages/public_api.html#wolframclient.evaluation.result.WolframResult.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the result or raise an exception based on the success status.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
@@ -521,7 +521,7 @@
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="WolframAPIResponse"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframAPIResponse">[docs]</a><span class="k">class</span> <span class="nc">WolframAPIResponse</span><span class="p">(</span><span class="n">WolframResult</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframAPIResponse"><a class="viewcode-back" href="../../../docpages/public_api.html#wolframclient.evaluation.result.WolframAPIResponse">[docs]</a><span class="k">class</span> <span class="nc">WolframAPIResponse</span><span class="p">(</span><span class="n">WolframResult</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Generic API response.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">decoder</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -540,7 +540,7 @@
 <div class="viewcode-block" id="WolframAPIResponse.build"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframAPIResponse.build">[docs]</a>    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="WolframAPIResponse.get"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframAPIResponse.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframAPIResponse.get"><a class="viewcode-back" href="../../../docpages/public_api.html#wolframclient.evaluation.result.WolframAPIResponse.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_built</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">()</span></div>
@@ -560,8 +560,8 @@
         <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1">:success=</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">success</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="WolframAPIResponseAsync"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframAPIResponseAsync">[docs]</a><span class="k">class</span> <span class="nc">WolframAPIResponseAsync</span><span class="p">(</span><span class="n">WolframAPIResponse</span><span class="p">):</span>
-<div class="viewcode-block" id="WolframAPIResponseAsync.get"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframAPIResponseAsync.get">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframAPIResponseAsync"><a class="viewcode-back" href="../../../docpages/public_api.html#wolframclient.evaluation.result.WolframAPIResponseAsync">[docs]</a><span class="k">class</span> <span class="nc">WolframAPIResponseAsync</span><span class="p">(</span><span class="n">WolframAPIResponse</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframAPIResponseAsync.get"><a class="viewcode-back" href="../../../docpages/public_api.html#wolframclient.evaluation.result.WolframAPIResponseAsync.get">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_built</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">()</span></div>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Basic Usage &#8212; Wolfram Client Library for Python 1.0.0 documentation</title>
+    <title>Basic Usage &#8212; Wolfram Client Library for Python 1.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -70,7 +70,7 @@
                                 </span>
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.0</span>
+                        <span class='header right navigation darkgrey'>v 1.0.1</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -121,7 +121,7 @@
 <span class="go">(#^2 &amp;)</span>
 </pre></div>
 </div>
-<p>Evaluate <a href="#id1"><span class="problematic" id="id2">:wlcode:`Map[#^2 &amp;, {1,2,3}]`</span></a>, by combining both methods. Insert <a href="#id3"><span class="problematic" id="id4">:wlcode:`#^2 &amp;`</span></a>, using <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wlexpr" title="wolframclient.language.wlexpr"><code class="xref py py-func docutils literal notranslate"><span class="pre">wlexpr()</span></code></a>, into <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Map.html" target="_blank">Map</a> represented with <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-data docutils literal notranslate"><span class="pre">wl</span></code></a>:</p>
+<p>Evaluate <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">Map</span></span><span class="p"><span class="pre">[</span></span><span class="nf"><span class="pre">#</span></span><span class="o"><span class="pre">^</span></span><span class="m"><span class="pre">2</span></span><span class="w"> </span><span class="o"><span class="pre">&amp;</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="m"><span class="pre">2</span></span><span class="p"><span class="pre">,</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">}]</span></span></code>, by combining both methods. Insert <code class="code wlcode wolfram docutils literal notranslate"><span class="nf"><span class="pre">#</span></span><span class="o"><span class="pre">^</span></span><span class="m"><span class="pre">2</span></span><span class="w"> </span><span class="o"><span class="pre">&amp;</span></span></code>, using <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wlexpr" title="wolframclient.language.wlexpr"><code class="xref py py-func docutils literal notranslate"><span class="pre">wlexpr()</span></code></a>, into <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Map.html" target="_blank">Map</a> represented with <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-data docutils literal notranslate"><span class="pre">wl</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">wlexpr</span><span class="p">(</span><span class="s1">&#39;#^2&amp;&#39;</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
 <span class="go">Map[(#^2&amp;), [1, 2, 3]]</span>
 </pre></div>
@@ -169,18 +169,18 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="id5">
-<h4>Expression Evaluation<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id1">
+<h4>Expression Evaluation<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
 <p>Functions are conveniently represented using <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-data docutils literal notranslate"><span class="pre">wl</span></code></a>. First import it:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="k">import</span> <span class="n">wl</span>
 </pre></div>
 </div>
-<p>Evaluate <a href="#id6"><span class="problematic" id="id7">:wlcode:`StringReverse[&quot;abc&quot;]`</span></a> from Python using <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate" title="wolframclient.evaluation.WolframLanguageSession.evaluate"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate()</span></code></a>:</p>
+<p>Evaluate <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">StringReverse</span></span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">“abc”</span></span><span class="p"><span class="pre">]</span></span></code> from Python using <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate" title="wolframclient.evaluation.WolframLanguageSession.evaluate"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate()</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">StringReverse</span><span class="p">(</span><span class="s1">&#39;abc&#39;</span><span class="p">))</span>
 <span class="go">&#39;cba&#39;</span>
 </pre></div>
 </div>
-<p>Evaluate <a href="#id8"><span class="problematic" id="id9">:wlcode:`MinMax[{1, 5, -3, 9}]`</span></a>, using the Wolfram Language function <a class="wl external reference" href="http://reference.wolfram.com/language/ref/MinMax.html" target="_blank">MinMax</a> on a Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>:</p>
+<p>Evaluate <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">MinMax</span></span><span class="p"><span class="pre">[{</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">5</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">9</span></span><span class="p"><span class="pre">}]</span></span></code>, using the Wolfram Language function <a class="wl external reference" href="http://reference.wolfram.com/language/ref/MinMax.html" target="_blank">MinMax</a> on a Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">MinMax</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">]))</span>
 <span class="go">[-3, 9]</span>
 </pre></div>
@@ -201,7 +201,7 @@
 </pre></div>
 </div>
 <p>Associations are represented as Python dictionaries and vice versa.</p>
-<p>Evaluate <a href="#id10"><span class="problematic" id="id11">:wlcode:`AssociationMap[FromLetterNumber, {1, 3, 5}]`</span></a>:</p>
+<p>Evaluate <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">AssociationMap</span></span><span class="p"><span class="pre">[</span></span><span class="nb"><span class="pre">FromLetterNumber</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">5</span></span><span class="p"><span class="pre">}]</span></span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">AssociationMap</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">FromLetterNumber</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">]))</span>
 <span class="go">{1: &#39;a&#39;, 3: &#39;c&#39;, 5: &#39;e&#39;}</span>
 </pre></div>
@@ -210,7 +210,7 @@
 <div class="section" id="options">
 <h4>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h4>
 <p>Wolfram Language options are passed as Python named arguments (a.k.a. <cite>**kwargs</cite>). As seen previously, <a class="wl external reference" href="http://reference.wolfram.com/language/ref/ArrayPad.html" target="_blank">ArrayPad</a> accepts an option <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Padding.html" target="_blank">Padding</a> to specify what padding to use.</p>
-<p>Evaluate <a href="#id12"><span class="problematic" id="id13">:wlcode:`ArrayPad[{{0}}, 1, Padding-&gt;1]`</span></a>:</p>
+<p>Evaluate <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">ArrayPad</span></span><span class="p"><span class="pre">[{{</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">}},</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="nb"><span class="pre">Padding</span></span><span class="o"><span class="pre">-&gt;</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">]</span></span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">ArrayPad</span><span class="p">([[</span><span class="mi">0</span><span class="p">]],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Padding</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
 <span class="go">[[1, 1, 1], [1, 0, 1], [1, 1, 1]]</span>
 </pre></div>
@@ -298,7 +298,7 @@
 <span class="p">]</span><span class="o">;</span><span class="w"></span>
 </pre></div>
 </div>
-<p>Define the Wolfram Language function <a href="#id14"><span class="problematic" id="id15">:wlcode:`distance`</span></a> for the current session:</p>
+<p>Define the Wolfram Language function <code class="code wlcode wolfram docutils literal notranslate"><span class="nv"><span class="pre">distance</span></span></code> for the current session:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">wlexpr</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
 <span class="gp">... </span><span class="s1">    distance[country1_String, country2_String] := QuantityMagnitude[</span>
 <span class="gp">... </span><span class="s1">        GeoDistance[</span>
