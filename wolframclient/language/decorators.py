@@ -12,9 +12,12 @@ from wolframclient.serializers import DEFAULT_FORMAT, export
 from wolframclient.utils.encoding import force_text, safe_force_text
 
 DEFAULT_UNKNOWN_FAILURE = {
-    'wxf': b'8:f\x02s\x07FailureS\x0dPythonFailureA\x01-S\x0fMessageTemplateS\x1aUnexpected error occurred.',
-    'wl': b'Failure["PythonFailure", <|"MessageTemplate" -> "Unexpected error occurred."|>]',
+    'wxf':
+    b'8:f\x02s\x07FailureS\x0dPythonFailureA\x01-S\x0fMessageTemplateS\x1aUnexpected error occurred.',
+    'wl':
+    b'Failure["PythonFailure", <|"MessageTemplate" -> "Unexpected error occurred."|>]',
 }
+
 
 def safe_wl_execute(function,
                     args=(),
@@ -65,14 +68,17 @@ def safe_wl_execute(function,
                         "PythonFailure", {
                             "MessageTemplate": safe_force_text(e),
                             "MessageParameters": {},
-                            "FailureCode": safe_force_text(e.__class__.__name__),
+                            "FailureCode": safe_force_text(
+                                e.__class__.__name__),
                             "Traceback": force_text(traceback.format_exc())
                         }),
-                    target_format=export_opts.get('target_format', DEFAULT_FORMAT))
+                    target_format=export_opts.get('target_format',
+                                                  DEFAULT_FORMAT))
             except Exception:
                 #something were even more wrong
                 #this might happen with import errors / syntax errors in third party pluging that are loading the exporter and doing some real damage to the dispatcher we are using.
-                return DEFAULT_UNKNOWN_FAILURE[export_opts.get('target_format', DEFAULT_FORMAT)]
+                return DEFAULT_UNKNOWN_FAILURE[export_opts.get(
+                    'target_format', DEFAULT_FORMAT)]
 
 
 def to_wl(**export_opts):

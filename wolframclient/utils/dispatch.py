@@ -78,14 +78,20 @@ class Dispatch(object):
                 raise ValueError('%s is not a class' % t)
             yield t
 
-    def register(self, function, types=object, keep_existing=False, replace_existing=False):
+    def register(self,
+                 function,
+                 types=object,
+                 keep_existing=False,
+                 replace_existing=False):
         """ Equivalent to annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch` but as 
         a function.
         """
         if not callable(function):
             raise ValueError('Function %s is not callable' % function)
         if keep_existing and replace_existing:
-            raise ValueError('Option values keep_existing and replace_existing cannot be both True.')
+            raise ValueError(
+                'Option values keep_existing and replace_existing cannot be both True.'
+            )
 
         self.clear_cache()
 
@@ -94,7 +100,9 @@ class Dispatch(object):
                 self.dispatch_dict[t] = function
             elif t in self.dispatch_dict:
                 if not keep_existing:
-                    raise TypeError("Duplicated registration for input type(s): %s" % (t, ))
+                    raise TypeError(
+                        "Duplicated registration for input type(s): %s" %
+                        (t, ))
             else:
                 self.dispatch_dict[t] = function
 

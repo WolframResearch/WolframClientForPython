@@ -214,10 +214,6 @@ Evaluating Expressions
     :noindex:
     :members:
 
-.. autoclass:: wolframclient.evaluation.WolframLanguageFutureSession
-    :noindex:
-    :members:
-
 .. autoclass:: wolframclient.evaluation.WolframEvaluatorPool
     :noindex:
     :members:
@@ -229,7 +225,11 @@ Evaluating Expressions
     :noindex:
     :members:
 
-.. autoclass:: wolframclient.evaluation.WolframEvaluationJSONResponse
+.. autoclass:: wolframclient.evaluation.WolframAPIResponse
+    :noindex:
+    :members:
+
+.. autoclass:: wolframclient.evaluation.WolframAPIResponseAsync
     :noindex:
     :members:
 

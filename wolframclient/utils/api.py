@@ -75,8 +75,9 @@ time = API(perf_counter=('time.perf_counter', 'time.time'), sleep='time.sleep')
 futures = API(ThreadPoolExecutor='concurrent.futures.ThreadPoolExecutor')
 
 asyncio = API(
-    create_task=('wolframclient.utils.asyncio.create_task'),
-    ensure_future=('asyncio.ensure_future'),
+    create_task='wolframclient.utils.asyncio.create_task',
+    ensure_future='asyncio.ensure_future',
+    wrap_future='asyncio.wrap_future',
     get_event_loop='asyncio.get_event_loop',
     new_event_loop='asyncio.new_event_loop',
     Queue='asyncio.Queue',
@@ -156,17 +157,15 @@ aiohttp = API(
     RouteTableDef='aiohttp.web.RouteTableDef',
     Application='aiohttp.web.Application',
     run_app='aiohttp.web.run_app',
-    BytesPayload='aiohttp.BytesPayload', 
-    ClientSession='aiohttp.ClientSession', 
-    FormData='aiohttp.FormData', 
-    StringPayload='aiohttp.StringPayload', 
+    BytesPayload='aiohttp.BytesPayload',
+    ClientSession='aiohttp.ClientSession',
+    FormData='aiohttp.FormData',
+    StringPayload='aiohttp.StringPayload',
 )
 
-ssl = API(
-    SSLContext='ssl.SSLContext',
-)
+ssl = API(SSLContext='ssl.SSLContext', )
 
 externalevaluate = API(
-    execute_from_file = 'wolframclient.utils.externalevaluate.execute_from_file',
-    start_zmq_loop    = 'wolframclient.utils.externalevaluate.start_zmq_loop',
+    execute_from_file='wolframclient.utils.externalevaluate.execute_from_file',
+    start_zmq_loop='wolframclient.utils.externalevaluate.start_zmq_loop',
 )

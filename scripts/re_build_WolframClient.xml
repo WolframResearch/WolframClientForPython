@@ -4,7 +4,10 @@
 	<property name='system_id' value='### Must be set by Jenkins ###' />
 
 	<property name='app.name' value='${component}' />
+	<property name='inputDir' value='${basedir}/docs' />
 	<property name='language' value='### Must be set by Jenkins ###' />
+
+	<property name="appPath" value="${appPath.default}" />
 
 	<property environment='env' />
 	<import file='${env.RE_ANTLIBRARY_HOME}/ant-lib.xml' />
@@ -37,7 +40,7 @@
 			files in there....
 		-->
 
-	<property name='keep.files_directory' value='true' />
+		<property name='keep.files_directory' value='true' />
 
 	</target>
 
@@ -62,6 +65,10 @@
 		]]></mathematica>
 
 	</target>
+
+	<!--
+		Installer Package
+	-->
 
 	<target name='Installer.WolframClientForPython.execute' extensionOf='Deploy.execute'>
 

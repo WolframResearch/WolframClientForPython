@@ -34,9 +34,70 @@ else:
                     length=safe_len(o))
 
 
-@encoder.dispatch((bool, six.none_type))
-def encode_none(serializer, o):
+@encoder.dispatch(bool)
+def encode_booleans(serializer, o):
     return serializer.serialize_symbol(force_bytes(o))
+
+
+@encoder.dispatch(six.none_type)
+def encode_none(serializer, o):
+    """ None in Python *'is frequently used to represent the absence of a value'*
+    https://docs.python.org/3/library/constants.html#None
+
+    :wlcode:`Null` in the Wolfram Language *'is a symbol used to indicate the absence of an expression or a result'*,
+    whereas :wlcode:`None` *'is a setting used for certain options.'*.
+    Ref: http://reference.wolfram.com/language/ref/Null.html and http://reference.wolfram.com/language/ref/None.html
+
+    Python :data:`None` is similar to :wlcode:`Null` when it means absence of value, like in::
+
+        def foo():
+            pass
+
+        foo() # None
+
+    .. code-block :: wl
+
+        foo[] := (nothing;)
+        foo[] // InputForm  (* Null *)
+
+    Both are usually suppressed similarly, :data:`None` and :wlcode:`Null` are not displayed, whereas `[None]` and
+    :wlcode:`{Null}` are.
+
+    On the other hand Python :data:`None` is similar to Wolfram Language :wlcode:`None` when it comes to option values,
+    like in::
+
+        def my_function(*args, option: None):
+            if option is None:
+                # ....
+
+    Obviously the mapping of :data:`None` is not straight forward. The options are:
+
+        1. map :wlcode:`Null` and :wlcode:`None` to Python :data:`None`.
+        2. map :wlcode:`Null` to Python :data:`None`.
+        3. map :wlcode:`None` to Python :data:`None`.
+
+    1. One symbol no more round trips. In the Wolfram Language :wlcode:`None` has a specific meaning and is used and
+    tested explicitly, so it has to be :wlcode:`Null` that no more round trips. :wlcode:`Null` is never really used as a
+    specific value, but more as a specific output meaning no output. From Python, testing if a WL function has returned
+    something is consistent with Python functions. From the Wolfram Language, Python functions not returning will return
+    :wlcode:`None` and therefore their output inconsistent. When the result is part of a bigger expression, checking for
+    one value (:wlcode:`Null`) or the other (:wlcode:`None`) is roughly equivalent, especially
+    as long as the library returns the same symbol.
+
+    2. Python :data:`None` is mapped to :wlcode:`Null` and :wlcode:`None` to :data:`WLSymbol('None')`. It create a UX
+    issue, in the sense that :data:`wl.None` is not available because :data:`None` is reserved keyword. Testing if
+    functions have returned is consistent and straight forward in both languages. We lose the opportunity to
+    preserve the name *None*, which can cause confusion. :wlcode:`Null` can easily be represented in Python even though
+    that's certainly less useful than a straight forward representation of :wlcode:`None` with :data:`None`.
+
+    3. Functions that do not return in Python, now return :wlcode:`None` symbol. The result is not suppressed
+    consistently in both languages. Similarly, on the Python side, a Wolfram Language function result must be compared
+    to `wl.Null` to check if the function returned anything.
+
+    Having inconsistencies between functions that return nothing is not an small issue, and could lead to all sort of
+    hack and work around solutions to prevent them. That's why we prioritize option 2 over the others.
+    """
+    return serializer.serialize_symbol(b'Null')
 
 
 @encoder.dispatch((bytearray, six.binary_type, six.buffer_types))

@@ -26,6 +26,18 @@ CloudDeploy[
 	co
 ]
 
+
+co = CloudObject["api/public/permkey_stringreverse_wxf"];
+CloudDeploy[
+	APIFunction[
+		{"str" -> "String"},
+		StringReverse[#str] &,
+    "WXF"
+	],
+	co,
+  Permissions -> {PermissionsKey["my_key"] -> "Execute"}
+]
+
 co = CloudObject["api/private/range/formated/json"];
 CloudDeploy[APIFunction[
   {"max" -> "Integer", "min" -> "Integer" -> 1, 
@@ -43,7 +55,12 @@ CloudDeploy[
 		"JSON"
 	],
 	Permissions->"Public"
-]
+];
+
+CloudDeploy[
+ APIFunction["i" -> "Integer", Range[#i] &, "XML"],
+ CloudObject["api/private/rangeXML"]
+];
 
 co = CloudObject["api/private/range/wlerror"];
 CloudDeploy[APIFunction[
@@ -62,6 +79,11 @@ CloudDeploy[APIFunction[
  ];
 
 CloudDeploy[
+ APIFunction["size" -> "Integer", RandomImage[1, #size] &, "PNG"],
+ CloudObject["api/private/randomimagepng"]
+ ]
+
+CloudDeploy[
 	APIFunction[{"image" -> "Image"}, ImageDimensions[#image] &, "JSON"], 
  	CloudObject["api/private/imagedimensions"]
 ];
@@ -72,3 +94,26 @@ api = APIFunction[{"str" -> "String", "image" -> "Image",
   "JSON"
 ];
 CloudDeploy[api, CloudObject["api/private/str_image_int"]];
+
+CloudDeploy[
+ APIFunction[{"x" -> "String", "y" -> "String"},
+	 {#x, #y} &,
+  "WXF"
+  ],
+ CloudObject["api/private/two_parameters_out_wxf"]
+];
+
+CloudDeploy[
+ APIFunction[{"x" -> "String", "y" -> "String"},
+	 {#x, #y} &
+  ],
+ CloudObject["api/private/two_parameters_out_default"]
+];
+
+CloudDeploy[
+ APIFunction[{"x" -> "String", "y" -> "String"},
+	 {#x, #y} &,
+  "JSON"
+  ],
+ CloudObject["api/private/two_parameters_out_json"]
+];

@@ -18,9 +18,6 @@
 #>     -h display this page.
 #> 
 
-echo "Compile mma.scss."
-sass ./wri_theme/static/mma.scss > wri_theme/static/mma.css
-
 function help(){
     less $0 | grep -e "^#>" | sed 's/^#> \(.*\)$/\1/g'
     exit $1 || 0
@@ -70,6 +67,9 @@ sphinx-apidoc -o api ../wolframclient ../wolframclient/tests*
 
 # build html
 make html
+
+echo "Compile mma.scss to ./_build/html/_static/mma.css"
+sass ./wri_theme/static/mma.scss > "./_build/html/_static/mma.css"
 
 if [[ ! -z "${target}" ]]; then
     cp -r "./_build/html/." "${target}"

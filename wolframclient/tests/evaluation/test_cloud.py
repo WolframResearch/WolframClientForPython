@@ -9,17 +9,15 @@ import unittest
 from wolframclient.evaluation.cloud.base import (SecuredAuthenticationKey,
                                                  UserIDPassword)
 from wolframclient.evaluation.cloud.cloudsession import (
-    WolframAPICall, WolframCloudFutureSession, WolframCloudSession,
-    encode_api_inputs)
+    WolframAPICall, WolframCloudSession, encode_api_inputs)
 from wolframclient.exception import (AuthenticationException,
                                      WolframLanguageException)
-from wolframclient.language import wl, wlexpr
+from wolframclient.language import wl
 from wolframclient.language.expression import WLFunction
 from wolframclient.tests.configure import (MSG_JSON_NOT_FOUND, json_config,
                                            secured_authentication_key, server,
                                            user_configuration)
 from wolframclient.utils import six
-from wolframclient.utils.api import json
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.tests import TestCase as BaseTestCase
 from wolframclient.utils.url import url_join
@@ -43,8 +41,7 @@ class TestCaseSettings(BaseTestCase):
         cls.api_owner = json_config['ApiOwner']
         cls.user_cred = user_configuration
         cls.server = server
-        cls.cloud_session = WolframCloudSession(credentials=cls.sak, server=cls.server)
-        cls.cloud_session_future = WolframCloudFutureSession(
+        cls.cloud_session = WolframCloudSession(
             credentials=cls.sak, server=cls.server)
 
     @classmethod
@@ -55,8 +52,6 @@ class TestCaseSettings(BaseTestCase):
     def tearDownCloudSession(cls):
         if cls.cloud_session is not None:
             cls.cloud_session.stop()
-        if cls.cloud_session_future is not None:
-            cls.cloud_session_future.terminate()
 
     def get_data_path(self, filename):
         """Return full path of a file in ./data/directory"""
@@ -73,7 +68,8 @@ class TestCase(TestCaseSettings):
         self.assertEqual(cloud_session.anonymous(), True)
 
     def test_section_authorized_oauth(self):
-        cloud_session = WolframCloudSession(credentials=self.sak, server=self.server)
+        cloud_session = WolframCloudSession(
+            credentials=self.sak, server=self.server)
         cloud_session.start()
         self.assertEqual(cloud_session.authorized(), True)
         self.assertEqual(cloud_session.anonymous(), False)
@@ -91,7 +87,8 @@ class TestCase(TestCaseSettings):
     def test_bad_sak(self):
         bad_sak = SecuredAuthenticationKey('foo', 'bar')
         with self.assertRaises(AuthenticationException):
-            cloud_session = WolframCloudSession(credentials=bad_sak, server=self.server)
+            cloud_session = WolframCloudSession(
+                credentials=bad_sak, server=self.server)
             cloud_session.start()
 
     def test_section_api_call_no_param(self):
@@ -104,6 +101,20 @@ class TestCase(TestCaseSettings):
         response = self.cloud_session.call((self.api_owner, url),
                                            input_parameters={'str': 'abcde'})
         self.assertEqual('"edcba"', force_text(response.get()))
+
+    def test_section_api_permission_key(self):
+        with WolframCloudSession(server=server) as cloud:
+            url = 'api/public/permkey_stringreverse_wxf'
+            response = cloud.call((self.api_owner, url),
+                                  input_parameters={'str': 'abcde'},
+                                  permissions_key='my_key')
+            self.assertEqual('edcba', response.get())
+
+    # currently missing key result in a webpage with an input field for the key.
+    # def test_section_api_missing_permission_key(self):
+    #     url = 'api/public/permkey_stringreverse_wxf'
+    #     with self.assertRaises(AuthenticationException):
+    #         self.cloud_session.call((self.api_owner, url), input_parameters={'str': 'abcde'})
 
     def test_section_api_call_one_param_wrong(self):
         url = 'api/private/stringreverse'
@@ -120,7 +131,7 @@ class TestCase(TestCaseSettings):
         response = cloud_session.call((self.api_owner, url),
                                       input_parameters={'i': 5})
         self.assertTrue(response.success)
-        self.assertEqual(json.loads(response.get()), list(range(1, 6)))
+        self.assertEqual(response.get(), list(range(1, 6)))
 
     def test_section_api_call_two_param(self):
         api = (self.api_owner, 'api/private/range/formated/json')
@@ -134,7 +145,7 @@ class TestCase(TestCaseSettings):
         if not response.success:
             logger.warning(response.failure)
         expected = list(range(v_min, v_max, step))
-        self.assertListEqual(expected, json.loads(response.get()))
+        self.assertListEqual(expected, response.get())
 
     def test_section_invalid_api_path(self):
         with self.assertRaises(WolframLanguageException):
@@ -154,7 +165,7 @@ class TestCase(TestCaseSettings):
         with open(self.get_data_path('32x2.png'), 'rb') as fp:
             response = self.cloud_session.call(api, files={'image': fp})
             self.assertTrue(response.success)
-            res = json.loads(response.get())
+            res = response.get()
             self.assertListEqual(res, [32, 2])
 
     def test_image_file(self):
@@ -162,7 +173,7 @@ class TestCase(TestCaseSettings):
         with open(self.get_data_path('500x200.png'), 'rb') as fp:
             response = self.cloud_session.call(api, files={'image': fp})
             self.assertTrue(response.success)
-            res = json.loads(response.get())
+            res = response.get()
             self.assertListEqual(res, [500, 200])
 
     def test_image_string_int(self):
@@ -176,18 +187,39 @@ class TestCase(TestCaseSettings):
                 },
                 files={'image': fp})
             self.assertTrue(response.success)
-            res = json.loads(response.get())
+            res = response.get()
             self.assertListEqual(res, ['abc', [32, 2], 10])
+
+    def test_xml_valid_response(self):
+        api = (self.api_owner, 'api/private/rangeXML')
+        response = self.cloud_session.call(api, input_parameters={'i': 5})
+        self.assertTrue(response.success)
+        self.assertEqual(response.status, 200)
+
+    def test_xml_invalid_response(self):
+        api = (self.api_owner, 'api/private/rangeXML')
+        response = self.cloud_session.call(api)
+        self.assertFalse(response.success)
+        self.assertEqual(response.status, 400)
+        with self.assertRaises(WolframLanguageException):
+            response.get()
+
+    def test_image_png(self):
+        api = (self.api_owner, 'api/private/randomimagepng')
+        response = self.cloud_session.call(api, input_parameters={'size': 3})
+        self.assertEqual(response.status, 200)
+        self.assertEqual(response.content_type, 'image/png')
+        self.assertTrue(isinstance(response.get(), six.binary_type))
 
     ### Evaluation
 
     def test_evaluate_string(self):
         res = self.cloud_session.evaluate('Range[3]')
-        self.assertEqual(res, [1,2,3])
+        self.assertEqual(res, [1, 2, 3])
 
     def test_evaluate_wl_expr(self):
         res = self.cloud_session.evaluate(wl.Range(2))
-        self.assertEqual(res, [1,2])
+        self.assertEqual(res, [1, 2])
 
     def test_evaluate_wl_expr_option(self):
         res = self.cloud_session.evaluate(wl.ArrayPad([[1]], 1, Padding=1))
@@ -211,23 +243,36 @@ class TestCase(TestCaseSettings):
         self.assertEqual(
             f([[1]], 1, Padding=1), [[1, 1, 1], [1, 1, 1], [1, 1, 1]])
 
-    def test_evaluate_string(self):
-        res1 = self.cloud_session_future.evaluate('Range[1]')
-        res2 = self.cloud_session_future.evaluate('Range[2]')
+    def test_evaluate_strings_future(self):
+        res1 = self.cloud_session.evaluate_future('Range[1]')
+        res2 = self.cloud_session.evaluate_future('Range[2]')
 
         self.assertEqual(res1.result(), [1])
         self.assertEqual(res2.result(), [1, 2])
 
-    def test_evaluate_string(self):
-        res = self.cloud_session_future.evaluate('Range[3]')
+    def test_evaluate_range_future(self):
+        res = self.cloud_session.evaluate_future('Range[3]')
         self.assertEqual(res.result(), [1, 2, 3])
+
+    def test_duplicate(self):
+        session = None
+        try:
+            session = self.cloud_session.duplicate()
+            res = session.evaluate('1+1')
+            self.assertEqual(res, 2)
+            res = session.evaluate_future('2+2')
+            self.assertEqual(res.result(), 4)
+        finally:
+            if session:
+                session.terminate()
 
 
 # inputform evaluation option disabled
 
     def test_evaluate_string_disable(self):
         with WolframCloudSession(
-                credentials=self.sak, server=self.server,
+                credentials=self.sak,
+                server=self.server,
                 inputform_string_evaluation=False) as session:
             res = session.evaluate('Range[3]')
             self.assertEqual(res, 'Range[3]')
@@ -236,18 +281,18 @@ class TestCase(TestCaseSettings):
             self.assertEqual(res, WLFunction('f', 'abc'))
 
     def test_evaluate_future_string_disable(self):
-        with WolframCloudFutureSession(
-                credentials=self.sak, server=self.server,
+        with WolframCloudSession(
+                credentials=self.sak,
+                server=self.server,
                 inputform_string_evaluation=False) as session:
-            res = session.evaluate('Range[3]')
+            res = session.evaluate_future('Range[3]')
             self.assertEqual(res.result(), 'Range[3]')
-            func = session.function('f')
+            func = session.function_future('f')
             res = func('abc')
             self.assertEqual(res.result(), WLFunction('f', 'abc'))
 
     def test_stop_start_restart_status(self):
         self._stop_start_restart_status(WolframCloudSession)
-        self._stop_start_restart_status(WolframCloudFutureSession)
 
     def _stop_start_restart_status(self, eval_class):
         session = None
@@ -309,7 +354,8 @@ class TestCase(TestCaseSettings):
 
     def test_encode_empty_dict(self):
         for target_format in ('wl', 'json', 'wxf'):
-            self.assertEqual(encode_api_inputs({}, target_format=target_format), {})
+            self.assertEqual(
+                encode_api_inputs({}, target_format=target_format), {})
 
     def test_encode_wl(self):
         encoded = encode_api_inputs({'param1': {'k': [1, 2]}, 'param2': 'foo'})
@@ -354,7 +400,7 @@ class TestWolframAPI(TestCaseSettings):
             apicall.add_file_parameter('image', fp)
             res = apicall.perform()
             self.assertTrue(res.success)
-            res = json.loads(res.get())
+            res = res.get()
             self.assertListEqual(res, [32, 2])
 
     def test_wolfram_api_call_named_image(self):
@@ -364,7 +410,7 @@ class TestWolframAPI(TestCaseSettings):
             apicall.add_file_parameter('image', fp, filename='testimage')
             res = apicall.perform()
             self.assertTrue(res.success)
-            res = json.loads(res.get())
+            res = res.get()
             self.assertListEqual(res, [32, 2])
 
     def test_wolfram_api_from_session(self):
@@ -374,25 +420,63 @@ class TestWolframAPI(TestCaseSettings):
             apicall.add_file_parameter('image', fp)
             res = apicall.perform()
             self.assertTrue(res.success)
-            res = json.loads(res.get())
+            res = res.get()
             self.assertListEqual(res, [32, 2])
 
     def test_wolfram_api_call_str(self):
         api = (self.api_owner, 'api/private/stringreverse')
         apicall = WolframAPICall(self.cloud_session, api)
-        apicall.add_parameter('str', 'abcde')
+        apicall.set_parameter('str', 'abcde')
         res = apicall.perform().get()
         self.assertEqual('"edcba"', force_text(res))
 
     def test_wolfram_api_image_string_int(self):
         api = (self.api_owner, 'api/private/str_image_int')
-        buffer = None
         with open(self.get_data_path('32x2.png'), 'rb') as fp:
             buffer = fp.read()
         apicall = WolframAPICall(self.cloud_session, api)
-        apicall.add_parameter('str', 'abc')
-        apicall.add_parameter('int', 10)
+        apicall.set_parameter('str', 'abc')
+        apicall.set_parameter('int', 10)
         apicall.add_image_data_parameter('image', buffer)
         result = apicall.perform().get()
-        res = json.loads(result)
+        res = result
         self.assertListEqual(res, ['abc', [32, 2], 10])
+
+    def test_wolfram_api_call_async(self):
+        api = (self.api_owner, 'api/private/stringreverse')
+        apicall = WolframAPICall(self.cloud_session, api)
+        apicall.set_parameter('str', 'abcde')
+        future = apicall.perform_future()
+        res = future.result()
+        self.assertEqual('"edcba"', force_text(res.get()))
+
+    def test_wolfram_api_from_session(self):
+        api = (self.api_owner, 'api/private/stringreverse')
+        apicall = self.cloud_session.wolfram_api_call(api)
+        apicall.set_parameter('str', 'abcde')
+        future = apicall.perform_future()
+        res = future.result()
+        self.assertEqual('"edcba"', force_text(res.get()))
+
+        res = apicall.perform()
+        self.assertEqual('"edcba"', force_text(res.get()))
+
+    def test_api_invalid_input(self):
+        api_urls = ('api/private/two_parameters_out_json',
+                    'api/private/two_parameters_out_wxf',
+                    'api/private/two_parameters_out_default')
+        for url in api_urls:
+            api = (self.api_owner, url)
+            apicall = WolframAPICall(self.cloud_session, api)
+            apicall.set_parameter('x', 'abc')
+            res = apicall.perform()
+            self.assertFalse(res.success)
+
+    def test_api_permission_key(self):
+        with WolframCloudSession(server=server) as cloud:
+            url = 'api/public/permkey_stringreverse_wxf'
+            api = (self.api_owner, url)
+            apicall = WolframAPICall(cloud, api, permission_key='my_key')
+            apicall.set_parameter('str', 'abcde')
+            response = apicall.perform()
+            self.assertEqual('edcba', response.get())

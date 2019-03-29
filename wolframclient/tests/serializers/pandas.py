@@ -272,7 +272,8 @@ class PandasDataFrameTestCase(PandasTestCase):
         self.export_compare(
             df,
             wl=b'<|0 -> <|"a" -> 1|>, 1 -> <|"a" -> 2|>|>',
-            wxf=b'8:f\x02s\x0bAssociationf\x02s\x04RuleC\x00f\x01s\x0bAssociationf\x02s\x04RuleS\x01aC\x01f\x02s\x04RuleC\x01f\x01s\x0bAssociationf\x02s\x04RuleS\x01aC\x02',
+            wxf=
+            b'8:f\x02s\x0bAssociationf\x02s\x04RuleC\x00f\x01s\x0bAssociationf\x02s\x04RuleS\x01aC\x01f\x02s\x04RuleC\x01f\x01s\x0bAssociationf\x02s\x04RuleS\x01aC\x02',
             pandas_dataframe_head='association')
 
     def test_dataframe_from_dict_as_assoc(self):

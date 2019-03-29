@@ -9,7 +9,7 @@ try:
     # this will trigger some log messages with the process ID, the sockets
     # address and the startup timer.
     session.start()
-    # Warning: Infinite expression Infinity encountered.
+    # Warning: Infinite expression Power[0, -1] encountered.
     res = session.evaluate('1/0')
 finally:
     session.terminate()
