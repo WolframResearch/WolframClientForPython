@@ -29,54 +29,55 @@ def safe_wl_execute(function,
 
     try:
         return export(function(*args, **opts), **export_opts)
-    except Exception as e:
+    except Exception as export_exception:
 
-        #the user might provide an exception class, that might be broken.
-        #in this case we are running another try / except to return errors that are happening during class serialization
+        # The user can provide an exception class, and it can be broken, in which case we are running another
+        # try / except to return errors that are happening during class serialization
 
-        if isinstance(e, WolframLanguageException):
+        if isinstance(export_exception, WolframLanguageException):
             try:
-                e.set_traceback(*sys.exc_info())
-                return export(e, **export_opts)
-            except Exception as e:
+                export_exception.set_traceback(*sys.exc_info())
+                return export(export_exception, **export_opts)
+            except Exception:
                 pass
 
         try:
             if exception_class is WolframLanguageException:
                 return export(
-                    WolframLanguageException(e, exec_info=sys.exc_info()),
+                    WolframLanguageException(export_exception, exec_info=sys.exc_info()),
                     **export_opts)
 
-            #a custom error class might fail, if this is happening then we can try to use the built in one
+            # A custom error class might fail, if this is happening then we can try to use the built in one
             try:
                 return export(
-                    exception_class(e, exec_info=sys.exc_info()),
+                    exception_class(export_exception, exec_info=sys.exc_info()),
                     **export_opts)
-            except Exception as e:
+            except Exception as exception_export_err:
                 return export(
-                    WolframLanguageException(e, exec_info=sys.exc_info()),
+                    WolframLanguageException(exception_export_err, exec_info=sys.exc_info()),
                     **export_opts)
 
-        except Exception as e:
+        except Exception as unknown_exception:
 
-            #this is the last resort.
-            #everything went wrong, including the code that was supposed to return a traceback, or the custom normalizer is doing something it should not.
-            #this should never happen.
+            # This is the last resort.
+            # Everything went wrong, including the code that was supposed to return a traceback, or the custom
+            # normalizer is doing something it should not. This should never happen.
             try:
                 return export(
                     wl.Failure(
                         "PythonFailure", {
-                            "MessageTemplate": safe_force_text(e),
+                            "MessageTemplate": safe_force_text(unknown_exception),
                             "MessageParameters": {},
                             "FailureCode": safe_force_text(
-                                e.__class__.__name__),
+                                unknown_exception.__class__.__name__),
                             "Traceback": force_text(traceback.format_exc())
                         }),
                     target_format=export_opts.get('target_format',
                                                   DEFAULT_FORMAT))
             except Exception:
-                #something were even more wrong
-                #this might happen with import errors / syntax errors in third party pluging that are loading the exporter and doing some real damage to the dispatcher we are using.
+                # Something went worst.
+                # this might happen with import errors / syntax errors in third party pluging that are loading the
+                # exporter and doing some real damage to the dispatcher we are using.
                 return DEFAULT_UNKNOWN_FAILURE[export_opts.get(
                     'target_format', DEFAULT_FORMAT)]
 
