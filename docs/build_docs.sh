@@ -36,7 +36,7 @@ while [ "$#" -gt 0 ]; do
         --all) all=1; shift 1;;
         --build=*) target="${1#*=}"; shift 1;;
         --help) help 0;;
-        -*) echo "unknow option: $1"; exit 1;;
+        -*) echo "unknown option: $1"; exit 1;;
         *) echo "unexpected argument: $1"; exit 1;;
     esac
 done
@@ -72,5 +72,6 @@ echo "Compile mma.scss to ./_build/html/_static/mma.css"
 sass ./wri_theme/static/mma.scss > "./_build/html/_static/mma.css"
 
 if [[ ! -z "${target}" ]]; then
+    echo "Copying _build to target: ${target}"
     cp -r "./_build/html/." "${target}"
 fi

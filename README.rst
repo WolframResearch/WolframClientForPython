@@ -22,8 +22,7 @@ The Wolfram Client Library provides seamless Wolfram Language integration in Pyt
 Links
 #############
 
-* `Installation instructions <https://wolframresearch.github.io/WolframClientForPython/docpages/install.html>`_
-* `Introduction <https://reference.wolfram.com/language/WolframClientForPython/docpages/install.html>`_
+* `Installation instructions <https://reference.wolfram.com/language/WolframClientForPython/docpages/install.html>`_
 * `Documentation <https://reference.wolfram.com/language/WolframClientForPython>`_
 * `Changelog <https://github.com/WolframResearch/WolframClientForPython/blob/master/CHANGELOG.md>`_
 * `Contributor guidelines <https://github.com/WolframResearch/WolframClientForPython/blob/master/CONTRIBUTING.md>`_
