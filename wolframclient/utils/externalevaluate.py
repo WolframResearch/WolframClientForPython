@@ -34,39 +34,14 @@ EXPORT_KWARGS = {
     'allow_external_objects': True,
 }
 
+def EvaluationContext(code, session_data = {}, context = None, **extra):
 
-class EvaluationContext(Mapping):
+    session_data['__loader__'] = Settings(get_source=lambda module, code = code: code)
+    session_data['__traceback_hidden_variables__'] = HIDDEN_VARIABLES
+    if context:
+        session_data.update(context)
 
-    def __init__(self, code, session_data = {}, context = None, **extra):
-
-        self.code = code
-        self.read = {
-            '__loader__': Settings(get_source=self.get_source),
-            '__traceback_hidden_variables__': HIDDEN_VARIABLES
-        }
-        self.read.update(session_data)
-        if context:
-            self.read.update(context)
-
-        self.write = session_data
-
-    def get_source(self, *args, **opts):
-        return self.code
-
-    def __getitem__(self, v):
-        return self.read[v]
-
-    def __setitem__(self, k, v):
-        self.read[k] = self.write[k] = v
-
-    def __iter__(self):
-        return iter(self.read)
-
-    def __len__(self):
-        return len(self.read)
-
-    def __repr__(self):
-        return '<evaluation context>'
+    return session_data
 
 
 def execute_from_file(path, *args, **opts):
@@ -92,10 +67,10 @@ def execute_from_string(code, globals = {}, **opts):
         result = expressions.pop(-1)
 
     if expressions:
-        exec(compile(ast.Module(expressions), '', 'exec'), globals, context)
+        exec(compile(ast.Module(expressions), '', 'exec'), context)
 
     if result:
-        return eval(compile(ast.Expression(result.value), '', 'eval'), globals, context)
+        return eval(compile(ast.Expression(result.value), '', 'eval'), context)
 
 
 class SideEffectSender(logging.Handler):
