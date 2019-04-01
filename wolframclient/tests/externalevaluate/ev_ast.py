@@ -3,7 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.language import wl
-from wolframclient.utils.externalevaluate import execute_from_string
+from wolframclient.utils.externalevaluate import execute_from_string, EvaluationContext
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
 
@@ -17,7 +17,7 @@ class TestCase(BaseTestCase):
         self.assertEqual(result, None)
         self.assertEqual(context.get('a', None), 4)
 
-        result = execute_from_string("a", context)
+        result = execute_from_string("a", session_data = context)
 
         self.assertEqual(result, 4)
 
@@ -39,5 +39,5 @@ class TestCase(BaseTestCase):
         self.assertEqual(result, 12)
         self.assertEqual(session_data.get('a', None), 12)
 
-    #def test_globals(self):
-    #    execute_from_string('import numpy\ndef arange(n): return numpy.arange(n).reshape(n)\n\narange(10)')
+    def test_globals(self):
+        execute_from_string('import numpy\ndef arange(n): return numpy.arange(n).reshape(n)\n\narange(10)')
