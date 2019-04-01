@@ -12,17 +12,32 @@ class TestCase(BaseTestCase):
 
         context = {}
 
-        result = execute_from_string("a = 2+2", context)
+        result = execute_from_string("a = 2+2", session_data = context)
 
-        self.assertEqual(result, wl.Null)
+        self.assertEqual(result, None)
         self.assertEqual(context.get('a', None), 4)
 
         result = execute_from_string("a", context)
 
         self.assertEqual(result, 4)
 
-        result = execute_from_string("z = a + 4\nz", context)
+        result = execute_from_string("z = a + 4\nz", session_data = context)
 
         self.assertEqual(result, 8)
         self.assertEqual(context.get('a', None), 4)
         self.assertEqual(context.get('z', None), 8)
+
+    def test_context(self):
+        session_data  = {}
+        local_context = {'a': 3}
+
+        result = execute_from_string("a", session_data = session_data, context = local_context)
+        self.assertEqual(result, 3)
+
+        result = execute_from_string("a = 12; a", session_data = session_data, context = local_context)
+
+        self.assertEqual(result, 12)
+        self.assertEqual(session_data.get('a', None), 12)
+
+    #def test_globals(self):
+    #    execute_from_string('import numpy\ndef arange(n): return numpy.arange(n).reshape(n)\n\narange(10)')
