@@ -47,11 +47,6 @@ def safe_wl_execute(function,
                 pass
 
         try:
-            if exception_class is WolframLanguageException:
-                return export(
-                    WolframLanguageException(e, exec_info=sys.exc_info()),
-                    **export_opts)
-
             #a custom error class might fail, if this is happening then we can try to use the built in one
             try:
                 return export(
@@ -60,7 +55,9 @@ def safe_wl_execute(function,
             except Exception as e:
                 return export(
                     WolframLanguageException(e, exec_info=sys.exc_info()),
-                    **export_opts)
+                    target_format=export_opts.get('target_format', DEFAULT_FORMAT),
+                    encoder='wolframclient.serializers.encoders.builtin.encoder',
+                )
 
         except Exception as e:
 
