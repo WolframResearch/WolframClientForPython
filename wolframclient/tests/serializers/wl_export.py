@@ -106,8 +106,6 @@ class TestCase(BaseTestCase):
                         "Traceback": 'foo'
                     }),
                 target_format='wl',
-                encoder='wolframclient.serializers.encoders.builtin.encoder'
-            ),
+                encoder='wolframclient.serializers.encoders.builtin.encoder'),
             b'Failure["PythonFailure", <|"MessageTemplate" -> "baz", "MessageParameters" -> <||>, "FailureCode" -> "bar", "Traceback" -> "foo"|>]'
         )
-

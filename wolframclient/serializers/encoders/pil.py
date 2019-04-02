@@ -73,8 +73,7 @@ def encode_image(serializer, img):
     try:
         img.save(stream, format=img_format)
     except KeyError:
-        raise NotImplementedError(
-            'Format %s is not supported.' % img_format)
+        raise NotImplementedError('Format %s is not supported.' % img_format)
     return serializer.serialize_function(
         serializer.serialize_symbol(b'ImportByteArray'),
         (serializer.serialize_bytes(stream.getvalue()),
