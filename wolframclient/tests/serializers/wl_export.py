@@ -90,3 +90,24 @@ class TestCase(BaseTestCase):
                     normalizer=identity,
                     target_format=export_format),
             )
+
+    def test_export_with_encoder(self):
+
+        #very similar code is used by safe_wl_execute, we need to make sure that we can pass the builtin encoder and a very simple
+        #data dump and the code keeps working
+
+        self.assertEqual(
+            export(
+                wl.Failure(
+                    "PythonFailure", {
+                        "MessageTemplate": 'baz',
+                        "MessageParameters": {},
+                        "FailureCode": 'bar',
+                        "Traceback": 'foo'
+                    }),
+                target_format='wl',
+                encoder='wolframclient.serializers.encoders.builtin.encoder'
+            ),
+            b'Failure["PythonFailure", <|"MessageTemplate" -> "baz", "MessageParameters" -> <||>, "FailureCode" -> "bar", "Traceback" -> "foo"|>]'
+        )
+
