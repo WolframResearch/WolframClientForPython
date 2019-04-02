@@ -6,7 +6,6 @@ import math
 
 from wolframclient.language.expression import (WLFunction, WLInputExpression,
                                                WLSymbol)
-from wolframclient.serializers.encoders.builtin import _to_key_value
 from wolframclient.serializers.serializable import WLSerializable
 from wolframclient.serializers.utils import safe_len
 from wolframclient.utils import six
