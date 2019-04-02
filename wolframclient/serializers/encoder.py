@@ -227,9 +227,8 @@ class Encoder(object):
         if isinstance(encoder, WolframDispatch):
             encoder.update_dispatch()
 
-        return partial(
-            composition(*map(safe_import_string,
-                             iterate(func or (), encoder.as_method()))), self)
+        return composition(*map(safe_import_string,
+                             iterate(func or (), partial(encoder.as_method(), self))))
 
     def get_property(self, key, d=None):
         """ Return the value of the named parameter passed during initialization.
