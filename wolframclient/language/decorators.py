@@ -30,32 +30,39 @@ def safe_wl_execute(function,
     try:
         return export(function(*args, **opts), **export_opts)
     except Exception as export_exception:
-
-        # The user can provide an exception class, and it can be broken, in which case we are running another
-        # try / except to return errors that are happening during class serialization
-
-        if isinstance(export_exception, WolframLanguageException):
-            try:
-                export_exception.set_traceback(*sys.exc_info())
-                return export(export_exception, **export_opts)
-            except Exception:
-                pass
-
         try:
-            if exception_class is WolframLanguageException:
-                return export(
-                    WolframLanguageException(export_exception, exec_info=sys.exc_info()),
-                    **export_opts)
-
-            # A custom error class might fail, if this is happening then we can try to use the built in one
             try:
+
+                # The user can provide an exception class, and it can be broken, in which case we are running another
+                # try / except to return errors that are happening during class serialization
+
+                if isinstance(export_exception, WolframLanguageException):
+                    try:
+                        export_exception.set_traceback(*sys.exc_info())
+                        return export(export_exception, **export_opts)
+                    except Exception:
+                        pass
+
+                if exception_class is WolframLanguageException:
+                    return export(
+                        WolframLanguageException(
+                            export_exception, exec_info=sys.exc_info()),
+                        **export_opts)
+
+                # A custom error class might fail, if this is happening then we can try to use the built in one
                 return export(
-                    exception_class(export_exception, exec_info=sys.exc_info()),
+                    exception_class(
+                        export_exception, exec_info=sys.exc_info()),
                     **export_opts)
             except Exception as exception_export_err:
                 return export(
-                    WolframLanguageException(exception_export_err, exec_info=sys.exc_info()),
-                    **export_opts)
+                    WolframLanguageException(
+                        exception_export_err, exec_info=sys.exc_info()),
+                    target_format=export_opts.get('target_format',
+                                                  DEFAULT_FORMAT),
+                    encoder=
+                    'wolframclient.serializers.encoders.builtin.encoder',
+                )
 
         except Exception as unknown_exception:
 
@@ -66,14 +73,20 @@ def safe_wl_execute(function,
                 return export(
                     wl.Failure(
                         "PythonFailure", {
-                            "MessageTemplate": safe_force_text(unknown_exception),
+                            "MessageTemplate":
+                            safe_force_text(unknown_exception),
                             "MessageParameters": {},
-                            "FailureCode": safe_force_text(
+                            "FailureCode":
+                            safe_force_text(
                                 unknown_exception.__class__.__name__),
-                            "Traceback": force_text(traceback.format_exc())
+                            "Traceback":
+                            force_text(traceback.format_exc())
                         }),
                     target_format=export_opts.get('target_format',
-                                                  DEFAULT_FORMAT))
+                                                  DEFAULT_FORMAT),
+                    encoder=
+                    'wolframclient.serializers.encoders.builtin.encoder',
+                )
             except Exception:
                 # Something went worst.
                 # this might happen with import errors / syntax errors in third party pluging that are loading the
