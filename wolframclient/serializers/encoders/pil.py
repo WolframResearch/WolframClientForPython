@@ -58,7 +58,7 @@ def encode_image(serializer, img):
     # some PIL mode are directly mapped to WL ones. Best case fast (de)serialization.
     try:
         if img.mode in MODE_MAPPING:
-            wl_data_type, colorspace, interleaving = MODE_MAPPING[mode]
+            wl_data_type, colorspace, interleaving = MODE_MAPPING[img.mode]
             return serializer.encode(
                 wl.Image(
                     normalize_array(numpy.array(img)),
