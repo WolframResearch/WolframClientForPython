@@ -62,6 +62,9 @@ def safe_wl_execute(function,
             #this is the last resort.
             #everything went wrong, including the code that was supposed to return a traceback, or the custom normalizer is doing something it should not.
             #this should never happen.
+            #we are overriding builtin encoder which might have been compromized by the user and we are using directly 
+            #the builtin encoder. unless someone is importing the encoder and doing mutations this code should always work 
+            #because it's using only internal tested code and never using user provided code.
             try:
                 return export(
                     wl.Failure(
