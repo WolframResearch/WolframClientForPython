@@ -56,17 +56,15 @@ def normalize_array(array):
 @encoder.dispatch(PIL.Image)
 def encode_image(serializer, img):
     # some PIL mode are directly mapped to WL ones. Best case fast (de)serialization.
-    try:
-        if img.mode in MODE_MAPPING:
-            wl_data_type, colorspace, interleaving = MODE_MAPPING[img.mode]
-            return serializer.encode(
-                wl.Image(
-                    normalize_array(numpy.array(img)),
-                    wl_data_type,
-                    ColorSpace=colorspace or wl.Automatic,
-                    Interleaving=interleaving))
-    except ImportError:
-        pass
+    #removing this code for version 12
+    #if img.mode in MODE_MAPPING:
+    #    wl_data_type, colorspace, interleaving = MODE_MAPPING[img.mode]
+    #    return serializer.encode(
+    #        wl.Image(
+    #            normalize_array(numpy.array(img)),
+    #            wl_data_type,
+    #            ColorSpace=colorspace or wl.Automatic,
+    #            Interleaving=interleaving))
     # try to use format and import/export, may fail during save() and raise exception.
     stream = six.BytesIO()
     img_format = img.format or "PNG"
