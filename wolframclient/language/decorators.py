@@ -5,14 +5,11 @@ from __future__ import absolute_import, print_function, unicode_literals
 import sys
 import traceback
 from functools import wraps
-import logging
 
 from wolframclient.language import wl
 from wolframclient.language.exceptions import WolframLanguageException
 from wolframclient.serializers import DEFAULT_FORMAT, export
 from wolframclient.utils.encoding import force_text, safe_force_text
-
-logger = logging.getLogger(__name__)
 
 DEFAULT_UNKNOWN_FAILURE = {
     'wxf':
@@ -30,59 +27,62 @@ def safe_wl_execute(function,
 
     __traceback_hidden_variables__ = True
 
-    logger.info(args)
-
     try:
         return export(function(*args, **opts), **export_opts)
-    except Exception as e:
-
-        #the user might provide an exception class, that might be broken.
-        #in this case we are running another try / except to return errors that are happening during class serialization
-
-        if isinstance(e, WolframLanguageException):
-            try:
-                e.set_traceback(*sys.exc_info())
-                return export(e, **export_opts)
-            except Exception as e:
-                pass
-
+    except Exception as export_exception:
         try:
-            #a custom error class might fail, if this is happening then we can try to use the built in one
             try:
+
+                # The user can provide an exception class, and it can be broken, in which case we are running another
+                # try / except to return errors that are happening during class serialization
+                
+                if isinstance(export_exception, WolframLanguageException):
+                    try:
+                        export_exception.set_traceback(*sys.exc_info())
+                        return export(export_exception, **export_opts)
+                    except Exception:
+                        pass
+
+                if exception_class is WolframLanguageException:
+                    return export(
+                        WolframLanguageException(export_exception, exec_info=sys.exc_info()),
+                        **export_opts)
+                    
+                # A custom error class might fail, if this is happening then we can try to use the built in one
                 return export(
-                    exception_class(e, exec_info=sys.exc_info()),
+                    exception_class(export_exception, exec_info=sys.exc_info()),
                     **export_opts)
-            except Exception as e:
+            except Exception as exception_export_err:
                 return export(
-                    WolframLanguageException(e, exec_info=sys.exc_info()),
+                    WolframLanguageException(exception_export_err, exec_info=sys.exc_info()),
                     target_format=export_opts.get('target_format', DEFAULT_FORMAT),
                     encoder='wolframclient.serializers.encoders.builtin.encoder',
                 )
 
-        except Exception as e:
+        except Exception as unknown_exception:
 
-            #this is the last resort.
-            #everything went wrong, including the code that was supposed to return a traceback, or the custom normalizer is doing something it should not.
-            #this should never happen.
-            #we are overriding builtin encoder which might have been compromized by the user and we are using directly 
-            #the builtin encoder. unless someone is importing the encoder and doing mutations this code should always work 
-            #because it's using only internal tested code and never using user provided code.
+            # This is the last resort.
+            # Everything went wrong, including the code that was supposed to return a traceback, or the custom
+            # normalizer is doing something it should not. This should never happen.
             try:
                 return export(
                     wl.Failure(
                         "PythonFailure", {
-                            "MessageTemplate": safe_force_text(e),
+                            "MessageTemplate": safe_force_text(unknown_exception),
                             "MessageParameters": {},
-                            "FailureCode": safe_force_text(e.__class__.__name__),
+                            "FailureCode": safe_force_text(
+                                unknown_exception.__class__.__name__),
                             "Traceback": force_text(traceback.format_exc())
                         }),
                     target_format=export_opts.get('target_format', DEFAULT_FORMAT),
                     encoder='wolframclient.serializers.encoders.builtin.encoder',
                 )
             except Exception:
-                #something were even more wrong
-                #this might happen with import errors / syntax errors in third party pluging that are loading the exporter and doing some real damage to the dispatcher we are using.
-                return DEFAULT_UNKNOWN_FAILURE[export_opts.get('target_format', DEFAULT_FORMAT)]
+                # Something went worst.
+                # this might happen with import errors / syntax errors in third party pluging that are loading the
+                # exporter and doing some real damage to the dispatcher we are using.
+                return DEFAULT_UNKNOWN_FAILURE[export_opts.get(
+                    'target_format', DEFAULT_FORMAT)]
 
 
 def to_wl(**export_opts):
