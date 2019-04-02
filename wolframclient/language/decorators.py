@@ -68,8 +68,7 @@ def safe_wl_execute(function,
                         "PythonFailure", {
                             "MessageTemplate": safe_force_text(e),
                             "MessageParameters": {},
-                            "FailureCode": safe_force_text(
-                                e.__class__.__name__),
+                            "FailureCode": safe_force_text(e.__class__.__name__),
                             "Traceback": force_text(traceback.format_exc())
                         }),
                     target_format=export_opts.get('target_format', DEFAULT_FORMAT),
@@ -78,8 +77,7 @@ def safe_wl_execute(function,
             except Exception:
                 #something were even more wrong
                 #this might happen with import errors / syntax errors in third party pluging that are loading the exporter and doing some real damage to the dispatcher we are using.
-                return DEFAULT_UNKNOWN_FAILURE[export_opts.get(
-                    'target_format', DEFAULT_FORMAT)]
+                return DEFAULT_UNKNOWN_FAILURE[export_opts.get('target_format', DEFAULT_FORMAT)]
 
 
 def to_wl(**export_opts):
