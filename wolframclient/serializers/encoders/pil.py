@@ -56,10 +56,9 @@ def normalize_array(array):
 @encoder.dispatch(PIL.Image)
 def encode_image(serializer, img):
     # some PIL mode are directly mapped to WL ones. Best case fast (de)serialization.
-    mode = img.mode
     try:
-        if mode in MODE_MAPPING:
-            wl_data_type, colorspace, interleaving = MODE_MAPPING[mode]
+        if img.mode in MODE_MAPPING:
+            wl_data_type, colorspace, interleaving = MODE_MAPPING[img.mode]
             return serializer.encode(
                 wl.Image(
                     normalize_array(numpy.array(img)),
