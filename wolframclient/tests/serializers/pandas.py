@@ -4,9 +4,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from collections import OrderedDict
 
-import numpy
 import pandas
 
+import numpy
 from wolframclient.serializers import export
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
