@@ -72,8 +72,9 @@ def safe_wl_execute(function,
                                 e.__class__.__name__),
                             "Traceback": force_text(traceback.format_exc())
                         }),
-                    target_format=export_opts.get('target_format',
-                                                  DEFAULT_FORMAT))
+                    target_format=export_opts.get('target_format', DEFAULT_FORMAT),
+                    encoder='wolframclient.serializers.encoders.builtin.encoder',
+                )
             except Exception:
                 #something were even more wrong
                 #this might happen with import errors / syntax errors in third party pluging that are loading the exporter and doing some real damage to the dispatcher we are using.
