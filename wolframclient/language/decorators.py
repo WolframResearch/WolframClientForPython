@@ -5,11 +5,14 @@ from __future__ import absolute_import, print_function, unicode_literals
 import sys
 import traceback
 from functools import wraps
+import logging
 
 from wolframclient.language import wl
 from wolframclient.language.exceptions import WolframLanguageException
 from wolframclient.serializers import DEFAULT_FORMAT, export
 from wolframclient.utils.encoding import force_text, safe_force_text
+
+logger = logging.getLogger(__name__)
 
 DEFAULT_UNKNOWN_FAILURE = {
     'wxf':
@@ -26,6 +29,8 @@ def safe_wl_execute(function,
                     exception_class=WolframLanguageException):
 
     __traceback_hidden_variables__ = True
+
+    logger.info(args)
 
     try:
         return export(function(*args, **opts), **export_opts)
