@@ -44,10 +44,6 @@ SYS_IS_LE = sys.byteorder == 'little'
 
 
 def normalize_array(array):
-    endianness = array.dtype.byteorder
-    # Ensure little endian
-    if endianness == '>' or (endianness == '=' and not SYS_IS_LE):
-        array.byteswap().newbyteorder()
     if array.dtype == numpy.dtype('bool'):
         array = array.astype('<u1')
     return array
