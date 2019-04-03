@@ -58,7 +58,7 @@ else:
         memoryview = buffer
     buffer_types = (bytearray, memoryview, buffer)
 
-iterable_types = (list, tuple, set, frozenset, types.GeneratorType)
+iterable_types = (list, tuple, set, frozenset, types.GeneratorType, chain)
 
 protected_types = tuple(
     chain(string_types, integer_types,
