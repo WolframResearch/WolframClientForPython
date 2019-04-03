@@ -167,7 +167,7 @@ Evaluate an alternative representation of the previous expression::
 
     >>> session.evaluate(wl.Map(wlexpr('#^2&'), wl.Range(5)))
 
-Data visualization
+Data Visualization
 ++++++++++++++++++++
 
 Create a :wl:`BarChart` from arbitrary Python data::
@@ -218,8 +218,8 @@ Call it::
     >>> session.evaluate('f[4]')
     16
 
-Create Python Function
-++++++++++++++++++++++
+Create a Python Function
++++++++++++++++++++++++++
 
 From a Wolfram Language expression, it is possible to create a Python function that directly evaluates when called using :meth:`~wolframclient.evaluation.base.WolframEvaluator.function`::
 
@@ -274,7 +274,7 @@ The session is no more useful, so terminate it::
 
     >>> session.terminate()
 
-Session management
+Session Management
 +++++++++++++++++++++
 
 :class:`~wolframclient.evaluation.WolframLanguageSession` must be terminated, either by explicitly calling :func:`~wolframclient.evaluation.WolframLanguageSession.terminate` or, alternatively, in a `with` block that achieves the same result automatically. 
@@ -335,7 +335,7 @@ Get the key and secret as strings:
     sak["ConsumerSecret"]   (* "VGhhdCdzIE1ZIHNlY3JldCE=" *)
 
 
-Start authenticated cloud session
+Start Authenticated Cloud Session
 ++++++++++++++++++++++++++++++++++
 
 Begin by importing the classes :class:`~wolframclient.evaluation.SecuredAuthenticationKey` and :class:`~wolframclient.evaluation.WolframCloudSession` from the :mod:`~wolframclient.evaluation` module.
@@ -646,7 +646,7 @@ Using the Wolfram Desktop, import the file:
 
 The library also provides extensible serialization mechanisms for custom Python classes. Refer to the :ref:`API guide page<extensible-serialization>` for detailed explanations and to the :doc:`examples page<advanced_usages>` for some use cases.
 
-Popular libraries support
+Popular Libraries Support
 --------------------------
 
 PIL
