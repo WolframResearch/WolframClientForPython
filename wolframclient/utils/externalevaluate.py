@@ -23,10 +23,10 @@ if six.PY_35:
 else:
     pass
 
-HIDDEN_VARIABLES = [
+HIDDEN_VARIABLES = (
     '__loader__', '__builtins__', '__traceback_hidden_variables__',
     'absolute_import', 'print_function', 'unicode_literals'
-]
+)
 
 EXPORT_KWARGS = {
     'target_format': 'wxf',
