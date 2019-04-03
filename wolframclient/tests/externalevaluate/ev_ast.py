@@ -40,6 +40,16 @@ class TestCase(BaseTestCase):
         self.assertEqual(result, 12)
         self.assertEqual(session_data.get('a', None), 12)
 
+    def test_context_deletion(self):
+
+        session_data  = {}
+        local_context = {'a': 3}
+
+        execute_from_string("del a", session_data=session_data, context=local_context)
+
+        with self.assertRaises(KeyError):
+            local_context['a']
+
     def test_globals(self):
         execute_from_string(
             'import numpy\ndef arange(n): return numpy.arange(n).reshape(n)\n\narange(10)'
