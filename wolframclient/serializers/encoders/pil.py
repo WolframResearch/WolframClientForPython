@@ -56,27 +56,25 @@ def normalize_array(array):
 @encoder.dispatch(PIL.Image)
 def encode_image(serializer, img):
     # some PIL mode are directly mapped to WL ones. Best case fast (de)serialization.
-    mode = img.mode
-    if mode in MODE_MAPPING:
-
-        wl_data_type, colorspace, interleaving = MODE_MAPPING[mode]
-
-        return serializer.encode(
-            wl.Image(
-                normalize_array(numpy.array(img)),
-                wl_data_type,
-                ColorSpace=colorspace or wl.Automatic,
-                Interleaving=interleaving))
-    else:
-        # try to use format and import/export, may fail during save() and raise exception.
-        stream = six.BytesIO()
-        img_format = img.format or "PNG"
-        try:
-            img.save(stream, format=img_format)
-        except KeyError:
-            raise NotImplementedError(
-                'Format %s is not supported.' % img_format)
-        return serializer.serialize_function(
-            serializer.serialize_symbol(b'ImportByteArray'),
-            (serializer.serialize_bytes(stream.getvalue()),
-             serializer.serialize_string(img_format)))
+    try:
+        if img.mode in MODE_MAPPING:
+            wl_data_type, colorspace, interleaving = MODE_MAPPING[img.mode]
+            return serializer.encode(
+                wl.Image(
+                    normalize_array(numpy.array(img)),
+                    wl_data_type,
+                    ColorSpace=colorspace or wl.Automatic,
+                    Interleaving=interleaving))
+    except ImportError:
+        pass
+    # try to use format and import/export, may fail during save() and raise exception.
+    stream = six.BytesIO()
+    img_format = img.format or "PNG"
+    try:
+        img.save(stream, format=img_format)
+    except KeyError:
+        raise NotImplementedError('Format %s is not supported.' % img_format)
+    return serializer.serialize_function(
+        serializer.serialize_symbol(b'ImportByteArray'),
+        (serializer.serialize_bytes(stream.getvalue()),
+         serializer.serialize_string(img_format)))
