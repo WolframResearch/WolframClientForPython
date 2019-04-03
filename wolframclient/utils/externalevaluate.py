@@ -78,10 +78,6 @@ class SideEffectSender(logging.Handler):
         if isinstance(sys.stdout, StdoutProxy):
             sys.stdout.send_side_effect(record.msg)
 
-
-side_effect_logger.addHandler(SideEffectSender())
-
-
 class SocketWriter:
     def __init__(self, socket):
         self.socket = socket
@@ -193,6 +189,8 @@ def start_zmq_loop(message_limit=float('inf'), redirect_stdout=True, **opts):
 
     if redirect_stdout:
         sys.stdout = StdoutProxy(stream)
+    
+    side_effect_logger.addHandler(SideEffectSender())
 
     #now sit in a while loop, evaluating input
     while messages < message_limit:
