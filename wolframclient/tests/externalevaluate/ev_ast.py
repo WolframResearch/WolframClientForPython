@@ -42,13 +42,12 @@ class TestCase(BaseTestCase):
 
     def test_context_deletion(self):
 
-        session_data  = {}
-        local_context = {'a': 3}
+        session_data  = {'a': 3}
 
-        execute_from_string("del a", session_data=session_data, context=local_context)
+        execute_from_string("del a", session_data=session_data)
 
         with self.assertRaises(KeyError):
-            local_context['a']
+            session_data['a']
 
     def test_globals(self):
         execute_from_string(
