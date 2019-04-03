@@ -144,7 +144,7 @@ Specify a timezone in Python using :func:`pytz.timezone` and serialize the date 
 
 .. _extensible-serialization:
 
-Extensible mechanism
+Extensible Mechanism
 --------------------
 
 The :mod:`~wolframclient.serializers` module provides mechanisms to extend built-in core functions and to define custom class serializations. There are three ways to extend serialization:
@@ -153,7 +153,7 @@ The :mod:`~wolframclient.serializers` module provides mechanisms to extend built
 * call :func:`~wolframclient.serializers.export` with `normalizer` set to a normalizer function. This function will be applied to each object prior to the serialization process.
 * declare a type encoder.
 
-Serializable classes
+Serializable Classes
 ^^^^^^^^^^^^^^^^^^^^
 
 .. autoclass:: wolframclient.serializers.serializable.WLSerializable
