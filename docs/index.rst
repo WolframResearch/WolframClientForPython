@@ -35,7 +35,7 @@
     </div>
     <div class='document-subheader bodyaligned'>
         <span id='header-summary'>
-            The Wolfram Client Library for Python lets Python programs directly integrate Wolfram Language capabilities. Connect either to a local Wolfram Engine, or to the Wolfram Cloud (or a private Wolfram Cloud)
+            The Wolfram Client Library for Python lets Python programs directly integrate Wolfram Language capabilities. Connect either to a local Wolfram Engine or to the Wolfram Cloud (or a private Wolfram Cloud)
         </span>
         <br>
     </div>
@@ -62,7 +62,7 @@
 .. raw:: html
 
     <div id='setup-session' class='border-top bodyaligned code-label'>
-        <span>Setup your Wolfram Language session:</span>
+        <span>Set up your Wolfram Language session:</span>
     </div>
 
 .. code-block :: py
@@ -113,7 +113,7 @@
 
     <div class='border-top bodyaligned subsection'>
         <span>
-            Direct support for PIL, Pandas, NumPy libraries:
+            Direct support for PIL, Pandas and NumPy libraries:
         </span>
     </div>
 
@@ -225,7 +225,7 @@
         <ul>
             <li><a class='' href='https://reference.wolfram.com/language/#DataManipulationAndAnalysis'>Data Science</a><span class='inlinebullet'>▪</span></li>
             <li><a class='' href='https://reference.wolfram.com/language/#SymbolicAndNumericComputation'>Numerics</a><span class='inlinebullet'>▪</span></li>
-            <li><a class='' href='https://reference.wolfram.com/language/#GraphsAndNetworks'>Graphs Theory</a><span class='inlinebullet'>▪</span></li>
+            <li><a class='' href='https://reference.wolfram.com/language/#GraphsAndNetworks'>Graph Theory</a><span class='inlinebullet'>▪</span></li>
             <li><a class='' href='https://reference.wolfram.com/language/'>...</a></li>
         </ul>
     </div>
@@ -234,7 +234,7 @@
 
     <div class='border-top bodyaligned subsection'>
         <span>
-            Access the Wolfram knowledgebase:
+            Access the Wolfram Knowledgebase:
         </span>
     </div>
 
@@ -254,7 +254,7 @@
 
     <div class='border-top bodyaligned subsection'>
         <span>
-            Use Wolfram natural language understanding in Python:
+            Use Wolfram's natural language understanding in Python:
         </span>
     </div>
 
@@ -272,7 +272,7 @@
 .. raw:: html
     
     <div class='bodyaligned code-label'>
-        Terminate the session, release all resources:
+        Terminate the session and release all resources:
     </div>
 
 .. code-block:: python
