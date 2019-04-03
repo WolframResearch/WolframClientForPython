@@ -158,7 +158,7 @@ Asynchronous
 
 Some computations may take a significant time to finish. The library provides various form of control on evaluations.
 
-Evaluate future
+Evaluate Future
 ^^^^^^^^^^^^^^^^
 
 Evaluation methods all have a future based counterpart.
@@ -337,7 +337,7 @@ Control the log level at both the Python and the kernel levels:
     :emphasize-lines: 5,10-11,13,16,18,19
 
 **********************************************
-Extending serialization: Writing an Encoder
+Extending Serialization: Writing an `Encoder`
 **********************************************
 
 Serialization of Python object involves encoders, which convert an input object into a stream of bytes. The library defines encoders for most built-in Python types and for some core libraries. It stores a mapping between types and encoder implementation. In order to serialize more classes, new encoders must be registered.
@@ -364,9 +364,9 @@ Note: the encoder for :data:`Animal` is never used, not even for the instance of
     (<class '__main__.Salmon'>, <class '__main__.Fish'>, <class '__main__.Animal'>, <class 'object'>)
 
 
-**********************************************
-Extending WXF Parsing: Writing a WXFConsumer
-**********************************************
+***********************************************
+Extending WXF Parsing: Writing a `WXFConsumer`
+***********************************************
 
 Integer Eigenvalues
 ====================
