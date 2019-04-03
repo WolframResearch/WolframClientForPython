@@ -100,12 +100,9 @@ class TestCase(BaseTestCase):
             export(
                 wl.Failure(
                     "PythonFailure", {
-                        "MessageTemplate": 'baz',
-                        "MessageParameters": {},
-                        "FailureCode": 'bar',
-                        "Traceback": 'foo'
+                        "MessageTemplate": 'baz'
                     }),
                 target_format='wl',
                 encoder='wolframclient.serializers.encoders.builtin.encoder'),
-            b'Failure["PythonFailure", <|"MessageTemplate" -> "baz", "MessageParameters" -> <||>, "FailureCode" -> "bar", "Traceback" -> "foo"|>]'
+            b'Failure["PythonFailure", <|"MessageTemplate" -> "baz"|>]'
         )
