@@ -118,14 +118,14 @@ def encode(serializer, o):
 wolfram_encoder.__doc__ = """ 
     Mapping between Python types and encoders used during serializations.
 
-    This instance of :class:`~wolframclient.utils.dispatch.Dispatch` is used in :func:`~wolframclient.serializers.export`
-    to serialize Python expressions and produce a stream of bytes.
+    This instance of :class:`~wolframclient.utils.dispatch.Dispatch` is used in 
+    :func:`~wolframclient.serializers.export` to serialize Python expressions and produce a stream of bytes.
 
     **Register new encoders:**
 
 
-    The annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch` applied to a function, defines an encoder, and associates 
-    it to the types passed as argument of the annotation.
+    The annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch` applied to a function, defines an encoder 
+    and associates it to the types passed as argument of the annotation.
 
     Define a new class::
 
@@ -163,11 +163,11 @@ wolfram_encoder.__doc__ = """
     **Update with a dispatcher:**
 
 
-    An other way to extend supported types is to create a new :class:`~wolframclient.utils.dispatch.Dispatch`, map 
-    various types and encoders, and ultimatelly update :data:`wolfram_encoder` using 
+    Another way to extend supported types is to create a new :class:`~wolframclient.utils.dispatch.Dispatch`, map 
+    various types and encoders and ultimatelly update :data:`wolfram_encoder` using 
     :meth:`~wolframclient.utils.dispatch.Dispatch.update`.
 
-    Create a new dispatcher, and register :data:`MyPythonClass`::
+    Create a new dispatcher and register :data:`MyPythonClass`::
 
         from wolframclient.utils.dispatch import Dispatch
 
@@ -186,17 +186,16 @@ wolfram_encoder.__doc__ = """
     **Define plugins:**
 
 
-    The library supports an entry point dedicated to new encoders: `wolframclient_serializers_encoder`. The library use 
-    this entry point to loads plugins at runtime, as separated libraries.
-    For more information about entry points, refer to the documentation page: 
-    https://packaging.python.org/specifications/entry-points/
+    The library supports an entry point dedicated to new encoders: `wolframclient_serializers_encoder`. The library uses 
+    this entry point to loads plugins at runtime as separated libraries. For more information about entry points, refer 
+    to the documentation page about `entry-points <https://packaging.python.org/specifications/entry-points/>`_.
 
     The plugin name must be unique and the value must reference a dispatcher instance. This instance is loaded and used 
-    to update :data:`wolfram_encoder`. A plugin is a simple way to distribute encoders as a separe library. 
+    to update :data:`wolfram_encoder`. A plugin is a simple way to distribute encoders as a separate library. 
     
-    One type must have a unique encoder associated to it, as a consequence, two plugins registering an encoder for the 
-    same type are incompatible. it is strongly advised to create one plugin for each existing Python library. 
-    e.g.: have one plugin dedicated to Numpy, and one to Pandas which makes heavy use of Numpy arrays.
+    One type must have a unique encoder associated to it; as a consequence, two plugins registering an encoder for the 
+    same type are incompatible. It is strongly advised to create one plugin for each existing Python library. 
+    e.g. have one plugin dedicated to NumPy, and one to Pandas which makes heavy use of NumPy arrays.
     """
 
 
