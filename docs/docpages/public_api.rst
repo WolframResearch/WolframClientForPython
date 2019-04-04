@@ -7,7 +7,7 @@ Guide
 
 The Wolfram Client Library is structured in submodules all located in :mod:`wolframclient`:
 
-* :mod:`~wolframclient.evaluation` provides convenient methods to evaluate Wolfram Language expressions directly from Python. There are many ways to evaluate code including: evaluation by a local kernel, direct evaluation by a public or private Wolfram Cloud, calling a deployed API.
+* :mod:`~wolframclient.evaluation` provides convenient methods to evaluate Wolfram Language expressions directly from Python. There are many ways to evaluate code, including: evaluation by a local kernel, direct evaluation by a public or private Wolfram Cloud, calling a deployed API.
 
 * :mod:`~wolframclient.language` provides a Python representation of Wolfram Language symbols and functions.
 
