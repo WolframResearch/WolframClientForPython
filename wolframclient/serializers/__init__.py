@@ -35,8 +35,9 @@ def export(data, stream=None, target_format=DEFAULT_FORMAT, **options):
         >>> export([1,2,3], target_format='wxf')
         b'8:f\x03s\x04ListC\x01C\x02C\x03'
 
-    .. note :: WXF is a binary format for serializing Wolfram Language expression. Consult the documentation for a full
-    format description: https://reference.wolfram.com/language/tutorial/WXFFormatDescription.html
+    .. note :: WXF is a binary format for serializing Wolfram Language expression. Consult the
+        `format specifications <https://reference.wolfram.com/language/tutorial/WXFFormatDescription.html>`_ for in
+        depth format description.
 
     WXF byte arrays are deserialized with :func:`~wolframclient.deserializers.binary_deserialize`::
 
