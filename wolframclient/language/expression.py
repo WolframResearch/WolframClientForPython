@@ -142,21 +142,3 @@ class WLInputExpression(WLExpressionMeta):
     def __str__(self):
         return '(%s)' % self.input
 
-
-# Sphinx seems to bug on this one, and picks an outdated the docstring when declared in __init__.
-wlexpr = WLInputExpression
-""" Represent Wolfram Language expressions with input form strings.
-
-Convenient alias for :class:`~wolframclient.language.expression.WLInputExpression`.
-
-Represent an expression::
-
-    >>> wlexpr('Select[Range[10], EvenQ]')
-    (Select[Range[10], EvenQ])
-
-Represent a pure function that squares an input argument::
-
-    >>> wlexpr('# ^ 2 &' )
-    (# ^ 2 &)
-
-"""
