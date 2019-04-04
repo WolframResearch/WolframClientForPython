@@ -39,7 +39,7 @@ def encode_ndarray(serializer, o):
             'NumPy serialization not implemented for %s. Choices are: %s' %
             (repr(o.dtype), ', '.join(map(repr, NUMPY_MAPPING.keys()))))
 
-    handler(o)
+    o = handler(o)
 
     if hasattr(o, 'tobytes'):
         #Numpy 1.9+ support array.tobytes, but previous versions don't and use tostring instead.
