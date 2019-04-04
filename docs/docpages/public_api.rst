@@ -22,19 +22,19 @@ Expression Representation
 ===========================================
 
 
-.. autofunction:: wolframclient.language.wl
+.. autodata:: wolframclient.language.wl
     :noindex:
 
-.. autofunction:: wolframclient.language.wlexpr
+.. autodata:: wolframclient.language.wlexpr
     :noindex:
 
-.. autofunction:: wolframclient.language.System
+.. autodata:: wolframclient.language.System
     :noindex:
 
-.. autofunction:: wolframclient.language.Global
+.. autodata:: wolframclient.language.Global
     :noindex:
 
-.. autofunction:: wolframclient.language.expression.WLSymbolFactory
+.. autoclass:: wolframclient.language.expression.WLSymbolFactory
     :noindex:
 
 
