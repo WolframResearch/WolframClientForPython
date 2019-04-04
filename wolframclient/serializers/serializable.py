@@ -21,12 +21,12 @@ class WLSerializable:
             def to_wl(self):
                 return wl.MyWolframFunction(*self.arguments)
 
-    Serialize :data:`MyPythonClass` using export::
+    Serialize :data:`MyPythonClass` using :func:`~wolframclient.serializers.export`::
 
         >>> export(MyPythonClass('foo', 'bar'))
         b'MyWolframFunction["foo", "bar"]'
 
-    Serialization is applied recursively, arguments are also serialized::
+    Serialization is applied recursively; arguments are also serialized::
 
         >>> export(MyPythonClass(1, 2, MyPythonClass(2, 3)))
         'MyWolframFunction[1, 2, MyWolframFunction[2, 3]]'
@@ -34,7 +34,7 @@ class WLSerializable:
     """
 
     def to_wl(self):
-        """ Return the serialized form of a given python class.
+        """ Return the serialized form of a given Python class.
         
         The returned value must be a combination of serializable types.
         """
