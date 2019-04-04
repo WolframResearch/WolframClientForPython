@@ -47,19 +47,19 @@ Serialization
 Formats
 --------
 
-*InputForm* is the default format and is the most readable one::
+:wl:`InputForm` is the default format and is the most readable one::
 
     >>> export([1, 2, 3], target_format = "wl")
     '{1, 2, 3}'
 
-Serialized output can be imported in a kernel using `ToExpression`.
+Serialized output can be imported in a kernel using :wl:`ToExpression`.
 
-*WXF* is also available as an efficient binary representation of Wolfram Language expressions::
+:wl:`WXF` is also available as an efficient binary representation of Wolfram Language expressions::
 
     >>> export([1, 2, 3], target_format = "wxf")
     '8:f\x03s\x04ListC\x01C\x02C\x03'
 
-The *WXF* format supports compression using zlib, the compression is disabled by default::
+The :wl:`WXF` format supports compression using *zlib*; the compression is disabled by default::
 
     >>> export([1, 2, 3], target_format = "wxf", compress = True)
     '8C:x\x9cKc.f\xf1\xc9,.qftfrf\x06\x00\x1b\xf8\x03L'
@@ -72,7 +72,7 @@ Supported Types
 Built-in Data Types
 ^^^^^^^^^^^^^^^^^^^
 
-Built-in data structures are all supported: :class:`list`, :class:`set`, :class:`frozenset`, :class:`dict`.
+Built-in data structures are all supported :class:`list`, :class:`set`, :class:`frozenset`, and :class:`dict`.
 
 Example::
 
@@ -95,7 +95,7 @@ Python generators are also serialized as :wl:`List`::
 
 .. note ::
 
-    Python generators should be used preferably when serializing big data, to avoid running out of memory.
+    Python generators should preferably be used when serializing big data to avoid running out of memory.
 
 To preserve ordering in associations use :class:`collections.OrderedDict`::
 
@@ -106,7 +106,7 @@ To preserve ordering in associations use :class:`collections.OrderedDict`::
 Numeric Types
 ^^^^^^^^^^^^^
 
-Numeric types are natively supported: :class:`int`, :class:`float`, :class:`complex` and :class:`~decimal.Decimal` serializes to
+Numeric types are natively supported; :class:`int`, :class:`float`, :class:`complex` and :class:`~decimal.Decimal` serializes to
 their Wolfram Language counterpart::
 
     >>> export({'int': 1, 'float':2.3, 'decimal': decimal.Decimal(1), 'complex': complex(3, 4)})
@@ -125,14 +125,14 @@ IEEE exceptions `infinity` and `NaN` are converted respectively to :wl:`Directed
 DateObject Serialization
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-:mod:`datetime`, :class:`~datetime.time` and :class:`~datetime.date` are serialized to :wl:`DateObject` and all assume that the timezome to use is the current one at evaluation time::
+:mod:`datetime`, :class:`~datetime.time` and :class:`~datetime.date` are serialized to :wl:`DateObject` and all assume that the time zone to use is the current one at evaluation time::
 
     >>> import datetime
     >>> now = datetime.datetime.now()
     >>> export([now.time(), now.date(), now])
     '{TimeObject[{16, 1, 19.993822}, TimeZone -> $TimeZone], DateObject[{2018, 3, 16}], DateObject[{2018, 3, 16, 16, 1, 19.993822}, "Instant", "Gregorian", $TimeZone]}'
 
-:class:`~datetime.timedelta` are serialized to :wl:`Quantity`::
+:class:`~datetime.timedelta` is serialized to :wl:`Quantity`::
 
     >>> export(datetime.timedelta(seconds = 340))
 
@@ -149,9 +149,9 @@ Extensible Mechanism
 
 The :mod:`~wolframclient.serializers` module provides mechanisms to extend built-in core functions and to define custom class serializations. There are three ways to extend serialization:
 
-* extend :class:`~wolframclient.serializers.serializable.WLSerializable` and override its method :meth:`~wolframclient.serializers.serializable.WLSerializable.to_wl`. 
-* call :func:`~wolframclient.serializers.export` with `normalizer` set to a normalizer function. This function will be applied to each object prior to the serialization process.
-* declare a type encoder.
+* Extend :class:`~wolframclient.serializers.serializable.WLSerializable` and override its :meth:`~wolframclient.serializers.serializable.WLSerializable.to_wl` method.
+* Call :func:`~wolframclient.serializers.export` with `normalizer` set to a normalizer function. This function will be applied to each object prior to the serialization process.
+* Declare a type encoder.
 
 Serializable Classes
 ^^^^^^^^^^^^^^^^^^^^
@@ -164,7 +164,7 @@ Serializable Classes
 Normalizer
 ^^^^^^^^^^
 
-A normalizer is a function that takes one argument and return one python object. It can either return a new object or pass the input if they can't deal with its type.
+A normalizer is a function that takes one argument and returns one python object. It can either return a new object or pass the input if it can't deal with that type.
 
 Define a class::
 
@@ -191,7 +191,7 @@ Serialize an instance of :data:`MyPythonClass` using the normalizer function def
 Encoder
 ^^^^^^^^
 
-The serialization of Python object relies on encoder functions. Each encoder is attached to a set of Python types. Encoders are generators of bytes. The library defines encoders for most built-in Python types, and for the core components of some popular libraries such as PIL :data:`Image`, Numpy arrays, and Pandas :data:`Series`.
+The serialization of a Python object relies on encoder functions. Each encoder is attached to a set of Python types. Encoders are generators of bytes. The library defines encoders for most built-in Python types and for the core components of some popular libraries such as PIL :data:`Image`, Numpy arrays and Pandas :data:`Series`.
 
 .. autodata:: wolframclient.serializers.encoder.wolfram_encoder
     :noindex:
