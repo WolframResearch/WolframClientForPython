@@ -25,6 +25,21 @@ __all__ = ['WolframCloudAsyncSession', 'WolframAPICallAsync']
 
 
 class WolframCloudAsyncSession(WolframAsyncEvaluator):
+    """ Interact with a Wolfram Cloud asynchronously using coroutines.
+
+    Asynchronous cloud operations are provided through coroutines, using modules :mod:`asyncio` and
+    `aiohttp <https://pypi.org/project/aiohttp/>`_.
+
+    Instances of this class can be managed with an asynchronous context manager::
+
+        async with WolframCloudAsyncSession() as session:
+            await session.call(...)
+
+    An event loop can be explicitly passed using the named parameter `loop`; otherwise the one
+    returned by :func:`~asyncio.get_event_loop` is used.
+    The initialization options of the class :class:`~wolframclient.evaluation.WolframCloudSession` are also supported by
+    this class.
+    """
     def __init__(self,
                  credentials=None,
                  server=None,
@@ -128,16 +143,15 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
                    target_format='wl',
                    permissions_key=None,
                    **kwargv):
-        """Call a given API, using the provided input parameters.
+        """Call a given API using the provided input parameters.
 
-        `api` can be a string url or a :class:`tuple` (`username`, `api name`). User name is
-        generally the Wolfram Language symbol ``$UserName``. The API name can be a uuid or a
-        relative path e.g: *myapi/foo/bar*.
+        `api` can be a string url or a :class:`tuple` (`username`, `api name`). The username is generally the Wolfram
+        Language symbol ``$UserName``. The API name can be a UUID or a relative path, e.g. *myapi/foo/bar*.
 
         The input parameters are provided as a dictionary with string keys being the name
         of the parameters associated to their value.
 
-        Files are passed in a dictionary. Value can have multiple forms::
+        Files are passed in a dictionary. Values can have multiple forms::
 
             {'parameter name': file_pointer}
 
@@ -149,8 +163,8 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
 
             {'parameter name': ('filename', b'...binary...data...', 'content-type')}
 
-        It's possible to pass a ``PermissionsKey`` to the server along side to the query,
-        and get access to a given resource.
+        It is possible to pass a ``PermissionsKey`` to the server alongside the query and get access to a given
+        resource.
         """
         url = user_api_url(self.server, api)
         params = {}
@@ -204,17 +218,18 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
         return WolframEvaluationWXFResponseAsync(response)
 
     async def evaluate(self, expr, **kwargs):
-        """Send `expr` to the cloud for evaluation, return the result.
+        """Send `expr` to the cloud for evaluation and return the result.
 
-        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export`,
-        or a the string InputForm of an expression to evaluate.
+        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export` or a the string
+        :wl:`InputForm` of an expression to evaluate.
         """
         response = await self._call_evaluation_api(
             self.normalize_input(expr), **kwargs)
         return await response.get()
 
     async def evaluate_wrap(self, expr, **kwargs):
-        """ Similar to :func:`~wolframclient.evaluation.cloud.asynccloudsession.WolframCloudAsyncSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframEvaluationJSONResponseAsync`.
+        """ Similar to :func:`~wolframclient.evaluation.cloud.asynccloudsession.WolframCloudAsyncSession.evaluate` but
+        return the result as a :class:`~wolframclient.evaluation.result.WolframEvaluationJSONResponseAsync`.
         """
         return await self._call_evaluation_api(
             self.normalize_input(expr), **kwargs)
@@ -233,7 +248,7 @@ class WolframAPICallAsync(WolframAPICallBase):
     """Perform an API call using an asynchronous cloud session. """
 
     async def perform(self, **kwargs):
-        """Make the API call, return the result."""
+        """Make the API call and return the result."""
         return await self.target.call(
             self.api,
             input_parameters=self.parameters,
