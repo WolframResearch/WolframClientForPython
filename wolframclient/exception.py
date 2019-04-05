@@ -37,7 +37,7 @@ class AuthenticationException(RequestException):
 
 
 class WolframKernelException(WolframLanguageException):
-    """Error while interacting with a Wolfram Kernel."""
+    """Error while interacting with a Wolfram kernel."""
 
 
 class WolframEvaluationException(WolframLanguageException):
