@@ -12,7 +12,7 @@ __all__ = ['binary_deserialize']
 def binary_deserialize(wxf_input, consumer=None, **kwargs):
     """Deserialize binary data and return a Python object.
 
-    Serialize a python object to WXF::
+    Serialize a Python object to WXF::
 
         >>> wxf = export({'key' : [1,2,3]}, target_format='wxf')
 
