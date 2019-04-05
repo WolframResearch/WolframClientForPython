@@ -65,7 +65,7 @@ class WolframEvaluator(WolframEvaluatorBase):
         raise NotImplementedError
 
     def evaluate_many(self, expr_list):
-        """ Evaluate a given list of Wolfram Language expression.
+        """ Evaluate a given list of Wolfram Language expressions.
         
         The list is provided as an iterable object. 
         """
@@ -73,7 +73,8 @@ class WolframEvaluator(WolframEvaluatorBase):
         return list(map(self.evaluate, expr_list))
 
     def evaluate_wrap(self, expr):
-        """ Evaluate a given Wolfram Language expression and return a result object with the result and meta information. """
+        """ Evaluate a given Wolfram Language expression and return a result object with the result and meta
+        information. """
         raise NotImplementedError
 
     def evaluate_wrap_future(self, expr):
@@ -90,7 +91,8 @@ class WolframEvaluator(WolframEvaluatorBase):
         raise NotImplementedError
 
     def stop(self):
-        """ Gracefully stop the evaluator. Try to stop the evaluator, but wait for current evaluation to finish first. """
+        """ Gracefully stop the evaluator. Try to stop the evaluator, but wait for current evaluation to finish first.
+        """
         raise NotImplementedError
 
     def terminate(self):
@@ -98,7 +100,7 @@ class WolframEvaluator(WolframEvaluatorBase):
         raise NotImplementedError
 
     def restart(self):
-        """ Restart a given evaluator by stopping it in case it was already started. """
+        """ Restart a given evaluator by stopping it in cases where it is already started. """
         if self.started:
             self.stop()
         self.start()
@@ -117,7 +119,8 @@ class WolframEvaluator(WolframEvaluatorBase):
         return inner
 
     def function_future(self, expr):
-        """Return a python function from a Wolfram Language function `expr`, that evaluates asynchronously, returning a future object. """
+        """Return a python function from a Wolfram Language function `expr`, that evaluates asynchronously, returning a
+         future object. """
         normalized_expr = self.normalize_input(expr)
 
         def inner(*args, **opts):
