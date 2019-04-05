@@ -10,7 +10,7 @@ __all__ = ['binary_deserialize']
 
 
 def binary_deserialize(wxf_input, consumer=None, **kwargs):
-    """Deserialize binary data, return a Python object.
+    """Deserialize binary data and return a Python object.
 
     Serialize a python object to WXF::
 
@@ -25,13 +25,13 @@ def binary_deserialize(wxf_input, consumer=None, **kwargs):
     of :class:`~wolframclient.deserializers.wxf.wxfparser.WXFParser`.
 
     The consumer must be an instance of :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer`. If none is
-    provided :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer` is used. To enable NumPy array support,
+    provided, :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer` is used. To enable NumPy array support,
     use :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy`.
 
     Named parameters are passed to the consumer. They can be any valid parameter of
     :meth:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.next_expression`, namely:
 
-    * `dict_class`: map WXF `Association` to `dict_class` in place of a regular :class:`dict`.
+    * `dict_class`: map WXF `Association` to `dict_class` in place of a regular :class:`dict`
 
     """
     parser = WXFParser(wxf_input)
