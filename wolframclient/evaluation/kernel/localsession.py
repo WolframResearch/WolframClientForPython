@@ -26,35 +26,35 @@ def do_get_result(result):
 
 
 class WolframLanguageSession(WolframEvaluator):
-    """A session to a Wolfram Kernel enabling evaluation of Wolfram Language expressions.
+    """A session to a Wolfram kernel enabling evaluation of Wolfram Language expressions.
 
     Start a new session and send an expression for evaluation::
 
         with WolframLanguageSession() as session:
             session.evaluate('Range[3]')
 
-    Set `timeout` value to a number, to set an evaluation timeout in seconds. If the evaluation
-    time extends the timeout a :class:`~concurrent.futures.TimeoutError` is raised.
+    Set `timeout` to a number to set an evaluation timeout in seconds. If the evaluation
+    time extends the timeout, a :class:`~concurrent.futures.TimeoutError` is raised.
     
-    Evaluate an expression taking 10 seconds to return, using a 5 second timeout::
+    Evaluate an expression taking 10 seconds to return using a 5 second timeout::
 
         long_evaluation = wl.Pause(10)
         with WolframLanguageSession() as session:
             session.evaluate(long_evaluation, timeout=5)
 
-    Asynchronous evaluation methods :meth:`~wolframclient.evaluation.kernel.localsession.WolframLanguageSession.evaluate_future` 
+    The asynchronous evaluation method
+    :meth:`~wolframclient.evaluation.kernel.localsession.WolframLanguageSession.evaluate_future`
     returns an instance of :class:`~concurrent.futures.Future` class wrapping the evaluation result::
 
         with WolframLanguageSession() as session:
             future = session.evaluate_future('1+1')
             result = future.result()
 
-    When `consumer` is set to a :class:`~wolframclient.deserializers.WXFConsumer` instance,
-    this instance is passed to :func:`~wolframclient.deserializers.binary_deserialize` when
-    deserializing the WXF output. 
+    When `consumer` is set to a :class:`~wolframclient.deserializers.WXFConsumer` instance, this instance is passed to
+    :func:`~wolframclient.deserializers.binary_deserialize` when deserializing the WXF output.
     
-    By default packed arrays are deserialized as :class:`list`. Specify a consumer instance
-    that supports NumPy arrays :class:`~wolframclient.deserializers.WXFConsumerNumpy`::
+    By default, packed arrays are deserialized as :class:`list`. Specify a consumer instance that supports NumPy arrays
+    :class:`~wolframclient.deserializers.WXFConsumerNumpy`::
 
         from wolframclient.deserializers import WXFConsumerNumpy
 
@@ -66,13 +66,11 @@ class WolframLanguageSession(WolframEvaluator):
     * one `PUSH` socket to send expressions for evaluation
     * one `PULL` socket to receive evaluation results
 
-    Kernel logging is disabled by default and is done through a third socket
-    (type `SUB`). The initial log level is specified by the parameter `kernel_loglevel`.
-    If the log level was not set at initialization, logging is not available for the entire
-    session.
+    Kernel logging is disabled by default and is done through a third socket (type `SUB`). The initial log level is
+    specified by the parameter `kernel_loglevel`.
+    If the log level was not set at initialization, logging is not available for the entire session.
 
-    The kernel associated with a given session provides the following
-    logging functions:
+    The kernel associated with a given session provides the following logging functions:
 
     * ``ClientLibrary`debug`` corresponding to :py:meth:`logging.Logger.debug`
     * ``ClientLibrary`info`` corresponding to :py:meth:`logging.Logger.info`
@@ -84,9 +82,9 @@ class WolframLanguageSession(WolframEvaluator):
     * ``ClientLibrary`SetErrorLogLevel[]`` only send error messages
     * ``ClientLibrary`DisableKernelLogging[]`` stop sending error message to the logging socket
 
-    The standard input, output and error file handles can be specified with `stdin`, `stdout` and `stderr`
-    named parameters. Valid values are those accepted by subprocess.Popen (e.g :data:`sys.stdout`). Those parameters should be handled
-    with care as deadlocks can arise from misconfiguration.
+    The standard input, output and error file handles can be specified with `stdin`, `stdout` and `stderr` named
+    parameters. Valid values are those accepted by :class:`subprocess.Popen` (e.g. :data:`sys.stdout`). Those parameters
+    should be handled with care as deadlocks can arise from misconfiguration.
 
     """
 
@@ -142,10 +140,10 @@ class WolframLanguageSession(WolframEvaluator):
         return self.kernel_controller.started
 
     def start(self, block=True, timeout=None):
-        """ Start a kernel controller, eventually restart a fresh on if the previous one was terminated. 
+        """ Start a kernel controller, eventually start a fresh one if the previous one was terminated.
         
         Set `block` to :data:`True` (default is :data:`False`) to wait for the kernel to be up and running 
-        before returning. Eventually set a timeout in seconds. If the timeout is reached a :data:`TimeoutError`
+        before returning. Optionally set a timeout in seconds. If the timeout is reached a :data:`TimeoutError`
         will be raised and the kernel is terminated.
         """
         try:
@@ -159,9 +157,9 @@ class WolframLanguageSession(WolframEvaluator):
                 raise e
 
     def start_future(self):
-        """ Request the Wolfram Kernel to start. Return a future object.
+        """ Request the Wolfram kernel to start and return a future object.
         
-        The result of the future object is True when the kernel is ready to evaluate input."""
+        The result of the future object is :data:`True` when the kernel is ready to evaluate input."""
         self.stopped = False
         if self.kernel_controller.terminated:
             self.kernel_controller = self.kernel_controller.duplicate()
@@ -172,11 +170,11 @@ class WolframLanguageSession(WolframEvaluator):
         return future
 
     def stop(self):
-        """ Request the Wolfram Kernel to stop gracefully. """
+        """ Request the Wolfram kernel to stop gracefully. """
         self._stop(gracefully=True)
 
     def terminate(self):
-        """ Request the Wolfram Kernel to stop immediately.
+        """ Request the Wolfram kernel to stop immediately.
         
         Ongoing evaluations may be cancelled. """
         self._stop(gracefully=False)
@@ -188,11 +186,11 @@ class WolframLanguageSession(WolframEvaluator):
             future.result()
 
     def stop_future(self, gracefully=True):
-        """ Request the Wolfram Kernel to stop. Return a future object.
+        """ Request the Wolfram kernel to stop and return a future object.
         
-        The result of the future object is True when the controller thread is no more alive.
-        Set `gracefully` to `False` will request for an immediate stop, eventually cancelling ongoing
-        evaluations. 
+        The result of the future object is :data:`True` when the controller thread is no longer alive.
+        Set `gracefully` to :data:`False` to request for an immediate stop, eventually cancelling ongoing
+        evaluations.
         """
         self.stopped = True
         if gracefully:
@@ -265,7 +263,7 @@ class WolframLanguageSession(WolframEvaluator):
     def evaluate_wxf(self, expr, **kwargs):
         """ Evaluate an expression and return the serialized expression. 
         
-        This method does not deserialize the Wolfram Kernel input. """
+        This method does not deserialize the Wolfram kernel input. """
         result = self.evaluate_wrap(expr, **kwargs)
         self.log_message_from_result(result)
         return result.wxf
