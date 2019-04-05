@@ -43,7 +43,7 @@ class WolframCloudSession(WolframEvaluator):
     :class:`~wolframclient.evaluation.result.WolframAPIResponse`.
     It is strongly advised to reuse a session to make multiple calls to mitigate the cost of initialization.
 
-    `max_workers` can be specified and is passed to the :py:`ThreadPoolExecutor` used for future methods.
+    `max_workers` can be specified and is passed to the :data:`ThreadPoolExecutor` used for future methods.
     """
 
     def __init__(self,
@@ -169,7 +169,7 @@ class WolframCloudSession(WolframEvaluator):
              target_format='wl',
              permissions_key=None,
              **kwargv):
-        """Call a given API, using the provided input parameters.
+        """Call a given API using the provided input parameters.
 
         `api` can be a string url or a :class:`tuple` (`username`, `api name`). The username is generally the Wolfram
         Language symbol ``$UserName``. The API name can be a UUID or a relative path, e.g. *myapi/foo/bar*.
@@ -223,16 +223,17 @@ class WolframCloudSession(WolframEvaluator):
         return WolframCloudEvaluationWXFResponse(response)
 
     def evaluate(self, expr, **kwargs):
-        """Send `expr` to the cloud for evaluation, return the result.
+        """Send `expr` to the cloud for evaluation and return the result.
 
-        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export`,
-        or a the string InputForm of an expression to evaluate.
+        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export` or a the string
+        :wl:`InputForm` of an expression to evaluate.
         """
         return self._call_evaluation_api(self.normalize_input(expr),
                                          **kwargs).get()
 
     def evaluate_wrap(self, expr, **kwargs):
-        """ Similar to :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframEvaluationJSONResponse`.
+        """ Similar to :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate` but return the
+         result as a :class:`~wolframclient.evaluation.result.WolframEvaluationJSONResponse`.
         """
         return self._call_evaluation_api(self.normalize_input(expr), **kwargs)
 
@@ -266,8 +267,8 @@ class WolframCloudSession(WolframEvaluator):
     def evaluate_future(self, expr, **kwargs):
         """Send `expr` to the cloud for asynchronous evaluation and return a :class:`concurrent.futures.Future` object.
 
-        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export`,
-        or a the string :wl:`InputForm` of an expression to evaluate.
+        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export` or a the string
+        :wl:`InputForm` of an expression to evaluate.
         """
         return self.pool.submit(self.evaluate, expr, **kwargs)
 
@@ -288,7 +289,7 @@ class WolframAPICall(WolframAPICallBase):
     """Helper class to perform an API call using a cloud session. """
 
     def perform(self, **kwargs):
-        """Make the API call, return the result."""
+        """Make the API call and return the result."""
         return self.target.call(
             self.api,
             input_parameters=self.parameters,
