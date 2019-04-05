@@ -23,23 +23,23 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
     """ A pool of kernels to dispatch one-shot evaluations asynchronously.
 
     Evaluators can be specified in various ways: as a string representing the path to a local kernel,
-    a :class:`~wolframclient.evaluation.WolframCloudAsyncSession`, or
-    an instance of :class:`~wolframclient.evaluation.WolframLanguageAsyncSession`. More than one evaluator specification can be provided
-    in the form of an iterable object, yielding above mentioned specification.
-    If the number of evaluators is less than the requested pool size (`poolsize`), elements are duplicated until the requested number of 
-    evaluators is reached.
+    a :class:`~wolframclient.evaluation.WolframCloudAsyncSession` or
+    an instance of :class:`~wolframclient.evaluation.WolframLanguageAsyncSession`. More than one evaluator specification
+    can be provided in the form of an iterable object, yielding the abovementioned specification.
+    If the number of evaluators is less than the requested pool size (`poolsize`), elements are duplicated until the
+    requested number of evaluators is reached.
 
-    Create a pool from a Wolfram Kernel default location::
+    Create a pool from a Wolfram kernel default location::
 
         async with WolframEvaluatorPool() as pool:
             await pool.evaluate('$InstallationDirectory')
 
-    Create a pool from a specific Wolfram Kernel::
+    Create a pool from a specific Wolfram kernel::
 
         async with WolframEvaluatorPool('/path/to/local/kernel') as pool:
             await pool.evaluate('1+1')
 
-    Create a pool from an cloud evaluator::
+    Create a pool from a cloud evaluator::
 
         cloud_session = WolframCloudAsyncSession(credentials=myCredentials)
         async with WolframEvaluatorPool(cloud_session) as pool:
@@ -54,9 +54,12 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         async with WolframEvaluatorPool(evaluators) as pool:
             await pool.evaluate('$MachineName')
 
-    `poolsize` is the number of kernel instances. The requested size may not be reached due to licencing restrictions.
-    `load_factor` indicate how many workloads are queued per kernel before new evaluation becomes blocking operation. Values below or equal to 0 means infinite queue size.
-    `loop` event loop to use.
+    Set `poolsize` to the number of kernel instances. The requested size may not be reached due to licencing
+    restrictions.
+    Set `load_factor` to specify how many workloads are queued per kernel before a new evaluation becomes blocking
+    operation.
+    Values below or equal to 0 mean an infinite queue size.
+    Set `loop` to the event loop to use.
     `kwargs` are passed to :class:`wolframclient.evaluation.WolframLanguageAsyncSession` during initialization.
     """
 
@@ -121,7 +124,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
                     break
                 # func is one of the evaluate* methods from WolframAsyncEvaluator.
                 future, func, args, kwargs = task
-                # those method can't be canceled since the kernel is evaluating anyway.
+                # those method can't be cancelled since the kernel is evaluating anyway.
                 try:
                     func = getattr(kernel, func)
                     result = await asyncio.shield(func(*args, **kwargs))
@@ -195,7 +198,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         be ready for evaluation.
 
         This method is a coroutine.
-        If not all the kernels were able to start fails and terminate the pool.
+        If not all the kernels were able to start, it fails and terminates the pool.
         """
         self.stopped = False
         # keep track of the init tasks. We have to wait before terminating.
@@ -293,11 +296,11 @@ def parallel_evaluate(expressions,
                       loop=None):
     """ Start a kernel pool and evaluate the expressions in parallel. 
     
-    The pool is created with the value of `evaluator_spec`. The pool is automatically
-    stopped when no more needed. The expressions are evaluated and returned in order.
+    The pool is created with the value of `evaluator_spec`. The pool is automatically stopped it is no longer needed.
+    The expressions are evaluated and returned in order.
 
-    Note that each evaluation should be independent and not rely on any previous one. 
-    There is no guarantee that two given expressions evaluate on the same kernel.
+    Note that each evaluation should be independent and not rely on any previous one. There is no guarantee that two
+    given expressions evaluate on the same kernel.
     """
     loop = loop or asyncio.get_event_loop()
     pool = None
