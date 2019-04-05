@@ -19,11 +19,6 @@ from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import last
 from wolframclient.utils.importutils import import_string
 
-if six.PY_35:
-    from collections.abc import Mapping
-else:
-    from collections import Mapping
-
 HIDDEN_VARIABLES = (
     '__loader__', '__builtins__', '__traceback_hidden_variables__',
     'absolute_import', 'print_function', 'unicode_literals'
