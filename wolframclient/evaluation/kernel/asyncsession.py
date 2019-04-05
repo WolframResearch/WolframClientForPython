@@ -25,14 +25,14 @@ class WolframLanguageAsyncSession(WolframAsyncEvaluator,
         async with WolframLanguageAsyncSession() as session:
             await session.evaluate('Now')
 
-    An event loop can be explicitly passed using the named parameter `loop`, otherwise the one 
+    An event loop can be explicitly passed using the named parameter `loop`; otherwise the one
     returned by :func:`~asyncio.get_event_loop` is used.
 
-    Coroutines all run in a unique thread. Since a Wolfram Kernel is single threaded, there can
+    Coroutines all run in a unique thread. Since a Wolfram kernel is single threaded, there can
     be only one evaluation at a time. In a sense, from the event loop point of view, evaluations 
     are atomic operations. Even when many asynchronous sessions are started, the number of 
     threads equals the number of kernel instances running and should not be problematic. Ensuring 
-    that only one thread runs all operations of a given Wolfram kernel, significantly reduces the 
+    that only one thread runs all operations of a given Wolfram kernel significantly reduces the
     complexity of the code without any real drawback.
     """
 
@@ -140,7 +140,7 @@ class WolframLanguageAsyncSession(WolframAsyncEvaluator,
         await asyncio.wrap_future(future, loop=self._loop)
 
     async def stop(self):
-        """Asynchronously stop the session (gracefully termination).
+        """Asynchronously stop the session (graceful termination).
         
         This method is a coroutine."""
         await self._async_terminate(True)
