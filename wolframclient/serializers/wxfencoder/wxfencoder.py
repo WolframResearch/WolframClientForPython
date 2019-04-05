@@ -11,11 +11,11 @@ from wolframclient.utils import six
 
 
 class NotEncodedException(Exception):
-    """Exception used during encoding to signal that a given python object has been ignored by a :class:`~wolframclient.serializers.wxfencoder.WXFEncoder`."""
+    """Exception used during encoding to signal that a given Python object has been ignored by a :class:`~wolframclient.serializers.wxfencoder.WXFEncoder`."""
 
 
 class WXFEncoder(object):
-    """Encode a given python object into a stream of :class:`~wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr`.
+    """Encode a given Python object into a stream of :class:`~wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr`.
 
     This class is meant to be subclassed in order to add support for new classes. The encoder does not have to do anything
     since more than one can be attached to a given :class:`~wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider`.
@@ -23,7 +23,7 @@ class WXFEncoder(object):
 
     To implement a new encoder one needs to sub-class :class:`~wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder`
     and implements method :func:`~wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder.encode`. Encode is a generator function
-    that takes a given python object and instances of :class:`~wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr`. If it returns before
+    that takes a given Python object and instances of :class:`~wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr`. If it returns before
     yielding anything a :class:`~wolframclient.serializers.wxfencoder.wxfencoder.NotEncodedException` is raised to signal that
     the encoder is not supporting the given object, and that the encoding must be delegating to the next encoder (if any).
 
@@ -40,7 +40,7 @@ class WXFEncoder(object):
         raise NotImplementedError
 
     def serialize(self, o):
-        """Re-entrant method used to serialize part of a python object.
+        """Re-entrant method used to serialize part of a Python object.
 
         Example: when serializing a custom class ``foo[{'k1'->1,'k2'->2}]``, the user
         defined encoder for class foo could encode it as a function with head 'foo' and a dict.
