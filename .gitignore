@@ -9,3 +9,4 @@ wolframclient/tests/local_config.json
 .coverage
 .vscode
 *.code-workspace
+/test-reports
