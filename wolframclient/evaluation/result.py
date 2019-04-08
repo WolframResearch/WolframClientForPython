@@ -693,7 +693,7 @@ class WolframAPIResponse404Async(WolframAPIResponse404,
 
 
 class WolframAPIResponseGeneric(WolframAPIFailureResponse):
-    async def build(self):
+    def build(self):
         self._failure = self.response.text()
         self._built = True
 
