@@ -168,4 +168,4 @@ def encoder_panda_dataframe(serializer, o):
     else:
         raise ValueError(
             "Invalid value for property 'pandas_dataframe_head'. Expecting one of (%s), got %s."
-            % (', '.join(PANDAS_PROPERTIES['pandas_dataframe_head']), prop))
+            % (', '.join(PANDAS_PROPERTIES['pandas_dataframe_head']), head))
