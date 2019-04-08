@@ -49,9 +49,9 @@ class Command(SimpleCommand):
                 suite.addTests(
                     unittest.defaultTestLoader.discover(
                         root, pattern=arg, top_level_dir=root))
-        xml_output = opts.get('xml_output', False)
+
         # verbosity > 1 print test name
-        if xml_output:
+        if opts.get('xml_output', False):
             import xmlrunner
             runner = xmlrunner.XMLTestRunner(output='test-reports')
         else:
