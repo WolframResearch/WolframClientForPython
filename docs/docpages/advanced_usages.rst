@@ -214,7 +214,7 @@ The standard output should display:
 Coroutine and Asyncio APIs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The :mod:`asyncio` provides high-level concurrent code and asynchronous evaluation using coroutines and the `async`/`await` keywords. Asynchronous evaluation based on :mod:`asyncio` requires an instance of :class:`~wolframclient.evaluation.WolframLanguageAsyncSession`, whose methods are mostly coroutines.
+:mod:`asyncio` provides high-level concurrent code and asynchronous evaluation using coroutines and the `async`/`await` keywords. Asynchronous evaluation based on :mod:`asyncio` requires an instance of :class:`~wolframclient.evaluation.WolframLanguageAsyncSession`, whose methods are mostly coroutines.
 
 Define a coroutine `delayed_evaluation` that artificially delays evaluation, using an asyncio sleep coroutine. Use this newly created coroutine to evaluate a first expression, wait for the coroutine to finish and evaluate the second:
 
@@ -247,7 +247,7 @@ In the examples shown, only one Wolfram kernel was used, which is a single-threa
 Kernel Pool
 ^^^^^^^^^^^
 
-A :class:`~wolframclient.evaluation.WolframEvaluatorPool` starts up a certain amount of evaluators and dispatch work load to them asynchronously. The pool is usable right after the first one has successfully started. Some may take more time to start and become available after a delay:
+A :class:`~wolframclient.evaluation.WolframEvaluatorPool` starts up a certain amount of evaluators and dispatches work load to them asynchronously. The pool is usable right after the first one has successfully started. Some may take more time to start and become available after a delay:
 
 .. literalinclude:: /examples/python/asynchronous4.py
     :linenos:
@@ -382,7 +382,7 @@ Use the Wolfram Client Library to access the Wolfram Language algebra functions.
 Complex Eigenvalues
 ====================
 
-Python has the built-in class :class:`complex`. By default, the function :func:`~wolframclient.deserializers.binary_deserialize` deserializes Wolfram Language functions using a generic class :class:`~wolframclient.language.expression.WLFunction` but conveniently provides a way to extend the mapping. Define `ComplexFunctionConsumer`, a subclass of :class:`~wolframclient.deserializers.WXFConsumer` that overrides the method :meth:`~wolframclient.deserializers.WXFConsumer.build_function`. The subclassed method maps :wl:`Complex` to the built-in Python :class:`complex`.
+Python has the built-in class :class:`complex`. By default, the function :func:`~wolframclient.deserializers.binary_deserialize` deserializes Wolfram Language functions using a generic class :class:`~wolframclient.language.expression.WLFunction` but conveniently provides a way to extend the mapping. Define `ComplexFunctionConsumer`, a subclass of :class:`~wolframclient.deserializers.WXFConsumer` that overrides the method :meth:`~wolframclient.deserializers.WXFConsumer.build_function`. The subclassed method maps :wl:`Complex` to the built-in Python class :class:`complex`.
 
 .. literalinclude:: /examples/python/eigenvalues2.py
     :emphasize-lines: 5-17, 31
@@ -424,7 +424,7 @@ It is possible to build a subclass of :class:`~wolframclient.deserializers.WXFCo
 A Wolfram Language Alternative
 ------------------------------
 
-It is recommended to delegate as much as possible to the Wolfram Language. Instead of implementing a (fragile) counterpart of core functions such as :wl:`Plus` or :wl:`Times`, it is best to compute a numerical result within the kernel. This can be achieved with the function :wl:`N`. Once applied to the eigenvalues, the result becomes a mixture of complex values and reals, which was already dealt with in the :ref:`previous section<complex-consumer>`.
+It is recommended to delegate as much as possible to the Wolfram Language. Instead of implementing a (fragile) counterpart of core functions such as :wl:`Plus` or :wl:`Times`, it is best to compute a numerical result within the kernel. This can be achieved with the function :wl:`N`. Once applied to the eigenvalues, the result becomes a mixture of complex values and reals, which was already dealt with in the :ref:`previous section<complex-consumer>`:
 
 .. literalinclude:: /examples/python/eigenvalues3_alternative.py
     :emphasize-lines: 8-14, 28

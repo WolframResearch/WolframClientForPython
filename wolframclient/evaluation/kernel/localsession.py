@@ -36,7 +36,7 @@ class WolframLanguageSession(WolframEvaluator):
     Set `timeout` to a number to set an evaluation timeout in seconds. If the evaluation
     time extends the timeout, a :class:`~concurrent.futures.TimeoutError` is raised.
     
-    Evaluate an expression taking 10 seconds to return using a 5 second timeout::
+    Evaluate an expression taking 10 seconds to return using a 5--second timeout::
 
         long_evaluation = wl.Pause(10)
         with WolframLanguageSession() as session:

@@ -164,7 +164,7 @@ wolfram_encoder.__doc__ = """
 
 
     Another way to extend supported types is to create a new :class:`~wolframclient.utils.dispatch.Dispatch`, map 
-    various types and encoders and ultimatelly update :data:`wolfram_encoder` using 
+    various types and encoders and ultimately update :data:`wolfram_encoder` using 
     :meth:`~wolframclient.utils.dispatch.Dispatch.update`.
 
     Create a new dispatcher and register :data:`MyPythonClass`::
@@ -188,14 +188,14 @@ wolfram_encoder.__doc__ = """
 
     The library supports an entry point dedicated to new encoders: `wolframclient_serializers_encoder`. The library uses 
     this entry point to loads plugins at runtime as separated libraries. For more information about entry points, refer 
-    to the documentation page about `entry-points <https://packaging.python.org/specifications/entry-points/>`_.
+    to the documentation page about `entry points <https://packaging.python.org/specifications/entry-points/>`_.
 
     The plugin name must be unique and the value must reference a dispatcher instance. This instance is loaded and used 
     to update :data:`wolfram_encoder`. A plugin is a simple way to distribute encoders as a separate library. 
     
     One type must have a unique encoder associated to it; as a consequence, two plugins registering an encoder for the 
     same type are incompatible. It is strongly advised to create one plugin for each existing Python library. 
-    e.g. have one plugin dedicated to NumPy, and one to Pandas which makes heavy use of NumPy arrays.
+    e.g. have one plugin dedicated to NumPy and one to Pandas, which makes heavy use of NumPy arrays.
     """
 
 

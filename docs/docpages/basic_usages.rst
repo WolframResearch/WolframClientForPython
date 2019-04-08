@@ -113,7 +113,7 @@ Evaluate :wlcode:`MinMax[{1, 5, -3, 9}]`, using the Wolfram Language function :w
     >>> session.evaluate(wl.MinMax([1, 5, -3, 9]))
     [-3, 9]
 
-Query `Wolfram|Alpha <https://www.wolframalpha.com/>`_ for the distance between Earth and the Sun using :wl:`WolframAlpha`::
+Query `Wolfram|Alpha <https://www.wolframalpha.com/>`_ for the distance between Earth and the sun using :wl:`WolframAlpha`::
 
     >>> distance = session.evaluate(wl.WolframAlpha("Earth distance from Sun", "Result"))
     Quantity[1.008045994315923, AstronomicalUnit]
@@ -288,7 +288,7 @@ Start a session manually::
     >>> session = WolframLanguageSession()
     >>> session.start()
 
-This is not required, since this operation is automatically performed during the first evaluation.
+This is not required since this operation is automatically performed during the first evaluation.
 
 Ensure the session started successfully:
 
@@ -325,7 +325,7 @@ Authenticate
 Generate a Secured Authentication Key
 +++++++++++++++++++++++++++++++++++++
 
-Using Wolfram Desktop or a the Wolfram Public Cloud, generate a new authentication key and give it a name e.g. `pythonclientlibrary`:
+Using Wolfram Desktop or the Wolfram Public Cloud, generate a new authentication key and give it a name e.g. `pythonclientlibrary`:
 
 .. code-block :: wl
 
@@ -339,8 +339,8 @@ Get the key and secret as strings:
     sak["ConsumerSecret"]   (* "VGhhdCdzIE1ZIHNlY3JldCE=" *)
 
 
-Start Authenticated Cloud Session
-++++++++++++++++++++++++++++++++++
+Start an Authenticated Cloud Session
++++++++++++++++++++++++++++++++++++++
 
 Begin by importing the classes :class:`~wolframclient.evaluation.SecuredAuthenticationKey` and :class:`~wolframclient.evaluation.WolframCloudSession` from the :mod:`~wolframclient.evaluation` module::
 
@@ -661,7 +661,7 @@ PIL :data:`Image` are serialized to the Wolfram Language function :wl:`Image`. M
 NumPy
 +++++++
 
-NumPy arrays of signed and unsigned integers, floats and complexes are serialized to the Wolfram Language function :wl:`NumericArray`. Numeric types are also supported (e.g. :data:`numpy.integer`, :data:`numpy.float16`, etc).
+NumPy arrays of signed and unsigned integers, floats and complexes are serialized to the Wolfram Language function :wl:`NumericArray`. Numeric types are also supported (e.g. :data:`numpy.integer`, :data:`numpy.float16`, etc.).
 
 Pandas
 ++++++++

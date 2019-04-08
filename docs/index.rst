@@ -35,7 +35,7 @@
     </div>
     <div class='document-subheader bodyaligned'>
         <span id='header-summary'>
-            The Wolfram Client Library for Python lets Python programs directly integrate Wolfram Language capabilities. Connect either to a local Wolfram Engine or to the Wolfram Cloud (or a private Wolfram Cloud)
+            The Wolfram Client Library for Python lets Python programs directly integrate Wolfram Language capabilities. Connect either to a local Wolfram Engine or to the Wolfram Cloud (or a private Wolfram Cloud).
         </span>
         <br>
     </div>

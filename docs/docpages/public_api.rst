@@ -7,7 +7,7 @@ Guide
 
 The Wolfram Client Library is structured in submodules all located in :mod:`wolframclient`:
 
-* :mod:`~wolframclient.evaluation` provides convenient methods to evaluate Wolfram Language expressions directly from Python. There are many ways to evaluate code, including: evaluation by a local kernel, direct evaluation by a public or private Wolfram Cloud, calling a deployed API.
+* :mod:`~wolframclient.evaluation` provides convenient methods to evaluate Wolfram Language expressions directly from Python. There are many ways to evaluate code, including evaluation by a local kernel, direct evaluation by a public or private Wolfram Cloud or calling a deployed API.
 
 * :mod:`~wolframclient.language` provides a Python representation of Wolfram Language symbols and functions.
 
@@ -72,7 +72,7 @@ Supported Types
 Built-in Data Types
 ^^^^^^^^^^^^^^^^^^^
 
-Built-in data structures are all supported :class:`list`, :class:`set`, :class:`frozenset`, and :class:`dict`.
+Built-in data structures are all supported :class:`list`, :class:`set`, :class:`frozenset` and :class:`dict`.
 
 Example::
 
@@ -106,7 +106,7 @@ To preserve ordering in associations use :class:`collections.OrderedDict`::
 Numeric Types
 ^^^^^^^^^^^^^
 
-Numeric types are natively supported; :class:`int`, :class:`float`, :class:`complex` and :class:`~decimal.Decimal` serializes to
+Numeric types are natively supported; :class:`int`, :class:`float`, :class:`complex` and :class:`~decimal.Decimal` serialize to
 their Wolfram Language counterpart::
 
     >>> export({'int': 1, 'float':2.3, 'decimal': decimal.Decimal(1), 'complex': complex(3, 4)})
@@ -136,7 +136,7 @@ DateObject Serialization
 
     >>> export(datetime.timedelta(seconds = 340))
 
-Specify a timezone in Python using :func:`pytz.timezone` and serialize the date to a :wl:`DateObject`::
+Specify a time zone in Python using :func:`pytz.timezone` and serialize the date to a :wl:`DateObject`::
 
     >>> from pytz import timezone
     >>> export(timezone('US/Eastern').localize(datetime.datetime.now()))
@@ -191,7 +191,7 @@ Serialize an instance of :data:`MyPythonClass` using the normalizer function def
 Encoder
 ^^^^^^^^
 
-The serialization of a Python object relies on encoder functions. Each encoder is attached to a set of Python types. Encoders are generators of bytes. The library defines encoders for most built-in Python types and for the core components of some popular libraries such as PIL :data:`Image`, Numpy arrays and Pandas :data:`Series`.
+The serialization of a Python object relies on encoder functions. Each encoder is attached to a set of Python types. Encoders are generators of bytes. The library defines encoders for most built-in Python types and for the core components of some popular libraries such as PIL :data:`Image`, NumPy arrays and Pandas :data:`Series`.
 
 .. autodata:: wolframclient.serializers.encoder.wolfram_encoder
     :noindex:
