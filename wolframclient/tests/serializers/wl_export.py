@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import os
 import tempfile
-from collections import OrderedDict
+
 from wolframclient.language import wl
 from wolframclient.serializers import available_formats, export
 from wolframclient.utils import six
@@ -99,14 +99,9 @@ class TestCase(BaseTestCase):
             export(
                 wl.Failure(
                     "PythonFailure",
-                    OrderedDict((
-                        ("MessageTemplate", 'baz'),
-                        ("MessageParameters", {}),
-                        ("FailureCode", 'bar'),
-                        ("Traceback", 'foo'),
-                    ))
+                    {'MessageTemplate': ['baz', ('bar', 'bad')]}
                 ),
                 target_format='wl',
                 encoder='wolframclient.serializers.encoders.builtin.encoder'),
-            b'Failure["PythonFailure", <|"MessageTemplate" -> "baz", "MessageParameters" -> <||>, "FailureCode" -> "bar", "Traceback" -> "foo"|>]'
+            b'Failure["PythonFailure", <|"MessageTemplate" -> {"baz", {"bar", "bad"}}|>]'
         )
