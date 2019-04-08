@@ -23,7 +23,7 @@ def dependencies():
         yield ("oauthlib", "2.1.0")
         yield ("pyzmq", "17.1.2")
         yield ("pandas", "0.23.4")
-        yield ('xmlrunner', "1.7.7")
+        yield ('unittest-xml-reporting', None)
     if not six.PY2:
         yield ("aiohttp", "3.4.4")
 
@@ -41,7 +41,7 @@ class Command(SimpleCommand):
         parser.add_argument('--xml', dest='xml_output', action='store_true')
         parser.add_argument('args', nargs='*')
 
-    def handle(self, xml_output, *args):
+    def handle(self, *args, **opts):
 
         suite = unittest.TestSuite()
         for root in map(module_path, self.modules):
@@ -49,12 +49,14 @@ class Command(SimpleCommand):
                 suite.addTests(
                     unittest.defaultTestLoader.discover(
                         root, pattern=arg, top_level_dir=root))
-
+        xml_output = opts.get('xml_output', False)
         # verbosity > 1 print test name
         if xml_output:
             import xmlrunner
+            print('xml output!')
             runner = xmlrunner.XMLTestRunner(output='test-reports')
         else:
+            print('Nope....!!!')
             runner = unittest.TextTestRunner(verbosity=2)
 
         result = runner.run(suite)
