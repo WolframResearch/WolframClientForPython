@@ -4,13 +4,12 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import os
 import tempfile
-
+from collections import OrderedDict
 from wolframclient.language import wl
 from wolframclient.serializers import available_formats, export
 from wolframclient.utils import six
 from wolframclient.utils.functional import identity
 from wolframclient.utils.tests import TestCase as BaseTestCase
-
 
 class TestCase(BaseTestCase):
     def test_export(self):
@@ -99,12 +98,14 @@ class TestCase(BaseTestCase):
         self.assertEqual(
             export(
                 wl.Failure(
-                    "PythonFailure", {
-                        "MessageTemplate": 'baz',
-                        "MessageParameters": {},
-                        "FailureCode": 'bar',
-                        "Traceback": 'foo'
-                    }),
+                    "PythonFailure",
+                    OrderedDict((
+                        ("MessageTemplate", 'baz'),
+                        ("MessageParameters", {}),
+                        ("FailureCode", 'bar'),
+                        ("Traceback", 'foo'),
+                    ))
+                ),
                 target_format='wl',
                 encoder='wolframclient.serializers.encoders.builtin.encoder'),
             b'Failure["PythonFailure", <|"MessageTemplate" -> "baz", "MessageParameters" -> <||>, "FailureCode" -> "bar", "Traceback" -> "foo"|>]'
