@@ -52,7 +52,7 @@ class Command(SimpleCommand):
                         root, pattern=arg, top_level_dir=root))
         if opts.get('default_xml_output'):
             xml_output = 'test-reports'
-        xml_output = opts.get('xml_output') or xml_output 
+        xml_output = opts.get('xml_output') or xml_output
         # verbosity > 1 print test name
         if xml_output:
             import xmlrunner
