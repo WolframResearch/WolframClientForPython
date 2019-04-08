@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import sys
 from operator import methodcaller
 
 from wolframclient.utils.api import numpy
@@ -11,35 +12,49 @@ from wolframclient.utils.functional import identity, map
 encoder = Dispatch()
 
 NUMPY_MAPPING = {
-    numpy.dtype('int8'): ('Integer8', methodcaller('astype', '<i1')),
-    numpy.dtype('int16'): ('Integer16', methodcaller('astype', '<i2')),
-    numpy.dtype('int32'): ('Integer32', methodcaller('astype', '<i4')),
-    numpy.dtype('int64'): ('Integer64', methodcaller('astype', '<i8')),
-    numpy.dtype('uint8'): ('UnsignedInteger8', methodcaller('astype', '<u1')),
-    numpy.dtype('uint16'): ('UnsignedInteger16', methodcaller('astype',
+    numpy.int8: ('Integer8', methodcaller('astype', '<i1')),
+    numpy.int16: ('Integer16', methodcaller('astype', '<i2')),
+    numpy.int32: ('Integer32', methodcaller('astype', '<i4')),
+    numpy.int64: ('Integer64', methodcaller('astype', '<i8')),
+    numpy.uint8: ('UnsignedInteger8', methodcaller('astype', '<u1')),
+    numpy.uint16: ('UnsignedInteger16', methodcaller('astype',
                                                               '<u2')),
-    numpy.dtype('uint32'): ('UnsignedInteger32', methodcaller('astype',
+    numpy.uint32: ('UnsignedInteger32', methodcaller('astype',
                                                               '<u4')),
-    numpy.dtype('uint64'): ('UnsignedInteger64', methodcaller('astype',
+    numpy.uint64: ('UnsignedInteger64', methodcaller('astype',
                                                               '<u8')),
-    numpy.dtype('float32'): ('Real32', identity),
-    numpy.dtype('float64'): ('Real64', identity),
-    numpy.dtype('complex64'): ('ComplexReal32', identity),
-    numpy.dtype('complex128'): ('ComplexReal64', identity),
+    numpy.float32: ('Real32', identity),
+    numpy.float64: ('Real64', identity),
+    numpy.complex64: ('ComplexReal32', identity),
+    numpy.complex128: ('ComplexReal64', identity),
 }
+
+
+SYS_IS_LE = sys.byteorder == 'little'
+
+
+def to_little_endian(array, inplace=False):
+    """ Return a numpy array of the same type with little endian byte ordering.
+
+    Set `inplace` to `True` to mutate the input array. """
+    endianness = array.dtype.byteorder
+    if endianness == '>' or (endianness == '=' and not SYS_IS_LE):
+        return array.byteswap(inplace=inplace).newbyteorder()
+    else:
+        return array
 
 
 @encoder.dispatch(numpy.ndarray)
 def encode_ndarray(serializer, o):
 
     try:
-        wl_type, handler = NUMPY_MAPPING[o.dtype]
+        wl_type, handler = NUMPY_MAPPING[o.dtype.type]
     except KeyError:
         raise NotImplementedError(
             'NumPy serialization not implemented for %s. Choices are: %s' %
             (repr(o.dtype), ', '.join(map(repr, NUMPY_MAPPING.keys()))))
 
-    o = handler(o)
+    o = to_little_endian(o)
 
     if hasattr(o, 'tobytes'):
         #Numpy 1.9+ support array.tobytes, but previous versions don't and use tostring instead.
