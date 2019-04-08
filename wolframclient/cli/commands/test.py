@@ -53,10 +53,8 @@ class Command(SimpleCommand):
         # verbosity > 1 print test name
         if xml_output:
             import xmlrunner
-            print('xml output!')
             runner = xmlrunner.XMLTestRunner(output='test-reports')
         else:
-            print('Nope....!!!')
             runner = unittest.TextTestRunner(verbosity=2)
 
         result = runner.run(suite)
