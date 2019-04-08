@@ -1,3 +1,6 @@
+# Version 1.0.2
+- Add a new optional flag to `test` command called `--xml`. It produces an xml output of the test results using the `xmlrunner` library.
+
 # Version 1.0.1
 - Bug fix in `WXFConsumer`.
 - Update some URLs.
