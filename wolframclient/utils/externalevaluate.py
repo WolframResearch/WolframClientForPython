@@ -52,7 +52,8 @@ def execute_from_string(string, context=UnprintableContext()):
         get_source=lambda module, code=string: code)
     current['__traceback_hidden_variables__'] = HIDDEN_VARIABLES
 
-    expressions = list(ast.parse(string).body)
+    expressions = list(compile(string, filename='<unknown>', mode='exec',
+                               flags=ast.PyCF_ONLY_AST | unicode_literals.compiler_flag).body)
 
     if not expressions:
         return
