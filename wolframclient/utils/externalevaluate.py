@@ -42,7 +42,7 @@ def execute_from_file(path, *args, **opts):
 
 def execute_from_string(string, context=UnprintableContext()):
 
-    __traceback_hidden_variables__ = True
+    __traceback_hidden_variables__ = ['context', 'current', '__traceback_hidden_variables__']
 
     #this is creating a custom __loader__ that is returning the source code
     #traceback serializers is inspecting global variables and looking for a standard loader that can return source code.
