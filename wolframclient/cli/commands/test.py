@@ -38,7 +38,7 @@ class Command(SimpleCommand):
     dependencies = dependencies()
 
     def add_arguments(self, parser):
-        parser.add_argument('--xml', dest='xml_output', action='store_true')
+        parser.add_argument('--xml', dest='xml_output', nargs='?', default=False, const='test-reports')
         parser.add_argument('args', nargs='*')
 
     def handle(self, *args, **opts):
@@ -49,11 +49,11 @@ class Command(SimpleCommand):
                 suite.addTests(
                     unittest.defaultTestLoader.discover(
                         root, pattern=arg, top_level_dir=root))
-
+        xml_output = opts.get('xml_output')
         # verbosity > 1 print test name
-        if opts.get('xml_output', False):
+        if xml_output:
             import xmlrunner
-            runner = xmlrunner.XMLTestRunner(output='test-reports')
+            runner = xmlrunner.XMLTestRunner(output=xml_output)
         else:
             runner = unittest.TextTestRunner(verbosity=2)
 

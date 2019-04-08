@@ -1,5 +1,5 @@
 # Version 1.0.2
-- Add a new optional flag to `test` command called `--xml`. It produces an xml output of the test results using the `unittest-xml-reporting` library .
+- Add a new optional flag to `test` command called `--xml`. It produces an xml output of the test results using the `unittest-xml-reporting` library. Accept an optional path for the output directory.
 
 # Version 1.0.1
 - Bug fix in `WXFConsumer`.
