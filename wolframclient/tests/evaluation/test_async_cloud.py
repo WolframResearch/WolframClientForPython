@@ -154,8 +154,8 @@ class TestCase(TestCaseSettings):
         async with WolframCloudAsyncSession(server=server) as cloud:
             url = 'api/public/permkey_stringreverse_wxf'
             response = await cloud.call((self.api_owner, url),
-                                  input_parameters={'str': 'abcde'},
-                                  permissions_key='my_key')
+                                        input_parameters={'str': 'abcde'},
+                                        permissions_key='my_key')
             self.assertEqual('edcba', await response.get())
 
     # currently missing key result in a webpage with an input field for the key.
@@ -164,7 +164,6 @@ class TestCase(TestCaseSettings):
     #     url = 'api/public/permkey_stringreverse_wxf'
     #     with self.assertRaises(AuthenticationException):
     #         await self.cloud_session_async.call((self.api_owner, url), input_parameters={'str': 'abcde'})
-
 
     @run_in_loop
     async def test_section_api_call_one_param_wrong(self):
@@ -257,7 +256,8 @@ class TestCase(TestCaseSettings):
     @run_in_loop
     async def test_xml_valid_response(self):
         api = ('dorianb', 'api/private/rangeXML')
-        response = await self.cloud_session_async.call(api, input_parameters={'i': 5})
+        response = await self.cloud_session_async.call(
+            api, input_parameters={'i': 5})
         self.assertTrue(response.success)
         self.assertEqual(response.status, 200)
 
@@ -269,7 +269,6 @@ class TestCase(TestCaseSettings):
         self.assertEqual(response.status, 400)
         with self.assertRaises(WolframLanguageException):
             await response.get()
-
 
     @run_in_loop
     async def test_evaluate_string_disable(self):
