@@ -30,7 +30,7 @@ class WolframCloudSession(WolframEvaluator):
     """Represent a session to a given cloud enabling simple API call.
 
     This is the central class of the cloud evaluation package. It is initialized with a server instance
-    representing a given cloud. By default, a session targets the Wolfram public cloud.
+    representing a given cloud. By default, a session targets the Wolfram Public Cloud.
 
     Most of the time it is necessary to authenticate with the server before issuing requests. A session supports two
     forms of authentication:
@@ -225,7 +225,7 @@ class WolframCloudSession(WolframEvaluator):
     def evaluate(self, expr, **kwargs):
         """Send `expr` to the cloud for evaluation and return the result.
 
-        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export` or a the string
+        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export` or the string
         :wl:`InputForm` of an expression to evaluate.
         """
         return self._call_evaluation_api(self.normalize_input(expr),
@@ -267,7 +267,7 @@ class WolframCloudSession(WolframEvaluator):
     def evaluate_future(self, expr, **kwargs):
         """Send `expr` to the cloud for asynchronous evaluation and return a :class:`~concurrent.futures.Future` object.
 
-        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export` or a the string
+        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export` or the string
         :wl:`InputForm` of an expression to evaluate.
         """
         return self.pool.submit(self.evaluate, expr, **kwargs)
