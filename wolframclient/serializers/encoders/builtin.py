@@ -16,19 +16,10 @@ from wolframclient.utils.functional import map
 
 encoder = Dispatch()
 
-if six.PY2:
-    #in py2 if you construct use dict(a=2) then "a" is binary
-    #since using bytes as keys is a legit operation we are only fixing py2 here
-    def _to_key_value(func, serializer, o):
-        return func(((serializer.encode(key), serializer.encode(value))
-                     for key, value in o.items()),
-                    length=safe_len(o))
-else:
-
-    def _to_key_value(func, serializer, o):
-        return func(((serializer.encode(key), serializer.encode(value))
-                     for key, value in o.items()),
-                    length=safe_len(o))
+def _to_key_value(func, serializer, o):
+    return func(((serializer.encode(key), serializer.encode(value))
+                 for key, value in o.items()),
+                length=safe_len(o))
 
 
 @encoder.dispatch(bool)
