@@ -6,7 +6,7 @@ import datetime
 import inspect
 import re
 from itertools import chain
-
+from wolframclient.utils.encoding import force_bytes
 from wolframclient.serializers.encoder import Encoder
 from wolframclient.serializers.wxfencoder.constants import (
     WXF_HEADER_SEPARATOR, WXF_VERSION)
