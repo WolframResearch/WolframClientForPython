@@ -65,7 +65,7 @@ class FormatSerializer(Encoder):
                 self.serialize_symbol(b'ByteArray'),
                 ((b'"', base64.b64encode(bytes), b'"'), ))
         else:
-            return self.serialize_string(force_bytes(bytes, "iso-8859-1"))
+            return self.serialize_string(force_string(bytes, "iso-8859-1"))
 
     def serialize_input_form(self, string):
         return self.serialize_function(
