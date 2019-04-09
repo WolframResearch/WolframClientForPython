@@ -61,8 +61,7 @@ class FormatSerializer(Encoder):
         #py2 is by default using strings
 
         if as_byte_array:
-            for token in self.serialize_string(force_text(bytes, encoding="iso-8859-1")):
-                yield token
+            return self.serialize_string(force_text(bytes, encoding="iso-8859-1"))
         else:
             return self.serialize_function(
                 self.serialize_symbol(b'ByteArray'),
