@@ -43,7 +43,7 @@ class WolframServer(object):
             self.certificate, self.is_xauth())
 
 
-# A built-in instance representing the Wolfram public Cloud.
+# A built-in instance representing the Wolfram Public Cloud.
 WOLFRAM_PUBLIC_CLOUD_SERVER = WolframServer(
     'https://www.wolframcloud.com',
     'https://account.wolfram.com/auth/request-token',
