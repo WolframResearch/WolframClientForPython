@@ -89,7 +89,7 @@ def encode_none(serializer, o):
 
 
 if six.PY2:
-    @encoder.dispatch(six.binary_type)
+    @encoder.dispatch(str)
     def encode_bytes(serializer, o):
         return serializer.serialize_bytes(o)
 
