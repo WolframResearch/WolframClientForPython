@@ -12,7 +12,7 @@ class WolframLanguageException(WLSerializable, Exception):
     ''' The most generic exception raised by the Wolfram Client Library.
 
     This class is :class:`~wolframclient.serializers.serializable.WLSerializable` and will automatically serialize to a
-    failure box when evaluated in a Wolfram Desktop.
+    failure box when evaluated in Wolfram Desktop.
     '''
 
     def __init__(self, payload, exec_info=None):
