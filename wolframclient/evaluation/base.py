@@ -61,7 +61,7 @@ class WolframEvaluator(WolframEvaluatorBase):
     def evaluate_future(self, expr):
         """ Evaluate a given Wolfram Language expression asynchronously.
         
-        Return a:class:`concurrent.futures.Future` object. """
+        Return a :class:`~concurrent.futures.Future` object. """
         raise NotImplementedError
 
     def evaluate_many(self, expr_list):
@@ -80,7 +80,7 @@ class WolframEvaluator(WolframEvaluatorBase):
     def evaluate_wrap_future(self, expr):
         """ Asynchronously call `evaluate_wrap`.
         
-        Return a:class:`concurrent.futures.Future` object. """
+        Return a :class:`~concurrent.futures.Future` object. """
         raise NotImplementedError
 
     def start(self):

@@ -24,7 +24,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
 
     Evaluators can be specified in various ways: as a string representing the path to a local kernel,
     a :class:`~wolframclient.evaluation.WolframCloudAsyncSession` or
-    an instance of :class:`~wolframclient.evaluation.WolframLanguageAsyncSession`. More than one evaluator specification
+    an instance of a :class:`~wolframclient.evaluation.WolframLanguageAsyncSession`. More than one evaluator specification
     can be provided in the form of an iterable object, yielding the abovementioned specification.
     If the number of evaluators is less than the requested pool size (`poolsize`), elements are duplicated until the
     requested number of evaluators is reached.
