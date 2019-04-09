@@ -25,7 +25,7 @@ class WolframLanguageAsyncSession(WolframAsyncEvaluator,
         async with WolframLanguageAsyncSession() as session:
             await session.evaluate('Now')
 
-    An event loop can be explicitly passed using the named parameter `loop`; otherwise the one
+    An event loop can be explicitly passed using the named parameter `loop`; otherwise, the one
     returned by :func:`~asyncio.get_event_loop` is used.
 
     Coroutines all run in a unique thread. Since a Wolfram kernel is single threaded, there can
