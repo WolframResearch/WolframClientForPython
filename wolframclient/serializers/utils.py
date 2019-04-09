@@ -21,9 +21,6 @@ ESCAPE_DCT = {
     '\t': '\\t',
 }
 
-# for i in range(0x20):
-#     ESCAPE_DCT.setdefault(chr(i), '\\.{0:02x}'.format(i))
-
 
 def replace(match):
     return ESCAPE_DCT[match.group(0)]
