@@ -113,7 +113,7 @@ class WXFSerializer(FormatSerializer):
             yield varint_bytes(len(bytes))
             yield bytes
         else:
-            for token in self.serialize_string(force_bytes(bytes, 'iso8859-1')):
+            for token in self.serialize_string(force_text(bytes, encoding = 'iso8859-1')):
                 yield token
 
     def serialize_mapping(self, keyvalue, **opts):
