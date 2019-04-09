@@ -110,9 +110,9 @@ class WXFSerializer(FormatSerializer):
     if six.PY2:
 
         def serialize_bytes(self, bytes):
-            for token in self.serialize_string(
-                    force_text(bytes, encoding='iso8859-1')):
-                yield token
+            yield WXF_CONSTANTS.String
+            yield varint_bytes(len(bytes))
+            yield bytes
     else:
 
         def serialize_bytes(self, bytes):
