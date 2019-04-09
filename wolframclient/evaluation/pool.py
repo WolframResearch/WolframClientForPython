@@ -56,7 +56,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
 
     Set `poolsize` to the number of kernel instances. The requested size may not be reached due to licencing
     restrictions.
-    Set `load_factor` to specify how many workloads are queued per kernel before a new evaluation becomes blocking
+    Set `load_factor` to specify how many workloads are queued per kernel before a new evaluation becomes a blocking
     operation.
     Values below or equal to 0 mean an infinite queue size.
     Set `loop` to the event loop to use.
@@ -296,8 +296,8 @@ def parallel_evaluate(expressions,
                       loop=None):
     """ Start a kernel pool and evaluate the expressions in parallel. 
     
-    The pool is created with the value of `evaluator_spec`. The pool is automatically stopped it is no longer needed.
-    The expressions are evaluated and returned in order.
+    The pool is created with the value of `evaluator_spec`. The pool is automatically stopped when it is no longer
+    needed. The expressions are evaluated and returned in order.
 
     Note that each evaluation should be independent and not rely on any previous one. There is no guarantee that two
     given expressions evaluate on the same kernel.
