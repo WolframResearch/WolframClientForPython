@@ -53,21 +53,11 @@ def normalize_array(array):
     return array
 
 
-if six.PY2:
-
-    def import_as_bytes(serializer, stream, img_format):
-        return serializer.serialize_function(
-            serializer.serialize_symbol(b'ImportString'),
-            (serializer.serialize_bytes(stream.getvalue()),
-             serializer.serialize_string(img_format)))
-else:
-
-    def import_as_bytes(serializer, stream, img_format):
-        return serializer.serialize_function(
-            serializer.serialize_symbol(b'ImportByteArray'),
-            (serializer.serialize_bytes(stream.getvalue()),
-             serializer.serialize_string(img_format)))
-
+def import_as_bytes(serializer, stream, img_format, import_symbol = six.PY2 and b'ImportString' or b'ImportByteArray'):
+    return serializer.serialize_function(
+        serializer.serialize_symbol(import_symbol),
+        (serializer.serialize_bytes(stream.getvalue()),
+         serializer.serialize_string(img_format)))
 
 @encoder.dispatch(PIL.Image)
 def encode_image(serializer, img):
