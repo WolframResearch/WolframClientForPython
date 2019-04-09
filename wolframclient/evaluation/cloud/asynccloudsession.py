@@ -35,7 +35,7 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
         async with WolframCloudAsyncSession() as session:
             await session.call(...)
 
-    An event loop can be explicitly passed using the named parameter `loop`; otherwise the one
+    An event loop can be explicitly passed using the named parameter `loop`; otherwise, the one
     returned by :func:`~asyncio.get_event_loop` is used.
     The initialization options of the class :class:`~wolframclient.evaluation.WolframCloudSession` are also supported by
     this class.
@@ -220,7 +220,7 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
     async def evaluate(self, expr, **kwargs):
         """Send `expr` to the cloud for evaluation and return the result.
 
-        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export` or a the string
+        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export` or the string
         :wl:`InputForm` of an expression to evaluate.
         """
         response = await self._call_evaluation_api(
