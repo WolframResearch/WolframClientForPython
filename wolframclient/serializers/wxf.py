@@ -14,7 +14,7 @@ from wolframclient.serializers.wxfencoder.utils import (
     varint_bytes, write_varint)
 from wolframclient.utils import six
 from wolframclient.utils.api import zlib
-from wolframclient.utils.encoding import force_bytes
+from wolframclient.utils.encoding import force_bytes, force_text
 
 
 def get_length(iterable, length=None):
@@ -107,10 +107,18 @@ class WXFSerializer(FormatSerializer):
         yield varint_bytes(len(string))
         yield string
 
-    def serialize_bytes(self, bytes):
-        yield WXF_CONSTANTS.BinaryString
-        yield varint_bytes(len(bytes))
-        yield bytes
+    if six.PY2:
+
+        def serialize_bytes(self, bytes):
+            for token in self.serialize_string(
+                    force_text(bytes, encoding='iso8859-1')):
+                yield token
+    else:
+
+        def serialize_bytes(self, bytes):
+            yield WXF_CONSTANTS.BinaryString
+            yield varint_bytes(len(bytes))
+            yield bytes
 
     def serialize_mapping(self, keyvalue, **opts):
         #the normalizer is always sending an generator key, value

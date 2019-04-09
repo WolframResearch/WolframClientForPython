@@ -53,6 +53,22 @@ def normalize_array(array):
     return array
 
 
+if six.PY2:
+
+    def import_as_bytes(serializer, stream, img_format):
+        return serializer.serialize_function(
+            serializer.serialize_symbol(b'ImportString'),
+            (serializer.serialize_bytes(stream.getvalue()),
+             serializer.serialize_string(img_format)))
+else:
+
+    def import_as_bytes(serializer, stream, img_format):
+        return serializer.serialize_function(
+            serializer.serialize_symbol(b'ImportByteArray'),
+            (serializer.serialize_bytes(stream.getvalue()),
+             serializer.serialize_string(img_format)))
+
+
 @encoder.dispatch(PIL.Image)
 def encode_image(serializer, img):
     # some PIL mode are directly mapped to WL ones. Best case fast (de)serialization.
@@ -74,7 +90,4 @@ def encode_image(serializer, img):
         img.save(stream, format=img_format)
     except KeyError:
         raise NotImplementedError('Format %s is not supported.' % img_format)
-    return serializer.serialize_function(
-        serializer.serialize_symbol(b'ImportByteArray'),
-        (serializer.serialize_bytes(stream.getvalue()),
-         serializer.serialize_string(img_format)))
+    return import_as_bytes(serializer, stream, img_format)
