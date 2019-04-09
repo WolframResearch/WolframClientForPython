@@ -284,7 +284,7 @@ class TestCase(SerializeTest):
 
         for value in (1, 2, "aaaa", 2.0, {
                 1: 2
-        }, [1, 2, 3], [b'hello', decimal.Decimal('1.23')], wl.Foo,
+        }, [1, 2, 3], ['hello', decimal.Decimal('1.23')], wl.Foo,
                       wl.Foo(2, wl.Context.Internal)):
             self.serialize_compare(value, export(value, target_format='wxf'))
 
