@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 __all__ = [
     'WolframResult', 'WolframAPIResponseBuilder', 'WolframAPIResponse',
-    'WolframCloudEvaluationWXFResponse', 'WolframCloudEvaluationJSONResponse',
+    'WolframCloudEvaluationResponse', 'WolframCloudEvaluationWXFResponse', 'WolframCloudEvaluationJSONResponse',
     'WolframKernelEvaluationResult', 'WolframAPIResponseAsync',
     'WolframEvaluationJSONResponseAsync', 'WolframEvaluationWXFResponseAsync'
 ]
