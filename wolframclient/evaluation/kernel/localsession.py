@@ -140,10 +140,10 @@ class WolframLanguageSession(WolframEvaluator):
         return self.kernel_controller.started
 
     def start(self, block=True, timeout=None):
-        """ Start a kernel controller, eventually start a fresh one if the previous one was terminated.
+        """ Start a kernel controller and eventually start a fresh one if the previous one was terminated.
         
         Set `block` to :data:`True` (default is :data:`False`) to wait for the kernel to be up and running 
-        before returning. Optionally set a timeout in seconds. If the timeout is reached a :data:`TimeoutError`
+        before returning. Optionally, set a timeout in seconds. If the timeout is reached, a :data:`TimeoutError`
         will be raised and the kernel is terminated.
         """
         try:
@@ -189,7 +189,7 @@ class WolframLanguageSession(WolframEvaluator):
         """ Request the Wolfram kernel to stop and return a future object.
         
         The result of the future object is :data:`True` when the controller thread is no longer alive.
-        Set `gracefully` to :data:`False` to request for an immediate stop, eventually cancelling ongoing
+        Set `gracefully` to :data:`False` to request an immediate stop, eventually cancelling ongoing
         evaluations.
         """
         self.stopped = True
@@ -205,7 +205,7 @@ class WolframLanguageSession(WolframEvaluator):
             self.restart()
 
     def restart(self, block=True, timeout=None):
-        """ Restart a given evaluator by stopping it in case it was already started. """
+        """ Restart a given evaluator by stopping it in cases where it is already started. """
         if self.started:
             self.stop()
         self.start(block=block, timeout=timeout)
