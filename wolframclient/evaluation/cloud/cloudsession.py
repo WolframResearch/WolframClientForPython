@@ -233,7 +233,7 @@ class WolframCloudSession(WolframEvaluator):
 
     def evaluate_wrap(self, expr, **kwargs):
         """ Similar to :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate` but return the
-         result as a :class:`~wolframclient.evaluation.result.WolframEvaluationJSONResponse`.
+         result as a :class:`~wolframclient.evaluation.result.WolframCloudEvaluationResponse`.
         """
         return self._call_evaluation_api(self.normalize_input(expr), **kwargs)
 
