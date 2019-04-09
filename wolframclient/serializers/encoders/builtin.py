@@ -88,9 +88,14 @@ def encode_none(serializer, o):
     return serializer.serialize_symbol(b'Null')
 
 
-@encoder.dispatch((bytearray, six.binary_type, six.buffer_types))
+@encoder.dispatch(six.binary_type)
 def encode_bytes(serializer, o):
     return serializer.serialize_bytes(o)
+
+
+@encoder.dispatch((bytearray, six.buffer_types))
+def encode_bytes(serializer, o):
+    return serializer.serialize_bytes(o, as_byte_array=True)
 
 
 @encoder.dispatch(six.text_type)
