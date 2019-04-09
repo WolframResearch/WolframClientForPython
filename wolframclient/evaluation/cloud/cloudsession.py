@@ -43,7 +43,7 @@ class WolframCloudSession(WolframEvaluator):
     :class:`~wolframclient.evaluation.result.WolframAPIResponse`.
     It is strongly advised to reuse a session to make multiple calls to mitigate the cost of initialization.
 
-    `max_workers` can be specified and is passed to the :data:`ThreadPoolExecutor` used for future methods.
+    `max_workers` can be specified and is passed to the :class:`~concurrent.futures.ThreadPoolExecutor` used for future methods.
     """
 
     def __init__(self,
