@@ -55,15 +55,15 @@ class FormatSerializer(Encoder):
     def serialize_int(self, obj):
         raise NotImplementedError
 
-    if six.PY2:
+    def serialize_bytes(self, bytes, as_byte_array = not six.PY2):
 
-        def serialize_bytes(self, bytes):
-            for token in self.serialize_string(
-                    force_text(bytes, encoding="iso-8859-1")):
+        #by default we are serializing as_byte_array for PY3,
+        #py2 is by default using strings
+
+        if as_byte_array:
+            for token in self.serialize_string(force_text(bytes, encoding="iso-8859-1")):
                 yield token
-    else:
-
-        def serialize_bytes(self, bytes):
+        else:
             return self.serialize_function(
                 self.serialize_symbol(b'ByteArray'),
                 ((b'"', base64.b64encode(bytes), b'"'), ))
@@ -73,28 +73,15 @@ class FormatSerializer(Encoder):
             self.serialize_symbol(b'ToExpression'),
             (self.serialize_string(string, ), ))
 
-    if six.PY2:
+    def serialize_numeric_array(self, data, shape, wl_type):
 
-        def serialize_numeric_array(self, data, shape, wl_type):
+        payload = concatenate_bytes(
+            chain((WXF_VERSION, WXF_HEADER_SEPARATOR),
+                  numeric_array_to_wxf(data, shape, wl_type)))
 
-            payload = concatenate_bytes(
-                chain((WXF_VERSION, WXF_HEADER_SEPARATOR),
-                      numeric_array_to_wxf(data, shape, wl_type)))
-
-            return self.serialize_function(
-                self.serialize_symbol(b'ImportString'),
-                (self.serialize_bytes(payload, ), ))
-    else:
-
-        def serialize_numeric_array(self, data, shape, wl_type):
-
-            payload = concatenate_bytes(
-                chain((WXF_VERSION, WXF_HEADER_SEPARATOR),
-                      numeric_array_to_wxf(data, shape, wl_type)))
-
-            return self.serialize_function(
-                self.serialize_symbol(b'BinaryDeserialize'),
-                (self.serialize_bytes(payload, ), ))
+        return self.serialize_function(
+            self.serialize_symbol(b'BinaryDeserialize'),
+            (self.serialize_bytes(payload, as_byte_array = True), ))
 
     def serialize_iterable(self, iterable, **opts):
         return self.serialize_function(

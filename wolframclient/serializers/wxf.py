@@ -107,18 +107,14 @@ class WXFSerializer(FormatSerializer):
         yield varint_bytes(len(string))
         yield string
 
-    if six.PY2:
-
-        def serialize_bytes(self, bytes):
-            for token in self.serialize_string(
-                    force_text(bytes, encoding='iso8859-1')):
-                yield token
-    else:
-
-        def serialize_bytes(self, bytes):
+    def serialize_bytes(self, bytes, as_byte_array = not six.PY2):
+        if as_byte_array:
             yield WXF_CONSTANTS.BinaryString
             yield varint_bytes(len(bytes))
             yield bytes
+        else:
+            for token in self.serialize_string(force_text(bytes, encoding='iso8859-1')):
+                yield token
 
     def serialize_mapping(self, keyvalue, **opts):
         #the normalizer is always sending an generator key, value
