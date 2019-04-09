@@ -252,7 +252,7 @@ class WolframCloudSession(WolframEvaluator):
                     target_format='wl',
                     permissions_key=None,
                     **kwargv):
-        """Call a given API asynchronously and return a :class:`concurrent.futures.Future` object.
+        """Call a given API asynchronously and return a :class:`~concurrent.futures.Future` object.
 
         See :func:`WolframCloudSession.call` for more details about input parameters.
         """
@@ -265,7 +265,7 @@ class WolframCloudSession(WolframEvaluator):
             **kwargv)
 
     def evaluate_future(self, expr, **kwargs):
-        """Send `expr` to the cloud for asynchronous evaluation and return a :class:`concurrent.futures.Future` object.
+        """Send `expr` to the cloud for asynchronous evaluation and return a :class:`~concurrent.futures.Future` object.
 
         `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export` or a the string
         :wl:`InputForm` of an expression to evaluate.
