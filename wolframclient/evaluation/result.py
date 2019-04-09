@@ -448,11 +448,11 @@ _DEFAULT_DECODERS = {
 
 
 class WolframAPIResponse(WolframResult):
-    """Generic API response.
+    """ A generic API response.
 
     This class is lazily constructed when the response body becomes available.
 
-    A decoder is inferred from the content-type. Currently JSON and WXF formats are supported.
+    A decoder is inferred from the content type. Currently JSON and WXF formats are supported.
     """
 
     def __init__(self, response, decoder=None):
