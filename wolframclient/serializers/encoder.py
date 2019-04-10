@@ -194,7 +194,7 @@ wolfram_encoder.__doc__ = """
     to update :data:`wolfram_encoder`. A plugin is a simple way to distribute encoders as a separate library. 
     
     One type must have a unique encoder associated to it; as a consequence, two plugins registering an encoder for the 
-    same type are incompatible. It is strongly advised to create one plugin for each existing Python library. 
+    same type are incompatible. It is strongly advised to create one plugin for each existing Python library, 
     e.g. have one plugin dedicated to NumPy and one to Pandas, which makes heavy use of NumPy arrays.
     """
 

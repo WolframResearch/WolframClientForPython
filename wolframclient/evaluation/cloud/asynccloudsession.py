@@ -27,7 +27,7 @@ __all__ = ['WolframCloudAsyncSession', 'WolframAPICallAsync']
 class WolframCloudAsyncSession(WolframAsyncEvaluator):
     """ Interact with a Wolfram Cloud asynchronously using coroutines.
 
-    Asynchronous cloud operations are provided through coroutines, using modules :mod:`asyncio` and
+    Asynchronous cloud operations are provided through coroutines using modules :mod:`asyncio` and
     `aiohttp <https://pypi.org/project/aiohttp/>`_.
 
     Instances of this class can be managed with an asynchronous context manager::

@@ -19,7 +19,7 @@ available_formats = API(
 def export(data, stream=None, target_format=DEFAULT_FORMAT, **options):
     """ Serialize input `data` to a target format.
 
-    Input `data` can be any supported Python type including :class:`list`, :class:`dict` or any serializable Python
+    Input `data` can be any supported Python type, including :class:`list`, :class:`dict` or any serializable Python
     object.
     
     Serializable python objects are class extending :class:`~wolframclient.serializers.serializable.WLSerializable` and
