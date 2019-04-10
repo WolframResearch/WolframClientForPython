@@ -57,8 +57,8 @@ class Command(SimpleCommand):
 
         # verbosity > 1 print test name
         verbosity = opts.get('verbosity')
-
-        if opts.get('produce_xml') or opts.get('xml_output_dir'):
+        # if opts.get('produce_xml'):
+        if opts.get('produce_xml'):
             import xmlrunner
             runner = xmlrunner.XMLTestRunner(output=opts.get('xml_output_dir'), verbosity=verbosity)
         else:
