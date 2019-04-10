@@ -4,6 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import datetime
 import decimal
+import unittest
 import fractions
 from collections import OrderedDict
 
@@ -13,7 +14,7 @@ from wolframclient.utils import six
 from wolframclient.utils.api import pytz
 from wolframclient.utils.datastructures import Association
 from wolframclient.utils.encoding import force_bytes
-from wolframclient.utils.tests import TestCase as BaseTestCase
+from wolframclient.utils.tests import TestCase as BaseTestCase, path_to_file_in_data_dir
 
 
 def test_datetime():
@@ -121,6 +122,16 @@ class TestCase(BaseTestCase):
         self.compare(wl.This.Thing.Just.Works, b'This`Thing`Just`Works')
         self.compare(
             wl.This.Thing.Just.Works(1, 2), b'This`Thing`Just`Works[1, 2]')
+
+
+    @unittest.skipIf(not six.PY2, 'Python2 str test skipped.')
+    def test_all_str_py2(self):
+        str_all_chr = b''.join([chr(i) for i in range(0, 256)])
+        wl_data = export(str_all_chr, target_format='wl')
+        with open(path_to_file_in_data_dir('allbytes.wl'), 'rb') as r_file:
+            expected = bytearray(r_file.read())
+        self.assertSequenceEqual(wl_data, expected)
+
 
     def test_encoding(self):
 
