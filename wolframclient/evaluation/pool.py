@@ -56,11 +56,13 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
 
     Set `poolsize` to the number of kernel instances. The requested size may not be reached due to licencing
     restrictions.
+
     Set `load_factor` to specify how many workloads are queued per kernel before a new evaluation becomes a blocking
-    operation.
-    Values below or equal to 0 mean an infinite queue size.
+    operation. Values below or equal to 0 mean an infinite queue size.
+
     Set `loop` to the event loop to use.
-    `kwargs` are passed to :class:`wolframclient.evaluation.WolframLanguageAsyncSession` during initialization.
+
+    `kwargs` are passed to :class:`~wolframclient.evaluation.WolframLanguageAsyncSession` during initialization.
     """
 
     def __init__(self,
