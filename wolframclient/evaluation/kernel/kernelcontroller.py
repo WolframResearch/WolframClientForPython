@@ -189,8 +189,8 @@ class WolframKernelController(Thread):
 
         Session parameters are:
 
-        * ``'STARTUP_TIMEOUT'``: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.
-        * ``'TERMINATE_TIMEOUT'``: time to wait, in seconds, after the ``Quit[]`` command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.
+        * ``'STARTUP_TIMEOUT'``: time to wait, in seconds, after the kernel startup is requested. Default is 20 seconds.
+        * ``'TERMINATE_TIMEOUT'``: time to wait, in seconds, after the ``Quit[]`` command is sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.
         """
         try:
             return self.parameters.get(
@@ -205,8 +205,8 @@ class WolframKernelController(Thread):
 
         Session parameters are:
 
-        * ``'STARTUP_TIMEOUT'``: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.
-        * ``'TERMINATE_TIMEOUT'``: time to wait, in seconds, after the ``Quit[]`` command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.
+        * ``'STARTUP_TIMEOUT'``: time to wait, in seconds, after the kernel startup is requested. Default is 20 seconds.
+        * ``'TERMINATE_TIMEOUT'``: time to wait, in seconds, after the ``Quit[]`` command is sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.
         """
         if parameter_name not in self._DEFAULT_PARAMETERS:
             raise KeyError(
@@ -448,7 +448,7 @@ class WolframKernelController(Thread):
 
     @property
     def pid(self):
-        """Return the PID of the Wolfram Kernel process, if any, or None."""
+        """Return the PID of the Wolfram kernel process, if any, or None."""
         try:
             return self.kernel_proc.pid
         except AttributeError:

@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 __all__ = [
     'WolframResult', 'WolframAPIResponseBuilder', 'WolframAPIResponse',
-    'WolframCloudEvaluationWXFResponse', 'WolframCloudEvaluationJSONResponse',
+    'WolframCloudEvaluationResponse', 'WolframCloudEvaluationWXFResponse', 'WolframCloudEvaluationJSONResponse',
     'WolframKernelEvaluationResult', 'WolframAPIResponseAsync',
     'WolframEvaluationJSONResponseAsync', 'WolframEvaluationWXFResponseAsync'
 ]
@@ -29,11 +29,11 @@ class WolframResultBase(object):
 
 
 class WolframResult(WolframResultBase):
-    """Most generic result object.
+    """ The most generic result object.
 
-    The actual result is returned via method :func:`~wolframclient.evaluation.result.WolframResult.get`.
-    If the result is a `success`, the field `result` is returned otherwise `failure` is returned and most
-    likely contains an error message.
+    The actual result is returned via the method :func:`~wolframclient.evaluation.result.WolframResult.get`. If the
+    result is a `success`, the field `result` is returned; otherwise, `failure` is returned and most likely contains an
+    error message.
     """
 
     def __init__(self, result=None, failure=None):
@@ -448,7 +448,12 @@ _DEFAULT_DECODERS = {
 
 
 class WolframAPIResponse(WolframResult):
-    """Generic API response."""
+    """ A generic API response.
+
+    This class is lazily constructed when the response body becomes available.
+
+    A decoder is inferred from the content type. Currently JSON and WXF formats are supported.
+    """
 
     def __init__(self, response, decoder=None):
         self.response = response
@@ -487,7 +492,16 @@ class WolframAPIResponse(WolframResult):
 
 
 class WolframAPIResponseAsync(WolframAPIResponse):
+    """ Asynchronous counterpart of :class:`~wolframclient.evaluation.result.WolframAPIResponse`, awaiting for the
+    response body.
+
+    Most of the class logic is implemented in :data:`WolframAPIResponse`, except the build method which has to be a
+    coroutine.
+    """
     async def get(self):
+        """ Return the result or raise an exception based on the success status.
+
+        This is a coroutine."""
         if not self._built:
             await self.build()
         return self._get()

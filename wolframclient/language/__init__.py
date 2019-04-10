@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.language.expression import WLSymbolFactory, wlexpr
+from wolframclient.language.expression import WLSymbolFactory, WLInputExpression
 
 wl = WLSymbolFactory()
 """A factory of :class:`~wolframclient.language.expression.WLSymbol` instances without any particular context.
@@ -62,5 +62,24 @@ Represent a function call to a function::
     Global`myFunction['foo']
 
 """
+
+# Sphinx seems to bug on this one, and picks an outdated the docstring when declared in __init__.
+wlexpr = WLInputExpression
+""" Represent Wolfram Language expressions with input form strings.
+
+Convenient alias for :class:`~wolframclient.language.expression.WLInputExpression`.
+
+Represent an expression::
+
+    >>> wlexpr('Select[Range[10], EvenQ]')
+    (Select[Range[10], EvenQ])
+
+Represent a pure function that squares an input argument::
+
+    >>> wlexpr('# ^ 2 &' )
+    (# ^ 2 &)
+
+"""
+
 
 __all__ = ['wl', 'System', 'Global', 'wlexpr']
