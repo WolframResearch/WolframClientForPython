@@ -253,6 +253,15 @@ class TestCase(SerializeTest):
         wxf = b'8:A\x03-C\x00S\x01a-C\x01S\x01b-C\x02S\x01c'
         self.serialize_compare(value, wxf, enforce=False)
 
+
+    @unittest.skipIf(not six.PY2, 'Python2 str test skipped.')
+    def test_all_str_py2(self):
+        str_all_chr = b''.join([chr(i) for i in range(0,256)])
+        wxf = export(str_all_chr, target_format='wxf')
+        with open(path_to_file_in_data_dir('allbytes.wxf'), 'rb') as r_file:
+            res = bytearray(r_file.read())
+        self.assertSequenceEqual(res, wxf)
+
     ### MIXED TESTS
 
     def test_all_char(self):
@@ -284,7 +293,7 @@ class TestCase(SerializeTest):
 
         for value in (1, 2, "aaaa", 2.0, {
                 1: 2
-        }, [1, 2, 3], [b'hello', decimal.Decimal('1.23')], wl.Foo,
+        }, [1, 2, 3], ['hello', decimal.Decimal('1.23')], wl.Foo,
                       wl.Foo(2, wl.Context.Internal)):
             self.serialize_compare(value, export(value, target_format='wxf'))
 

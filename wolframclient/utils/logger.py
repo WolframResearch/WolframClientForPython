@@ -5,6 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import logging
 
 from wolframclient.utils import six
+from wolframclient.utils.encoding import force_text
 
 if six.PY2:
 
@@ -27,7 +28,7 @@ else:
 def str_trim(o, max_char=80):
     """Return the string representation of an object, trimmed to keep up to `max_char` characters.
     """
-    as_str = str(o)
+    as_str = force_text(o)
     if len(as_str) > max_char:
         return '%s...(%i more)' % (as_str[:max_char], len(as_str) - max_char)
     else:
