@@ -1,5 +1,5 @@
 # Version 1.0.2
-- Add two new optional flags to `test` command called `-x` and `--xml path/to/dir`. It produces an xml output of the test results using the `unittest-xml-reporting` library. `--xml` expects a filepath for the output directory, `-x` output to `test-reports`.
+- Add two new optional flags to `test` command called `-x` or `--xml` and `-d` or `--xml-dir`. It produces an xml output of the test results using the `unittest-xml-reporting` library. `-d` expects the filepath of the output directory, default is `test-reports`. Also add `-v` or `--verbosity` to control the `verbosity` option of the test suite. Check `python run.py test -h` for more info.
 
 # Version 1.0.1
 - Bug fix in `WXFConsumer`.
