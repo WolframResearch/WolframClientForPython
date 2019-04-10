@@ -118,14 +118,14 @@ class TestCase(TestCaseSettings):
     async def test_bad_sak(self):
         bad_sak = SecuredAuthenticationKey('foo', 'bar')
         with self.assertRaises(AuthenticationException):
-            cloud_session = WolframCloudAsyncSession(credentials=bad_sak)
+            cloud_session = WolframCloudAsyncSession(credentials=bad_sak, server=server)
             await cloud_session.start()
 
     @run_in_loop
     async def test_need_auth_err(self):
         bad_sak = SecuredAuthenticationKey('foo', 'bar')
         with self.assertRaises(RequestException):
-            async with WolframCloudAsyncSession() as cloud_session:
+            async with WolframCloudAsyncSession(server=server) as cloud_session:
                 await cloud_session.evaluate('1+1')
 
     @run_in_loop
@@ -133,7 +133,7 @@ class TestCase(TestCaseSettings):
         bad_sak = SecuredAuthenticationKey('foo', 'bar')
         with self.assertRaises(RequestException):
             async with WolframCloudAsyncSession(
-                    credentials=bad_sak) as cloud_session:
+                    credentials=bad_sak, server=server) as cloud_session:
                 cloud_session.authorized()
 
     @run_in_loop
