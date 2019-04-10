@@ -57,7 +57,7 @@ def execute_from_string(code, globals = {}, **opts):
     result      = None
     expressions = list(
         compile(
-            string,
+            code,
             filename='<unknown>',
             mode='exec',
             flags=ast.PyCF_ONLY_AST | unicode_literals.compiler_flag).body)
