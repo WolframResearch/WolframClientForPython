@@ -11,31 +11,15 @@ from wolframclient.serializers.utils import safe_len
 from wolframclient.utils import six
 from wolframclient.utils.datastructures import Association
 from wolframclient.utils.dispatch import Dispatch
-from wolframclient.utils.encoding import force_bytes, force_text
+from wolframclient.utils.encoding import force_bytes
 from wolframclient.utils.functional import map
 
 encoder = Dispatch()
 
-if six.PY2:
-    #in py2 if you construct use dict(a=2) then "a" is binary
-    #since using bytes as keys is a legit operation we are only fixing py2 here
-
-    def safe_key(key):
-        if isinstance(key, six.binary_type):
-            return force_text(key)
-        return key
-
-    def _to_key_value(func, serializer, o):
-        return func(
-            ((serializer.encode(safe_key(key)), serializer.encode(value))
-             for key, value in o.items()),
-            length=safe_len(o))
-else:
-
-    def _to_key_value(func, serializer, o):
-        return func(((serializer.encode(key), serializer.encode(value))
-                     for key, value in o.items()),
-                    length=safe_len(o))
+def _to_key_value(func, serializer, o):
+    return func(((serializer.encode(key), serializer.encode(value))
+                 for key, value in o.items()),
+                length=safe_len(o))
 
 
 @encoder.dispatch(bool)
@@ -104,9 +88,19 @@ def encode_none(serializer, o):
     return serializer.serialize_symbol(b'Null')
 
 
-@encoder.dispatch((bytearray, six.binary_type, six.buffer_types))
-def encode_bytes(serializer, o):
-    return serializer.serialize_bytes(o)
+if six.PY2:
+    @encoder.dispatch(str)
+    def encode_bytes(serializer, o):
+        return serializer.serialize_bytes(o)
+
+
+    @encoder.dispatch((bytearray, six.buffer_types))
+    def encode_bytes(serializer, o):
+        return serializer.serialize_bytes(o, as_byte_array=True)
+else:
+    @encoder.dispatch((six.binary_type, bytearray, six.buffer_types))
+    def encode_bytes(serializer, o):
+        return serializer.serialize_bytes(o)
 
 
 @encoder.dispatch(six.text_type)

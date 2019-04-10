@@ -42,7 +42,9 @@ def execute_from_file(path, *args, **opts):
 
 def execute_from_string(string, context=UnprintableContext()):
 
-    __traceback_hidden_variables__ = True
+    __traceback_hidden_variables__ = [
+        'context', 'current', '__traceback_hidden_variables__'
+    ]
 
     #this is creating a custom __loader__ that is returning the source code
     #traceback serializers is inspecting global variables and looking for a standard loader that can return source code.
@@ -52,7 +54,12 @@ def execute_from_string(string, context=UnprintableContext()):
         get_source=lambda module, code=string: code)
     current['__traceback_hidden_variables__'] = HIDDEN_VARIABLES
 
-    expressions = list(ast.parse(string).body)
+    expressions = list(
+        compile(
+            string,
+            filename='<unknown>',
+            mode='exec',
+            flags=ast.PyCF_ONLY_AST | unicode_literals.compiler_flag).body)
 
     if not expressions:
         return

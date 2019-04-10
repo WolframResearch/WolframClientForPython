@@ -147,6 +147,7 @@ pandas = API(
     TimedeltaIndex='pandas.TimedeltaIndex',
     MultiIndex='pandas.MultiIndex',
     SparseSeries='pandas.SparseSeries',
+    SparseArray='pandas.SparseArray',
     bdate_range='pandas.bdate_range',
 )
 
