@@ -137,6 +137,8 @@ def evaluate_message(input=None,
 
     __traceback_hidden_variables__ = True
 
+    result = None
+
     if isinstance(input, six.string_types):
         result = execute_from_string(input, **opts)
 
