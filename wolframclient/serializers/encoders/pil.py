@@ -44,14 +44,9 @@ SYS_IS_LE = sys.byteorder == 'little'
 
 
 def normalize_array(array):
-    endianness = array.dtype.byteorder
-    # Ensure little endian
-    if endianness == '>' or (endianness == '=' and not SYS_IS_LE):
-        array.byteswap().newbyteorder()
     if array.dtype == numpy.dtype('bool'):
         array = array.astype('<u1')
     return array
-
 
 @encoder.dispatch(PIL.Image)
 def encode_image(serializer, img):
@@ -76,5 +71,5 @@ def encode_image(serializer, img):
         raise NotImplementedError('Format %s is not supported.' % img_format)
     return serializer.serialize_function(
         serializer.serialize_symbol(b'ImportByteArray'),
-        (serializer.serialize_bytes(stream.getvalue()),
+        (serializer.serialize_bytes(stream.getvalue(), as_byte_array = True),
          serializer.serialize_string(img_format)))
