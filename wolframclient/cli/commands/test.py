@@ -38,8 +38,12 @@ class Command(SimpleCommand):
     dependencies = dependencies()
 
     def add_arguments(self, parser):
-        parser.add_argument('-x', dest='default_xml_output', action='store_true')
-        parser.add_argument('--xml', dest='xml_output', default='test-reports')
+        parser.add_argument('-x', '--xml', dest='produce_xml', action='store_true',
+                            help='produce xml reports from the test results')
+        parser.add_argument('-d', '--xml-dir', dest='xml_output_dir', default='test-reports',
+                            help='specify the directory for xml reports. Ignored if -x is not set.')
+        parser.add_argument("-v", "--verbosity", type=int, choices=[0, 1, 2], default=2,
+                            help="set output verbosity")
         parser.add_argument('args', nargs='*')
 
     def handle(self, *args, **opts):
@@ -50,15 +54,15 @@ class Command(SimpleCommand):
                 suite.addTests(
                     unittest.defaultTestLoader.discover(
                         root, pattern=arg, top_level_dir=root))
-        if opts.get('default_xml_output'):
-            xml_output = 'test-reports'
-        xml_output = opts.get('xml_output') or xml_output
+
         # verbosity > 1 print test name
-        if xml_output:
+        verbosity = opts.get('verbosity')
+        # if opts.get('produce_xml'):
+        if opts.get('produce_xml'):
             import xmlrunner
-            runner = xmlrunner.XMLTestRunner(output=xml_output)
+            runner = xmlrunner.XMLTestRunner(output=opts.get('xml_output_dir'), verbosity=verbosity)
         else:
-            runner = unittest.TextTestRunner(verbosity=2)
+            runner = unittest.TextTestRunner(verbosity=verbosity)
 
         result = runner.run(suite)
 
