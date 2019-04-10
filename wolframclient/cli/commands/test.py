@@ -40,8 +40,8 @@ class Command(SimpleCommand):
     def add_arguments(self, parser):
         parser.add_argument('-x', '--xml', dest='produce_xml', action='store_true',
                             help='produce xml reports from the test results')
-        parser.add_argument('-d', '--xml-dir', dest='xml_output_dir', default='test-reports',
-                            help='specify the directory for xml reports. Ignored if -x is not set.')
+        parser.add_argument('-d', '--xml-dir', dest='xml_output_dir',
+                            help='produce an xml report in a specific directory.')
         parser.add_argument("-v", "--verbosity", type=int, choices=[0, 1, 2], default=2,
                             help="set output verbosity")
         parser.add_argument('args', nargs='*')
@@ -57,10 +57,11 @@ class Command(SimpleCommand):
 
         # verbosity > 1 print test name
         verbosity = opts.get('verbosity')
+        xml_path = opts.get('xml_output_dir')
         # if opts.get('produce_xml'):
-        if opts.get('produce_xml'):
+        if xml_path is not None or opts.get('produce_xml'):
             import xmlrunner
-            runner = xmlrunner.XMLTestRunner(output=opts.get('xml_output_dir'), verbosity=verbosity)
+            runner = xmlrunner.XMLTestRunner(output=xml_path or 'test-reports', verbosity=verbosity)
         else:
             runner = unittest.TextTestRunner(verbosity=verbosity)
 
