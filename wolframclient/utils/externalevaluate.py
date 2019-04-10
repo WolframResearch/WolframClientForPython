@@ -90,7 +90,9 @@ class SocketWriter:
 
 class StdoutProxy:
 
-    keep_listening = wl.ExternalEvaluate.Private.ExternalEvaluateKeepListening
+    #on version 12.1 will start using wl.ExternalEvaluate.Private.ExternalEvaluateKeepListening
+    #for consistency with nodejs
+    keep_listening = wl.ExternalEvaluate.Private.PythonKeepListening
 
     def __init__(self, stream):
         self.stream = stream
