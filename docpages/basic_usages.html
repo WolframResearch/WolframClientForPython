@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Basic Usage &#8212; Wolfram Client Library for Python 1.0.1 documentation</title>
+    <title>Basic Usage &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -63,14 +63,14 @@
                                 </span>
                         </a></span><span class='reldelimiter'>|</span></li>
                         <li class="right" >
-                            <span class='header right navigation'><a href="install.html" title="Installation and prerequisites"
+                            <span class='header right navigation'><a href="install.html" title="Installation and Prerequisites"
                             accesskey="P">
                                 <span class='arrowleft'>
                                     <img src="../_static/wolf-python-arrowleft.png"/>
                                 </span>
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.1</span>
+                        <span class='header right navigation darkgrey'>v 1.0.2</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -91,13 +91,13 @@
 <h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="expression-representation">
 <span id="ref-expressions"></span><h2>Expression Representation<a class="headerlink" href="#expression-representation" title="Permalink to this headline">¶</a></h2>
-<p>The library exposes many kinds of interactions with the Wolfram Language, many of which require representation of Wolfram Language expressions as Python objects. A fast introduction to the Wolfram Language is available at <a class="reference external" href="https://www.wolfram.com/language/fast-introduction-for-programmers">https://www.wolfram.com/language/fast-introduction-for-programmers</a>.</p>
+<p>The library exposes many kinds of interactions with the Wolfram Language, many of which require representation of Wolfram Language expressions as Python objects. If you are new to the Wolfram Language, the <a class="reference external" href="https://www.wolfram.com/language/fast-introduction-for-programmers">Fast Introduction for Programmers</a> is a good place to start.</p>
 <p>A straightforward way to construct Python objects representing expressions is to call attributes of <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-data docutils literal notranslate"><span class="pre">wl</span></code></a>.</p>
 <p>Import the factory:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="k">import</span> <span class="n">wl</span>
 </pre></div>
 </div>
-<p>Represent the Wolfram Language symbol <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Now.html" target="_blank">Now</a>:</p>
+<p>Represent the Wolfram Language symbol <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Now.html">Now</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">Now</span>
 <span class="go">Now</span>
 </pre></div>
@@ -107,7 +107,7 @@
 <span class="go">Select[PrimeQ, Range[5]]</span>
 </pre></div>
 </div>
-<p>Option are defined using named parameters. <a class="wl external reference" href="http://reference.wolfram.com/language/ref/ArrayPad.html" target="_blank">ArrayPad</a> accepts option <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Padding.html" target="_blank">Padding</a>:</p>
+<p>Options are defined using named parameters. <a class="wl external reference" href="http://reference.wolfram.com/language/ref/ArrayPad.html">ArrayPad</a> accepts the option <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Padding.html">Padding</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">ArrayPad</span><span class="p">([[</span><span class="mi">0</span><span class="p">]],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Padding</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">ArrayPad[[[0]], 1, Rule[Padding, 1]]</span>
 </pre></div>
@@ -121,7 +121,7 @@
 <span class="go">(#^2 &amp;)</span>
 </pre></div>
 </div>
-<p>Evaluate <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">Map</span></span><span class="p"><span class="pre">[</span></span><span class="nf"><span class="pre">#</span></span><span class="o"><span class="pre">^</span></span><span class="m"><span class="pre">2</span></span><span class="w"> </span><span class="o"><span class="pre">&amp;</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="m"><span class="pre">2</span></span><span class="p"><span class="pre">,</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">}]</span></span></code>, by combining both methods. Insert <code class="code wlcode wolfram docutils literal notranslate"><span class="nf"><span class="pre">#</span></span><span class="o"><span class="pre">^</span></span><span class="m"><span class="pre">2</span></span><span class="w"> </span><span class="o"><span class="pre">&amp;</span></span></code>, using <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wlexpr" title="wolframclient.language.wlexpr"><code class="xref py py-func docutils literal notranslate"><span class="pre">wlexpr()</span></code></a>, into <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Map.html" target="_blank">Map</a> represented with <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-data docutils literal notranslate"><span class="pre">wl</span></code></a>:</p>
+<p>Evaluate <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">Map</span></span><span class="p"><span class="pre">[</span></span><span class="nf"><span class="pre">#</span></span><span class="o"><span class="pre">^</span></span><span class="m"><span class="pre">2</span></span><span class="w"> </span><span class="o"><span class="pre">&amp;</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="m"><span class="pre">2</span></span><span class="p"><span class="pre">,</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">}]</span></span></code> by combining both methods. Insert <code class="code wlcode wolfram docutils literal notranslate"><span class="nf"><span class="pre">#</span></span><span class="o"><span class="pre">^</span></span><span class="m"><span class="pre">2</span></span><span class="w"> </span><span class="o"><span class="pre">&amp;</span></span></code>, using <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wlexpr" title="wolframclient.language.wlexpr"><code class="xref py py-func docutils literal notranslate"><span class="pre">wlexpr()</span></code></a>, into <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Map.html">Map</a> represented with <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-data docutils literal notranslate"><span class="pre">wl</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">wlexpr</span><span class="p">(</span><span class="s1">&#39;#^2&amp;&#39;</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
 <span class="go">Map[(#^2&amp;), [1, 2, 3]]</span>
 </pre></div>
@@ -133,15 +133,15 @@
 </div>
 <div class="section" id="expression-evaluation">
 <h2>Expression Evaluation<a class="headerlink" href="#expression-evaluation" title="Permalink to this headline">¶</a></h2>
-<p>The evaluation of Wolfram Language expressions directly from Python requires you to initialize a session either to a local Wolfram Engine or to the cloud. Local sessions are persistent, whereas cloud sessions only support “one-shot” evaluations, meaning that a fresh engine is used for each evaluation. Cloud session authentication is detailed in a dedicated <a class="reference internal" href="#ref-auth"><span class="std std-ref">sub-section</span></a> of this page.</p>
+<p>The evaluation of Wolfram Language expressions directly from Python requires you to initialize a session either to a local Wolfram Engine or to the cloud. Local sessions are persistent, whereas cloud sessions only support “one-shot” evaluations, meaning that a fresh engine is used for each evaluation. Cloud session authentication is detailed in a dedicated <a class="reference internal" href="#ref-auth"><span class="std std-ref">subsection</span></a> of this page.</p>
 <div class="section" id="local-evaluation">
 <span id="ref-localkernel"></span><h3>Local Evaluation<a class="headerlink" href="#local-evaluation" title="Permalink to this headline">¶</a></h3>
 <p>The Wolfram Language session <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession" title="wolframclient.evaluation.WolframLanguageSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframLanguageSession</span></code></a> enables local evaluation of Wolfram Language code directly from Python.</p>
-<p>A session must interact with a Wolfram Engine executable. The library automatically discovers Wolfram Engines installed at the default location. A specific Wolfram Engine can be specified by its path. The executable is located relative to the top level directory returned by the Wolfram Language symbol <a class="wl external reference" href="http://reference.wolfram.com/language/ref/$InstallationDirectory.html" target="_blank">$InstallationDirectory</a>. The relative path from this directory depends on the operating system:</p>
+<p>A session must interact with a Wolfram Engine executable. The library automatically discovers Wolfram Engines installed at the default location. A specific Wolfram Engine can be specified by its path. The executable is located relative to the top-level directory returned by the Wolfram Language symbol <a class="wl external reference" href="http://reference.wolfram.com/language/ref/$InstallationDirectory.html">$InstallationDirectory</a>. The relative path from this directory depends on the operating system:</p>
 <blockquote>
 <div><ul class="simple">
-<li>On <cite>MacOS</cite>: <cite>Contents/MacOS/WolframKernel</cite></li>
-<li>On <cite>Windows</cite>: <cite>WolframKernel.exe</cite></li>
+<li>On MacOS: <cite>Contents/MacOS/WolframKernel</cite></li>
+<li>On Windows: <cite>WolframKernel.exe</cite></li>
 <li>On Linux: <cite>Executables/WolframKernel</cite></li>
 </ul>
 </div></blockquote>
@@ -155,16 +155,16 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span> <span class="o">=</span> <span class="n">WolframLanguageSession</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>The default path depends on the environment, and may also depend on the version.</p>
-<p>On <cite>MacOS</cite>:</p>
+<p>The default path depends on the environment and may also depend on the version.</p>
+<p>On MacOS:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span> <span class="o">=</span> <span class="n">WolframLanguageSession</span><span class="p">(</span><span class="s1">&#39;/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>On <cite>Windows</cite>:</p>
+<p>On Windows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span> <span class="o">=</span> <span class="n">WolframLanguageSession</span><span class="p">(</span><span class="s1">&#39;C:</span><span class="se">\\</span><span class="s1">Program Files</span><span class="se">\\</span><span class="s1">Wolfram Research</span><span class="se">\\</span><span class="s1">Wolfram Desktop</span><span class="se">\\</span><span class="s1">11.3</span><span class="se">\\</span><span class="s1">WolframKernel.exe&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>On <cite>Linux</cite>:</p>
+<p>On Linux:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span> <span class="o">=</span> <span class="n">WolframLanguageSession</span><span class="p">(</span><span class="s1">&#39;/usr/local/Wolfram/Desktop/11.3/Executables/WolframKernel&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -180,22 +180,22 @@
 <span class="go">&#39;cba&#39;</span>
 </pre></div>
 </div>
-<p>Evaluate <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">MinMax</span></span><span class="p"><span class="pre">[{</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">5</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">9</span></span><span class="p"><span class="pre">}]</span></span></code>, using the Wolfram Language function <a class="wl external reference" href="http://reference.wolfram.com/language/ref/MinMax.html" target="_blank">MinMax</a> on a Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>:</p>
+<p>Evaluate <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">MinMax</span></span><span class="p"><span class="pre">[{</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">5</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">9</span></span><span class="p"><span class="pre">}]</span></span></code>, using the Wolfram Language function <a class="wl external reference" href="http://reference.wolfram.com/language/ref/MinMax.html">MinMax</a> on a Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">MinMax</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">]))</span>
 <span class="go">[-3, 9]</span>
 </pre></div>
 </div>
-<p>Query <a class="reference external" href="https://www.wolframalpha.com/">WolframAlpha</a> for the distance between the Earth and the Sun using <a class="wl external reference" href="http://reference.wolfram.com/language/ref/WolframAlpha.html" target="_blank">WolframAlpha</a>:</p>
+<p>Query <a class="reference external" href="https://www.wolframalpha.com/">Wolfram|Alpha</a> for the distance between Earth and the sun using <a class="wl external reference" href="http://reference.wolfram.com/language/ref/WolframAlpha.html">WolframAlpha</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">distance</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">WolframAlpha</span><span class="p">(</span><span class="s2">&quot;Earth distance from Sun&quot;</span><span class="p">,</span> <span class="s2">&quot;Result&quot;</span><span class="p">))</span>
 <span class="go">Quantity[1.008045994315923, AstronomicalUnit]</span>
 </pre></div>
 </div>
-<p>The Python object stored in the <cite>distance</cite> variable is a Wolfram Language <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Quantity.html" target="_blank">Quantity</a>. Convert the unit to kilometers, looping back the previous result in a new expression evaluation:</p>
+<p>The Python object stored in the <cite>distance</cite> variable is a Wolfram Language <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Quantity.html">Quantity</a>. Convert the unit to kilometers, looping back the previous result in a new expression evaluation:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d_km</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">UnitConvert</span><span class="p">(</span><span class="n">distance</span><span class="p">,</span> <span class="s2">&quot;Kilometers&quot;</span><span class="p">))</span>
 <span class="go">Quantity[150801534.3173264, Kilometers]</span>
 </pre></div>
 </div>
-<p>Get the magnitude as a Python number using <a class="wl external reference" href="http://reference.wolfram.com/language/ref/QuantityMagnitude.html" target="_blank">QuantityMagnitude</a>:</p>
+<p>Get the magnitude as a Python number using <a class="wl external reference" href="http://reference.wolfram.com/language/ref/QuantityMagnitude.html">QuantityMagnitude</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">QuantityMagnitude</span><span class="p">(</span><span class="n">d_km</span><span class="p">))</span>
 <span class="go">150801534.3173264</span>
 </pre></div>
@@ -209,7 +209,7 @@
 </div>
 <div class="section" id="options">
 <h4>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h4>
-<p>Wolfram Language options are passed as Python named arguments (a.k.a. <cite>**kwargs</cite>). As seen previously, <a class="wl external reference" href="http://reference.wolfram.com/language/ref/ArrayPad.html" target="_blank">ArrayPad</a> accepts an option <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Padding.html" target="_blank">Padding</a> to specify what padding to use.</p>
+<p>Wolfram Language options are passed as Python named arguments (a.k.a. <cite>**kwargs</cite>). As seen previously, <a class="wl external reference" href="http://reference.wolfram.com/language/ref/ArrayPad.html">ArrayPad</a> accepts the option <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Padding.html">Padding</a> to specify what padding to use.</p>
 <p>Evaluate <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">ArrayPad</span></span><span class="p"><span class="pre">[{{</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">}},</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="nb"><span class="pre">Padding</span></span><span class="o"><span class="pre">-&gt;</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">]</span></span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">ArrayPad</span><span class="p">([[</span><span class="mi">0</span><span class="p">]],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Padding</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
 <span class="go">[[1, 1, 1], [1, 0, 1], [1, 1, 1]]</span>
@@ -218,7 +218,7 @@
 </div>
 <div class="section" id="inputform-string-evaluate">
 <h4>InputForm String Evaluate<a class="headerlink" href="#inputform-string-evaluate" title="Permalink to this headline">¶</a></h4>
-<p>It is sometimes simpler to input Wolfram Language code as <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html" target="_blank">InputForm</a> strings.</p>
+<p>It is sometimes simpler to input Wolfram Language code as <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html">InputForm</a> strings.</p>
 <p>First import <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wlexpr" title="wolframclient.language.wlexpr"><code class="xref py py-func docutils literal notranslate"><span class="pre">wlexpr()</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="k">import</span> <span class="n">wlexpr</span>
 </pre></div>
@@ -235,18 +235,18 @@
 </div>
 </div>
 <div class="section" id="data-visualization">
-<h4>Data visualization<a class="headerlink" href="#data-visualization" title="Permalink to this headline">¶</a></h4>
-<p>Create a <a class="wl external reference" href="http://reference.wolfram.com/language/ref/BarChart.html" target="_blank">BarChart</a> from arbitrary Python data:</p>
+<h4>Data Visualization<a class="headerlink" href="#data-visualization" title="Permalink to this headline">¶</a></h4>
+<p>Create a <a class="wl external reference" href="http://reference.wolfram.com/language/ref/BarChart.html">BarChart</a> from arbitrary Python data:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">graphic</span> <span class="o">=</span> <span class="n">wl</span><span class="o">.</span><span class="n">BarChart</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Wrap it with <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Export.html" target="_blank">Export</a> to save the graphic to disc, as an image:</p>
+<p>Wrap it with <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Export.html">Export</a> to save the graphic to disk as an image:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;/tmp/data.png&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">png_export</span> <span class="o">=</span> <span class="n">wl</span><span class="o">.</span><span class="n">Export</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">graphic</span><span class="p">,</span> <span class="s2">&quot;PNG&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Evaluate the expression</p>
+<p>Evaluate the expression:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">png_export</span><span class="p">)</span>
 <span class="go">&#39;/tmp/data.png&#39;</span>
 </pre></div>
@@ -269,7 +269,8 @@
 </div>
 <div class="section" id="persistence">
 <h4>Persistence<a class="headerlink" href="#persistence" title="Permalink to this headline">¶</a></h4>
-<p>Expressions evaluated in a given session are persistent. Define a function:</p>
+<p>Expressions evaluated in a given session are persistent.</p>
+<p>Define a function:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;f[x_] := x ^ 2&#39;</span><span class="p">)</span>
 <span class="go">Null</span>
 </pre></div>
@@ -280,8 +281,8 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="create-python-function">
-<h4>Create Python Function<a class="headerlink" href="#create-python-function" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="create-a-python-function">
+<h4>Create a Python Function<a class="headerlink" href="#create-a-python-function" title="Permalink to this headline">¶</a></h4>
 <p>From a Wolfram Language expression, it is possible to create a Python function that directly evaluates when called using <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.base.WolframEvaluator.function" title="wolframclient.evaluation.base.WolframEvaluator.function"><code class="xref py py-meth docutils literal notranslate"><span class="pre">function()</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">str_reverse</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">StringReverse</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">str_reverse</span><span class="p">(</span><span class="s1">&#39;abc&#39;</span><span class="p">)</span>
@@ -314,7 +315,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">capital_distance</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wlexpr</span><span class="p">(</span><span class="s1">&#39;distance&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>Alternatively, use the Global expression constructor:</p>
+<p>Alternatively, use the <code class="xref py py-data docutils literal notranslate"><span class="pre">Global</span></code> expression constructor:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="k">import</span> <span class="n">Global</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">capital_distance</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">Global</span><span class="o">.</span><span class="n">distance</span><span class="p">)</span>
 </pre></div>
@@ -327,21 +328,22 @@
 <span class="go">721.9965597052519</span>
 </pre></div>
 </div>
-<p>The session is no more useful, so terminate it:</p>
+<p>The session is no longer useful, so terminate it:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="session-management">
-<h4>Session management<a class="headerlink" href="#session-management" title="Permalink to this headline">¶</a></h4>
+<h4>Session Management<a class="headerlink" href="#session-management" title="Permalink to this headline">¶</a></h4>
 <p><a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession" title="wolframclient.evaluation.WolframLanguageSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframLanguageSession</span></code></a> must be terminated, either by explicitly calling <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.terminate" title="wolframclient.evaluation.WolframLanguageSession.terminate"><code class="xref py py-func docutils literal notranslate"><span class="pre">terminate()</span></code></a> or, alternatively, in a <cite>with</cite> block that achieves the same result automatically.</p>
-<p>A Wolfram Language session starts on average in about a second. For this reason, it is highly recommended to initialize a session once and for all.</p>
+<p>A Wolfram Language session starts, on average, in about one second. For this reason, it is highly recommended to initialize a session only once.</p>
 <p>Start a session manually:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span> <span class="o">=</span> <span class="n">WolframLanguageSession</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>This is not required, since this operation is automatically performed during the first evaluation. Ensure the session started successfully:</p>
+<p>This is not required since this operation is automatically performed during the first evaluation.</p>
+<p>Ensure the session started successfully:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">started</span>
 <span class="go">True</span>
 </pre></div>
@@ -354,7 +356,7 @@
 <p class="first admonition-title">Note</p>
 <p class="last">non-terminated sessions usually result in orphan kernel processes, which ultimately lead to the inability to spawn any usable instance at all.</p>
 </div>
-<p>Alternatively, delegate the handling of the life-cycle of a session using a <cite>with</cite> block:</p>
+<p>Alternatively, delegate the handling of the life cycle of a session using a <cite>with</cite> block:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">WolframLanguageSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">wl_session</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="n">wl_session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">StringReverse</span><span class="p">(</span><span class="s1">&#39;abc&#39;</span><span class="p">))</span>
 <span class="gp">...</span>
@@ -367,12 +369,12 @@
 </div>
 <div class="section" id="wolfram-cloud-interactions">
 <h2>Wolfram Cloud Interactions<a class="headerlink" href="#wolfram-cloud-interactions" title="Permalink to this headline">¶</a></h2>
-<p>Most Cloud interactions require proper authentication to the Wolfram Cloud. Authentication from the library is done with a secured authentication key. Secured authentication keys are attached to a Wolfram account. To create one, visit <a class="reference external" href="https://account.wolfram.com/auth/create">https://account.wolfram.com/auth/create</a>.</p>
+<p>Most Cloud interactions require proper authentication to the Wolfram Cloud. Authentication from the library is done with a secured authentication key. Secured authentication keys are attached to a Wolfram account. To create one, register <a class="reference external" href="https://account.wolfram.com/auth/create">here</a>.</p>
 <div class="section" id="authenticate">
 <span id="ref-auth"></span><h3>Authenticate<a class="headerlink" href="#authenticate" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="generate-a-secured-authentication-key">
 <h4>Generate a Secured Authentication Key<a class="headerlink" href="#generate-a-secured-authentication-key" title="Permalink to this headline">¶</a></h4>
-<p>Using a Wolfram Desktop, or a the Wolfram Public Cloud, generate a new authentication key, and give it a name e.g. <cite>pythonclientlibrary</cite>:</p>
+<p>Using Wolfram Desktop or the Wolfram Public Cloud, generate a new authentication key and give it a name e.g. <cite>pythonclientlibrary</cite>:</p>
 <div class="highlight-wl notranslate"><div class="highlight"><pre><span></span><span class="nv">sak</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">GenerateSecuredAuthenticationKey</span><span class="p">[</span><span class="s">&quot;pythonclientlibrary&quot;</span><span class="p">]</span><span class="w"></span>
 </pre></div>
 </div>
@@ -382,9 +384,9 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="start-authenticated-cloud-session">
-<h4>Start authenticated cloud session<a class="headerlink" href="#start-authenticated-cloud-session" title="Permalink to this headline">¶</a></h4>
-<p>Begin by importing the classes <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.SecuredAuthenticationKey" title="wolframclient.evaluation.SecuredAuthenticationKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">SecuredAuthenticationKey</span></code></a> and <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudSession" title="wolframclient.evaluation.WolframCloudSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframCloudSession</span></code></a> from the <a class="reference internal" href="../api/wolframclient.evaluation.html#module-wolframclient.evaluation" title="wolframclient.evaluation"><code class="xref py py-mod docutils literal notranslate"><span class="pre">evaluation</span></code></a> module.</p>
+<div class="section" id="start-an-authenticated-cloud-session">
+<h4>Start an Authenticated Cloud Session<a class="headerlink" href="#start-an-authenticated-cloud-session" title="Permalink to this headline">¶</a></h4>
+<p>Begin by importing the classes <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.SecuredAuthenticationKey" title="wolframclient.evaluation.SecuredAuthenticationKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">SecuredAuthenticationKey</span></code></a> and <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudSession" title="wolframclient.evaluation.WolframCloudSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframCloudSession</span></code></a> from the <a class="reference internal" href="../api/wolframclient.evaluation.html#module-wolframclient.evaluation" title="wolframclient.evaluation"><code class="xref py py-mod docutils literal notranslate"><span class="pre">evaluation</span></code></a> module:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.evaluation</span> <span class="k">import</span> <span class="n">SecuredAuthenticationKey</span><span class="p">,</span> <span class="n">WolframCloudSession</span>
 </pre></div>
 </div>
@@ -421,7 +423,7 @@
 <span class="go">&#39;cba&#39;</span>
 </pre></div>
 </div>
-<p>Even if the authenticated session is a persistent object, each evaluation occurs independently, similarly to <a class="wl external reference" href="http://reference.wolfram.com/language/ref/CloudEvaluate.html" target="_blank">CloudEvaluate</a>. This means that this is not the appropriate tool to work with variables and functions.</p>
+<p>Even if the authenticated session is a persistent object, each evaluation occurs independently, similarly to <a class="wl external reference" href="http://reference.wolfram.com/language/ref/CloudEvaluate.html">CloudEvaluate</a>. This means that this is not the appropriate tool to work with variables and functions.</p>
 <p>Define a function <cite>f</cite>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">wlexpr</span><span class="p">(</span><span class="s1">&#39;f[x_]:=x+1&#39;</span><span class="p">))</span>
 <span class="go">Null</span>
@@ -441,7 +443,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wl_str_reverse</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">StringReverse</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Apply it to a first string:</p>
+<p>Apply it to a string first:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wl_str_reverse</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">)</span>
 <span class="go">&#39;olleh&#39;</span>
 </pre></div>
@@ -451,7 +453,7 @@
 <span class="go">&#39;.dlrow&#39;</span>
 </pre></div>
 </div>
-<p>Define a <a class="reference internal" href="#ref-capital-distance"><span class="std std-ref">complex function</span></a> as a pure function suited for a usage in the cloud:</p>
+<p>Define a <a class="reference internal" href="#ref-capital-distance"><span class="std std-ref">complex function</span></a> as a pure function suited for usage in the cloud:</p>
 <div class="highlight-wl notranslate"><div class="highlight"><pre><span></span><span class="nb">QuantityMagnitude</span><span class="p">[</span><span class="w"></span>
 <span class="w">    </span><span class="nb">GeoDistance</span><span class="p">[</span><span class="w"></span>
 <span class="w">        </span><span class="nb">EntityValue</span><span class="p">[</span><span class="nb">Entity</span><span class="p">[</span><span class="s">&quot;Country&quot;</span><span class="p">,</span><span class="w"> </span><span class="nf">#1</span><span class="p">],</span><span class="w"> </span><span class="s">&quot;CapitalCity&quot;</span><span class="p">],</span><span class="w"></span>
@@ -491,7 +493,7 @@
 <div class="highlight-wl notranslate"><div class="highlight"><pre><span></span><span class="nb">CloudConnect</span><span class="p">[</span><span class="s">&quot;MyWolframID&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;myPassword&quot;</span><span class="p">]</span><span class="w"></span>
 </pre></div>
 </div>
-<p>Create an <a class="wl external reference" href="http://reference.wolfram.com/language/ref/APIFunction.html" target="_blank">APIFunction</a> that takes an integer and returns its squared value:</p>
+<p>Create an <a class="wl external reference" href="http://reference.wolfram.com/language/ref/APIFunction.html">APIFunction</a> that takes an integer and returns its squared value:</p>
 <div class="highlight-wl notranslate"><div class="highlight"><pre><span></span><span class="nv">api</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">APIFunction</span><span class="p">[{</span><span class="s">&quot;x&quot;</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="s">&quot;Integer&quot;</span><span class="p">},</span><span class="w"></span>
 <span class="w">    </span><span class="nf">#x</span><span class="o">^</span><span class="m">2</span><span class="w"> </span><span class="o">&amp;</span><span class="w"></span>
 <span class="p">]</span><span class="w"></span>
@@ -499,13 +501,13 @@
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">By default, <a class="wl external reference" href="http://reference.wolfram.com/language/ref/APIFunction.html" target="_blank">APIFunction</a> formats output as string <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html" target="_blank">InputForm</a>, which is not always suited for interoperability with Python. For better interoperability, JSON is preferable. <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html" target="_blank">WXF</a> is another versatile option.</p>
+<p class="last">By default, <a class="wl external reference" href="http://reference.wolfram.com/language/ref/APIFunction.html">APIFunction</a> formats output as string <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html">InputForm</a>, which is not always suited for interoperability with Python. For better interoperability, JSON is preferable. <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html">WXF</a> is another versatile option.</p>
 </div>
 <p>Deploy the API as a cloud object named <cite>api/private/xsquared</cite>:</p>
 <div class="highlight-wl notranslate"><div class="highlight"><pre><span></span><span class="nb">CloudDeploy</span><span class="p">[</span><span class="nv">api</span><span class="p">,</span><span class="w"> </span><span class="nb">CloudObject</span><span class="p">[</span><span class="s">&quot;api/private/xsquared&quot;</span><span class="p">]]</span><span class="w"></span>
 </pre></div>
 </div>
-<p>The API was deployed with default permissions, and as such is a private <a class="wl external reference" href="http://reference.wolfram.com/language/ref/CloudObject.html" target="_blank">CloudObject</a> only usable by its owner. Provide read access to the newly created secured authentication key called <cite>pythonclientlibrary</cite>:</p>
+<p>The API was deployed with default permissions and as such is a private <a class="wl external reference" href="http://reference.wolfram.com/language/ref/CloudObject.html">CloudObject</a> only usable by its owner. Provide read access to the newly created secured authentication key called <cite>pythonclientlibrary</cite>:</p>
 <div class="highlight-wl notranslate"><div class="highlight"><pre><span></span><span class="nb">SetPermissions</span><span class="p">[</span><span class="w"></span>
 <span class="w">    </span><span class="nb">CloudObject</span><span class="p">[</span><span class="s">&quot;api/private/xsquared&quot;</span><span class="p">],</span><span class="w"></span>
 <span class="w">    </span><span class="nb">SecuredAuthenticationKeys</span><span class="p">[</span><span class="s">&quot;pythonclientlibrary&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;Read&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Execute&quot;</span><span class="p">}</span><span class="w"></span>
@@ -515,11 +517,11 @@
 </div>
 <div class="section" id="api-call-from-python">
 <h4>API Call from Python<a class="headerlink" href="#api-call-from-python" title="Permalink to this headline">¶</a></h4>
-<p>Once again, an <a class="reference internal" href="#ref-auth"><span class="std std-ref">authenticated session</span></a> is needed to call the API from Python. APIs are specified with a two-value tuple made up of the owner ID (your Wolfram ID) and the name of the <a class="wl external reference" href="http://reference.wolfram.com/language/ref/CloudObject.html" target="_blank">CloudObject</a> used to deploy:</p>
+<p>Once again, an <a class="reference internal" href="#ref-auth"><span class="std std-ref">authenticated session</span></a> is needed to call the API from Python. APIs are specified with a two-value tuple made up of the owner ID (your Wolfram ID) and the name of the <a class="wl external reference" href="http://reference.wolfram.com/language/ref/CloudObject.html">CloudObject</a> used to deploy:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">api</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;MyWolframID&#39;</span><span class="p">,</span> <span class="s1">&#39;api/private/xsquared&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The API’s sole input is “<cite>list</cite>”. In general, an API value is specified as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, in which keys are parameters names. A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> in Python is automatically converted to a Wolfram Language <a class="wl external reference" href="http://reference.wolfram.com/language/ref/List.html" target="_blank">List</a> and is thus a valid API input values.</p>
+<p>The API’s sole input is “<cite>list</cite>”. In general, an API value is specified as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, in which keys are parameter names. A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> in Python is automatically converted to a Wolfram Language <a class="wl external reference" href="http://reference.wolfram.com/language/ref/List.html">List</a> and is thus a valid API input value.</p>
 <p>Call the API:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">api</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span> <span class="p">:</span> <span class="mi">4</span><span class="p">})</span>
 </pre></div>
@@ -563,7 +565,7 @@
 </pre></div>
 </div>
 <p>The class <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframAPICall" title="wolframclient.evaluation.WolframAPICall"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframAPICall</span></code></a> exposes some helper functions to deal with specific content types and files. It is particularly useful when using image inputs.</p>
-<p>Deploy an API that takes an image and returns its <a class="wl external reference" href="http://reference.wolfram.com/language/ref/ImageDimensions.html" target="_blank">ImageDimensions</a> as a JSON array:</p>
+<p>Deploy an API that takes an image and returns its <a class="wl external reference" href="http://reference.wolfram.com/language/ref/ImageDimensions.html">ImageDimensions</a> as a JSON array:</p>
 <div class="highlight-wl notranslate"><div class="highlight"><pre><span></span><span class="nb">CloudDeploy</span><span class="p">[</span><span class="w"></span>
 <span class="w">    </span><span class="nb">APIFunction</span><span class="p">[{</span><span class="s">&quot;image&quot;</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="s">&quot;Image&quot;</span><span class="p">},</span><span class="w"></span>
 <span class="w">        </span><span class="nb">ImageDimensions</span><span class="p">[</span><span class="nf">#image</span><span class="p">]</span><span class="w"> </span><span class="o">&amp;</span><span class="p">,</span><span class="w"></span>
@@ -607,7 +609,7 @@
 </div>
 <div class="section" id="serialization">
 <h2>Serialization<a class="headerlink" href="#serialization" title="Permalink to this headline">¶</a></h2>
-<p>This library is intended to provide a way to serialize Python expressions to Wolfram Language <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html" target="_blank">InputForm</a> strings and <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html" target="_blank">WXF</a> strings of bytes. The functionality was designed to be extensible, so that any arbitrary Python object can be serialized with the addition of custom encoders.</p>
+<p>This library is intended to provide a way to serialize Python expressions to Wolfram Language <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html">InputForm</a> strings and <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html">WXF</a> strings of bytes. The functionality was designed to be extensible so that any arbitrary Python object can be serialized with the addition of custom encoders.</p>
 <div class="section" id="serialize">
 <h3>Serialize<a class="headerlink" href="#serialize" title="Permalink to this headline">¶</a></h3>
 <p>The modules <a class="reference internal" href="../api/wolframclient.serializers.html#module-wolframclient.serializers" title="wolframclient.serializers"><code class="xref py py-mod docutils literal notranslate"><span class="pre">serializers</span></code></a> and <a class="reference internal" href="../api/wolframclient.language.html#module-wolframclient.language" title="wolframclient.language"><code class="xref py py-mod docutils literal notranslate"><span class="pre">language</span></code></a> provide tools to represent and serialize arbitrary Wolfram Language expressions.
@@ -616,7 +618,7 @@ The function <a class="reference internal" href="../api/wolframclient.serializer
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.serializers</span> <span class="k">import</span> <span class="n">export</span>
 </pre></div>
 </div>
-<p>Serialize a Python list of integers into a Wolfram Language <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html" target="_blank">InputForm</a> string representation:</p>
+<p>Serialize a Python list of integers into a Wolfram Language <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html">InputForm</a> string representation:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
 <span class="go">b&#39;{1, 2, 3}&#39;</span>
 </pre></div>
@@ -626,7 +628,7 @@ The function <a class="reference internal" href="../api/wolframclient.serializer
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="k">import</span> <span class="n">wl</span>
 </pre></div>
 </div>
-<p>Build a Python object representing a <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Quantity.html" target="_blank">Quantity</a>:</p>
+<p>Build a Python object representing a <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Quantity.html">Quantity</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;Hours&quot;</span><span class="p">)</span>
 <span class="go">Quantity[&lt;&lt; 2 &gt;&gt;]</span>
 </pre></div>
@@ -641,22 +643,22 @@ The function <a class="reference internal" href="../api/wolframclient.serializer
 <span class="go">b&#39;Select[{1, 2, 3}, PrimeQ]&#39;</span>
 </pre></div>
 </div>
-<p>The <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html" target="_blank">WXF</a> format is also supported. It is a binary format, thus not always human readable, but it is the most efficient way to exchange Wolfram Language expressions. Specify a <cite>target_format</cite> argument to serialize the previous expression to WXF:</p>
+<p>The <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html">WXF</a> format is also supported. It is a binary format, thus not always human readable, but it is the most efficient way to exchange Wolfram Language expressions. Specify a <cite>target_format</cite> argument to serialize the previous expression to <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html">WXF</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">Select</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">wl</span><span class="o">.</span><span class="n">PrimeQ</span><span class="p">),</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wxf&#39;</span><span class="p">)</span>
 <span class="go">b&#39;f\x02s\x06Selectf\x03s\x04ListC\x01C\x02C\x03s\x06PrimeQ&#39;</span>
 </pre></div>
 </div>
 <p>If the <cite>stream</cite> parameter is set to a string path, the serialized output is directly written to the file.</p>
-<p>First, represent a Wolfram Language <a class="wl external reference" href="http://reference.wolfram.com/language/ref/ListPlot.html" target="_blank">ListPlot</a> of the first 25 <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Prime.html" target="_blank">Prime</a> numbers:</p>
+<p>First, represent a Wolfram Language <a class="wl external reference" href="http://reference.wolfram.com/language/ref/ListPlot.html">ListPlot</a> of the first 25 <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Prime.html">Prime</a> numbers:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wl_expr</span> <span class="o">=</span> <span class="n">wl</span><span class="o">.</span><span class="n">ListPlot</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">Prime</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">Range</span><span class="p">(</span><span class="mi">25</span><span class="p">)))</span>
 </pre></div>
 </div>
-<p>Serialize it to <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html" target="_blank">WXF</a> and print the resulting bytes to the file <cite>/path/to/file.wxf</cite>:</p>
+<p>Serialize it to <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html">WXF</a> and print the resulting bytes to the file <cite>/path/to/file.wxf</cite>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">(</span><span class="n">wl_expr</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="s1">&#39;/path/to/file.wxf&#39;</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wxf&#39;</span><span class="p">)</span>
 <span class="go">&#39;/path/to/file.wxf&#39;</span>
 </pre></div>
 </div>
-<p>Using the Wolfram Desktop, import the file:</p>
+<p>Using Wolfram Desktop, import the file:</p>
 <div class="highlight-wl notranslate"><div class="highlight"><pre><span></span><span class="nb">Import</span><span class="p">[</span><span class="s">&quot;/path/to/file.wxf&quot;</span><span class="p">]</span><span class="w"></span>
 </pre></div>
 </div>
@@ -664,24 +666,24 @@ The function <a class="reference internal" href="../api/wolframclient.serializer
 <p>The library also provides extensible serialization mechanisms for custom Python classes. Refer to the <a class="reference internal" href="public_api.html#extensible-serialization"><span class="std std-ref">API guide page</span></a> for detailed explanations and to the <a class="reference internal" href="advanced_usages.html"><span class="doc">examples page</span></a> for some use cases.</p>
 </div>
 <div class="section" id="popular-libraries-support">
-<h3>Popular libraries support<a class="headerlink" href="#popular-libraries-support" title="Permalink to this headline">¶</a></h3>
+<h3>Popular Libraries Support<a class="headerlink" href="#popular-libraries-support" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="pil">
 <h4>PIL<a class="headerlink" href="#pil" title="Permalink to this headline">¶</a></h4>
-<p>PIL <code class="xref py py-data docutils literal notranslate"><span class="pre">Image</span></code> are serialized to Wolfram Language <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Image.html" target="_blank">Image</a>. Most image modes are supported. Popular modes are natively supported, their raw pixel data corresponds to the one used in the Wolfram Language. These modes enable fast serialization and deserialization. When the mode is not supported natively, the raw pixel data is converted back to the original format of the image and imported in the Wolfram Language. When there is no original format specified, and when the mode is not natively supported, the image is encoded as <cite>PNG</cite> first. Except for the last case which is uncommon, images are faithfully serialized.</p>
+<p>PIL <code class="xref py py-data docutils literal notranslate"><span class="pre">Image</span></code> are serialized to the Wolfram Language function <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Image.html">Image</a>. Most image modes are supported. Popular modes are natively supported; their raw pixel data corresponds to the one used in the Wolfram Language. These modes enable fast serialization and deserialization. When the mode is not supported natively, the raw pixel data is converted back to the original format of the image and imported into the Wolfram Language. When there is no original format specified and when the mode is not natively supported, the image is encoded as <cite>PNG</cite> first. Except for the last case, which is uncommon, images are faithfully serialized.</p>
 </div>
 <div class="section" id="numpy">
 <h4>NumPy<a class="headerlink" href="#numpy" title="Permalink to this headline">¶</a></h4>
-<p>Numpy arrays of integers signed and unsigned, floats, and complexes are serialized to Wolfram Language <a class="wl external reference" href="http://reference.wolfram.com/language/ref/NumericArray.html" target="_blank">NumericArray</a>. Numeric types are also supported (e.g.: <code class="xref py py-data docutils literal notranslate"><span class="pre">numpy.integer</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">numpy.float16</span></code>, etc).</p>
+<p>NumPy arrays of signed and unsigned integers, floats and complexes are serialized to the Wolfram Language function <a class="wl external reference" href="http://reference.wolfram.com/language/ref/NumericArray.html">NumericArray</a>. Numeric types are also supported (e.g. <code class="xref py py-data docutils literal notranslate"><span class="pre">numpy.integer</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">numpy.float16</span></code>, etc.).</p>
 </div>
 <div class="section" id="pandas">
 <h4>Pandas<a class="headerlink" href="#pandas" title="Permalink to this headline">¶</a></h4>
 <p>The library supports Pandas core classes <code class="xref py py-data docutils literal notranslate"><span class="pre">Series</span></code> and <code class="xref py py-data docutils literal notranslate"><span class="pre">DataFrame</span></code>.</p>
-<p>The serialized form of a <code class="xref py py-data docutils literal notranslate"><span class="pre">Series</span></code> depends on its index. <code class="xref py py-data docutils literal notranslate"><span class="pre">Series</span></code> indexed with a <code class="xref py py-data docutils literal notranslate"><span class="pre">DatetimeIndex</span></code> are serialized to <a class="wl external reference" href="http://reference.wolfram.com/language/ref/TimeSeries.html" target="_blank">TimeSeries</a>. <code class="xref py py-data docutils literal notranslate"><span class="pre">Series</span></code> indexed with a <code class="xref py py-data docutils literal notranslate"><span class="pre">MultiIndex</span></code> are serialized to <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Dataset.html" target="_blank">Dataset</a>. Other series are serialized to <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Association.html" target="_blank">Association</a>. In <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a>, it is possible to set <cite>pandas_series_head</cite> to any of: <cite>‘association’</cite>, <cite>‘dataset’</cite>, or <cite>‘list’</cite> to specify the outer head.</p>
+<p>The serialized form of a <code class="xref py py-data docutils literal notranslate"><span class="pre">Series</span></code> depends on its index. <code class="xref py py-data docutils literal notranslate"><span class="pre">Series</span></code> indexed with a <code class="xref py py-data docutils literal notranslate"><span class="pre">DatetimeIndex</span></code> are serialized to <a class="wl external reference" href="http://reference.wolfram.com/language/ref/TimeSeries.html">TimeSeries</a>. <code class="xref py py-data docutils literal notranslate"><span class="pre">Series</span></code> indexed with a <code class="xref py py-data docutils literal notranslate"><span class="pre">MultiIndex</span></code> are serialized to <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Dataset.html">Dataset</a>. Other series are serialized to <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Association.html">Association</a>. In <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a>, it is possible to set <cite>pandas_series_head</cite> to any of <cite>‘association’</cite>, <cite>‘dataset’</cite> or <cite>‘list’</cite> to specify the outer head.</p>
 <p>Import the library:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span>
 </pre></div>
 </div>
-<p>Create a simple Series:</p>
+<p>Create a simple <code class="xref py py-data docutils literal notranslate"><span class="pre">Series</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">series</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -695,7 +697,7 @@ The function <a class="reference internal" href="../api/wolframclient.serializer
 <span class="go">b&#39;{-1 -&gt; 1, &quot;a&quot; -&gt; 2, 1 -&gt; 3}&#39;</span>
 </pre></div>
 </div>
-<p><code class="xref py py-data docutils literal notranslate"><span class="pre">DataFrame</span></code> is serialized by default to <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Dataset.html" target="_blank">Dataset</a>. It is possible to set <cite>pandas_dataframe_head</cite> to <cite>‘association’</cite> in <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a> to return an <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Association.html" target="_blank">Association</a> instead.</p>
+<p><code class="xref py py-data docutils literal notranslate"><span class="pre">DataFrame</span></code> is serialized by default to <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Dataset.html">Dataset</a>. It is possible to set <cite>pandas_dataframe_head</cite> to <cite>‘association’</cite> in <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a> to return an <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Association.html">Association</a> instead.</p>
 <p>Create a <code class="xref py py-data docutils literal notranslate"><span class="pre">DataFrame</span></code> with two columns, indexed with string values:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
 <span class="go">    {&#39;col1&#39;: [&#39;v12&#39;, &#39;v12&#39;],</span>
@@ -717,9 +719,9 @@ The function <a class="reference internal" href="../api/wolframclient.serializer
 </div>
 <div class="section" id="deserialize">
 <h3>Deserialize<a class="headerlink" href="#deserialize" title="Permalink to this headline">¶</a></h3>
-<p>The library can parse <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html" target="_blank">WXF</a> binary inputs and return Python objects from it.
-The function <a class="reference internal" href="../api/wolframclient.deserializers.html#wolframclient.deserializers.binary_deserialize" title="wolframclient.deserializers.binary_deserialize"><code class="xref py py-func docutils literal notranslate"><span class="pre">binary_deserialize()</span></code></a> can deserialize any <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html" target="_blank">WXF</a> input into standard Python objects and, eventually, <a class="reference external" href="http://www.numpy.org/">NumPy</a> arrays.</p>
-<p>Export a Python list of integers to <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html" target="_blank">WXF</a>:</p>
+<p>The library can parse <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html">WXF</a> binary inputs and return Python objects from it.
+The function <a class="reference internal" href="../api/wolframclient.deserializers.html#wolframclient.deserializers.binary_deserialize" title="wolframclient.deserializers.binary_deserialize"><code class="xref py py-func docutils literal notranslate"><span class="pre">binary_deserialize()</span></code></a> can deserialize any <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html">WXF</a> input into standard Python objects and, eventually, <a class="reference external" href="http://www.numpy.org/">NumPy</a> arrays.</p>
+<p>Export a Python list of integers to <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html">WXF</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.serializers</span> <span class="k">import</span> <span class="n">export</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">my_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wxf</span> <span class="o">=</span> <span class="n">export</span><span class="p">(</span><span class="n">my_list</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wxf&#39;</span><span class="p">)</span>
@@ -764,7 +766,7 @@ The function <a class="reference internal" href="../api/wolframclient.deserializ
         href="../index.html">Overview</a>
 </div>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="install.html">Installation and prerequisites</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation and Prerequisites</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="install.html#prerequisites">Prerequisites</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#installation">Installation</a></li>
 </ul>
@@ -779,8 +781,8 @@ The function <a class="reference internal" href="../api/wolframclient.deserializ
 <li class="toctree-l1"><a class="reference internal" href="advanced_usages.html">Advanced Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="advanced_usages.html#expression-representation">Expression Representation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="advanced_usages.html#local-kernel-evaluation">Local Kernel Evaluation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced_usages.html#extending-serialization-writing-an-encoder">Extending serialization: Writing an Encoder</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced_usages.html#extending-wxf-parsing-writing-a-wxfconsumer">Extending WXF Parsing: Writing a WXFConsumer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usages.html#extending-serialization-writing-an-encoder">Extending Serialization: Writing an <cite>Encoder</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usages.html#extending-wxf-parsing-writing-a-wxfconsumer">Extending WXF Parsing: Writing a <cite>WXFConsumer</cite></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="public_api.html">Guide</a><ul>
@@ -811,7 +813,7 @@ The function <a class="reference internal" href="../api/wolframclient.deserializ
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script><footer class='copyright'>
     <div>
-        <span>&#169; Copyright 2019, Wolfram Research.</span>
+        <span>&#169; 2019 Wolfram Research. All rights reserved.</span>
     </div>
 </footer>
         </div>

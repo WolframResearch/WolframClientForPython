@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.serializers.wxfencoder.wxfencoder &#8212; Wolfram Client Library for Python 1.0.1 documentation</title>
+    <title>wolframclient.serializers.wxfencoder.wxfencoder &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.1</span>
+                        <span class='header right navigation darkgrey'>v 1.0.2</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -85,11 +85,11 @@
 
 
 <div class="viewcode-block" id="NotEncodedException"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.wxfencoder.NotEncodedException">[docs]</a><span class="k">class</span> <span class="nc">NotEncodedException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Exception used during encoding to signal that a given python object has been ignored by a :class:`~wolframclient.serializers.wxfencoder.WXFEncoder`.&quot;&quot;&quot;</span></div>
+    <span class="sd">&quot;&quot;&quot;Exception used during encoding to signal that a given Python object has been ignored by a :class:`~wolframclient.serializers.wxfencoder.WXFEncoder`.&quot;&quot;&quot;</span></div>
 
 
 <div class="viewcode-block" id="WXFEncoder"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder">[docs]</a><span class="k">class</span> <span class="nc">WXFEncoder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Encode a given python object into a stream of :class:`~wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr`.</span>
+    <span class="sd">&quot;&quot;&quot;Encode a given Python object into a stream of :class:`~wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr`.</span>
 
 <span class="sd">    This class is meant to be subclassed in order to add support for new classes. The encoder does not have to do anything</span>
 <span class="sd">    since more than one can be attached to a given :class:`~wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider`.</span>
@@ -97,7 +97,7 @@
 
 <span class="sd">    To implement a new encoder one needs to sub-class :class:`~wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder`</span>
 <span class="sd">    and implements method :func:`~wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder.encode`. Encode is a generator function</span>
-<span class="sd">    that takes a given python object and instances of :class:`~wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr`. If it returns before</span>
+<span class="sd">    that takes a given Python object and instances of :class:`~wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr`. If it returns before</span>
 <span class="sd">    yielding anything a :class:`~wolframclient.serializers.wxfencoder.wxfencoder.NotEncodedException` is raised to signal that</span>
 <span class="sd">    the encoder is not supporting the given object, and that the encoding must be delegating to the next encoder (if any).</span>
 
@@ -114,7 +114,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="WXFEncoder.serialize"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder.serialize">[docs]</a>    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Re-entrant method used to serialize part of a python object.</span>
+        <span class="sd">&quot;&quot;&quot;Re-entrant method used to serialize part of a Python object.</span>
 
 <span class="sd">        Example: when serializing a custom class ``foo[{&#39;k1&#39;-&gt;1,&#39;k2&#39;-&gt;2}]``, the user</span>
 <span class="sd">        defined encoder for class foo could encode it as a function with head &#39;foo&#39; and a dict.</span>
@@ -214,7 +214,7 @@
         href="../../../../index.html">Overview</a>
 </div>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../docpages/install.html">Installation and prerequisites</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docpages/install.html">Installation and Prerequisites</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../docpages/install.html#prerequisites">Prerequisites</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../docpages/install.html#installation">Installation</a></li>
 </ul>
@@ -229,8 +229,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../docpages/advanced_usages.html">Advanced Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../docpages/advanced_usages.html#expression-representation">Expression Representation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../docpages/advanced_usages.html#local-kernel-evaluation">Local Kernel Evaluation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/advanced_usages.html#extending-serialization-writing-an-encoder">Extending serialization: Writing an Encoder</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/advanced_usages.html#extending-wxf-parsing-writing-a-wxfconsumer">Extending WXF Parsing: Writing a WXFConsumer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/advanced_usages.html#extending-serialization-writing-an-encoder">Extending Serialization: Writing an <cite>Encoder</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../docpages/advanced_usages.html#extending-wxf-parsing-writing-a-wxfconsumer">Extending WXF Parsing: Writing a <cite>WXFConsumer</cite></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../docpages/public_api.html">Guide</a><ul>
@@ -261,7 +261,7 @@
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script><footer class='copyright'>
     <div>
-        <span>&#169; Copyright 2019, Wolfram Research.</span>
+        <span>&#169; 2019 Wolfram Research. All rights reserved.</span>
     </div>
 </footer>
         </div>

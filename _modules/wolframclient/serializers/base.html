@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.serializers.base &#8212; Wolfram Client Library for Python 1.0.1 documentation</title>
+    <title>wolframclient.serializers.base &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
     <link rel="stylesheet" href="../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.1</span>
+                        <span class='header right navigation darkgrey'>v 1.0.2</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -129,10 +129,17 @@
 <div class="viewcode-block" id="FormatSerializer.serialize_int"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_int">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="FormatSerializer.serialize_bytes"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_bytes">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;ByteArray&#39;</span><span class="p">),</span>
-            <span class="p">((</span><span class="sa">b</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="nb">bytes</span><span class="p">),</span> <span class="sa">b</span><span class="s1">&#39;&quot;&#39;</span><span class="p">),</span> <span class="p">))</span></div>
+<div class="viewcode-block" id="FormatSerializer.serialize_bytes"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_bytes">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">as_byte_array</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">six</span><span class="o">.</span><span class="n">PY2</span><span class="p">):</span>
+
+        <span class="c1">#by default we are serializing as_byte_array for PY3,</span>
+        <span class="c1">#py2 is by default using strings</span>
+
+        <span class="k">if</span> <span class="n">as_byte_array</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;ByteArray&#39;</span><span class="p">),</span>
+                <span class="p">((</span><span class="sa">b</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="nb">bytes</span><span class="p">),</span> <span class="sa">b</span><span class="s1">&#39;&quot;&#39;</span><span class="p">),</span> <span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_string</span><span class="p">(</span><span class="n">force_text</span><span class="p">(</span><span class="nb">bytes</span><span class="p">,</span> <span class="s2">&quot;iso-8859-1&quot;</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="FormatSerializer.serialize_input_form"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_input_form">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_input_form</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
@@ -147,7 +154,7 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">serialize_symbol</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;BinaryDeserialize&#39;</span><span class="p">),</span>
-            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">serialize_bytes</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="p">),</span> <span class="p">))</span></div>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">serialize_bytes</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">as_byte_array</span> <span class="o">=</span> <span class="kc">True</span><span class="p">),</span> <span class="p">))</span></div>
 
 <div class="viewcode-block" id="FormatSerializer.serialize_iterable"><a class="viewcode-back" href="../../../api/wolframclient.serializers.html#wolframclient.serializers.base.FormatSerializer.serialize_iterable">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_iterable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_function</span><span class="p">(</span>
@@ -254,7 +261,7 @@
         href="../../../index.html">Overview</a>
 </div>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../docpages/install.html">Installation and prerequisites</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../docpages/install.html">Installation and Prerequisites</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../docpages/install.html#prerequisites">Prerequisites</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../docpages/install.html#installation">Installation</a></li>
 </ul>
@@ -269,8 +276,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../docpages/advanced_usages.html">Advanced Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../docpages/advanced_usages.html#expression-representation">Expression Representation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../docpages/advanced_usages.html#local-kernel-evaluation">Local Kernel Evaluation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../docpages/advanced_usages.html#extending-serialization-writing-an-encoder">Extending serialization: Writing an Encoder</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../docpages/advanced_usages.html#extending-wxf-parsing-writing-a-wxfconsumer">Extending WXF Parsing: Writing a WXFConsumer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../docpages/advanced_usages.html#extending-serialization-writing-an-encoder">Extending Serialization: Writing an <cite>Encoder</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../docpages/advanced_usages.html#extending-wxf-parsing-writing-a-wxfconsumer">Extending WXF Parsing: Writing a <cite>WXFConsumer</cite></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../docpages/public_api.html">Guide</a><ul>
@@ -301,7 +308,7 @@
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script><footer class='copyright'>
     <div>
-        <span>&#169; Copyright 2019, Wolfram Research.</span>
+        <span>&#169; 2019 Wolfram Research. All rights reserved.</span>
     </div>
 </footer>
         </div>

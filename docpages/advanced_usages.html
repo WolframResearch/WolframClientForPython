@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Advanced Usage &#8212; Wolfram Client Library for Python 1.0.1 documentation</title>
+    <title>Advanced Usage &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -70,7 +70,7 @@
                                 </span>
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.1</span>
+                        <span class='header right navigation darkgrey'>v 1.0.2</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -91,7 +91,7 @@
 <h1>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="expression-representation">
 <span id="adv-expression-representation"></span><h2>Expression Representation<a class="headerlink" href="#expression-representation" title="Permalink to this headline">¶</a></h2>
-<p>Basic aspects of expression representation are exposed in <a class="reference internal" href="basic_usages.html#ref-expressions"><span class="std std-ref">basic usages</span></a>.</p>
+<p>Basic aspects of expression representation are covered in <a class="reference internal" href="basic_usages.html#ref-expressions"><span class="std std-ref">basic usages</span></a>.</p>
 <div class="section" id="contexts">
 <h3>Contexts<a class="headerlink" href="#contexts" title="Permalink to this headline">¶</a></h3>
 <p>In the Wolfram Language, symbols live in <a class="reference external" href="http://reference.wolfram.com/language/tutorial/Contexts.html">contexts</a>, which serve as a namespace mechanism. Built-in functions belong to the <code class="docutils literal notranslate"><span class="pre">System`</span></code> context. User-defined symbols and functions are stored by default in the <code class="docutils literal notranslate"><span class="pre">Global`</span></code> context.</p>
@@ -106,11 +106,11 @@
 <span class="go">myFunction[1]</span>
 </pre></div>
 </div>
-<p>The representation of a given expression using its string <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html" target="_blank">InputForm</a> is readable but ambiguous, since the context is resolved in the kernel during evaluation, and as such different kernels may return different results. See <a class="wl external reference" href="http://reference.wolfram.com/language/ref/$ContextPath.html" target="_blank">$ContextPath</a>.</p>
-<p>On the other hand, in the <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html" target="_blank">WXF</a> format, expressions are represented with their full names. Context must be fully specified for all symbols, the exception being the <code class="docutils literal notranslate"><span class="pre">System`</span></code> context, which can be omitted. As a consequence, in WXF a symbol with no context is always deserialized as a <code class="docutils literal notranslate"><span class="pre">System`</span></code> symbol.</p>
-<p>The method <code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate()</span></code> accepts two types of input:</p>
+<p>The representation of a given expression using its string <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html">InputForm</a> is readable but ambiguous since the context is resolved in the kernel during evaluation, and as such different kernels may return different results. See <a class="wl external reference" href="http://reference.wolfram.com/language/ref/$ContextPath.html">$ContextPath</a>.</p>
+<p>On the other hand, in the <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html">WXF</a> format, expressions are represented with their full names. Context must be fully specified for all symbols, the exception being the <code class="docutils literal notranslate"><span class="pre">System`</span></code> context, which can be omitted. As a consequence, in WXF, a symbol with no context is always deserialized as a <code class="docutils literal notranslate"><span class="pre">System`</span></code> symbol.</p>
+<p>The method <a class="reference internal" href="../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.localsession.WolframLanguageSession.evaluate" title="wolframclient.evaluation.kernel.localsession.WolframLanguageSession.evaluate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate()</span></code></a> accepts two types of input:</p>
 <ul class="simple">
-<li>Python strings are treated as a string <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html" target="_blank">InputForm</a>; as such, context is resolved during evaluation. User-defined functions are most of the time automatically created with the <code class="docutils literal notranslate"><span class="pre">Global`</span></code> context.</li>
+<li>Python strings are treated as a string <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html">InputForm</a>; as such, context is resolved during evaluation. User-defined functions are most of the time automatically created with the <code class="docutils literal notranslate"><span class="pre">Global`</span></code> context.</li>
 <li>Serializable Python objects are serialized to WXF before evaluation; as such, context must be explicitly specified, except for <code class="docutils literal notranslate"><span class="pre">System`</span></code> symbols.</li>
 </ul>
 <div class="section" id="system-context">
@@ -119,7 +119,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="k">import</span> <span class="n">System</span>
 </pre></div>
 </div>
-<p>Create a Python object representing the built-in function <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Classify.html" target="_blank">Classify</a>:</p>
+<p>Create a Python object representing the built-in function <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Classify.html">Classify</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">System</span><span class="o">.</span><span class="n">Classify</span>
 <span class="go">System`Classify</span>
 </pre></div>
@@ -153,21 +153,21 @@
 </div>
 <div class="section" id="use-cases">
 <h4>Use Cases<a class="headerlink" href="#use-cases" title="Permalink to this headline">¶</a></h4>
-<p>Create a new function <code class="xref py py-data docutils literal notranslate"><span class="pre">max</span></code>, that takes a list of strings and returns the longer ones. The function definition is:</p>
+<p>Create a new function <code class="xref py py-data docutils literal notranslate"><span class="pre">max</span></code> that takes a list of strings and returns the longer ones. The function definition is:</p>
 <div class="highlight-wl notranslate"><div class="highlight"><pre><span></span><span class="nv">max</span><span class="p">[</span><span class="nv">s</span><span class="o">:</span><span class="nb">List</span><span class="p">[</span><span class="nt">__String</span><span class="p">]]</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nb">MaximalBy</span><span class="p">[</span><span class="nv">s</span><span class="p">,</span><span class="w"> </span><span class="nb">StringLength</span><span class="p">]</span><span class="w"></span>
 </pre></div>
 </div>
-<p>Setup a new local evaluator session:</p>
+<p>Set up a new local evaluator session:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.evaluation</span> <span class="k">import</span> <span class="n">WolframLanguageSession</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="k">import</span> <span class="n">wl</span><span class="p">,</span> <span class="n">Global</span><span class="p">,</span> <span class="n">wlexpr</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">session</span> <span class="o">=</span> <span class="n">WolframLanguageSession</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Most of the time it is much more convenient to define functions using an <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html" target="_blank">InputForm</a> string expression rather than <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-data docutils literal notranslate"><span class="pre">wl</span></code></a>. Define the function <cite>max</cite> for the current session:</p>
+<p>Most of the time, it is much more convenient to define functions using an <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html">InputForm</a> string expression rather than <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-data docutils literal notranslate"><span class="pre">wl</span></code></a>. Define the function <cite>max</cite> for the current session:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">wlexpr</span><span class="p">(</span><span class="s1">&#39;max[s : List[__String]] := MaximalBy[s, StringLength]&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>Apply function <code class="xref py py-data docutils literal notranslate"><span class="pre">Global.max</span></code> on a list of strings:</p>
+<p>Apply function <code class="xref py py-data docutils literal notranslate"><span class="pre">Global.max</span></code> to a list of strings:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">Global</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="s1">&#39;darkness&#39;</span><span class="p">,</span> <span class="s1">&#39;my&#39;</span><span class="p">,</span> <span class="s1">&#39;old&#39;</span><span class="p">,</span> <span class="s1">&#39;friend&#39;</span><span class="p">]))</span>
 <span class="go">[&#39;darkness&#39;]</span>
 </pre></div>
@@ -177,8 +177,8 @@
 <span class="go">max[[&#39;hello&#39;, &#39;darkness&#39;, &#39;my&#39;, &#39;old&#39;, &#39;friend&#39;]]</span>
 </pre></div>
 </div>
-<p>It is important to understand that <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wlexpr" title="wolframclient.language.wlexpr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">wlexpr()</span></code></a> applied to a string is equivalent to evaluating <a class="wl external reference" href="http://reference.wolfram.com/language/ref/ToExpression.html" target="_blank">ToExpression</a> on top of the string input, and as such some context inference is performed when evaluating. In the above example, the <code class="xref py py-data docutils literal notranslate"><span class="pre">max</span></code> function explicit name is <code class="docutils literal notranslate"><span class="pre">Global`max</span></code>. When the Python object <code class="xref py py-data docutils literal notranslate"><span class="pre">wl.max</span></code> is passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate()</span></code>, it is serialized to <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html" target="_blank">WXF</a> first, which has strict context specification rules: the only context that can be omitted is the <code class="docutils literal notranslate"><span class="pre">System`</span></code> context. As a consequence, any symbol without context is attached to the <code class="docutils literal notranslate"><span class="pre">System`</span></code> context; <cite>max</cite> is thus <code class="docutils literal notranslate"><span class="pre">System`max</span></code>, which is not defined.</p>
-<p>Finally terminate the session:</p>
+<p>It is important to understand that <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wlexpr" title="wolframclient.language.wlexpr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">wlexpr()</span></code></a> applied to a string is equivalent to evaluating <a class="wl external reference" href="http://reference.wolfram.com/language/ref/ToExpression.html">ToExpression</a> on top of the string input, and as such some context inference is performed when evaluating. In the above example, the <code class="xref py py-data docutils literal notranslate"><span class="pre">max</span></code> function’s explicit name is <code class="docutils literal notranslate"><span class="pre">Global`max</span></code>. When the Python object <code class="xref py py-data docutils literal notranslate"><span class="pre">wl.max</span></code> is passed to <a class="reference internal" href="../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.localsession.WolframLanguageSession.evaluate" title="wolframclient.evaluation.kernel.localsession.WolframLanguageSession.evaluate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate()</span></code></a>, it is serialized to <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html">WXF</a> first, which has strict context specification rules; the only context that can be omitted is the <code class="docutils literal notranslate"><span class="pre">System`</span></code> context. As a consequence, any symbol without context is attached to the <code class="docutils literal notranslate"><span class="pre">System`</span></code> context; <cite>max</cite> is thus <code class="docutils literal notranslate"><span class="pre">System`max</span></code>, which is not defined.</p>
+<p>Finally, terminate the session:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -213,7 +213,7 @@
 <span class="go">DirectedInfinity[]</span>
 </pre></div>
 </div>
-<p>Messages are stored as tuples of two elements; the message name and the formatted message.</p>
+<p>Messages are stored as tuples of two elements, the message name and the formatted message:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">eval</span><span class="o">.</span><span class="n">messages</span>
 <span class="go">[(&#39;Power::infy&#39;, &#39;Infinite expression Power[0, -1] encountered.&#39;)]</span>
 </pre></div>
@@ -223,29 +223,29 @@
 <h4>Asynchronous<a class="headerlink" href="#asynchronous" title="Permalink to this headline">¶</a></h4>
 <p>Some computations may take a significant time to finish. The library provides various form of control on evaluations.</p>
 <div class="section" id="evaluate-future">
-<h5>Evaluate future<a class="headerlink" href="#evaluate-future" title="Permalink to this headline">¶</a></h5>
-<p>Evaluation methods all have a future based counterpart.</p>
+<h5>Evaluate Future<a class="headerlink" href="#evaluate-future" title="Permalink to this headline">¶</a></h5>
+<p>Evaluation methods all have a future-based counterpart:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.evaluation</span> <span class="k">import</span> <span class="n">WolframLanguageSession</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">session</span> <span class="o">=</span> <span class="n">WolframLanguageSession</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">future</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">evaluate_future</span><span class="p">(</span><span class="s1">&#39;Pause[3]; 1+1&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The future object is immediately returned, the computation is done in the background. Return the evaluated expression:</p>
+<p>The future object is immediately returned; the computation is done in the background. Return the evaluated expression:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
 <span class="go">2</span>
 </pre></div>
 </div>
-<p>Sometimes a fine control over the maximum duration of an evaluation is required. <a class="wl external reference" href="http://reference.wolfram.com/language/ref/TimeConstrained.html" target="_blank">TimeConstrained</a> ensures that a given evaluation duration is not exceeding a timeout in seconds. When the timeout is reached the symbol <a class="wl external reference" href="http://reference.wolfram.com/language/ref/$Aborted.html" target="_blank">$Aborted</a> is returned.</p>
+<p>Sometimes a fine control over the maximum duration of an evaluation is required. <a class="wl external reference" href="http://reference.wolfram.com/language/ref/TimeConstrained.html">TimeConstrained</a> ensures that a given evaluation duration is not exceeding a timeout in seconds. When the timeout is reached, the symbol <a class="wl external reference" href="http://reference.wolfram.com/language/ref/$Aborted.html">$Aborted</a> is returned.</p>
 <p>Wrap an artificially long evaluation to last at most one second:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">long_eval</span> <span class="o">=</span> <span class="n">wl</span><span class="o">.</span><span class="n">Pause</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">timeconstrained_eval</span> <span class="o">=</span> <span class="n">wl</span><span class="o">.</span><span class="n">TimeConstrained</span><span class="p">(</span><span class="n">long_eval</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Evaluate the time constrained expression:</p>
+<p>Evaluate the time-constrained expression:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">timeconstrained_eval</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Check if the result is <a class="wl external reference" href="http://reference.wolfram.com/language/ref/$Aborted.html" target="_blank">$Aborted</a>:</p>
+<p>Check if the result is <a class="wl external reference" href="http://reference.wolfram.com/language/ref/$Aborted.html">$Aborted</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;$Aborted&#39;</span>
 <span class="go">True</span>
 </pre></div>
@@ -257,8 +257,8 @@
 </div>
 <div class="section" id="concurrent-future">
 <h5>Concurrent Future<a class="headerlink" href="#concurrent-future" title="Permalink to this headline">¶</a></h5>
-<p>Sometimes, the result is not be required immediately. Asynchronous evaluation is a way to start evaluations on a local kernel as a background task, without blocking the main Python execution. Asynchronous evaluation methods are: <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_future" title="wolframclient.evaluation.WolframLanguageSession.evaluate_future"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_future()</span></code></a>, <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wrap_future" title="wolframclient.evaluation.WolframLanguageSession.evaluate_wrap_future"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_wrap_future()</span></code></a>, and <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wxf_future" title="wolframclient.evaluation.WolframLanguageSession.evaluate_wxf_future"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_wxf_future()</span></code></a>. They wrapped the evaluation result into a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> objects. The result is the one that would be returned by the non-future method (e.g <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_future" title="wolframclient.evaluation.WolframLanguageSession.evaluate_future"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_future()</span></code></a> returns the result of <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate" title="wolframclient.evaluation.WolframLanguageSession.evaluate"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate()</span></code></a>).</p>
-<p>Evaluate an artificially delayed code (using <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Pause.html" target="_blank">Pause</a>), and print the time elapsed at each step:</p>
+<p>Sometimes, the result is not required immediately. Asynchronous evaluation is a way to start evaluations on a local kernel as a background task, without blocking the main Python execution. Asynchronous evaluation methods are <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_future" title="wolframclient.evaluation.WolframLanguageSession.evaluate_future"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_future()</span></code></a>, <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wrap_future" title="wolframclient.evaluation.WolframLanguageSession.evaluate_wrap_future"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_wrap_future()</span></code></a> and <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_wxf_future" title="wolframclient.evaluation.WolframLanguageSession.evaluate_wxf_future"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_wxf_future()</span></code></a>. They wrapped the evaluation result into a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> object. Result is the one that would be returned by the non-future method (e.g <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate_future" title="wolframclient.evaluation.WolframLanguageSession.evaluate_future"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_future()</span></code></a> returns the result of <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession.evaluate" title="wolframclient.evaluation.WolframLanguageSession.evaluate"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate()</span></code></a>).</p>
+<p>Evaluate an artificially delayed code (using <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Pause.html">Pause</a>), and print the time elapsed at each step:</p>
 <div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -295,7 +295,7 @@ After 2.02s, result was available. Kernel evaluation returned: 2
 </div>
 <div class="section" id="coroutine-and-asyncio-apis">
 <h5>Coroutine and Asyncio APIs<a class="headerlink" href="#coroutine-and-asyncio-apis" title="Permalink to this headline">¶</a></h5>
-<p>The <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> provides high-level concurrent code and asynchronous evaluation using coroutines and the <cite>async</cite>/<cite>await</cite> keywords. Asynchronous evaluation based on <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> requires an instance of <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageAsyncSession" title="wolframclient.evaluation.WolframLanguageAsyncSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframLanguageAsyncSession</span></code></a>, which methods are mostly coroutines.</p>
+<p><a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> provides high-level concurrent code and asynchronous evaluation using coroutines and the <cite>async</cite>/<cite>await</cite> keywords. Asynchronous evaluation based on <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> requires an instance of <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageAsyncSession" title="wolframclient.evaluation.WolframLanguageAsyncSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframLanguageAsyncSession</span></code></a>, whose methods are mostly coroutines.</p>
 <p>Define a coroutine <cite>delayed_evaluation</cite> that artificially delays evaluation, using an asyncio sleep coroutine. Use this newly created coroutine to evaluate a first expression, wait for the coroutine to finish and evaluate the second:</p>
 <div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
@@ -353,7 +353,7 @@ After 2.02s, result was available. Kernel evaluation returned: 2
 After 2.04s, both evaluations finished returning: [1, 2, 3], 6
 </pre></div>
 </div>
-<p>When coroutines can be evaluated independently one from each other, it is convenient to run them in parallel. Start two independent coroutines in a concurrent fashion, and wait for the result:</p>
+<p>When coroutines can be evaluated independently one from each other, it is convenient to run them in parallel. Start two independent coroutines in a concurrent fashion and wait for the result:</p>
 <div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -414,11 +414,11 @@ After 2.04s, both evaluations finished returning: [1, 2, 3], 6
 After 1.03s, both evaluations finished returning: hello, world!
 </pre></div>
 </div>
-<p>In the examples shown, only one Wolfram kernel was used, which is a single-threaded process. Evaluating two computation-heavy Wolfram Language expressions in parallel will have no impact on performances. This requires more than one kernel, which is exactly what kernel pool was designed for.</p>
+<p>In the examples shown, only one Wolfram kernel was used, which is a single-threaded process. Evaluating two computation-heavy Wolfram Language expressions in parallel will have no impact on performance. This requires more than one kernel, which is exactly what kernel pool was designed for.</p>
 </div>
 <div class="section" id="kernel-pool">
 <h5>Kernel Pool<a class="headerlink" href="#kernel-pool" title="Permalink to this headline">¶</a></h5>
-<p>A <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframEvaluatorPool" title="wolframclient.evaluation.WolframEvaluatorPool"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframEvaluatorPool</span></code></a> starts up a certain amount of evaluators and dispatch work load on them asynchronously. The pool is usable right after the first one has successfully started. Some may take more time to start and become available after a delay.</p>
+<p>A <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframEvaluatorPool" title="wolframclient.evaluation.WolframEvaluatorPool"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframEvaluatorPool</span></code></a> starts up a certain amount of evaluators and dispatches work load to them asynchronously. The pool is usable right after the first one has successfully started. Some may take more time to start and become available after a delay:</p>
 <div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -474,22 +474,22 @@ After 1.03s, both evaluations finished returning: hello, world!
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.evaluation</span> <span class="k">import</span> <span class="n">parallel_evaluate</span>
 </pre></div>
 </div>
-<p>Build a list of ten delayed <a class="wl external reference" href="http://reference.wolfram.com/language/ref/$ProcessID.html" target="_blank">$ProcessID</a>, which returns the kernel process identified (<cite>pid</cite>) after one second:</p>
+<p>Build a list of ten delayed <a class="wl external reference" href="http://reference.wolfram.com/language/ref/$ProcessID.html">$ProcessID</a> expressions, which returns the kernel process identified (<cite>pid</cite>) after one second:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">expressions</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Pause[1]; $ProcessID&#39;</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
 </pre></div>
 </div>
-<p>Evaluate in parallel and get back a list of ten values <cite>pid</cite>:</p>
+<p>Evaluate in parallel and get back a list of ten <cite>pid</cite> values:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">parallel_evaluate</span><span class="p">(</span><span class="n">expressions</span><span class="p">)</span>
 <span class="go">[72094, 72098, 72095, 72096, 72099, 72097, 72094, 72098, 72095, 72096]</span>
 </pre></div>
 </div>
-<p>The result varies but the pattern remains the same – namely, at least one process was started, and each process is eventually used more than once.</p>
+<p>The result varies, but the pattern remains the same—namely, at least one process was started, and each process is eventually used more than once.</p>
 </div>
 </div>
 </div>
 <div class="section" id="logging">
 <h3>Logging<a class="headerlink" href="#logging" title="Permalink to this headline">¶</a></h3>
-<p>Logging is often an important part of an application. The library relies on the standard <a class="reference external" href="https://docs.python.org/3/library/logging.html#module-logging" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">logging</span></code></a> module, and exposes various methods to control the level of information logged.</p>
+<p>Logging is often an important part of an application. The library relies on the standard <a class="reference external" href="https://docs.python.org/3/library/logging.html#module-logging" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">logging</span></code></a> module and exposes various methods to control the level of information logged.</p>
 <p>The first level of control is through the logging module itself. The Python library logs at various levels. Set up a basic configuration for the logging module to witness some messages in the standard output:</p>
 <div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
@@ -532,7 +532,7 @@ INFO:wolframclient.evaluation.kernel.kernelcontroller:Kernel 54259 is ready. Sta
 <p>It is also possible to log from within the kernel. This feature is disabled by default. When initializing a <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession" title="wolframclient.evaluation.WolframLanguageSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframLanguageSession</span></code></a>, the parameter <cite>kernel_loglevel</cite> can be specified with one of the following values to activate kernel logging: <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.DEBUG</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.INFO</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.WARNING</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.ERROR</span></code>.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">if a WolframLanguageSession is initialized with the default <cite>kernel_loglevel</cite> (i.e: <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.NOTSET</span></code>), kernel logging is disable for the session, and it is not possible to activate it afterward.</p>
+<p class="last">if a <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageSession" title="wolframclient.evaluation.WolframLanguageSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframLanguageSession</span></code></a> is initialized with the default <cite>kernel_loglevel</cite> (i.e. <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.NOTSET</span></code>), kernel logging is disable for the session, and it is not possible to activate it afterward.</p>
 </div>
 <p>From the Wolfram Language, it is possible to issue log messages using one of the following functions, given with its signature:</p>
 <div class="highlight-wl notranslate"><div class="highlight"><pre><span></span><span class="c">(* Sends a log message to Python with a given log level *)</span><span class="w"></span>
@@ -595,10 +595,10 @@ INFO:wolframclient.evaluation.kernel.kernelcontroller:Kernel 54259 is ready. Sta
 </div>
 </div>
 <div class="section" id="extending-serialization-writing-an-encoder">
-<h2>Extending serialization: Writing an Encoder<a class="headerlink" href="#extending-serialization-writing-an-encoder" title="Permalink to this headline">¶</a></h2>
-<p>Serialization of Python object involves encoders, which convert an input object into a stream of bytes. The library defines encoders for most built-in Python types and for some core libraries. It stores a mapping between types and encoder implementation. In order to serialize more classes, new encoders must be registered.</p>
+<h2>Extending Serialization: Writing an <cite>Encoder</cite><a class="headerlink" href="#extending-serialization-writing-an-encoder" title="Permalink to this headline">¶</a></h2>
+<p>Serialization of a Python object involves encoders, which convert an input object into a stream of bytes. The library defines encoders for most built-in Python types and for some core libraries. It stores a mapping between types and encoder implementation. In order to serialize more classes, new encoders must be registered.</p>
 <p>An encoder is a function of two arguments, the serializer and an object, associated with a type. The object is guaranteed to be an instance of the associated type.</p>
-<p>Register a new encoder for a user defined class:</p>
+<p>Register a new encoder for a user-defined class:</p>
 <div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -640,7 +640,7 @@ INFO:wolframclient.evaluation.kernel.kernelcontroller:Kernel 54259 is ready. Sta
 </span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="c1"># b&#39;Animal&#39;</span>
 </pre></div>
 </td></tr></table></div>
-<p>During export, for each object to serialize, the proper encoder is found by inspecting the type hierarchy (field <code class="xref py py-data docutils literal notranslate"><span class="pre">__mro__</span></code>). First, check that an encoder is associated with the object type, if not, repeat with the first parent type until one is found. The default encoder, associated with <code class="xref py py-data docutils literal notranslate"><span class="pre">object</span></code>, is used in last resort.</p>
+<p>During export, for each object to serialize, the proper encoder is found by inspecting the type hierarchy (field <code class="xref py py-data docutils literal notranslate"><span class="pre">__mro__</span></code>). First, check that an encoder is associated with the object type; if not, repeat with the first parent type until one is found. The default encoder, associated with <code class="xref py py-data docutils literal notranslate"><span class="pre">object</span></code>, is used as the last resort.</p>
 <p>Register some encoders for a hierarchy of classes:</p>
 <div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
@@ -724,10 +724,10 @@ INFO:wolframclient.evaluation.kernel.kernelcontroller:Kernel 54259 is ready. Sta
 </div>
 </div>
 <div class="section" id="extending-wxf-parsing-writing-a-wxfconsumer">
-<h2>Extending WXF Parsing: Writing a WXFConsumer<a class="headerlink" href="#extending-wxf-parsing-writing-a-wxfconsumer" title="Permalink to this headline">¶</a></h2>
+<h2>Extending WXF Parsing: Writing a <cite>WXFConsumer</cite><a class="headerlink" href="#extending-wxf-parsing-writing-a-wxfconsumer" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="integer-eigenvalues">
 <h3>Integer Eigenvalues<a class="headerlink" href="#integer-eigenvalues" title="Permalink to this headline">¶</a></h3>
-<p>Use the Wolfram Client Library to access the Wolfram Language algebra functions. Compute the integer <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Eigenvalues.html" target="_blank">Eigenvalues</a> on a Python matrix of integers:</p>
+<p>Use the Wolfram Client Library to access the Wolfram Language algebra functions. Compute the integer <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Eigenvalues.html">Eigenvalues</a> on a Python matrix of integers:</p>
 <div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -760,7 +760,7 @@ INFO:wolframclient.evaluation.kernel.kernelcontroller:Kernel 54259 is ready. Sta
 </div>
 <div class="section" id="complex-eigenvalues">
 <span id="complex-consumer"></span><h3>Complex Eigenvalues<a class="headerlink" href="#complex-eigenvalues" title="Permalink to this headline">¶</a></h3>
-<p>Python has built-in <a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">complex</span></code></a>. By default, the function <a class="reference internal" href="../api/wolframclient.deserializers.html#wolframclient.deserializers.binary_deserialize" title="wolframclient.deserializers.binary_deserialize"><code class="xref py py-func docutils literal notranslate"><span class="pre">binary_deserialize()</span></code></a> deserializes Wolfram Language functions using a generic class <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.expression.WLFunction" title="wolframclient.language.expression.WLFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLFunction</span></code></a>, but conveniently provides a way to extend the mapping. Define <cite>ComplexFunctionConsumer</cite>, a subclass of <a class="reference internal" href="../api/wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumer" title="wolframclient.deserializers.WXFConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumer</span></code></a> that overrides the method <a class="reference internal" href="../api/wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumer.build_function" title="wolframclient.deserializers.WXFConsumer.build_function"><code class="xref py py-meth docutils literal notranslate"><span class="pre">build_function()</span></code></a>. The subclassed method maps <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Complex.html" target="_blank">Complex</a> to the built-in Python complex.</p>
+<p>Python has the built-in class <a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">complex</span></code></a>. By default, the function <a class="reference internal" href="../api/wolframclient.deserializers.html#wolframclient.deserializers.binary_deserialize" title="wolframclient.deserializers.binary_deserialize"><code class="xref py py-func docutils literal notranslate"><span class="pre">binary_deserialize()</span></code></a> deserializes Wolfram Language functions using a generic class <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.expression.WLFunction" title="wolframclient.language.expression.WLFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLFunction</span></code></a> but conveniently provides a way to extend the mapping. Define <cite>ComplexFunctionConsumer</cite>, a subclass of <a class="reference internal" href="../api/wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumer" title="wolframclient.deserializers.WXFConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumer</span></code></a> that overrides the method <a class="reference internal" href="../api/wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumer.build_function" title="wolframclient.deserializers.WXFConsumer.build_function"><code class="xref py py-meth docutils literal notranslate"><span class="pre">build_function()</span></code></a>. The subclassed method maps <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Complex.html">Complex</a> to the built-in Python class <a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">complex</span></code></a>.</p>
 <div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -832,7 +832,7 @@ INFO:wolframclient.evaluation.kernel.kernelcontroller:Kernel 54259 is ready. Sta
 <div class="section" id="a-python-heavy-approach">
 <h4>A Python-Heavy Approach<a class="headerlink" href="#a-python-heavy-approach" title="Permalink to this headline">¶</a></h4>
 <p>Sometimes the resulting expression of an evaluation is a symbolic exact value, which nonetheless could be approximated to a numerical result. The eigenvalues of <img alt="3x3 Matrix. If this image does not display, it might be that your browser does not support the SVG image format." class="vertical-align" src="../_images/matrix.svg" /> are <img alt="Eigenvalue of the matrix. If this image does not display, it might be that your browser does not support the SVG image format." class="vertical-align" src="../_images/ev1.svg" />, <img alt="Eigenvalue of the matrix. If this image does not display, it might be that your browser does not support the SVG image format." class="vertical-align" src="../_images/ev2.svg" /> and <img alt="Eigenvalue of the matrix. If this image does not display, it might be that your browser does not support the SVG image format." class="vertical-align" src="../_images/ev3.svg" />.</p>
-<p>It is possible to build a subclass of <a class="reference internal" href="../api/wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumer" title="wolframclient.deserializers.WXFConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumer</span></code></a> that can convert a subset of all Wolfram Language symbols into pure built-in Python objects. It has to deal with <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Plus.html" target="_blank">Plus</a> and <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Times.html" target="_blank">Times</a>, converts <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Pi.html" target="_blank">Pi</a> to <code class="xref py py-class docutils literal notranslate"><span class="pre">math.pi</span></code>, <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Rational.html" target="_blank">Rational</a> to <a class="reference external" href="https://docs.python.org/3/library/fractions.html#fractions.Fraction" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">fractions.Fraction</span></code></a> and <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Complex.html" target="_blank">Complex</a> to <a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">complex</span></code></a>. It results in a significant code inflation but provide a detailed review of the extension mechanism. However, as will be shown, this is not really necessary.</p>
+<p>It is possible to build a subclass of <a class="reference internal" href="../api/wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumer" title="wolframclient.deserializers.WXFConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumer</span></code></a> that can convert a subset of all Wolfram Language symbols into pure built-in Python objects. It has to deal with <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Plus.html">Plus</a> and <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Times.html">Times</a> and converts <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Pi.html">Pi</a> to <code class="xref py py-class docutils literal notranslate"><span class="pre">math.pi</span></code>, <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Rational.html">Rational</a> to <a class="reference external" href="https://docs.python.org/3/library/fractions.html#fractions.Fraction" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">fractions.Fraction</span></code></a> and <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Complex.html">Complex</a> to <a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">complex</span></code></a>. It results in a significant code inflation but provides a detailed review of the extension mechanism. However, as will be shown, this is not really necessary:</p>
 <div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -1009,7 +1009,7 @@ INFO:wolframclient.evaluation.kernel.kernelcontroller:Kernel 54259 is ready. Sta
 </div>
 <div class="section" id="a-wolfram-language-alternative">
 <h4>A Wolfram Language Alternative<a class="headerlink" href="#a-wolfram-language-alternative" title="Permalink to this headline">¶</a></h4>
-<p>It is recommended to delegate as much as possible to the Wolfram Language. Instead of implementing a (fragile) counterpart of core functions such as <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Plus.html" target="_blank">Plus</a> or <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Times.html" target="_blank">Times</a>, it is best to compute a numerical result within the kernel. This can be achieved with the function <a class="wl external reference" href="http://reference.wolfram.com/language/ref/N.html" target="_blank">N</a>. Once applied to the eigenvalues the result becomes a mixture of complex values and reals, which was already dealt with in the <a class="reference internal" href="#complex-consumer"><span class="std std-ref">previous section</span></a>.</p>
+<p>It is recommended to delegate as much as possible to the Wolfram Language. Instead of implementing a (fragile) counterpart of core functions such as <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Plus.html">Plus</a> or <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Times.html">Times</a>, it is best to compute a numerical result within the kernel. This can be achieved with the function <a class="wl external reference" href="http://reference.wolfram.com/language/ref/N.html">N</a>. Once applied to the eigenvalues, the result becomes a mixture of complex values and reals, which was already dealt with in the <a class="reference internal" href="#complex-consumer"><span class="std std-ref">previous section</span></a>:</p>
 <div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -1086,7 +1086,7 @@ INFO:wolframclient.evaluation.kernel.kernelcontroller:Kernel 54259 is ready. Sta
         href="../index.html">Overview</a>
 </div>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="install.html">Installation and prerequisites</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation and Prerequisites</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="install.html#prerequisites">Prerequisites</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#installation">Installation</a></li>
 </ul>
@@ -1101,8 +1101,8 @@ INFO:wolframclient.evaluation.kernel.kernelcontroller:Kernel 54259 is ready. Sta
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Advanced Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#expression-representation">Expression Representation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#local-kernel-evaluation">Local Kernel Evaluation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#extending-serialization-writing-an-encoder">Extending serialization: Writing an Encoder</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#extending-wxf-parsing-writing-a-wxfconsumer">Extending WXF Parsing: Writing a WXFConsumer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#extending-serialization-writing-an-encoder">Extending Serialization: Writing an <cite>Encoder</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#extending-wxf-parsing-writing-a-wxfconsumer">Extending WXF Parsing: Writing a <cite>WXFConsumer</cite></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="public_api.html">Guide</a><ul>
@@ -1133,7 +1133,7 @@ INFO:wolframclient.evaluation.kernel.kernelcontroller:Kernel 54259 is ready. Sta
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script><footer class='copyright'>
     <div>
-        <span>&#169; Copyright 2019, Wolfram Research.</span>
+        <span>&#169; 2019 Wolfram Research. All rights reserved.</span>
     </div>
 </footer>
         </div>

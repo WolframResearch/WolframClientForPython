@@ -11,7 +11,7 @@ Basic Usage
 Expression Representation
 ==========================================
 
-The library exposes many kinds of interactions with the Wolfram Language, many of which require representation of Wolfram Language expressions as Python objects. A fast introduction to the Wolfram Language is available at https://www.wolfram.com/language/fast-introduction-for-programmers.
+The library exposes many kinds of interactions with the Wolfram Language, many of which require representation of Wolfram Language expressions as Python objects. If you are new to the Wolfram Language, the `Fast Introduction for Programmers <https://www.wolfram.com/language/fast-introduction-for-programmers>`_ is a good place to start.
 
 A straightforward way to construct Python objects representing expressions is to call attributes of :data:`~wolframclient.language.wl`.
 
@@ -29,7 +29,7 @@ Functions are represented in a similar fashion::
     >>> wl.Select(wl.PrimeQ, wl.Range(5))
     Select[PrimeQ, Range[5]]
 
-Option are defined using named parameters. :wl:`ArrayPad` accepts option :wl:`Padding`::
+Options are defined using named parameters. :wl:`ArrayPad` accepts the option :wl:`Padding`::
 
     >>> wl.ArrayPad([[0]], 1, Padding=1)
     ArrayPad[[[0]], 1, Rule[Padding, 1]]
@@ -43,7 +43,7 @@ Represent a Wolfram Language pure function::
     >>> wlexpr('#^2 &')
     (#^2 &)
     
-Evaluate :wlcode:`Map[#^2 &, {1,2,3}]`, by combining both methods. Insert :wlcode:`#^2 &`, using :func:`~wolframclient.language.wlexpr`, into :wl:`Map` represented with :data:`~wolframclient.language.wl`::
+Evaluate :wlcode:`Map[#^2 &, {1,2,3}]` by combining both methods. Insert :wlcode:`#^2 &`, using :func:`~wolframclient.language.wlexpr`, into :wl:`Map` represented with :data:`~wolframclient.language.wl`::
 
     >>> wl.Map(wlexpr('#^2&'), [1,2,3])
     Map[(#^2&), [1, 2, 3]]
@@ -54,7 +54,7 @@ Evaluate :wlcode:`Map[#^2 &, {1,2,3}]`, by combining both methods. Insert :wlcod
 Expression Evaluation
 =======================
 
-The evaluation of Wolfram Language expressions directly from Python requires you to initialize a session either to a local Wolfram Engine or to the cloud. Local sessions are persistent, whereas cloud sessions only support "one-shot" evaluations, meaning that a fresh engine is used for each evaluation. Cloud session authentication is detailed in a dedicated :ref:`sub-section<ref-auth>` of this page.
+The evaluation of Wolfram Language expressions directly from Python requires you to initialize a session either to a local Wolfram Engine or to the cloud. Local sessions are persistent, whereas cloud sessions only support "one-shot" evaluations, meaning that a fresh engine is used for each evaluation. Cloud session authentication is detailed in a dedicated :ref:`subsection<ref-auth>` of this page.
 
 .. _ref-localkernel:
 
@@ -63,10 +63,10 @@ Local Evaluation
 
 The Wolfram Language session :class:`~wolframclient.evaluation.WolframLanguageSession` enables local evaluation of Wolfram Language code directly from Python. 
 
-A session must interact with a Wolfram Engine executable. The library automatically discovers Wolfram Engines installed at the default location. A specific Wolfram Engine can be specified by its path. The executable is located relative to the top level directory returned by the Wolfram Language symbol :wl:`$InstallationDirectory`. The relative path from this directory depends on the operating system:
+A session must interact with a Wolfram Engine executable. The library automatically discovers Wolfram Engines installed at the default location. A specific Wolfram Engine can be specified by its path. The executable is located relative to the top-level directory returned by the Wolfram Language symbol :wl:`$InstallationDirectory`. The relative path from this directory depends on the operating system:
     
-    * On `MacOS`: `Contents/MacOS/WolframKernel`
-    * On `Windows`: `WolframKernel.exe`
+    * On MacOS: `Contents/MacOS/WolframKernel`
+    * On Windows: `WolframKernel.exe`
     * On Linux: `Executables/WolframKernel`
 
 
@@ -81,17 +81,17 @@ Create a session using the default path::
 
     >>> session = WolframLanguageSession()
 
-The default path depends on the environment, and may also depend on the version.
+The default path depends on the environment and may also depend on the version.
 
-On `MacOS`::
+On MacOS::
 
     >>> session = WolframLanguageSession('/Applications/Wolfram Desktop.app/Contents/MacOS/WolframKernel')
 
-On `Windows`::
+On Windows::
 
     >>> session = WolframLanguageSession('C:\\Program Files\\Wolfram Research\\Wolfram Desktop\\11.3\\WolframKernel.exe')
 
-On `Linux`::
+On Linux::
 
     >>> session = WolframLanguageSession('/usr/local/Wolfram/Desktop/11.3/Executables/WolframKernel')
 
@@ -113,7 +113,7 @@ Evaluate :wlcode:`MinMax[{1, 5, -3, 9}]`, using the Wolfram Language function :w
     >>> session.evaluate(wl.MinMax([1, 5, -3, 9]))
     [-3, 9]
 
-Query `WolframAlpha <https://www.wolframalpha.com/>`_ for the distance between the Earth and the Sun using :wl:`WolframAlpha`::
+Query `Wolfram|Alpha <https://www.wolframalpha.com/>`_ for the distance between Earth and the sun using :wl:`WolframAlpha`::
 
     >>> distance = session.evaluate(wl.WolframAlpha("Earth distance from Sun", "Result"))
     Quantity[1.008045994315923, AstronomicalUnit]
@@ -139,7 +139,7 @@ Evaluate :wlcode:`AssociationMap[FromLetterNumber, {1, 3, 5}]`::
 Options
 +++++++++
 
-Wolfram Language options are passed as Python named arguments (a.k.a. `**kwargs`). As seen previously, :wl:`ArrayPad` accepts an option :wl:`Padding` to specify what padding to use.
+Wolfram Language options are passed as Python named arguments (a.k.a. `**kwargs`). As seen previously, :wl:`ArrayPad` accepts the option :wl:`Padding` to specify what padding to use.
 
 Evaluate :wlcode:`ArrayPad[{{0}}, 1, Padding->1]`::
 
@@ -167,7 +167,7 @@ Evaluate an alternative representation of the previous expression::
 
     >>> session.evaluate(wl.Map(wlexpr('#^2&'), wl.Range(5)))
 
-Data visualization
+Data Visualization
 ++++++++++++++++++++
 
 Create a :wl:`BarChart` from arbitrary Python data::
@@ -175,12 +175,12 @@ Create a :wl:`BarChart` from arbitrary Python data::
     >>> data = [.3, 2, 4, 5, 5.5]
     >>> graphic = wl.BarChart(data)
 
-Wrap it with :wl:`Export` to save the graphic to disc, as an image::
+Wrap it with :wl:`Export` to save the graphic to disk as an image::
 
     >>> path = "/tmp/data.png"
     >>> png_export = wl.Export(path, graphic, "PNG")
 
-Evaluate the expression 
+Evaluate the expression::
 
     >>> session.evaluate(png_export)
     '/tmp/data.png'
@@ -208,7 +208,9 @@ Use the Wolfram Language to compute the image dimensions::
 Persistence
 +++++++++++
 
-Expressions evaluated in a given session are persistent. Define a function::
+Expressions evaluated in a given session are persistent.
+
+Define a function::
     
     >>> session.evaluate('f[x_] := x ^ 2')
     Null
@@ -218,8 +220,8 @@ Call it::
     >>> session.evaluate('f[4]')
     16
 
-Create Python Function
-++++++++++++++++++++++
+Create a Python Function
++++++++++++++++++++++++++
 
 From a Wolfram Language expression, it is possible to create a Python function that directly evaluates when called using :meth:`~wolframclient.evaluation.base.WolframEvaluator.function`::
 
@@ -257,7 +259,7 @@ Create a Python function from it::
 
     >>> capital_distance = session.function(wlexpr('distance'))
 
-Alternatively, use the Global expression constructor::
+Alternatively, use the :data:`Global` expression constructor::
 
     >>> from wolframclient.language import Global
     >>> capital_distance = session.function(Global.distance)
@@ -270,23 +272,25 @@ Apply the function::
     >>> capital_distance('Canada', 'USA')
     721.9965597052519
 
-The session is no more useful, so terminate it::
+The session is no longer useful, so terminate it::
 
     >>> session.terminate()
 
-Session management
+Session Management
 +++++++++++++++++++++
 
 :class:`~wolframclient.evaluation.WolframLanguageSession` must be terminated, either by explicitly calling :func:`~wolframclient.evaluation.WolframLanguageSession.terminate` or, alternatively, in a `with` block that achieves the same result automatically. 
 
-A Wolfram Language session starts on average in about a second. For this reason, it is highly recommended to initialize a session once and for all.
+A Wolfram Language session starts, on average, in about one second. For this reason, it is highly recommended to initialize a session only once.
 
 Start a session manually::
 
     >>> session = WolframLanguageSession()
     >>> session.start()
 
-This is not required, since this operation is automatically performed during the first evaluation. Ensure the session started successfully:
+This is not required since this operation is automatically performed during the first evaluation.
+
+Ensure the session started successfully:
 
     >>> session.started
     True
@@ -298,7 +302,7 @@ Manually terminate the session::
 .. note::
     non-terminated sessions usually result in orphan kernel processes, which ultimately lead to the inability to spawn any usable instance at all.
 
-Alternatively, delegate the handling of the life-cycle of a session using a `with` block::
+Alternatively, delegate the handling of the life cycle of a session using a `with` block::
 
     >>> with WolframLanguageSession() as wl_session:
     ...     wl_session.evaluate(wl.StringReverse('abc'))
@@ -311,7 +315,7 @@ Alternatively, delegate the handling of the life-cycle of a session using a `wit
 Wolfram Cloud Interactions
 ==============================
 
-Most Cloud interactions require proper authentication to the Wolfram Cloud. Authentication from the library is done with a secured authentication key. Secured authentication keys are attached to a Wolfram account. To create one, visit https://account.wolfram.com/auth/create.
+Most Cloud interactions require proper authentication to the Wolfram Cloud. Authentication from the library is done with a secured authentication key. Secured authentication keys are attached to a Wolfram account. To create one, register `here <https://account.wolfram.com/auth/create>`_.
 
 .. _ref-auth:
 
@@ -321,7 +325,7 @@ Authenticate
 Generate a Secured Authentication Key
 +++++++++++++++++++++++++++++++++++++
 
-Using a Wolfram Desktop, or a the Wolfram Public Cloud, generate a new authentication key, and give it a name e.g. `pythonclientlibrary`:
+Using Wolfram Desktop or the Wolfram Public Cloud, generate a new authentication key and give it a name e.g. `pythonclientlibrary`:
 
 .. code-block :: wl
 
@@ -335,10 +339,10 @@ Get the key and secret as strings:
     sak["ConsumerSecret"]   (* "VGhhdCdzIE1ZIHNlY3JldCE=" *)
 
 
-Start authenticated cloud session
-++++++++++++++++++++++++++++++++++
+Start an Authenticated Cloud Session
++++++++++++++++++++++++++++++++++++++
 
-Begin by importing the classes :class:`~wolframclient.evaluation.SecuredAuthenticationKey` and :class:`~wolframclient.evaluation.WolframCloudSession` from the :mod:`~wolframclient.evaluation` module.
+Begin by importing the classes :class:`~wolframclient.evaluation.SecuredAuthenticationKey` and :class:`~wolframclient.evaluation.WolframCloudSession` from the :mod:`~wolframclient.evaluation` module::
 
     >>> from wolframclient.evaluation import SecuredAuthenticationKey, WolframCloudSession
 
@@ -348,7 +352,7 @@ Create a new instance of :class:`~wolframclient.evaluation.SecuredAuthentication
     ...     'T2ghIEhpISDinIw=',
     ...     'VGhhdCdzIE1ZIHNlY3JldCE=')
 
-Using `sak`, start a new authenticated cloud session:: 
+Using `sak`, start a new authenticated cloud session::
 
     >>> session = WolframCloudSession(credentials=sak)
     >>> session.start()
@@ -398,7 +402,7 @@ Create a cloud function from a built-in symbol::
 
     >>> wl_str_reverse = session.function(wl.StringReverse)
 
-Apply it to a first string::
+Apply it to a string first::
 
     >>> wl_str_reverse("hello")
     'olleh'
@@ -408,7 +412,7 @@ Use the function again with a new argument::
     >>> wl_str_reverse("world.")
     '.dlrow'
 
-Define a :ref:`complex function<ref-capital-distance>` as a pure function suited for a usage in the cloud:
+Define a :ref:`complex function<ref-capital-distance>` as a pure function suited for usage in the cloud:
 
 .. code-block :: wl 
 
@@ -473,7 +477,7 @@ Deploy the API as a cloud object named `api/private/xsquared`:
 
     CloudDeploy[api, CloudObject["api/private/xsquared"]]
 
-The API was deployed with default permissions, and as such is a private :wl:`CloudObject` only usable by its owner. Provide read access to the newly created secured authentication key called `pythonclientlibrary`:
+The API was deployed with default permissions and as such is a private :wl:`CloudObject` only usable by its owner. Provide read access to the newly created secured authentication key called `pythonclientlibrary`:
 
 .. code-block :: wl
 
@@ -490,7 +494,7 @@ Once again, an :ref:`authenticated session<ref-auth>` is needed to call the API 
 
     >>> api = ('MyWolframID', 'api/private/xsquared')
 
-The API's sole input is "`list`". In general, an API value is specified as a :class:`dict`, in which keys are parameters names. A :class:`list` in Python is automatically converted to a Wolfram Language :wl:`List` and is thus a valid API input values. 
+The API's sole input is "`list`". In general, an API value is specified as a :class:`dict`, in which keys are parameter names. A :class:`list` in Python is automatically converted to a Wolfram Language :wl:`List` and is thus a valid API input value.
 
 Call the API::
 
@@ -580,7 +584,7 @@ Parse the JSON API response::
 Serialization
 =============
 
-This library is intended to provide a way to serialize Python expressions to Wolfram Language :wl:`InputForm` strings and :wl:`WXF` strings of bytes. The functionality was designed to be extensible, so that any arbitrary Python object can be serialized with the addition of custom encoders.
+This library is intended to provide a way to serialize Python expressions to Wolfram Language :wl:`InputForm` strings and :wl:`WXF` strings of bytes. The functionality was designed to be extensible so that any arbitrary Python object can be serialized with the addition of custom encoders.
 
 Serialize
 ----------
@@ -618,7 +622,7 @@ Expressions can be nested and mixed with serializable Python types::
     >>> export(wl.Select([1,2,3], wl.PrimeQ))
     b'Select[{1, 2, 3}, PrimeQ]'
 
-The :wl:`WXF` format is also supported. It is a binary format, thus not always human readable, but it is the most efficient way to exchange Wolfram Language expressions. Specify a `target_format` argument to serialize the previous expression to WXF::
+The :wl:`WXF` format is also supported. It is a binary format, thus not always human readable, but it is the most efficient way to exchange Wolfram Language expressions. Specify a `target_format` argument to serialize the previous expression to :wl:`WXF`::
 
     >>> export(wl.Select([1,2,3], wl.PrimeQ), target_format='wxf')
     b'f\x02s\x06Selectf\x03s\x04ListC\x01C\x02C\x03s\x06PrimeQ'
@@ -634,7 +638,7 @@ Serialize it to :wl:`WXF` and print the resulting bytes to the file `/path/to/fi
     >>> export(wl_expr, stream='/path/to/file.wxf', target_format='wxf')
     '/path/to/file.wxf'
 
-Using the Wolfram Desktop, import the file:
+Using Wolfram Desktop, import the file:
 
 .. code-block:: wl
 
@@ -646,31 +650,31 @@ Using the Wolfram Desktop, import the file:
 
 The library also provides extensible serialization mechanisms for custom Python classes. Refer to the :ref:`API guide page<extensible-serialization>` for detailed explanations and to the :doc:`examples page<advanced_usages>` for some use cases.
 
-Popular libraries support
+Popular Libraries Support
 --------------------------
 
 PIL
 +++++
 
-PIL :data:`Image` are serialized to Wolfram Language :wl:`Image`. Most image modes are supported. Popular modes are natively supported, their raw pixel data corresponds to the one used in the Wolfram Language. These modes enable fast serialization and deserialization. When the mode is not supported natively, the raw pixel data is converted back to the original format of the image and imported in the Wolfram Language. When there is no original format specified, and when the mode is not natively supported, the image is encoded as `PNG` first. Except for the last case which is uncommon, images are faithfully serialized.
+PIL :data:`Image` are serialized to the Wolfram Language function :wl:`Image`. Most image modes are supported. Popular modes are natively supported; their raw pixel data corresponds to the one used in the Wolfram Language. These modes enable fast serialization and deserialization. When the mode is not supported natively, the raw pixel data is converted back to the original format of the image and imported into the Wolfram Language. When there is no original format specified and when the mode is not natively supported, the image is encoded as `PNG` first. Except for the last case, which is uncommon, images are faithfully serialized.
 
 NumPy
 +++++++
 
-Numpy arrays of integers signed and unsigned, floats, and complexes are serialized to Wolfram Language :wl:`NumericArray`. Numeric types are also supported (e.g.: :data:`numpy.integer`, :data:`numpy.float16`, etc).
+NumPy arrays of signed and unsigned integers, floats and complexes are serialized to the Wolfram Language function :wl:`NumericArray`. Numeric types are also supported (e.g. :data:`numpy.integer`, :data:`numpy.float16`, etc.).
 
 Pandas
 ++++++++
 
 The library supports Pandas core classes :data:`Series` and :data:`DataFrame`. 
 
-The serialized form of a :data:`Series` depends on its index. :data:`Series` indexed with a :data:`DatetimeIndex` are serialized to :wl:`TimeSeries`. :data:`Series` indexed with a :data:`MultiIndex` are serialized to :wl:`Dataset`. Other series are serialized to :wl:`Association`. In :func:`~wolframclient.serializers.export`, it is possible to set `pandas_series_head` to any of: `'association'`, `'dataset'`, or `'list'` to specify the outer head.
+The serialized form of a :data:`Series` depends on its index. :data:`Series` indexed with a :data:`DatetimeIndex` are serialized to :wl:`TimeSeries`. :data:`Series` indexed with a :data:`MultiIndex` are serialized to :wl:`Dataset`. Other series are serialized to :wl:`Association`. In :func:`~wolframclient.serializers.export`, it is possible to set `pandas_series_head` to any of `'association'`, `'dataset'` or `'list'` to specify the outer head.
 
 Import the library::
 
     >>> import pandas
 
-Create a simple Series::
+Create a simple :data:`Series`::
 
     >>> series = pandas.Series([1, 2, 3], index=[-1, 'a', 1])
 

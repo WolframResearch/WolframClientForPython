@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Guide &#8212; Wolfram Client Library for Python 1.0.1 documentation</title>
+    <title>Guide &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -63,7 +63,7 @@
                                 </span>
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.1</span>
+                        <span class='header right navigation darkgrey'>v 1.0.2</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -84,42 +84,51 @@
 </div>
 <p>The Wolfram Client Library is structured in submodules all located in <a class="reference internal" href="../api/wolframclient.html#module-wolframclient" title="wolframclient"><code class="xref py py-mod docutils literal notranslate"><span class="pre">wolframclient</span></code></a>:</p>
 <ul class="simple">
-<li><a class="reference internal" href="../api/wolframclient.evaluation.html#module-wolframclient.evaluation" title="wolframclient.evaluation"><code class="xref py py-mod docutils literal notranslate"><span class="pre">evaluation</span></code></a> provides convenient methods to evaluate Wolfram Language expressions directly from Python. There are many ways to evaluate code including: evaluation by a local kernel, direct evaluation by a public or private Wolfram Cloud, calling a deployed API.</li>
+<li><a class="reference internal" href="../api/wolframclient.evaluation.html#module-wolframclient.evaluation" title="wolframclient.evaluation"><code class="xref py py-mod docutils literal notranslate"><span class="pre">evaluation</span></code></a> provides convenient methods to evaluate Wolfram Language expressions directly from Python. There are many ways to evaluate code, including evaluation by a local kernel, direct evaluation by a public or private Wolfram Cloud or calling a deployed API.</li>
 <li><a class="reference internal" href="../api/wolframclient.language.html#module-wolframclient.language" title="wolframclient.language"><code class="xref py py-mod docutils literal notranslate"><span class="pre">language</span></code></a> provides a Python representation of Wolfram Language symbols and functions.</li>
-<li><a class="reference internal" href="../api/wolframclient.serializers.html#module-wolframclient.serializers" title="wolframclient.serializers"><code class="xref py py-mod docutils literal notranslate"><span class="pre">serializers</span></code></a> provides serialization methods to various formats such as string <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html" target="_blank">InputForm</a> and binary <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html" target="_blank">WXF</a> format.</li>
-<li><a class="reference internal" href="../api/wolframclient.deserializers.html#module-wolframclient.deserializers" title="wolframclient.deserializers"><code class="xref py py-mod docutils literal notranslate"><span class="pre">deserializers</span></code></a> contains a parser for <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html" target="_blank">WXF</a>.</li>
+<li><a class="reference internal" href="../api/wolframclient.serializers.html#module-wolframclient.serializers" title="wolframclient.serializers"><code class="xref py py-mod docutils literal notranslate"><span class="pre">serializers</span></code></a> provides serialization methods to various formats such as string <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html">InputForm</a> and binary <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html">WXF</a> format.</li>
+<li><a class="reference internal" href="../api/wolframclient.deserializers.html#module-wolframclient.deserializers" title="wolframclient.deserializers"><code class="xref py py-mod docutils literal notranslate"><span class="pre">deserializers</span></code></a> contains a parser for <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html">WXF</a>.</li>
 <li><a class="reference internal" href="../api/wolframclient.html#module-wolframclient.exception" title="wolframclient.exception"><code class="xref py py-mod docutils literal notranslate"><span class="pre">exception</span></code></a> regroups the exceptions and errors that the library may raise.</li>
 </ul>
 <div class="section" id="expression-representation">
 <h2>Expression Representation<a class="headerlink" href="#expression-representation" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
+<dl class="data">
 <dt>
-<code class="descclassname">wolframclient.language.</code><code class="descname">wl</code><span class="sig-paren">(</span><em>*args</em>, <em>**opts</em><span class="sig-paren">)</span></dt>
-<dd><p>Provide a convenient way to build objects representing arbitrary Wolfram Language expressions through the use of attributes.</p>
-<p>This class is conveniently instantiated at startup as: <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-class docutils literal notranslate"><span class="pre">wl</span></code></a>, <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.Global" title="wolframclient.language.Global"><code class="xref py py-class docutils literal notranslate"><span class="pre">Global</span></code></a> 
-and <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.System" title="wolframclient.language.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">System</span></code></a>. It should be instantiated only to represent many symbols belonging to the same specific
-context.</p>
-<p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dev</span> <span class="o">=</span> <span class="n">WLSymbolFactory</span><span class="p">(</span><span class="s1">&#39;Developer&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dev</span><span class="o">.</span><span class="n">PackedArrayQ</span>
-<span class="go">Developer`PackedArrayQ</span>
+<code class="descclassname">wolframclient.language.</code><code class="descname">wl</code></dt>
+<dd><p>A factory of <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.expression.WLSymbol" title="wolframclient.language.expression.WLSymbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbol</span></code></a> instances without any particular context.</p>
+<p>This instance of <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.expression.WLSymbolFactory" title="wolframclient.language.expression.WLSymbolFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbolFactory</span></code></a> is conveniently used
+by calling its attributes. The following code represents various Wolfram Language expressions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Now</span>
+<span class="n">wl</span><span class="o">.</span><span class="n">Now</span>
+<span class="c1"># Quantity[3, &quot;Hours&quot;]</span>
+<span class="n">wl</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Hours&quot;</span><span class="p">)</span>
+<span class="c1"># Select[PrimeQ, {1,2,3,4}]</span>
+<span class="n">wl</span><span class="o">.</span><span class="n">Select</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">PrimeQ</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>Alternative:</p>
+<p>Represent symbols in various contexts:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">Developer</span><span class="o">.</span><span class="n">PackedArrayQ</span>
 <span class="go">Developer`PackedArrayQ</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">Global</span><span class="o">.</span><span class="n">f</span>
+<span class="go">Global`f</span>
+</pre></div>
+</div>
+<p>Specify a context and a subcontext:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">MyContext</span><span class="o">.</span><span class="n">MySubContext</span><span class="o">.</span><span class="n">SymbolName</span>
+<span class="go">MyContext`MySubContext`SymbolName</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
+<dl class="data">
 <dt>
-<code class="descclassname">wolframclient.language.</code><code class="descname">wlexpr</code><span class="sig-paren">(</span><em>input</em><span class="sig-paren">)</span></dt>
+<code class="descclassname">wolframclient.language.</code><code class="descname">wlexpr</code><em class="property"> = &lt;class 'wolframclient.language.expression.WLInputExpression'&gt;</em></dt>
 <dd><p>Represent Wolfram Language expressions with input form strings.</p>
 <p>Convenient alias for <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.expression.WLInputExpression" title="wolframclient.language.expression.WLInputExpression"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLInputExpression</span></code></a>.</p>
 <p>Represent an expression:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wlexpr</span><span class="p">(</span><span class="s1">&#39;Select[EvenQ, Range[10]]&#39;</span><span class="p">)</span>
-<span class="go">(Select[EvenQ, Range[10]])</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wlexpr</span><span class="p">(</span><span class="s1">&#39;Select[Range[10], EvenQ]&#39;</span><span class="p">)</span>
+<span class="go">(Select[Range[10], EvenQ])</span>
 </pre></div>
 </div>
 <p>Represent a pure function that squares an input argument:</p>
@@ -129,53 +138,45 @@ context.</p>
 </div>
 </dd></dl>
 
-<dl class="function">
+<dl class="data">
 <dt>
-<code class="descclassname">wolframclient.language.</code><code class="descname">System</code><span class="sig-paren">(</span><em>*args</em>, <em>**opts</em><span class="sig-paren">)</span></dt>
-<dd><p>Provide a convenient way to build objects representing arbitrary Wolfram Language expressions through the use of attributes.</p>
-<p>This class is conveniently instantiated at startup as: <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-class docutils literal notranslate"><span class="pre">wl</span></code></a>, <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.Global" title="wolframclient.language.Global"><code class="xref py py-class docutils literal notranslate"><span class="pre">Global</span></code></a> 
-and <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.System" title="wolframclient.language.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">System</span></code></a>. It should be instantiated only to represent many symbols belonging to the same specific
-context.</p>
-<p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dev</span> <span class="o">=</span> <span class="n">WLSymbolFactory</span><span class="p">(</span><span class="s1">&#39;Developer&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dev</span><span class="o">.</span><span class="n">PackedArrayQ</span>
-<span class="go">Developer`PackedArrayQ</span>
-</pre></div>
-</div>
-<p>Alternative:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">Developer</span><span class="o">.</span><span class="n">PackedArrayQ</span>
-<span class="go">Developer`PackedArrayQ</span>
+<code class="descclassname">wolframclient.language.</code><code class="descname">System</code><em class="property"> = System</em></dt>
+<dd><p>A factory of <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.expression.WLSymbol" title="wolframclient.language.expression.WLSymbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbol</span></code></a> instances having <code class="docutils literal notranslate"><span class="pre">System`</span></code> context.</p>
+<p>See <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.expression.WLSymbolFactory" title="wolframclient.language.expression.WLSymbolFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbolFactory</span></code></a> for more details.</p>
+<p>Represent a symbol in the System context:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">System</span><span class="o">.</span><span class="n">ImageIdentify</span>
+<span class="go">System`ImageIdentify</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
+<dl class="data">
 <dt>
-<code class="descclassname">wolframclient.language.</code><code class="descname">Global</code><span class="sig-paren">(</span><em>*args</em>, <em>**opts</em><span class="sig-paren">)</span></dt>
-<dd><p>Provide a convenient way to build objects representing arbitrary Wolfram Language expressions through the use of attributes.</p>
-<p>This class is conveniently instantiated at startup as: <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-class docutils literal notranslate"><span class="pre">wl</span></code></a>, <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.Global" title="wolframclient.language.Global"><code class="xref py py-class docutils literal notranslate"><span class="pre">Global</span></code></a> 
-and <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.System" title="wolframclient.language.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">System</span></code></a>. It should be instantiated only to represent many symbols belonging to the same specific
-context.</p>
-<p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dev</span> <span class="o">=</span> <span class="n">WLSymbolFactory</span><span class="p">(</span><span class="s1">&#39;Developer&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dev</span><span class="o">.</span><span class="n">PackedArrayQ</span>
-<span class="go">Developer`PackedArrayQ</span>
+<code class="descclassname">wolframclient.language.</code><code class="descname">Global</code><em class="property"> = Global</em></dt>
+<dd><p>A factory of <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.expression.WLSymbol" title="wolframclient.language.expression.WLSymbol"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbol</span></code></a> instances having <code class="docutils literal notranslate"><span class="pre">Global`</span></code> context.</p>
+<p>See <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.expression.WLSymbolFactory" title="wolframclient.language.expression.WLSymbolFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbolFactory</span></code></a> and
+<a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.expression.WLSymbolFactory" title="wolframclient.language.expression.WLSymbolFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSymbolFactory</span></code></a> for more details.</p>
+<p>Represent a symbol in the Global context:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Global</span><span class="o">.</span><span class="n">mySymbol</span>
+<span class="go">Global`mySymbol</span>
 </pre></div>
 </div>
-<p>Alternative:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">Developer</span><span class="o">.</span><span class="n">PackedArrayQ</span>
-<span class="go">Developer`PackedArrayQ</span>
+<p>Represent a function call to a function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Global</span><span class="o">.</span><span class="n">myFunction</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+<span class="go">Global`myFunction[&#39;foo&#39;]</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
+<dl class="class">
 <dt>
-<code class="descclassname">wolframclient.language.expression.</code><code class="descname">WLSymbolFactory</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/expression.html#WLSymbolFactory"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Provide a convenient way to build objects representing arbitrary Wolfram Language expressions through the use of attributes.</p>
-<p>This class is conveniently instantiated at startup as: <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-class docutils literal notranslate"><span class="pre">wl</span></code></a>, <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.Global" title="wolframclient.language.Global"><code class="xref py py-class docutils literal notranslate"><span class="pre">Global</span></code></a> 
-and <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.System" title="wolframclient.language.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">System</span></code></a>. It should be instantiated only to represent many symbols belonging to the same specific
-context.</p>
+<em class="property">class </em><code class="descclassname">wolframclient.language.expression.</code><code class="descname">WLSymbolFactory</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/expression.html#WLSymbolFactory"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Provide a convenient way to build objects representing arbitrary Wolfram Language expressions through the use of
+attributes.</p>
+<p>This class is conveniently instantiated at startup as <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.wl" title="wolframclient.language.wl"><code class="xref py py-class docutils literal notranslate"><span class="pre">wl</span></code></a>,
+<a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.Global" title="wolframclient.language.Global"><code class="xref py py-class docutils literal notranslate"><span class="pre">Global</span></code></a>
+and <a class="reference internal" href="../api/wolframclient.language.html#wolframclient.language.System" title="wolframclient.language.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">System</span></code></a>. It should be instantiated only to represent many symbols belonging to
+the same specific context.</p>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dev</span> <span class="o">=</span> <span class="n">WLSymbolFactory</span><span class="p">(</span><span class="s1">&#39;Developer&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dev</span><span class="o">.</span><span class="n">PackedArrayQ</span>
@@ -196,10 +197,11 @@ context.</p>
 <dt>
 <code class="descclassname">wolframclient.serializers.</code><code class="descname">export</code><span class="sig-paren">(</span><em>data</em>, <em>stream=None</em>, <em>target_format='wl'</em>, <em>**options</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers.html#export"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Serialize input <cite>data</cite> to a target format.</p>
-<p>Input <cite>data</cite> can be any supported Python types including: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, etc, or, a serializable python object.</p>
-<p>Serializable python objects are class extending <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.serializable.WLSerializable" title="wolframclient.serializers.serializable.WLSerializable"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSerializable</span></code></a>, and types mapped to
-an encoder.</p>
-<p>The default format is <em>InputForm</em> string:</p>
+<p>Input <cite>data</cite> can be any supported Python type, including <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> or any serializable Python
+object.</p>
+<p>Serializable python objects are class extending <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.serializable.WLSerializable" title="wolframclient.serializers.serializable.WLSerializable"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSerializable</span></code></a> and
+types declared in an encoder.</p>
+<p>The default format is <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html">InputForm</a> string:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">Range</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
 <span class="go">b&#39;Range[3]&#39;</span>
 </pre></div>
@@ -211,8 +213,9 @@ an encoder.</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">WXF is a binary format for serializing Wolfram Language expression. Consult
-the documentation for a full format description: <a class="reference external" href="https://reference.wolfram.com/language/tutorial/WXFFormatDescription.html">https://reference.wolfram.com/language/tutorial/WXFFormatDescription.html</a></p>
+<p class="last">WXF is a binary format for serializing Wolfram Language expression. Consult the
+<a class="reference external" href="https://reference.wolfram.com/language/tutorial/WXFFormatDescription.html">format specifications</a> for in
+depth format description.</p>
 </div>
 <p>WXF byte arrays are deserialized with <a class="reference internal" href="../api/wolframclient.deserializers.html#wolframclient.deserializers.binary_deserialize" title="wolframclient.deserializers.binary_deserialize"><code class="xref py py-func docutils literal notranslate"><span class="pre">binary_deserialize()</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wxf</span> <span class="o">=</span> <span class="n">export</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wxf&#39;</span><span class="p">)</span>
@@ -220,14 +223,15 @@ the documentation for a full format description: <a class="reference external" h
 <span class="go">[1, 2, 3]</span>
 </pre></div>
 </div>
-<p>If <cite>stream</cite> is specified with a string, it is interpreted as a file path, and serialized form is
-written directly to the specified file. The file is opened and closed automatically:</p>
+<p>If <cite>stream</cite> is specified with a string, it is interpreted as a file path and the serialized form is written directly
+to the specified file. The file is opened and closed automatically:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">stream</span><span class="o">=</span><span class="s1">&#39;file.wl&#39;</span><span class="p">)</span>
 <span class="go">&#39;file.wl&#39;</span>
 </pre></div>
 </div>
 <p>If <cite>stream</cite> is specified with an output stream, the serialization bytes are written to it.</p>
-<p>Any object that implements a <cite>write</cite> method, e.g. <code class="xref py py-data docutils literal notranslate"><span class="pre">file</span></code>, <a class="reference external" href="https://docs.python.org/3/library/io.html#io.BytesIO" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">io.BytesIO</span></code></a>, or <a class="reference external" href="https://docs.python.org/3/library/io.html#io.StringIO" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">io.StringIO</span></code></a> is a valid value for the <cite>stream</cite> named parameter:</p>
+<p>Any object that implements a <cite>write</cite> method, e.g. <code class="xref py py-data docutils literal notranslate"><span class="pre">file</span></code>, <a class="reference external" href="https://docs.python.org/3/library/io.html#io.BytesIO" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">io.BytesIO</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/io.html#io.StringIO" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">io.StringIO</span></code></a>, is a
+valid value for the <cite>stream</cite> named parameter:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;file.wl&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="n">export</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">stream</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
 <span class="gp">...</span>
@@ -238,40 +242,40 @@ written directly to the specified file. The file is opened and closed automatica
 
 <div class="section" id="formats">
 <h3>Formats<a class="headerlink" href="#formats" title="Permalink to this headline">¶</a></h3>
-<p><em>InputForm</em> is the default format and is the most readable one:</p>
+<p><a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html">InputForm</a> is the default format and is the most readable one:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">target_format</span> <span class="o">=</span> <span class="s2">&quot;wl&quot;</span><span class="p">)</span>
 <span class="go">&#39;{1, 2, 3}&#39;</span>
 </pre></div>
 </div>
-<p>Serialized output can be imported in a kernel using <cite>ToExpression</cite>.</p>
-<p><em>WXF</em> is also available as an efficient binary representation of Wolfram Language expressions:</p>
+<p>Serialized output can be imported in a kernel using <a class="wl external reference" href="http://reference.wolfram.com/language/ref/ToExpression.html">ToExpression</a>.</p>
+<p><a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html">WXF</a> is also available as an efficient binary representation of Wolfram Language expressions:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">target_format</span> <span class="o">=</span> <span class="s2">&quot;wxf&quot;</span><span class="p">)</span>
 <span class="go">&#39;8:f\x03s\x04ListC\x01C\x02C\x03&#39;</span>
 </pre></div>
 </div>
-<p>The <em>WXF</em> format supports compression using zlib, the compression is disabled by default:</p>
+<p>The <a class="wl external reference" href="http://reference.wolfram.com/language/tutorial/WXFFormatDescription.html">WXF</a> format supports compression using <em>zlib</em>; the compression is disabled by default:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">target_format</span> <span class="o">=</span> <span class="s2">&quot;wxf&quot;</span><span class="p">,</span> <span class="n">compress</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
 <span class="go">&#39;8C:x\x9cKc.f\xf1\xc9,.qftfrf\x06\x00\x1b\xf8\x03L&#39;</span>
 </pre></div>
 </div>
-<p>Serialized output can be imported in a kernel using <a class="wl external reference" href="http://reference.wolfram.com/language/ref/BinaryDeserialize.html" target="_blank">BinaryDeserialize</a>.</p>
+<p>Serialized output can be imported in a kernel using <a class="wl external reference" href="http://reference.wolfram.com/language/ref/BinaryDeserialize.html">BinaryDeserialize</a>.</p>
 </div>
 <div class="section" id="supported-types">
 <h3>Supported Types<a class="headerlink" href="#supported-types" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="built-in-data-types">
 <h4>Built-in Data Types<a class="headerlink" href="#built-in-data-types" title="Permalink to this headline">¶</a></h4>
-<p>Built-in data structures are all supported: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">frozenset</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>.</p>
+<p>Built-in data structures are all supported <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">frozenset</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>.</p>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">({</span><span class="s2">&quot;list&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s2">&quot;set&quot;</span><span class="p">:</span> <span class="nb">set</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]),</span> <span class="s2">&quot;frozenset&quot;</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]),</span> <span class="s2">&quot;dict&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)})</span>
 <span class="go">&#39;&lt;|&quot;list&quot; -&gt; {1, 2, 3}, &quot;set&quot; -&gt; {1, 2, 4}, &quot;frozenset&quot; -&gt; {1, 2, 4}, &quot;dict&quot; -&gt; &lt;|&quot;a&quot; -&gt; 2|&gt;|&gt;&#39;</span>
 </pre></div>
 </div>
-<p>Any class that has an <cite>__iter__</cite> method is converted to a Wolfram Language <a class="wl external reference" href="http://reference.wolfram.com/language/ref/List.html" target="_blank">List</a>:</p>
+<p>Any class that has an <cite>__iter__</cite> method is converted to a Wolfram Language <a class="wl external reference" href="http://reference.wolfram.com/language/ref/List.html">List</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)))</span>
 <span class="go">&#39;&quot;{2, 3, 4, 5, 6, 7, 8, 9, 10, 11}&quot;&#39;</span>
 </pre></div>
 </div>
-<p>Python generators are also serialized as <a class="wl external reference" href="http://reference.wolfram.com/language/ref/List.html" target="_blank">List</a>:</p>
+<p>Python generators are also serialized as <a class="wl external reference" href="http://reference.wolfram.com/language/ref/List.html">List</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">gen</span><span class="p">():</span>
 <span class="gp">... </span>    <span class="k">yield</span> <span class="mi">1</span>
 <span class="gp">... </span>    <span class="k">yield</span> <span class="mi">2</span>
@@ -282,7 +286,7 @@ written directly to the specified file. The file is opened and closed automatica
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Python generators should be used preferably when serializing big data, to avoid running out of memory.</p>
+<p class="last">Python generators should preferably be used when serializing big data to avoid running out of memory.</p>
 </div>
 <p>To preserve ordering in associations use <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.OrderedDict</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
@@ -293,18 +297,18 @@ written directly to the specified file. The file is opened and closed automatica
 </div>
 <div class="section" id="numeric-types">
 <h4>Numeric Types<a class="headerlink" href="#numeric-types" title="Permalink to this headline">¶</a></h4>
-<p>Numeric types are natively supported: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">complex</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a> serializes to
+<p>Numeric types are natively supported; <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">complex</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a> serialize to
 their Wolfram Language counterpart:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">({</span><span class="s1">&#39;int&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;float&#39;</span><span class="p">:</span><span class="mf">2.3</span><span class="p">,</span> <span class="s1">&#39;decimal&#39;</span><span class="p">:</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="s1">&#39;complex&#39;</span><span class="p">:</span> <span class="nb">complex</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)})</span>
 <span class="go">&#39;&lt;|&quot;int&quot; -&gt; 1, &quot;float&quot; -&gt; 2.300000, &quot;decimal&quot; -&gt; 1, &quot;complex&quot; -&gt; Complex[3.000000, 4.000000]|&gt;&#39;</span>
 </pre></div>
 </div>
-<p>IEEE exceptions <cite>infinity</cite> and <cite>NaN</cite> are converted respectively to <a class="wl external reference" href="http://reference.wolfram.com/language/ref/DirectedInfinity.html" target="_blank">DirectedInfinity</a> and <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Indeterminate.html" target="_blank">Indeterminate</a>:</p>
+<p>IEEE exceptions <cite>infinity</cite> and <cite>NaN</cite> are converted respectively to <a class="wl external reference" href="http://reference.wolfram.com/language/ref/DirectedInfinity.html">DirectedInfinity</a> and <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Indeterminate.html">Indeterminate</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">({</span><span class="s1">&#39;+inf&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span> <span class="s1">&#39;-inf&#39;</span><span class="p">:</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span> <span class="s1">&#39;nan&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)})</span>
 <span class="go">&#39;&lt;|&quot;+inf&quot; -&gt; DirectedInfinity[1], &quot;-inf&quot; -&gt; DirectedInfinity[-1], &quot;nan&quot; -&gt; Indeterminate|&gt;&#39;</span>
 </pre></div>
 </div>
-<p><a class="reference external" href="https://docs.python.org/3/library/fractions.html#fractions.Fraction" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fraction</span></code></a> serializes to <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Rational.html" target="_blank">Rational</a>:</p>
+<p><a class="reference external" href="https://docs.python.org/3/library/fractions.html#fractions.Fraction" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fraction</span></code></a> serializes to <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Rational.html">Rational</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">(</span><span class="n">fractions</span><span class="o">.</span><span class="n">Fraction</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 <span class="go">&#39;(2 / 3)&#39;</span>
 </pre></div>
@@ -312,18 +316,18 @@ their Wolfram Language counterpart:</p>
 </div>
 <div class="section" id="dateobject-serialization">
 <h4>DateObject Serialization<a class="headerlink" href="#dateobject-serialization" title="Permalink to this headline">¶</a></h4>
-<p><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">datetime</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.time" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">time</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> are serialized to <a class="wl external reference" href="http://reference.wolfram.com/language/ref/DateObject.html" target="_blank">DateObject</a> and all assume that the timezome to use is the current one at evaluation time:</p>
+<p><a class="reference external" href="https://docs.python.org/3/library/datetime.html#module-datetime" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">datetime</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.time" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">time</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> are serialized to <a class="wl external reference" href="http://reference.wolfram.com/language/ref/DateObject.html">DateObject</a> and all assume that the time zone to use is the current one at evaluation time:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">datetime</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">([</span><span class="n">now</span><span class="o">.</span><span class="n">time</span><span class="p">(),</span> <span class="n">now</span><span class="o">.</span><span class="n">date</span><span class="p">(),</span> <span class="n">now</span><span class="p">])</span>
 <span class="go">&#39;{TimeObject[{16, 1, 19.993822}, TimeZone -&gt; $TimeZone], DateObject[{2018, 3, 16}], DateObject[{2018, 3, 16, 16, 1, 19.993822}, &quot;Instant&quot;, &quot;Gregorian&quot;, $TimeZone]}&#39;</span>
 </pre></div>
 </div>
-<p><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.timedelta" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">timedelta</span></code></a> are serialized to <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Quantity.html" target="_blank">Quantity</a>:</p>
+<p><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.timedelta" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">timedelta</span></code></a> is serialized to <a class="wl external reference" href="http://reference.wolfram.com/language/ref/Quantity.html">Quantity</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span> <span class="o">=</span> <span class="mi">340</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>Specify a timezone in Python using <code class="xref py py-func docutils literal notranslate"><span class="pre">pytz.timezone()</span></code> and serialize the date to a <a class="wl external reference" href="http://reference.wolfram.com/language/ref/DateObject.html" target="_blank">DateObject</a>:</p>
+<p>Specify a time zone in Python using <code class="xref py py-func docutils literal notranslate"><span class="pre">pytz.timezone()</span></code> and serialize the date to a <a class="wl external reference" href="http://reference.wolfram.com/language/ref/DateObject.html">DateObject</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pytz</span> <span class="k">import</span> <span class="n">timezone</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">(</span><span class="n">timezone</span><span class="p">(</span><span class="s1">&#39;US/Eastern&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()))</span>
 <span class="go">&#39;DateObject[{2018, 3, 16, 16, 4, 17.712409}, &quot;Instant&quot;, &quot;Gregorian&quot;, &quot;US/Eastern&quot;]&#39;</span>
@@ -332,15 +336,15 @@ their Wolfram Language counterpart:</p>
 </div>
 </div>
 <div class="section" id="extensible-mechanism">
-<span id="extensible-serialization"></span><h3>Extensible mechanism<a class="headerlink" href="#extensible-mechanism" title="Permalink to this headline">¶</a></h3>
+<span id="extensible-serialization"></span><h3>Extensible Mechanism<a class="headerlink" href="#extensible-mechanism" title="Permalink to this headline">¶</a></h3>
 <p>The <a class="reference internal" href="../api/wolframclient.serializers.html#module-wolframclient.serializers" title="wolframclient.serializers"><code class="xref py py-mod docutils literal notranslate"><span class="pre">serializers</span></code></a> module provides mechanisms to extend built-in core functions and to define custom class serializations. There are three ways to extend serialization:</p>
 <ul class="simple">
-<li>extend <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.serializable.WLSerializable" title="wolframclient.serializers.serializable.WLSerializable"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSerializable</span></code></a> and override its method <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.serializable.WLSerializable.to_wl" title="wolframclient.serializers.serializable.WLSerializable.to_wl"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_wl()</span></code></a>.</li>
-<li>call <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a> with <cite>normalizer</cite> set to a normalizer function. This function will be applied to each object prior to the serialization process.</li>
-<li>declare a type encoder.</li>
+<li>Extend <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.serializable.WLSerializable" title="wolframclient.serializers.serializable.WLSerializable"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSerializable</span></code></a> and override its <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.serializable.WLSerializable.to_wl" title="wolframclient.serializers.serializable.WLSerializable.to_wl"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_wl()</span></code></a> method.</li>
+<li>Call <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a> with <cite>normalizer</cite> set to a normalizer function. This function will be applied to each object prior to the serialization process.</li>
+<li>Declare a type encoder.</li>
 </ul>
 <div class="section" id="serializable-classes">
-<h4>Serializable classes<a class="headerlink" href="#serializable-classes" title="Permalink to this headline">¶</a></h4>
+<h4>Serializable Classes<a class="headerlink" href="#serializable-classes" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt>
 <em class="property">class </em><code class="descclassname">wolframclient.serializers.serializable.</code><code class="descname">WLSerializable</code><a class="reference internal" href="../_modules/wolframclient/serializers/serializable.html#WLSerializable"><span class="viewcode-link">[source]</span></a></dt>
@@ -358,12 +362,12 @@ their Wolfram Language counterpart:</p>
         <span class="k">return</span> <span class="n">wl</span><span class="o">.</span><span class="n">MyWolframFunction</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Serialize <code class="xref py py-data docutils literal notranslate"><span class="pre">MyPythonClass</span></code> using export:</p>
+<p>Serialize <code class="xref py py-data docutils literal notranslate"><span class="pre">MyPythonClass</span></code> using <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">(</span><span class="n">MyPythonClass</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">))</span>
 <span class="go">b&#39;MyWolframFunction[&quot;foo&quot;, &quot;bar&quot;]&#39;</span>
 </pre></div>
 </div>
-<p>Serialization is applied recursively, arguments are also serialized:</p>
+<p>Serialization is applied recursively; arguments are also serialized:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span><span class="p">(</span><span class="n">MyPythonClass</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">MyPythonClass</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span>
 <span class="go">&#39;MyWolframFunction[1, 2, MyWolframFunction[2, 3]]&#39;</span>
 </pre></div>
@@ -371,7 +375,7 @@ their Wolfram Language counterpart:</p>
 <dl class="method">
 <dt>
 <code class="descname">to_wl</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/serializable.html#WLSerializable.to_wl"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Return the serialized form of a given python class.</p>
+<dd><p>Return the serialized form of a given Python class.</p>
 <p>The returned value must be a combination of serializable types.</p>
 </dd></dl>
 
@@ -380,7 +384,7 @@ their Wolfram Language counterpart:</p>
 </div>
 <div class="section" id="normalizer">
 <h4>Normalizer<a class="headerlink" href="#normalizer" title="Permalink to this headline">¶</a></h4>
-<p>A normalizer is a function that takes one argument and return one python object. It can either return a new object or pass the input if they can’t deal with its type.</p>
+<p>A normalizer is a function that takes one argument and returns one python object. It can either return a new object or pass the input if it can’t deal with that type.</p>
 <p>Define a class:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyPythonClass</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">arguments</span><span class="p">):</span>
@@ -406,16 +410,16 @@ their Wolfram Language counterpart:</p>
 </div>
 <div class="section" id="encoder">
 <h4>Encoder<a class="headerlink" href="#encoder" title="Permalink to this headline">¶</a></h4>
-<p>The serialization of Python object relies on encoder functions. Each encoder is attached to a set of Python types. Encoders are generators of bytes. The library defines encoders for most built-in Python types, and for the core components of some popular libraries such as PIL <code class="xref py py-data docutils literal notranslate"><span class="pre">Image</span></code>, Numpy arrays, and Pandas <code class="xref py py-data docutils literal notranslate"><span class="pre">Series</span></code>.</p>
+<p>The serialization of a Python object relies on encoder functions. Each encoder is attached to a set of Python types. Encoders are generators of bytes. The library defines encoders for most built-in Python types and for the core components of some popular libraries such as PIL <code class="xref py py-data docutils literal notranslate"><span class="pre">Image</span></code>, NumPy arrays and Pandas <code class="xref py py-data docutils literal notranslate"><span class="pre">Series</span></code>.</p>
 <dl class="data">
 <dt>
-<code class="descclassname">wolframclient.serializers.encoder.</code><code class="descname">wolfram_encoder</code><em class="property"> = &lt;wolframclient.utils.dispatch.Dispatch object&gt;</em></dt>
+<code class="descclassname">wolframclient.serializers.encoder.</code><code class="descname">wolfram_encoder</code><em class="property"> = &lt;wolframclient.serializers.encoder.WolframDispatch object&gt;</em></dt>
 <dd><p>Mapping between Python types and encoders used during serializations.</p>
-<p>This instance of <a class="reference internal" href="../api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch" title="wolframclient.utils.dispatch.Dispatch"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dispatch</span></code></a> is used in <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a>
-to serialize Python expressions and produce a stream of bytes.</p>
+<p>This instance of <a class="reference internal" href="../api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch" title="wolframclient.utils.dispatch.Dispatch"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dispatch</span></code></a> is used in 
+<a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a> to serialize Python expressions and produce a stream of bytes.</p>
 <p><strong>Register new encoders:</strong></p>
-<p>The annotation <a class="reference internal" href="../api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.dispatch" title="wolframclient.utils.dispatch.Dispatch.dispatch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dispatch()</span></code></a> applied to a function, defines an encoder, and associates 
-it to the types passed as argument of the annotation.</p>
+<p>The annotation <a class="reference internal" href="../api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.dispatch" title="wolframclient.utils.dispatch.Dispatch.dispatch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dispatch()</span></code></a> applied to a function, defines an encoder 
+and associates it to the types passed as argument of the annotation.</p>
 <p>Define a new class:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyPythonClass</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">arguments</span><span class="p">):</span>
@@ -449,10 +453,10 @@ unregister the previous encoder:</p>
 </pre></div>
 </div>
 <p><strong>Update with a dispatcher:</strong></p>
-<p>An other way to extend supported types is to create a new <a class="reference internal" href="../api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch" title="wolframclient.utils.dispatch.Dispatch"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dispatch</span></code></a>, map 
-various types and encoders, and ultimatelly update <code class="xref py py-data docutils literal notranslate"><span class="pre">wolfram_encoder</span></code> using 
+<p>Another way to extend supported types is to create a new <a class="reference internal" href="../api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch" title="wolframclient.utils.dispatch.Dispatch"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dispatch</span></code></a>, map 
+various types and encoders and ultimately update <code class="xref py py-data docutils literal notranslate"><span class="pre">wolfram_encoder</span></code> using 
 <a class="reference internal" href="../api/wolframclient.utils.html#wolframclient.utils.dispatch.Dispatch.update" title="wolframclient.utils.dispatch.Dispatch.update"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update()</span></code></a>.</p>
-<p>Create a new dispatcher, and register <code class="xref py py-data docutils literal notranslate"><span class="pre">MyPythonClass</span></code>:</p>
+<p>Create a new dispatcher and register <code class="xref py py-data docutils literal notranslate"><span class="pre">MyPythonClass</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">wolframclient.utils.dispatch</span> <span class="k">import</span> <span class="n">Dispatch</span>
 
 <span class="n">dispatch</span> <span class="o">=</span> <span class="n">Dispatch</span><span class="p">()</span>
@@ -469,15 +473,14 @@ various types and encoders, and ultimatelly update <code class="xref py py-data 
 </pre></div>
 </div>
 <p><strong>Define plugins:</strong></p>
-<p>The library supports an entry point dedicated to new encoders: <cite>wolframclient_serializers_encoder</cite>. The library use 
-this entry point to loads plugins at runtime, as separated libraries.
-For more information about entry points, refer to the documentation page: 
-<a class="reference external" href="https://packaging.python.org/specifications/entry-points/">https://packaging.python.org/specifications/entry-points/</a></p>
+<p>The library supports an entry point dedicated to new encoders: <cite>wolframclient_serializers_encoder</cite>. The library uses 
+this entry point to loads plugins at runtime as separated libraries. For more information about entry points, refer 
+to the documentation page about <a class="reference external" href="https://packaging.python.org/specifications/entry-points/">entry points</a>.</p>
 <p>The plugin name must be unique and the value must reference a dispatcher instance. This instance is loaded and used 
-to update <code class="xref py py-data docutils literal notranslate"><span class="pre">wolfram_encoder</span></code>. A plugin is a simple way to distribute encoders as a separe library.</p>
-<p>One type must have a unique encoder associated to it, as a consequence, two plugins registering an encoder for the 
-same type are incompatible. it is strongly advised to create one plugin for each existing Python library. 
-e.g.: have one plugin dedicated to Numpy, and one to Pandas which makes heavy use of Numpy arrays.</p>
+to update <code class="xref py py-data docutils literal notranslate"><span class="pre">wolfram_encoder</span></code>. A plugin is a simple way to distribute encoders as a separate library.</p>
+<p>One type must have a unique encoder associated to it; as a consequence, two plugins registering an encoder for the 
+same type are incompatible. It is strongly advised to create one plugin for each existing Python library, 
+e.g. have one plugin dedicated to NumPy and one to Pandas, which makes heavy use of NumPy arrays.</p>
 </dd></dl>
 
 </div>
@@ -488,8 +491,8 @@ e.g.: have one plugin dedicated to Numpy, and one to Pandas which makes heavy us
 <dl class="data">
 <dt>
 <code class="descclassname">wolframclient.deserializers.</code><code class="descname">binary_deserialize</code><em class="property"> = &lt;function binary_deserialize&gt;</em><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf.html#binary_deserialize"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Deserialize binary data, return a Python object.</p>
-<p>Serialize a python object to WXF:</p>
+<dd><p>Deserialize binary data and return a Python object.</p>
+<p>Serialize a Python object to WXF:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wxf</span> <span class="o">=</span> <span class="n">export</span><span class="p">({</span><span class="s1">&#39;key&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]},</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wxf&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -501,12 +504,12 @@ e.g.: have one plugin dedicated to Numpy, and one to Pandas which makes heavy us
 <p>A stream of <a class="reference internal" href="../api/wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> is generated from the WXF input by a instance
 of <a class="reference internal" href="../api/wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFParser" title="wolframclient.deserializers.wxf.wxfparser.WXFParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFParser</span></code></a>.</p>
 <p>The consumer must be an instance of <a class="reference internal" href="../api/wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumer</span></code></a>. If none is
-provided <a class="reference internal" href="../api/wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumer</span></code></a> is used. To enable NumPy array support,
+provided, <a class="reference internal" href="../api/wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumer</span></code></a> is used. To enable NumPy array support,
 use <a class="reference internal" href="../api/wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumerNumpy</span></code></a>.</p>
 <p>Named parameters are passed to the consumer. They can be any valid parameter of
 <a class="reference internal" href="../api/wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.next_expression" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.next_expression"><code class="xref py py-meth docutils literal notranslate"><span class="pre">next_expression()</span></code></a>, namely:</p>
 <ul class="simple">
-<li><cite>dict_class</cite>: map WXF <cite>Association</cite> to <cite>dict_class</cite> in place of a regular <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>.</li>
+<li><cite>dict_class</cite>: map WXF <cite>Association</cite> to <cite>dict_class</cite> in place of a regular <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></li>
 </ul>
 </dd></dl>
 
@@ -516,32 +519,32 @@ use <a class="reference internal" href="../api/wolframclient.deserializers.wxf.h
 <dl class="class">
 <dt>
 <em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframLanguageSession</code><span class="sig-paren">(</span><em>kernel=None</em>, <em>consumer=None</em>, <em>initfile=None</em>, <em>kernel_loglevel=0</em>, <em>stdin=-1</em>, <em>stdout=-1</em>, <em>stderr=-1</em>, <em>inputform_string_evaluation=True</em>, <em>wxf_bytes_evaluation=True</em>, <em>controller_class=&lt;class 'wolframclient.evaluation.kernel.kernelcontroller.WolframKernelController'&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>A session to a Wolfram Kernel enabling evaluation of Wolfram Language expressions.</p>
+<dd><p>A session to a Wolfram kernel enabling evaluation of Wolfram Language expressions.</p>
 <p>Start a new session and send an expression for evaluation:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">WolframLanguageSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
     <span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;Range[3]&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Set <cite>timeout</cite> value to a number, to set an evaluation timeout in seconds. If the evaluation
-time extends the timeout a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.TimeoutError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeoutError</span></code></a> is raised.</p>
-<p>Evaluate an expression taking 10 seconds to return, using a 5 second timeout:</p>
+<p>Set <cite>timeout</cite> to a number to set an evaluation timeout in seconds. If the evaluation
+time extends the timeout, a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.TimeoutError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeoutError</span></code></a> is raised.</p>
+<p>Evaluate an expression taking 10 seconds to return using a 5-second timeout:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">long_evaluation</span> <span class="o">=</span> <span class="n">wl</span><span class="o">.</span><span class="n">Pause</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 <span class="k">with</span> <span class="n">WolframLanguageSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
     <span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">long_evaluation</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Asynchronous evaluation methods <a class="reference internal" href="../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.localsession.WolframLanguageSession.evaluate_future" title="wolframclient.evaluation.kernel.localsession.WolframLanguageSession.evaluate_future"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate_future()</span></code></a> 
+<p>The asynchronous evaluation method
+<a class="reference internal" href="../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.localsession.WolframLanguageSession.evaluate_future" title="wolframclient.evaluation.kernel.localsession.WolframLanguageSession.evaluate_future"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate_future()</span></code></a>
 returns an instance of <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> class wrapping the evaluation result:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">WolframLanguageSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
     <span class="n">future</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">evaluate_future</span><span class="p">(</span><span class="s1">&#39;1+1&#39;</span><span class="p">)</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>When <cite>consumer</cite> is set to a <a class="reference internal" href="../api/wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumer" title="wolframclient.deserializers.WXFConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumer</span></code></a> instance,
-this instance is passed to <a class="reference internal" href="../api/wolframclient.deserializers.html#wolframclient.deserializers.binary_deserialize" title="wolframclient.deserializers.binary_deserialize"><code class="xref py py-func docutils literal notranslate"><span class="pre">binary_deserialize()</span></code></a> when
-deserializing the WXF output.</p>
-<p>By default packed arrays are deserialized as <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>. Specify a consumer instance
-that supports NumPy arrays <a class="reference internal" href="../api/wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumerNumpy" title="wolframclient.deserializers.WXFConsumerNumpy"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumerNumpy</span></code></a>:</p>
+<p>When <cite>consumer</cite> is set to a <a class="reference internal" href="../api/wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumer" title="wolframclient.deserializers.WXFConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumer</span></code></a> instance, this instance is passed to
+<a class="reference internal" href="../api/wolframclient.deserializers.html#wolframclient.deserializers.binary_deserialize" title="wolframclient.deserializers.binary_deserialize"><code class="xref py py-func docutils literal notranslate"><span class="pre">binary_deserialize()</span></code></a> when deserializing the WXF output.</p>
+<p>By default, packed arrays are deserialized as <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>. Specify a consumer instance that supports NumPy arrays
+<a class="reference internal" href="../api/wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumerNumpy" title="wolframclient.deserializers.WXFConsumerNumpy"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumerNumpy</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">wolframclient.deserializers</span> <span class="k">import</span> <span class="n">WXFConsumerNumpy</span>
 
 <span class="k">with</span> <span class="n">WolframLanguageSession</span><span class="p">(</span><span class="n">consumer</span><span class="o">=</span><span class="n">WXFConsumerNumpy</span><span class="p">())</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
@@ -553,12 +556,10 @@ that supports NumPy arrays <a class="reference internal" href="../api/wolframcli
 <li>one <cite>PUSH</cite> socket to send expressions for evaluation</li>
 <li>one <cite>PULL</cite> socket to receive evaluation results</li>
 </ul>
-<p>Kernel logging is disabled by default and is done through a third socket
-(type <cite>SUB</cite>). The initial log level is specified by the parameter <cite>kernel_loglevel</cite>.
-If the log level was not set at initialization, logging is not available for the entire
-session.</p>
-<p>The kernel associated with a given session provides the following
-logging functions:</p>
+<p>Kernel logging is disabled by default and is done through a third socket (type <cite>SUB</cite>). The initial log level is
+specified by the parameter <cite>kernel_loglevel</cite>.
+If the log level was not set at initialization, logging is not available for the entire session.</p>
+<p>The kernel associated with a given session provides the following logging functions:</p>
 <ul class="simple">
 <li><code class="docutils literal notranslate"><span class="pre">ClientLibrary`debug</span></code> corresponding to <a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Logger.debug" title="(in Python v3.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">logging.Logger.debug()</span></code></a></li>
 <li><code class="docutils literal notranslate"><span class="pre">ClientLibrary`info</span></code> corresponding to <a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Logger.info" title="(in Python v3.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">logging.Logger.info()</span></code></a></li>
@@ -570,9 +571,9 @@ logging functions:</p>
 <li><code class="docutils literal notranslate"><span class="pre">ClientLibrary`SetErrorLogLevel[]</span></code> only send error messages</li>
 <li><code class="docutils literal notranslate"><span class="pre">ClientLibrary`DisableKernelLogging[]</span></code> stop sending error message to the logging socket</li>
 </ul>
-<p>The standard input, output and error file handles can be specified with <cite>stdin</cite>, <cite>stdout</cite> and <cite>stderr</cite>
-named parameters. Valid values are those accepted by subprocess.Popen (e.g <a class="reference external" href="https://docs.python.org/3/library/sys.html#sys.stdout" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">sys.stdout</span></code></a>). Those parameters should be handled
-with care as deadlocks can arise from misconfiguration.</p>
+<p>The standard input, output and error file handles can be specified with <cite>stdin</cite>, <cite>stdout</cite> and <cite>stderr</cite> named
+parameters. Valid values are those accepted by <a class="reference external" href="https://docs.python.org/3/library/subprocess.html#subprocess.Popen" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">subprocess.Popen</span></code></a> (e.g. <a class="reference external" href="https://docs.python.org/3/library/sys.html#sys.stdout" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">sys.stdout</span></code></a>). Those parameters
+should be handled with care as deadlocks can arise from misconfiguration.</p>
 <dl class="method">
 <dt>
 <code class="descname">duplicate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.duplicate"><span class="viewcode-link">[source]</span></a></dt>
@@ -596,7 +597,8 @@ with care as deadlocks can arise from misconfiguration.</p>
 <dl class="method">
 <dt>
 <code class="descname">evaluate_wrap</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.evaluate_wrap"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Evaluate a given Wolfram Language expression and return a result object with the result and meta information.</p>
+<dd><p>Evaluate a given Wolfram Language expression and return a result object with the result and meta
+information.</p>
 </dd></dl>
 
 <dl class="method">
@@ -611,7 +613,7 @@ See <a class="reference internal" href="../api/wolframclient.evaluation.html#wol
 <dt>
 <code class="descname">evaluate_wxf</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.evaluate_wxf"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Evaluate an expression and return the serialized expression.</p>
-<p>This method does not deserialize the Wolfram Kernel input.</p>
+<p>This method does not deserialize the Wolfram kernel input.</p>
 </dd></dl>
 
 <dl class="method">
@@ -628,15 +630,15 @@ See <a class="reference internal" href="../api/wolframclient.evaluation.html#wol
 <dd><p>Return the value of a given session parameter.</p>
 <p>Session parameters are:</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">'STARTUP_TIMEOUT'</span></code>: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.</li>
-<li><code class="docutils literal notranslate"><span class="pre">'TERMINATE_TIMEOUT'</span></code>: time to wait, in seconds, after the <code class="docutils literal notranslate"><span class="pre">Quit[]</span></code> command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.</li>
+<li><code class="docutils literal notranslate"><span class="pre">'STARTUP_TIMEOUT'</span></code>: time to wait, in seconds, after the kernel startup is requested. Default is 20 seconds.</li>
+<li><code class="docutils literal notranslate"><span class="pre">'TERMINATE_TIMEOUT'</span></code>: time to wait, in seconds, after the <code class="docutils literal notranslate"><span class="pre">Quit[]</span></code> command is sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.</li>
 </ul>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">restart</code><span class="sig-paren">(</span><em>block=True</em>, <em>timeout=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.restart"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Restart a given evaluator by stopping it in case it was already started.</p>
+<dd><p>Restart a given evaluator by stopping it in cases where it is already started.</p>
 </dd></dl>
 
 <dl class="method">
@@ -645,46 +647,46 @@ See <a class="reference internal" href="../api/wolframclient.evaluation.html#wol
 <dd><p>Set a new value for a given parameter. The new value only applies for this session.</p>
 <p>Session parameters are:</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">'STARTUP_TIMEOUT'</span></code>: time to wait, in seconds, after the kernel start-up was requested. Default is 20 seconds.</li>
-<li><code class="docutils literal notranslate"><span class="pre">'TERMINATE_TIMEOUT'</span></code>: time to wait, in seconds, after the <code class="docutils literal notranslate"><span class="pre">Quit[]</span></code> command was sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.</li>
+<li><code class="docutils literal notranslate"><span class="pre">'STARTUP_TIMEOUT'</span></code>: time to wait, in seconds, after the kernel startup is requested. Default is 20 seconds.</li>
+<li><code class="docutils literal notranslate"><span class="pre">'TERMINATE_TIMEOUT'</span></code>: time to wait, in seconds, after the <code class="docutils literal notranslate"><span class="pre">Quit[]</span></code> command is sent to the kernel. The kernel is killed after this duration. Default is 3 seconds.</li>
 </ul>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">start</code><span class="sig-paren">(</span><em>block=True</em>, <em>timeout=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.start"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Start a kernel controller, eventually restart a fresh on if the previous one was terminated.</p>
+<dd><p>Start a kernel controller and eventually start a fresh one if the previous one was terminated.</p>
 <p>Set <cite>block</cite> to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">True</span></code></a> (default is <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">False</span></code></a>) to wait for the kernel to be up and running 
-before returning. Eventually set a timeout in seconds. If the timeout is reached a <code class="xref py py-data docutils literal notranslate"><span class="pre">TimeoutError</span></code>
+before returning. Optionally, set a timeout in seconds. If the timeout is reached, a <code class="xref py py-data docutils literal notranslate"><span class="pre">TimeoutError</span></code>
 will be raised and the kernel is terminated.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">start_future</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.start_future"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Request the Wolfram Kernel to start. Return a future object.</p>
-<p>The result of the future object is True when the kernel is ready to evaluate input.</p>
+<dd><p>Request the Wolfram kernel to start and return a future object.</p>
+<p>The result of the future object is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">True</span></code></a> when the kernel is ready to evaluate input.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.stop"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Request the Wolfram Kernel to stop gracefully.</p>
+<dd><p>Request the Wolfram kernel to stop gracefully.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">stop_future</code><span class="sig-paren">(</span><em>gracefully=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.stop_future"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Request the Wolfram Kernel to stop. Return a future object.</p>
-<p>The result of the future object is True when the controller thread is no more alive.
-Set <cite>gracefully</cite> to <cite>False</cite> will request for an immediate stop, eventually cancelling ongoing
+<dd><p>Request the Wolfram kernel to stop and return a future object.</p>
+<p>The result of the future object is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">True</span></code></a> when the controller thread is no longer alive.
+Set <cite>gracefully</cite> to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">False</span></code></a> to request an immediate stop, eventually cancelling ongoing
 evaluations.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">terminate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.terminate"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Request the Wolfram Kernel to stop immediately.</p>
+<dd><p>Request the Wolfram kernel to stop immediately.</p>
 <p>Ongoing evaluations may be cancelled.</p>
 </dd></dl>
 
@@ -700,13 +702,13 @@ evaluations.</p>
     <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;Now&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>An event loop can be explicitly passed using the named parameter <cite>loop</cite>, otherwise the one 
+<p>An event loop can be explicitly passed using the named parameter <cite>loop</cite>; otherwise, the one
 returned by <a class="reference external" href="https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.get_event_loop" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_event_loop()</span></code></a> is used.</p>
-<p>Coroutines all run in a unique thread. Since a Wolfram Kernel is single threaded, there can
+<p>Coroutines all run in a unique thread. Since a Wolfram kernel is single threaded, there can
 be only one evaluation at a time. In a sense, from the event loop point of view, evaluations 
 are atomic operations. Even when many asynchronous sessions are started, the number of 
 threads equals the number of kernel instances running and should not be problematic. Ensuring 
-that only one thread runs all operations of a given Wolfram kernel, significantly reduces the 
+that only one thread runs all operations of a given Wolfram kernel significantly reduces the
 complexity of the code without any real drawback.</p>
 <dl class="method">
 <dt>
@@ -732,7 +734,7 @@ complexity of the code without any real drawback.</p>
 <dl class="method">
 <dt>
 <code class="descname">evaluate_many</code><span class="sig-paren">(</span><em>expr_list</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession.evaluate_many"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Evaluate a given list of Wolfram Language expression.</p>
+<dd><p>Evaluate a given list of Wolfram Language expressions.</p>
 <p>The list is provided as an iterable object.</p>
 </dd></dl>
 
@@ -769,7 +771,7 @@ See <a class="reference internal" href="../api/wolframclient.evaluation.html#wol
 <dl class="method">
 <dt>
 <code class="descname">restart</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession.restart"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Restart a given evaluator by stopping it in case it was already started.</p>
+<dd><p>Restart a given evaluator by stopping it in cases where it is already started.</p>
 </dd></dl>
 
 <dl class="method">
@@ -782,7 +784,7 @@ See <a class="reference internal" href="../api/wolframclient.evaluation.html#wol
 <dl class="method">
 <dt>
 <code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession.stop"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Asynchronously stop the session (gracefully termination).</p>
+<dd><p>Asynchronously stop the session (graceful termination).</p>
 <p>This method is a coroutine.</p>
 </dd></dl>
 
@@ -800,22 +802,22 @@ See <a class="reference internal" href="../api/wolframclient.evaluation.html#wol
 <em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframEvaluatorPool</code><span class="sig-paren">(</span><em>async_evaluators=None</em>, <em>poolsize=4</em>, <em>load_factor=0</em>, <em>loop=None</em>, <em>async_language_session_class=&lt;class 'wolframclient.evaluation.kernel.asyncsession.WolframLanguageAsyncSession'&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/pool.html#WolframEvaluatorPool"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>A pool of kernels to dispatch one-shot evaluations asynchronously.</p>
 <p>Evaluators can be specified in various ways: as a string representing the path to a local kernel,
-a <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudAsyncSession" title="wolframclient.evaluation.WolframCloudAsyncSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframCloudAsyncSession</span></code></a>, or
-an instance of <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageAsyncSession" title="wolframclient.evaluation.WolframLanguageAsyncSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframLanguageAsyncSession</span></code></a>. More than one evaluator specification can be provided
-in the form of an iterable object, yielding above mentioned specification.
-If the number of evaluators is less than the requested pool size (<cite>poolsize</cite>), elements are duplicated until the requested number of 
-evaluators is reached.</p>
-<p>Create a pool from a Wolfram Kernel default location:</p>
+a <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudAsyncSession" title="wolframclient.evaluation.WolframCloudAsyncSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframCloudAsyncSession</span></code></a> or
+an instance of a <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageAsyncSession" title="wolframclient.evaluation.WolframLanguageAsyncSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframLanguageAsyncSession</span></code></a>. More than one evaluator specification
+can be provided in the form of an iterable object, yielding the abovementioned specification.
+If the number of evaluators is less than the requested pool size (<cite>poolsize</cite>), elements are duplicated until the
+requested number of evaluators is reached.</p>
+<p>Create a pool from a Wolfram kernel default location:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">with</span> <span class="n">WolframEvaluatorPool</span><span class="p">()</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
     <span class="k">await</span> <span class="n">pool</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;$InstallationDirectory&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Create a pool from a specific Wolfram Kernel:</p>
+<p>Create a pool from a specific Wolfram kernel:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">with</span> <span class="n">WolframEvaluatorPool</span><span class="p">(</span><span class="s1">&#39;/path/to/local/kernel&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
     <span class="k">await</span> <span class="n">pool</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;1+1&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Create a pool from an cloud evaluator:</p>
+<p>Create a pool from a cloud evaluator:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cloud_session</span> <span class="o">=</span> <span class="n">WolframCloudAsyncSession</span><span class="p">(</span><span class="n">credentials</span><span class="o">=</span><span class="n">myCredentials</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">with</span> <span class="n">WolframEvaluatorPool</span><span class="p">(</span><span class="n">cloud_session</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
     <span class="k">await</span> <span class="n">pool</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;$MachineName&#39;</span><span class="p">)</span>
@@ -830,17 +832,19 @@ evaluators is reached.</p>
     <span class="k">await</span> <span class="n">pool</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;$MachineName&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><cite>poolsize</cite> is the number of kernel instances. The requested size may not be reached due to licencing restrictions.
-<cite>load_factor</cite> indicate how many workloads are queued per kernel before new evaluation becomes blocking operation. Values below or equal to 0 means infinite queue size.
-<cite>loop</cite> event loop to use.
-<cite>kwargs</cite> are passed to <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageAsyncSession" title="wolframclient.evaluation.WolframLanguageAsyncSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.evaluation.WolframLanguageAsyncSession</span></code></a> during initialization.</p>
+<p>Set <cite>poolsize</cite> to the number of kernel instances. The requested size may not be reached due to licencing
+restrictions.</p>
+<p>Set <cite>load_factor</cite> to specify how many workloads are queued per kernel before a new evaluation becomes a blocking
+operation. Values below or equal to 0 mean an infinite queue size.</p>
+<p>Set <cite>loop</cite> to the event loop to use.</p>
+<p><cite>kwargs</cite> are passed to <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframLanguageAsyncSession" title="wolframclient.evaluation.WolframLanguageAsyncSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframLanguageAsyncSession</span></code></a> during initialization.</p>
 <dl class="method">
 <dt>
 <code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/pool.html#WolframEvaluatorPool.start"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Start a pool of kernels and wait for at least one of them to 
 be ready for evaluation.</p>
 <p>This method is a coroutine.
-If not all the kernels were able to start fails and terminate the pool.</p>
+If not all the kernels were able to start, it fails and terminates the pool.</p>
 </dd></dl>
 
 </dd></dl>
@@ -849,19 +853,19 @@ If not all the kernels were able to start fails and terminate the pool.</p>
 <dt>
 <code class="descclassname">wolframclient.evaluation.</code><code class="descname">parallel_evaluate</code><span class="sig-paren">(</span><em>expressions</em>, <em>evaluator_spec=None</em>, <em>max_evaluators=4</em>, <em>loop=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/pool.html#parallel_evaluate"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Start a kernel pool and evaluate the expressions in parallel.</p>
-<p>The pool is created with the value of <cite>evaluator_spec</cite>. The pool is automatically
-stopped when no more needed. The expressions are evaluated and returned in order.</p>
-<p>Note that each evaluation should be independent and not rely on any previous one. 
-There is no guarantee that two given expressions evaluate on the same kernel.</p>
+<p>The pool is created with the value of <cite>evaluator_spec</cite>. The pool is automatically stopped when it is no longer
+needed. The expressions are evaluated and returned in order.</p>
+<p>Note that each evaluation should be independent and not rely on any previous one. There is no guarantee that two
+given expressions evaluate on the same kernel.</p>
 </dd></dl>
 
 <dl class="class">
 <dt>
 <em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframResult</code><span class="sig-paren">(</span><em>result=None</em>, <em>failure=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/result.html#WolframResult"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Most generic result object.</p>
-<p>The actual result is returned via method <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframResult.get" title="wolframclient.evaluation.result.WolframResult.get"><code class="xref py py-func docutils literal notranslate"><span class="pre">get()</span></code></a>.
-If the result is a <cite>success</cite>, the field <cite>result</cite> is returned otherwise <cite>failure</cite> is returned and most
-likely contains an error message.</p>
+<dd><p>The most generic result object.</p>
+<p>The actual result is returned via the method <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframResult.get" title="wolframclient.evaluation.result.WolframResult.get"><code class="xref py py-func docutils literal notranslate"><span class="pre">get()</span></code></a>. If the
+result is a <cite>success</cite>, the field <cite>result</cite> is returned; otherwise, <cite>failure</cite> is returned and most likely contains an
+error message.</p>
 <dl class="method">
 <dt>
 <code class="descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/result.html#WolframResult.get"><span class="viewcode-link">[source]</span></a></dt>
@@ -873,7 +877,9 @@ likely contains an error message.</p>
 <dl class="class">
 <dt>
 <em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframAPIResponse</code><span class="sig-paren">(</span><em>response</em>, <em>decoder=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/result.html#WolframAPIResponse"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Generic API response.</p>
+<dd><p>A generic API response.</p>
+<p>This class is lazily constructed when the response body becomes available.</p>
+<p>A decoder is inferred from the content type. Currently JSON and WXF formats are supported.</p>
 <dl class="method">
 <dt>
 <code class="descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/result.html#WolframAPIResponse.get"><span class="viewcode-link">[source]</span></a></dt>
@@ -885,10 +891,15 @@ likely contains an error message.</p>
 <dl class="class">
 <dt>
 <em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframAPIResponseAsync</code><span class="sig-paren">(</span><em>response</em>, <em>decoder=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/result.html#WolframAPIResponseAsync"><span class="viewcode-link">[source]</span></a></dt>
-<dd><dl class="method">
+<dd><p>Asynchronous counterpart of <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframAPIResponse" title="wolframclient.evaluation.result.WolframAPIResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframAPIResponse</span></code></a>, awaiting for the
+response body.</p>
+<p>Most of the class logic is implemented in <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframAPIResponse" title="wolframclient.evaluation.WolframAPIResponse"><code class="xref py py-data docutils literal notranslate"><span class="pre">WolframAPIResponse</span></code></a>, except the build method which has to be a
+coroutine.</p>
+<dl class="method">
 <dt>
 <code class="descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/result.html#WolframAPIResponseAsync.get"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Return the result or raise an exception based on the success status.</p>
+<p>This is a coroutine.</p>
 </dd></dl>
 
 </dd></dl>
@@ -901,27 +912,27 @@ likely contains an error message.</p>
 <em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframCloudSession</code><span class="sig-paren">(</span><em>credentials=None</em>, <em>server=None</em>, <em>inputform_string_evaluation=True</em>, <em>oauth_session_class=None</em>, <em>xauth_session_class=None</em>, <em>http_sessionclass=None</em>, <em>max_workers=4</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Represent a session to a given cloud enabling simple API call.</p>
 <p>This is the central class of the cloud evaluation package. It is initialized with a server instance
-representing a given cloud. By default a session targets the Wolfram public cloud.</p>
-<p>Most of the time it is necessary to authenticate with the server before issuing requests. Session
-supports two forms of authentication:</p>
+representing a given cloud. By default, a session targets the Wolfram Public Cloud.</p>
+<p>Most of the time it is necessary to authenticate with the server before issuing requests. A session supports two
+forms of authentication:</p>
 <ul class="simple">
-<li>2-legged oauth using a secured authentication key.</li>
-<li>xauth using the user ID and password.</li>
+<li>2-legged oauth using a secured authentication key</li>
+<li>xauth using the user ID and password</li>
 </ul>
-<p>Calling an API is done through the method <a class="reference internal" href="../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.call" title="wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.call"><code class="xref py py-func docutils literal notranslate"><span class="pre">call()</span></code></a>
-which will return an instance of <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframAPIResponse" title="wolframclient.evaluation.result.WolframAPIResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframAPIResponse</span></code></a>.
-It is strongly advised to re-use a session to make multiple calls to mitigate the cost of initialization.</p>
-<p><cite>max_workers</cite> can be specified and is passed to the ThreadPoolExecutor used for future methods.</p>
+<p>Calling an API is done through the method
+<a class="reference internal" href="../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.call" title="wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.call"><code class="xref py py-func docutils literal notranslate"><span class="pre">call()</span></code></a>, which will return an instance of
+<a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframAPIResponse" title="wolframclient.evaluation.result.WolframAPIResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframAPIResponse</span></code></a>.
+It is strongly advised to reuse a session to make multiple calls to mitigate the cost of initialization.</p>
+<p><cite>max_workers</cite> can be specified and is passed to the <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThreadPoolExecutor</span></code></a> used for future methods.</p>
 <dl class="method">
 <dt>
 <code class="descname">call</code><span class="sig-paren">(</span><em>api</em>, <em>input_parameters={}</em>, <em>files={}</em>, <em>target_format='wl'</em>, <em>permissions_key=None</em>, <em>**kwargv</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.call"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Call a given API, using the provided input parameters.</p>
-<p><cite>api</cite> can be a string url or a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> (<cite>username</cite>, <cite>api name</cite>). User name is
-generally the Wolfram Language symbol <code class="docutils literal notranslate"><span class="pre">$UserName</span></code>. The API name can be a uuid or a
-relative path e.g: <em>myapi/foo/bar</em>.</p>
-<p>The input parameters are provided as a dictionary with string keys being the name
-of the parameters associated to their value.</p>
-<p>Files are passed in a dictionary. Value can have multiple forms:</p>
+<dd><p>Call a given API using the provided input parameters.</p>
+<p><cite>api</cite> can be a string url or a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> (<cite>username</cite>, <cite>api name</cite>). The username is generally the Wolfram
+Language symbol <code class="docutils literal notranslate"><span class="pre">$UserName</span></code>. The API name can be a UUID or a relative path, e.g. <em>myapi/foo/bar</em>.</p>
+<p>The input parameters are provided as a dictionary with string keys being the name of the parameters associated
+to their value.</p>
+<p>Files are passed in a dictionary. Values can have multiple forms:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;parameter name&#39;</span><span class="p">:</span> <span class="n">file_pointer</span><span class="p">}</span>
 </pre></div>
 </div>
@@ -933,14 +944,14 @@ of the parameters associated to their value.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;parameter name&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;filename&#39;</span><span class="p">,</span> <span class="s1">&#39;...string...data...&#39;</span><span class="p">,</span> <span class="s1">&#39;content-type&#39;</span><span class="p">)}</span>
 </pre></div>
 </div>
-<p>It’s possible to pass a <code class="docutils literal notranslate"><span class="pre">PermissionsKey</span></code> to the server along side to the query,
-and get access to a given resource.</p>
+<p>It is possible to pass a <code class="docutils literal notranslate"><span class="pre">PermissionsKey</span></code> to the server alongside the query and get access to a given
+resource.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">call_future</code><span class="sig-paren">(</span><em>api</em>, <em>input_parameters={}</em>, <em>target_format='wl'</em>, <em>permissions_key=None</em>, <em>**kwargv</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.call_future"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Call a given API asynchronously. Returns a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">concurrent.futures.Future</span></code></a> object.</p>
+<dd><p>Call a given API asynchronously and return a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> object.</p>
 <p>See <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudSession.call" title="wolframclient.evaluation.WolframCloudSession.call"><code class="xref py py-func docutils literal notranslate"><span class="pre">WolframCloudSession.call()</span></code></a> for more details about input parameters.</p>
 </dd></dl>
 
@@ -953,50 +964,51 @@ and get access to a given resource.</p>
 <dl class="method">
 <dt>
 <code class="descname">evaluate</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.evaluate"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Send <cite>expr</cite> to the cloud for evaluation, return the result.</p>
-<p><cite>expr</cite> can be a Python object serializable by <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a>,
-or a the string InputForm of an expression to evaluate.</p>
+<dd><p>Send <cite>expr</cite> to the cloud for evaluation and return the result.</p>
+<p><cite>expr</cite> can be a Python object serializable by <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a> or the string
+<a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html">InputForm</a> of an expression to evaluate.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">evaluate_future</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.evaluate_future"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Send <cite>expr</cite> to the cloud for asynchronous evaluation.</p>
-<p>Returns a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">concurrent.futures.Future</span></code></a> object.</p>
-<p><cite>expr</cite> can be a Python object serializable by <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a>,
-or a the string InputForm of an expression to evaluate.</p>
+<dd><p>Send <cite>expr</cite> to the cloud for asynchronous evaluation and return a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> object.</p>
+<p><cite>expr</cite> can be a Python object serializable by <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a> or the string
+<a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html">InputForm</a> of an expression to evaluate.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">evaluate_wrap</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.evaluate_wrap"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Similar to <a class="reference internal" href="../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate" title="wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate()</span></code></a> but return the result as a <code class="xref py py-class docutils literal notranslate"><span class="pre">WolframEvaluationJSONResponse</span></code>.</p>
+<dd><p>Similar to <a class="reference internal" href="../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate" title="wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate()</span></code></a> but return the
+result as a <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframCloudEvaluationResponse" title="wolframclient.evaluation.result.WolframCloudEvaluationResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframCloudEvaluationResponse</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">evaluate_wrap_future</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.evaluate_wrap_future"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Asynchronously call <cite>evaluate_wrap</cite>.</p>
-<p>Returns a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">concurrent.futures.Future</span></code></a> object.</p>
+<p>Return a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> object.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.start"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Start the evaluator.</p>
-<p>Once this function was called, the evaluator must be ready to evaluate incoming expressions.</p>
+<p>Once this function is called, the evaluator must be ready to evaluate incoming expressions.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.stop"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Gracefully stop the evaluator. Try to stop the evaluator, but wait for current evaluation to finish first.</p>
+<dd><p>Gracefully stop the evaluator. Try to stop the evaluator but wait for the current evaluation to finish
+first.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">terminate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.terminate"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Immediately stop the evaluator, eventually killing running jobs resulting in cancelled evaluations.</p>
+<dd><p>Immediately stop the evaluator, which will kill the running jobs, resulting in cancelled evaluations.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1014,13 +1026,13 @@ or a the string InputForm of an expression to evaluate.</p>
 <dl class="method">
 <dt>
 <code class="descname">perform</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframAPICall.perform"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Make the API call, return the result.</p>
+<dd><p>Make the API call and return the result.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">perform_future</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframAPICall.perform_future"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Make the API call asynchronously, return a future object.</p>
+<dd><p>Make the API call asynchronously and return a future object.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1028,7 +1040,9 @@ or a the string InputForm of an expression to evaluate.</p>
 <dl class="class">
 <dt>
 <em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframAPIResponse</code><span class="sig-paren">(</span><em>response</em>, <em>decoder=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/result.html#WolframAPIResponse"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Generic API response.</p>
+<dd><p>A generic API response.</p>
+<p>This class is lazily constructed when the response body becomes available.</p>
+<p>A decoder is inferred from the content type. Currently JSON and WXF formats are supported.</p>
 <dl class="method">
 <dt>
 <code class="descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/result.html#WolframAPIResponse.get"><span class="viewcode-link">[source]</span></a></dt>
@@ -1040,16 +1054,27 @@ or a the string InputForm of an expression to evaluate.</p>
 <dl class="class">
 <dt>
 <em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframCloudAsyncSession</code><span class="sig-paren">(</span><em>credentials=None</em>, <em>server=None</em>, <em>loop=None</em>, <em>inputform_string_evaluation=True</em>, <em>oauth_session_class=None</em>, <em>xauth_session_class=None</em>, <em>http_sessionclass=None</em>, <em>ssl_context_class=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/asynccloudsession.html#WolframCloudAsyncSession"><span class="viewcode-link">[source]</span></a></dt>
-<dd><dl class="method">
+<dd><p>Interact with a Wolfram Cloud asynchronously using coroutines.</p>
+<p>Asynchronous cloud operations are provided through coroutines using modules <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> and
+<a class="reference external" href="https://pypi.org/project/aiohttp/">aiohttp</a>.</p>
+<p>Instances of this class can be managed with an asynchronous context manager:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">with</span> <span class="n">WolframCloudAsyncSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>An event loop can be explicitly passed using the named parameter <cite>loop</cite>; otherwise, the one
+returned by <a class="reference external" href="https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.get_event_loop" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_event_loop()</span></code></a> is used.
+The initialization options of the class <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.WolframCloudSession" title="wolframclient.evaluation.WolframCloudSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframCloudSession</span></code></a> are also supported by
+this class.</p>
+<dl class="method">
 <dt>
 <code class="descname">call</code><span class="sig-paren">(</span><em>api</em>, <em>input_parameters={}</em>, <em>files={}</em>, <em>target_format='wl'</em>, <em>permissions_key=None</em>, <em>**kwargv</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/asynccloudsession.html#WolframCloudAsyncSession.call"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Call a given API, using the provided input parameters.</p>
-<p><cite>api</cite> can be a string url or a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> (<cite>username</cite>, <cite>api name</cite>). User name is
-generally the Wolfram Language symbol <code class="docutils literal notranslate"><span class="pre">$UserName</span></code>. The API name can be a uuid or a
-relative path e.g: <em>myapi/foo/bar</em>.</p>
+<dd><p>Call a given API using the provided input parameters.</p>
+<p><cite>api</cite> can be a string url or a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> (<cite>username</cite>, <cite>api name</cite>). The username is generally the Wolfram
+Language symbol <code class="docutils literal notranslate"><span class="pre">$UserName</span></code>. The API name can be a UUID or a relative path, e.g. <em>myapi/foo/bar</em>.</p>
 <p>The input parameters are provided as a dictionary with string keys being the name
 of the parameters associated to their value.</p>
-<p>Files are passed in a dictionary. Value can have multiple forms:</p>
+<p>Files are passed in a dictionary. Values can have multiple forms:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;parameter name&#39;</span><span class="p">:</span> <span class="n">file_pointer</span><span class="p">}</span>
 </pre></div>
 </div>
@@ -1061,8 +1086,8 @@ of the parameters associated to their value.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;parameter name&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;filename&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;...binary...data...&#39;</span><span class="p">,</span> <span class="s1">&#39;content-type&#39;</span><span class="p">)}</span>
 </pre></div>
 </div>
-<p>It’s possible to pass a <code class="docutils literal notranslate"><span class="pre">PermissionsKey</span></code> to the server along side to the query,
-and get access to a given resource.</p>
+<p>It is possible to pass a <code class="docutils literal notranslate"><span class="pre">PermissionsKey</span></code> to the server alongside the query and get access to a given
+resource.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1074,15 +1099,16 @@ and get access to a given resource.</p>
 <dl class="method">
 <dt>
 <code class="descname">evaluate</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/asynccloudsession.html#WolframCloudAsyncSession.evaluate"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Send <cite>expr</cite> to the cloud for evaluation, return the result.</p>
-<p><cite>expr</cite> can be a Python object serializable by <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a>,
-or a the string InputForm of an expression to evaluate.</p>
+<dd><p>Send <cite>expr</cite> to the cloud for evaluation and return the result.</p>
+<p><cite>expr</cite> can be a Python object serializable by <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a> or the string
+<a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html">InputForm</a> of an expression to evaluate.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">evaluate_wrap</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/asynccloudsession.html#WolframCloudAsyncSession.evaluate_wrap"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Similar to <a class="reference internal" href="../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.asynccloudsession.WolframCloudAsyncSession.evaluate" title="wolframclient.evaluation.cloud.asynccloudsession.WolframCloudAsyncSession.evaluate"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate()</span></code></a> but return the result as a <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframEvaluationJSONResponseAsync" title="wolframclient.evaluation.result.WolframEvaluationJSONResponseAsync"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframEvaluationJSONResponseAsync</span></code></a>.</p>
+<dd><p>Similar to <a class="reference internal" href="../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.asynccloudsession.WolframCloudAsyncSession.evaluate" title="wolframclient.evaluation.cloud.asynccloudsession.WolframCloudAsyncSession.evaluate"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate()</span></code></a> but
+return the result as a <a class="reference internal" href="../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframEvaluationJSONResponseAsync" title="wolframclient.evaluation.result.WolframEvaluationJSONResponseAsync"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframEvaluationJSONResponseAsync</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1099,13 +1125,13 @@ or a the string InputForm of an expression to evaluate.</p>
 <dl class="class">
 <dt>
 <em class="property">class </em><code class="descclassname">wolframclient.exception.</code><code class="descname">WolframLanguageException</code><span class="sig-paren">(</span><em>payload</em>, <em>exec_info=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/exceptions.html#WolframLanguageException"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>The most generic exception raised by the wolframclient library.</p>
-<p>This class is <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.serializable.WLSerializable" title="wolframclient.serializers.serializable.WLSerializable"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSerializable</span></code></a>,
-and will automatically serialize to a failure box when evaluated in a Wolfram Desktop.</p>
+<dd><p>The most generic exception raised by the Wolfram Client Library.</p>
+<p>This class is <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.serializable.WLSerializable" title="wolframclient.serializers.serializable.WLSerializable"><code class="xref py py-class docutils literal notranslate"><span class="pre">WLSerializable</span></code></a> and will automatically serialize to a
+failure box when evaluated in Wolfram Desktop.</p>
 <dl class="method">
 <dt>
 <code class="descname">to_wl</code><span class="sig-paren">(</span><em>*args</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/language/exceptions.html#WolframLanguageException.to_wl"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Return the serialized form of a given python class.</p>
+<dd><p>Return the serialized form of a given Python class.</p>
 <p>The returned value must be a combination of serializable types.</p>
 </dd></dl>
 
@@ -1114,7 +1140,7 @@ and will automatically serialize to a failure box when evaluated in a Wolfram De
 <dl class="class">
 <dt>
 <em class="property">class </em><code class="descclassname">wolframclient.exception.</code><code class="descname">AuthenticationException</code><span class="sig-paren">(</span><em>response</em>, <em>msg=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/exception.html#AuthenticationException"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Error in authentication request.</p>
+<dd><p>Error in an authentication request.</p>
 </dd></dl>
 
 <dl class="class">
@@ -1126,7 +1152,7 @@ and will automatically serialize to a failure box when evaluated in a Wolfram De
 <dl class="class">
 <dt>
 <em class="property">class </em><code class="descclassname">wolframclient.exception.</code><code class="descname">RequestException</code><span class="sig-paren">(</span><em>response</em>, <em>msg=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/exception.html#RequestException"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Error in HTTP request.</p>
+<dd><p>Error in an HTTP request.</p>
 </dd></dl>
 
 <dl class="class">
@@ -1148,7 +1174,7 @@ and will automatically serialize to a failure box when evaluated in a Wolfram De
         href="../index.html">Overview</a>
 </div>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="install.html">Installation and prerequisites</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation and Prerequisites</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="install.html#prerequisites">Prerequisites</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#installation">Installation</a></li>
 </ul>
@@ -1163,8 +1189,8 @@ and will automatically serialize to a failure box when evaluated in a Wolfram De
 <li class="toctree-l1"><a class="reference internal" href="advanced_usages.html">Advanced Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="advanced_usages.html#expression-representation">Expression Representation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="advanced_usages.html#local-kernel-evaluation">Local Kernel Evaluation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced_usages.html#extending-serialization-writing-an-encoder">Extending serialization: Writing an Encoder</a></li>
-<li class="toctree-l2"><a class="reference internal" href="advanced_usages.html#extending-wxf-parsing-writing-a-wxfconsumer">Extending WXF Parsing: Writing a WXFConsumer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usages.html#extending-serialization-writing-an-encoder">Extending Serialization: Writing an <cite>Encoder</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usages.html#extending-wxf-parsing-writing-a-wxfconsumer">Extending WXF Parsing: Writing a <cite>WXFConsumer</cite></a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Guide</a><ul>
@@ -1195,7 +1221,7 @@ and will automatically serialize to a failure box when evaluated in a Wolfram De
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script><footer class='copyright'>
     <div>
-        <span>&#169; Copyright 2019, Wolfram Research.</span>
+        <span>&#169; 2019 Wolfram Research. All rights reserved.</span>
     </div>
 </footer>
         </div>

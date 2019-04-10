@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Wolfram Client Library for Python &#8212; Wolfram Client Library for Python 1.0.1 documentation</title>
+    <title>Wolfram Client Library for Python &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
     <link rel="stylesheet" href="_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -59,7 +59,7 @@
 </div>
 <div class='document-subheader bodyaligned'>
     <span id='header-summary'>
-        The Wolfram Client Library for Python lets Python programs directly integrate Wolfram Language capabilities. Connect either to a local Wolfram Engine, or to the Wolfram Cloud (or a private Wolfram Cloud)
+        The Wolfram Client Library for Python lets Python programs directly integrate Wolfram Language capabilities. Connect either to a local Wolfram Engine or to the Wolfram Cloud (or a private Wolfram Cloud).
     </span>
     <br>
 </div>
@@ -74,7 +74,7 @@
 </pre></div>
 </div>
 <div id='setup-session' class='border-top bodyaligned code-label'>
-    <span>Setup your Wolfram Language session:</span>
+    <span>Set up your Wolfram Language session:</span>
 </div><div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.evaluation</span> <span class="kn">import</span> <span class="n">WolframLanguageSession</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.language</span> <span class="kn">import</span> <span class="n">wl</span><span class="p">,</span> <span class="n">wlexpr</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">session</span> <span class="o">=</span> <span class="n">WolframLanguageSession</span><span class="p">()</span>
@@ -105,7 +105,7 @@
 </div>
 <div class='border-top bodyaligned subsection'>
     <span>
-        Direct support for PIL, Pandas, NumPy libraries:
+        Direct support for PIL, Pandas and NumPy libraries:
     </span>
 </div><div  class='bodyaligned code-label'>
     Create a Pandas <span class='pre'>DataFrame</span>:
@@ -167,12 +167,12 @@
     <ul>
         <li><a class='' href='https://reference.wolfram.com/language/#DataManipulationAndAnalysis'>Data Science</a><span class='inlinebullet'>▪</span></li>
         <li><a class='' href='https://reference.wolfram.com/language/#SymbolicAndNumericComputation'>Numerics</a><span class='inlinebullet'>▪</span></li>
-        <li><a class='' href='https://reference.wolfram.com/language/#GraphsAndNetworks'>Graphs Theory</a><span class='inlinebullet'>▪</span></li>
+        <li><a class='' href='https://reference.wolfram.com/language/#GraphsAndNetworks'>Graph Theory</a><span class='inlinebullet'>▪</span></li>
         <li><a class='' href='https://reference.wolfram.com/language/'>...</a></li>
     </ul>
 </div><div class='border-top bodyaligned subsection'>
     <span>
-        Access the Wolfram knowledgebase:
+        Access the Wolfram Knowledgebase:
     </span>
 </div><div class='bodyaligned code-label'>
     Get the closest ocean:
@@ -183,7 +183,7 @@
 </div>
 <div class='border-top bodyaligned subsection'>
     <span>
-        Use Wolfram natural language understanding in Python:
+        Use Wolfram's natural language understanding in Python:
     </span>
 </div><div class='bodyaligned code-label'>
     Query <a href='https://www.wolframalpha.com/'>Wolfram|Alpha</a> directly in Python:
@@ -192,7 +192,7 @@
 </pre></div>
 </div>
 <div class='bodyaligned code-label'>
-    Terminate the session, release all resources:
+    Terminate the session and release all resources:
 </div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -207,7 +207,7 @@
         href="#">Overview</a>
 </div>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="docpages/install.html">Installation and prerequisites</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="docpages/install.html">Installation and Prerequisites</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="docpages/install.html#prerequisites">Prerequisites</a></li>
 <li class="toctree-l2"><a class="reference internal" href="docpages/install.html#installation">Installation</a></li>
 </ul>
@@ -222,8 +222,8 @@
 <li class="toctree-l1"><a class="reference internal" href="docpages/advanced_usages.html">Advanced Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="docpages/advanced_usages.html#expression-representation">Expression Representation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="docpages/advanced_usages.html#local-kernel-evaluation">Local Kernel Evaluation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docpages/advanced_usages.html#extending-serialization-writing-an-encoder">Extending serialization: Writing an Encoder</a></li>
-<li class="toctree-l2"><a class="reference internal" href="docpages/advanced_usages.html#extending-wxf-parsing-writing-a-wxfconsumer">Extending WXF Parsing: Writing a WXFConsumer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docpages/advanced_usages.html#extending-serialization-writing-an-encoder">Extending Serialization: Writing an <cite>Encoder</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="docpages/advanced_usages.html#extending-wxf-parsing-writing-a-wxfconsumer">Extending WXF Parsing: Writing a <cite>WXFConsumer</cite></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="docpages/public_api.html">Guide</a><ul>
@@ -254,7 +254,7 @@
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script><footer class='copyright'>
     <div>
-        <span>&#169; Copyright 2019, Wolfram Research.</span>
+        <span>&#169; 2019 Wolfram Research. All rights reserved.</span>
     </div>
 </footer>
         </div>

@@ -60,14 +60,6 @@ wolframclient.serializers.encoders.pil module
     :undoc-members:
     :show-inheritance:
 
-wolframclient.serializers.encoders.wolfram module
--------------------------------------------------
-
-.. automodule:: wolframclient.serializers.encoders.wolfram
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 Module contents
 ---------------
