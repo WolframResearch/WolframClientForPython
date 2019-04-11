@@ -12,21 +12,18 @@ from wolframclient.utils.functional import identity, map
 encoder = Dispatch()
 
 NUMPY_MAPPING = {
-    numpy.int8: ('Integer8', methodcaller('astype', '<i1')),
-    numpy.int16: ('Integer16', methodcaller('astype', '<i2')),
-    numpy.int32: ('Integer32', methodcaller('astype', '<i4')),
-    numpy.int64: ('Integer64', methodcaller('astype', '<i8')),
-    numpy.uint8: ('UnsignedInteger8', methodcaller('astype', '<u1')),
-    numpy.uint16: ('UnsignedInteger16', methodcaller('astype',
-                                                              '<u2')),
-    numpy.uint32: ('UnsignedInteger32', methodcaller('astype',
-                                                              '<u4')),
-    numpy.uint64: ('UnsignedInteger64', methodcaller('astype',
-                                                              '<u8')),
-    numpy.float32: ('Real32', identity),
-    numpy.float64: ('Real64', identity),
-    numpy.complex64: ('ComplexReal32', identity),
-    numpy.complex128: ('ComplexReal64', identity),
+    numpy.int8: 'Integer8',
+    numpy.int16: 'Integer16',
+    numpy.int32: 'Integer32',
+    numpy.int64: 'Integer64',
+    numpy.uint8: 'UnsignedInteger8',
+    numpy.uint16: 'UnsignedInteger16',
+    numpy.uint32: 'UnsignedInteger32',
+    numpy.uint64: 'UnsignedInteger64',
+    numpy.float32: 'Real32',
+    numpy.float64: 'Real64',
+    numpy.complex64: 'ComplexReal32',
+    numpy.complex128: 'ComplexReal64',
 }
 
 
@@ -48,7 +45,7 @@ def to_little_endian(array, inplace=False):
 def encode_ndarray(serializer, o):
 
     try:
-        wl_type, handler = NUMPY_MAPPING[o.dtype.type]
+        wl_type = NUMPY_MAPPING[o.dtype.type]
     except KeyError:
         raise NotImplementedError(
             'NumPy serialization not implemented for %s. Choices are: %s' %
