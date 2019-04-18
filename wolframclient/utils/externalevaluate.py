@@ -29,12 +29,12 @@ EXPORT_KWARGS = {
     'allow_external_objects': True,
 }
 
-def EvaluationContext(code, session_data = {}, context = None, **extra):
+def EvaluationEnvironment(code, session_data = {}, constants = None, **extra):
 
     session_data['__loader__'] = Settings(get_source=lambda module, code = code: code)
     session_data['__traceback_hidden_variables__'] = HIDDEN_VARIABLES
-    if context:
-        session_data.update(context)
+    if constants:
+        session_data.update(constants)
 
     return session_data
 
@@ -47,13 +47,13 @@ def execute_from_file(path, *args, **opts):
 def execute_from_string(code, globals = {}, **opts):
 
     __traceback_hidden_variables__ = [
-        'context', 'current', '__traceback_hidden_variables__'
+        'env', 'current', '__traceback_hidden_variables__'
     ]
 
     #this is creating a custom __loader__ that is returning the source code
     #traceback serializers is inspecting global variables and looking for a standard loader that can return source code.
 
-    context     = EvaluationContext(code = code, **opts)
+    env         = EvaluationEnvironment(code = code, **opts)
     result      = None
     expressions = list(
         compile(
@@ -69,10 +69,10 @@ def execute_from_string(code, globals = {}, **opts):
         result = expressions.pop(-1)
 
     if expressions:
-        exec(compile(ast.Module(expressions), '', 'exec'), context)
+        exec(compile(ast.Module(expressions), '', 'exec'), env)
 
     if result:
-        return eval(compile(ast.Expression(result.value), '', 'eval'), context)
+        return eval(compile(ast.Expression(result.value), '', 'eval'), env)
 
 
 class SideEffectSender(logging.Handler):
