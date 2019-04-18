@@ -7,7 +7,7 @@ from wolframclient.utils.logger import str_trim
 
 
 class RequestException(WolframLanguageException):
-    """Error in HTTP request."""
+    """Error in an HTTP request."""
 
     def __init__(self, response, msg=None):
         self.response = response
@@ -33,11 +33,11 @@ class RequestException(WolframLanguageException):
 
 
 class AuthenticationException(RequestException):
-    """Error in authentication request."""
+    """Error in an authentication request."""
 
 
 class WolframKernelException(WolframLanguageException):
-    """Error while interacting with a Wolfram Kernel."""
+    """Error while interacting with a Wolfram kernel."""
 
 
 class WolframEvaluationException(WolframLanguageException):

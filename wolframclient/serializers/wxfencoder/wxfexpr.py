@@ -160,9 +160,8 @@ class WXFExprBigInteger(_WXFExprStringLike):
 
 
 class WXFExprBigReal(_WXFExprStringLike):
-    ''' A string representation of a real value with arbitrary precision. The
-    string format matches the one of the `InputForm` string representation of
-    the real in the Wolfram Language.
+    ''' A string representation of a real value with arbitrary precision. The string format matches the one of the
+    :wl:`InputForm` string representation of the real in the Wolfram Language.
     '''
 
     def __init__(self, value):

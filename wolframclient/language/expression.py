@@ -97,11 +97,13 @@ class WLFunction(WLExpressionMeta):
 
 
 class WLSymbolFactory(WLSymbol):
-    """Provide a convenient way to build objects representing arbitrary Wolfram Language expressions through the use of attributes.
+    """Provide a convenient way to build objects representing arbitrary Wolfram Language expressions through the use of
+    attributes.
 
-    This class is conveniently instantiated at startup as: :class:`~wolframclient.language.wl`, :class:`~wolframclient.language.Global` 
-    and :class:`~wolframclient.language.System`. It should be instantiated only to represent many symbols belonging to the same specific
-    context.
+    This class is conveniently instantiated at startup as :class:`~wolframclient.language.wl`,
+    :class:`~wolframclient.language.Global`
+    and :class:`~wolframclient.language.System`. It should be instantiated only to represent many symbols belonging to
+    the same specific context.
 
     Example::
 
@@ -140,21 +142,3 @@ class WLInputExpression(WLExpressionMeta):
     def __str__(self):
         return '(%s)' % self.input
 
-
-# Sphinx seems to bug on this one, and picks an outdated the docstring when declared in __init__.
-wlexpr = WLInputExpression
-""" Represent Wolfram Language expressions with input form strings.
-
-Convenient alias for :class:`~wolframclient.language.expression.WLInputExpression`.
-
-Represent an expression::
-
-    >>> wlexpr('Select[EvenQ, Range[10]]')
-    (Select[EvenQ, Range[10]])
-
-Represent a pure function that squares an input argument::
-
-    >>> wlexpr('# ^ 2 &' )
-    (# ^ 2 &)
-
-"""

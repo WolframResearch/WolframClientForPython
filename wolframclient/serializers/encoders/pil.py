@@ -18,7 +18,7 @@ encoder = Dispatch()
     are supported, fortunatelly the most common ones.
 
     When the internal PIL representation does not correspond to one of the Wolfram Language,
-    the image is converted to its format, if specified, or ultimatelly to PNG. This may fail,
+    the image is converted to its format, if specified, or ultimately to PNG. This may fail,
     in which case an exception is raised and there is nothing more we can do.
 
     In theory we could represent any image, but due to :func:`~PIL.Image.convert()` behavior 

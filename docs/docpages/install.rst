@@ -1,12 +1,12 @@
 .. toctree::
     :maxdepth: 4
 
-Installation and prerequisites
+Installation and Prerequisites
 ******************************
 
 The library source code is available in various repositories:
 
-* hosted on `PyPi <https://pypi.org/project/wolframclient/>`_ and available in `pip`
+* hosted on `PyPI <https://pypi.org/project/wolframclient/>`_ and available in `pip`
 * in a public repository on `GitHub <https://github.com/WolframResearch/WolframClientForPython>`_
 * bundled with Wolfram Language 12+
 
@@ -23,7 +23,7 @@ Installation
 
 There are three methods for installing the library.
 
-Install using pip (recommended)
+Install Using `pip` (Recommended)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Recommended for most users. It installs the latest stable version released by Wolfram Research.
@@ -34,7 +34,7 @@ Evaluate the following command in a terminal:
 
     $ pip install wolframclient
 
-Install using Git
+Install Using Git
 ^^^^^^^^^^^^^^^^^^^^^
 
 Recommended for developers who want to install the library along with the full source code.
@@ -51,8 +51,8 @@ Install the library in your site-package directory:
 
     $ pip install .
 
-Install from Wolfram Language based products
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Install from Wolfram Language--Based Products
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Future releases of the Wolfram Language will include a stable version of the client library. The library location depends on your OS. Here are the usual locations:
 

@@ -14,6 +14,6 @@ def wl_reference_role(role_name, rawtext, wl_symbol, lineno, inliner,
     else:
         symbol_ref_url = wl_ref_url % utils.unescape(wl_symbol)
     node = nodes.reference(rawtext, wl_symbol, refuri=symbol_ref_url,
-                           classes=['wl', 'external'], target='_blank',
+                           classes=['wl', 'external'],
                            **options)
     return [node], []

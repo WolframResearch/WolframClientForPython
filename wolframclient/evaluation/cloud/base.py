@@ -162,20 +162,18 @@ class WolframAPICallBase(object):
                                  content_type='image/png'):
         """Add a new API image input parameter from binary data.
 
-        If the data in `image_data` does not represent an image in the `PNG` format, the
-        optional parameter `content_type` must be set accordingly to the appropriate content
-        type.
-        e.g: *image/jpeg*, *image/gif*, etc.
+        If the data in `image_data` does not represent an image in the `PNG` format, the optional parameter
+        `content_type` must be set accordingly to the appropriate content type, e.g. *image/jpeg*, *image/gif*, etc.
         """
         return self.add_binary_parameter(name, image_data, filename,
                                          content_type)
 
     def perform(self, **kwargs):
-        """Make the API call, return the result."""
+        """Make the API call and return the result."""
         raise NotImplementedError
 
     def perform_future(self, **kwargs):
-        """Make the API call asynchronously, return a future object."""
+        """Make the API call asynchronously and return a future object."""
         raise NotImplementedError
 
     def __repr__(self):

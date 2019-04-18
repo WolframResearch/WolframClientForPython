@@ -11,7 +11,6 @@ from wolframclient.utils import six
 from wolframclient.utils.functional import identity
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
-
 class TestCase(BaseTestCase):
     def test_export(self):
 
@@ -98,7 +97,7 @@ class TestCase(BaseTestCase):
 
         self.assertEqual(
             export(
-                wl.Failure("PythonFailure", {"MessageTemplate": 'baz'}),
+                wl.Failure("PythonFailure", {"MessageTemplate": ('baz', 'bar')}),
                 target_format='wl',
                 encoder='wolframclient.serializers.encoders.builtin.encoder'),
-            b'Failure["PythonFailure", <|"MessageTemplate" -> "baz"|>]')
+            b'Failure["PythonFailure", <|"MessageTemplate" -> {"baz", "bar"}|>]')

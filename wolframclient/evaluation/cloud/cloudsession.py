@@ -12,7 +12,7 @@ from wolframclient.evaluation.cloud.oauth import \
     XAuthRequestsSyncSession as XAuthSession
 from wolframclient.evaluation.cloud.server import WOLFRAM_PUBLIC_CLOUD_SERVER
 from wolframclient.evaluation.result import (
-    WolframAPIResponseBuilder, WolframCloudEvaluationJSONResponse,
+    WolframAPIResponseBuilder,
     WolframCloudEvaluationWXFResponse)
 from wolframclient.exception import AuthenticationException
 from wolframclient.serializers import export
@@ -30,19 +30,20 @@ class WolframCloudSession(WolframEvaluator):
     """Represent a session to a given cloud enabling simple API call.
 
     This is the central class of the cloud evaluation package. It is initialized with a server instance
-    representing a given cloud. By default a session targets the Wolfram public cloud.
+    representing a given cloud. By default, a session targets the Wolfram Public Cloud.
 
-    Most of the time it is necessary to authenticate with the server before issuing requests. Session
-    supports two forms of authentication:
+    Most of the time it is necessary to authenticate with the server before issuing requests. A session supports two
+    forms of authentication:
 
-    * 2-legged oauth using a secured authentication key.
-    * xauth using the user ID and password.
+    * 2-legged oauth using a secured authentication key
+    * xauth using the user ID and password
 
-    Calling an API is done through the method :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.call`
-    which will return an instance of :class:`~wolframclient.evaluation.result.WolframAPIResponse`.
-    It is strongly advised to re-use a session to make multiple calls to mitigate the cost of initialization.
+    Calling an API is done through the method
+    :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.call`, which will return an instance of
+    :class:`~wolframclient.evaluation.result.WolframAPIResponse`.
+    It is strongly advised to reuse a session to make multiple calls to mitigate the cost of initialization.
 
-    `max_workers` can be specified and is passed to the ThreadPoolExecutor used for future methods.
+    `max_workers` can be specified and is passed to the :class:`~concurrent.futures.ThreadPoolExecutor` used for future methods.
     """
 
     def __init__(self,
@@ -168,16 +169,15 @@ class WolframCloudSession(WolframEvaluator):
              target_format='wl',
              permissions_key=None,
              **kwargv):
-        """Call a given API, using the provided input parameters.
+        """Call a given API using the provided input parameters.
 
-        `api` can be a string url or a :class:`tuple` (`username`, `api name`). User name is
-        generally the Wolfram Language symbol ``$UserName``. The API name can be a uuid or a
-        relative path e.g: *myapi/foo/bar*.
+        `api` can be a string url or a :class:`tuple` (`username`, `api name`). The username is generally the Wolfram
+        Language symbol ``$UserName``. The API name can be a UUID or a relative path, e.g. *myapi/foo/bar*.
 
-        The input parameters are provided as a dictionary with string keys being the name
-        of the parameters associated to their value.
+        The input parameters are provided as a dictionary with string keys being the name of the parameters associated
+        to their value.
 
-        Files are passed in a dictionary. Value can have multiple forms::
+        Files are passed in a dictionary. Values can have multiple forms::
 
             {'parameter name': file_pointer}
 
@@ -189,8 +189,8 @@ class WolframCloudSession(WolframEvaluator):
 
             {'parameter name': ('filename', '...string...data...', 'content-type')}
 
-        It's possible to pass a ``PermissionsKey`` to the server along side to the query,
-        and get access to a given resource.
+        It is possible to pass a ``PermissionsKey`` to the server alongside the query and get access to a given
+        resource.
         """
         url = user_api_url(self.server, api)
         params = {
@@ -223,16 +223,17 @@ class WolframCloudSession(WolframEvaluator):
         return WolframCloudEvaluationWXFResponse(response)
 
     def evaluate(self, expr, **kwargs):
-        """Send `expr` to the cloud for evaluation, return the result.
+        """Send `expr` to the cloud for evaluation and return the result.
 
-        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export`,
-        or a the string InputForm of an expression to evaluate.
+        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export` or the string
+        :wl:`InputForm` of an expression to evaluate.
         """
         return self._call_evaluation_api(self.normalize_input(expr),
                                          **kwargs).get()
 
     def evaluate_wrap(self, expr, **kwargs):
-        """ Similar to :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate` but return the result as a :class:`~wolframclient.evaluation.result.WolframEvaluationJSONResponse`.
+        """ Similar to :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate` but return the
+         result as a :class:`~wolframclient.evaluation.result.WolframCloudEvaluationResponse`.
         """
         return self._call_evaluation_api(self.normalize_input(expr), **kwargs)
 
@@ -251,7 +252,7 @@ class WolframCloudSession(WolframEvaluator):
                     target_format='wl',
                     permissions_key=None,
                     **kwargv):
-        """Call a given API asynchronously. Returns a :class:`concurrent.futures.Future` object.
+        """Call a given API asynchronously and return a :class:`~concurrent.futures.Future` object.
 
         See :func:`WolframCloudSession.call` for more details about input parameters.
         """
@@ -264,12 +265,10 @@ class WolframCloudSession(WolframEvaluator):
             **kwargv)
 
     def evaluate_future(self, expr, **kwargs):
-        """Send `expr` to the cloud for asynchronous evaluation.
+        """Send `expr` to the cloud for asynchronous evaluation and return a :class:`~concurrent.futures.Future` object.
 
-        Returns a :class:`concurrent.futures.Future` object.
-
-        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export`,
-        or a the string InputForm of an expression to evaluate.
+        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export` or the string
+        :wl:`InputForm` of an expression to evaluate.
         """
         return self.pool.submit(self.evaluate, expr, **kwargs)
 
@@ -286,90 +285,11 @@ class WolframCloudSession(WolframEvaluator):
                                                     self.authorized())
 
 
-# class WolframCloudFutureSession(WolframCloudSession):
-#     """ Am asynchronous Wolfram cloud session wrapping API calls and cloud evaluations
-#     in future objects.
-
-#     `max_workers` can be specified and is passed to the ThreadPoolExecutor.
-#     `kwargs` are parameters as expect by `~wolframclient.evaluation.WolframCloudSession`
-#     """
-
-#     def __init__(self,
-#                  credentials=None,
-#                  server=WOLFRAM_PUBLIC_CLOUD_SERVER,
-#                  max_workers=None,
-#                  inputform_string_evaluation=True,
-#                  oauth_session_class=OAuthSession,
-#                  xauth_session_class=XAuthSession,
-#                  http_sessionclass=requests.Session):
-#         super().__init__(
-#             credentials=credentials,
-#             server=server,
-#             inputform_string_evaluation=inputform_string_evaluation,
-#             oauth_session_class=oauth_session_class,
-#             xauth_session_class=xauth_session_class,
-#             http_sessionclass=http_sessionclass)
-#         self._pool = None
-#         self._max_workers = max_workers
-
-#     @property
-#     def started(self):
-#         return self._pool is not None and super().started
-
-#     def start(self):
-#         super().start()
-#         if self._pool is None:
-#             self._pool = futures.ThreadPoolExecutor(
-#                 max_workers=self._max_workers)
-
-#     def stop(self):
-#         if self._pool is not None:
-#             self._pool.shutdown(wait=True)
-#             self._pool = None
-#         super().stop()
-
-#     def terminate(self):
-#         if self._pool is not None:
-#             self._pool.shutdown(wait=False)
-#             self._pool = None
-#         super().terminate()
-
-#     def call(self,
-#              api,
-#              input_parameters={},
-#              target_format='wl',
-#              permissions_key=None,
-#              **kwargv):
-#         """Call a given API asynchronously. Returns a :class:`concurrent.futures.Future` object.
-
-#         See :func:`WolframCloudSession.call` for more details about input parameters.
-#         """
-#         self.ensure_started()
-#         return self._pool.submit(
-#             super().call,
-#             api,
-#             input_parameters=input_parameters,
-#             target_format=target_format,
-#             permissions_key=permissions_key,
-#             **kwargv)
-
-#     def evaluate(self, expr):
-#         """Send `expr` to the cloud for asynchronous evaluation.
-
-#         Returns a :class:`concurrent.futures.Future` object.
-
-#         `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export`,
-#         or a the string InputForm of an expression to evaluate.
-#         """
-#         self.ensure_started()
-#         return self._pool.submit(super().evaluate, expr)
-
-
 class WolframAPICall(WolframAPICallBase):
     """Helper class to perform an API call using a cloud session. """
 
     def perform(self, **kwargs):
-        """Make the API call, return the result."""
+        """Make the API call and return the result."""
         return self.target.call(
             self.api,
             input_parameters=self.parameters,

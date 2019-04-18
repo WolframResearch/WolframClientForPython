@@ -23,6 +23,7 @@ def dependencies():
         yield ("oauthlib", "2.1.0")
         yield ("pyzmq", "17.1.2")
         yield ("pandas", "0.23.4")
+        yield ('unittest-xml-reporting', None)
     if not six.PY2:
         yield ("aiohttp", "3.4.4")
 
@@ -37,9 +38,15 @@ class Command(SimpleCommand):
     dependencies = dependencies()
 
     def add_arguments(self, parser):
+        parser.add_argument('-x', '--xml', dest='produce_xml', action='store_true',
+                            help='produce xml reports from the test results')
+        parser.add_argument('-d', '--xml-dir', dest='xml_output_dir',
+                            help='produce an xml report in a specific directory.')
+        parser.add_argument("-v", "--verbosity", type=int, choices=[0, 1, 2], default=2,
+                            help="set output verbosity")
         parser.add_argument('args', nargs='*')
 
-    def handle(self, *args):
+    def handle(self, *args, **opts):
 
         suite = unittest.TestSuite()
         for root in map(module_path, self.modules):
@@ -49,7 +56,16 @@ class Command(SimpleCommand):
                         root, pattern=arg, top_level_dir=root))
 
         # verbosity > 1 print test name
-        runner = unittest.TextTestRunner(verbosity=2)
+        verbosity = opts.get('verbosity')
+        xml_path = opts.get('xml_output_dir')
+        # if opts.get('produce_xml'):
+        if xml_path is not None or opts.get('produce_xml'):
+            import xmlrunner
+            runner = xmlrunner.XMLTestRunner(output=xml_path or 'test-reports', verbosity=verbosity)
+        else:
+            runner = unittest.TextTestRunner(verbosity=verbosity)
+
         result = runner.run(suite)
+
         if not result.wasSuccessful():
             sys.exit(1)
