@@ -96,9 +96,10 @@ class WXFConsumer(object):
         :func:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function`.
         """
         head = self.next_expression(tokens, **kwargs)
-        args = []
-        for i in range(current_token.length):
-            args.append(self.next_expression(tokens, **kwargs))
+        args = tuple(
+            self.next_expression(tokens, **kwargs)
+            for i in range(current_token.length)
+        )
         if head == self._LIST:
             return args
         else:
