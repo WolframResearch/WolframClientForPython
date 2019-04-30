@@ -106,22 +106,22 @@ class TestCase(BaseTestCase):
     ### INTEGER TESTS
     @unittest.skipIf(six.JYTHON, None)
     def test_integer8(self):
-        value = [0, 1, 127, -1, -128]
+        value = (0, 1, 127, -1, -128)
         self.wxf_assert_roundtrip(value)
 
     @unittest.skipIf(six.JYTHON, None)
     def test_int16(self):
-        value = [-(1 << 15), (1 << 15) - 1]
+        value = (-(1 << 15), (1 << 15) - 1)
         self.wxf_assert_roundtrip(value)
 
     @unittest.skipIf(six.JYTHON, None)
     def test_int32(self):
-        value = [-(1 << 31), (1 << 31) - 1]
+        value = (-(1 << 31), (1 << 31) - 1)
         self.wxf_assert_roundtrip(value)
 
     @unittest.skipIf(six.JYTHON, None)
     def test_int64(self):
-        value = [-(1 << 63), (1 << 63) - 1]
+        value = (-(1 << 63), (1 << 63) - 1)
         self.wxf_assert_roundtrip(value)
 
     @unittest.skipIf(six.JYTHON, None)
@@ -130,7 +130,7 @@ class TestCase(BaseTestCase):
         self.wxf_assert_roundtrip(value)
 
     def test_real(self):
-        value = [1.2345, 0., 1.23456789e100]
+        value = (1.2345, 0., 1.23456789e100)
         self.wxf_assert_roundtrip(value)
 
     def test_bigreal_precision(self):
@@ -146,7 +146,7 @@ class TestCase(BaseTestCase):
             decimal.Decimal('9.999999999999996843873323328588479844E+999'))
 
     def test_empty_lists(self):
-        value = [[], [[]], [1, []], []]
+        value = ((), ((), ), (1, ()), ())
         self.wxf_assert_roundtrip(value)
 
     def test_simple_dict(self):
@@ -160,7 +160,7 @@ class TestCase(BaseTestCase):
         # BinarySerialize[<|"1" -> 1, "2" -> {0}, "3" -> <||>|>]
         wxf = b'8:A\x03-S\x011C\x01-S\x012f\x01s\x04ListC\x00-S\x013A\x00'
         res = binary_deserialize(wxf)
-        self.assertEqual(res, {'1': 1, '2': [0], '3': {}})
+        self.assertEqual(res, {'1': 1, '2': (0, ), '3': {}})
 
     # WXF format error
     def test_bad_header_version(self):
@@ -185,7 +185,7 @@ class TestCase(BaseTestCase):
             binary_deserialize(wxf)
 
     def test_compressed_input(self):
-        expr = [1, 2, 3]
+        expr = (1, 2, 3)
         wxf = export(expr, target_format='wxf', compress=True)
         res = binary_deserialize(wxf)
         self.assertEqual(expr, res)
