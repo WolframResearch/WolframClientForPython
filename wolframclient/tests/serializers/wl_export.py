@@ -97,11 +97,7 @@ class TestCase(BaseTestCase):
 
         self.assertEqual(
             export(
-                wl.Failure(
-                    "PythonFailure",
-                    {'MessageTemplate': ['baz', ('bar', 'bad')]}
-                ),
+                wl.Failure("PythonFailure", {"MessageTemplate": ('baz', 'bar')}),
                 target_format='wl',
                 encoder='wolframclient.serializers.encoders.builtin.encoder'),
-            b'Failure["PythonFailure", <|"MessageTemplate" -> {"baz", {"bar", "bad"}}|>]'
-        )
+            b'Failure["PythonFailure", <|"MessageTemplate" -> {"baz", "bar"}|>]')

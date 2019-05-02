@@ -9,6 +9,9 @@ from wolframclient.utils.api import externalevaluate as ev
 
 
 class Command(SimpleCommand):
+
+    dependencies = ()
+
     def add_arguments(self, parser):
         parser.add_argument('--port', dest='port', default=None)
         parser.add_argument('--installpath', dest='installpath', default=None)

@@ -16,7 +16,7 @@ class DispatchCommand(SimpleCommand):
 
     default_command = None
 
-    dependencies = []
+    dependencies = ()
 
     def subcommands(self):
         return discover_with_convention(self.modules, self.class_name)

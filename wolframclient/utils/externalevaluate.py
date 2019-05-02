@@ -19,20 +19,24 @@ from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import last
 from wolframclient.utils.importutils import import_string
 
-HIDDEN_VARIABLES = [
+HIDDEN_VARIABLES = (
     '__loader__', '__builtins__', '__traceback_hidden_variables__',
     'absolute_import', 'print_function', 'unicode_literals'
-]
+)
 
 EXPORT_KWARGS = {
     'target_format': 'wxf',
     'allow_external_objects': True,
 }
 
+def EvaluationEnvironment(code, session_data = {}, constants = None, **extra):
 
-class UnprintableContext(dict):
-    def __repr__(self):
-        return '<evaluation context>'
+    session_data['__loader__'] = Settings(get_source=lambda module, code = code: code)
+    session_data['__traceback_hidden_variables__'] = HIDDEN_VARIABLES
+    if constants:
+        session_data.update(constants)
+
+    return session_data
 
 
 def execute_from_file(path, *args, **opts):
@@ -40,58 +44,41 @@ def execute_from_file(path, *args, **opts):
         return execute_from_string(force_text(f.read()), *args, **opts)
 
 
-def execute_from_string(string, context=UnprintableContext()):
+def execute_from_string(code, globals = {}, **opts):
 
     __traceback_hidden_variables__ = [
-        'context', 'current', '__traceback_hidden_variables__'
+        'env', 'current', '__traceback_hidden_variables__'
     ]
 
     #this is creating a custom __loader__ that is returning the source code
     #traceback serializers is inspecting global variables and looking for a standard loader that can return source code.
 
-    current = UnprintableContext(context or ())
-    current['__loader__'] = Settings(
-        get_source=lambda module, code=string: code)
-    current['__traceback_hidden_variables__'] = HIDDEN_VARIABLES
-
+    env         = EvaluationEnvironment(code = code, **opts)
+    result      = None
     expressions = list(
         compile(
-            string,
+            code,
             filename='<unknown>',
             mode='exec',
             flags=ast.PyCF_ONLY_AST | unicode_literals.compiler_flag).body)
 
     if not expressions:
-        return
-
-    result = None
+        return 
 
     if isinstance(last(expressions), ast.Expr):
         result = expressions.pop(-1)
 
     if expressions:
-        exec(compile(ast.Module(expressions), '', 'exec'), current)
+        exec(compile(ast.Module(expressions), '', 'exec'), env)
 
     if result:
-        result = eval(
-            compile(ast.Expression(result.value), '', 'eval'), current)
-    else:
-        result = wl.Null
-
-    if context is not None:
-        context.update(current)
-
-    return result
+        return eval(compile(ast.Expression(result.value), '', 'eval'), env)
 
 
 class SideEffectSender(logging.Handler):
     def emit(self, record):
         if isinstance(sys.stdout, StdoutProxy):
             sys.stdout.send_side_effect(record.msg)
-
-
-side_effect_logger.addHandler(SideEffectSender())
-
 
 class SocketWriter:
     def __init__(self, socket):
@@ -103,6 +90,8 @@ class SocketWriter:
 
 class StdoutProxy:
 
+    #on version 12.1 will start using wl.ExternalEvaluate.Private.ExternalEvaluateKeepListening
+    #for consistency with nodejs
     keep_listening = wl.ExternalEvaluate.Private.PythonKeepListening
 
     def __init__(self, stream):
@@ -143,44 +132,37 @@ class StdoutProxy:
         self.stream.write(export(self.keep_listening(expr), **EXPORT_KWARGS))
 
 
-def evaluate_message(context,
-                     input=None,
+def evaluate_message(input=None,
                      return_type=None,
-                     function=None,
-                     is_module=False,
                      args=None,
                      **opts):
 
     __traceback_hidden_variables__ = True
 
-    if function and args is not None:
-        #then we have a function call to do
-        #first get the function object we need to call
-        if is_module:
-            func = import_string(function)
-        else:
-            func = execute_from_string(function, context)
-        #get the full argument types (possibly calling a serialization function if necessary)
-        #finally call the function and assign the output
-        return func(*args)
+    result = None
 
     if isinstance(input, six.string_types):
-        result = execute_from_string(input, context)
+        result = execute_from_string(input, **opts)
 
-        if return_type == 'string':
-            # bug 354267 repr returns a 'str' even on py2 (i.e. bytes).
-            return force_text(repr(result))
+    if isinstance(args, (list, tuple)):
+        #then we have a function call to do
+        #first get the function object we need to call
+        result = result(*args)
 
-        return result
+    if return_type == 'string':
+        # bug 354267 repr returns a 'str' even on py2 (i.e. bytes).
+        result = force_text(repr(result))
+
+    return result
 
 
 @to_wl(**EXPORT_KWARGS)
-def handle_message(socket, context=UnprintableContext()):
+def handle_message(socket):
 
     __traceback_hidden_variables__ = True
 
     message = binary_deserialize(socket.recv())
-    result = evaluate_message(context=context, **message)
+    result  = evaluate_message(**message)
 
     sys.stdout.flush()
     return result
@@ -213,6 +195,8 @@ def start_zmq_loop(message_limit=float('inf'), redirect_stdout=True, **opts):
 
     if redirect_stdout:
         sys.stdout = StdoutProxy(stream)
+    
+    side_effect_logger.addHandler(SideEffectSender())
 
     #now sit in a while loop, evaluating input
     while messages < message_limit:
