@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.deserializers.wxf.wxfconsumer import WXFConsumer
+from wolframclient.deserializers.wxf.wxfconsumer import WXFConsumerNumpy
 from wolframclient.deserializers.wxf.wxfparser import WXFParser
 from wolframclient.exception import WolframParserException
 
@@ -24,9 +24,9 @@ def binary_deserialize(wxf_input, consumer=None, **kwargs):
     A stream of :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` is generated from the WXF input by a instance
     of :class:`~wolframclient.deserializers.wxf.wxfparser.WXFParser`.
 
-    The consumer must be an instance of :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer`. If none is
-    provided, :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer` is used. To enable NumPy array support,
-    use :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy`.
+    The consumer must be an instance of :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy`. If none is
+    provided, :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer` is used. To disable NumPy array support,
+    use :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer`.
 
     Named parameters are passed to the consumer. They can be any valid parameter of
     :meth:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.next_expression`, namely:
@@ -36,7 +36,7 @@ def binary_deserialize(wxf_input, consumer=None, **kwargs):
     """
     parser = WXFParser(wxf_input)
     if consumer is None:
-        consumer = WXFConsumer()
+        consumer = WXFConsumerNumpy()
 
     try:
         o = consumer.next_expression(parser.tokens(), **kwargs)
