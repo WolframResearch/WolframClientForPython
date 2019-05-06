@@ -13,6 +13,7 @@ from wolframclient.language.expression import WLFunction, WLSymbol
 from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config
 from wolframclient.utils.tests import TestCase as BaseTestCase
 from wolframclient.utils.tests import path_to_file_in_data_dir
+from wolframclient.deserializers import WXFConsumer
 
 try:
     import PIL.Image
@@ -179,12 +180,12 @@ class TestCase(TestCaseSettings):
 
     def test_valid_evaluate_wxf(self):
         wxf = self.kernel_session.evaluate_wxf('Range[3]')
-        result = binary_deserialize(wxf)
+        result = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(result, [1, 2, 3])
 
     def test_err_evaluate_wxf(self):
         wxf = self.kernel_session.evaluate_wxf('Range[3')
-        result = binary_deserialize(wxf)
+        result = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(result, WLSymbol('$Failed'))
 
     def test_auto_start_session(self):
@@ -357,7 +358,7 @@ class TestSessionTimeout(TestCaseSettings):
     def test_valid_evaluate_wxf_async(self):
         future = self.kernel_session.evaluate_wxf_future('Range[3]')
         wxf = future.result(timeout=1)
-        result = binary_deserialize(wxf)
+        result = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(result, [1, 2, 3])
 
 
