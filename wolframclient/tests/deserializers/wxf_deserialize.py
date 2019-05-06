@@ -56,7 +56,7 @@ class TestCase(BaseTestCase):
 
     def wxf_assert_roundtrip(self, value):
         wxf = export(value, target_format='wxf')
-        o = binary_deserialize(wxf)
+        o = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(value, o)
 
     #Strings
@@ -135,12 +135,12 @@ class TestCase(BaseTestCase):
 
     def test_bigreal_precision(self):
         wxf = b'8:R\x0710.`10.'
-        res = binary_deserialize(wxf)
+        res = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(res, decimal.Decimal(10))
 
     def test_bigreal_precision_exponent(self):
         wxf = b'8:R>9.999999999999996843873323328588479844`15.352529778863042*^999'
-        res = binary_deserialize(wxf)
+        res = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(
             res,
             decimal.Decimal('9.999999999999996843873323328588479844E+999'))
@@ -159,35 +159,35 @@ class TestCase(BaseTestCase):
     def test_rules(self):
         # BinarySerialize[<|"1" -> 1, "2" -> {0}, "3" -> <||>|>]
         wxf = b'8:A\x03-S\x011C\x01-S\x012f\x01s\x04ListC\x00-S\x013A\x00'
-        res = binary_deserialize(wxf)
+        res = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(res, {'1': 1, '2': (0, ), '3': {}})
 
     # WXF format error
     def test_bad_header_version(self):
         wxf = b'1:'
         with self.assertRaises(WolframParserException):
-            binary_deserialize(wxf)
+            binary_deserialize(wxf, consumer = WXFConsumer())
 
     def test_bad_header_compress(self):
         wxf = b'8x:'
         with self.assertRaises(WolframParserException):
-            binary_deserialize(wxf)
+            binary_deserialize(wxf, consumer = WXFConsumer())
 
     def test_bad_header_separator(self):
         wxf = b'8C/'
         with self.assertRaises(WolframParserException):
-            binary_deserialize(wxf)
+            binary_deserialize(wxf, consumer = WXFConsumer())
 
     def test_bad_bignum(self):
         # replace last digit by 'A'
         wxf = b'8:I\x171234567890123456789012A'
         with self.assertRaises(WolframParserException):
-            binary_deserialize(wxf)
+            binary_deserialize(wxf, consumer = WXFConsumer())
 
     def test_compressed_input(self):
         expr = (1, 2, 3)
         wxf = export(expr, target_format='wxf', compress=True)
-        res = binary_deserialize(wxf)
+        res = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(expr, res)
 
     # Custom consumers
@@ -227,7 +227,7 @@ class TestCase(BaseTestCase):
     def test_bad_wxf_buffer(self):
         wxf = 1
         with self.assertRaises(TypeError):
-            binary_deserialize(wxf)
+            binary_deserialize(wxf, consumer = WXFConsumer())
 
 
 @unittest.skipIf(six.JYTHON, "numpy is not supported in jython")
@@ -403,13 +403,13 @@ class TestCaseArrayAsList(BaseTestCase):
     def test_packedarray_ndim_int8(self):
         # ConstantArray[1, {2, 3, 1}]
         wxf = b'8:\xc1\x00\x03\x02\x03\x01\x01\x01\x01\x01\x01\x01'
-        a = binary_deserialize(wxf)
+        a = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertListEqual(a, [[[1], [1], [1]], [[1], [1], [1]]])
 
     def test_packedarray_ndim_complex(self):
         # ConstantArray[I + 1., {2, 3, 1}]
         wxf = b'8:\xc14\x03\x02\x03\x01\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?'
-        a = binary_deserialize(wxf)
+        a = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 3)
         self.assertEqual(len(a[0][0]), 1)
@@ -421,7 +421,7 @@ class TestCaseArrayAsList(BaseTestCase):
     def test_int8_array(self):
         # ConstantArray[1, {2, 2}]
         wxf = b'8:\xc1\x00\x02\x02\x02\x01\x01\x01\x01'
-        a = binary_deserialize(wxf)
+        a = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 2)
         self.assertListEqual(a, [[1, 1], [1, 1]])
@@ -429,7 +429,7 @@ class TestCaseArrayAsList(BaseTestCase):
     def test_int16_array(self):
         # ConstantArray[2^15 - 1, {2, 2}]
         wxf = wxf = b'8:\xc2\x01\x02\x02\x02\xff\x7f\xff\x7f\xff\x7f\xff\x7f'
-        a = binary_deserialize(wxf)
+        a = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 2)
         self.assertEqual(a,
@@ -438,7 +438,7 @@ class TestCaseArrayAsList(BaseTestCase):
     def test_int32_array(self):
         # ConstantArray[2^16, {2, 2}]
         wxf = b'8:\xc1\x02\x02\x02\x02\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x01\x00'
-        a = binary_deserialize(wxf)
+        a = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 2)
         self.assertEqual(a, [[2**16, 2**16], [2**16, 2**16]])
@@ -446,7 +446,7 @@ class TestCaseArrayAsList(BaseTestCase):
     def test_int64_array(self):
         # ConstantArray[2^40, {2, 1}]
         wxf = b'8:\xc1\x03\x02\x02\x01\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00'
-        a = binary_deserialize(wxf)
+        a = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 1)
         self.assertEqual(a, [[2**40], [2**40]])
@@ -454,7 +454,7 @@ class TestCaseArrayAsList(BaseTestCase):
     def test_double_array(self):
         # ConstantArray[1., {2, 1}]
         wxf = b'8:\xc1#\x02\x02\x01\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?'
-        a = binary_deserialize(wxf)
+        a = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 1)
         self.assertEqual(a, [[1.], [1.]])
@@ -462,7 +462,7 @@ class TestCaseArrayAsList(BaseTestCase):
     def test_int8_numeric_array(self):
         # NumericArray from ConstantArray[1, {2, 2}]
         wxf = b'8:\xc2\x00\x02\x02\x02\x01\x01\x01\x01'
-        a = binary_deserialize(wxf)
+        a = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 2)
         self.assertEqual(a, [[1, 1], [1, 1]])
@@ -470,7 +470,7 @@ class TestCaseArrayAsList(BaseTestCase):
     def test_uint8_numeric_array(self):
         # NumericArray from ConstantArray[255, {2, 2}]
         wxf = b'8:\xc2\x10\x02\x02\x02\xff\xff\xff\xff'
-        a = binary_deserialize(wxf)
+        a = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 2)
         self.assertEqual(a, [[255, 255], [255, 255]])
@@ -478,7 +478,7 @@ class TestCaseArrayAsList(BaseTestCase):
     def test_int16_numeric_array(self):
         # NumericArray from ConstantArray[2^15 - 1, {2, 2}]
         wxf = b'8:\xc2\x01\x02\x02\x02\xff\x7f\xff\x7f\xff\x7f\xff\x7f'
-        a = binary_deserialize(wxf)
+        a = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 2)
         self.assertEqual(a,
@@ -487,7 +487,7 @@ class TestCaseArrayAsList(BaseTestCase):
     def test_uint16_numeric_array(self):
         # NumericArray from ConstantArray[2^16 - 1, {2, 2}]
         wxf = b'8:\xc2\x11\x02\x02\x02\xff\xff\xff\xff\xff\xff\xff\xff'
-        a = binary_deserialize(wxf)
+        a = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 2)
         self.assertEqual(a,
@@ -496,7 +496,7 @@ class TestCaseArrayAsList(BaseTestCase):
     def test_int32_numeric_array(self):
         # NumericArray from ConstantArray[2^16, {2, 2}]
         wxf = b'8:\xc2\x02\x02\x02\x02\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x01\x00'
-        a = binary_deserialize(wxf)
+        a = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 2)
         self.assertEqual(a, [[2**16, 2**16], [2**16, 2**16]])
@@ -504,7 +504,7 @@ class TestCaseArrayAsList(BaseTestCase):
     def test_uint32_numeric_array(self):
         # NumericArray from ConstantArray[2^32-1, {2, 1}]
         wxf = b'8:\xc2\x12\x02\x02\x01\xff\xff\xff\xff\xff\xff\xff\xff'
-        a = binary_deserialize(wxf)
+        a = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 1)
         self.assertEqual(a, [[-1 + 2**32], [-1 + 2**32]])
@@ -512,7 +512,7 @@ class TestCaseArrayAsList(BaseTestCase):
     def test_int64_numeric_array(self):
         # NumericArray from ConstantArray[2^40, {2, 1}]
         wxf = b'8:\xc2\x03\x02\x02\x01\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00'
-        a = binary_deserialize(wxf)
+        a = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 1)
         self.assertEqual(a, [[2**40], [2**40]])
@@ -520,7 +520,7 @@ class TestCaseArrayAsList(BaseTestCase):
     def test_uint64_numeric_array(self):
         # NumericArray from ConstantArray[2^64-1, {2, 1}]
         wxf = b'8:\xc2\x13\x02\x02\x01\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-        a = binary_deserialize(wxf)
+        a = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 1)
         self.assertEqual(a, [[-1 + 2**64], [-1 + 2**64]])
@@ -528,7 +528,7 @@ class TestCaseArrayAsList(BaseTestCase):
     def test_float_numeric_array(self):
         # NumericArray["Real32", ConstantArray[1., {2, 1}]]
         wxf = b'8:\xc2"\x02\x02\x01\x00\x00\x80?\x00\x00\x80?'
-        a = binary_deserialize(wxf)
+        a = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 1)
         self.assertEqual(a, [[1.], [1.]])
@@ -536,7 +536,7 @@ class TestCaseArrayAsList(BaseTestCase):
     def test_double_numeric_array(self):
         # NumericArray["Real64", ConstantArray[1., {2, 1}]]
         wxf = b'8:\xc2#\x02\x02\x01\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\xf0?'
-        a = binary_deserialize(wxf)
+        a = binary_deserialize(wxf, consumer = WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 1)
         self.assertEqual(a, [[1.], [1.]])

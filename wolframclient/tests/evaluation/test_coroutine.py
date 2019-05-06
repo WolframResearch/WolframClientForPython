@@ -5,6 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import logging
 import unittest
 
+from wolframclient.deserializers import WXFConsumer
 from wolframclient.deserializers import binary_deserialize
 from wolframclient.evaluation import (
     WolframCloudAsyncSession, WolframEvaluatorPool,
@@ -183,7 +184,7 @@ class TestKernelPool(BaseTestCase):
             for i in range(1, 11)
         ]
         res = await asyncio.gather(*tasks)
-        res = {binary_deserialize(wxf) for wxf in res}
+        res = {binary_deserialize(wxf, consumer = WXFConsumer()) for wxf in res}
         self.assertEqual(res,
                          {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"})
 
