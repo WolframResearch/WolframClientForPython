@@ -47,10 +47,10 @@ class Command(SimpleCommand):
 
         main()
 
-        import black
+        from black import main
 
         sys.argv = list(self._module_args("--line-length", "95"))
 
-        black.main()
+        main()
 
         sys.argv = argv
