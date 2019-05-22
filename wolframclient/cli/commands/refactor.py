@@ -44,7 +44,7 @@ class Command(SimpleCommand):
 
         from black import main
 
-        sys.argv = list(self._module_args("--line-length", "95"))
+        sys.argv = tuple(self._module_args("--line-length", "95"))
 
         main()
 
