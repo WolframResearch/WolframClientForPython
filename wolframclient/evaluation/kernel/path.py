@@ -44,6 +44,7 @@ def installation_directories():
     elif six.MACOS:
         yield '/Applications/Wolfram Desktop.app/Contents'
         yield '/Applications/Mathematica.app/Contents'
+        yield '/Applications/Wolfram Engine.app/Contents'
 
 
 def exe_path():
