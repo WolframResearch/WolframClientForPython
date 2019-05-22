@@ -3,11 +3,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import sys
-from operator import methodcaller
 
 from wolframclient.utils.api import numpy
 from wolframclient.utils.dispatch import Dispatch
-from wolframclient.utils.functional import identity, map
+from wolframclient.utils.functional import map
 
 encoder = Dispatch()
 
