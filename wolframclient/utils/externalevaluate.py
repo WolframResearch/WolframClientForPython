@@ -17,7 +17,6 @@ from wolframclient.utils.api import zmq
 from wolframclient.utils.datastructures import Settings
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import last
-from wolframclient.utils.importutils import import_string
 
 HIDDEN_VARIABLES = (
     '__loader__', '__builtins__', '__traceback_hidden_variables__',

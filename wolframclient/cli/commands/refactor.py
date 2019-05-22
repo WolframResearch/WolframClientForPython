@@ -12,8 +12,7 @@ class Command(SimpleCommand):
 
     modules = ['wolframclient']
 
-    dependencies = (('autopep8', '1.4'), ('isort', '4.3.4'),
-                    ('yapf', '0.24.0'), ('autoflake', '1.2'))
+    dependencies = (('autoflake', '1.2'), ('black', '19.3b0'))
 
     def _module_args(self, *args):
 
@@ -38,21 +37,10 @@ class Command(SimpleCommand):
 
         main()
 
-        from isort.main import main
+        from black import main
 
-        sys.argv = list(
-            self._module_args(
-                '-rc', '--multi-line', '5', '-a',
-                "from __future__ import absolute_import, print_function, unicode_literals"
-            ))
+        sys.argv = list(self._module_args("--line-length", "95"))
 
         main()
-
-        import yapf
-
-        sys.argv = list(
-            self._module_args('--in-place', '--recursive', '--parallel'))
-
-        yapf.run_main()
 
         sys.argv = argv
