@@ -69,7 +69,7 @@ class Command(SimpleCommand):
         export(1)
 
         for title, stream_generator in (
-            ("In memory", lambda complexity: None),
+            ("Memory", lambda complexity: None),
             (
                 "File",
                 lambda complexity: os.path.join(
@@ -79,9 +79,7 @@ class Command(SimpleCommand):
             ),
         ):
 
-            print(title)
-
-            self.table_line("", *(force_text(c).ljust(self.col_size) for c in self.complexity))
+            self.table_line(title, *(force_text(c).ljust(self.col_size) for c in self.complexity))
             self.table_divider(len(self.complexity) + 1)
 
             for label, export_format, opts in (
