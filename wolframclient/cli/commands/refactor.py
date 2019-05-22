@@ -13,7 +13,7 @@ class Command(SimpleCommand):
     modules = ['wolframclient']
 
     dependencies = (('autopep8', '1.4'), ('isort', '4.3.4'),
-                    ('yapf', '0.24.0'), ('autoflake', '1.2'))
+                    ('autoflake', '1.2'), ('black', '19.3b0'))
 
     def _module_args(self, *args):
 
@@ -48,11 +48,11 @@ class Command(SimpleCommand):
 
         main()
 
-        import yapf
+        import black
 
         sys.argv = list(
-            self._module_args('--in-place', '--recursive', '--parallel'))
+            self._module_args())
 
-        yapf.run_main()
+        black.main()
 
         sys.argv = argv
