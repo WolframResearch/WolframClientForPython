@@ -11,22 +11,22 @@ from wolframclient.utils.functional import map
 encoder = Dispatch()
 
 NUMPY_MAPPING = {
-    numpy.int8: 'Integer8',
-    numpy.int16: 'Integer16',
-    numpy.int32: 'Integer32',
-    numpy.int64: 'Integer64',
-    numpy.uint8: 'UnsignedInteger8',
-    numpy.uint16: 'UnsignedInteger16',
-    numpy.uint32: 'UnsignedInteger32',
-    numpy.uint64: 'UnsignedInteger64',
-    numpy.float32: 'Real32',
-    numpy.float64: 'Real64',
-    numpy.complex64: 'ComplexReal32',
-    numpy.complex128: 'ComplexReal64',
+    numpy.int8: "Integer8",
+    numpy.int16: "Integer16",
+    numpy.int32: "Integer32",
+    numpy.int64: "Integer64",
+    numpy.uint8: "UnsignedInteger8",
+    numpy.uint16: "UnsignedInteger16",
+    numpy.uint32: "UnsignedInteger32",
+    numpy.uint64: "UnsignedInteger64",
+    numpy.float32: "Real32",
+    numpy.float64: "Real64",
+    numpy.complex64: "ComplexReal32",
+    numpy.complex128: "ComplexReal64",
 }
 
 
-SYS_IS_LE = sys.byteorder == 'little'
+SYS_IS_LE = sys.byteorder == "little"
 
 
 def to_little_endian(array, inplace=False):
@@ -34,7 +34,7 @@ def to_little_endian(array, inplace=False):
 
     Set `inplace` to `True` to mutate the input array. """
     endianness = array.dtype.byteorder
-    if endianness == '>' or (endianness == '=' and not SYS_IS_LE):
+    if endianness == ">" or (endianness == "=" and not SYS_IS_LE):
         return array.byteswap(inplace=inplace).newbyteorder()
     else:
         return array
@@ -47,13 +47,14 @@ def encode_ndarray(serializer, o):
         wl_type = NUMPY_MAPPING[o.dtype.type]
     except KeyError:
         raise NotImplementedError(
-            'NumPy serialization not implemented for %s. Choices are: %s' %
-            (repr(o.dtype), ', '.join(map(repr, NUMPY_MAPPING.keys()))))
+            "NumPy serialization not implemented for %s. Choices are: %s"
+            % (repr(o.dtype), ", ".join(map(repr, NUMPY_MAPPING.keys())))
+        )
 
     o = to_little_endian(o)
 
-    if hasattr(o, 'tobytes'):
-        #Numpy 1.9+ support array.tobytes, but previous versions don't and use tostring instead.
+    if hasattr(o, "tobytes"):
+        # Numpy 1.9+ support array.tobytes, but previous versions don't and use tostring instead.
         data = o.tobytes()
     else:
         data = o.tostring()
@@ -71,16 +72,15 @@ def encode_numpy_floating(serializer, o):
     # mantissa, and base 2 exponent.
     mantissa, exp = numpy.frexp(o)
     return serializer.serialize_function(
-        serializer.serialize_symbol(b'Times'), (
+        serializer.serialize_symbol(b"Times"),
+        (
             serializer.serialize_float(mantissa),
             serializer.serialize_function(
-                serializer.serialize_symbol(b'Power'),
-                (
-                    serializer.serialize_int(2),
-                    serializer.serialize_float(exp),
-                ),
+                serializer.serialize_symbol(b"Power"),
+                (serializer.serialize_int(2), serializer.serialize_float(exp)),
             ),
-        ))
+        ),
+    )
 
 
 @encoder.dispatch((numpy.float16, numpy.float32, numpy.float64))

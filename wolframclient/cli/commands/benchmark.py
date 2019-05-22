@@ -29,24 +29,19 @@ class Command(SimpleCommand):
     complexity = [1, 2, 5, 10, 100, 1000]
 
     def add_arguments(self, parser):
-        parser.add_argument(
-            '--profile', dest='profile', default=False, action='store_true')
+        parser.add_argument("--profile", dest="profile", default=False, action="store_true")
 
     def complexity_handler(self, complexity):
         return {
-            'symbols': repeat(wl.Symbol, complexity),
-            'strings': repeat("string", complexity),
-            'bytes': repeat(b"bytes", complexity),
-            'integers': repeat(1, complexity),
-            'decimals': repeat(decimal.Decimal('1.23'), complexity),
-            'floats': repeat(1.23, complexity),
-            'dict': repeat({
-                1: 2,
-                3: 4,
-                5: 6
-            }, complexity),
-            'list': repeat([1, 2, 3], complexity),
-            'functions': repeat(wl.Function(1, 2, 3), complexity),
+            "symbols": repeat(wl.Symbol, complexity),
+            "strings": repeat("string", complexity),
+            "bytes": repeat(b"bytes", complexity),
+            "integers": repeat(1, complexity),
+            "decimals": repeat(decimal.Decimal("1.23"), complexity),
+            "floats": repeat(1.23, complexity),
+            "dict": repeat({1: 2, 3: 4, 5: 6}, complexity),
+            "list": repeat([1, 2, 3], complexity),
+            "functions": repeat(wl.Function(1, 2, 3), complexity),
         }
 
     @timed
@@ -55,10 +50,9 @@ class Command(SimpleCommand):
 
     def formatted_time(self, *args, **opts):
 
-        time = sum(
-            first(self.export(*args, **opts)) for i in range(self.repetitions))
+        time = sum(first(self.export(*args, **opts)) for i in range(self.repetitions))
 
-        return '%.5f' % (time / self.repetitions)
+        return "%.5f" % (time / self.repetitions)
 
     def table_line(self, *iterable):
         self.print(*(force_text(c).ljust(self.col_size) for c in iterable))
@@ -72,23 +66,25 @@ class Command(SimpleCommand):
 
         benchmarks = [(c, self.complexity_handler(c)) for c in self.complexity]
 
-        self.print('dumping results in', path)
+        self.print("dumping results in", path)
 
-        #running export to do all lazy loadings
+        # running export to do all lazy loadings
         export(1)
 
         for title, stream_generator in (
-            ('In memory', lambda complexity: None),
-            ('File', lambda complexity: os.path.join(
-                        path, 'benchmark-test-%s.%s' %
-                        (force_text(complexity).zfill(7), export_format)))
-            ):
+            ("In memory", lambda complexity: None),
+            (
+                "File",
+                lambda complexity: os.path.join(
+                    path,
+                    "benchmark-test-%s.%s" % (force_text(complexity).zfill(7), export_format),
+                ),
+            ),
+        ):
 
             print(title)
 
-            self.table_line(
-                "",
-                *(force_text(c).ljust(self.col_size) for c in self.complexity))
+            self.table_line("", *(force_text(c).ljust(self.col_size) for c in self.complexity))
             self.table_divider(len(self.complexity) + 1)
 
             for label, export_format, opts in (
@@ -98,11 +94,16 @@ class Command(SimpleCommand):
             ):
                 self.table_line(
                     label,
-                    *(self.formatted_time(
-                        expr,
-                        stream=stream_generator(complexity),
-                        target_format=export_format,
-                        **opts) for complexity, expr in benchmarks))
+                    *(
+                        self.formatted_time(
+                            expr,
+                            stream=stream_generator(complexity),
+                            target_format=export_format,
+                            **opts
+                        )
+                        for complexity, expr in benchmarks
+                    )
+                )
 
             self.table_line()
 
@@ -110,6 +111,6 @@ class Command(SimpleCommand):
 
     def handle(self, profile, **opts):
         if profile:
-            cProfile.runctx('report()', {'report': self.report}, {})
+            cProfile.runctx("report()", {"report": self.report}, {})
         else:
             self.report()

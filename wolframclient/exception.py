@@ -17,19 +17,19 @@ class RequestException(WolframLanguageException):
             try:
                 self.msg = response.text()
             except UnicodeDecodeErrors:
-                self.msg = 'Failed to decode request body.'
+                self.msg = "Failed to decode request body."
 
     def __str__(self):
-        if hasattr(self.response, 'status'):
+        if hasattr(self.response, "status"):
             if callable(self.response.status):
                 status = self.response.status()
             else:
                 status = self.response.status
-        elif hasattr(self.response, 'status_code'):
+        elif hasattr(self.response, "status_code"):
             status = self.response.status_code
         else:
-            status = 'N/A'
-        return '<status: %s> %s' % (status, self.msg or '')
+            status = "N/A"
+        return "<status: %s> %s" % (status, self.msg or "")
 
 
 class AuthenticationException(RequestException):
@@ -55,9 +55,12 @@ class WolframEvaluationException(WolframLanguageException):
         return self.error
 
     def __repr__(self):
-        return '<%s error=%s, expr=%s, messages=%i>:' % (
-            self.__class__.__name__, self.error, str_trim(self.result),
-            len(self.messages))
+        return "<%s error=%s, expr=%s, messages=%i>:" % (
+            self.__class__.__name__,
+            self.error,
+            str_trim(self.result),
+            len(self.messages),
+        )
 
 
 class SocketException(WolframLanguageException):
@@ -69,7 +72,11 @@ class WolframParserException(WolframLanguageException):
 
 
 __all__ = [
-    'WolframLanguageException', 'RequestException', 'AuthenticationException',
-    'WolframKernelException', 'SocketException', 'WolframParserException',
-    'WolframEvaluationException'
+    "WolframLanguageException",
+    "RequestException",
+    "AuthenticationException",
+    "WolframKernelException",
+    "SocketException",
+    "WolframParserException",
+    "WolframEvaluationException",
 ]

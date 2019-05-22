@@ -100,7 +100,7 @@ class DefaultWXFEncoder(WXFEncoder):
             yield wxfexpr.WXFExprInteger(pythonExpr)
         elif isinstance(pythonExpr, list):
             yield wxfexpr.WXFExprFunction(len(pythonExpr))
-            yield wxfexpr.WXFExprSymbol('List')
+            yield wxfexpr.WXFExprSymbol("List")
             for pyArg in iter(pythonExpr):
                 for wxf_expr in self.serialize(pyArg):
                     yield wxf_expr
@@ -113,16 +113,16 @@ class DefaultWXFEncoder(WXFEncoder):
                 for wxf_expr in self.serialize(value):
                     yield wxf_expr
         elif pythonExpr is True:
-            yield wxfexpr.WXFExprSymbol('True')
+            yield wxfexpr.WXFExprSymbol("True")
         elif pythonExpr is False:
-            yield wxfexpr.WXFExprSymbol('False')
+            yield wxfexpr.WXFExprSymbol("False")
         elif pythonExpr is None:
-            yield wxfexpr.WXFExprSymbol('None')
+            yield wxfexpr.WXFExprSymbol("None")
         elif isinstance(pythonExpr, float):
             yield wxfexpr.WXFExprReal(pythonExpr)
         elif isinstance(pythonExpr, complex):
             yield wxfexpr.WXFExprFunction(2)
-            yield wxfexpr.WXFExprSymbol('Complex')
+            yield wxfexpr.WXFExprSymbol("Complex")
             yield wxfexpr.WXFExprReal(pythonExpr.real)
             yield wxfexpr.WXFExprReal(pythonExpr.imag)
         elif isinstance(pythonExpr, wxfexpr.WXFExpr):

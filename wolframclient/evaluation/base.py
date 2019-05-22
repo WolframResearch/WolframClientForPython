@@ -17,6 +17,7 @@ class WolframEvaluatorBase(object):
     `string_as_inputform` specifies if strings should be treated
         as input form strings and wrapped into :func:`~wolframclient.language.wlexpr`
     """
+
     stopped = True  # avoid error in __del__ if __init__ failed.
 
     def __init__(self, inputform_string_evaluation=True, **kwargs):
@@ -29,19 +30,20 @@ class WolframEvaluatorBase(object):
     def __del__(self, _warnings=warnings):
         if not self.stopped:
             if six.PY_36:
-                kwargs = {'source': self}
+                kwargs = {"source": self}
             else:
                 kwargs = {}
             _warnings.warn(
-                "Unclosed instance of %s: %s" %
-                (self.__class__.__name__, self), ResourceWarning, **kwargs)
+                "Unclosed instance of %s: %s" % (self.__class__.__name__, self),
+                ResourceWarning,
+                **kwargs
+            )
 
     def normalize_input(self, expr):
         """ Normalize a given Python object representing an expr to as object
         as expected by evaluators.
         """
-        if self.inputform_string_evaluation and isinstance(
-                expr, six.string_types):
+        if self.inputform_string_evaluation and isinstance(expr, six.string_types):
             return wlexpr(expr)
         else:
             return expr
@@ -125,8 +127,7 @@ class WolframEvaluator(WolframEvaluatorBase):
         normalized_expr = self.normalize_input(expr)
 
         def inner(*args, **opts):
-            return self.evaluate_future(
-                WLFunction(normalized_expr, *args, **opts))
+            return self.evaluate_future(WLFunction(normalized_expr, *args, **opts))
 
         return inner
 
@@ -158,8 +159,7 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
         return await result.get()
 
     async def evaluate_many(self, expr_list):
-        return await asyncio.gather(
-            *map(self.evaluate, expr_list), loop=self._loop)
+        return await asyncio.gather(*map(self.evaluate, expr_list), loop=self._loop)
 
     async def evaluate_wrap(self, expr):
         raise NotImplementedError
@@ -168,7 +168,7 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
         raise NotImplementedError
 
     async def stop(self):
-        #Graceful stop
+        # Graceful stop
         raise NotImplementedError
 
     async def terminate(self):
@@ -187,8 +187,7 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
         normalized_expr = self.normalize_input(expr)
 
         async def inner(*args, **opts):
-            return await self.evaluate(
-                WLFunction(normalized_expr, *args, **opts))
+            return await self.evaluate(WLFunction(normalized_expr, *args, **opts))
 
         return inner
 
@@ -196,8 +195,9 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
         """ A user friendly message when 'async with' is not used. 
         
         This method should not be implemented in child classes."""
-        raise NotImplementedError("%s must be used in a 'async with' block." %
-                                  self.__class__.__name__)
+        raise NotImplementedError(
+            "%s must be used in a 'async with' block." % self.__class__.__name__
+        )
 
     def __exit__(self, type, value, traceback):
         """ Let the __enter__ method fail and propagate doing nothing. 
@@ -218,8 +218,5 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
     def __del__(self, _warnings=warnings):
         super().__del__(_warnings=warnings)
         if self._loop and not self.stopped and not self._loop.is_closed():
-            context = {
-                self.__class__.__name__: self,
-                'message': 'Unclosed evaluator.'
-            }
+            context = {self.__class__.__name__: self, "message": "Unclosed evaluator."}
             self._loop.call_exception_handler(context)

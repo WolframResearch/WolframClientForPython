@@ -15,5 +15,7 @@ if sys.version_info[0] == 3 and sys.version_info[1] <= 5:
         if isinstance(s, six.binary_type):
             s = force_text(s)
         return json_loads(s)
+
+
 else:
     loads = json_loads

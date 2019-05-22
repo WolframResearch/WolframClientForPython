@@ -82,4 +82,4 @@ Represent a pure function that squares an input argument::
 """
 
 
-__all__ = ['wl', 'System', 'Global', 'wlexpr']
+__all__ = ["wl", "System", "Global", "wlexpr"]
