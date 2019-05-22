@@ -11,15 +11,12 @@ from wolframclient.cli.utils import SimpleCommand
 from wolframclient.language import wl
 from wolframclient.serializers import export
 from wolframclient.utils.debug import timed
-from wolframclient.utils.decorators import to_tuple
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import first
 
 
-@to_tuple
 def repeat(el, n=1):
-    for i in range(n):
-        yield el
+    return tuple(el for _ in range(n))
 
 
 class Command(SimpleCommand):
