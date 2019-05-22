@@ -12,7 +12,7 @@ class Command(SimpleCommand):
 
     modules = ['wolframclient']
 
-    dependencies = (('isort', '4.3.4'), ('autoflake', '1.2'), ('black', '19.3b0'))
+    dependencies = (('autoflake', '1.2'), ('black', '19.3b0'))
 
     def _module_args(self, *args):
 
@@ -34,16 +34,6 @@ class Command(SimpleCommand):
             self._module_args('--in-place', '--remove-duplicate-keys',
                               '--expand-star-import',
                               '--remove-all-unused-imports', '--recursive'))
-
-        main()
-
-        from isort.main import main
-
-        sys.argv = list(
-            self._module_args(
-                '-rc', '--multi-line', '5', '-a',
-                "from __future__ import absolute_import, print_function, unicode_literals"
-            ))
 
         main()
 
