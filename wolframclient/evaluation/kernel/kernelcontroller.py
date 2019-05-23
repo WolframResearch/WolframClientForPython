@@ -127,8 +127,11 @@ class WolframKernelController(Thread):
                     'Cannot execute kernel %s.' % kernel)
             else:
                 self.kernel = kernel
+        elif kernel is None:
+            raise WolframKernelException(
+                'Cannot locate a kernel automatically. Please provide an explicit kernel path.')
         else:
-            raise ValueError(
+            raise WolframKernelException(
                 'Invalid kernel value. Expecting a filepath as a string.')
         if initfile is None:
             self.initfile = os.path_join(os.dirname(__file__), 'initkernel.m')
