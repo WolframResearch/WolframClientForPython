@@ -37,13 +37,6 @@ class Command(SimpleCommand):
 
         main()
 
-        from black import main
-
-        sys.argv = list(self._module_args("--line-length", "95", "--target-version", "py35"))
-
-        main()
-
-
         from isort.main import main
 
         sys.argv = list(
@@ -51,6 +44,12 @@ class Command(SimpleCommand):
                 '-rc', '--multi-line', '5', '-a',
                 "from __future__ import absolute_import, print_function, unicode_literals"
             ))
+
+        main()
+
+        from black import main
+
+        sys.argv = list(self._module_args("--line-length", "95", "--target-version", "py35"))
 
         main()
 
