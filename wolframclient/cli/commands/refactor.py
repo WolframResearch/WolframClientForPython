@@ -43,7 +43,6 @@ class Command(SimpleCommand):
 
         main()
 
-        sys.argv = argv
 
         from isort.main import main
 
@@ -54,3 +53,5 @@ class Command(SimpleCommand):
             ))
 
         main()
+
+        sys.argv = argv
