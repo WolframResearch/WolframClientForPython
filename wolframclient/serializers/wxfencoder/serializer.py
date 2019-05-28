@@ -3,12 +3,13 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.serializers.wxfencoder.constants import (
-    WXF_HEADER_COMPRESS, WXF_HEADER_SEPARATOR, WXF_VERSION)
+    WXF_HEADER_COMPRESS,
+    WXF_HEADER_SEPARATOR,
+    WXF_VERSION,
+)
 from wolframclient.serializers.wxfencoder.streaming import ZipCompressedWriter
 
-__all__ = [
-    'WXFExprSerializer', 'SerializationContext', 'WXFSerializerException'
-]
+__all__ = ["WXFExprSerializer", "SerializationContext", "WXFSerializerException"]
 
 
 class WXFSerializerException(Exception):
@@ -20,37 +21,38 @@ class _Context(object):
         pass
 
     def add_part(self):
-        raise NotImplementedError('class %s must implement a add_part method' %
-                                  self.__class__.__name__)
+        raise NotImplementedError(
+            "class %s must implement a add_part method" % self.__class__.__name__
+        )
 
     def step_into_new_function(self, length):
         raise NotImplementedError(
-            'class %s must implement a step_into_new_function method' %
-            self.__class__.__name__)
+            "class %s must implement a step_into_new_function method" % self.__class__.__name__
+        )
 
     def step_into_new_assoc(self, length):
         raise NotImplementedError(
-            'class %s must implement a step_into_new_assoc method' %
-            self.__class__.__name__)
+            "class %s must implement a step_into_new_assoc method" % self.__class__.__name__
+        )
 
     def step_into_new_rule(self):
         raise NotImplementedError(
-            'class %s must implement a step_into_new_rule method' %
-            self.__class__.__name__)
+            "class %s must implement a step_into_new_rule method" % self.__class__.__name__
+        )
 
     def is_valid_final_state(self):
         raise NotImplementedError(
-            'class %s must implement a is_valid_final_state method' %
-            self.__class__.__name__)
+            "class %s must implement a is_valid_final_state method" % self.__class__.__name__
+        )
 
     def is_rule_valid(self):
         raise NotImplementedError(
-            'class %s must implement a is_rule_valid method' %
-            self.__class__.__name__)
+            "class %s must implement a is_rule_valid method" % self.__class__.__name__
+        )
 
 
 class NoEnforcingContext(_Context):
-    ''' This context doesn't prevent inconsistent state. '''
+    """ This context doesn't prevent inconsistent state. """
 
     def add_part(self):
         pass
@@ -94,15 +96,22 @@ class SerializationContext(_Context):
         self._in_assoc_stack = [False]
 
     def _check_insert(self):
-        if self._depth >= 0 and self._current_index_stack[
-                self._depth] >= self._expected_length_stack[self._depth]:
+        if (
+            self._depth >= 0
+            and self._current_index_stack[self._depth]
+            >= self._expected_length_stack[self._depth]
+        ):
             raise IndexError(
-                'Out of bound, number of parts is greater than declared length %d.'
-                % self._expected_length_stack[self._depth])
+                "Out of bound, number of parts is greater than declared length %d."
+                % self._expected_length_stack[self._depth]
+            )
 
     def _step_out_finalized_expr(self):
-        while self._depth >= 0 and self._current_index_stack[
-                self._depth] == self._expected_length_stack[self._depth]:
+        while (
+            self._depth >= 0
+            and self._current_index_stack[self._depth]
+            == self._expected_length_stack[self._depth]
+        ):
             self._depth -= 1
 
     def add_part(self):
@@ -114,18 +123,18 @@ class SerializationContext(_Context):
 
     @staticmethod
     def _set_at_index_or_append(array, index, value):
-        '''Set the element of an `array` at a given index if it exists,
+        """Set the element of an `array` at a given index if it exists,
         append it to the array otherwise. The `index` must be at most the
         length of the array.
-        '''
+        """
         if len(array) == index:
             array.append(value)
         elif len(array) > index:
             array[index] = value
         else:
             raise IndexError(
-                'Index {} is greater than array length: {}'.format(
-                    index, len(array)))
+                "Index {} is greater than array length: {}".format(index, len(array))
+            )
 
     def step_into_new_function(self, length):
         self.step_into_new_expr(length + 1)
@@ -149,11 +158,12 @@ class SerializationContext(_Context):
         self._depth += 1
         # set or append element at index self._depth
         SerializationContext._set_at_index_or_append(
-            self._expected_length_stack, self._depth, length)
-        SerializationContext._set_at_index_or_append(self._current_index_stack,
-                                                     self._depth, 0)
-        SerializationContext._set_at_index_or_append(self._in_assoc_stack,
-                                                     self._depth, is_assoc)
+            self._expected_length_stack, self._depth, length
+        )
+        SerializationContext._set_at_index_or_append(self._current_index_stack, self._depth, 0)
+        SerializationContext._set_at_index_or_append(
+            self._in_assoc_stack, self._depth, is_assoc
+        )
 
         if len(self._expected_length_stack) <= self._depth:
             self._expected_length_stack.append(length)
@@ -174,10 +184,12 @@ class SerializationContext(_Context):
         return self._in_assoc_stack[self._depth]
 
     def __repr__(self):
-        return '{}(depth={}, element={}/{})'.format(
-            self.__class__.__name__, self._depth,
+        return "{}(depth={}, element={}/{})".format(
+            self.__class__.__name__,
+            self._depth,
             self._current_index_stack[self._depth],
-            self._expected_length_stack[self._depth])
+            self._expected_length_stack[self._depth],
+        )
 
 
 class WXFExprSerializer(object):
@@ -194,11 +206,7 @@ class WXFExprSerializer(object):
 
     """
 
-    def __init__(self,
-                 stream,
-                 expr_provider=None,
-                 compress=False,
-                 enforce=True):
+    def __init__(self, stream, expr_provider=None, compress=False, enforce=True):
         self._compress = compress
         self._writer = stream
         self._expr_provider = expr_provider
@@ -218,9 +226,9 @@ class WXFExprSerializer(object):
         return pyExpr
 
     def serialize(self, pyExpr):
-        '''
+        """
         Serialize the python expression given as parameter.
-        '''
+        """
         # the header is never compressed.
         self._writer.write(WXF_VERSION)
         if self._compress:
@@ -236,4 +244,4 @@ class WXFExprSerializer(object):
                 wxfexpr._serialize_to_wxf(self._writer, self._context)
 
         if not self._context.is_valid_final_state():
-            raise WXFSerializerException('Inconsistent state: truncated expr.')
+            raise WXFSerializerException("Inconsistent state: truncated expr.")

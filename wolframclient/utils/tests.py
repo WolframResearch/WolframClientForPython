@@ -11,7 +11,7 @@ class TestCase(unittest.TestCase):
 
 
 HERE = os.path.dirname(__file__)
-DATA_DIR = os.path.abspath(os.path.join(HERE, '..', 'tests', 'data'))
+DATA_DIR = os.path.abspath(os.path.join(HERE, "..", "tests", "data"))
 
 
 def path_to_file_in_data_dir(file_name):

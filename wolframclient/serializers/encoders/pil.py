@@ -38,15 +38,16 @@ MODE_MAPPING = {
     "LAB": ("Byte", "LAB", True),
     "F": ("Real32", None, True),
     "RGBA": ("Byte", "RGB", True),
-    "HSV": ("Byte", "HSB", True)
+    "HSV": ("Byte", "HSB", True),
 }
-SYS_IS_LE = sys.byteorder == 'little'
+SYS_IS_LE = sys.byteorder == "little"
 
 
 def normalize_array(array):
-    if array.dtype == numpy.dtype('bool'):
-        array = array.astype('<u1')
+    if array.dtype == numpy.dtype("bool"):
+        array = array.astype("<u1")
     return array
+
 
 @encoder.dispatch(PIL.Image)
 def encode_image(serializer, img):
@@ -59,7 +60,9 @@ def encode_image(serializer, img):
                     normalize_array(numpy.array(img)),
                     wl_data_type,
                     ColorSpace=colorspace or wl.Automatic,
-                    Interleaving=interleaving))
+                    Interleaving=interleaving,
+                )
+            )
     except ImportError:
         pass
     # try to use format and import/export, may fail during save() and raise exception.
@@ -68,8 +71,11 @@ def encode_image(serializer, img):
     try:
         img.save(stream, format=img_format)
     except KeyError:
-        raise NotImplementedError('Format %s is not supported.' % img_format)
+        raise NotImplementedError("Format %s is not supported." % img_format)
     return serializer.serialize_function(
-        serializer.serialize_symbol(b'ImportByteArray'),
-        (serializer.serialize_bytes(stream.getvalue(), as_byte_array = True),
-         serializer.serialize_string(img_format)))
+        serializer.serialize_symbol(b"ImportByteArray"),
+        (
+            serializer.serialize_bytes(stream.getvalue(), as_byte_array=True),
+            serializer.serialize_string(img_format),
+        ),
+    )

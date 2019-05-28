@@ -3,11 +3,14 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.serializers.wxfencoder.wxfencoder import (
-    DefaultWXFEncoder, NotEncodedException, WXFEncoder)
+    DefaultWXFEncoder,
+    NotEncodedException,
+    WXFEncoder,
+)
 
 
 class WXFExprProvider(object):
-    '''
+    """
     Expression provider pull instances of WXFExpr from instances of `WXFEncoder`.
 
     `WXFExprProvider` can be initialized with an encoder. If none is provided the
@@ -23,7 +26,7 @@ class WXFExprProvider(object):
     e.g: a string using `default=repr`.
 
     One must carefully design the `default` function to avoid stack overflow.
-    '''
+    """
 
     def __init__(self, encoder=None, default=None):
         self.encoders = []
@@ -35,25 +38,25 @@ class WXFExprProvider(object):
         self.default = default
 
     def add_encoder(self, *encoders):
-        ''' Add a new encoder to be called last if all others failed to encode an object. '''
+        """ Add a new encoder to be called last if all others failed to encode an object. """
         for encoder in encoders:
             if isinstance(encoder, WXFEncoder):
                 self.encoders.append(encoder)
                 encoder._provider = self
             else:
-                raise TypeError('Invalid encoder.')
+                raise TypeError("Invalid encoder.")
         return self
 
     def provide_wxfexpr(self, o):
-        ''' Main function, a generator of wxf expr.'''
+        """ Main function, a generator of wxf expr."""
         for wxfexpr in self._iter(o):
             yield wxfexpr
 
     def _iter(self, o, use_default=True):
-        ''' Try to encode a given expr using encoders, if none was able to
+        """ Try to encode a given expr using encoders, if none was able to
         process the expr and a `default` function was provided, applies it
         and try again. Otherwise fail.
-        '''
+        """
         for encoder in self.encoders:
             try:
                 for sub in encoder._encode(o):
@@ -67,5 +70,6 @@ class WXFExprProvider(object):
             for sub in self._iter(self.default(o), use_default=False):
                 yield sub
         else:
-            raise TypeError('Object of type %s is not serializable to WXF.' %
-                            o.__class__.__name__)
+            raise TypeError(
+                "Object of type %s is not serializable to WXF." % o.__class__.__name__
+            )

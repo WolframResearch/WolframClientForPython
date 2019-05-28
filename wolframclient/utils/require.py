@@ -20,8 +20,7 @@ def missing_requirements(*modules):
         if isinstance(module, (tuple, list)):
             module, version = module
 
-        if not module in distributions or version and not distributions[
-                module] == version:
+        if not module in distributions or version and not distributions[module] == version:
             yield version and "%s==%s" % (module, version) or module
 
 

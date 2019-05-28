@@ -48,7 +48,7 @@ def silence(*exceptions):
     return wrap
 
 
-if hasattr(asyncio, 'create_task'):
+if hasattr(asyncio, "create_task"):
     create_task = asyncio.create_task
 else:
 
