@@ -5,8 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import logging
 import unittest
 
-from wolframclient.deserializers import WXFConsumer
-from wolframclient.deserializers import binary_deserialize
+from wolframclient.deserializers import WXFConsumer, binary_deserialize
 from wolframclient.evaluation import (
     WolframCloudAsyncSession,
     WolframEvaluatorPool,

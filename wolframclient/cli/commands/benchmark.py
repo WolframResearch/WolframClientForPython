@@ -79,7 +79,9 @@ class Command(SimpleCommand):
             ),
         ):
 
-            self.table_line(title, *(force_text(c).ljust(self.col_size) for c in self.complexity))
+            self.table_line(
+                title, *(force_text(c).ljust(self.col_size) for c in self.complexity)
+            )
             self.table_divider(len(self.complexity) + 1)
 
             for label, export_format, opts in (

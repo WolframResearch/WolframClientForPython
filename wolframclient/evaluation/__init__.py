@@ -6,11 +6,13 @@ from wolframclient.evaluation.cloud import (
     SecuredAuthenticationKey,
     UserIDPassword,
     WolframAPICall,
-    WolframCloudSession,
     WolframAPICallAsync,
     WolframCloudAsyncSession,
+    WolframCloudSession,
     WolframServer,
 )
+from wolframclient.evaluation.kernel import WolframLanguageAsyncSession, WolframLanguageSession
+from wolframclient.evaluation.pool import WolframEvaluatorPool, parallel_evaluate
 from wolframclient.evaluation.result import (
     WolframAPIResponse,
     WolframAPIResponseAsync,
@@ -19,9 +21,6 @@ from wolframclient.evaluation.result import (
     WolframKernelEvaluationResult,
     WolframResult,
 )
-
-from wolframclient.evaluation.kernel import WolframLanguageSession, WolframLanguageAsyncSession
-from wolframclient.evaluation.pool import WolframEvaluatorPool, parallel_evaluate
 
 __all__ = [
     "WolframAPICall",

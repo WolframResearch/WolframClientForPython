@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import, print_function, unicode_literals
+
+import fnmatch
 import os
 import unittest
-import fnmatch
+
 from wolframclient.utils import six
 
 # The evaluation modules is only supported on python 3.5+, because of asyncio

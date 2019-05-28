@@ -4,8 +4,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import datetime
 import decimal
-import unittest
 import fractions
+import unittest
 from collections import OrderedDict
 
 from wolframclient.language import Global, System, wl, wlexpr
@@ -14,7 +14,8 @@ from wolframclient.utils import six
 from wolframclient.utils.api import pytz
 from wolframclient.utils.datastructures import Association
 from wolframclient.utils.encoding import force_bytes
-from wolframclient.utils.tests import TestCase as BaseTestCase, path_to_file_in_data_dir
+from wolframclient.utils.tests import TestCase as BaseTestCase
+from wolframclient.utils.tests import path_to_file_in_data_dir
 
 
 def test_datetime():

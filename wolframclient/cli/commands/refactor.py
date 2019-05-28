@@ -12,7 +12,7 @@ class Command(SimpleCommand):
 
     modules = ["wolframclient"]
 
-    dependencies = (('isort', "4.3.20"), ("autoflake", "1.3"), ("black", "19.3b0"))
+    dependencies = (("isort", "4.3.20"), ("autoflake", "1.3"), ("black", "19.3b0"))
 
     def _module_args(self, *args):
 
@@ -46,15 +46,19 @@ class Command(SimpleCommand):
 
         sys.argv = list(
             self._module_args(
-                '-rc', '--multi-line', '5', '-a',
-                "from __future__ import absolute_import, print_function, unicode_literals"
-            ))
+                "-rc",
+                "--multi-line",
+                "5",
+                "-a",
+                "from __future__ import absolute_import, print_function, unicode_literals",
+            )
+        )
 
         main()
 
         from black import main
 
-        sys.argv = list(self._module_args("--line-length", "95", "--target-version", "py35"))
+        sys.argv = list(self._module_args("--line-length", "95", "--target-version", "py34"))
 
         main()
 

@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.language.expression import WLSymbolFactory, WLInputExpression
+from wolframclient.language.expression import WLInputExpression, WLSymbolFactory
 
 wl = WLSymbolFactory()
 """A factory of :class:`~wolframclient.language.expression.WLSymbol` instances without any particular context.
