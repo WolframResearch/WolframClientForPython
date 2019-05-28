@@ -7,13 +7,12 @@ from concurrent import futures
 from subprocess import PIPE
 
 from wolframclient.evaluation.base import WolframEvaluator
-from wolframclient.evaluation.kernel.kernelcontroller import (
-    WolframKernelController)
+from wolframclient.evaluation.kernel.kernelcontroller import WolframKernelController
 from wolframclient.serializers import export
 
 logger = logging.getLogger(__name__)
 
-__all__ = ['WolframLanguageSession']
+__all__ = ["WolframLanguageSession"]
 
 
 # Some callback methods for internal use.
@@ -88,20 +87,21 @@ class WolframLanguageSession(WolframEvaluator):
 
     """
 
-    def __init__(self,
-                 kernel=None,
-                 consumer=None,
-                 initfile=None,
-                 kernel_loglevel=logging.NOTSET,
-                 stdin=PIPE,
-                 stdout=PIPE,
-                 stderr=PIPE,
-                 inputform_string_evaluation=True,
-                 wxf_bytes_evaluation=True,
-                 controller_class=WolframKernelController,
-                 **kwargs):
-        super().__init__(
-            inputform_string_evaluation=inputform_string_evaluation)
+    def __init__(
+        self,
+        kernel=None,
+        consumer=None,
+        initfile=None,
+        kernel_loglevel=logging.NOTSET,
+        stdin=PIPE,
+        stdout=PIPE,
+        stderr=PIPE,
+        inputform_string_evaluation=True,
+        wxf_bytes_evaluation=True,
+        controller_class=WolframKernelController,
+        **kwargs
+    ):
+        super().__init__(inputform_string_evaluation=inputform_string_evaluation)
         self.kernel = kernel
         self.consumer = None
         self.initfile = None
@@ -118,7 +118,8 @@ class WolframLanguageSession(WolframEvaluator):
             stdin=stdin,
             stdout=stdout,
             stderr=stderr,
-            **kwargs)
+            **kwargs
+        )
         self.parameters = kwargs
         self.stopped = True
 
@@ -133,7 +134,8 @@ class WolframLanguageSession(WolframEvaluator):
             stderr=self._stderr,
             inputform_string_evaluation=self.inputform_string_evaluation,
             controller_class=self.controller_class,
-            **self.parameters)
+            **self.parameters
+        )
 
     @property
     def started(self):
@@ -215,12 +217,10 @@ class WolframLanguageSession(WolframEvaluator):
 
     def do_evaluate_future(self, expr, result_update_callback=None, **kwargs):
         future = futures.Future()
-        wxf = export(self.normalize_input(expr), target_format='wxf', **kwargs)
+        wxf = export(self.normalize_input(expr), target_format="wxf", **kwargs)
         self.kernel_controller.evaluate_future(
-            wxf,
-            future,
-            result_update_callback=result_update_callback,
-            **kwargs)
+            wxf, future, result_update_callback=result_update_callback, **kwargs
+        )
         return future
 
     def evaluate_future(self, expr, **kwargs):
@@ -231,7 +231,8 @@ class WolframLanguageSession(WolframEvaluator):
         """
         self.ensure_started()
         return self.do_evaluate_future(
-            expr, result_update_callback=self.CALLBACK_GET, **kwargs)
+            expr, result_update_callback=self.CALLBACK_GET, **kwargs
+        )
 
     def evaluate_wxf_future(self, expr, **kwargs):
         """ Evaluate an expression and return a future object.
@@ -241,7 +242,8 @@ class WolframLanguageSession(WolframEvaluator):
         """
         self.ensure_started()
         return self.do_evaluate_future(
-            expr, result_update_callback=self.CALLBACK_GET_WXF, **kwargs)
+            expr, result_update_callback=self.CALLBACK_GET_WXF, **kwargs
+        )
 
     def evaluate_wrap_future(self, expr, **kwargs):
         """ Evaluate an expression and return a future object.
@@ -284,7 +286,9 @@ class WolframLanguageSession(WolframEvaluator):
 
     def __repr__(self):
         if self.started:
-            return '<%s: kernel controller=%s>' % (self.__class__.__name__,
-                                                   self.kernel_controller)
+            return "<%s: kernel controller=%s>" % (
+                self.__class__.__name__,
+                self.kernel_controller,
+            )
         else:
-            return '<%s: not started>' % self.__class__.__name__
+            return "<%s: not started>" % self.__class__.__name__

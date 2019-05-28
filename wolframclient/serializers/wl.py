@@ -9,7 +9,7 @@ from wolframclient.serializers.utils import py_encode_decimal, py_encode_text
 from wolframclient.utils.encoding import force_bytes
 
 
-def yield_with_separators(iterable, separator=b', ', first=None, last=None):
+def yield_with_separators(iterable, separator=b", ", first=None, last=None):
     if first:
         yield first
     for i, arg in enumerate(iterable):
@@ -30,7 +30,7 @@ class WLSerializer(FormatSerializer):
         return self.encode(data)
 
     def serialize_function(self, head, args, **opts):
-        return chain(head, yield_with_separators(args, first=b'[', last=b']'))
+        return chain(head, yield_with_separators(args, first=b"[", last=b"]"))
 
     def serialize_symbol(self, name):
         yield force_bytes(name)
@@ -42,30 +42,31 @@ class WLSerializer(FormatSerializer):
         yield py_encode_decimal(number)
 
     def serialize_float(self, number):
-        yield (b'%.13f' % number).rstrip(b'0')
+        yield (b"%.13f" % number).rstrip(b"0")
 
     def serialize_int(self, number):
-        yield b'%i' % number
+        yield b"%i" % number
 
     def serialize_rule(self, lhs, rhs):
-        return yield_with_separators((lhs, rhs), separator=b' -> ')
+        return yield_with_separators((lhs, rhs), separator=b" -> ")
 
     def serialize_rule_delayed(self, lhs, rhs):
-        return yield_with_separators((lhs, rhs), separator=b' :> ')
+        return yield_with_separators((lhs, rhs), separator=b" :> ")
 
     def serialize_mapping(self, mapping, **opts):
         return yield_with_separators(
             (self.serialize_rule(key, value) for key, value in mapping),
-            first=b'<|',
-            last=b'|>')
+            first=b"<|",
+            last=b"|>",
+        )
 
     def serialize_association(self, mapping, **opts):
         return self.serialize_mapping(mapping, **opts)
 
     def serialize_iterable(self, iterable, **opts):
-        return yield_with_separators(iterable, first=b'{', last=b'}')
+        return yield_with_separators(iterable, first=b"{", last=b"}")
 
     def serialize_input_form(self, string):
-        yield b'('
+        yield b"("
         yield force_bytes(string)
-        yield b')'
+        yield b")"

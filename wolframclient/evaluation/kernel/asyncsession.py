@@ -11,11 +11,10 @@ from wolframclient.utils.api import asyncio
 
 logger = logging.getLogger(__name__)
 
-__all__ = ['WolframLanguageAsyncSession']
+__all__ = ["WolframLanguageAsyncSession"]
 
 
-class WolframLanguageAsyncSession(WolframAsyncEvaluator,
-                                  WolframLanguageSession):
+class WolframLanguageAsyncSession(WolframAsyncEvaluator, WolframLanguageSession):
     """Evaluate expressions asynchronously using coroutines.
 
     Asynchronous evaluations are provided through coroutines and the :mod:`asyncio` modules.
@@ -36,17 +35,19 @@ class WolframLanguageAsyncSession(WolframAsyncEvaluator,
     complexity of the code without any real drawback.
     """
 
-    def __init__(self,
-                 kernel=None,
-                 consumer=None,
-                 loop=None,
-                 initfile=None,
-                 kernel_loglevel=logging.NOTSET,
-                 stdin=PIPE,
-                 stdout=PIPE,
-                 stderr=PIPE,
-                 inputform_string_evaluation=True,
-                 **kwargs):
+    def __init__(
+        self,
+        kernel=None,
+        consumer=None,
+        loop=None,
+        initfile=None,
+        kernel_loglevel=logging.NOTSET,
+        stdin=PIPE,
+        stdout=PIPE,
+        stderr=PIPE,
+        inputform_string_evaluation=True,
+        **kwargs
+    ):
         super().__init__(
             kernel=kernel,
             consumer=consumer,
@@ -57,7 +58,8 @@ class WolframLanguageAsyncSession(WolframAsyncEvaluator,
             stderr=stderr,
             inputform_string_evaluation=inputform_string_evaluation,
             loop=loop,
-            **kwargs)
+            **kwargs
+        )
 
     def duplicate(self):
         return self.__class__(
@@ -70,25 +72,26 @@ class WolframLanguageAsyncSession(WolframAsyncEvaluator,
             stdout=self._stdout,
             stderr=self._stderr,
             inputform_string_evaluation=self.inputform_string_evaluation,
-            **self.parameters)
+            **self.parameters
+        )
 
-    async def do_evaluate_future(self,
-                                 expr,
-                                 result_update_callback=None,
-                                 **kwargs):
+    async def do_evaluate_future(self, expr, result_update_callback=None, **kwargs):
         future = super().do_evaluate_future(
-            expr, result_update_callback=result_update_callback, **kwargs)
+            expr, result_update_callback=result_update_callback, **kwargs
+        )
         return asyncio.wrap_future(future, loop=self._loop)
 
     async def evaluate_future(self, expr, **kwargs):
         await self.ensure_started()
         return await self.do_evaluate_future(
-            expr, result_update_callback=self.CALLBACK_GET, **kwargs)
+            expr, result_update_callback=self.CALLBACK_GET, **kwargs
+        )
 
     async def evaluate_wxf_future(self, expr, **kwargs):
         await self.ensure_started()
         return await self.do_evaluate_future(
-            expr, result_update_callback=self.CALLBACK_GET_WXF, **kwargs)
+            expr, result_update_callback=self.CALLBACK_GET_WXF, **kwargs
+        )
 
     async def evaluate_wrap_future(self, expr, **kwargs):
         await self.ensure_started()
@@ -152,6 +155,6 @@ class WolframLanguageAsyncSession(WolframAsyncEvaluator,
         await self._async_terminate(False)
 
     async def _async_terminate(self, gracefully):
-        logger.info('Terminating asynchronous kernel session.')
+        logger.info("Terminating asynchronous kernel session.")
         future = super().stop_future(gracefully=gracefully)
         await asyncio.wrap_future(future, loop=self._loop)

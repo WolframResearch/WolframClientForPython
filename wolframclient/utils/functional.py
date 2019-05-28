@@ -12,6 +12,8 @@ if six.PY2:
 
     def map(f, iterable):
         return (f(e) for e in iterable)
+
+
 else:
     map = map
 
@@ -35,23 +37,24 @@ def identity(x):
 
 
 def composition(*functions):
-    return reduce(lambda f, g: lambda *args, **kw: f(g(*args, **kw)),
-                  reversed(functions or (identity, )))
+    return reduce(
+        lambda f, g: lambda *args, **kw: f(g(*args, **kw)), reversed(functions or (identity,))
+    )
 
 
 def is_iterable(obj, exclude_list=six.string_types):
     if isinstance(obj, exclude_list):
         return False
-    return not inspect.isclass(obj) and hasattr(obj, '__iter__')
+    return not inspect.isclass(obj) and hasattr(obj, "__iter__")
 
 
 def to_iterable(obj, exclude_list=six.string_types):
     if isinstance(obj, exclude_list):
-        return obj,
+        return (obj,)
     try:
         return iter(obj)
     except TypeError:
-        return obj,
+        return (obj,)
 
 
 def iterate(*args):

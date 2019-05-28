@@ -10,7 +10,7 @@ from wolframclient.language.expression import WLFunction, WLSymbol
 from wolframclient.serializers.wxfencoder import constants
 from wolframclient.utils.api import numpy
 
-__all__ = ['WXFConsumer', 'WXFConsumerNumpy']
+__all__ = ["WXFConsumer", "WXFConsumerNumpy"]
 
 
 class WXFConsumer(object):
@@ -51,22 +51,22 @@ class WXFConsumer(object):
     """
 
     _mapping = {
-        constants.WXF_CONSTANTS.Function: 'consume_function',
-        constants.WXF_CONSTANTS.Symbol: 'consume_symbol',
-        constants.WXF_CONSTANTS.String: 'consume_string',
-        constants.WXF_CONSTANTS.BinaryString: 'consume_binary_string',
-        constants.WXF_CONSTANTS.Integer8: 'consume_integer8',
-        constants.WXF_CONSTANTS.Integer16: 'consume_integer16',
-        constants.WXF_CONSTANTS.Integer32: 'consume_integer32',
-        constants.WXF_CONSTANTS.Integer64: 'consume_integer64',
-        constants.WXF_CONSTANTS.Real64: 'consume_real64',
-        constants.WXF_CONSTANTS.BigInteger: 'consume_bigint',
-        constants.WXF_CONSTANTS.BigReal: 'consume_bigreal',
-        constants.WXF_CONSTANTS.PackedArray: 'consume_packed_array',
-        constants.WXF_CONSTANTS.NumericArray: 'consume_numeric_array',
-        constants.WXF_CONSTANTS.Association: 'consume_association',
-        constants.WXF_CONSTANTS.Rule: 'consume_rule',
-        constants.WXF_CONSTANTS.RuleDelayed: 'consume_rule_delayed'
+        constants.WXF_CONSTANTS.Function: "consume_function",
+        constants.WXF_CONSTANTS.Symbol: "consume_symbol",
+        constants.WXF_CONSTANTS.String: "consume_string",
+        constants.WXF_CONSTANTS.BinaryString: "consume_binary_string",
+        constants.WXF_CONSTANTS.Integer8: "consume_integer8",
+        constants.WXF_CONSTANTS.Integer16: "consume_integer16",
+        constants.WXF_CONSTANTS.Integer32: "consume_integer32",
+        constants.WXF_CONSTANTS.Integer64: "consume_integer64",
+        constants.WXF_CONSTANTS.Real64: "consume_real64",
+        constants.WXF_CONSTANTS.BigInteger: "consume_bigint",
+        constants.WXF_CONSTANTS.BigReal: "consume_bigreal",
+        constants.WXF_CONSTANTS.PackedArray: "consume_packed_array",
+        constants.WXF_CONSTANTS.NumericArray: "consume_numeric_array",
+        constants.WXF_CONSTANTS.Association: "consume_association",
+        constants.WXF_CONSTANTS.Rule: "consume_rule",
+        constants.WXF_CONSTANTS.RuleDelayed: "consume_rule_delayed",
     }
 
     def next_expression(self, tokens, **kwargs):
@@ -80,11 +80,12 @@ class WXFConsumer(object):
             func = self._mapping[wxf_type]
         except KeyError:
             raise WolframParserException(
-                'Class %s does not implement any consumer method for WXF token %s'
-                % (self.__class__.__name__, wxf_type))
+                "Class %s does not implement any consumer method for WXF token %s"
+                % (self.__class__.__name__, wxf_type)
+            )
         return getattr(self, func)
 
-    _LIST = WLSymbol('List')
+    _LIST = WLSymbol("List")
 
     def consume_function(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *function*.
@@ -97,8 +98,7 @@ class WXFConsumer(object):
         """
         head = self.next_expression(tokens, **kwargs)
         args = tuple(
-            self.next_expression(tokens, **kwargs)
-            for i in range(current_token.length)
+            self.next_expression(tokens, **kwargs) for i in range(current_token.length)
         )
         if head == self._LIST:
             return args
@@ -113,11 +113,7 @@ class WXFConsumer(object):
         """
         return WLFunction(head, *arg_list)
 
-    def consume_association(self,
-                            current_token,
-                            tokens,
-                            dict_class=dict,
-                            **kwargs):
+    def consume_association(self, current_token, tokens, dict_class=dict, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *association*.
 
         By default, return a :class:`dict` made from the rules.
@@ -125,24 +121,22 @@ class WXFConsumer(object):
         :class:`dict_class` is returned.
         """
         return dict_class(
-            self.next_expression(tokens, **kwargs)
-            for i in range(current_token.length))
+            self.next_expression(tokens, **kwargs) for i in range(current_token.length)
+        )
 
     def consume_rule(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *rule* as a tuple"""
-        return (self.next_expression(tokens, **kwargs),
-                self.next_expression(tokens, **kwargs))
+        return (self.next_expression(tokens, **kwargs), self.next_expression(tokens, **kwargs))
 
     def consume_rule_delayed(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *rule* as a tuple"""
-        return (self.next_expression(tokens, **kwargs),
-                self.next_expression(tokens, **kwargs))
+        return (self.next_expression(tokens, **kwargs), self.next_expression(tokens, **kwargs))
 
     BUILTIN_SYMBOL = {
-        'True': True,
-        'False': False,
-        'Null': None,
-        'Indeterminate': float('NaN')
+        "True": True,
+        "False": False,
+        "Null": None,
+        "Indeterminate": float("NaN"),
     }
     """ See documentation of :func:`~wolframclient.serializers.encoders.builtin.encode_none` for more information
         about the mapping of None and Null. """
@@ -159,10 +153,9 @@ class WXFConsumer(object):
         try:
             return int(current_token.data)
         except ValueError:
-            raise WolframParserException(
-                'Invalid big integer value: %s' % current_token.data)
+            raise WolframParserException("Invalid big integer value: %s" % current_token.data)
 
-    BIGREAL_RE = re.compile(r'([^`]+)(`[0-9.]+){0,1}(\*\^[0-9]+){0,1}')
+    BIGREAL_RE = re.compile(r"([^`]+)(`[0-9.]+){0,1}(\*\^[0-9]+){0,1}")
 
     def consume_bigreal(self, current_token, tokens, **kwargs):
         """Parse a WXF big real as a WXF serializable big real.
@@ -180,12 +173,11 @@ class WXFConsumer(object):
             num, prec, exp = match.groups()
 
             if exp:
-                return decimal.Decimal('%se%s' % (num, exp[2:]))
+                return decimal.Decimal("%se%s" % (num, exp[2:]))
 
             return decimal.Decimal(num)
 
-        raise WolframParserException(
-            'Invalid big real value: %s' % current_token.data)
+        raise WolframParserException("Invalid big real value: %s" % current_token.data)
 
     def consume_string(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *string* as a string of unicode utf8 encoded."""
@@ -229,23 +221,22 @@ class WXFConsumer(object):
         """
         return self._array_to_list(current_token, tokens)
 
+    # memoryview.cast was introduced in Python 3.3.
 
-# memoryview.cast was introduced in Python 3.3.
-
-    if hasattr(memoryview, 'cast'):
+    if hasattr(memoryview, "cast"):
         unpack_mapping = {
-            constants.ARRAY_TYPES.Integer8: 'b',
-            constants.ARRAY_TYPES.UnsignedInteger8: 'B',
-            constants.ARRAY_TYPES.Integer16: 'h',
-            constants.ARRAY_TYPES.UnsignedInteger16: 'H',
-            constants.ARRAY_TYPES.Integer32: 'i',
-            constants.ARRAY_TYPES.UnsignedInteger32: 'I',
-            constants.ARRAY_TYPES.Integer64: 'q',
-            constants.ARRAY_TYPES.UnsignedInteger64: 'Q',
-            constants.ARRAY_TYPES.Real32: 'f',
-            constants.ARRAY_TYPES.Real64: 'd',
-            constants.ARRAY_TYPES.ComplexReal32: 'f',
-            constants.ARRAY_TYPES.ComplexReal64: 'd',
+            constants.ARRAY_TYPES.Integer8: "b",
+            constants.ARRAY_TYPES.UnsignedInteger8: "B",
+            constants.ARRAY_TYPES.Integer16: "h",
+            constants.ARRAY_TYPES.UnsignedInteger16: "H",
+            constants.ARRAY_TYPES.Integer32: "i",
+            constants.ARRAY_TYPES.UnsignedInteger32: "I",
+            constants.ARRAY_TYPES.Integer64: "q",
+            constants.ARRAY_TYPES.UnsignedInteger64: "Q",
+            constants.ARRAY_TYPES.Real32: "f",
+            constants.ARRAY_TYPES.Real64: "d",
+            constants.ARRAY_TYPES.ComplexReal32: "f",
+            constants.ARRAY_TYPES.ComplexReal64: "d",
         }
 
         def _to_complex(self, array, max_depth, curr_depth):
@@ -261,20 +252,25 @@ class WXFConsumer(object):
 
         def _array_to_list(self, current_token, tokens):
             view = memoryview(current_token.data)
-            if current_token.array_type == constants.ARRAY_TYPES.ComplexReal32 or current_token.array_type == constants.ARRAY_TYPES.ComplexReal64:
+            if (
+                current_token.array_type == constants.ARRAY_TYPES.ComplexReal32
+                or current_token.array_type == constants.ARRAY_TYPES.ComplexReal64
+            ):
                 dimensions = list(current_token.dimensions)
                 # In the given array, 2 reals give one complex,
                 # adding one last dimension to represent it.
                 dimensions.append(2)
                 as_list = view.cast(
-                    self.unpack_mapping[current_token.array_type],
-                    shape=dimensions).tolist()
+                    self.unpack_mapping[current_token.array_type], shape=dimensions
+                ).tolist()
                 self._to_complex(as_list, len(current_token.dimensions), 0)
                 return as_list
             else:
                 return view.cast(
                     self.unpack_mapping[current_token.array_type],
-                    shape=current_token.dimensions).tolist()
+                    shape=current_token.dimensions,
+                ).tolist()
+
     else:
         unpack_mapping = {
             constants.ARRAY_TYPES.Integer8: constants.StructInt8LE,
@@ -293,22 +289,25 @@ class WXFConsumer(object):
 
         def _array_to_list(self, current_token, tokens):
             value, _ = self._build_array_from_bytes(
-                current_token.data, 0, current_token.array_type,
-                current_token.dimensions, 0)
+                current_token.data, 0, current_token.array_type, current_token.dimensions, 0
+            )
             return value
 
-        def _build_array_from_bytes(self, data, offset, array_type, dimensions,
-                                    current_dim):
+        def _build_array_from_bytes(self, data, offset, array_type, dimensions, current_dim):
             new_array = list()
             if current_dim < len(dimensions) - 1:
                 for i in range(dimensions[current_dim]):
                     new_elem, offset = self._build_array_from_bytes(
-                        data, offset, array_type, dimensions, current_dim + 1)
+                        data, offset, array_type, dimensions, current_dim + 1
+                    )
                     new_array.append(new_elem)
             else:
                 struct = self.unpack_mapping[array_type]
                 # complex values, need two reals for each.
-                if array_type == constants.ARRAY_TYPES.ComplexReal32 or array_type == constants.ARRAY_TYPES.ComplexReal64:
+                if (
+                    array_type == constants.ARRAY_TYPES.ComplexReal32
+                    or array_type == constants.ARRAY_TYPES.ComplexReal64
+                ):
                     for i in range(dimensions[-1]):
                         # this returns a tuple.
                         re = struct.unpack_from(data, offset=offset)
@@ -331,7 +330,8 @@ class WXFConsumerNumpy(WXFConsumer):
     def consume_array(self, current_token, tokens, **kwargs):
         arr = numpy.frombuffer(
             current_token.data,
-            dtype=WXFConsumerNumpy.WXF_TYPE_TO_DTYPE[current_token.array_type])
+            dtype=WXFConsumerNumpy.WXF_TYPE_TO_DTYPE[current_token.array_type],
+        )
         arr = numpy.reshape(arr, tuple(current_token.dimensions))
         return arr
 
@@ -341,16 +341,16 @@ class WXFConsumerNumpy(WXFConsumer):
     consume_numeric_array = consume_array
 
     WXF_TYPE_TO_DTYPE = {
-        constants.ARRAY_TYPES.Integer8: 'int8',
-        constants.ARRAY_TYPES.Integer16: 'int16',
-        constants.ARRAY_TYPES.Integer32: 'int32',
-        constants.ARRAY_TYPES.Integer64: 'int64',
-        constants.ARRAY_TYPES.UnsignedInteger8: 'uint8',
-        constants.ARRAY_TYPES.UnsignedInteger16: 'uint16',
-        constants.ARRAY_TYPES.UnsignedInteger32: 'uint32',
-        constants.ARRAY_TYPES.UnsignedInteger64: 'uint64',
-        constants.ARRAY_TYPES.Real32: 'float32',
-        constants.ARRAY_TYPES.Real64: 'float64',
-        constants.ARRAY_TYPES.ComplexReal32: 'complex64',
-        constants.ARRAY_TYPES.ComplexReal64: 'complex128',
+        constants.ARRAY_TYPES.Integer8: "int8",
+        constants.ARRAY_TYPES.Integer16: "int16",
+        constants.ARRAY_TYPES.Integer32: "int32",
+        constants.ARRAY_TYPES.Integer64: "int64",
+        constants.ARRAY_TYPES.UnsignedInteger8: "uint8",
+        constants.ARRAY_TYPES.UnsignedInteger16: "uint16",
+        constants.ARRAY_TYPES.UnsignedInteger32: "uint32",
+        constants.ARRAY_TYPES.UnsignedInteger64: "uint64",
+        constants.ARRAY_TYPES.Real32: "float32",
+        constants.ARRAY_TYPES.Real64: "float64",
+        constants.ARRAY_TYPES.ComplexReal32: "complex64",
+        constants.ARRAY_TYPES.ComplexReal64: "complex128",
     }

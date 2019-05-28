@@ -3,7 +3,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.utils.api import aiohttp, requests
 from wolframclient.utils.encoding import force_text
 
-__all__ = ['wrap_response']
+__all__ = ["wrap_response"]
 
 
 class HTTPResponseAdapterBase(object):
@@ -69,5 +69,4 @@ def wrap_response(response):
     elif isinstance(response, aiohttp.ClientResponse):
         return AIOHttpHTTPRequestAdapter(response)
     else:
-        raise ValueError(
-            'No adapter found for HTTP response class %s' % response.__class__)
+        raise ValueError("No adapter found for HTTP response class %s" % response.__class__)

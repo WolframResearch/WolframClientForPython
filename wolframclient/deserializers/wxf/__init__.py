@@ -6,7 +6,7 @@ from wolframclient.deserializers.wxf.wxfconsumer import WXFConsumerNumpy
 from wolframclient.deserializers.wxf.wxfparser import WXFParser
 from wolframclient.exception import WolframParserException
 
-__all__ = ['binary_deserialize']
+__all__ = ["binary_deserialize"]
 
 
 def binary_deserialize(wxf_input, consumer=None, **kwargs):
@@ -42,10 +42,10 @@ def binary_deserialize(wxf_input, consumer=None, **kwargs):
         o = consumer.next_expression(parser.tokens(), **kwargs)
     except StopIteration:
         raise WolframParserException(
-            'Input data does not represent a valid expression in WXF format. Expecting more input data.'
+            "Input data does not represent a valid expression in WXF format. Expecting more input data."
         )
     if not parser.context.is_valid_final_state():
         raise WolframParserException(
-            'Input data does not represent a valid expression in WXF format. Some expressions are incomplete.'
+            "Input data does not represent a valid expression in WXF format. Some expressions are incomplete."
         )
     return o

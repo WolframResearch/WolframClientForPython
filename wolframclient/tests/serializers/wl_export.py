@@ -11,12 +11,13 @@ from wolframclient.utils import six
 from wolframclient.utils.functional import identity
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
+
 class TestCase(BaseTestCase):
     def test_export(self):
 
-        #checking that export is able to return bytes if no second argument is provided
+        # checking that export is able to return bytes if no second argument is provided
 
-        self.assertEqual(export(2), b'2')
+        self.assertEqual(export(2), b"2")
         self.assertEqual(export("foo"), b'"foo"')
 
         fd, path = tempfile.mkstemp()
@@ -29,14 +30,14 @@ class TestCase(BaseTestCase):
 
                 expected = export(test, target_format=export_format)
 
-                #checking that export is able to write to a path if a string is provided
+                # checking that export is able to write to a path if a string is provided
 
                 export(test, path, target_format=export_format)
 
-                with open(path, 'rb') as stream:
+                with open(path, "rb") as stream:
                     self.assertEqual(stream.read(), expected)
 
-                #checking that export is writing to a byteio
+                # checking that export is writing to a byteio
 
                 stream = six.BytesIO()
 
@@ -46,12 +47,12 @@ class TestCase(BaseTestCase):
 
                 self.assertEqual(stream.read(), expected)
 
-                #checking that export is able to write to a filelike object
+                # checking that export is able to write to a filelike object
 
-                with open(path, 'wb') as stream:
+                with open(path, "wb") as stream:
                     export(test, stream, target_format=export_format)
 
-                with open(path, 'rb') as stream:
+                with open(path, "rb") as stream:
                     self.assertEqual(stream.read(), expected)
 
         os.remove(path)
@@ -63,17 +64,18 @@ class TestCase(BaseTestCase):
 
         def normalizer(o):
             if isinstance(o, six.integer_types):
-                return 'o'
+                return "o"
             if isinstance(o, MyStuff):
                 return wl.RandomThings(*o.stuff)
             return o
 
-        expr = [1, 2, 'a', {1: "a"}, MyStuff(1, 2, MyStuff(1, 'a'))]
+        expr = [1, 2, "a", {1: "a"}, MyStuff(1, 2, MyStuff(1, "a"))]
         normalized = [
-            "o", "o", "a", {
-                "o": "a"
-            },
-            wl.RandomThings("o", "o", wl.RandomThings("o", "a"))
+            "o",
+            "o",
+            "a",
+            {"o": "a"},
+            wl.RandomThings("o", "o", wl.RandomThings("o", "a")),
         ]
 
         for export_format in available_formats:
@@ -82,22 +84,20 @@ class TestCase(BaseTestCase):
                 export(expr, normalizer=identity, target_format=export_format)
 
             self.assertEqual(
-                export(
-                    expr, normalizer=normalizer, target_format=export_format),
-                export(
-                    normalized,
-                    normalizer=identity,
-                    target_format=export_format),
+                export(expr, normalizer=normalizer, target_format=export_format),
+                export(normalized, normalizer=identity, target_format=export_format),
             )
 
     def test_export_with_encoder(self):
 
-        #very similar code is used by safe_wl_execute, we need to make sure that we can pass the builtin encoder and a very simple
-        #data dump and the code keeps working
+        # very similar code is used by safe_wl_execute, we need to make sure that we can pass the builtin encoder and a very simple
+        # data dump and the code keeps working
 
         self.assertEqual(
             export(
-                wl.Failure("PythonFailure", {"MessageTemplate": ('baz', 'bar')}),
-                target_format='wl',
-                encoder='wolframclient.serializers.encoders.builtin.encoder'),
-            b'Failure["PythonFailure", <|"MessageTemplate" -> {"baz", "bar"}|>]')
+                wl.Failure("PythonFailure", {"MessageTemplate": ("baz", "bar")}),
+                target_format="wl",
+                encoder="wolframclient.serializers.encoders.builtin.encoder",
+            ),
+            b'Failure["PythonFailure", <|"MessageTemplate" -> {"baz", "bar"}|>]',
+        )

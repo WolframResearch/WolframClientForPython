@@ -6,8 +6,8 @@ import inspect
 
 from wolframclient.utils.functional import flatten
 
-#original idea by Guido in person.
-#https://www.artima.com/weblogs/viewpost.jsp?thread=101605
+# original idea by Guido in person.
+# https://www.artima.com/weblogs/viewpost.jsp?thread=101605
 
 
 class Dispatch(object):
@@ -68,29 +68,25 @@ class Dispatch(object):
         elif isinstance(dispatch, dict):
             dispatchmapping = dispatch
         else:
-            raise ValueError('%s is not an instance of Dispatch' % dispatch)
+            raise ValueError("%s is not an instance of Dispatch" % dispatch)
         for t, function in dispatchmapping.items():
             self.register(function, t, **opts)
 
     def validate_types(self, types):
         for t in frozenset(flatten(types)):
             if not inspect.isclass(t):
-                raise ValueError('%s is not a class' % t)
+                raise ValueError("%s is not a class" % t)
             yield t
 
-    def register(self,
-                 function,
-                 types=object,
-                 keep_existing=False,
-                 replace_existing=False):
+    def register(self, function, types=object, keep_existing=False, replace_existing=False):
         """ Equivalent to annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch` but as 
         a function.
         """
         if not callable(function):
-            raise ValueError('Function %s is not callable' % function)
+            raise ValueError("Function %s is not callable" % function)
         if keep_existing and replace_existing:
             raise ValueError(
-                'Option values keep_existing and replace_existing cannot be both True.'
+                "Option values keep_existing and replace_existing cannot be both True."
             )
 
         self.clear_cache()
@@ -100,9 +96,7 @@ class Dispatch(object):
                 self.dispatch_dict[t] = function
             elif t in self.dispatch_dict:
                 if not keep_existing:
-                    raise TypeError(
-                        "Duplicated registration for input type(s): %s" %
-                        (t, ))
+                    raise TypeError("Duplicated registration for input type(s): %s" % (t,))
             else:
                 self.dispatch_dict[t] = function
 
@@ -143,7 +137,7 @@ class Dispatch(object):
 
     def default_function(self, *args, **opts):
         """ Ultimately called when no type was found. """
-        raise ValueError('Unable to handle args')
+        raise ValueError("Unable to handle args")
 
     def __call__(self, arg, *args, **opts):
         return self.resolve(arg)(arg, *args, **opts)

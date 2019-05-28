@@ -13,13 +13,12 @@ from wolframclient.serializers.utils import safe_len
 from wolframclient.utils import six
 from wolframclient.utils.api import multiprocessing
 from wolframclient.utils.dispatch import Dispatch
-from wolframclient.utils.functional import (composition, is_iterable, iterate,
-                                            map)
+from wolframclient.utils.functional import composition, is_iterable, iterate, map
 from wolframclient.utils.importutils import safe_import_string
 
 logger = logging.getLogger(__name__)
 
-__all__ = ['wolfram_encoder', 'Encoder']
+__all__ = ["wolfram_encoder", "Encoder"]
 
 
 class WolframDispatch(Dispatch):
@@ -36,22 +35,20 @@ class WolframDispatch(Dispatch):
             self.modules.add(module)
             self.registry[module].extend(iterate(_handlers))
 
-    def register_plugins(self, name='wolframclient_serializers_encoder'):
+    def register_plugins(self, name="wolframclient_serializers_encoder"):
         if logger.isEnabledFor(logging.INFO):
             logger.info(
-                'Registering Wolfram encoders plugins associated with entrypoint %s.'
-                % name)
+                "Registering Wolfram encoders plugins associated with entrypoint %s." % name
+            )
         for entry_point in pkg_resources.iter_entry_points(group=name):
-            self.plugins_registry[entry_point.name].extend(
-                entry_point.module_name)
+            self.plugins_registry[entry_point.name].extend(entry_point.module_name)
 
     def _update_dispatch(self):
         if self.modules:
             installed_modules = sys.modules.keys()
             for module in self.modules.intersection(installed_modules):
                 for handler in self.registry[module]:
-                    self.update(
-                        safe_import_string(handler), keep_existing=True)
+                    self.update(safe_import_string(handler), keep_existing=True)
 
                 del self.registry[module]
                 self.modules.remove(module)
@@ -59,13 +56,13 @@ class WolframDispatch(Dispatch):
     def _update_plugins(self):
         if self.plugins_registry:
             for plugins_name, handler in self.plugins_registry.items():
-                handler = ''.join(handler)
+                handler = "".join(handler)
                 try:
                     self.update(safe_import_string(handler))
                 except TypeError as e:
                     logger.fatal(
-                        'Failed to load encoder associated to plugins %s.' %
-                        plugins_name)
+                        "Failed to load encoder associated to plugins %s." % plugins_name
+                    )
                     raise e
             self.plugins_registry = defaultdict(list)
 
@@ -87,18 +84,18 @@ class WolframDispatch(Dispatch):
 
 wolfram_encoder = WolframDispatch()
 wolfram_encoder.register_modules(
-
-    #builtin libraries
-    sys='wolframclient.serializers.encoders.builtin.encoder',
-    decimal='wolframclient.serializers.encoders.decimal.encoder',
-    datetime='wolframclient.serializers.encoders.datetime.encoder',
-    fractions='wolframclient.serializers.encoders.fractions.encoder',
-
-    #wolfram language support
-    numpy='wolframclient.serializers.encoders.numpy.encoder',
-    pandas='wolframclient.serializers.encoders.pandas.encoder',
-    PIL=('wolframclient.serializers.encoders.pil.encoder',
-         'wolframclient.serializers.encoders.numpy.encoder'),
+    # builtin libraries
+    sys="wolframclient.serializers.encoders.builtin.encoder",
+    decimal="wolframclient.serializers.encoders.decimal.encoder",
+    datetime="wolframclient.serializers.encoders.datetime.encoder",
+    fractions="wolframclient.serializers.encoders.fractions.encoder",
+    # wolfram language support
+    numpy="wolframclient.serializers.encoders.numpy.encoder",
+    pandas="wolframclient.serializers.encoders.pandas.encoder",
+    PIL=(
+        "wolframclient.serializers.encoders.pil.encoder",
+        "wolframclient.serializers.encoders.numpy.encoder",
+    ),
 )
 wolfram_encoder.register_plugins()
 
@@ -106,13 +103,11 @@ wolfram_encoder.register_plugins()
 @wolfram_encoder.dispatch(object)
 def encode(serializer, o):
     if is_iterable(o):
-        return serializer.serialize_iterable(
-            map(serializer.encode, o), length=safe_len(o))
+        return serializer.serialize_iterable(map(serializer.encode, o), length=safe_len(o))
     if serializer.allow_external_objects:
         return serializer.serialize_external_object(o)
 
-    raise NotImplementedError(
-        'Cannot serialize object of class %s' % o.__class__)
+    raise NotImplementedError("Cannot serialize object of class %s" % o.__class__)
 
 
 wolfram_encoder.__doc__ = """ 
@@ -208,15 +203,18 @@ class Encoder(object):
     :meth:`~wolframclient.serializers.encode.Encoder.get_property`. 
     """
 
-    def __init__(self,
-                 normalizer=None,
-                 encoder=None,
-                 allow_external_objects=False,
-                 target_kernel_version=None,
-                 **kwargs):
+    def __init__(
+        self,
+        normalizer=None,
+        encoder=None,
+        allow_external_objects=False,
+        target_kernel_version=None,
+        **kwargs
+    ):
 
         self.encode = self.chain_normalizer(
-            normalizer, encoder=safe_import_string(encoder or wolfram_encoder))
+            normalizer, encoder=safe_import_string(encoder or wolfram_encoder)
+        )
         self.allow_external_objects = allow_external_objects
         self.target_kernel_version = target_kernel_version or 11.3
         self._properties = kwargs
@@ -227,8 +225,8 @@ class Encoder(object):
             encoder.update_dispatch()
 
         return composition(
-            *map(safe_import_string,
-                 iterate(func or (), partial(encoder.as_method(), self))))
+            *map(safe_import_string, iterate(func or (), partial(encoder.as_method(), self)))
+        )
 
     def get_property(self, key, d=None):
         """ Return the value of the named parameter passed during initialization.

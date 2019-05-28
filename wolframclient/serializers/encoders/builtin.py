@@ -4,8 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import math
 
-from wolframclient.language.expression import (WLFunction, WLInputExpression,
-                                               WLSymbol)
+from wolframclient.language.expression import WLFunction, WLInputExpression, WLSymbol
 from wolframclient.serializers.serializable import WLSerializable
 from wolframclient.serializers.utils import safe_len
 from wolframclient.utils import six
@@ -16,10 +15,12 @@ from wolframclient.utils.functional import map
 
 encoder = Dispatch()
 
+
 def _to_key_value(func, serializer, o):
-    return func(((serializer.encode(key), serializer.encode(value))
-                 for key, value in o.items()),
-                length=safe_len(o))
+    return func(
+        ((serializer.encode(key), serializer.encode(value)) for key, value in o.items()),
+        length=safe_len(o),
+    )
 
 
 @encoder.dispatch(bool)
@@ -85,19 +86,22 @@ def encode_none(serializer, o):
     Having inconsistencies between functions that return nothing is not an small issue, and could lead to all sort of
     hack and work around solutions to prevent them. That's why we prioritize option 2 over the others.
     """
-    return serializer.serialize_symbol(b'Null')
+    return serializer.serialize_symbol(b"Null")
 
 
 if six.PY2:
+
     @encoder.dispatch(str)
     def encode_bytes(serializer, o):
         return serializer.serialize_bytes(o)
 
-
     @encoder.dispatch((bytearray, six.buffer_types))
     def encode_bytes(serializer, o):
         return serializer.serialize_bytes(o, as_byte_array=True)
+
+
 else:
+
     @encoder.dispatch((six.binary_type, bytearray, six.buffer_types))
     def encode_bytes(serializer, o):
         return serializer.serialize_bytes(o)
@@ -124,7 +128,8 @@ def encode_float(serializer, o):
     if math.isinf(o):
         return serializer.serialize_function(
             serializer.serialize_symbol(b"DirectedInfinity"),
-            (serializer.serialize_int(o < 0 and -1 or 1), ))
+            (serializer.serialize_int(o < 0 and -1 or 1),),
+        )
 
     if math.isnan(o):
         return serializer.serialize_symbol(b"Indeterminate")
@@ -139,11 +144,10 @@ def encode_complex(serializer, o):
 
 @encoder.dispatch(six.iterable_types)
 def encode_iter(serializer, o):
-    return serializer.serialize_iterable(
-        map(serializer.encode, o), length=safe_len(o))
+    return serializer.serialize_iterable(map(serializer.encode, o), length=safe_len(o))
 
 
-#STARTING WL CONSTRUCTS
+# STARTING WL CONSTRUCTS
 
 
 @encoder.dispatch(WLSymbol)
@@ -154,9 +158,8 @@ def encode_symbol(serializer, o):
 @encoder.dispatch(WLFunction)
 def encode_function(serializer, o):
     return serializer.serialize_function(
-        serializer.encode(o.head),
-        map(serializer.encode, o.args),
-        length=len(o.args))
+        serializer.encode(o.head), map(serializer.encode, o.args), length=len(o.args)
+    )
 
 
 @encoder.dispatch(WLInputExpression)
