@@ -91,7 +91,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
                 self._add_evaluator(evaluator)
 
         self._started_tasks = []
-        self._pending_init_tasks = None
+        self._pending_init_tasks = ()
         self.last = 0
         self.eval_count = 0
         self.requestedsize = poolsize
@@ -213,6 +213,10 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         logger.info("Pool initialized with %i running kernels", len(self._started_tasks))
 
     async def stop(self):
+
+        if self.stopped:
+            return
+
         self.stopped = True
         # make sure all init tasks are finished.
         if len(self._pending_init_tasks) > 0:

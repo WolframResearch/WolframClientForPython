@@ -115,18 +115,20 @@ class WolframKernelController(Thread):
         **kwargs
     ):
         self.id = _thread_counter()
-        super().__init__(name="wolfram-kernel-%i" % self.id)
-        if kernel is None:
-            kernel = self.default_kernel_path()
-        if isinstance(kernel, six.string_types):
-            if not os.isfile(kernel):
-                raise WolframKernelException("Kernel not found at %s." % kernel)
-            elif not os.access(kernel, os.X_OK):
-                raise WolframKernelException("Cannot execute kernel %s." % kernel)
-            else:
-                self.kernel = kernel
+        super().__init__(name='wolfram-kernel-%i' % self.id)
+
+        self.kernel = kernel or self.default_kernel_path()
+
+        if self.kernel:
+
+            if not os.isfile(self.kernel):
+                raise WolframKernelException('Kernel not found at %s.' % self.kernel)
+            
+            if not os.access(self.kernel, os.X_OK):
+                raise WolframKernelException('Cannot execute kernel %s.' % self.kernel)
+
         else:
-            raise ValueError("Invalid kernel value. Expecting a filepath as a string.")
+            raise WolframKernelException('Cannot locate a kernel automatically. Please provide an explicit kernel path.')
         if initfile is None:
             self.initfile = os.path_join(os.dirname(__file__), "initkernel.m")
         else:
@@ -134,9 +136,8 @@ class WolframKernelController(Thread):
         if not os.isfile(self.initfile):
             raise FileNotFoundError("Kernel initialization file %s not found." % self.initfile)
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(
-                "Initializing kernel %s using script: %s" % (self.kernel, self.initfile)
-            )
+            logger.debug('Initializing kernel %s using script: %s' %
+                         (self.kernel, self.initfile))
         self.tasks_queue = Queue()
         self.kernel_socket_in = None
         self.kernel_socket_out = None

@@ -151,8 +151,8 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
     except that they are coroutines. """
 
     def __init__(self, loop=None, **kwargs):
-        super().__init__(**kwargs)
         self._loop = loop or asyncio.get_event_loop()
+        super().__init__(**kwargs)
 
     async def evaluate(self, expr):
         result = await self.evaluate_wrap(expr)

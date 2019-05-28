@@ -29,8 +29,8 @@ logger.setLevel(logging.INFO)
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestCaseSettings(BaseTestCase):
 
-    if json_config:
-        KERNEL_PATH = json_config.get("kernel", None)
+    KERNEL_PATH = json_config and json_config.get('kernel', None) or None
+
 
     @classmethod
     def setUpClass(cls):
@@ -117,7 +117,8 @@ class TestCase(TestCaseSettings):
     def test_one_msg_wrap(self):
         res = self.kernel_session.evaluate_wrap("1/0")
         self.assertFalse(res.success)
-        self.assertListEqual(res.messages, ["Infinite expression Power[0, -1] encountered."])
+        self.assertEqual(res.messages,
+                             ('Infinite expression Power[0, -1] encountered.', ))
 
     def test_silenced_msg(self):
         off = self.kernel_session.evaluate("Off[Power::infy]")
@@ -135,17 +136,13 @@ class TestCase(TestCaseSettings):
     def test_one_eval_many_msg_wrap(self):
         res = self.kernel_session.evaluate_wrap('ImportString["[1,2", "RawJSON"]')
         self.assertFalse(res.success)
-        expected_msgs = [
-            (
-                wl.MessageName(wl.Import, "jsonarraymissingsep"),
-                "Expecting end of array or a value separator.",
-            ),
-            (
-                wl.MessageName(wl.Import, "jsonhintposandchar"),
-                "An error occurred near character 'EOF', at line 1:6",
-            ),
-        ]
-        self.assertListEqual(list(res.iter_messages_tuple()), expected_msgs)
+        expected_msgs = (
+            (wl.MessageName(wl.Import, 'jsonarraymissingsep'),
+             'Expecting end of array or a value separator.'),
+            (wl.MessageName(wl.Import, 'jsonhintposandchar'),
+             "An error occurred near character 'EOF', at line 1:6")
+        )
+        self.assertEqual(tuple(res.iter_messages_tuple()), expected_msgs)
 
     def test_many_failures(self):
         res = self.kernel_session.evaluate('ImportString["[1,2", "RawJSON"]; 1/0')
@@ -154,26 +151,27 @@ class TestCase(TestCaseSettings):
     def test_many_failures_wrap(self):
         res = self.kernel_session.evaluate_wrap('ImportString["[1,2", "RawJSON"]; 1/0')
         self.assertFalse(res.success)
-        expected_msgs = [
-            "Expecting end of array or a value separator.",
+        expected_msgs = (
+            'Expecting end of array or a value separator.',
             "An error occurred near character 'EOF', at line 1:6",
-            "Infinite expression Power[0, -1] encountered.",
-        ]
-        expected_msgs_name = [
-            wl.MessageName(wl.Import, "jsonarraymissingsep"),
-            wl.MessageName(wl.Import, "jsonhintposandchar"),
-            wl.MessageName(wl.Power, "infy"),
-        ]
+            'Infinite expression Power[0, -1] encountered.'
+        )
+        expected_msgs_name = (
+            wl.MessageName(wl.Import, 'jsonarraymissingsep'),
+            wl.MessageName(wl.Import, 'jsonhintposandchar'),
+            wl.MessageName(wl.Power, 'infy')
+        )
 
-        expected_tuples = list(zip(expected_msgs_name, expected_msgs))
+        expected_tuples = tuple(zip(expected_msgs_name, expected_msgs))
 
-        self.assertListEqual(res.messages, expected_msgs)
-        self.assertListEqual(list(res.iter_messages()), expected_msgs)
+        self.assertEqual(res.messages, expected_msgs)
+        self.assertEqual(tuple(res.iter_messages()), expected_msgs)
 
-        self.assertListEqual(res.messages_name, expected_msgs_name)
-        self.assertListEqual(list(res.iter_messages_name()), expected_msgs_name)
+        self.assertEqual(res.messages_name, expected_msgs_name)
+        self.assertEqual(
+            tuple(res.iter_messages_name()), expected_msgs_name)
 
-        self.assertListEqual(list(res.iter_messages_tuple()), expected_tuples)
+        self.assertEqual(tuple(res.iter_messages_tuple()), expected_tuples)
 
     def test_valid_evaluate_wxf(self):
         wxf = self.kernel_session.evaluate_wxf("Range[3]")
@@ -213,8 +211,8 @@ class TestCase(TestCaseSettings):
         self.assertEqual(total_range(5), 15)
 
     def test_wlexpr_wrapper(self):
-        res = self.kernel_session.evaluate(wl.Map(wlexpr("#+1&"), [1, 2, 3]))
-        self.assertEqual(res, [2, 3, 4])
+        res = self.kernel_session.evaluate(wl.Map(wlexpr('#+1&'), [1, 2, 3]))
+        self.assertEqual(res, (2, 3, 4))
 
     def test_built_in_symbols(self):
         self.assertEqual(self.kernel_session.evaluate(wl.Null), None)
@@ -249,12 +247,12 @@ class TestCase(TestCaseSettings):
         self.class_bad_kwargs_parameters(self, WolframLanguageSession)
 
     IMAGE_FILES_DIMS = {
-        "10ct_32bit_128.tiff": [128, 128],
-        "16_bit_binary_pgm.png": [20, 100],
-        "hopper.ppm": [128, 128],
-        "pal1wb.bmp": [127, 64],
-        "pil_sample_cmyk.jpg": [100, 100],
-        "umbrellaRGBA.png": [1789, 1920],
+        "10ct_32bit_128.tiff": (128, 128),
+        "16_bit_binary_pgm.png": (20, 100),
+        "hopper.ppm": (128, 128),
+        "pal1wb.bmp": (127, 64),
+        "pil_sample_cmyk.jpg": (100, 100),
+        "umbrellaRGBA.png": (1789, 1920)
     }
 
     @unittest.skipIf(not has_pil, "PIL not found skipping image test.")
@@ -282,27 +280,30 @@ class TestCase(TestCaseSettings):
                 )
 
     def test_stop_start_restart_status(self):
-        session = None
-        try:
-            session = WolframLanguageSession(self.KERNEL_PATH)
-            self.assertFalse(session.started)
-            self.assertTrue(session.stopped)
-            session.start()
-            self.assertTrue(session.started)
-            self.assertFalse(session.stopped)
-            session.stop()
-            self.assertFalse(session.started)
-            self.assertTrue(session.stopped)
-            session.restart()
-            self.assertTrue(session.started)
-            self.assertFalse(session.stopped)
-            session.terminate()
-            self.assertFalse(session.started)
-            self.assertTrue(session.stopped)
-        finally:
-            if session:
-                session.terminate()
 
+        session = WolframLanguageSession(self.KERNEL_PATH)
+        self.assertFalse(session.started)
+        self.assertTrue(session.stopped)
+        session.start()
+        self.assertTrue(session.started)
+        self.assertFalse(session.stopped)
+        session.stop()
+        self.assertFalse(session.started)
+        self.assertTrue(session.stopped)
+        session.restart()
+        self.assertTrue(session.started)
+        self.assertFalse(session.stopped)
+        session.terminate()
+        self.assertFalse(session.started)
+        self.assertTrue(session.stopped)
+
+        session = WolframLanguageSession(self.KERNEL_PATH)
+        session.stop()
+        self.assertFalse(session.started)
+        self.assertTrue(session.stopped)
+        session.terminate()
+        self.assertFalse(session.started)
+        self.assertTrue(session.stopped)
 
 class TestSessionTimeout(TestCaseSettings):
     def test_evaluate_async_basic_inputform(self):
@@ -329,25 +330,26 @@ class TestSessionTimeout(TestCaseSettings):
         )
         res = future.result(timeout=1)
         self.assertFalse(res.success)
-        expected_msgs = [
-            "Expecting end of array or a value separator.",
+        expected_msgs = (
+            'Expecting end of array or a value separator.',
             "An error occurred near character 'EOF', at line 1:6",
-            "Infinite expression Power[0, -1] encountered.",
-        ]
-        expected_msgs_name = [
-            wl.MessageName(wl.Import, "jsonarraymissingsep"),
-            wl.MessageName(wl.Import, "jsonhintposandchar"),
-            wl.MessageName(wl.Power, "infy"),
-        ]
-        expected_tuples = list(zip(expected_msgs_name, expected_msgs))
+            'Infinite expression Power[0, -1] encountered.'
+        )
+        expected_msgs_name = (
+            wl.MessageName(wl.Import, 'jsonarraymissingsep'),
+            wl.MessageName(wl.Import, 'jsonhintposandchar'),
+            wl.MessageName(wl.Power, 'infy')
+        )
+        expected_tuples = tuple(zip(expected_msgs_name, expected_msgs))
 
-        self.assertListEqual(res.messages, expected_msgs)
-        self.assertListEqual(list(res.iter_messages()), expected_msgs)
+        self.assertEqual(res.messages, expected_msgs)
+        self.assertEqual(tuple(res.iter_messages()), expected_msgs)
 
-        self.assertListEqual(res.messages_name, expected_msgs_name)
-        self.assertListEqual(list(res.iter_messages_name()), expected_msgs_name)
+        self.assertEqual(res.messages_name, expected_msgs_name)
+        self.assertEqual(
+            tuple(res.iter_messages_name()), expected_msgs_name)
 
-        self.assertListEqual(list(res.iter_messages_tuple()), expected_tuples)
+        self.assertEqual(tuple(res.iter_messages_tuple()), expected_tuples)
 
     def test_valid_evaluate_wxf_async(self):
         future = self.kernel_session.evaluate_wxf_future("Range[3]")
@@ -361,10 +363,6 @@ class TestCaseSession(TestCaseSettings):
     def test_kernel_init_bad_path(self):
         with self.assertRaises(WolframKernelException):
             WolframLanguageSession("path/that/does/not/exists")
-
-    def test_kernel_init_nonstring_path(self):
-        with self.assertRaises(ValueError):
-            WolframLanguageSession(False)
 
     def test_terminated_session_autorestart(self):
         session = None
