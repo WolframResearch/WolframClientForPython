@@ -479,6 +479,11 @@ class WolframKernelController(Thread):
             self.trigger_termination_requested.set()
         return future
 
+    def join(self, timeout=None):
+        future = self.stop()
+        future.result(timeout=timeout)
+        super().join(timeout=timeout)
+
     def evaluate_future(self,
                         wxf,
                         future,
