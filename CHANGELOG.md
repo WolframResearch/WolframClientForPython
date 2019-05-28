@@ -2,6 +2,7 @@
 - WXF deserialization maps `List` to `tuple`, was `list` before for two reasons. `List` and tuple are immutable. `tuple` contrary to `list` are hashable object and as such can be keys in `dict`.
 - WXF deserialization maps numeric arrays to `NumPy` arrays. Numpy being a pre-requisite of the library, and lazily loaded, this change will boost performances while causing very little trouble, if any.
 - Use `black` code formatter.
+- Fix bug in `WolframLanguageSession` that was preventing Python interpreter from exiting.
 
 # Version 1.0.2
 - Add two new optional flags to `test` command called `-x` or `--xml` and `-d` or `--xml-dir`. It produces an xml output of the test results using the `unittest-xml-reporting` library. `-d` expects the filepath of the output directory, default is `test-reports`. Also add `-v` or `--verbosity` to control the `verbosity` option of the test suite. Check `python run.py test -h` for more info.
