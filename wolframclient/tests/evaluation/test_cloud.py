@@ -23,6 +23,7 @@ from wolframclient.tests.configure import (
     user_configuration,
 )
 from wolframclient.utils import six
+from wolframclient.utils.api import numpy
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.tests import TestCase as BaseTestCase
 from wolframclient.utils.url import url_join
@@ -145,7 +146,7 @@ class TestCase(TestCaseSettings):
         if not response.success:
             logger.warning(response.failure)
         expected = list(range(v_min, v_max, step))
-        self.assertListEqual(expected, response.get())
+        self.assertEqual(expected, response.get())
 
     def test_section_invalid_api_path(self):
         with self.assertRaises(WolframLanguageException):
@@ -166,7 +167,7 @@ class TestCase(TestCaseSettings):
             response = self.cloud_session.call(api, files={"image": fp})
             self.assertTrue(response.success)
             res = response.get()
-            self.assertListEqual(res, [32, 2])
+            self.assertEqual(res, [32, 2])
 
     def test_image_file(self):
         api = (self.api_owner, "api/private/imagedimensions")
@@ -174,7 +175,7 @@ class TestCase(TestCaseSettings):
             response = self.cloud_session.call(api, files={"image": fp})
             self.assertTrue(response.success)
             res = response.get()
-            self.assertListEqual(res, [500, 200])
+            self.assertEqual(res, [500, 200])
 
     def test_image_string_int(self):
         api = (self.api_owner, "api/private/str_image_int")
@@ -184,7 +185,7 @@ class TestCase(TestCaseSettings):
             )
             self.assertTrue(response.success)
             res = response.get()
-            self.assertListEqual(res, ["abc", [32, 2], 10])
+            self.assertEqual(res, ["abc", [32, 2], 10])
 
     def test_xml_valid_response(self):
         api = (self.api_owner, "api/private/rangeXML")
@@ -211,43 +212,43 @@ class TestCase(TestCaseSettings):
 
     def test_evaluate_string(self):
         res = self.cloud_session.evaluate("Range[3]")
-        self.assertEqual(res, [1, 2, 3])
+        numpy.assert_array_equal(res, numpy.arange(1,4))
 
     def test_evaluate_wl_expr(self):
         res = self.cloud_session.evaluate(wl.Range(2))
-        self.assertEqual(res, [1, 2])
+        numpy.assert_array_equal(res, numpy.arange(1,3))
 
     def test_evaluate_wl_expr_option(self):
         res = self.cloud_session.evaluate(wl.ArrayPad([[1]], 1, Padding=1))
-        self.assertEqual(res, [[1, 1, 1], [1, 1, 1], [1, 1, 1]])
+        self.assertEqual(res, ((1, 1, 1), (1, 1, 1), (1, 1, 1)))
 
     def test_evaluate_wrap(self):
         res = self.cloud_session.evaluate_wrap(wl.Range(2))
         self.assertTrue(res.success)
-        self.assertEqual(res.get(), [1, 2])
+        numpy.assert_array_equal(res.get(), numpy.arange(1, 3))
 
     def test_evaluate_function(self):
         f = self.cloud_session.function("Range")
-        self.assertEqual(f(3), [1, 2, 3])
+        numpy.assert_array_equal(f(3), numpy.arange(1, 4))
 
     def test_evaluate_function_wl(self):
         f = self.cloud_session.function(wl.Range)
-        self.assertEqual(f(3), [1, 2, 3])
+        numpy.assert_array_equal(f(3), numpy.arange(1, 4))
 
     def test_evaluate_function_wl_option(self):
         f = self.cloud_session.function(wl.ArrayPad)
-        self.assertEqual(f([[1]], 1, Padding=1), [[1, 1, 1], [1, 1, 1], [1, 1, 1]])
+        self.assertEqual(f([[1]], 1, Padding=1), ((1, 1, 1), (1, 1, 1), (1, 1, 1)))
 
     def test_evaluate_strings_future(self):
         res1 = self.cloud_session.evaluate_future("Range[1]")
         res2 = self.cloud_session.evaluate_future("Range[2]")
 
-        self.assertEqual(res1.result(), [1])
-        self.assertEqual(res2.result(), [1, 2])
+        numpy.assert_array_equal(res1.result(), numpy.arange(1,2))
+        numpy.assert_array_equal(res2.result(), numpy.arange(1,3))
 
     def test_evaluate_range_future(self):
         res = self.cloud_session.evaluate_future("Range[3]")
-        self.assertEqual(res.result(), [1, 2, 3])
+        numpy.assert_array_equal(res.result(), numpy.arange(1,4))
 
     def test_duplicate(self):
         session = None
@@ -380,7 +381,7 @@ class TestWolframAPI(TestCaseSettings):
             res = apicall.perform()
             self.assertTrue(res.success)
             res = res.get()
-            self.assertListEqual(res, [32, 2])
+            self.assertEqual(res, [32, 2])
 
     def test_wolfram_api_call_named_image(self):
         api = (self.api_owner, "api/private/imagedimensions")
@@ -390,7 +391,7 @@ class TestWolframAPI(TestCaseSettings):
             res = apicall.perform()
             self.assertTrue(res.success)
             res = res.get()
-            self.assertListEqual(res, [32, 2])
+            self.assertEqual(res, [32, 2])
 
     def test_wolfram_api_from_session(self):
         api = (self.api_owner, "api/private/imagedimensions")
@@ -400,7 +401,7 @@ class TestWolframAPI(TestCaseSettings):
             res = apicall.perform()
             self.assertTrue(res.success)
             res = res.get()
-            self.assertListEqual(res, [32, 2])
+            self.assertEqual(res, [32, 2])
 
     def test_wolfram_api_call_str(self):
         api = (self.api_owner, "api/private/stringreverse")
@@ -419,7 +420,7 @@ class TestWolframAPI(TestCaseSettings):
         apicall.add_image_data_parameter("image", buffer)
         result = apicall.perform().get()
         res = result
-        self.assertListEqual(res, ["abc", [32, 2], 10])
+        self.assertEqual(res, ["abc", [32, 2], 10])
 
     def test_wolfram_api_call_async(self):
         api = (self.api_owner, "api/private/stringreverse")
