@@ -238,19 +238,19 @@ class TestCaseNumPyArray(BaseTestCase):
         arr = numpy.array([0, 1], "uint8")
         wxf = export(arr, target_format="wxf")
         res = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
-        self.assertListEqual(res.tolist(), arr.tolist())
+        self.assertEqual(res.tolist(), arr.tolist())
 
     def test_numpy_2d_array(self):
         arr = numpy.array([[0, 1], [1, 1], [2, 1]], "uint8")
         wxf = export(arr, target_format="wxf")
         res = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
-        self.assertListEqual(res.tolist(), arr.tolist())
+        self.assertEqual(res.tolist(), arr.tolist())
 
     def test_numpy_packedarray(self):
         # Range[1]
         wxf = b"8:\xc1\x00\x01\x01\x01"
         res = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
-        self.assertListEqual(res.tolist(), [1])
+        self.assertEqual(res.tolist(), [1])
 
     def test_packedarray_ndim_int8(self):
         # ConstantArray[1, {2, 3, 1}]
@@ -258,7 +258,7 @@ class TestCaseNumPyArray(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
         self.assertEqual(a.shape, (2, 3, 1))
         self.assertEqual(a.dtype, "int8")
-        self.assertListEqual(a.tolist(), [[[1], [1], [1]], [[1], [1], [1]]])
+        self.assertEqual(a.tolist(), [[[1], [1], [1]], [[1], [1], [1]]])
 
     def test_packedarray_ndim_complex(self):
         # ConstantArray[I + 1., {2, 3, 1}]
@@ -409,7 +409,7 @@ class TestCaseArrayAsList(BaseTestCase):
         # ConstantArray[1, {2, 3, 1}]
         wxf = b"8:\xc1\x00\x03\x02\x03\x01\x01\x01\x01\x01\x01\x01"
         a = binary_deserialize(wxf, consumer=WXFConsumer())
-        self.assertListEqual(a, [[[1], [1], [1]], [[1], [1], [1]]])
+        self.assertEqual(a, [[[1], [1], [1]], [[1], [1], [1]]])
 
     def test_packedarray_ndim_complex(self):
         # ConstantArray[I + 1., {2, 3, 1}]
@@ -429,7 +429,7 @@ class TestCaseArrayAsList(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 2)
-        self.assertListEqual(a, [[1, 1], [1, 1]])
+        self.assertEqual(a, [[1, 1], [1, 1]])
 
     def test_int16_array(self):
         # ConstantArray[2^15 - 1, {2, 2}]
