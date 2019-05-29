@@ -428,7 +428,7 @@ class WolframCloudEvaluationResponseAsync(WolframCloudEvaluationResponse):
                     logger.warning(msg)
                 return self.result
         else:
-            raise WolframEvaluationException("Evaluation failed.", messages=self.failure)
+            raise WolframEvaluationException("Evaluation failed.", messages=await self.failure)
 
 
 class WolframEvaluationJSONResponseAsync(WolframCloudEvaluationResponseAsync):
