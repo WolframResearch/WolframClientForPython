@@ -133,6 +133,7 @@ numpy = API(
     floating="numpy.floating",
     complexfloating="numpy.complexfloating",
     frexp="numpy.frexp",
+    assert_array_equal='numpy.testing.assert_array_equal',
 )
 
 multiprocessing = API(Lock="multiprocessing.Lock")
