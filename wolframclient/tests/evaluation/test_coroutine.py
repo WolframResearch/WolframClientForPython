@@ -21,6 +21,7 @@ from wolframclient.tests.configure import (
 )
 from wolframclient.tests.evaluation.test_kernel import TestCaseSettings as TestKernelBase
 from wolframclient.utils import six
+from wolframclient.utils.api import numpy
 from wolframclient.utils.api import asyncio, time
 from wolframclient.utils.asyncio import get_event_loop, run_in_loop
 from wolframclient.utils.tests import TestCase as BaseTestCase
@@ -63,7 +64,7 @@ class TestCoroutineSession(BaseTestCase):
         timer = time.perf_counter() - start
         self.assertTrue(timer < 0.1)
         res = await task
-        self.assertEqual(res, [1, 2, 3])
+        numpy.assert_array_equal(res, numpy.arange(1, 4))
 
     @run_in_loop
     async def test_eval_wlsymbol(self):
@@ -74,7 +75,7 @@ class TestCoroutineSession(BaseTestCase):
         timer = time.perf_counter() - start
         self.assertTrue(timer < 0.1)
         res = await task
-        self.assertEqual(res, [1, 2])
+        numpy.assert_array_equal(res, numpy.arange(1, 3))
 
     @run_in_loop
     async def test_eval_wxf(self):
@@ -84,8 +85,9 @@ class TestCoroutineSession(BaseTestCase):
         )
         timer = time.perf_counter() - start
         self.assertTrue(timer < 0.1)
-        res = await task
-        self.assertEqual(binary_deserialize(res), [1, 2, 3])
+        wxf = await task
+        res = binary_deserialize(wxf)
+        numpy.assert_array_equal(res, numpy.arange(1, 4))
 
     @run_in_loop
     async def test_eval_wrap(self):
@@ -96,7 +98,7 @@ class TestCoroutineSession(BaseTestCase):
         timer = time.perf_counter() - start
         self.assertTrue(timer < 0.1)
         res = await task
-        self.assertEqual(res.get(), [1, 2, 3])
+        numpy.assert_array_equal(res.get(), numpy.arange(1, 4))
 
     @run_in_loop
     async def test_eval_many(self):
@@ -272,7 +274,11 @@ class TestParalleleEvaluate(BaseTestCase):
     def test_parallel_evaluate_cloud(self):
         cloud = WolframCloudAsyncSession(credentials=secured_authentication_key, server=server)
         exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
-        res = parallel_evaluate(exprs, evaluator_spec=cloud)
+        try:
+            res = parallel_evaluate(exprs, evaluator_spec=cloud)
+        except Exception as e:
+            print(e)
+            raise e
         self.assertEqual(len(res), 10)
         for elem in res:
             self.assertTrue(isinstance(elem, six.string_types))
