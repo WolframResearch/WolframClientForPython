@@ -7,10 +7,15 @@ from wolframclient.serializers.wxfencoder.constants import (
     VALID_PACKED_ARRAY_TYPES,
     WXF_CONSTANTS,
     StructDouble,
+    StructFloat,
     StructInt8LE,
+    StructUInt8LE,
     StructInt16LE,
+    StructUInt16LE,
     StructInt32LE,
+    StructUInt32LE,
     StructInt64LE,
+    StructUInt64LE
 )
 from wolframclient.utils import six
 
