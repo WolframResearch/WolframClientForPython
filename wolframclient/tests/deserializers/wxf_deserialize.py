@@ -13,11 +13,12 @@ from wolframclient.deserializers import (
     binary_deserialize,
 )
 from wolframclient.deserializers.wxf.wxfparser import parse_varint
-from wolframclient.exception import WolframParserException
+from wolframclient.exception import WolframParserException, WolframLanguageException
 from wolframclient.serializers import export
 from wolframclient.serializers.wxfencoder.utils import write_varint
 from wolframclient.utils import six
 from wolframclient.utils.api import numpy
+from wolframclient.utils.datastructures import PackedArray
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
 
@@ -237,8 +238,8 @@ class TestCaseNumPyArray(BaseTestCase):
     def test_numpy_1d_array(self):
         arr = numpy.array([0, 1], "uint8")
         wxf = export(arr, target_format="wxf")
-        res = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
-        self.assertEqual(res.tolist(), arr.tolist())
+        res = binary_deserialize(wxf)
+        numpy.assert_array_equal(res, arr)
 
     def test_numpy_2d_array(self):
         arr = numpy.array([[0, 1], [1, 1], [2, 1]], "uint8")
@@ -542,3 +543,27 @@ class TestCaseArrayAsList(BaseTestCase):
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 1)
         self.assertEqual(a, [[1.0], [1.0]])
+
+
+class TestArrayRoundTrip(BaseTestCase):
+    @staticmethod
+    def ensure_roundtrip(pa):
+        wxf = export(pa, target_format='wxf')
+        res = binary_deserialize(wxf)
+        numpy.assert_array_equal(res, pa)
+
+    def test_int8_PA(self):
+        pa = numpy.array([[-(1 << 7), -1], [1, (1 << 7) - 1]], numpy.int8).view(PackedArray)
+        self.ensure_roundtrip(pa)
+
+    def test_int16(self):
+        pa = numpy.array([[-(1 << 15)], [(1 << 15) - 1]], numpy.int16).view(PackedArray)
+        self.ensure_roundtrip(pa)
+
+    def test_int32(self):
+        pa = numpy.array([[-(1 << 31)], [(1 << 31) - 1]], numpy.int32).view(PackedArray)
+        self.ensure_roundtrip(pa)
+
+    def test_int64(self):
+        pa = numpy.array([[-(1 << 62)], [(1 << 62)]], numpy.int64).view(PackedArray)
+        self.ensure_roundtrip(pa)
