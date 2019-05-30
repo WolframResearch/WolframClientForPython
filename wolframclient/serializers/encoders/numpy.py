@@ -5,9 +5,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 import sys
 
 from wolframclient.utils.api import numpy
+from wolframclient.utils.datastructures import PackedArray
 from wolframclient.utils.dispatch import Dispatch
 from wolframclient.utils.functional import map
-from wolframclient.utils.datastructures import PackedArray
 
 encoder = Dispatch()
 

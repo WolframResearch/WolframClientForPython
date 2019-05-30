@@ -21,8 +21,7 @@ from wolframclient.tests.configure import (
 )
 from wolframclient.tests.evaluation.test_kernel import TestCaseSettings as TestKernelBase
 from wolframclient.utils import six
-from wolframclient.utils.api import numpy
-from wolframclient.utils.api import asyncio, time
+from wolframclient.utils.api import asyncio, numpy, time
 from wolframclient.utils.asyncio import get_event_loop, run_in_loop
 from wolframclient.utils.tests import TestCase as BaseTestCase
 

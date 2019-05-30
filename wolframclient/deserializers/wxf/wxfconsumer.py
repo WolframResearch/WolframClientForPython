@@ -214,16 +214,22 @@ class WXFConsumer(object):
 
         This method return :class:`list`, and made the assumption that system is little endian.
         """
-        return array_to_list(current_token.data, current_token.dimensions,
-                             constants.ARRAY_TYPES_FROM_WXF_TYPES[current_token.array_type])
+        return array_to_list(
+            current_token.data,
+            current_token.dimensions,
+            constants.ARRAY_TYPES_FROM_WXF_TYPES[current_token.array_type],
+        )
 
     def consume_packed_array(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *packed array*.
 
         This method return :class:`list`, and made the assumption that system is little endian.
         """
-        return array_to_list(current_token.data, current_token.dimensions,
-                             constants.ARRAY_TYPES_FROM_WXF_TYPES[current_token.array_type])
+        return array_to_list(
+            current_token.data,
+            current_token.dimensions,
+            constants.ARRAY_TYPES_FROM_WXF_TYPES[current_token.array_type],
+        )
 
 
 class WXFConsumerNumpy(WXFConsumer):
@@ -240,7 +246,6 @@ class WXFConsumerNumpy(WXFConsumer):
     def consume_packed_array(self, current_token, tokens, **kwargs):
         arr = self.consume_numeric_array(current_token, tokens, **kwargs)
         return arr.view(PackedArray)
-
 
     # """Build a numpy array from a PackedArray."""
     # consume_packed_array = consume_packed_array

@@ -3,6 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from collections import OrderedDict
+
 from wolframclient.utils.api import numpy
 
 
@@ -15,7 +16,6 @@ class Association(OrderedDict):
 
 class PackedArray(numpy.ndarray):
     """ Wrapper class on top of NymPy ndarray used to preserve packed arrays when round-tripping them. """
-    pass
 
 
 class Settings(dict):

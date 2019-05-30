@@ -61,7 +61,7 @@ ARRAY_TYPES = Settings(
     ComplexReal32=_bytes(0x33),
     ComplexReal64=_bytes(0x34),
 )
-ARRAY_TYPES_FROM_WXF_TYPES = {v:k for k ,v in ARRAY_TYPES.items()}
+ARRAY_TYPES_FROM_WXF_TYPES = {v: k for k, v in ARRAY_TYPES.items()}
 
 
 ARRAY_TYPES_ELEM_SIZE = {

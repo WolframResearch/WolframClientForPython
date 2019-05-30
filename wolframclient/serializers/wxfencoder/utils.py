@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from wolframclient.exception import WolframLanguageException
 from wolframclient.serializers.wxfencoder.constants import (
     ARRAY_TYPES,
     VALID_PACKED_ARRAY_TYPES,
@@ -9,17 +10,16 @@ from wolframclient.serializers.wxfencoder.constants import (
     StructDouble,
     StructFloat,
     StructInt8LE,
-    StructUInt8LE,
     StructInt16LE,
-    StructUInt16LE,
     StructInt32LE,
-    StructUInt32LE,
     StructInt64LE,
-    StructUInt64LE
+    StructUInt8LE,
+    StructUInt16LE,
+    StructUInt32LE,
+    StructUInt64LE,
 )
-from wolframclient.utils.datastructures import Settings
 from wolframclient.utils import six
-from wolframclient.exception import WolframLanguageException
+from wolframclient.utils.datastructures import Settings
 
 if six.JYTHON:
     import jarray
@@ -115,7 +115,9 @@ else:
 
 def valid_dimension_or_fail(dimension):
     if dimension <= 0:
-        raise WolframLanguageException('Invalid array dimensions: %s. Expecting strictly positive integer.' % dimension)
+        raise WolframLanguageException(
+            "Invalid array dimensions: %s. Expecting strictly positive integer." % dimension
+        )
 
 
 def array_to_wxf(wxf_token, data, dimensions, array_type_token):
@@ -135,7 +137,7 @@ def numeric_array_to_wxf(data, dimensions, wl_type):
 def packed_array_to_wxf(data, dimensions, wl_type):
     array_type_token = ARRAY_TYPES[wl_type]
     if array_type_token not in VALID_PACKED_ARRAY_TYPES:
-        raise ValueError('Invalid PackedArray type %s' % array_type_token)
+        raise ValueError("Invalid PackedArray type %s" % array_type_token)
     return array_to_wxf(WXF_CONSTANTS.PackedArray, data, dimensions, array_type_token)
 
 
@@ -147,18 +149,18 @@ def array_to_list(data, dimensions, wl_type):
 
 if hasattr(memoryview, "cast"):
     unpack_mapping = Settings(
-        Integer8= "b",
-        UnsignedInteger8= "B",
-        Integer16= "h",
-        UnsignedInteger16= "H",
-        Integer32= "i",
-        UnsignedInteger32= "I",
-        Integer64= "q",
-        UnsignedInteger64= "Q",
-        Real32= "f",
-        Real64= "d",
-        ComplexReal32= "f",
-        ComplexReal64= "d",
+        Integer8="b",
+        UnsignedInteger8="B",
+        Integer16="h",
+        UnsignedInteger16="H",
+        Integer32="i",
+        UnsignedInteger32="I",
+        Integer64="q",
+        UnsignedInteger64="Q",
+        Real32="f",
+        Real64="d",
+        ComplexReal32="f",
+        ComplexReal64="d",
     )
 
     def _to_complex(array, max_depth, curr_depth):
@@ -172,50 +174,39 @@ if hasattr(memoryview, "cast"):
         for index, complex_pair in enumerate(array):
             array[index] = complex(*complex_pair)
 
-
     def _array_to_list(data, shape, array_type):
         view = memoryview(data)
-        if (
-                array_type == "ComplexReal32"
-                or array_type == "ComplexReal64"
-        ):
+        if array_type == "ComplexReal32" or array_type == "ComplexReal64":
             dimensions = list(shape)
             array_depth = len(dimensions)
             # In the given array, 2 reals give one complex,
             # adding one last dimension to represent it.
             dimensions.append(2)
-            as_list = view.cast(
-                unpack_mapping[array_type], shape=dimensions
-            ).tolist()
+            as_list = view.cast(unpack_mapping[array_type], shape=dimensions).tolist()
             _to_complex(as_list, array_depth, 0)
             return as_list
         else:
-            return view.cast(
-                unpack_mapping[array_type],
-                shape=shape,
-            ).tolist()
+            return view.cast(unpack_mapping[array_type], shape=shape).tolist()
+
 
 else:
     unpack_mapping = Settings(
-        Integer8= StructInt8LE,
-        UnsignedInteger8= StructUInt8LE,
-        Integer16= StructInt16LE,
-        UnsignedInteger16= StructUInt16LE,
-        Integer32= StructInt32LE,
-        UnsignedInteger32= StructUInt32LE,
-        Integer64= StructInt64LE,
-        UnsignedInteger64= StructUInt64LE,
-        Real32= StructFloat,
-        Real64= StructDouble,
-        ComplexReal32= StructFloat,
-        ComplexReal64= StructDouble,
+        Integer8=StructInt8LE,
+        UnsignedInteger8=StructUInt8LE,
+        Integer16=StructInt16LE,
+        UnsignedInteger16=StructUInt16LE,
+        Integer32=StructInt32LE,
+        UnsignedInteger32=StructUInt32LE,
+        Integer64=StructInt64LE,
+        UnsignedInteger64=StructUInt64LE,
+        Real32=StructFloat,
+        Real64=StructDouble,
+        ComplexReal32=StructFloat,
+        ComplexReal64=StructDouble,
     )
 
-
     def _array_to_list(data, shape, array_type):
-        value, _ = _build_array_from_bytes(
-            data, 0, array_type, shape, 0
-        )
+        value, _ = _build_array_from_bytes(data, 0, array_type, shape, 0)
         return value
 
     def _build_array_from_bytes(data, offset, array_type, dimensions, current_dim):
@@ -229,10 +220,7 @@ else:
         else:
             struct = unpack_mapping[array_type]
             # complex values, need two reals for each.
-            if (
-                array_type == "ComplexReal32"
-                or array_type == "ComplexReal64"
-            ):
+            if array_type == "ComplexReal32" or array_type == "ComplexReal64":
                 for i in range(dimensions[-1]):
                     # this returns a tuple.
                     re = struct.unpack_from(data, offset=offset)

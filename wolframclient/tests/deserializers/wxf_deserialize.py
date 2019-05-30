@@ -13,7 +13,7 @@ from wolframclient.deserializers import (
     binary_deserialize,
 )
 from wolframclient.deserializers.wxf.wxfparser import parse_varint
-from wolframclient.exception import WolframParserException, WolframLanguageException
+from wolframclient.exception import WolframParserException
 from wolframclient.serializers import export
 from wolframclient.serializers.wxfencoder.utils import write_varint
 from wolframclient.utils import six
@@ -548,7 +548,7 @@ class TestCaseArrayAsList(BaseTestCase):
 class TestArrayRoundTrip(BaseTestCase):
     @staticmethod
     def ensure_roundtrip(pa):
-        wxf = export(pa, target_format='wxf')
+        wxf = export(pa, target_format="wxf")
         res = binary_deserialize(wxf)
         numpy.assert_array_equal(res, pa)
 
@@ -570,45 +570,42 @@ class TestArrayRoundTrip(BaseTestCase):
 
     def test_uint8_RA(self):
         pa = numpy.array([0, (1 << 8) - 1], numpy.uint8).view(PackedArray)
-        res = binary_deserialize(export(pa, target_format='wxf'))
-        numpy.assert_array_equal(
-            res,
-            numpy.array([0, (1 << 8) - 1], numpy.int16)
-        )
+        res = binary_deserialize(export(pa, target_format="wxf"))
+        numpy.assert_array_equal(res, numpy.array([0, (1 << 8) - 1], numpy.int16))
 
     def test_uint16_RA(self):
         pa = numpy.array([0, (1 << 16) - 1], numpy.uint16).view(PackedArray)
-        res = binary_deserialize(export(pa, target_format='wxf'))
-        numpy.assert_array_equal(
-            res,
-            numpy.array([0, (1 << 16) - 1], numpy.int32)
-        )
+        res = binary_deserialize(export(pa, target_format="wxf"))
+        numpy.assert_array_equal(res, numpy.array([0, (1 << 16) - 1], numpy.int32))
 
     def test_uint32_RA(self):
         pa = numpy.array([0, (1 << 32) - 1], numpy.uint32).view(PackedArray)
-        res = binary_deserialize(export(pa, target_format='wxf'))
-        numpy.assert_array_equal(
-            res,
-            numpy.array([0, (1 << 32) - 1], numpy.int64)
-        )
+        res = binary_deserialize(export(pa, target_format="wxf"))
+        numpy.assert_array_equal(res, numpy.array([0, (1 << 32) - 1], numpy.int64))
 
     def test_uint64_RA(self):
         with self.assertRaises(NotImplementedError):
             pa = numpy.array([0, (1 << 64) - 1], numpy.uint64).view(PackedArray)
-            export(pa, target_format='wxf')
+            export(pa, target_format="wxf")
 
     def test_float_PA(self):
-        pa = numpy.array([[1.0, -2.0], [-3., 4.]], dtype='float').view(PackedArray)
+        pa = numpy.array([[1.0, -2.0], [-3.0, 4.0]], dtype="float").view(PackedArray)
         self.ensure_roundtrip(pa)
 
     def test_double_PA(self):
-        pa = numpy.array([[1.0, -2.0], [-3., 4.]], dtype='double').view(PackedArray)
+        pa = numpy.array([[1.0, -2.0], [-3.0, 4.0]], dtype="double").view(PackedArray)
         self.ensure_roundtrip(pa)
 
     def test_complex64_PA(self):
-        pa = numpy.array([[complex(1, 0.1), complex(-2.0, 0)], [complex(-3., 1), complex(4., -1.)]], dtype='complex64').view(PackedArray)
+        pa = numpy.array(
+            [[complex(1, 0.1), complex(-2.0, 0)], [complex(-3.0, 1), complex(4.0, -1.0)]],
+            dtype="complex64",
+        ).view(PackedArray)
         self.ensure_roundtrip(pa)
 
     def test_complex128_PA(self):
-        pa = numpy.array([[complex(1, 0.1), complex(-2.0, 0)], [complex(-3., 1), complex(4., -1.)]], dtype='complex128').view(PackedArray)
+        pa = numpy.array(
+            [[complex(1, 0.1), complex(-2.0, 0)], [complex(-3.0, 1), complex(4.0, -1.0)]],
+            dtype="complex128",
+        ).view(PackedArray)
         self.ensure_roundtrip(pa)

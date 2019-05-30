@@ -212,11 +212,11 @@ class TestCase(TestCaseSettings):
 
     def test_evaluate_string(self):
         res = self.cloud_session.evaluate("Range[3]")
-        numpy.assert_array_equal(res, numpy.arange(1,4))
+        numpy.assert_array_equal(res, numpy.arange(1, 4))
 
     def test_evaluate_wl_expr(self):
         res = self.cloud_session.evaluate(wl.Range(2))
-        numpy.assert_array_equal(res, numpy.arange(1,3))
+        numpy.assert_array_equal(res, numpy.arange(1, 3))
 
     def test_evaluate_wl_expr_option(self):
         res = self.cloud_session.evaluate(wl.ArrayPad([[1]], 1, Padding=1))
@@ -243,12 +243,12 @@ class TestCase(TestCaseSettings):
         res1 = self.cloud_session.evaluate_future("Range[1]")
         res2 = self.cloud_session.evaluate_future("Range[2]")
 
-        numpy.assert_array_equal(res1.result(), numpy.arange(1,2))
-        numpy.assert_array_equal(res2.result(), numpy.arange(1,3))
+        numpy.assert_array_equal(res1.result(), numpy.arange(1, 2))
+        numpy.assert_array_equal(res2.result(), numpy.arange(1, 3))
 
     def test_evaluate_range_future(self):
         res = self.cloud_session.evaluate_future("Range[3]")
-        numpy.assert_array_equal(res.result(), numpy.arange(1,4))
+        numpy.assert_array_equal(res.result(), numpy.arange(1, 4))
 
     def test_duplicate(self):
         session = None
