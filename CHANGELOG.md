@@ -1,6 +1,7 @@
 # Version 1.1.0
 - WXF deserialization maps `List` to `tuple`, was `list` before for two reasons. `List` and tuple are immutable. `tuple` contrary to `list` are hashable object and as such can be keys in `dict`.
 - WXF deserialization maps numeric arrays to `NumPy` arrays. Numpy being a pre-requisite of the library, and lazily loaded, this change will boost performances while causing very little trouble, if any.
+- Add new class `PackedArray`, a wrapper on top of NumPy `ndarray`. Instances of `PackedArray` are serialized as... WL packed array (!). This fixes the issue of having a WL packed array (say the output of `Range[3]`), being serialized to a `ndarray` (`arange(3)`), and send back to the kernel as a `NumericArray`. 
 - Use `black` code formatter.
 - Fix bug in `WolframLanguageSession` that was preventing Python interpreter from exiting.
 
