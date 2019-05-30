@@ -567,3 +567,32 @@ class TestArrayRoundTrip(BaseTestCase):
     def test_int64(self):
         pa = numpy.array([[-(1 << 62)], [(1 << 62)]], numpy.int64).view(PackedArray)
         self.ensure_roundtrip(pa)
+
+    def test_uint8_RA(self):
+        pa = numpy.array([0, (1 << 8) - 1], numpy.uint8).view(PackedArray)
+        res = binary_deserialize(export(pa, target_format='wxf'))
+        numpy.assert_array_equal(
+            res,
+            numpy.array([0, (1 << 8) - 1], numpy.int16)
+        )
+
+    def test_uint16_RA(self):
+        pa = numpy.array([0, (1 << 16) - 1], numpy.uint16).view(PackedArray)
+        res = binary_deserialize(export(pa, target_format='wxf'))
+        numpy.assert_array_equal(
+            res,
+            numpy.array([0, (1 << 16) - 1], numpy.int32)
+        )
+
+    def test_uint32_RA(self):
+        pa = numpy.array([0, (1 << 32) - 1], numpy.uint32).view(PackedArray)
+        res = binary_deserialize(export(pa, target_format='wxf'))
+        numpy.assert_array_equal(
+            res,
+            numpy.array([0, (1 << 32) - 1], numpy.int64)
+        )
+
+    def test_uint64_RA(self):
+        with self.assertRaises(NotImplementedError):
+            pa = numpy.array([0, (1 << 64) - 1], numpy.uint64).view(PackedArray)
+            export(pa, target_format='wxf')
