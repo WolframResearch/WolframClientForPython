@@ -17,6 +17,7 @@ from wolframclient.serializers.wxfencoder.constants import (
     StructInt64LE,
     StructUInt64LE
 )
+from wolframclient.utils.datastructures import Settings
 from wolframclient.utils import six
 from wolframclient.exception import WolframLanguageException
 
@@ -141,24 +142,24 @@ def packed_array_to_wxf(data, dimensions, wl_type):
 def array_to_list(data, dimensions, wl_type):
     for dimension in dimensions:
         valid_dimension_or_fail(dimension)
-    return _array_to_list(data, dimensions, ARRAY_TYPES[wl_type])
+    return _array_to_list(data, dimensions, wl_type)
 
 
 if hasattr(memoryview, "cast"):
-    unpack_mapping = {
-        ARRAY_TYPES.Integer8: "b",
-        ARRAY_TYPES.UnsignedInteger8: "B",
-        ARRAY_TYPES.Integer16: "h",
-        ARRAY_TYPES.UnsignedInteger16: "H",
-        ARRAY_TYPES.Integer32: "i",
-        ARRAY_TYPES.UnsignedInteger32: "I",
-        ARRAY_TYPES.Integer64: "q",
-        ARRAY_TYPES.UnsignedInteger64: "Q",
-        ARRAY_TYPES.Real32: "f",
-        ARRAY_TYPES.Real64: "d",
-        ARRAY_TYPES.ComplexReal32: "f",
-        ARRAY_TYPES.ComplexReal64: "d",
-    }
+    unpack_mapping = Settings(
+        Integer8= "b",
+        UnsignedInteger8= "B",
+        Integer16= "h",
+        UnsignedInteger16= "H",
+        Integer32= "i",
+        UnsignedInteger32= "I",
+        Integer64= "q",
+        UnsignedInteger64= "Q",
+        Real32= "f",
+        Real64= "d",
+        ComplexReal32= "f",
+        ComplexReal64= "d",
+    )
 
     def _to_complex(array, max_depth, curr_depth):
         # recursivelly traverse the array until the last (real) dimension is reached
@@ -175,8 +176,8 @@ if hasattr(memoryview, "cast"):
     def _array_to_list(data, shape, array_type):
         view = memoryview(data)
         if (
-                array_type == ARRAY_TYPES.ComplexReal32
-                or array_type == ARRAY_TYPES.ComplexReal64
+                array_type == "ComplexReal32"
+                or array_type == "ComplexReal64"
         ):
             dimensions = list(shape)
             array_depth = len(dimensions)
@@ -195,20 +196,20 @@ if hasattr(memoryview, "cast"):
             ).tolist()
 
 else:
-    unpack_mapping = {
-        ARRAY_TYPES.Integer8: StructInt8LE,
-        ARRAY_TYPES.UnsignedInteger8: StructUInt8LE,
-        ARRAY_TYPES.Integer16: StructInt16LE,
-        ARRAY_TYPES.UnsignedInteger16: StructUInt16LE,
-        ARRAY_TYPES.Integer32: StructInt32LE,
-        ARRAY_TYPES.UnsignedInteger32: StructUInt32LE,
-        ARRAY_TYPES.Integer64: StructInt64LE,
-        ARRAY_TYPES.UnsignedInteger64: StructUInt64LE,
-        ARRAY_TYPES.Real32: StructFloat,
-        ARRAY_TYPES.Real64: StructDouble,
-        ARRAY_TYPES.ComplexReal32: StructFloat,
-        ARRAY_TYPES.ComplexReal64: StructDouble,
-    }
+    unpack_mapping = Settings(
+        Integer8= StructInt8LE,
+        UnsignedInteger8= StructUInt8LE,
+        Integer16= StructInt16LE,
+        UnsignedInteger16= StructUInt16LE,
+        Integer32= StructInt32LE,
+        UnsignedInteger32= StructUInt32LE,
+        Integer64= StructInt64LE,
+        UnsignedInteger64= StructUInt64LE,
+        Real32= StructFloat,
+        Real64= StructDouble,
+        ComplexReal32= StructFloat,
+        ComplexReal64= StructDouble,
+    )
 
 
     def _array_to_list(data, shape, array_type):
@@ -229,8 +230,8 @@ else:
             struct = unpack_mapping[array_type]
             # complex values, need two reals for each.
             if (
-                array_type == ARRAY_TYPES.ComplexReal32
-                or array_type == ARRAY_TYPES.ComplexReal64
+                array_type == "ComplexReal32"
+                or array_type == "ComplexReal64"
             ):
                 for i in range(dimensions[-1]):
                     # this returns a tuple.
