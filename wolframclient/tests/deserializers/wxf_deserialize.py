@@ -596,3 +596,19 @@ class TestArrayRoundTrip(BaseTestCase):
         with self.assertRaises(NotImplementedError):
             pa = numpy.array([0, (1 << 64) - 1], numpy.uint64).view(PackedArray)
             export(pa, target_format='wxf')
+
+    def test_float_PA(self):
+        pa = numpy.array([[1.0, -2.0], [-3., 4.]], dtype='float').view(PackedArray)
+        self.ensure_roundtrip(pa)
+
+    def test_double_PA(self):
+        pa = numpy.array([[1.0, -2.0], [-3., 4.]], dtype='double').view(PackedArray)
+        self.ensure_roundtrip(pa)
+
+    def test_complex64_PA(self):
+        pa = numpy.array([[complex(1, 0.1), complex(-2.0, 0)], [complex(-3., 1), complex(4., -1.)]], dtype='complex64').view(PackedArray)
+        self.ensure_roundtrip(pa)
+
+    def test_complex128_PA(self):
+        pa = numpy.array([[complex(1, 0.1), complex(-2.0, 0)], [complex(-3., 1), complex(4., -1.)]], dtype='complex128').view(PackedArray)
+        self.ensure_roundtrip(pa)
