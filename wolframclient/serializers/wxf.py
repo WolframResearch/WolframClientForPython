@@ -18,6 +18,7 @@ from wolframclient.serializers.wxfencoder.utils import (
     integer_size,
     integer_to_bytes,
     numeric_array_to_wxf,
+    packed_array_to_wxf,
     varint_bytes,
     write_varint,
 )
@@ -140,3 +141,6 @@ class WXFSerializer(FormatSerializer):
 
     def serialize_numeric_array(self, data, dimensions, wl_type):
         return numeric_array_to_wxf(data, dimensions, wl_type)
+
+    def serialize_packed_array(self, data, dimensions, wl_type):
+        return packed_array_to_wxf(data, dimensions, wl_type)
