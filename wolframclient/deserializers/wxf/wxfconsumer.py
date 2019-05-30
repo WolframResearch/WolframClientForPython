@@ -9,6 +9,7 @@ from wolframclient.exception import WolframParserException
 from wolframclient.language.expression import WLFunction, WLSymbol
 from wolframclient.serializers.wxfencoder import constants
 from wolframclient.utils.api import numpy
+from wolframclient.utils.datastructures import PackedArray
 
 __all__ = ["WXFConsumer", "WXFConsumerNumpy"]
 
@@ -250,25 +251,25 @@ class WXFConsumer(object):
             for index, complex_pair in enumerate(array):
                 array[index] = complex(*complex_pair)
 
-        def _array_to_list(self, current_token, tokens):
-            view = memoryview(current_token.data)
+        def _array_to_list(self, data, shape, array_type):
+            view = memoryview(data)
             if (
-                current_token.array_type == constants.ARRAY_TYPES.ComplexReal32
-                or current_token.array_type == constants.ARRAY_TYPES.ComplexReal64
+                array_type == constants.ARRAY_TYPES.ComplexReal32
+                or array_type == constants.ARRAY_TYPES.ComplexReal64
             ):
-                dimensions = list(current_token.dimensions)
+                dimensions = list(shape)
                 # In the given array, 2 reals give one complex,
                 # adding one last dimension to represent it.
                 dimensions.append(2)
                 as_list = view.cast(
-                    self.unpack_mapping[current_token.array_type], shape=dimensions
+                    self.unpack_mapping[array_type], shape=dimensions
                 ).tolist()
-                self._to_complex(as_list, len(current_token.dimensions), 0)
+                self._to_complex(as_list, len(dimensions), 0)
                 return as_list
             else:
                 return view.cast(
-                    self.unpack_mapping[current_token.array_type],
-                    shape=current_token.dimensions,
+                    self.unpack_mapping[array_type],
+                    shape=shape,
                 ).tolist()
 
     else:
@@ -287,9 +288,9 @@ class WXFConsumer(object):
             constants.ARRAY_TYPES.ComplexReal64: constants.StructDouble,
         }
 
-        def _array_to_list(self, current_token, tokens):
+        def _array_to_list(self, data, shape, array_type):
             value, _ = self._build_array_from_bytes(
-                current_token.data, 0, current_token.array_type, current_token.dimensions, 0
+                data, 0, array_type, shape, 0
             )
             return value
 
@@ -324,10 +325,11 @@ class WXFConsumer(object):
             return new_array, offset
 
 
+
 class WXFConsumerNumpy(WXFConsumer):
     """ A WXF consumer that maps WXF array types to NumPy arrays. """
 
-    def consume_array(self, current_token, tokens, **kwargs):
+    def consume_numeric_array(self, current_token, tokens, **kwargs):
         arr = numpy.frombuffer(
             current_token.data,
             dtype=WXFConsumerNumpy.WXF_TYPE_TO_DTYPE[current_token.array_type],
@@ -335,10 +337,15 @@ class WXFConsumerNumpy(WXFConsumer):
         arr = numpy.reshape(arr, tuple(current_token.dimensions))
         return arr
 
-    """Build a numpy array from a PackedArray."""
-    consume_packed_array = consume_array
-    """Build a numpy array from a NumericArray."""
-    consume_numeric_array = consume_array
+    def consume_packed_array(self, current_token, tokens, **kwargs):
+        arr = self.consume_numeric_array(current_token, tokens, **kwargs)
+        return arr.view(PackedArray)
+
+
+    # """Build a numpy array from a PackedArray."""
+    # consume_packed_array = consume_packed_array
+    # """Build a numpy array from a NumericArray."""
+    # consume_numeric_array = consume_array
 
     WXF_TYPE_TO_DTYPE = {
         constants.ARRAY_TYPES.Integer8: "int8",
