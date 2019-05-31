@@ -10,7 +10,6 @@ from wolframclient.language.expression import WLFunction, WLSymbol
 from wolframclient.serializers.wxfencoder import constants
 from wolframclient.serializers.wxfencoder.utils import array_to_list
 from wolframclient.utils.api import numpy
-from wolframclient.utils.datastructures import PackedArray
 
 __all__ = ["WXFConsumer", "WXFConsumerNumpy"]
 
@@ -245,7 +244,7 @@ class WXFConsumerNumpy(WXFConsumer):
 
     def consume_packed_array(self, current_token, tokens, **kwargs):
         arr = self.consume_numeric_array(current_token, tokens, **kwargs)
-        return arr.view(PackedArray)
+        return arr.view(numpy.PackedArray)
 
     # """Build a numpy array from a PackedArray."""
     # consume_packed_array = consume_packed_array
