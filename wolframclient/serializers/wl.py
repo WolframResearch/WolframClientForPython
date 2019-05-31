@@ -7,7 +7,8 @@ from itertools import chain
 from wolframclient.serializers.base import FormatSerializer
 from wolframclient.serializers.utils import py_encode_decimal, py_encode_text
 from wolframclient.utils.encoding import force_bytes
-
+from wolframclient.utils import six
+from wolframclient.utils.api import base64
 
 def yield_with_separators(iterable, separator=b", ", first=None, last=None):
     if first:
