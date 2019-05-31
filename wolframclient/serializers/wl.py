@@ -38,6 +38,18 @@ class WLSerializer(FormatSerializer):
     def serialize_string(self, string):
         return py_encode_text(string)
 
+    def serialize_bytes(self, bytes, as_byte_array=not six.PY2):
+
+        # by default we are serializing as_byte_array for PY3,
+        # py2 is by default using strings
+
+        if as_byte_array:
+            return self.serialize_function(
+                self.serialize_symbol(b"ByteArray"), ((b'"', base64.b64encode(bytes), b'"'),)
+            )
+        else:
+            return self.serialize_string(force_text(bytes, "iso-8859-1"))
+
     def serialize_decimal(self, number):
         yield py_encode_decimal(number)
 
