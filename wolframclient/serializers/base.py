@@ -9,7 +9,7 @@ from itertools import chain
 
 from wolframclient.serializers.encoder import Encoder
 from wolframclient.serializers.wxfencoder.constants import WXF_HEADER_SEPARATOR, WXF_VERSION
-from wolframclient.serializers.wxfencoder.utils import array_to_list, numeric_array_to_wxf
+from wolframclient.serializers.wxfencoder.utils import numeric_array_to_wxf, packed_array_to_wxf
 from wolframclient.utils import six
 from wolframclient.utils.api import base64
 from wolframclient.utils.encoding import concatenate_bytes, force_text
@@ -71,21 +71,24 @@ class FormatSerializer(Encoder):
             self.serialize_symbol(b"ToExpression"), (self.serialize_string(string),)
         )
 
-    def serialize_numeric_array(self, data, shape, wl_type):
-
+    def _serialize_as_wxf(self, data, shape, wl_type, constructor):
         payload = concatenate_bytes(
             chain(
-                (WXF_VERSION, WXF_HEADER_SEPARATOR), numeric_array_to_wxf(data, shape, wl_type)
+                (WXF_VERSION, WXF_HEADER_SEPARATOR), constructor(data, shape, wl_type)
             )
         )
 
         return self.serialize_function(
             self.serialize_symbol(b"BinaryDeserialize"),
             (self.serialize_bytes(payload, as_byte_array=True),),
-        )
+        )      
+
+    def serialize_numeric_array(self, data, shape, wl_type):
+        return self._serialize_as_wxf(data, shape, wl_type, constructor = numeric_array_to_wxf)
+
 
     def serialize_packed_array(self, data, shape, wl_type):
-        return self.encode(array_to_list(data, shape, wl_type))
+        return self._serialize_as_wxf(data, shape, wl_type, constructor = packed_array_to_wxf)
 
     def serialize_iterable(self, iterable, **opts):
         return self.serialize_function(self.serialize_symbol(b"List"), iterable, **opts)
