@@ -14,7 +14,6 @@ from wolframclient.serializers.wxfencoder.utils import (
     packed_array_to_wxf,
 )
 from wolframclient.utils import six
-from wolframclient.utils.api import base64
 from wolframclient.utils.encoding import concatenate_bytes, force_text
 from wolframclient.utils.functional import first
 

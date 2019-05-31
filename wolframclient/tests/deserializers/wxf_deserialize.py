@@ -552,7 +552,9 @@ class TestArrayRoundTrip(BaseTestCase):
         numpy.assert_array_equal(res, pa)
 
     def test_int8_PA(self):
-        pa = numpy.array([[-(1 << 7), -1], [1, (1 << 7) - 1]], numpy.int8).view(numpy.PackedArray)
+        pa = numpy.array([[-(1 << 7), -1], [1, (1 << 7) - 1]], numpy.int8).view(
+            numpy.PackedArray
+        )
         self.ensure_roundtrip(pa)
 
     def test_int16(self):
