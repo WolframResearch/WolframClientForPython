@@ -5,7 +5,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 import sys
 
 from wolframclient.utils.api import numpy
-from wolframclient.utils.datastructures import PackedArray
 from wolframclient.utils.dispatch import Dispatch
 from wolframclient.utils.functional import map
 
@@ -82,7 +81,7 @@ Maps numpy dtype to appropriate wxf packed array type, eventually specifying the
 """
 
 
-@encoder.dispatch(PackedArray)
+@encoder.dispatch(numpy.PackedArray)
 def encode_packed_array(serializer, o):
     try:
         wl_type, cast_to = PACKEDARRAY_NUMPY_MAPPING[o.dtype.type]
