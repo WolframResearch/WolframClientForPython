@@ -237,20 +237,20 @@ class TestCaseNumPyArray(BaseTestCase):
     def test_numpy_1d_array(self):
         arr = numpy.array([0, 1], "uint8")
         wxf = export(arr, target_format="wxf")
-        res = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
-        self.assertListEqual(res.tolist(), arr.tolist())
+        res = binary_deserialize(wxf)
+        numpy.assert_array_equal(res, arr)
 
     def test_numpy_2d_array(self):
         arr = numpy.array([[0, 1], [1, 1], [2, 1]], "uint8")
         wxf = export(arr, target_format="wxf")
         res = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
-        self.assertListEqual(res.tolist(), arr.tolist())
+        self.assertEqual(res.tolist(), arr.tolist())
 
     def test_numpy_packedarray(self):
         # Range[1]
         wxf = b"8:\xc1\x00\x01\x01\x01"
         res = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
-        self.assertListEqual(res.tolist(), [1])
+        self.assertEqual(res.tolist(), [1])
 
     def test_packedarray_ndim_int8(self):
         # ConstantArray[1, {2, 3, 1}]
@@ -258,7 +258,7 @@ class TestCaseNumPyArray(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
         self.assertEqual(a.shape, (2, 3, 1))
         self.assertEqual(a.dtype, "int8")
-        self.assertListEqual(a.tolist(), [[[1], [1], [1]], [[1], [1], [1]]])
+        self.assertEqual(a.tolist(), [[[1], [1], [1]], [[1], [1], [1]]])
 
     def test_packedarray_ndim_complex(self):
         # ConstantArray[I + 1., {2, 3, 1}]
@@ -409,7 +409,7 @@ class TestCaseArrayAsList(BaseTestCase):
         # ConstantArray[1, {2, 3, 1}]
         wxf = b"8:\xc1\x00\x03\x02\x03\x01\x01\x01\x01\x01\x01\x01"
         a = binary_deserialize(wxf, consumer=WXFConsumer())
-        self.assertListEqual(a, [[[1], [1], [1]], [[1], [1], [1]]])
+        self.assertEqual(a, [[[1], [1], [1]], [[1], [1], [1]]])
 
     def test_packedarray_ndim_complex(self):
         # ConstantArray[I + 1., {2, 3, 1}]
@@ -429,7 +429,7 @@ class TestCaseArrayAsList(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 2)
-        self.assertListEqual(a, [[1, 1], [1, 1]])
+        self.assertEqual(a, [[1, 1], [1, 1]])
 
     def test_int16_array(self):
         # ConstantArray[2^15 - 1, {2, 2}]
@@ -542,3 +542,71 @@ class TestCaseArrayAsList(BaseTestCase):
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 1)
         self.assertEqual(a, [[1.0], [1.0]])
+
+
+class TestArrayRoundTrip(BaseTestCase):
+    @staticmethod
+    def ensure_roundtrip(pa):
+        wxf = export(pa, target_format="wxf")
+        res = binary_deserialize(wxf)
+        numpy.assert_array_equal(res, pa)
+
+    def test_int8_PA(self):
+        pa = numpy.array([[-(1 << 7), -1], [1, (1 << 7) - 1]], numpy.int8).view(
+            numpy.PackedArray
+        )
+        self.ensure_roundtrip(pa)
+
+    def test_int16(self):
+        pa = numpy.array([[-(1 << 15)], [(1 << 15) - 1]], numpy.int16).view(numpy.PackedArray)
+        self.ensure_roundtrip(pa)
+
+    def test_int32(self):
+        pa = numpy.array([[-(1 << 31)], [(1 << 31) - 1]], numpy.int32).view(numpy.PackedArray)
+        self.ensure_roundtrip(pa)
+
+    def test_int64(self):
+        pa = numpy.array([[-(1 << 62)], [(1 << 62)]], numpy.int64).view(numpy.PackedArray)
+        self.ensure_roundtrip(pa)
+
+    def test_uint8_RA(self):
+        pa = numpy.array([0, (1 << 8) - 1], numpy.uint8).view(numpy.PackedArray)
+        res = binary_deserialize(export(pa, target_format="wxf"))
+        numpy.assert_array_equal(res, numpy.array([0, (1 << 8) - 1], numpy.int16))
+
+    def test_uint16_RA(self):
+        pa = numpy.array([0, (1 << 16) - 1], numpy.uint16).view(numpy.PackedArray)
+        res = binary_deserialize(export(pa, target_format="wxf"))
+        numpy.assert_array_equal(res, numpy.array([0, (1 << 16) - 1], numpy.int32))
+
+    def test_uint32_RA(self):
+        pa = numpy.array([0, (1 << 32) - 1], numpy.uint32).view(numpy.PackedArray)
+        res = binary_deserialize(export(pa, target_format="wxf"))
+        numpy.assert_array_equal(res, numpy.array([0, (1 << 32) - 1], numpy.int64))
+
+    def test_uint64_RA(self):
+        with self.assertRaises(NotImplementedError):
+            pa = numpy.array([0, (1 << 64) - 1], numpy.uint64).view(numpy.PackedArray)
+            export(pa, target_format="wxf")
+
+    def test_float_PA(self):
+        pa = numpy.array([[1.0, -2.0], [-3.0, 4.0]], dtype="float").view(numpy.PackedArray)
+        self.ensure_roundtrip(pa)
+
+    def test_double_PA(self):
+        pa = numpy.array([[1.0, -2.0], [-3.0, 4.0]], dtype="double").view(numpy.PackedArray)
+        self.ensure_roundtrip(pa)
+
+    def test_complex64_PA(self):
+        pa = numpy.array(
+            [[complex(1, 0.1), complex(-2.0, 0)], [complex(-3.0, 1), complex(4.0, -1.0)]],
+            dtype="complex64",
+        ).view(numpy.PackedArray)
+        self.ensure_roundtrip(pa)
+
+    def test_complex128_PA(self):
+        pa = numpy.array(
+            [[complex(1, 0.1), complex(-2.0, 0)], [complex(-3.0, 1), complex(4.0, -1.0)]],
+            dtype="complex128",
+        ).view(numpy.PackedArray)
+        self.ensure_roundtrip(pa)

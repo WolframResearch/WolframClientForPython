@@ -133,6 +133,9 @@ numpy = API(
     floating="numpy.floating",
     complexfloating="numpy.complexfloating",
     frexp="numpy.frexp",
+    assert_array_equal="numpy.testing.assert_array_equal",
+    assert_array_almost_equal="numpy.testing.assert_array_almost_equal",
+    PackedArray="wolframclient.utils.packedarray.PackedArray",
 )
 
 multiprocessing = API(Lock="multiprocessing.Lock")

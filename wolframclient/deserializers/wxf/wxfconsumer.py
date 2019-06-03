@@ -8,6 +8,7 @@ import re
 from wolframclient.exception import WolframParserException
 from wolframclient.language.expression import WLFunction, WLSymbol
 from wolframclient.serializers.wxfencoder import constants
+from wolframclient.serializers.wxfencoder.utils import array_to_list
 from wolframclient.utils.api import numpy
 
 __all__ = ["WXFConsumer", "WXFConsumerNumpy"]
@@ -212,122 +213,28 @@ class WXFConsumer(object):
 
         This method return :class:`list`, and made the assumption that system is little endian.
         """
-        return self._array_to_list(current_token, tokens)
+        return array_to_list(
+            current_token.data,
+            current_token.dimensions,
+            constants.ARRAY_TYPES_FROM_WXF_TYPES[current_token.array_type],
+        )
 
     def consume_packed_array(self, current_token, tokens, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *packed array*.
 
         This method return :class:`list`, and made the assumption that system is little endian.
         """
-        return self._array_to_list(current_token, tokens)
-
-    # memoryview.cast was introduced in Python 3.3.
-
-    if hasattr(memoryview, "cast"):
-        unpack_mapping = {
-            constants.ARRAY_TYPES.Integer8: "b",
-            constants.ARRAY_TYPES.UnsignedInteger8: "B",
-            constants.ARRAY_TYPES.Integer16: "h",
-            constants.ARRAY_TYPES.UnsignedInteger16: "H",
-            constants.ARRAY_TYPES.Integer32: "i",
-            constants.ARRAY_TYPES.UnsignedInteger32: "I",
-            constants.ARRAY_TYPES.Integer64: "q",
-            constants.ARRAY_TYPES.UnsignedInteger64: "Q",
-            constants.ARRAY_TYPES.Real32: "f",
-            constants.ARRAY_TYPES.Real64: "d",
-            constants.ARRAY_TYPES.ComplexReal32: "f",
-            constants.ARRAY_TYPES.ComplexReal64: "d",
-        }
-
-        def _to_complex(self, array, max_depth, curr_depth):
-            # recursivelly traverse the array until the last (real) dimension is reached
-            # it correspond to an array of (fake) array of two elements (real and im parts).
-            if curr_depth < max_depth - 1:
-                for sub in array:
-                    self._to_complex(sub, max_depth, curr_depth + 1)
-                return
-            # iterate over the pairs
-            for index, complex_pair in enumerate(array):
-                array[index] = complex(*complex_pair)
-
-        def _array_to_list(self, current_token, tokens):
-            view = memoryview(current_token.data)
-            if (
-                current_token.array_type == constants.ARRAY_TYPES.ComplexReal32
-                or current_token.array_type == constants.ARRAY_TYPES.ComplexReal64
-            ):
-                dimensions = list(current_token.dimensions)
-                # In the given array, 2 reals give one complex,
-                # adding one last dimension to represent it.
-                dimensions.append(2)
-                as_list = view.cast(
-                    self.unpack_mapping[current_token.array_type], shape=dimensions
-                ).tolist()
-                self._to_complex(as_list, len(current_token.dimensions), 0)
-                return as_list
-            else:
-                return view.cast(
-                    self.unpack_mapping[current_token.array_type],
-                    shape=current_token.dimensions,
-                ).tolist()
-
-    else:
-        unpack_mapping = {
-            constants.ARRAY_TYPES.Integer8: constants.StructInt8LE,
-            constants.ARRAY_TYPES.UnsignedInteger8: constants.StructUInt8LE,
-            constants.ARRAY_TYPES.Integer16: constants.StructInt16LE,
-            constants.ARRAY_TYPES.UnsignedInteger16: constants.StructUInt16LE,
-            constants.ARRAY_TYPES.Integer32: constants.StructInt32LE,
-            constants.ARRAY_TYPES.UnsignedInteger32: constants.StructUInt32LE,
-            constants.ARRAY_TYPES.Integer64: constants.StructInt64LE,
-            constants.ARRAY_TYPES.UnsignedInteger64: constants.StructUInt64LE,
-            constants.ARRAY_TYPES.Real32: constants.StructFloat,
-            constants.ARRAY_TYPES.Real64: constants.StructDouble,
-            constants.ARRAY_TYPES.ComplexReal32: constants.StructFloat,
-            constants.ARRAY_TYPES.ComplexReal64: constants.StructDouble,
-        }
-
-        def _array_to_list(self, current_token, tokens):
-            value, _ = self._build_array_from_bytes(
-                current_token.data, 0, current_token.array_type, current_token.dimensions, 0
-            )
-            return value
-
-        def _build_array_from_bytes(self, data, offset, array_type, dimensions, current_dim):
-            new_array = list()
-            if current_dim < len(dimensions) - 1:
-                for i in range(dimensions[current_dim]):
-                    new_elem, offset = self._build_array_from_bytes(
-                        data, offset, array_type, dimensions, current_dim + 1
-                    )
-                    new_array.append(new_elem)
-            else:
-                struct = self.unpack_mapping[array_type]
-                # complex values, need two reals for each.
-                if (
-                    array_type == constants.ARRAY_TYPES.ComplexReal32
-                    or array_type == constants.ARRAY_TYPES.ComplexReal64
-                ):
-                    for i in range(dimensions[-1]):
-                        # this returns a tuple.
-                        re = struct.unpack_from(data, offset=offset)
-                        offset = offset + struct.size
-                        im = struct.unpack_from(data, offset=offset)
-                        offset = offset + struct.size
-                        new_array.append(complex(re[0], im[0]))
-                else:
-                    for i in range(dimensions[-1]):
-                        # this returns a tuple.
-                        value = struct.unpack_from(data, offset=offset)
-                        offset = offset + struct.size
-                        new_array.append(value[0])
-            return new_array, offset
+        return array_to_list(
+            current_token.data,
+            current_token.dimensions,
+            constants.ARRAY_TYPES_FROM_WXF_TYPES[current_token.array_type],
+        )
 
 
 class WXFConsumerNumpy(WXFConsumer):
     """ A WXF consumer that maps WXF array types to NumPy arrays. """
 
-    def consume_array(self, current_token, tokens, **kwargs):
+    def consume_numeric_array(self, current_token, tokens, **kwargs):
         arr = numpy.frombuffer(
             current_token.data,
             dtype=WXFConsumerNumpy.WXF_TYPE_TO_DTYPE[current_token.array_type],
@@ -335,10 +242,14 @@ class WXFConsumerNumpy(WXFConsumer):
         arr = numpy.reshape(arr, tuple(current_token.dimensions))
         return arr
 
-    """Build a numpy array from a PackedArray."""
-    consume_packed_array = consume_array
-    """Build a numpy array from a NumericArray."""
-    consume_numeric_array = consume_array
+    def consume_packed_array(self, current_token, tokens, **kwargs):
+        arr = self.consume_numeric_array(current_token, tokens, **kwargs)
+        return arr.view(numpy.PackedArray)
+
+    # """Build a numpy array from a PackedArray."""
+    # consume_packed_array = consume_packed_array
+    # """Build a numpy array from a NumericArray."""
+    # consume_numeric_array = consume_array
 
     WXF_TYPE_TO_DTYPE = {
         constants.ARRAY_TYPES.Integer8: "int8",

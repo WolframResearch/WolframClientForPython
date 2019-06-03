@@ -62,6 +62,46 @@ def encode_ndarray(serializer, o):
     return serializer.serialize_numeric_array(data, o.shape, wl_type)
 
 
+PACKEDARRAY_NUMPY_MAPPING = {
+    numpy.int8: ("Integer8", None),
+    numpy.int16: ("Integer16", None),
+    numpy.int32: ("Integer32", None),
+    numpy.int64: ("Integer64", None),
+    numpy.uint8: ("Integer16", numpy.int16),
+    numpy.uint16: ("Integer32", numpy.int32),
+    numpy.uint32: ("Integer64", numpy.int64),
+    # numpy.uint64: ("UnsignedInteger64", None),
+    numpy.float32: ("Real32", None),
+    numpy.float64: ("Real64", None),
+    numpy.complex64: ("ComplexReal32", None),
+    numpy.complex128: ("ComplexReal64", None),
+}
+"""
+Maps numpy dtype to appropriate wxf packed array type, eventually specifying the type to cast the data to.
+"""
+
+
+@encoder.dispatch(numpy.PackedArray)
+def encode_packed_array(serializer, o):
+    try:
+        wl_type, cast_to = PACKEDARRAY_NUMPY_MAPPING[o.dtype.type]
+    except KeyError:
+        raise NotImplementedError(
+            "Packed array serialization not implemented for %s. Choices are: %s"
+            % (repr(o.dtype), ", ".join(map(repr, PACKEDARRAY_NUMPY_MAPPING.keys())))
+        )
+    o = to_little_endian(o)
+    if cast_to is not None:
+        o = numpy.array(o, dtype=cast_to)
+    if hasattr(o, "tobytes"):
+        # Numpy 1.9+ support array.tobytes, but previous versions don't and use tostring instead.
+        data = o.tobytes()
+    else:
+        data = o.tostring()
+
+    return serializer.serialize_packed_array(data, o.shape, wl_type)
+
+
 @encoder.dispatch(numpy.integer)
 def encode_numpy_int(serializer, o):
     return serializer.serialize_int(int(o))

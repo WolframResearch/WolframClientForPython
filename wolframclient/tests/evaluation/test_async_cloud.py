@@ -27,6 +27,7 @@ from wolframclient.tests.configure import (
     user_configuration,
 )
 from wolframclient.utils import six
+from wolframclient.utils.api import numpy
 from wolframclient.utils.asyncio import get_event_loop, run_in_loop
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.tests import TestCase as BaseTestCase
@@ -210,7 +211,7 @@ class TestCase(TestCaseSettings):
         if not response.success:
             logger.warning(await response.failure)
         expected = list(range(v_min, v_max, step))
-        self.assertListEqual(expected, await response.get())
+        self.assertEqual(expected, await response.get())
 
     @run_in_loop
     async def test_section_invalid_api_path(self):
@@ -234,7 +235,7 @@ class TestCase(TestCaseSettings):
             response = await self.cloud_session_async.call(api, files={"image": fp})
             self.assertTrue(response.success)
             res = await response.get()
-            self.assertListEqual(res, [32, 2])
+            self.assertEqual(res, [32, 2])
 
     @run_in_loop
     async def test_image_file(self):
@@ -243,7 +244,7 @@ class TestCase(TestCaseSettings):
             response = await self.cloud_session_async.call(api, files={"image": fp})
             self.assertTrue(response.success)
             res = await response.get()
-            self.assertListEqual(res, [500, 200])
+            self.assertEqual(res, [500, 200])
 
     @run_in_loop
     async def test_image_string_int(self):
@@ -254,7 +255,7 @@ class TestCase(TestCaseSettings):
             )
             self.assertTrue(response.success)
             res = await response.get()
-            self.assertListEqual(res, ["abc", [32, 2], 10])
+            self.assertEqual(res, ["abc", [32, 2], 10])
 
     @run_in_loop
     async def test_xml_valid_response(self):
@@ -309,55 +310,57 @@ class TestCase(TestCaseSettings):
     @run_in_loop
     async def test_evaluate_string(self):
         res = await self.cloud_session_async.evaluate("Range[3]")
-        self.assertEqual(res, [1, 2, 3])
+        self.assertEqual(res, (1, 2, 3))
 
     @run_in_loop
     async def test_evaluate_wl_expr(self):
         res = await self.cloud_session_async.evaluate(wl.Range(2))
-        self.assertEqual(res, [1, 2])
+        numpy.assert_array_equal(res, numpy.arange(1, 3))
 
     @run_in_loop
     async def test_evaluate_wl_expr_option(self):
         res = await self.cloud_session_async.evaluate(wl.ArrayPad([[1]], 1, Padding=1))
-        self.assertEqual(res, [[1, 1, 1], [1, 1, 1], [1, 1, 1]])
+        self.assertEqual(res, ((1, 1, 1), (1, 1, 1), (1, 1, 1)))
 
     @run_in_loop
     async def test_evaluate_wrap(self):
         res = await self.cloud_session_async.evaluate_wrap(wl.Range(2))
         self.assertTrue(await res.success)
-        self.assertEqual(await res.get(), [1, 2])
+        numpy.assert_array_equal(await res.get(), numpy.arange(1, 3))
 
     @run_in_loop
     async def test_evaluate_function(self):
         f = self.cloud_session_async.function("Range")
-        self.assertEqual(await f(3), [1, 2, 3])
+        res = await f(3)
+        numpy.assert_array_equal(res, numpy.arange(1, 4))
 
     @run_in_loop
     async def test_evaluate_function_wl(self):
         f = self.cloud_session_async.function(wl.Range)
-        self.assertEqual(await f(3), [1, 2, 3])
+        res = await f(3)
+        numpy.assert_array_equal(res, numpy.arange(1, 4))
 
     @run_in_loop
     async def test_evaluate_function_wl_option(self):
         f = self.cloud_session_async.function(wl.ArrayPad)
-        self.assertEqual(await f([[1]], 1, Padding=1), [[1, 1, 1], [1, 1, 1], [1, 1, 1]])
+        self.assertEqual(await f([[1]], 1, Padding=1), ((1, 1, 1), (1, 1, 1), (1, 1, 1)))
 
     @run_in_loop
     async def test_evaluate_string(self):
         res1 = await self.cloud_session_async.evaluate("Range[1]")
         res2 = await self.cloud_session_async.evaluate("Range[2]")
 
-        self.assertEqual(res1, [1])
-        self.assertEqual(res2, [1, 2])
+        numpy.assert_array_equal(res1, numpy.arange(1, 2))
+        numpy.assert_array_equal(res2, numpy.arange(1, 3))
 
     @run_in_loop
     async def test_evaluate_string_concurrently(self):
         task1 = asyncio.ensure_future(self.cloud_session_async.evaluate("Range[1]"))
         task2 = asyncio.ensure_future(self.cloud_session_async.evaluate_wrap("Range[2]"))
         res1, res2 = await asyncio.gather(task1, task2)
-        self.assertEqual(res1, [1])
+        numpy.assert_array_equal(res1, numpy.arange(1, 2))
         res2 = await res2.result
-        self.assertEqual(res2, [1, 2])
+        numpy.assert_array_equal(res2, numpy.arange(1, 3))
 
     # @run_in_loop
     # async def test_big_expr(self):
@@ -377,7 +380,7 @@ class TestWolframAPI(TestCaseSettings):
             res = await apicall.perform()
             self.assertTrue(res.success)
             res = await res.get()
-            self.assertListEqual(res, [32, 2])
+            self.assertEqual(res, [32, 2])
 
     @run_in_loop
     async def test_wolfram_api_call_named_image(self):
@@ -388,7 +391,7 @@ class TestWolframAPI(TestCaseSettings):
             res = await apicall.perform()
             self.assertTrue(res.success)
             res = await res.get()
-            self.assertListEqual(res, [32, 2])
+            self.assertEqual(res, [32, 2])
 
     @run_in_loop
     async def test_wolfram_api_from_session(self):
@@ -399,7 +402,7 @@ class TestWolframAPI(TestCaseSettings):
             res = await apicall.perform()
             self.assertTrue(res.success)
             res = await res.get()
-            self.assertListEqual(res, [32, 2])
+            self.assertEqual(res, [32, 2])
 
     @run_in_loop
     async def test_wolfram_api_call_str(self):
@@ -419,7 +422,7 @@ class TestWolframAPI(TestCaseSettings):
             apicall.add_file_parameter("image", fp)
             result = await apicall.perform()
             res = await result.get()
-            self.assertListEqual(res, ["abc", [32, 2], 10])
+            self.assertEqual(res, ["abc", [32, 2], 10])
 
     @run_in_loop
     async def test_wolfram_api_imagebytes_string_int(self):
@@ -432,7 +435,7 @@ class TestWolframAPI(TestCaseSettings):
         apicall.add_image_data_parameter("image", buffer)
         result = await apicall.perform()
         res = await result.get()
-        self.assertListEqual(res, ["abc", [32, 2], 10])
+        self.assertEqual(res, ["abc", [32, 2], 10])
 
     @run_in_loop
     async def test_api_invalid_input(self):
