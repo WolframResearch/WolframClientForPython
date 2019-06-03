@@ -273,11 +273,7 @@ class TestParalleleEvaluate(BaseTestCase):
     def test_parallel_evaluate_cloud(self):
         cloud = WolframCloudAsyncSession(credentials=secured_authentication_key, server=server)
         exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
-        try:
-            res = parallel_evaluate(exprs, evaluator_spec=cloud)
-        except Exception as e:
-            print(e)
-            raise e
+        res = parallel_evaluate(exprs, evaluator_spec=cloud)
         self.assertEqual(len(res), 10)
         for elem in res:
             self.assertTrue(isinstance(elem, six.string_types))
