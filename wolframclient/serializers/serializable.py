@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-__all__ = ['WLSerializable']
+__all__ = ["WLSerializable"]
 
 
 class WLSerializable:
@@ -39,4 +39,5 @@ class WLSerializable:
         The returned value must be a combination of serializable types.
         """
         raise NotImplementedError(
-            'class %s must implement a to_wl method' % self.__class__.__name__)
+            "class %s must implement a to_wl method" % self.__class__.__name__
+        )

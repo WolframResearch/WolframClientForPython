@@ -11,8 +11,8 @@ from wolframclient.utils.require import require_module
 
 class DispatchCommand(SimpleCommand):
 
-    modules = ['wolframclient.cli.commands']
-    class_name = 'Command'
+    modules = ["wolframclient.cli.commands"]
+    class_name = "Command"
 
     default_command = None
 
@@ -30,11 +30,12 @@ class DispatchCommand(SimpleCommand):
 
         if attr in all_commands:
             return import_string(all_commands[attr])(
-                self.subcommand_args(), name=all_commands[attr]).main()
+                self.subcommand_args(), name=all_commands[attr]
+            ).main()
 
-        self.print('Select one of the following commands:')
+        self.print("Select one of the following commands:")
         for command in sorted(all_commands.keys()):
-            self.print(' -', command)
+            self.print(" -", command)
 
         sys.exit(1)
 

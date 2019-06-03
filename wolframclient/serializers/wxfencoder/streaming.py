@@ -52,8 +52,8 @@ class ExactSizeReader(object):
         data = six.BytesIO(data)
         while out_len < size:
             chunk = self._reader.read(size - out_len)
-            if chunk == b'':
-                raise EOFError('Not enough data to read.')
+            if chunk == b"":
+                raise EOFError("Not enough data to read.")
             data.write(chunk)
             out_len = out_len + len(chunk)
         return data.getvalue()
@@ -64,6 +64,7 @@ class ZipCompressedReader(object):
 
     This class is instantiated from a reader, any object implementing a :meth:`~io.BufferedIOBase.read` method.
     """
+
     CHUNK_SIZE = 8192
 
     def __init__(self, reader):
@@ -87,14 +88,14 @@ class ZipCompressedReader(object):
         while True:
             # first step find try to find some data to uncompress.
             # sometimes some bytes are left over. We have to send them first to zlib.
-            if self._compressor.unconsumed_tail != b'':
+            if self._compressor.unconsumed_tail != b"":
                 data_in = self._compressor.unconsumed_tail
             else:
                 # read more data from input reader. Read in chunk since we can't guess how
                 # big the inflated result is.
                 data_in = self._reader.read(chunk_size)
                 # no more data is available.
-                if data_in == b'':
+                if data_in == b"":
                     break
             # second step, decompress the new chunk
             if size > 0:

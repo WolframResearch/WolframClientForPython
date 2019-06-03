@@ -10,8 +10,11 @@ from subprocess import PIPE, Popen
 from threading import Event, RLock, Thread
 
 from wolframclient.evaluation.kernel.path import find_default_kernel_path
-from wolframclient.evaluation.kernel.zmqsocket import (Socket, SocketAborted,
-                                                       SocketOperationTimeout)
+from wolframclient.evaluation.kernel.zmqsocket import (
+    Socket,
+    SocketAborted,
+    SocketOperationTimeout,
+)
 from wolframclient.evaluation.result import WolframKernelEvaluationResult
 from wolframclient.exception import WolframKernelException
 from wolframclient.utils import six
@@ -20,16 +23,11 @@ from wolframclient.utils.api import json, os, time, zmq
 if six.WINDOWS:
     from subprocess import STARTUPINFO, STARTF_USESHOWWINDOW
 
-__all__ = ['WolframKernelController']
+__all__ = ["WolframKernelController"]
 
 logger = logging.getLogger(__name__)
 
-TO_PY_LOG_LEVEL = {
-    1: logging.DEBUG,
-    2: logging.INFO,
-    3: logging.WARN,
-    4: logging.FATAL
-}
+TO_PY_LOG_LEVEL = {1: logging.DEBUG, 2: logging.INFO, 3: logging.WARN, 4: logging.FATAL}
 FROM_PY_LOG_LEVEL = dict((v, k) for k, v in TO_PY_LOG_LEVEL.items())
 
 _thread_counter = _count().__next__
@@ -42,6 +40,7 @@ class KernelLogger(Thread):
     A consumer of messages read from a PUB/SUB socket that turn them into log messages as expected
     by the :mod:`logging` module.
     """
+
     MAX_MESSAGE_BEFORE_QUIT = 32
 
     def __init__(self, name=None, level=logging.WARN):
@@ -49,25 +48,23 @@ class KernelLogger(Thread):
         self.socket = Socket(zmq_type=zmq.SUB)
         self.socket.bind()
         # Subscribe to all since we want all log messages.
-        self.socket.zmq_socket.setsockopt(zmq.SUBSCRIBE, b'')
+        self.socket.zmq_socket.setsockopt(zmq.SUBSCRIBE, b"")
         if logger.isEnabledFor(logging.INFO):
-            logger.info('Initializing Kernel logger on socket ' +
-                        self.socket.uri)
-        self.logger = logging.getLogger('WolframKernel-<%s>' % self.socket.uri)
+            logger.info("Initializing Kernel logger on socket " + self.socket.uri)
+        self.logger = logging.getLogger("WolframKernel-<%s>" % self.socket.uri)
         self.logger.setLevel(level)
         self.stopped = Event()
 
     def run(self):
-        logger.debug('Start receiving kernel logger messages.')
+        logger.debug("Start receiving kernel logger messages.")
         msg_after_quit = 0
         zmq_socket = self.socket.zmq_socket
         try:
             while msg_after_quit < KernelLogger.MAX_MESSAGE_BEFORE_QUIT:
                 try:
                     msg = zmq_socket.recv_json(flags=zmq.NOBLOCK)
-                    level = TO_PY_LOG_LEVEL.get(msg.get('level', 3))
-                    msg_text = msg.get(
-                        'msg', 'Malformed kernel message. Missing key "msg".')
+                    level = TO_PY_LOG_LEVEL.get(msg.get("level", 3))
+                    msg_text = msg.get("msg", 'Malformed kernel message. Missing key "msg".')
                     self.logger.log(level, msg_text)
                     if self.stopped.is_set():
                         msg_after_quit += 1
@@ -75,20 +72,21 @@ class KernelLogger(Thread):
                     if self.stopped.is_set():
                         break
                     else:
-                        time.sleep(.01)
+                        time.sleep(0.01)
                 except json.JSONDecodeError as e:
-                    logger.warning('Invalid message: %s', e.doc)
+                    logger.warning("Invalid message: %s", e.doc)
         # no matter what we try to close the socket:
         finally:
-            logger.info('Terminating kernel logger thread.')
+            logger.info("Terminating kernel logger thread.")
             if msg_after_quit == KernelLogger.MAX_MESSAGE_BEFORE_QUIT:
                 logger.warning(
-                    'The maximum number of messages to log after a session finishes has been reached. \
-                Some messages may have been discarded.')
+                    "The maximum number of messages to log after a session finishes has been reached. \
+                Some messages may have been discarded."
+                )
             try:
                 self.socket.close()
             except:
-                logger.fatal('Failed to close ZMQ logging socket.')
+                logger.fatal("Failed to close ZMQ logging socket.")
 
 
 class WolframKernelController(Thread):
@@ -105,42 +103,46 @@ class WolframKernelController(Thread):
     asynchronous operations.
     """
 
-    def __init__(self,
-                 kernel=None,
-                 initfile=None,
-                 consumer=None,
-                 kernel_loglevel=logging.NOTSET,
-                 stdin=PIPE,
-                 stdout=PIPE,
-                 stderr=PIPE,
-                 **kwargs):
+    def __init__(
+        self,
+        kernel=None,
+        initfile=None,
+        consumer=None,
+        kernel_loglevel=logging.NOTSET,
+        stdin=PIPE,
+        stdout=PIPE,
+        stderr=PIPE,
+        **kwargs
+    ):
         self.id = _thread_counter()
-        super().__init__(name='wolfram-kernel-%i' % self.id)
+        super().__init__(name="wolfram-kernel-%i" % self.id)
 
         self.kernel = kernel or self.default_kernel_path()
 
         if self.kernel:
 
             if not os.isfile(self.kernel):
-                raise WolframKernelException('Kernel not found at %s.' % self.kernel)
-            
+                raise WolframKernelException("Kernel not found at %s." % self.kernel)
+
             if not os.access(self.kernel, os.X_OK):
-                raise WolframKernelException('Cannot execute kernel %s.' % self.kernel)
+                raise WolframKernelException("Cannot execute kernel %s." % self.kernel)
 
         else:
-            raise WolframKernelException('Cannot locate a kernel automatically. Please provide an explicit kernel path.')
+            raise WolframKernelException(
+                "Cannot locate a kernel automatically. Please provide an explicit kernel path."
+            )
 
         if initfile is None:
-            self.initfile = os.path_join(os.dirname(__file__), 'initkernel.m')
+            self.initfile = os.path_join(os.dirname(__file__), "initkernel.m")
         else:
             self.initfile = initfile
         if not os.isfile(self.initfile):
-            raise FileNotFoundError(
-                'Kernel initialization file %s not found.' % self.initfile)
+            raise FileNotFoundError("Kernel initialization file %s not found." % self.initfile)
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('Initializing kernel %s using script: %s' %
-                         (self.kernel, self.initfile))
-            
+            logger.debug(
+                "Initializing kernel %s using script: %s" % (self.kernel, self.initfile)
+            )
+
         self.tasks_queue = Queue()
         self.kernel_socket_in = None
         self.kernel_socket_out = None
@@ -177,12 +179,13 @@ class WolframKernelController(Thread):
             stdin=self._stdin,
             stdout=self._stdout,
             stderr=self._stderr,
-            **self.parameters)
+            **self.parameters
+        )
 
     _DEFAULT_PARAMETERS = {
-        'STARTUP_TIMEOUT': 20,
-        'TERMINATE_TIMEOUT': 3,
-        'HIDE_SUBPROCESS_WINDOW': True
+        "STARTUP_TIMEOUT": 20,
+        "TERMINATE_TIMEOUT": 3,
+        "HIDE_SUBPROCESS_WINDOW": True,
     }
 
     def get_parameter(self, parameter_name):
@@ -195,11 +198,13 @@ class WolframKernelController(Thread):
         """
         try:
             return self.parameters.get(
-                parameter_name, self._DEFAULT_PARAMETERS[parameter_name])
+                parameter_name, self._DEFAULT_PARAMETERS[parameter_name]
+            )
         except KeyError:
             raise KeyError(
-                '%s is not one of the valid parameters: %s' %
-                (parameter_name, ', '.join(self._DEFAULT_PARAMETERS.keys())))
+                "%s is not one of the valid parameters: %s"
+                % (parameter_name, ", ".join(self._DEFAULT_PARAMETERS.keys()))
+            )
 
     def set_parameter(self, parameter_name, parameter_value):
         """Set a new value for a given parameter. The new value only applies for this session.
@@ -211,8 +216,9 @@ class WolframKernelController(Thread):
         """
         if parameter_name not in self._DEFAULT_PARAMETERS:
             raise KeyError(
-                '%s is not one of the valid parameters: %s' %
-                (parameter_name, ', '.join(self._DEFAULT_PARAMETERS.keys())))
+                "%s is not one of the valid parameters: %s"
+                % (parameter_name, ", ".join(self._DEFAULT_PARAMETERS.keys()))
+            )
         self.parameters[parameter_name] = parameter_value
 
     def default_kernel_path(self):
@@ -233,7 +239,7 @@ class WolframKernelController(Thread):
             simultaneously. Make sure to always terminate sessions to avoid
             unexpected start-up errors.
         """
-        logger.info('Start termination on kernel %s', self)
+        logger.info("Start termination on kernel %s", self)
         with self._state_lock:
             self._state_terminated = True
         self.trigger_termination_requested.set()
@@ -242,19 +248,18 @@ class WolframKernelController(Thread):
             if gracefully:
                 # Graceful stop: first send a Quit command to the kernel.
                 try:
-                    self.kernel_socket_out.send(
-                        b'8:f\x00s\x04Quit', flags=zmq.NOBLOCK)
+                    self.kernel_socket_out.send(b"8:f\x00s\x04Quit", flags=zmq.NOBLOCK)
                 except:
-                    logger.info('Failed to send Quit[] command to the kernel.')
+                    logger.info("Failed to send Quit[] command to the kernel.")
                     error = True
                 if not error:
                     try:
-                        self.kernel_proc.wait(
-                            timeout=self.get_parameter('TERMINATE_TIMEOUT'))
+                        self.kernel_proc.wait(timeout=self.get_parameter("TERMINATE_TIMEOUT"))
                     except:
                         logger.info(
-                            'Kernel process failed to stop after %.02f seconds. Killing it.'
-                            % self.get_parameter('TERMINATE_TIMEOUT'))
+                            "Kernel process failed to stop after %.02f seconds. Killing it."
+                            % self.get_parameter("TERMINATE_TIMEOUT")
+                        )
                         error = True
                 # Kill process if not already terminated.
                 # Wait for it to cleanly stop if the Quit command was successfully sent,
@@ -263,23 +268,22 @@ class WolframKernelController(Thread):
                 try:
                     self.kernel_proc.stdin.close()
                 except:
-                    logger.warning('Failed to close kernel process stdin.')
+                    logger.warning("Failed to close kernel process stdin.")
                     error = True
             if self._stdout == PIPE:
                 try:
                     self.kernel_proc.stdout.close()
                 except:
-                    logger.warning('Failed to close kernel process stdout.')
+                    logger.warning("Failed to close kernel process stdout.")
                     error = True
             if self._stderr == PIPE:
                 try:
                     self.kernel_proc.stderr.close()
                 except:
-                    logger.warning('Failed to close kernel process stderr')
+                    logger.warning("Failed to close kernel process stderr")
                     error = True
             if error or not gracefully:
-                logger.info(
-                    'Killing kernel process: %i' % self.kernel_proc.pid)
+                logger.info("Killing kernel process: %i" % self.kernel_proc.pid)
                 self.kernel_proc.kill()
             self.kernel_proc = None
         if self.kernel_socket_out is not None:
@@ -304,10 +308,10 @@ class WolframKernelController(Thread):
                 logger.fatal(e)
             finally:
                 self.kernel_logger = None
-        assert (self.kernel_proc is None)
-        assert (self.kernel_socket_in is None)
-        assert (self.kernel_socket_out is None)
-        assert (self.kernel_logger is None)
+        assert self.kernel_proc is None
+        assert self.kernel_socket_in is None
+        assert self.kernel_socket_out is None
+        assert self.kernel_logger is None
 
     @property
     def started(self):
@@ -325,8 +329,7 @@ class WolframKernelController(Thread):
         """ Return the status of the kernel process. """
         try:
             # subprocess poll function is thread safe.
-            return (self.kernel_proc is not None
-                    and self.kernel_proc.poll() is None)
+            return self.kernel_proc is not None and self.kernel_proc.poll() is None
         except AttributeError:
             # in case kernel_proc was set to None. May not even be possible.
             return False
@@ -349,8 +352,8 @@ class WolframKernelController(Thread):
 
     def enqueue_task(self, payload, future, callback):
         if self.terminated or self.trigger_termination_requested.is_set():
-            logger.fatal('Cannot enqueue tasks on terminated controller.')
-            raise RuntimeError('Thread is closing. Cannot queue task')
+            logger.fatal("Cannot enqueue tasks on terminated controller.")
+            raise RuntimeError("Thread is closing. Cannot queue task")
         self.tasks_queue.put((payload, future, callback))
 
     def _safe_kernel_start(self):
@@ -358,13 +361,13 @@ class WolframKernelController(Thread):
         try:
             self._kernel_start()
         except Exception as e:
-            logger.warning('Failed to start.')
+            logger.warning("Failed to start.")
             try:
                 self._kernel_terminate()
             finally:
                 raise e
 
-    _KERNEL_OK = b'OK'
+    _KERNEL_OK = b"OK"
     _KERNEL_VERSION_NOT_SUPPORTED = 10
 
     def _kernel_start(self):
@@ -378,33 +381,38 @@ class WolframKernelController(Thread):
         self.kernel_socket_out.bind()
         self.kernel_socket_in.bind()
         if logger.isEnabledFor(logging.INFO):
-            logger.info('Kernel writes commands to socket: %s',
-                        self.kernel_socket_out)
+            logger.info("Kernel writes commands to socket: %s", self.kernel_socket_out)
             logger.info(
-                'Kernel receives evaluated expressions from socket: %s',
-                self.kernel_socket_in)
+                "Kernel receives evaluated expressions from socket: %s", self.kernel_socket_in
+            )
         # start the kernel process
-        cmd = [self.kernel, '-noprompt', "-initfile", self.initfile]
+        cmd = [self.kernel, "-noprompt", "-initfile", self.initfile]
         if self.loglevel != logging.NOTSET:
             self.kernel_logger = KernelLogger(
-                name='wolfram-kernel-logger-%i' % self.id, level=self.loglevel)
+                name="wolfram-kernel-logger-%i" % self.id, level=self.loglevel
+            )
             self.kernel_logger.start()
-            cmd.append('-run')
+            cmd.append("-run")
             cmd.append(
                 'ClientLibrary`Private`SlaveKernelPrivateStart["%s", "%s", "%s", %i];'
-                % (self.kernel_socket_out.uri, self.kernel_socket_in.uri,
-                   self.kernel_logger.socket.uri,
-                   FROM_PY_LOG_LEVEL[self.loglevel]))
+                % (
+                    self.kernel_socket_out.uri,
+                    self.kernel_socket_in.uri,
+                    self.kernel_logger.socket.uri,
+                    FROM_PY_LOG_LEVEL[self.loglevel],
+                )
+            )
         else:
-            cmd.append('-run')
+            cmd.append("-run")
             cmd.append(
-                'ClientLibrary`Private`SlaveKernelPrivateStart["%s", "%s"];' %
-                (self.kernel_socket_out.uri, self.kernel_socket_in.uri))
+                'ClientLibrary`Private`SlaveKernelPrivateStart["%s", "%s"];'
+                % (self.kernel_socket_out.uri, self.kernel_socket_in.uri)
+            )
 
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('Kernel called using command: %s.' % ' '.join(cmd))
+            logger.debug("Kernel called using command: %s." % " ".join(cmd))
         # hide the WolframKernel window.
-        if six.WINDOWS and self.get_parameter('HIDE_SUBPROCESS_WINDOW'):
+        if six.WINDOWS and self.get_parameter("HIDE_SUBPROCESS_WINDOW"):
             startupinfo = STARTUPINFO()
             startupinfo.dwFlags |= STARTF_USESHOWWINDOW
         else:
@@ -415,37 +423,40 @@ class WolframKernelController(Thread):
                 stdin=self._stdin,
                 stdout=self._stdout,
                 stderr=self._stderr,
-                startupinfo=startupinfo)
+                startupinfo=startupinfo,
+            )
             if logger.isEnabledFor(logging.INFO):
-                logger.info('Kernel process started with PID: %s' %
-                            self.kernel_proc.pid)
+                logger.info("Kernel process started with PID: %s" % self.kernel_proc.pid)
                 t_start = time.perf_counter()
         except Exception as e:
             logger.exception(e)
-            raise WolframKernelException('Failed to start kernel process.')
+            raise WolframKernelException("Failed to start kernel process.")
         try:
             # First message must be "OK", acknowledging everything is up and running
             # on the kernel side.
             response = self.kernel_socket_in.recv_abortable(
-                timeout=self.get_parameter('STARTUP_TIMEOUT'),
-                abort_event=_StartEvent(self.kernel_proc,
-                                        self.trigger_termination_requested))
+                timeout=self.get_parameter("STARTUP_TIMEOUT"),
+                abort_event=_StartEvent(self.kernel_proc, self.trigger_termination_requested),
+            )
             if response == self._KERNEL_OK:
                 if logger.isEnabledFor(logging.INFO):
                     logger.info(
-                        'Kernel %s is ready. Startup took %.2f seconds.' %
-                        (self.pid, time.perf_counter() - t_start))
+                        "Kernel %s is ready. Startup took %.2f seconds."
+                        % (self.pid, time.perf_counter() - t_start)
+                    )
             else:
                 raise WolframKernelException(
-                    'Kernel %s failed to start properly.' % self.kernel)
+                    "Kernel %s failed to start properly." % self.kernel
+                )
         except (SocketAborted, SocketOperationTimeout) as se:
             if self.kernel_proc.returncode == self._KERNEL_VERSION_NOT_SUPPORTED:
                 raise WolframKernelException(
-                    'Wolfram kernel version is not supported. Please consult library prerequisites.'
+                    "Wolfram kernel version is not supported. Please consult library prerequisites."
                 )
-            logger.warning('Socket exception: %s', se)
+            logger.warning("Socket exception: %s", se)
             raise WolframKernelException(
-                'Failed to communicate with kernel: %s.' % self.kernel)
+                "Failed to communicate with kernel: %s." % self.kernel
+            )
 
     @property
     def pid(self):
@@ -479,27 +490,27 @@ class WolframKernelController(Thread):
             self.trigger_termination_requested.set()
         return future
 
-    def evaluate_future(self,
-                        wxf,
-                        future,
-                        result_update_callback=None,
-                        **kwargs):
+    def join(self, timeout=None):
+        future = self.stop()
+        future.result(timeout=timeout)
+        return super().join(timeout=timeout)
+
+    def evaluate_future(self, wxf, future, result_update_callback=None, **kwargs):
         self.enqueue_task(wxf, future, result_update_callback)
 
     def _do_evaluate(self, wxf, future, result_update_callback):
         start = time.perf_counter()
         self.kernel_socket_out.send(wxf)
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('Expression sent to kernel in %.06fsec',
-                         time.perf_counter() - start)
+            logger.debug("Expression sent to kernel in %.06fsec", time.perf_counter() - start)
             start = time.perf_counter()
         wxf_eval_data = self.kernel_socket_in.recv_abortable(copy=False)
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('Expression received from kernel after %.06fsec',
-                         time.perf_counter() - start)
+            logger.debug(
+                "Expression received from kernel after %.06fsec", time.perf_counter() - start
+            )
         self.evaluation_count += 1
-        result = WolframKernelEvaluationResult(
-            wxf_eval_data.buffer, consumer=self.consumer)
+        result = WolframKernelEvaluationResult(wxf_eval_data.buffer, consumer=self.consumer)
         if logger.isEnabledFor(logging.WARNING):
             for msg in result.iter_messages():
                 logger.warning(msg)
@@ -535,8 +546,9 @@ class WolframKernelController(Thread):
                     with self._state_lock:
                         self._state_terminated = True
                     logger.info(
-                        'Termination requested for kernel controller. Associated kernel PID: %s',
-                        self.pid)
+                        "Termination requested for kernel controller. Associated kernel PID: %s",
+                        self.pid,
+                    )
                     task = None
                     self.tasks_queue.task_done()
                     break
@@ -548,7 +560,7 @@ class WolframKernelController(Thread):
                 payload, future, result_update_callback = task
         except (KeyboardInterrupt, RuntimeError, futures.CancelledError) as e:
             self.trigger_termination_requested.set()
-            logger.error('Fatal error in kernel controller: %s', e)
+            logger.error("Fatal error in kernel controller: %s", e)
             raise e
         except Exception as e:
             self.trigger_termination_requested.set()
@@ -582,11 +594,14 @@ class WolframKernelController(Thread):
 
     def __repr__(self):
         if self.started:
-            return '<%s: pid:%i, kernel sockets: (in:%s, out:%s)>' % (
-                self.__class__.__name__, self.kernel_proc.pid,
-                self.kernel_socket_in.uri, self.kernel_socket_out.uri)
+            return "<%s: pid:%i, kernel sockets: (in:%s, out:%s)>" % (
+                self.__class__.__name__,
+                self.kernel_proc.pid,
+                self.kernel_socket_in.uri,
+                self.kernel_socket_out.uri,
+            )
         else:
-            return '<%s: %s>' % (self.__class__.__name__, self.name)
+            return "<%s: %s>" % (self.__class__.__name__, self.name)
 
 
 class _StartEvent(object):

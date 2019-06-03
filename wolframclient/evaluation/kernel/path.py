@@ -26,7 +26,7 @@ def explore_paths(*paths):
 
 
 def installation_directories():
-    env = os.environ.get('WOLFRAM_INSTALLATION_DIRECTORY', None)
+    env = os.environ.get("WOLFRAM_INSTALLATION_DIRECTORY", None)
     if env:
         yield env
 
@@ -51,11 +51,11 @@ def installation_directories():
 
 def exe_path():
     if six.WINDOWS:
-        return 'WolframKernel.exe'
+        return "WolframKernel.exe"
     elif six.LINUX:
-        return 'Executables/WolframKernel'
+        return "Executables/WolframKernel"
     elif six.MACOS:
-        return 'MacOS/WolframKernel'
+        return "MacOS/WolframKernel"
 
 
 def find_default_kernel_path():
