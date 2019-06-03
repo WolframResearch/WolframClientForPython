@@ -75,10 +75,10 @@ class FormatSerializer(Encoder):
         )
 
     def serialize_numeric_array(self, data, shape, wl_type):
-        return self._serialize_as_wxf(data, shape, wl_type, constructor=numeric_array_to_wxf)
+        return self._serialize_as_wxf(data, shape, wl_type, numeric_array_to_wxf)
 
     def serialize_packed_array(self, data, shape, wl_type):
-        return self._serialize_as_wxf(data, shape, wl_type, constructor=packed_array_to_wxf)
+        return self._serialize_as_wxf(data, shape, wl_type, packed_array_to_wxf)
 
     def serialize_iterable(self, iterable, **opts):
         return self.serialize_function(self.serialize_symbol(b"List"), iterable, **opts)
