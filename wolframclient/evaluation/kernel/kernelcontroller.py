@@ -131,6 +131,7 @@ class WolframKernelController(Thread):
             raise WolframKernelException(
                 "Cannot locate a kernel automatically. Please provide an explicit kernel path."
             )
+
         if initfile is None:
             self.initfile = os.path_join(os.dirname(__file__), "initkernel.m")
         else:
@@ -141,6 +142,7 @@ class WolframKernelController(Thread):
             logger.debug(
                 "Initializing kernel %s using script: %s" % (self.kernel, self.initfile)
             )
+
         self.tasks_queue = Queue()
         self.kernel_socket_in = None
         self.kernel_socket_out = None
@@ -487,6 +489,11 @@ class WolframKernelController(Thread):
             self._state_terminated = True
             self.trigger_termination_requested.set()
         return future
+
+    def join(self, timeout=None):
+        future = self.stop()
+        future.result(timeout=timeout)
+        return super().join(timeout=timeout)
 
     def evaluate_future(self, wxf, future, result_update_callback=None, **kwargs):
         self.enqueue_task(wxf, future, result_update_callback)
