@@ -217,6 +217,7 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
 
     def __del__(self, _warnings=warnings):
         super().__del__(_warnings=warnings)
-        if self._loop and not self.stopped and not self._loop.is_closed():
-            context = {self.__class__.__name__: self, "message": "Unclosed evaluator."}
-            self._loop.call_exception_handler(context)
+        if not self.stopped and self._loop and not self._loop.is_closed():
+            self._loop.call_exception_handler(
+                {self.__class__.__name__: self, "message": "Unclosed evaluator."}
+            )
