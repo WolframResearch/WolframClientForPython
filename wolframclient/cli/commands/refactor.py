@@ -3,27 +3,16 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import sys
-from contextlib import contextmanager
 
 from wolframclient.cli.utils import SimpleCommand
 from wolframclient.utils.importutils import module_path, safe_import_string_and_call
 
 
-@contextmanager
-def changed_args(args):
-    # Code to acquire resource, e.g.:
-    originals = sys.argv
-
-    sys.argv = list(args)
-
-    yield
-
-    sys.argv = originals
-
-
 def run(path, args):
-    with changed_args(args):
-        safe_import_string_and_call(path)
+    originals = sys.argv
+    sys.argv = list(args)
+    safe_import_string_and_call(path)
+    sys.argv = originals
 
 
 class Command(SimpleCommand):
