@@ -230,7 +230,7 @@ class TestKernelCloudPool(TestKernelPool):
                 self.assertTrue(session.stopped)
 
 
-class TestParalleleEvaluate(BaseTestCase):
+class TestParallelEvaluate(BaseTestCase):
 
     KERNEL_PATH = json_config and json_config.get("kernel", None) or None
 
@@ -255,7 +255,7 @@ class TestParalleleEvaluate(BaseTestCase):
 
 
 @skip_for_missing_config
-class TestParalleleEvaluateCloud(TestParalleleEvaluate):
+class TestParallelEvaluateCloud(TestParallelEvaluate):
     def test_parallel_evaluate_cloud(self):
 
         cloud = WolframCloudAsyncSession(credentials=secured_authentication_key, server=server)
