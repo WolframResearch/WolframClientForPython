@@ -7,7 +7,6 @@ from itertools import chain
 from wolframclient.serializers.base import FormatSerializer
 from wolframclient.serializers.utils import py_encode_decimal, safe_len
 from wolframclient.serializers.wxfencoder.constants import (
-    ARRAY_TYPES,
     WXF_CONSTANTS,
     WXF_HEADER_COMPRESS,
     WXF_HEADER_SEPARATOR,
@@ -20,7 +19,6 @@ from wolframclient.serializers.wxfencoder.utils import (
     numeric_array_to_wxf,
     packed_array_to_wxf,
     varint_bytes,
-    write_varint,
 )
 from wolframclient.utils import six
 from wolframclient.utils.api import zlib

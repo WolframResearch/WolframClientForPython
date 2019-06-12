@@ -2,21 +2,20 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import unittest
-
 from wolframclient.serializers import export
 from wolframclient.serializers.encoders.numpy import to_little_endian
 from wolframclient.serializers.wxfencoder.serializer import WXFExprSerializer
 from wolframclient.serializers.wxfencoder.wxfencoder import DefaultWXFEncoder
 from wolframclient.serializers.wxfencoder.wxfexprprovider import WXFExprProvider
 from wolframclient.serializers.wxfencoder.wxfnumpyencoder import NumPyWXFEncoder
+from wolframclient.tests.configure import skip_for_jython
 from wolframclient.utils import six
 from wolframclient.utils.api import numpy
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
 
-@unittest.skipIf(six.JYTHON, "numpy is not supported in jython")
+@skip_for_jython  # numpy is not supported in jython
 class TestCase(BaseTestCase):
     @classmethod
     def initDefault(cls):

@@ -3,7 +3,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
-import unittest
 
 from wolframclient.deserializers import WXFConsumer, binary_deserialize
 from wolframclient.evaluation import (
@@ -14,10 +13,10 @@ from wolframclient.evaluation import (
 )
 from wolframclient.language import wl, wlexpr
 from wolframclient.tests.configure import (
-    MSG_JSON_NOT_FOUND,
     json_config,
     secured_authentication_key,
     server,
+    skip_for_missing_config,
 )
 from wolframclient.tests.evaluation.test_kernel import TestCaseSettings as TestKernelBase
 from wolframclient.utils import six
@@ -30,31 +29,23 @@ logger.setLevel(logging.INFO)
 
 LOOP = get_event_loop()
 
-
-@unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestCoroutineSession(BaseTestCase):
+
+    KERNEL_PATH = json_config and json_config.get("kernel", None) or None
+
     @classmethod
     def setUpClass(cls):
-        cls.KERNEL_PATH = json_config.get("kernel", None)
-        cls.setupKernelSession()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.tearDownKernelSession()
-
-    @classmethod
-    def tearDownKernelSession(cls):
-        if cls.async_session is not None:
-            LOOP.run_until_complete(cls.async_session.stop())
-
-    @classmethod
-    def setupKernelSession(cls):
         cls.async_session = WolframLanguageAsyncSession(
             cls.KERNEL_PATH, kernel_loglevel=logging.INFO
         )
         cls.async_session.set_parameter("STARTUP_TIMEOUT", 5)
         cls.async_session.set_parameter("TERMINATE_TIMEOUT", 3)
         LOOP.run_until_complete(cls.async_session.start())
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.async_session is not None:
+            LOOP.run_until_complete(cls.async_session.stop())
 
     @run_in_loop
     async def test_eval_inputform(self):
@@ -131,27 +122,12 @@ class TestCoroutineSession(BaseTestCase):
         TestKernelBase.class_bad_kwargs_parameters(self, WolframLanguageAsyncSession)
 
 
-@unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestKernelPool(BaseTestCase):
 
-    if json_config:
-        KERNEL_PATH = json_config.get("kernel", None)
+    KERNEL_PATH = json_config and json_config.get("kernel", None) or None
 
     @classmethod
     def setUpClass(cls):
-        cls.setupKernelSession()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.tearDownKernelSession()
-
-    @classmethod
-    def tearDownKernelSession(cls):
-        if cls.pool is not None:
-            LOOP.run_until_complete(cls.pool.terminate())
-
-    @classmethod
-    def setupKernelSession(cls):
         cls.pool = WolframEvaluatorPool(
             cls.KERNEL_PATH,
             kernel_loglevel=logging.INFO,
@@ -208,8 +184,22 @@ class TestKernelPool(BaseTestCase):
         self.assertFalse(session.started)
         self.assertTrue(session.stopped)
 
+    async def _pool_evaluation_check(self, pool):
+        tasks = [
+            asyncio.create_task(pool.evaluate(wl.FromLetterNumber(i))) for i in range(1, 11)
+        ]
+        res = await asyncio.gather(*tasks)
+        self.assertEqual({*res}, {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"})
+
+
+@skip_for_missing_config
+class TestKernelCloudPool(TestKernelPool):
+
+    KERNEL_PATH = json_config and json_config.get("kernel", None) or None
+
     @run_in_loop
     async def test_pool_from_one_cloud(self):
+
         session = WolframCloudAsyncSession(
             credentials=secured_authentication_key, server=server
         )
@@ -223,6 +213,7 @@ class TestKernelPool(BaseTestCase):
     @run_in_loop
     async def test_pool_from_mixed_kernel_cloud_path(self):
         await self.pool.terminate()
+
         sessions = (
             WolframCloudAsyncSession(credentials=secured_authentication_key, server=server),
             WolframLanguageAsyncSession(self.KERNEL_PATH),
@@ -237,19 +228,10 @@ class TestKernelPool(BaseTestCase):
                 self.assertFalse(session.started)
                 self.assertTrue(session.stopped)
 
-    async def _pool_evaluation_check(self, pool):
-        tasks = [
-            asyncio.create_task(pool.evaluate(wl.FromLetterNumber(i))) for i in range(1, 11)
-        ]
-        res = await asyncio.gather(*tasks)
-        self.assertEqual({*res}, {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"})
 
+class TestParallelEvaluate(BaseTestCase):
 
-@unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
-class TestParalleleEvaluate(BaseTestCase):
-
-    if json_config:
-        KERNEL_PATH = json_config.get("kernel", None)
+    KERNEL_PATH = json_config and json_config.get("kernel", None) or None
 
     def test_parallel_evaluate_local(self):
         exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
@@ -270,7 +252,14 @@ class TestParalleleEvaluate(BaseTestCase):
         )
         self.assertEqual(res, ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"])
 
+
+@skip_for_missing_config
+class TestParallelEvaluateCloud(TestParallelEvaluate):
+
+    KERNEL_PATH = json_config and json_config.get("kernel", None) or None
+
     def test_parallel_evaluate_cloud(self):
+
         cloud = WolframCloudAsyncSession(credentials=secured_authentication_key, server=server)
         exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
         res = parallel_evaluate(exprs, evaluator_spec=cloud)
@@ -279,6 +268,7 @@ class TestParalleleEvaluate(BaseTestCase):
             self.assertTrue(isinstance(elem, six.string_types))
 
     def test_parallel_evaluate_mixed(self):
+
         cloud = WolframCloudAsyncSession(credentials=secured_authentication_key, server=server)
         exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
         res = parallel_evaluate(exprs, evaluator_spec=[cloud, self.KERNEL_PATH, cloud])

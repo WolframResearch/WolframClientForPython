@@ -4,14 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.utils import six
 from wolframclient.utils.dispatch import Dispatch
-from wolframclient.utils.functional import (
-    composition,
-    flatten,
-    iterate,
-    map,
-    partition,
-    riffle,
-)
+from wolframclient.utils.functional import composition, flatten, iterate, partition, riffle
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
 

@@ -3,29 +3,21 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
-import unittest
 
 from wolframclient.deserializers import WXFConsumer, binary_deserialize
 from wolframclient.evaluation import WolframLanguageSession
 from wolframclient.exception import WolframKernelException
 from wolframclient.language import wl, wlexpr
 from wolframclient.language.expression import WLFunction, WLSymbol
-from wolframclient.tests.configure import MSG_JSON_NOT_FOUND, json_config
+from wolframclient.tests.configure import json_config
+from wolframclient.utils.api import PIL
 from wolframclient.utils.tests import TestCase as BaseTestCase
 from wolframclient.utils.tests import path_to_file_in_data_dir
-
-try:
-    import PIL.Image
-
-    has_pil = True
-except ImportError:
-    has_pil = False
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-@unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestCaseSettings(BaseTestCase):
 
     KERNEL_PATH = json_config and json_config.get("kernel", None) or None
@@ -72,7 +64,6 @@ class TestCaseSettings(BaseTestCase):
             kernel_session.get_parameter("foo")
 
 
-@unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestCase(TestCaseSettings):
     def test_evaluate_basic_inputform(self):
         res = self.kernel_session.evaluate("1+1")
@@ -255,19 +246,17 @@ class TestCase(TestCaseSettings):
         "umbrellaRGBA.png": (1789, 1920),
     }
 
-    @unittest.skipIf(not has_pil, "PIL not found skipping image test.")
     def test_images_serialization(self):
         for path, dimensions in self.IMAGE_FILES_DIMS.items():
-            with PIL.Image.open(path_to_file_in_data_dir(path)) as img:
+            with PIL.open(path_to_file_in_data_dir(path)) as img:
                 res = self.kernel_session.evaluate(wl.ImageDimensions(img))
                 self.assertEqual(res, dimensions)
 
-    @unittest.skipIf(not has_pil, "PIL not found skipping image test.")
     def test_images_in_expr(self):
         img1_path = "hopper.ppm"
         img2_path = "pal1wb.bmp"
-        with PIL.Image.open(path_to_file_in_data_dir(img1_path)) as img1:
-            with PIL.Image.open(path_to_file_in_data_dir(img2_path)) as img2:
+        with PIL.open(path_to_file_in_data_dir(img1_path)) as img1:
+            with PIL.open(path_to_file_in_data_dir(img2_path)) as img2:
                 res = self.kernel_session.evaluate(
                     wl.Map(wl.ImageDimensions, {"img1": img1, "img2": img2})
                 )
@@ -358,7 +347,6 @@ class TestSessionTimeout(TestCaseSettings):
         self.assertEqual(result, [1, 2, 3])
 
 
-@unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestCaseSession(TestCaseSettings):
     def test_kernel_init_bad_path(self):
         with self.assertRaises(WolframKernelException):
@@ -377,7 +365,6 @@ class TestCaseSession(TestCaseSettings):
                 session.terminate()
 
 
-@unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestCaseInternalFunctions(TestCaseSettings):
     def test_default_loglevel(self):
         with WolframLanguageSession(self.KERNEL_PATH) as session:
