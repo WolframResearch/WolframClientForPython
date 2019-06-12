@@ -4,7 +4,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import decimal
 import os
-import unittest
 
 from wolframclient.deserializers import (
     WXFConsumer,
@@ -16,6 +15,7 @@ from wolframclient.deserializers.wxf.wxfparser import parse_varint
 from wolframclient.exception import WolframParserException
 from wolframclient.serializers import export
 from wolframclient.serializers.wxfencoder.utils import write_varint
+from wolframclient.tests.configure import skip_for_jython
 from wolframclient.utils import six
 from wolframclient.utils.api import numpy
 from wolframclient.utils.tests import TestCase as BaseTestCase
@@ -108,27 +108,27 @@ class TestCase(BaseTestCase):
         self.assertEqual(res, all_char)
 
     ### INTEGER TESTS
-    @unittest.skipIf(six.JYTHON, None)
+    @skip_for_jython
     def test_integer8(self):
         value = (0, 1, 127, -1, -128)
         self.wxf_assert_roundtrip(value)
 
-    @unittest.skipIf(six.JYTHON, None)
+    @skip_for_jython
     def test_int16(self):
         value = (-(1 << 15), (1 << 15) - 1)
         self.wxf_assert_roundtrip(value)
 
-    @unittest.skipIf(six.JYTHON, None)
+    @skip_for_jython
     def test_int32(self):
         value = (-(1 << 31), (1 << 31) - 1)
         self.wxf_assert_roundtrip(value)
 
-    @unittest.skipIf(six.JYTHON, None)
+    @skip_for_jython
     def test_int64(self):
         value = (-(1 << 63), (1 << 63) - 1)
         self.wxf_assert_roundtrip(value)
 
-    @unittest.skipIf(six.JYTHON, None)
+    @skip_for_jython
     def test_bigint_as_int(self):
         value = 10 ** 20
         self.wxf_assert_roundtrip(value)
@@ -232,7 +232,7 @@ class TestCase(BaseTestCase):
             binary_deserialize(wxf, consumer=WXFConsumer())
 
 
-@unittest.skipIf(six.JYTHON, "numpy is not supported in jython")
+@skip_for_jython
 class TestCaseNumPyArray(BaseTestCase):
     def test_numpy_1d_array(self):
         arr = numpy.array([0, 1], "uint8")

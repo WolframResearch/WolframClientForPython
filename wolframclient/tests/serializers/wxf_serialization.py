@@ -21,6 +21,7 @@ from wolframclient.serializers.wxfencoder.wxfexpr import (
     WXFExprString,
 )
 from wolframclient.serializers.wxfencoder.wxfexprprovider import WXFExprProvider
+from wolframclient.tests.configure import skip_for_jython
 from wolframclient.utils import six
 from wolframclient.utils.datastructures import Association
 from wolframclient.utils.tests import TestCase as BaseTestCase
@@ -130,7 +131,8 @@ class TestCase(SerializeTest):
         wxf = b"\x38\x3a\x53\x03\xef\xbf\xbf"
         self.serialize_compare(value, wxf)
 
-    @unittest.skipIf(six.JYTHON, "Different surrogate handling in Jython.")
+    # Different surrogate handling in Jython.
+    @skip_for_jython
     def test_high_surrogates(self):
         values = [0xD800, 0xDB7F, 0xDC00, 0xDFFF]
         wxf_outs = [
@@ -152,7 +154,7 @@ class TestCase(SerializeTest):
     """ Mostly useful for Python 2.7. Otherwise we test int.to_bytes.
     """
 
-    @unittest.skipIf(six.JYTHON, None)
+    @skip_for_jython
     def test_int8(self):
         values = [0, 1, 127, -1, -128]
         res = [0, 1, 127, 255, 128]
@@ -160,7 +162,7 @@ class TestCase(SerializeTest):
             wxf_expr = WXFExprInteger(values[i])
             self.assertEqual(wxf_expr.to_bytes()[0], res[i])
 
-    @unittest.skipIf(six.JYTHON, None)
+    @skip_for_jython
     def test_int16(self):
         values = [-(1 << 15), (1 << 15) - 1]
         res = [(0x00, 0x80), (0xFF, 0x7F)]
@@ -168,7 +170,7 @@ class TestCase(SerializeTest):
             wxf_expr = WXFExprInteger(values[i])
             self.assertSequenceEqual(wxf_expr.to_bytes(), res[i])
 
-    @unittest.skipIf(six.JYTHON, None)
+    @skip_for_jython
     def test_int32(self):
         values = [-(1 << 31), (1 << 31) - 1]
         res = [(0x00, 0x00, 0x00, 0x80), (0xFF, 0xFF, 0xFF, 0x7F)]
@@ -176,7 +178,7 @@ class TestCase(SerializeTest):
             wxf_expr = WXFExprInteger(values[i])
             self.assertSequenceEqual(wxf_expr.to_bytes(), res[i])
 
-    @unittest.skipIf(six.JYTHON, None)
+    @skip_for_jython
     def test_int64(self):
         values = [-(1 << 63), (1 << 63) - 1]
         res = [
@@ -187,7 +189,7 @@ class TestCase(SerializeTest):
             wxf_expr = WXFExprInteger(values[i])
             self.assertSequenceEqual(wxf_expr.to_bytes(), res[i])
 
-    @unittest.skipIf(six.JYTHON, None)
+    @skip_for_jython
     def test_bigint_as_int(self):
         value = 10 ** 20
         with self.assertRaises(ValueError):

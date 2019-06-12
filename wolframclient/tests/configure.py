@@ -4,6 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import json
 import logging
+import unittest
 
 from wolframclient.utils import six
 from wolframclient.utils.api import os
@@ -110,3 +111,7 @@ if six.PY_35 and _json_config_path is not None:
         raise ValueError("Failed to find json configuration file %s" % _json_config_path)
 
 MSG_JSON_NOT_FOUND = "Environment variable WOLFRAMCLIENT_PY_JSON_CONFIG not set."
+
+
+def skip_for_jython(cls):
+    return unittest.skipIf(six.JYTHON, "currently not supported in jython")(cls)

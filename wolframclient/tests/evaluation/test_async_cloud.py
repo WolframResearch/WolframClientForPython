@@ -24,9 +24,9 @@ from wolframclient.tests.configure import (
     json_config,
     secured_authentication_key,
     server,
+    skip_for_jython,
     user_configuration,
 )
-from wolframclient.utils import six
 from wolframclient.utils.api import numpy
 from wolframclient.utils.asyncio import run_in_loop
 from wolframclient.utils.encoding import force_text
@@ -70,7 +70,7 @@ class TestCaseSettings(BaseTestCase):
 
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
-@unittest.skipIf(six.JYTHON, "Not supported in Jython.")
+@skip_for_jython
 class TestCase(TestCaseSettings):
     def test_section_not_authorized(self):
         session = WolframCloudAsyncSession(server=self.server)

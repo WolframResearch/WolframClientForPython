@@ -20,6 +20,7 @@ from wolframclient.tests.configure import (
     json_config,
     secured_authentication_key,
     server,
+    skip_for_jython,
     user_configuration,
 )
 from wolframclient.utils import six
@@ -65,7 +66,7 @@ class TestCaseSettings(BaseTestCase):
 
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
-@unittest.skipIf(six.JYTHON, "Not supported in Jython.")
+@skip_for_jython
 class TestCase(TestCaseSettings):
     def test_section_not_authorized(self):
         cloud_session = WolframCloudSession(server=self.server)
