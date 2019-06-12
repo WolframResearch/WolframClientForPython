@@ -111,7 +111,7 @@ if six.PY_35 and _json_config_path is not None:
         raise ValueError("Failed to find json configuration file %s" % _json_config_path)
 
 
-skip_for_jython = unittest.skipIf(six.JYTHON, "currently not supported in jython")
+skip_for_jython = unittest.skipIf(six.JYTHON, "Currently not supported in jython")
 
 skip_for_missing_config = unittest.skipIf(
     json_config is None, "Environment variable WOLFRAMCLIENT_PY_JSON_CONFIG not set."
