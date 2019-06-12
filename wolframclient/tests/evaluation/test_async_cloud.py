@@ -28,12 +28,13 @@ from wolframclient.tests.configure import (
 )
 from wolframclient.utils import six
 from wolframclient.utils.api import numpy
-from wolframclient.utils.asyncio import get_event_loop, run_in_loop
+from wolframclient.utils.asyncio import run_in_loop
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
 
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestCaseSettings(BaseTestCase):

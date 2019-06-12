@@ -33,7 +33,6 @@ class TestCase(BaseTestCase):
         result = execute_from_string("a", session_data=session_data, constants=local_context)
         self.assertEqual(result, 3)
 
-
         result = execute_from_string(
             "a = 12; a", session_data=session_data, constants=local_context
         )
