@@ -5,11 +5,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.serializers.wxfencoder.constants import (
     VALID_PACKED_ARRAY_TYPES,
     WXF_CONSTANTS,
-    StructDouble,
-    StructInt8LE,
-    StructInt16LE,
-    StructInt32LE,
-    StructInt64LE,
 )
 from wolframclient.serializers.wxfencoder.serializer import WXFSerializerException
 from wolframclient.serializers.wxfencoder.utils import (
