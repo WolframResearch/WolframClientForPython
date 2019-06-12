@@ -3,7 +3,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
-import unittest
 
 from wolframclient.deserializers import WXFConsumer, binary_deserialize
 from wolframclient.evaluation import (
@@ -14,10 +13,10 @@ from wolframclient.evaluation import (
 )
 from wolframclient.language import wl, wlexpr
 from wolframclient.tests.configure import (
-    MSG_JSON_NOT_FOUND,
     json_config,
     secured_authentication_key,
     server,
+    skip_for_missing_config,
 )
 from wolframclient.tests.evaluation.test_kernel import TestCaseSettings as TestKernelBase
 from wolframclient.utils import six
@@ -197,7 +196,7 @@ class TestKernelPool(TestCoroutineSession):
         self.assertEqual({*res}, {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"})
 
 
-@unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
+@skip_for_missing_config
 class TestKernelCloudPool(TestKernelPool):
     @run_in_loop
     async def test_pool_from_one_cloud(self):
@@ -255,7 +254,7 @@ class TestParalleleEvaluate(BaseTestCase):
         self.assertEqual(res, ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"])
 
 
-@unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
+@skip_for_missing_config
 class TestParalleleEvaluateCloud(TestParalleleEvaluate):
     def test_parallel_evaluate_cloud(self):
 

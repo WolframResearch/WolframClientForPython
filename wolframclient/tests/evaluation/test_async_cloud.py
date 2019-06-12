@@ -5,7 +5,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 import asyncio
 import logging
 import os
-import unittest
 
 from wolframclient.evaluation.cloud.asynccloudsession import (
     WolframAPICallAsync,
@@ -20,11 +19,11 @@ from wolframclient.exception import (
 from wolframclient.language import wl
 from wolframclient.language.expression import WLFunction
 from wolframclient.tests.configure import (
-    MSG_JSON_NOT_FOUND,
     json_config,
     secured_authentication_key,
     server,
     skip_for_jython,
+    skip_for_missing_config,
     user_configuration,
 )
 from wolframclient.utils.api import numpy
@@ -36,7 +35,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-@unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
+@skip_for_missing_config
 class TestCaseSettings(BaseTestCase):
     user_cred = None
     server = None
@@ -69,7 +68,7 @@ class TestCaseSettings(BaseTestCase):
         return os.path.join(current_file_dir, "..", "data", filename)
 
 
-@unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
+@skip_for_missing_config
 @skip_for_jython
 class TestCase(TestCaseSettings):
     def test_section_not_authorized(self):
