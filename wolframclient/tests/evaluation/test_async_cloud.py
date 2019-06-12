@@ -35,9 +35,6 @@ from wolframclient.utils.tests import TestCase as BaseTestCase
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-LOOP = get_event_loop()
-
-
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestCaseSettings(BaseTestCase):
     user_cred = None
