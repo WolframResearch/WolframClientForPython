@@ -27,6 +27,7 @@ from wolframclient.utils.tests import TestCase as BaseTestCase
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+LOOP = get_event_loop()
 
 class TestCoroutineSession(BaseTestCase):
 
@@ -39,12 +40,12 @@ class TestCoroutineSession(BaseTestCase):
         )
         cls.async_session.set_parameter("STARTUP_TIMEOUT", 5)
         cls.async_session.set_parameter("TERMINATE_TIMEOUT", 3)
-        get_event_loop().run_until_complete(cls.async_session.start())
+        LOOP.run_until_complete(cls.async_session.start())
 
     @classmethod
     def tearDownClass(cls):
         if cls.async_session is not None:
-            get_event_loop().run_until_complete(cls.async_session.stop())
+            LOOP.run_until_complete(cls.async_session.stop())
 
     @run_in_loop
     async def test_eval_inputform(self):
@@ -133,7 +134,7 @@ class TestKernelPool(BaseTestCase):
             STARTUP_TIMEOUT=5,
             TERMINATE_TIMEOUT=3,
         )
-        get_event_loop().run_until_complete(cls.pool.start())
+        LOOP.run_until_complete(cls.pool.start())
 
     @run_in_loop
     async def test_eval_wlsymbol(self):
