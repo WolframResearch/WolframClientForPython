@@ -28,33 +28,23 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class KernelMixin(BaseTestCase):
+class TestCoroutineSession(BaseTestCase):
 
     KERNEL_PATH = json_config and json_config.get("kernel", None) or None
 
     @classmethod
     def setUpClass(cls):
-        cls.setupKernelSession()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.tearDownKernelSession()
-
-    @classmethod
-    def tearDownKernelSession(cls):
-        if cls.async_session is not None:
-            get_event_loop().run_until_complete(cls.async_session.stop())
-
-
-class TestCoroutineSession(KernelMixin):
-    @classmethod
-    def setupKernelSession(cls):
         cls.async_session = WolframLanguageAsyncSession(
             cls.KERNEL_PATH, kernel_loglevel=logging.INFO
         )
         cls.async_session.set_parameter("STARTUP_TIMEOUT", 5)
         cls.async_session.set_parameter("TERMINATE_TIMEOUT", 3)
         get_event_loop().run_until_complete(cls.async_session.start())
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.async_session is not None:
+            get_event_loop().run_until_complete(cls.async_session.stop())
 
     @run_in_loop
     async def test_eval_inputform(self):
@@ -131,10 +121,12 @@ class TestCoroutineSession(KernelMixin):
         TestKernelBase.class_bad_kwargs_parameters(self, WolframLanguageAsyncSession)
 
 
-class TestKernelPool(KernelMixin):
-    
+class TestKernelPool(BaseTestCase):
+
+    KERNEL_PATH = json_config and json_config.get("kernel", None) or None
+
     @classmethod
-    def setupKernelSession(cls):
+    def setUpClass(cls):
         cls.pool = WolframEvaluatorPool(
             cls.KERNEL_PATH,
             kernel_loglevel=logging.INFO,
@@ -200,7 +192,10 @@ class TestKernelPool(KernelMixin):
 
 
 @skip_for_missing_config
-class TestKernelCloudPool(KernelMixin):
+class TestKernelCloudPool(BaseTestCase):
+
+    KERNEL_PATH = json_config and json_config.get("kernel", None) or None
+
     @run_in_loop
     async def test_pool_from_one_cloud(self):
 
