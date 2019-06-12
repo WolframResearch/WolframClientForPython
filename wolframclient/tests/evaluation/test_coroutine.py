@@ -189,7 +189,6 @@ class TestKernelPool(TestCoroutineSession):
         self.assertFalse(session.started)
         self.assertTrue(session.stopped)
 
-
     async def _pool_evaluation_check(self, pool):
         tasks = [
             asyncio.create_task(pool.evaluate(wl.FromLetterNumber(i))) for i in range(1, 11)
@@ -197,9 +196,9 @@ class TestKernelPool(TestCoroutineSession):
         res = await asyncio.gather(*tasks)
         self.assertEqual({*res}, {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"})
 
+
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestKernelCloudPool(TestKernelPool):
-
     @run_in_loop
     async def test_pool_from_one_cloud(self):
 
@@ -218,9 +217,7 @@ class TestKernelCloudPool(TestKernelPool):
         await self.pool.terminate()
 
         sessions = (
-            WolframCloudAsyncSession(
-                credentials=secured_authentication_key, server=server
-            ),
+            WolframCloudAsyncSession(credentials=secured_authentication_key, server=server),
             WolframLanguageAsyncSession(self.KERNEL_PATH),
             self.KERNEL_PATH,
         )
@@ -257,14 +254,12 @@ class TestParalleleEvaluate(BaseTestCase):
         )
         self.assertEqual(res, ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"])
 
+
 @unittest.skipIf(json_config is None, MSG_JSON_NOT_FOUND)
 class TestParalleleEvaluateCloud(TestParalleleEvaluate):
-
     def test_parallel_evaluate_cloud(self):
 
-        cloud = WolframCloudAsyncSession(
-            credentials=secured_authentication_key, server=server
-        )
+        cloud = WolframCloudAsyncSession(credentials=secured_authentication_key, server=server)
         exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
         res = parallel_evaluate(exprs, evaluator_spec=cloud)
         self.assertEqual(len(res), 10)
@@ -273,9 +268,7 @@ class TestParalleleEvaluateCloud(TestParalleleEvaluate):
 
     def test_parallel_evaluate_mixed(self):
 
-        cloud = WolframCloudAsyncSession(
-            credentials=secured_authentication_key, server=server
-        )
+        cloud = WolframCloudAsyncSession(credentials=secured_authentication_key, server=server)
         exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
         res = parallel_evaluate(exprs, evaluator_spec=[cloud, self.KERNEL_PATH, cloud])
         self.assertEqual(len(res), 10)
