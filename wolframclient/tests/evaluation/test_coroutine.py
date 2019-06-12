@@ -27,8 +27,7 @@ from wolframclient.utils.tests import TestCase as BaseTestCase
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-
-class TestCoroutineSession(BaseTestCase):
+class KernelMixin(BaseTestCase):
 
     KERNEL_PATH = json_config and json_config.get("kernel", None) or None
 
@@ -43,7 +42,9 @@ class TestCoroutineSession(BaseTestCase):
     @classmethod
     def tearDownKernelSession(cls):
         if cls.async_session is not None:
-            get_event_loop().run_until_complete(cls.async_session.stop())
+            get_event_loop().run_until_complete(cls.async_session.stop())    
+
+class TestCoroutineSession(KernelMixin):
 
     @classmethod
     def setupKernelSession(cls):
@@ -197,7 +198,7 @@ class TestKernelPool(TestCoroutineSession):
 
 
 @skip_for_missing_config
-class TestKernelCloudPool(TestKernelPool):
+class TestKernelCloudPool(KernelMixin):
     @run_in_loop
     async def test_pool_from_one_cloud(self):
 
@@ -256,6 +257,9 @@ class TestParallelEvaluate(BaseTestCase):
 
 @skip_for_missing_config
 class TestParallelEvaluateCloud(TestParallelEvaluate):
+
+    KERNEL_PATH = json_config and json_config.get("kernel", None) or None
+
     def test_parallel_evaluate_cloud(self):
 
         cloud = WolframCloudAsyncSession(credentials=secured_authentication_key, server=server)
