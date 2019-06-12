@@ -3,9 +3,27 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import sys
+from contextlib import contextmanager
 
 from wolframclient.cli.utils import SimpleCommand
-from wolframclient.utils.importutils import module_path
+from wolframclient.utils.importutils import module_path, safe_import_string_and_call
+
+
+@contextmanager
+def changed_args(args):
+    # Code to acquire resource, e.g.:
+    originals = sys.argv
+
+    sys.argv = list(args)
+
+    yield
+
+    sys.argv = originals
+
+
+def run(path, args):
+    with changed_args(args):
+        safe_import_string_and_call(path)
 
 
 class Command(SimpleCommand):
@@ -26,40 +44,27 @@ class Command(SimpleCommand):
 
     def handle(self, **opts):
 
-        argv = sys.argv
+        run(
+            "isort.main.main",
+            self._module_args(
+                "-rc",
+                "-sl",
+                "-a",
+                "from __future__ import absolute_import, print_function, unicode_literals",
+            ),
+        )
 
-        from autoflake import main
-
-        sys.argv = list(
+        run(
+            "autoflake.main",
             self._module_args(
                 "--in-place",
                 "--remove-duplicate-keys",
                 "--expand-star-import",
                 "--remove-all-unused-imports",
                 "--recursive",
-            )
+            ),
         )
 
-        main()
+        run("isort.main.main", self._module_args("-rc", "--multi-line", "5"))
 
-        from isort.main import main
-
-        sys.argv = list(
-            self._module_args(
-                "-rc",
-                "--multi-line",
-                "5",
-                "-a",
-                "from __future__ import absolute_import, print_function, unicode_literals",
-            )
-        )
-
-        main()
-
-        from black import main
-
-        sys.argv = list(self._module_args("--line-length", "95", "--target-version", "py34"))
-
-        main()
-
-        sys.argv = argv
+        run("black.main", self._module_args("--line-length", "95", "--target-version", "py34"))
