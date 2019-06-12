@@ -193,7 +193,7 @@ class TestKernelPool(BaseTestCase):
 
 
 @skip_for_missing_config
-class TestKernelCloudPool(BaseTestCase):
+class TestKernelCloudPool(TestKernelPool):
 
     KERNEL_PATH = json_config and json_config.get("kernel", None) or None
 
