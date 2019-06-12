@@ -131,7 +131,8 @@ class TestCoroutineSession(KernelMixin):
         TestKernelBase.class_bad_kwargs_parameters(self, WolframLanguageAsyncSession)
 
 
-class TestKernelPool(TestCoroutineSession):
+class TestKernelPool(KernelMixin):
+    
     @classmethod
     def setupKernelSession(cls):
         cls.pool = WolframEvaluatorPool(
