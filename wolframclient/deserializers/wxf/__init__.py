@@ -24,8 +24,8 @@ def binary_deserialize(wxf_input, consumer=None, **kwargs):
     A stream of :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` is generated from the WXF input by a instance
     of :class:`~wolframclient.deserializers.wxf.wxfparser.WXFParser`.
 
-    The consumer must be an instance of :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy`. If none is
-    provided, :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer` is used. To disable NumPy array support,
+    The consumer must be an instance of :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer`. If none is
+    provided, :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy` is used. To disable NumPy array support,
     use :class:`~wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer`.
 
     Named parameters are passed to the consumer. They can be any valid parameter of
