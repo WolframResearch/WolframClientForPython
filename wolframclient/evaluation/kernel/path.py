@@ -34,16 +34,22 @@ def installation_directories():
         for p in explore_paths(
             "C:\\Program Files\\Wolfram Research\\Wolfram Desktop",
             "C:\\Program Files\\Wolfram Research\\Mathematica",
+            "C:\\Program Files\\Wolfram Research\\Wolfram Engine",
         ):
             yield p
 
     elif six.LINUX:
-        for p in explore_paths("/usr/local/Wolfram/Desktop" "/usr/local/Wolfram/Mathematica"):
+        for p in explore_paths(
+            "/usr/local/Wolfram/Desktop",
+            "/usr/local/Wolfram/Mathematica",
+            "/usr/local/Wolfram/WolframEngine",
+        ):
             yield p
 
     elif six.MACOS:
         yield "/Applications/Wolfram Desktop.app/Contents"
         yield "/Applications/Mathematica.app/Contents"
+        yield "/Applications/Wolfram Engine.app/Contents"
 
 
 def exe_path():
