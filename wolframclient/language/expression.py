@@ -80,6 +80,9 @@ class WLFunction(WLExpressionMeta):
     def __hash__(self):
         return hash((self.head, self.args))
 
+    def __getitem__(self, i):
+        return self.args.__getitem__(i)
+
     def __eq__(self, other):
         return (
             isinstance(other, WLFunction)
