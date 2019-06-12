@@ -44,6 +44,9 @@ class Command(SimpleCommand):
 
     def handle(self, **opts):
 
+        # autoflake is not removing imports if they are in a list
+        # to fix this we first refactor the code using imports in single line
+
         run(
             "isort.main.main",
             self._module_args(
@@ -53,6 +56,8 @@ class Command(SimpleCommand):
                 "from __future__ import absolute_import, print_function, unicode_literals",
             ),
         )
+
+        # then we remove all missing imports and we expand star imports
 
         run(
             "autoflake.main",
@@ -65,6 +70,10 @@ class Command(SimpleCommand):
             ),
         )
 
+        # then we use refactor imports again using pretty newline style
+
         run("isort.main.main", self._module_args("-rc", "--multi-line", "5"))
+
+        # after that we finally run black to refactor all code
 
         run("black.main", self._module_args("--line-length", "95", "--target-version", "py34"))
