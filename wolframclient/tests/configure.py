@@ -84,7 +84,10 @@ def _parse_config(config):
         logger.warning("Failed to parse json config.", e)
 
     kernel_path = json_config.get("kernel", None)
-    return sak, user_cred, server, kernel_path
+
+    api_owner = json_config.get("ApiOwner", None)
+
+    return sak, user_cred, server, kernel_path, api_owner
 
 
 log_file = os.environ.get("WOLFRAMCLIENT_PY_LOG_FILE", None)
@@ -97,6 +100,7 @@ secured_authentication_key = None
 user_configuration = None
 server = None
 kernel_path = None
+api_owner = None
 
 _json_config_path = os.environ.get("WOLFRAMCLIENT_PY_JSON_CONFIG", None)
 if six.PY_35 and _json_config_path is not None:
@@ -104,7 +108,7 @@ if six.PY_35 and _json_config_path is not None:
     try:
         with open(expended_path, "r") as fp:
             json_config = json.load(fp)
-            secured_authentication_key, user_configuration, server, kernel_path = _parse_config(
+            secured_authentication_key, user_configuration, server, kernel_path, api_owner= _parse_config(
                 json_config
             )
     except IOError:
