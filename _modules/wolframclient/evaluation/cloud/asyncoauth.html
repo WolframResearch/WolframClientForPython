@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.evaluation.cloud.asyncoauth &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
+    <title>wolframclient.evaluation.cloud.asyncoauth &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
     <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.2</span>
+                        <span class='header right navigation darkgrey'>v 1.1.0</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -78,8 +78,7 @@
 
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">wolframclient.evaluation.cloud.base</span> <span class="k">import</span> <span class="p">(</span><span class="n">OAuthAsyncSessionBase</span><span class="p">,</span>
-                                                 <span class="n">UserIDPassword</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">wolframclient.evaluation.cloud.base</span> <span class="k">import</span> <span class="n">OAuthAsyncSessionBase</span><span class="p">,</span> <span class="n">UserIDPassword</span>
 <span class="kn">from</span> <span class="nn">wolframclient.exception</span> <span class="k">import</span> <span class="n">AuthenticationException</span>
 <span class="kn">from</span> <span class="nn">wolframclient.utils</span> <span class="k">import</span> <span class="n">six</span>
 <span class="kn">from</span> <span class="nn">wolframclient.utils.api</span> <span class="k">import</span> <span class="n">aiohttp</span><span class="p">,</span> <span class="n">oauth</span><span class="p">,</span> <span class="n">ssl</span>
@@ -90,20 +89,23 @@
 <div class="viewcode-block" id="OAuthAIOHttpAsyncSessionBase"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.asyncoauth.OAuthAIOHttpAsyncSessionBase">[docs]</a><span class="k">class</span> <span class="nc">OAuthAIOHttpAsyncSessionBase</span><span class="p">(</span><span class="n">OAuthAsyncSessionBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Asynchronous OAuth authentication class using aiohttp library for requests. &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">http_session</span><span class="p">,</span>
-                 <span class="n">server</span><span class="p">,</span>
-                 <span class="n">consumer_key</span><span class="p">,</span>
-                 <span class="n">consumer_secret</span><span class="p">,</span>
-                 <span class="n">signature_method</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">client_class</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">ssl_context_class</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">http_session</span><span class="p">,</span>
+        <span class="n">server</span><span class="p">,</span>
+        <span class="n">consumer_key</span><span class="p">,</span>
+        <span class="n">consumer_secret</span><span class="p">,</span>
+        <span class="n">signature_method</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">client_class</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ssl_context_class</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">server</span><span class="p">,</span>
             <span class="n">consumer_key</span><span class="p">,</span>
             <span class="n">consumer_secret</span><span class="p">,</span>
             <span class="n">signature_method</span><span class="o">=</span><span class="n">signature_method</span><span class="p">,</span>
-            <span class="n">client_class</span><span class="o">=</span><span class="n">client_class</span> <span class="ow">or</span> <span class="n">oauth</span><span class="o">.</span><span class="n">Client</span><span class="p">)</span>
+            <span class="n">client_class</span><span class="o">=</span><span class="n">client_class</span> <span class="ow">or</span> <span class="n">oauth</span><span class="o">.</span><span class="n">Client</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span> <span class="o">=</span> <span class="n">http_session</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ssl_context_class</span> <span class="o">=</span> <span class="n">ssl_context_class</span> <span class="ow">or</span> <span class="n">ssl</span><span class="o">.</span><span class="n">SSLContext</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">certificate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -113,7 +115,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ssl_context</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="OAuthAIOHttpAsyncSessionBase.signed_request"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.asyncoauth.OAuthAIOHttpAsyncSessionBase.signed_request">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">signed_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{},</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;POST&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="OAuthAIOHttpAsyncSessionBase.signed_request"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.asyncoauth.OAuthAIOHttpAsyncSessionBase.signed_request">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">signed_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{},</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;POST&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Construct a signed request and send it.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">authorized</span><span class="p">():</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">authenticate</span><span class="p">()</span>
@@ -124,8 +126,7 @@
         <span class="n">sign_body</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="c1"># Payload Instances are not encoded (e.g: octet stream). Only FormData are.</span>
-        <span class="n">form_encoded</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
-                                  <span class="n">aiohttp</span><span class="o">.</span><span class="n">FormData</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">is_multipart</span>
+        <span class="n">form_encoded</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">FormData</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">is_multipart</span>
         <span class="n">multipart</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">FormData</span><span class="p">)</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">is_multipart</span>
         <span class="c1"># only form encoded body are signed.</span>
         <span class="c1"># Non multipart FormData are url encoded: need signed request. We need to get back the body</span>
@@ -134,25 +135,27 @@
             <span class="n">buffer</span> <span class="o">=</span> <span class="n">_AsyncBytesIO</span><span class="p">()</span>
             <span class="k">await</span> <span class="n">data</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
             <span class="n">body</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
-            <span class="n">req_headers</span><span class="p">[</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;application/x-www-form-urlencoded&#39;</span>
+            <span class="n">req_headers</span><span class="p">[</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;application/x-www-form-urlencoded&quot;</span>
 
         <span class="n">uri</span><span class="p">,</span> <span class="n">req_headers</span><span class="p">,</span> <span class="n">signed_body</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span>
             <span class="n">uri</span><span class="p">,</span>
             <span class="n">method</span><span class="p">,</span>
             <span class="n">body</span><span class="o">=</span><span class="n">body</span> <span class="k">if</span> <span class="n">form_encoded</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">headers</span><span class="o">=</span><span class="n">req_headers</span><span class="p">,</span>
-            <span class="n">realm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">cloudbase</span><span class="p">)</span>
+            <span class="n">realm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">cloudbase</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Signed uri: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">uri</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Signed header: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">req_headers</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Is body signed: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">form_encoded</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Signed uri: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Signed header: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">req_headers</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Is body signed: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">form_encoded</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">multipart</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">form_encoded</span><span class="p">:</span>
             <span class="n">body</span> <span class="o">=</span> <span class="n">data</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">body</span> <span class="o">=</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">StringPayload</span><span class="p">(</span><span class="n">signed_body</span><span class="p">)</span>
         <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
-            <span class="n">method</span><span class="p">,</span> <span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">req_headers</span><span class="p">,</span> <span class="n">ssl</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ssl_context</span><span class="p">)</span></div>
+            <span class="n">method</span><span class="p">,</span> <span class="n">uri</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">req_headers</span><span class="p">,</span> <span class="n">ssl</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ssl_context</span>
+        <span class="p">)</span></div>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_ensure_success_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="kc">None</span>
@@ -160,11 +163,12 @@
             <span class="k">return</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">as_json</span> <span class="o">=</span> <span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="n">as_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">as_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="c1"># msg is None if response is not JSON, but it&#39;s fine.</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">AuthenticationException</span><span class="p">(</span>
-                <span class="n">response</span><span class="p">,</span> <span class="s1">&#39;Request failed with status </span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">response</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
+                <span class="n">response</span><span class="p">,</span> <span class="s2">&quot;Request failed with status </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">response</span><span class="o">.</span><span class="n">status</span>
+            <span class="p">)</span>
         <span class="k">raise</span> <span class="n">AuthenticationException</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span></div>
 
 
@@ -173,38 +177,38 @@
 
 <div class="viewcode-block" id="OAuth1AIOHttpAsyncSession.set_oauth_request_token"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.asyncoauth.OAuth1AIOHttpAsyncSession.set_oauth_request_token">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">set_oauth_request_token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Fetching oauth request token from: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
-                         <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">request_token_endpoint</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;Fetching oauth request token from: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">request_token_endpoint</span>
+            <span class="p">)</span>
 
         <span class="n">logging</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
 
-        <span class="n">token_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_class</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">consumer_key</span><span class="p">,</span> <span class="n">client_secret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">consumer_secret</span><span class="p">)</span>
-        <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">token_client</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">request_token_endpoint</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">)</span>
+        <span class="n">token_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_class</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">consumer_key</span><span class="p">,</span> <span class="n">client_secret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">consumer_secret</span><span class="p">)</span>
+        <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">token_client</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">request_token_endpoint</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">)</span>
 
         <span class="n">logging</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">NOTSET</span><span class="p">)</span>
 
         <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
-                <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">,</span>
-                <span class="n">ssl</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ssl_context</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
+            <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">ssl</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ssl_context</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_success_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_update_token_from_request_body</span><span class="p">(</span><span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="OAuth1AIOHttpAsyncSession.set_oauth_access_token"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.asyncoauth.OAuth1AIOHttpAsyncSession.set_oauth_access_token">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">set_oauth_access_token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Fetching oauth access token from </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
-                         <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">access_token_endpoint</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;Fetching oauth access token from </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">access_token_endpoint</span>
+            <span class="p">)</span>
         <span class="n">access_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_class</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">consumer_key</span><span class="p">,</span>
             <span class="n">client_secret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">consumer_secret</span><span class="p">,</span>
             <span class="n">resource_owner_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token</span><span class="p">,</span>
-            <span class="n">resource_owner_secret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token_secret</span><span class="p">)</span>
-        <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">access_client</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">access_token_endpoint</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">)</span>
+            <span class="n">resource_owner_secret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token_secret</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">access_client</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">access_token_endpoint</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">)</span>
         <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
-                <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">,</span>
-                <span class="n">ssl</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ssl_context</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
+            <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">ssl</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ssl_context</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_success_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_update_token_from_request_body</span><span class="p">(</span><span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
 
@@ -217,12 +221,14 @@
 <div class="viewcode-block" id="XAuthAIOHttpAsyncSession"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.asyncoauth.XAuthAIOHttpAsyncSession">[docs]</a><span class="k">class</span> <span class="nc">XAuthAIOHttpAsyncSession</span><span class="p">(</span><span class="n">OAuthAIOHttpAsyncSessionBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; XAuth using aiohttp.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">userid_password</span><span class="p">,</span>
-                 <span class="n">http_session</span><span class="p">,</span>
-                 <span class="n">server</span><span class="p">,</span>
-                 <span class="n">signature_method</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">client_class</span><span class="o">=</span><span class="n">oauth</span><span class="o">.</span><span class="n">Client</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">userid_password</span><span class="p">,</span>
+        <span class="n">http_session</span><span class="p">,</span>
+        <span class="n">server</span><span class="p">,</span>
+        <span class="n">signature_method</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">client_class</span><span class="o">=</span><span class="n">oauth</span><span class="o">.</span><span class="n">Client</span><span class="p">,</span>
+    <span class="p">):</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">http_session</span><span class="p">,</span>
@@ -230,10 +236,11 @@
             <span class="n">server</span><span class="o">.</span><span class="n">xauth_consumer_key</span><span class="p">,</span>
             <span class="n">server</span><span class="o">.</span><span class="n">xauth_consumer_secret</span><span class="p">,</span>
             <span class="n">signature_method</span><span class="o">=</span><span class="n">signature_method</span><span class="p">,</span>
-            <span class="n">client_class</span><span class="o">=</span><span class="n">client_class</span><span class="p">)</span>
+            <span class="n">client_class</span><span class="o">=</span><span class="n">client_class</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">is_xauth</span><span class="p">():</span>
             <span class="k">raise</span> <span class="n">AuthenticationException</span><span class="p">(</span>
-                <span class="s1">&#39;XAuth is not configured for this server. Missing xauth consumer key and/or secret.&#39;</span>
+                <span class="s2">&quot;XAuth is not configured for this server. Missing xauth consumer key and/or secret.&quot;</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">userid_password</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">userid_password</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">xauth_credentials</span> <span class="o">=</span> <span class="n">UserIDPassword</span><span class="p">(</span><span class="o">*</span><span class="n">userid_password</span><span class="p">)</span>
@@ -241,13 +248,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">xauth_credentials</span> <span class="o">=</span> <span class="n">userid_password</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s1">&#39;User ID and password must be specified as a tuple or a UserIDPassword instance.&#39;</span>
+                <span class="s2">&quot;User ID and password must be specified as a tuple or a UserIDPassword instance.&quot;</span>
             <span class="p">)</span>
 
 <div class="viewcode-block" id="XAuthAIOHttpAsyncSession.authenticate"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.asyncoauth.XAuthAIOHttpAsyncSession.authenticate">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">authenticate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;xauth authentication of user </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
-                         <span class="bp">self</span><span class="o">.</span><span class="n">xauth_credentials</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;xauth authentication of user </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xauth_credentials</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
         <span class="n">client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_class</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">consumer_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer_secret</span><span class="p">)</span>
 
         <span class="c1"># avoid dumping password in log files.</span>
@@ -255,19 +261,20 @@
 
         <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">access_token_endpoint</span><span class="p">,</span>
-            <span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;POST&quot;</span><span class="p">,</span>
             <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DEFAULT_CONTENT_TYPE</span><span class="p">,</span>
             <span class="n">body</span><span class="o">=</span><span class="p">{</span>
                 <span class="s2">&quot;x_auth_username&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">xauth_credentials</span><span class="o">.</span><span class="n">user</span><span class="p">,</span>
                 <span class="s2">&quot;x_auth_password&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">xauth_credentials</span><span class="o">.</span><span class="n">password</span><span class="p">,</span>
                 <span class="s2">&quot;x_auth_mode&quot;</span><span class="p">:</span> <span class="s2">&quot;client_auth&quot;</span><span class="p">,</span>
-            <span class="p">})</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
 
         <span class="n">logging</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">NOTSET</span><span class="p">)</span>
 
         <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
-                <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">,</span>
-                <span class="n">ssl</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ssl_context</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
+            <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">ssl</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ssl_context</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_success_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_update_token_from_request_body</span><span class="p">(</span><span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.evaluation.cloud.cloudsession &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
+    <title>wolframclient.evaluation.cloud.cloudsession &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
     <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.2</span>
+                        <span class='header right navigation darkgrey'>v 1.1.0</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -80,14 +80,13 @@
 
 <span class="kn">from</span> <span class="nn">wolframclient.evaluation.base</span> <span class="k">import</span> <span class="n">WolframEvaluator</span>
 <span class="kn">from</span> <span class="nn">wolframclient.evaluation.cloud.base</span> <span class="k">import</span> <span class="n">WolframAPICallBase</span>
-<span class="kn">from</span> <span class="nn">wolframclient.evaluation.cloud.oauth</span> <span class="k">import</span> \
-    <span class="n">OAuth1RequestsSyncSession</span> <span class="k">as</span> <span class="n">OAuthSession</span>
-<span class="kn">from</span> <span class="nn">wolframclient.evaluation.cloud.oauth</span> <span class="k">import</span> \
-    <span class="n">XAuthRequestsSyncSession</span> <span class="k">as</span> <span class="n">XAuthSession</span>
+<span class="kn">from</span> <span class="nn">wolframclient.evaluation.cloud.oauth</span> <span class="k">import</span> <span class="n">OAuth1RequestsSyncSession</span> <span class="k">as</span> <span class="n">OAuthSession</span>
+<span class="kn">from</span> <span class="nn">wolframclient.evaluation.cloud.oauth</span> <span class="k">import</span> <span class="n">XAuthRequestsSyncSession</span> <span class="k">as</span> <span class="n">XAuthSession</span>
 <span class="kn">from</span> <span class="nn">wolframclient.evaluation.cloud.server</span> <span class="k">import</span> <span class="n">WOLFRAM_PUBLIC_CLOUD_SERVER</span>
 <span class="kn">from</span> <span class="nn">wolframclient.evaluation.result</span> <span class="k">import</span> <span class="p">(</span>
     <span class="n">WolframAPIResponseBuilder</span><span class="p">,</span>
-    <span class="n">WolframCloudEvaluationWXFResponse</span><span class="p">)</span>
+    <span class="n">WolframCloudEvaluationWXFResponse</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">wolframclient.exception</span> <span class="k">import</span> <span class="n">AuthenticationException</span>
 <span class="kn">from</span> <span class="nn">wolframclient.serializers</span> <span class="k">import</span> <span class="n">export</span>
 <span class="kn">from</span> <span class="nn">wolframclient.utils</span> <span class="k">import</span> <span class="n">six</span>
@@ -97,7 +96,7 @@
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;WolframCloudSession&#39;</span><span class="p">,</span> <span class="s1">&#39;WolframAPICall&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;WolframCloudSession&quot;</span><span class="p">,</span> <span class="s2">&quot;WolframAPICall&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="WolframCloudSession"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframCloudSession">[docs]</a><span class="k">class</span> <span class="nc">WolframCloudSession</span><span class="p">(</span><span class="n">WolframEvaluator</span><span class="p">):</span>
@@ -120,16 +119,17 @@
 <span class="sd">    `max_workers` can be specified and is passed to the :class:`~concurrent.futures.ThreadPoolExecutor` used for future methods.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">server</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">inputform_string_evaluation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                 <span class="n">oauth_session_class</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">xauth_session_class</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">http_sessionclass</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">max_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">inputform_string_evaluation</span><span class="o">=</span><span class="n">inputform_string_evaluation</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">server</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">inputform_string_evaluation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">oauth_session_class</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">xauth_session_class</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">http_sessionclass</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">inputform_string_evaluation</span><span class="o">=</span><span class="n">inputform_string_evaluation</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="n">server</span> <span class="ow">or</span> <span class="n">WOLFRAM_PUBLIC_CLOUD_SERVER</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">evaluation_api_url</span> <span class="o">=</span> <span class="n">evaluation_api_url</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">http_sessionclass</span> <span class="o">=</span> <span class="n">http_sessionclass</span> <span class="ow">or</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span>
@@ -151,21 +151,19 @@
             <span class="n">oauth_session_class</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">oauth_session_class</span><span class="p">,</span>
             <span class="n">xauth_session_class</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xauth_session_class</span><span class="p">,</span>
             <span class="n">http_sessionclass</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">http_sessionclass</span><span class="p">,</span>
-            <span class="n">max_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_workers</span><span class="p">)</span></div>
+            <span class="n">max_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_workers</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">started</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">anonymous</span><span class="p">()</span>
-                                                  <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">authorized</span><span class="p">())</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">anonymous</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">authorized</span><span class="p">())</span>
 
 <div class="viewcode-block" id="WolframCloudSession.start"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframCloudSession.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_sessionclass</span><span class="p">()</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;WolframClientForPython/1.0&#39;</span>
-                <span class="p">}</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;WolframClientForPython/1.0&quot;</span><span class="p">}</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">anonymous</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_authenticate</span><span class="p">()</span></div>
 
@@ -189,8 +187,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span> <span class="ow">is</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="WolframCloudSession.authorized"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudSession.authorized">[docs]</a>    <span class="k">def</span> <span class="nf">authorized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session</span><span class="o">.</span><span class="n">authorized</span><span class="p">(</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session</span><span class="o">.</span><span class="n">authorized</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">_authenticate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Authenticate with the server using the credentials.</span>
@@ -198,37 +195,40 @@
 <span class="sd">        This method supports both oauth and xauth methods. It is not necessary</span>
 <span class="sd">        to call it, since the session will try to authenticate when the first</span>
 <span class="sd">        request is issued. &quot;&quot;&quot;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Authenticating to the server.&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Authenticating to the server.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">AuthenticationException</span><span class="p">(</span><span class="s1">&#39;Missing credentials.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">AuthenticationException</span><span class="p">(</span><span class="s2">&quot;Missing credentials.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="o">.</span><span class="n">is_xauth</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xauth_session_class</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">xauth_consumer_key</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">xauth_consumer_secret</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">xauth_consumer_secret</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session_class</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="o">.</span><span class="n">consumer_key</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="o">.</span><span class="n">consumer_secret</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="o">.</span><span class="n">consumer_key</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="o">.</span><span class="n">consumer_secret</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session</span><span class="o">.</span><span class="n">authenticate</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{},</span> <span class="n">body</span><span class="o">=</span><span class="p">{},</span> <span class="n">files</span><span class="o">=</span><span class="p">{},</span> <span class="n">params</span><span class="o">=</span><span class="p">{}):</span>
         <span class="sd">&quot;&quot;&quot;Do a POST request, signing the content only if authentication has been successful.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_started</span><span class="p">()</span>
-        <span class="n">headers</span><span class="p">[</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;WolframClientForPython/1.0&#39;</span>
+        <span class="n">headers</span><span class="p">[</span><span class="s2">&quot;User-Agent&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;WolframClientForPython/1.0&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">authorized</span><span class="p">():</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Authenticated call to api </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Authenticated call to api </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session</span><span class="o">.</span><span class="n">signed_request</span><span class="p">(</span>
-                <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">)</span>
+                <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="n">files</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Anonymous call to api </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Anonymous call to api </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
-                <span class="n">url</span><span class="p">,</span>
-                <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
-                <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
-                <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">,</span>
-                <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span>
-                <span class="n">verify</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verify</span><span class="p">)</span>
+                <span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verify</span>
+            <span class="p">)</span>
 
 <div class="viewcode-block" id="WolframCloudSession.ensure_started"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudSession.ensure_started">[docs]</a>    <span class="k">def</span> <span class="nf">ensure_started</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">:</span>
@@ -236,13 +236,15 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="WolframCloudSession.call"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframCloudSession.call">[docs]</a>    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-             <span class="n">api</span><span class="p">,</span>
-             <span class="n">input_parameters</span><span class="o">=</span><span class="p">{},</span>
-             <span class="n">files</span><span class="o">=</span><span class="p">{},</span>
-             <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wl&#39;</span><span class="p">,</span>
-             <span class="n">permissions_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-             <span class="o">**</span><span class="n">kwargv</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframCloudSession.call"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframCloudSession.call">[docs]</a>    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">api</span><span class="p">,</span>
+        <span class="n">input_parameters</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">files</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">target_format</span><span class="o">=</span><span class="s2">&quot;wl&quot;</span><span class="p">,</span>
+        <span class="n">permissions_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargv</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Call a given API using the provided input parameters.</span>
 
 <span class="sd">        `api` can be a string url or a :class:`tuple` (`username`, `api name`). The username is generally the Wolfram</span>
@@ -267,17 +269,13 @@
 <span class="sd">        resource.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">user_api_url</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="n">api</span><span class="p">)</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;_key&#39;</span><span class="p">:</span> <span class="n">permissions_key</span>
-        <span class="p">}</span> <span class="k">if</span> <span class="n">permissions_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;_key&quot;</span><span class="p">:</span> <span class="n">permissions_key</span><span class="p">}</span> <span class="k">if</span> <span class="n">permissions_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
         <span class="n">is_multipart</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="n">encoded_inputs</span> <span class="o">=</span> <span class="n">encode_api_inputs</span><span class="p">(</span>
-            <span class="n">input_parameters</span><span class="p">,</span>
-            <span class="n">target_format</span><span class="o">=</span><span class="n">target_format</span><span class="p">,</span>
-            <span class="n">multipart</span><span class="o">=</span><span class="n">is_multipart</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">kwargv</span><span class="p">)</span>
+            <span class="n">input_parameters</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="n">target_format</span><span class="p">,</span> <span class="n">multipart</span><span class="o">=</span><span class="n">is_multipart</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargv</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Encoded input </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">encoded_inputs</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Encoded input </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">encoded_inputs</span><span class="p">)</span>
         <span class="c1"># in multipart requests we have to merge input parameters with files.</span>
         <span class="c1"># and use the same format for both.</span>
         <span class="k">if</span> <span class="n">is_multipart</span><span class="p">:</span>
@@ -289,10 +287,9 @@
         <span class="k">return</span> <span class="n">WolframAPIResponseBuilder</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_call_evaluation_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">export</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wl&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">export</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="s2">&quot;wl&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s1">&#39;Sending expression to cloud server for evaluation: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Sending expression to cloud server for evaluation: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluation_api_url</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">WolframCloudEvaluationWXFResponse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 
@@ -302,8 +299,7 @@
 <span class="sd">        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export` or the string</span>
 <span class="sd">        :wl:`InputForm` of an expression to evaluate.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_evaluation_api</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span>
-                                         <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_evaluation_api</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="WolframCloudSession.evaluate_wrap"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframCloudSession.evaluate_wrap">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Similar to :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate` but return the</span>
@@ -316,16 +312,12 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">pool</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pool</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_pool</span> <span class="o">=</span> <span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span>
-                <span class="n">max_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_workers</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pool</span> <span class="o">=</span> <span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_workers</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pool</span>
 
-<div class="viewcode-block" id="WolframCloudSession.call_future"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframCloudSession.call_future">[docs]</a>    <span class="k">def</span> <span class="nf">call_future</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                    <span class="n">api</span><span class="p">,</span>
-                    <span class="n">input_parameters</span><span class="o">=</span><span class="p">{},</span>
-                    <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wl&#39;</span><span class="p">,</span>
-                    <span class="n">permissions_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                    <span class="o">**</span><span class="n">kwargv</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframCloudSession.call_future"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframCloudSession.call_future">[docs]</a>    <span class="k">def</span> <span class="nf">call_future</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">api</span><span class="p">,</span> <span class="n">input_parameters</span><span class="o">=</span><span class="p">{},</span> <span class="n">target_format</span><span class="o">=</span><span class="s2">&quot;wl&quot;</span><span class="p">,</span> <span class="n">permissions_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargv</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Call a given API asynchronously and return a :class:`~concurrent.futures.Future` object.</span>
 
 <span class="sd">        See :func:`WolframCloudSession.call` for more details about input parameters.</span>
@@ -336,7 +328,8 @@
             <span class="n">input_parameters</span><span class="o">=</span><span class="n">input_parameters</span><span class="p">,</span>
             <span class="n">target_format</span><span class="o">=</span><span class="n">target_format</span><span class="p">,</span>
             <span class="n">permissions_key</span><span class="o">=</span><span class="n">permissions_key</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">kwargv</span><span class="p">)</span></div>
+            <span class="o">**</span><span class="n">kwargv</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="WolframCloudSession.evaluate_future"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframCloudSession.evaluate_future">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_future</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Send `expr` to the cloud for asynchronous evaluation and return a :class:`~concurrent.futures.Future` object.</span>
@@ -354,9 +347,9 @@
         <span class="k">return</span> <span class="n">WolframAPICall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">{}</span><span class="s1">:base=</span><span class="si">{}</span><span class="s1">, authorized=</span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-                                                    <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">cloudbase</span><span class="p">,</span>
-                                                    <span class="bp">self</span><span class="o">.</span><span class="n">authorized</span><span class="p">())</span></div>
+        <span class="k">return</span> <span class="s2">&quot;&lt;</span><span class="si">{}</span><span class="s2">:base=</span><span class="si">{}</span><span class="s2">, authorized=</span><span class="si">{}</span><span class="s2">&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">cloudbase</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">authorized</span><span class="p">()</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="WolframAPICall"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframAPICall">[docs]</a><span class="k">class</span> <span class="nc">WolframAPICall</span><span class="p">(</span><span class="n">WolframAPICallBase</span><span class="p">):</span>
@@ -369,7 +362,8 @@
             <span class="n">input_parameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span>
             <span class="n">files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">,</span>
             <span class="n">permissions_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">permission_key</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="WolframAPICall.perform_future"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframAPICall.perform_future">[docs]</a>    <span class="k">def</span> <span class="nf">perform_future</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">call_future</span><span class="p">(</span>
@@ -377,23 +371,24 @@
             <span class="n">input_parameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span>
             <span class="n">files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">,</span>
             <span class="n">permissions_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">permission_key</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div></div>
 
 
 <span class="nd">@to_dict</span>
 <span class="k">def</span> <span class="nf">_encode_inputs_as_wxf</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">multipart</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">yield</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">__wxf&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">,</span> <span class="n">_to_multipart</span><span class="p">(</span>
-            <span class="n">name</span><span class="p">,</span>
-            <span class="n">export</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wxf&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span>
-            <span class="n">multipart</span><span class="o">=</span><span class="n">multipart</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">__wxf&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">,</span> <span class="n">_to_multipart</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">export</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="s2">&quot;wxf&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="n">multipart</span><span class="o">=</span><span class="n">multipart</span>
+        <span class="p">)</span>
 
 
 <span class="nd">@to_dict</span>
 <span class="k">def</span> <span class="nf">_encode_inputs_as_json</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">multipart</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">yield</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">__json&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">,</span> <span class="n">_to_multipart</span><span class="p">(</span>
-            <span class="n">name</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="n">multipart</span><span class="o">=</span><span class="n">multipart</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">__json&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">,</span> <span class="n">_to_multipart</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="n">multipart</span><span class="o">=</span><span class="n">multipart</span>
+        <span class="p">)</span>
 
 
 <span class="nd">@to_dict</span>
@@ -404,28 +399,27 @@
             <span class="k">yield</span> <span class="n">name</span><span class="p">,</span> <span class="n">_to_multipart</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">multipart</span><span class="o">=</span><span class="n">multipart</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">name</span><span class="p">,</span> <span class="n">_to_multipart</span><span class="p">(</span>
-                <span class="n">name</span><span class="p">,</span>
-                <span class="n">export</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wl&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span>
-                <span class="n">multipart</span><span class="o">=</span><span class="n">multipart</span><span class="p">)</span>
+                <span class="n">name</span><span class="p">,</span> <span class="n">export</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="s2">&quot;wl&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="n">multipart</span><span class="o">=</span><span class="n">multipart</span>
+            <span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_to_multipart</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">multipart</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Update the given :class:`~parameters` with a new inputs using the appropriate form based on `multipart`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">multipart</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;tmp_file_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;tmp_file_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">value</span>
 
 
 <span class="n">SUPPORTED_ENCODING_FORMATS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;json&#39;</span><span class="p">:</span> <span class="n">_encode_inputs_as_json</span><span class="p">,</span>
-    <span class="s1">&#39;wxf&#39;</span><span class="p">:</span> <span class="n">_encode_inputs_as_wxf</span><span class="p">,</span>
-    <span class="s1">&#39;wl&#39;</span><span class="p">:</span> <span class="n">_encode_inputs_as_wl</span>
+    <span class="s2">&quot;json&quot;</span><span class="p">:</span> <span class="n">_encode_inputs_as_json</span><span class="p">,</span>
+    <span class="s2">&quot;wxf&quot;</span><span class="p">:</span> <span class="n">_encode_inputs_as_wxf</span><span class="p">,</span>
+    <span class="s2">&quot;wl&quot;</span><span class="p">:</span> <span class="n">_encode_inputs_as_wl</span><span class="p">,</span>
 <span class="p">}</span>
 
 
-<span class="k">def</span> <span class="nf">encode_api_inputs</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wl&#39;</span><span class="p">,</span> <span class="n">multipart</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">encode_api_inputs</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="s2">&quot;wl&quot;</span><span class="p">,</span> <span class="n">multipart</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">inputs</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{}</span>
 
@@ -433,8 +427,9 @@
         <span class="n">encoder</span> <span class="o">=</span> <span class="n">SUPPORTED_ENCODING_FORMATS</span><span class="p">[</span><span class="n">target_format</span><span class="p">]</span>
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s1">&#39;Invalid encoding format </span><span class="si">%s</span><span class="s1">. Choices are: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
-            <span class="p">(</span><span class="n">target_format</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SUPPORTED_ENCODING_FORMATS</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+            <span class="s2">&quot;Invalid encoding format </span><span class="si">%s</span><span class="s2">. Choices are: </span><span class="si">%s</span><span class="s2">&quot;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="n">target_format</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SUPPORTED_ENCODING_FORMATS</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">encoder</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">multipart</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>

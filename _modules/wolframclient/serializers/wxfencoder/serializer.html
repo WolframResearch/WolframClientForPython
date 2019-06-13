@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.serializers.wxfencoder.serializer &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
+    <title>wolframclient.serializers.wxfencoder.serializer &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
     <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.2</span>
+                        <span class='header right navigation darkgrey'>v 1.1.0</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -77,12 +77,13 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
 
 <span class="kn">from</span> <span class="nn">wolframclient.serializers.wxfencoder.constants</span> <span class="k">import</span> <span class="p">(</span>
-    <span class="n">WXF_HEADER_COMPRESS</span><span class="p">,</span> <span class="n">WXF_HEADER_SEPARATOR</span><span class="p">,</span> <span class="n">WXF_VERSION</span><span class="p">)</span>
+    <span class="n">WXF_HEADER_COMPRESS</span><span class="p">,</span>
+    <span class="n">WXF_HEADER_SEPARATOR</span><span class="p">,</span>
+    <span class="n">WXF_VERSION</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">wolframclient.serializers.wxfencoder.streaming</span> <span class="k">import</span> <span class="n">ZipCompressedWriter</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;WXFExprSerializer&#39;</span><span class="p">,</span> <span class="s1">&#39;SerializationContext&#39;</span><span class="p">,</span> <span class="s1">&#39;WXFSerializerException&#39;</span>
-<span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;WXFExprSerializer&quot;</span><span class="p">,</span> <span class="s2">&quot;SerializationContext&quot;</span><span class="p">,</span> <span class="s2">&quot;WXFSerializerException&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="WXFSerializerException"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.serializer.WXFSerializerException">[docs]</a><span class="k">class</span> <span class="nc">WXFSerializerException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
@@ -94,37 +95,38 @@
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">add_part</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;class </span><span class="si">%s</span><span class="s1"> must implement a add_part method&#39;</span> <span class="o">%</span>
-                                  <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s2">&quot;class </span><span class="si">%s</span><span class="s2"> must implement a add_part method&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">step_into_new_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s1">&#39;class </span><span class="si">%s</span><span class="s1"> must implement a step_into_new_function method&#39;</span> <span class="o">%</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+            <span class="s2">&quot;class </span><span class="si">%s</span><span class="s2"> must implement a step_into_new_function method&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">step_into_new_assoc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s1">&#39;class </span><span class="si">%s</span><span class="s1"> must implement a step_into_new_assoc method&#39;</span> <span class="o">%</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+            <span class="s2">&quot;class </span><span class="si">%s</span><span class="s2"> must implement a step_into_new_assoc method&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">step_into_new_rule</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s1">&#39;class </span><span class="si">%s</span><span class="s1"> must implement a step_into_new_rule method&#39;</span> <span class="o">%</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+            <span class="s2">&quot;class </span><span class="si">%s</span><span class="s2"> must implement a step_into_new_rule method&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">is_valid_final_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s1">&#39;class </span><span class="si">%s</span><span class="s1"> must implement a is_valid_final_state method&#39;</span> <span class="o">%</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+            <span class="s2">&quot;class </span><span class="si">%s</span><span class="s2"> must implement a is_valid_final_state method&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">is_rule_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s1">&#39;class </span><span class="si">%s</span><span class="s1"> must implement a is_rule_valid method&#39;</span> <span class="o">%</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+            <span class="s2">&quot;class </span><span class="si">%s</span><span class="s2"> must implement a is_rule_valid method&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">NoEnforcingContext</span><span class="p">(</span><span class="n">_Context</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; This context doesn&#39;t prevent inconsistent state. &#39;&#39;&#39;</span>
+    <span class="sd">&quot;&quot;&quot; This context doesn&#39;t prevent inconsistent state. &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">add_part</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
@@ -168,15 +170,22 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_in_assoc_stack</span> <span class="o">=</span> <span class="p">[</span><span class="kc">False</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_check_insert</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_depth</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_index_stack</span><span class="p">[</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expected_length_stack</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_depth</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_index_stack</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">]</span>
+            <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expected_length_stack</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">]</span>
+        <span class="p">):</span>
             <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
-                <span class="s1">&#39;Out of bound, number of parts is greater than declared length </span><span class="si">%d</span><span class="s1">.&#39;</span>
-                <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expected_length_stack</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">])</span>
+                <span class="s2">&quot;Out of bound, number of parts is greater than declared length </span><span class="si">%d</span><span class="s2">.&quot;</span>
+                <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expected_length_stack</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">]</span>
+            <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_step_out_finalized_expr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_depth</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_index_stack</span><span class="p">[</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expected_length_stack</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">]:</span>
+        <span class="k">while</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_depth</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_index_stack</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">]</span>
+            <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expected_length_stack</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">]</span>
+        <span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_depth</span> <span class="o">-=</span> <span class="mi">1</span>
 
 <div class="viewcode-block" id="SerializationContext.add_part"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.serializer.SerializationContext.add_part">[docs]</a>    <span class="k">def</span> <span class="nf">add_part</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -188,18 +197,18 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_set_at_index_or_append</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Set the element of an `array` at a given index if it exists,</span>
+        <span class="sd">&quot;&quot;&quot;Set the element of an `array` at a given index if it exists,</span>
 <span class="sd">        append it to the array otherwise. The `index` must be at most the</span>
 <span class="sd">        length of the array.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="p">)</span> <span class="o">==</span> <span class="n">index</span><span class="p">:</span>
             <span class="n">array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">index</span><span class="p">:</span>
             <span class="n">array</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
-                <span class="s1">&#39;Index </span><span class="si">{}</span><span class="s1"> is greater than array length: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">index</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="p">)))</span>
+                <span class="s2">&quot;Index </span><span class="si">{}</span><span class="s2"> is greater than array length: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="p">))</span>
+            <span class="p">)</span>
 
 <div class="viewcode-block" id="SerializationContext.step_into_new_function"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.serializer.SerializationContext.step_into_new_function">[docs]</a>    <span class="k">def</span> <span class="nf">step_into_new_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">step_into_new_expr</span><span class="p">(</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span></div>
@@ -223,11 +232,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_depth</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="c1"># set or append element at index self._depth</span>
         <span class="n">SerializationContext</span><span class="o">.</span><span class="n">_set_at_index_or_append</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_expected_length_stack</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
-        <span class="n">SerializationContext</span><span class="o">.</span><span class="n">_set_at_index_or_append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_index_stack</span><span class="p">,</span>
-                                                     <span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">SerializationContext</span><span class="o">.</span><span class="n">_set_at_index_or_append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_in_assoc_stack</span><span class="p">,</span>
-                                                     <span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">,</span> <span class="n">is_assoc</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_expected_length_stack</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">,</span> <span class="n">length</span>
+        <span class="p">)</span>
+        <span class="n">SerializationContext</span><span class="o">.</span><span class="n">_set_at_index_or_append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_index_stack</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">SerializationContext</span><span class="o">.</span><span class="n">_set_at_index_or_append</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_in_assoc_stack</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">,</span> <span class="n">is_assoc</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expected_length_stack</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_expected_length_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
@@ -248,10 +258,12 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_in_assoc_stack</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">]</span></div>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(depth=</span><span class="si">{}</span><span class="s1">, element=</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">,</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(depth=</span><span class="si">{}</span><span class="s2">, element=</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_current_index_stack</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">],</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_expected_length_stack</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">])</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_expected_length_stack</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_depth</span><span class="p">],</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="WXFExprSerializer"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.serializer.WXFExprSerializer">[docs]</a><span class="k">class</span> <span class="nc">WXFExprSerializer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -268,11 +280,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">stream</span><span class="p">,</span>
-                 <span class="n">expr_provider</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">compress</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">enforce</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">expr_provider</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">compress</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">enforce</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_compress</span> <span class="o">=</span> <span class="n">compress</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span> <span class="o">=</span> <span class="n">stream</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expr_provider</span> <span class="o">=</span> <span class="n">expr_provider</span>
@@ -292,9 +300,9 @@
         <span class="k">return</span> <span class="n">pyExpr</span></div>
 
 <div class="viewcode-block" id="WXFExprSerializer.serialize"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.serializer.WXFExprSerializer.serialize">[docs]</a>    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pyExpr</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Serialize the python expression given as parameter.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># the header is never compressed.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">WXF_VERSION</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compress</span><span class="p">:</span>
@@ -310,7 +318,7 @@
                 <span class="n">wxfexpr</span><span class="o">.</span><span class="n">_serialize_to_wxf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">is_valid_final_state</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="n">WXFSerializerException</span><span class="p">(</span><span class="s1">&#39;Inconsistent state: truncated expr.&#39;</span><span class="p">)</span></div></div>
+            <span class="k">raise</span> <span class="n">WXFSerializerException</span><span class="p">(</span><span class="s2">&quot;Inconsistent state: truncated expr.&quot;</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>

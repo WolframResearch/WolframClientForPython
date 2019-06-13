@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.cli.commands.refactor &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
+    <title>wolframclient.cli.commands.refactor &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
     <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.2</span>
+                        <span class='header right navigation darkgrey'>v 1.1.0</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -79,15 +79,14 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="kn">from</span> <span class="nn">wolframclient.cli.utils</span> <span class="k">import</span> <span class="n">SimpleCommand</span>
-<span class="kn">from</span> <span class="nn">wolframclient.utils.importutils</span> <span class="k">import</span> <span class="n">module_path</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils.importutils</span> <span class="k">import</span> <span class="n">module_path</span><span class="p">,</span> <span class="n">safe_import_string_and_call</span>
 
 
 <div class="viewcode-block" id="Command"><a class="viewcode-back" href="../../../../api/wolframclient.cli.commands.html#wolframclient.cli.commands.refactor.Command">[docs]</a><span class="k">class</span> <span class="nc">Command</span><span class="p">(</span><span class="n">SimpleCommand</span><span class="p">):</span>
 
-    <span class="n">modules</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;wolframclient&#39;</span><span class="p">]</span>
+    <span class="n">modules</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;wolframclient&quot;</span><span class="p">]</span>
 
-    <span class="n">dependencies</span> <span class="o">=</span> <span class="p">((</span><span class="s1">&#39;autopep8&#39;</span><span class="p">,</span> <span class="s1">&#39;1.4&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;isort&#39;</span><span class="p">,</span> <span class="s1">&#39;4.3.4&#39;</span><span class="p">),</span>
-                    <span class="p">(</span><span class="s1">&#39;yapf&#39;</span><span class="p">,</span> <span class="s1">&#39;0.24.0&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;autoflake&#39;</span><span class="p">,</span> <span class="s1">&#39;1.2&#39;</span><span class="p">))</span>
+    <span class="n">dependencies</span> <span class="o">=</span> <span class="p">((</span><span class="s2">&quot;isort&quot;</span><span class="p">,</span> <span class="s2">&quot;4.3.20&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;autoflake&quot;</span><span class="p">,</span> <span class="s2">&quot;1.3&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="s2">&quot;19.3b0&quot;</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_module_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
 
@@ -99,37 +98,43 @@
         <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">arg</span>
 
+<div class="viewcode-block" id="Command.run"><a class="viewcode-back" href="../../../../api/wolframclient.cli.commands.html#wolframclient.cli.commands.refactor.Command.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="n">originals</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_module_args</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">))</span>
+        <span class="n">safe_import_string_and_call</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="o">=</span> <span class="n">originals</span></div>
+
 <div class="viewcode-block" id="Command.handle"><a class="viewcode-back" href="../../../../api/wolframclient.cli.commands.html#wolframclient.cli.commands.refactor.Command.handle">[docs]</a>    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
 
-        <span class="n">argv</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+        <span class="c1"># autoflake is not removing imports if they are in a list</span>
+        <span class="c1"># to fix this we first refactor the code using imports in single line</span>
 
-        <span class="kn">from</span> <span class="nn">autoflake</span> <span class="k">import</span> <span class="n">main</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="s2">&quot;isort.main.main&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;-rc&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;-sl&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;-a&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;from __future__ import absolute_import, print_function, unicode_literals&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
 
-        <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_module_args</span><span class="p">(</span><span class="s1">&#39;--in-place&#39;</span><span class="p">,</span> <span class="s1">&#39;--remove-duplicate-keys&#39;</span><span class="p">,</span>
-                              <span class="s1">&#39;--expand-star-import&#39;</span><span class="p">,</span>
-                              <span class="s1">&#39;--remove-all-unused-imports&#39;</span><span class="p">,</span> <span class="s1">&#39;--recursive&#39;</span><span class="p">))</span>
+        <span class="c1"># then we remove all missing imports and we expand star imports</span>
 
-        <span class="n">main</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="s2">&quot;autoflake.main&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;--in-place&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;--remove-duplicate-keys&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;--expand-star-import&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;--remove-all-unused-imports&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;--recursive&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
 
-        <span class="kn">from</span> <span class="nn">isort.main</span> <span class="k">import</span> <span class="n">main</span>
+        <span class="c1"># then we use refactor imports again using pretty newline style</span>
 
-        <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_module_args</span><span class="p">(</span>
-                <span class="s1">&#39;-rc&#39;</span><span class="p">,</span> <span class="s1">&#39;--multi-line&#39;</span><span class="p">,</span> <span class="s1">&#39;5&#39;</span><span class="p">,</span> <span class="s1">&#39;-a&#39;</span><span class="p">,</span>
-                <span class="s2">&quot;from __future__ import absolute_import, print_function, unicode_literals&quot;</span>
-            <span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;isort.main.main&quot;</span><span class="p">,</span> <span class="s2">&quot;-rc&quot;</span><span class="p">,</span> <span class="s2">&quot;--multi-line&quot;</span><span class="p">,</span> <span class="s2">&quot;5&quot;</span><span class="p">)</span>
 
-        <span class="n">main</span><span class="p">()</span>
+        <span class="c1"># after that we finally run black to refactor all code</span>
 
-        <span class="kn">import</span> <span class="nn">yapf</span>
-
-        <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_module_args</span><span class="p">(</span><span class="s1">&#39;--in-place&#39;</span><span class="p">,</span> <span class="s1">&#39;--recursive&#39;</span><span class="p">,</span> <span class="s1">&#39;--parallel&#39;</span><span class="p">))</span>
-
-        <span class="n">yapf</span><span class="o">.</span><span class="n">run_main</span><span class="p">()</span>
-
-        <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="o">=</span> <span class="n">argv</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;black.main&quot;</span><span class="p">,</span> <span class="s2">&quot;--line-length&quot;</span><span class="p">,</span> <span class="s2">&quot;95&quot;</span><span class="p">,</span> <span class="s2">&quot;--target-version&quot;</span><span class="p">,</span> <span class="s2">&quot;py34&quot;</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>

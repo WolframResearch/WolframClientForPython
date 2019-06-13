@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.serializers.wxfencoder.wxfexpr &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
+    <title>wolframclient.serializers.wxfencoder.wxfexpr &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
     <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.2</span>
+                        <span class='header right navigation darkgrey'>v 1.1.0</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -77,17 +77,25 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
 
 <span class="kn">from</span> <span class="nn">wolframclient.serializers.wxfencoder.constants</span> <span class="k">import</span> <span class="p">(</span>
-    <span class="n">VALID_PACKED_ARRAY_TYPES</span><span class="p">,</span> <span class="n">WXF_CONSTANTS</span><span class="p">,</span> <span class="n">StructDouble</span><span class="p">,</span> <span class="n">StructInt8LE</span><span class="p">,</span>
-    <span class="n">StructInt16LE</span><span class="p">,</span> <span class="n">StructInt32LE</span><span class="p">,</span> <span class="n">StructInt64LE</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">wolframclient.serializers.wxfencoder.serializer</span> <span class="k">import</span> <span class="p">(</span>
-    <span class="n">WXFSerializerException</span><span class="p">)</span>
+    <span class="n">VALID_PACKED_ARRAY_TYPES</span><span class="p">,</span>
+    <span class="n">WXF_CONSTANTS</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">wolframclient.serializers.wxfencoder.serializer</span> <span class="k">import</span> <span class="n">WXFSerializerException</span>
 <span class="kn">from</span> <span class="nn">wolframclient.serializers.wxfencoder.utils</span> <span class="k">import</span> <span class="p">(</span>
-    <span class="n">float_to_bytes</span><span class="p">,</span> <span class="n">integer_size</span><span class="p">,</span> <span class="n">integer_to_bytes</span><span class="p">,</span> <span class="n">write_varint</span><span class="p">)</span>
+    <span class="n">float_to_bytes</span><span class="p">,</span>
+    <span class="n">integer_size</span><span class="p">,</span>
+    <span class="n">integer_to_bytes</span><span class="p">,</span>
+    <span class="n">write_varint</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">wolframclient.utils</span> <span class="k">import</span> <span class="n">six</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;WXFExprFunction&#39;</span><span class="p">,</span> <span class="s1">&#39;WXFExprInteger&#39;</span><span class="p">,</span> <span class="s1">&#39;WXFExprString&#39;</span><span class="p">,</span> <span class="s1">&#39;WXFExprSymbol&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;WXFExprBinaryString&#39;</span><span class="p">,</span> <span class="s1">&#39;WXF_CONSTANTS&#39;</span>
+    <span class="s2">&quot;WXFExprFunction&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;WXFExprInteger&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;WXFExprString&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;WXFExprSymbol&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;WXFExprBinaryString&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;WXF_CONSTANTS&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -97,13 +105,13 @@
 <span class="sd">    This is an abstract class. Only its children must be used.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;wxf_type&#39;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s2">&quot;wxf_type&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wxf_type</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wxf_type</span> <span class="o">=</span> <span class="n">wxf_type</span>
 
     <span class="k">def</span> <span class="nf">_serialize_to_wxf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">stream</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Write the serialized form of a given WXFExpr. &#39;&#39;&#39;</span>
+        <span class="sd">&quot;&quot;&quot; Write the serialized form of a given WXFExpr. &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 
@@ -112,7 +120,8 @@
 <span class="sd">    Each function has a head which is itself a expr, usually a `WXFExprSymbol` which</span>
 <span class="sd">    is not accounted in the length.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;length&#39;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s2">&quot;length&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">WXFExprFunction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">Function</span><span class="p">)</span>
@@ -126,27 +135,27 @@
 
 
 <div class="viewcode-block" id="WXFExprInteger"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.wxfexpr.WXFExprInteger">[docs]</a><span class="k">class</span> <span class="nc">WXFExprInteger</span><span class="p">(</span><span class="n">WXFExpr</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Integers have various length, from one byte up to eight and are signed</span>
+    <span class="sd">&quot;&quot;&quot; Integers have various length, from one byte up to eight and are signed</span>
 <span class="sd">    values. Values above 2^63-1 are represented with `WXFExprBigInteger`.</span>
 <span class="sd">    Internally WXF uses the two&#39;s complement representation of integer values.</span>
 <span class="sd">    The endianness is system independent and is always little-endian.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="s1">&#39;int_size&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="s2">&quot;int_size&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">integer_types</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="s1">&#39;WXFExprInteger must be initialize with an integer value.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;WXFExprInteger must be initialize with an integer value.&quot;</span><span class="p">)</span>
         <span class="n">wxf_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">int_size</span> <span class="o">=</span> <span class="n">integer_size</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">WXFExprInteger</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wxf_type</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="sd">&#39;&#39;&#39; Encode the integer into bytes and return them in a `buffer`.</span>
+    <span class="sd">&quot;&quot;&quot; Encode the integer into bytes and return them in a `buffer`.</span>
 
 <span class="sd">    Note that the buffer is an bytearray in python 2.7 and an array in 3.x.</span>
 <span class="sd">    This method is only useful to hide the Python 2.7 implementation.</span>
 <span class="sd">    It is proxying int.to_bytes for version 3.4 and above.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="WXFExprInteger.to_bytes"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.wxfexpr.WXFExprInteger.to_bytes">[docs]</a>    <span class="k">def</span> <span class="nf">to_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">integer_to_bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">int_size</span><span class="p">)</span></div>
@@ -158,13 +167,14 @@
 
 
 <span class="k">class</span> <span class="nc">WXFExprReal</span><span class="p">(</span><span class="n">WXFExpr</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Represent a floating point value. Internally WXF represents the value with</span>
-<span class="sd">    double float-point value in the IEEE 754 standard. &#39;&#39;&#39;</span>
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span>
+    <span class="sd">&quot;&quot;&quot; Represent a floating point value. Internally WXF represents the value with</span>
+<span class="sd">    double float-point value in the IEEE 754 standard. &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;WXFExprReal must be initialized with a float.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;WXFExprReal must be initialized with a float.&quot;</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">WXFExprReal</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">Real64</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
 
@@ -175,26 +185,30 @@
 
 
 <span class="k">class</span> <span class="nc">_WXFExprStringLike</span><span class="p">(</span><span class="n">WXFExpr</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Parent class of all string based expressions.</span>
+    <span class="sd">&quot;&quot;&quot; Parent class of all string based expressions.</span>
 
 <span class="sd">    Store a given string value as a utf-8 encoded binary string.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;length&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s2">&quot;length&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wxf_type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">allow_binary</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Initialize using a given string `value`.</span>
+        <span class="sd">&quot;&quot;&quot; Initialize using a given string `value`.</span>
 
 <span class="sd">        If `allow_binary` is set to false, also accept binary types: `bytes` (py3) and `str` (py2)</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">_WXFExprStringLike</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wxf_type</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">allow_binary</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">binary_type</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">text_type</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span>
-                            <span class="s2">&quot; must be initialize with a string. Was &#39;&quot;</span> <span class="o">+</span>
-                            <span class="n">value</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;&#39;.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+                <span class="o">+</span> <span class="s2">&quot; must be initialize with a string. Was &#39;&quot;</span>
+                <span class="o">+</span> <span class="n">value</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+                <span class="o">+</span> <span class="s2">&quot;&#39;.&quot;</span>
+            <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
@@ -206,54 +220,54 @@
 
 
 <div class="viewcode-block" id="WXFExprSymbol"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.wxfexpr.WXFExprSymbol">[docs]</a><span class="k">class</span> <span class="nc">WXFExprSymbol</span><span class="p">(</span><span class="n">_WXFExprStringLike</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; A symbol represented by a string name. The name is always utf8 encoded.&#39;&#39;&#39;</span>
+    <span class="sd">&quot;&quot;&quot; A symbol represented by a string name. The name is always utf8 encoded.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">WXFExprSymbol</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">Symbol</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">allow_binary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WXFExprSymbol</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">Symbol</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">allow_binary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="WXFExprString"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.wxfexpr.WXFExprString">[docs]</a><span class="k">class</span> <span class="nc">WXFExprString</span><span class="p">(</span><span class="n">_WXFExprStringLike</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; A string of unicode character. The string is always utf8 encoded.</span>
+    <span class="sd">&quot;&quot;&quot; A string of unicode character. The string is always utf8 encoded.</span>
 
 <span class="sd">    Notabene: Python 3 does not allow utf8 encoding of the surrogate range</span>
 <span class="sd">    from `0xD800` to `0xDFFF`. Python 2 and the Wolfram Language on the other</span>
 <span class="sd">    hand handle those characters as any other unicode code points.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">WXFExprString</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 
 
 <span class="k">class</span> <span class="nc">WXFExprBigInteger</span><span class="p">(</span><span class="n">_WXFExprStringLike</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; A string of digits representing a big integer&#39;&#39;&#39;</span>
+    <span class="sd">&quot;&quot;&quot; A string of digits representing a big integer&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">WXFExprBigInteger</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">BigInteger</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">allow_binary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">BigInteger</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">allow_binary</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">WXFExprBigReal</span><span class="p">(</span><span class="n">_WXFExprStringLike</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; A string representation of a real value with arbitrary precision. The string format matches the one of the</span>
+    <span class="sd">&quot;&quot;&quot; A string representation of a real value with arbitrary precision. The string format matches the one of the</span>
 <span class="sd">    :wl:`InputForm` string representation of the real in the Wolfram Language.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">WXFExprBigReal</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">BigReal</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">allow_binary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WXFExprBigReal</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">BigReal</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">allow_binary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="WXFExprBinaryString"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.wxfexpr.WXFExprBinaryString">[docs]</a><span class="k">class</span> <span class="nc">WXFExprBinaryString</span><span class="p">(</span><span class="n">WXFExpr</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;A string of arbitrary bytes. Contrary to `WXFExprString` no encoding is</span>
-<span class="sd">    required.&#39;&#39;&#39;</span>
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;data&#39;</span>
+    <span class="sd">&quot;&quot;&quot;A string of arbitrary bytes. Contrary to `WXFExprString` no encoding is</span>
+<span class="sd">    required.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s2">&quot;data&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">binary_type</span><span class="p">,</span> <span class="nb">bytearray</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">buffer_types</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="s1">&#39;WXFExprBinaryString must be initialized with binary data: bytes in Python 3, str in Python 2.7 or bytearray.&#39;</span>
+                <span class="s2">&quot;WXFExprBinaryString must be initialized with binary data: bytes in Python 3, str in Python 2.7 or bytearray.&quot;</span>
             <span class="p">)</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">WXFExprBinaryString</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">BinaryString</span><span class="p">)</span>
 
@@ -265,21 +279,20 @@
 
 
 <span class="k">class</span> <span class="nc">_WXFExprArray</span><span class="p">(</span><span class="n">WXFExpr</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Arrays are multidimensional tables of machine-precision numeric values.</span>
+    <span class="sd">&quot;&quot;&quot;Arrays are multidimensional tables of machine-precision numeric values.</span>
 <span class="sd">    The `dimensions` is a list of strictly positive integers representing the</span>
 <span class="sd">    array shape. The data contains the flatten binary representation of the</span>
-<span class="sd">    values.&#39;&#39;&#39;</span>
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;dimensions&#39;</span><span class="p">,</span> <span class="s1">&#39;value_type&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span>
+<span class="sd">    values.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s2">&quot;dimensions&quot;</span><span class="p">,</span> <span class="s2">&quot;value_type&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wxf_type</span><span class="p">,</span> <span class="n">dimensions</span><span class="p">,</span> <span class="n">value_type</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">_WXFExprArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wxf_type</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dimensions</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">dimensions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Dimensions must be a non-empty list.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Dimensions must be a non-empty list.&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span>
-                <span class="nb">isinstance</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">integer_types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dim</span> <span class="o">&gt;</span> <span class="mi">0</span>
-                <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">dimensions</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Dimensions must be positive integers.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">integer_types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dim</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">dimensions</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Dimensions must be positive integers.&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">dimensions</span> <span class="o">=</span> <span class="n">dimensions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value_type</span> <span class="o">=</span> <span class="n">value_type</span>
@@ -299,37 +312,38 @@
 
 
 <span class="k">class</span> <span class="nc">WXFExprPackedArray</span><span class="p">(</span><span class="n">_WXFExprArray</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Packed array is a type of array that only supports a subset of all the</span>
-<span class="sd">    possible type of values: signed integers, reals, complexes. See `VALID_PACKED_ARRAY_TYPES`.&#39;&#39;&#39;</span>
+    <span class="sd">&quot;&quot;&quot; Packed array is a type of array that only supports a subset of all the</span>
+<span class="sd">    possible type of values: signed integers, reals, complexes. See `VALID_PACKED_ARRAY_TYPES`.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dimensions</span><span class="p">,</span> <span class="n">value_type</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">value_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">VALID_PACKED_ARRAY_TYPES</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Invalid packed array value type (</span><span class="si">{}</span><span class="s1">).&#39;</span><span class="p">,</span>
-                            <span class="n">value_type</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">WXFExprPackedArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">PackedArray</span><span class="p">,</span>
-                                                 <span class="n">dimensions</span><span class="p">,</span> <span class="n">value_type</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Invalid packed array value type (</span><span class="si">{}</span><span class="s2">).&quot;</span><span class="p">,</span> <span class="n">value_type</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WXFExprPackedArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">PackedArray</span><span class="p">,</span> <span class="n">dimensions</span><span class="p">,</span> <span class="n">value_type</span><span class="p">,</span> <span class="n">data</span>
+        <span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">WXFExprNumericArray</span><span class="p">(</span><span class="n">_WXFExprArray</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Raw array is an array that supports many type of values:</span>
-<span class="sd">    signed and unsigned integers, reals, complexes. See `ARRAY_TYPES`.&#39;&#39;&#39;</span>
+    <span class="sd">&quot;&quot;&quot; Raw array is an array that supports many type of values:</span>
+<span class="sd">    signed and unsigned integers, reals, complexes. See `ARRAY_TYPES`.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dimensions</span><span class="p">,</span> <span class="n">value_type</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">WXFExprNumericArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">NumericArray</span><span class="p">,</span>
-                                                  <span class="n">dimensions</span><span class="p">,</span> <span class="n">value_type</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WXFExprNumericArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">NumericArray</span><span class="p">,</span> <span class="n">dimensions</span><span class="p">,</span> <span class="n">value_type</span><span class="p">,</span> <span class="n">data</span>
+        <span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">WXFExprAssociation</span><span class="p">(</span><span class="n">WXFExpr</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Association is a key value store similar to `dict`. `WXFExprAssociation`</span>
+    <span class="sd">&quot;&quot;&quot; Association is a key value store similar to `dict`. `WXFExprAssociation`</span>
 <span class="sd">    requires a length, the number of entries. Only `WXFExprRule` and `WXFExprRuleDelayed`</span>
 <span class="sd">    are valid entry types in an association.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-    <span class="n">__slot__</span> <span class="o">=</span> <span class="s1">&#39;length&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">__slot__</span> <span class="o">=</span> <span class="s2">&quot;length&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">integer_types</span><span class="p">)</span> <span class="ow">or</span> <span class="n">length</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="s1">&#39;WXFExprAssociation must be instantiated with a length.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;WXFExprAssociation must be instantiated with a length.&quot;</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">WXFExprAssociation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">Association</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="n">length</span>
 
@@ -355,17 +369,17 @@
 
 
 <span class="k">class</span> <span class="nc">WXFExprRule</span><span class="p">(</span><span class="n">_WXFExprRule</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Represent a rule in an association. Rule have two parts but no head.</span>
+    <span class="sd">&quot;&quot;&quot; Represent a rule in an association. Rule have two parts but no head.</span>
 <span class="sd">    Rules that are not part of an association (e.g list of rules) must be encoded</span>
 <span class="sd">    as a function with head `&#39;Rule&#39;`.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">WXFExprRule</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">Rule</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">WXFExprRuleDelayed</span><span class="p">(</span><span class="n">_WXFExprRule</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Represent a rule delayed in an association. See `WXFExprRule`&#39;&#39;&#39;</span>
+    <span class="sd">&quot;&quot;&quot; Represent a rule delayed in an association. See `WXFExprRule`&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">WXFExprRuleDelayed</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">RuleDelayed</span><span class="p">)</span>

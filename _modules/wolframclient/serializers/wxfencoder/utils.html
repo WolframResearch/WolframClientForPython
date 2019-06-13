@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.serializers.wxfencoder.utils &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
+    <title>wolframclient.serializers.wxfencoder.utils &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
     <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.2</span>
+                        <span class='header right navigation darkgrey'>v 1.1.0</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -76,10 +76,24 @@
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
 
+<span class="kn">from</span> <span class="nn">wolframclient.exception</span> <span class="k">import</span> <span class="n">WolframLanguageException</span>
 <span class="kn">from</span> <span class="nn">wolframclient.serializers.wxfencoder.constants</span> <span class="k">import</span> <span class="p">(</span>
-    <span class="n">ARRAY_TYPES</span><span class="p">,</span> <span class="n">VALID_PACKED_ARRAY_TYPES</span><span class="p">,</span> <span class="n">WXF_CONSTANTS</span><span class="p">,</span> <span class="n">StructDouble</span><span class="p">,</span>
-    <span class="n">StructInt8LE</span><span class="p">,</span> <span class="n">StructInt16LE</span><span class="p">,</span> <span class="n">StructInt32LE</span><span class="p">,</span> <span class="n">StructInt64LE</span><span class="p">)</span>
+    <span class="n">ARRAY_TYPES</span><span class="p">,</span>
+    <span class="n">VALID_PACKED_ARRAY_TYPES</span><span class="p">,</span>
+    <span class="n">WXF_CONSTANTS</span><span class="p">,</span>
+    <span class="n">StructDouble</span><span class="p">,</span>
+    <span class="n">StructFloat</span><span class="p">,</span>
+    <span class="n">StructInt8LE</span><span class="p">,</span>
+    <span class="n">StructInt16LE</span><span class="p">,</span>
+    <span class="n">StructInt32LE</span><span class="p">,</span>
+    <span class="n">StructInt64LE</span><span class="p">,</span>
+    <span class="n">StructUInt8LE</span><span class="p">,</span>
+    <span class="n">StructUInt16LE</span><span class="p">,</span>
+    <span class="n">StructUInt32LE</span><span class="p">,</span>
+    <span class="n">StructUInt64LE</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">wolframclient.utils</span> <span class="k">import</span> <span class="n">six</span>
+<span class="kn">from</span> <span class="nn">wolframclient.utils.datastructures</span> <span class="k">import</span> <span class="n">Settings</span>
 
 <span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">JYTHON</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">jarray</span>
@@ -96,10 +110,10 @@
     <span class="sd">&quot;&quot;&quot;Serialize `int_value` into varint bytes and return them as a byetarray.&quot;&quot;&quot;</span>
     <span class="n">buf</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">int_value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Negative values cannot be encoded as varint.&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Negative values cannot be encoded as varint.&quot;</span><span class="p">)</span>
     <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="nb">next</span> <span class="o">=</span> <span class="n">int_value</span> <span class="o">&amp;</span> <span class="mh">0x7f</span>
+        <span class="nb">next</span> <span class="o">=</span> <span class="n">int_value</span> <span class="o">&amp;</span> <span class="mh">0x7F</span>
         <span class="n">int_value</span> <span class="o">&gt;&gt;=</span> <span class="mi">7</span>
         <span class="k">if</span> <span class="n">int_value</span><span class="p">:</span>
             <span class="n">buf</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="nb">next</span> <span class="o">|</span> <span class="mh">0x80</span>
@@ -119,31 +133,29 @@
     <span class="o">-</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">31</span><span class="p">):</span> <span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">Integer32</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
     <span class="o">-</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">63</span><span class="p">):</span> <span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">Integer64</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
 <span class="p">}</span>
-<span class="n">_size</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">j</span><span class="p">,</span> <span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="p">[</span><span class="s1">&#39;Integer</span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">ih</span><span class="p">],</span> <span class="n">ih</span> <span class="o">//</span> <span class="mi">8</span><span class="p">))</span>
-             <span class="k">for</span> <span class="n">il</span><span class="p">,</span> <span class="n">ih</span> <span class="ow">in</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span> <span class="p">(</span><span class="mi">17</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span> <span class="p">(</span><span class="mi">33</span><span class="p">,</span> <span class="mi">64</span><span class="p">))</span>
-             <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">il</span><span class="p">,</span> <span class="n">ih</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">_size</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="p">[</span><span class="s2">&quot;Integer</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">ih</span><span class="p">],</span> <span class="n">ih</span> <span class="o">//</span> <span class="mi">8</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">il</span><span class="p">,</span> <span class="n">ih</span> <span class="ow">in</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span> <span class="p">(</span><span class="mi">17</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span> <span class="p">(</span><span class="mi">33</span><span class="p">,</span> <span class="mi">64</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">il</span><span class="p">,</span> <span class="n">ih</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="integer_size"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.utils.integer_size">[docs]</a><span class="k">def</span> <span class="nf">integer_size</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_exceptions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">_size</span><span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Value </span><span class="si">%i</span><span class="s1"> is not a machine-sized integer.&#39;</span> <span class="o">%</span> <span class="n">value</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Value </span><span class="si">%i</span><span class="s2"> is not a machine-sized integer.&quot;</span> <span class="o">%</span> <span class="n">value</span><span class="p">)</span></div>
 
 
-<span class="n">_packing</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="mi">1</span><span class="p">:</span> <span class="n">StructInt8LE</span><span class="p">,</span>
-    <span class="mi">2</span><span class="p">:</span> <span class="n">StructInt16LE</span><span class="p">,</span>
-    <span class="mi">4</span><span class="p">:</span> <span class="n">StructInt32LE</span><span class="p">,</span>
-    <span class="mi">8</span><span class="p">:</span> <span class="n">StructInt64LE</span>
-<span class="p">}</span>
+<span class="n">_packing</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="n">StructInt8LE</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="n">StructInt16LE</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="n">StructInt32LE</span><span class="p">,</span> <span class="mi">8</span><span class="p">:</span> <span class="n">StructInt64LE</span><span class="p">}</span>
 
 <span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">JYTHON</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="nf">integer_to_bytes</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">int_size</span><span class="p">):</span>
-        <span class="n">buffer</span> <span class="o">=</span> <span class="n">jarray</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">)</span>
+        <span class="n">buffer</span> <span class="o">=</span> <span class="n">jarray</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">)</span>
         <span class="n">_packing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">int_size</span><span class="p">)</span><span class="o">.</span><span class="n">pack_into</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">buffer</span><span class="p">[:</span><span class="n">int_size</span><span class="p">]</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
+
 
 <span class="k">elif</span> <span class="n">six</span><span class="o">.</span><span class="n">PY2</span><span class="p">:</span>
 
@@ -151,18 +163,22 @@
         <span class="n">buffer</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
         <span class="n">_packing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">int_size</span><span class="p">)</span><span class="o">.</span><span class="n">pack_into</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">buffer</span><span class="p">[:</span><span class="n">int_size</span><span class="p">]</span>
+
+
 <span class="k">else</span><span class="p">:</span>
 
 <div class="viewcode-block" id="integer_to_bytes"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.utils.integer_to_bytes">[docs]</a>    <span class="k">def</span> <span class="nf">integer_to_bytes</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">int_size</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="n">int_size</span><span class="p">,</span> <span class="n">byteorder</span><span class="o">=</span><span class="s1">&#39;little&#39;</span><span class="p">,</span> <span class="n">signed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="n">int_size</span><span class="p">,</span> <span class="n">byteorder</span><span class="o">=</span><span class="s2">&quot;little&quot;</span><span class="p">,</span> <span class="n">signed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
 <span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">JYTHON</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="nf">float_to_bytes</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-        <span class="n">buffer</span> <span class="o">=</span> <span class="n">jarray</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">)</span>
+        <span class="n">buffer</span> <span class="o">=</span> <span class="n">jarray</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">)</span>
         <span class="n">StructDouble</span><span class="o">.</span><span class="n">pack_into</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">buffer</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
+
+
 <span class="k">else</span><span class="p">:</span>
 
 <div class="viewcode-block" id="float_to_bytes"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.utils.float_to_bytes">[docs]</a>    <span class="k">def</span> <span class="nf">float_to_bytes</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
@@ -171,13 +187,128 @@
         <span class="k">return</span> <span class="n">buffer</span></div>
 
 
-<div class="viewcode-block" id="numeric_array_to_wxf"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.utils.numeric_array_to_wxf">[docs]</a><span class="k">def</span> <span class="nf">numeric_array_to_wxf</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dimensions</span><span class="p">,</span> <span class="n">wl_type</span><span class="p">):</span>
-    <span class="k">yield</span> <span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">NumericArray</span>
-    <span class="k">yield</span> <span class="n">ARRAY_TYPES</span><span class="p">[</span><span class="n">wl_type</span><span class="p">]</span>
+<div class="viewcode-block" id="valid_dimension_or_fail"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.utils.valid_dimension_or_fail">[docs]</a><span class="k">def</span> <span class="nf">valid_dimension_or_fail</span><span class="p">(</span><span class="n">dimension</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">dimension</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">WolframLanguageException</span><span class="p">(</span>
+            <span class="s2">&quot;Invalid array dimensions: </span><span class="si">%s</span><span class="s2">. Expecting strictly positive integer.&quot;</span> <span class="o">%</span> <span class="n">dimension</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="array_to_wxf"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.utils.array_to_wxf">[docs]</a><span class="k">def</span> <span class="nf">array_to_wxf</span><span class="p">(</span><span class="n">wxf_token</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">dimensions</span><span class="p">,</span> <span class="n">array_type_token</span><span class="p">):</span>
+    <span class="k">yield</span> <span class="n">wxf_token</span>
+    <span class="k">yield</span> <span class="n">array_type_token</span>
     <span class="k">yield</span> <span class="n">varint_bytes</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dimensions</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">dimensions</span><span class="p">:</span>
+        <span class="n">valid_dimension_or_fail</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
         <span class="k">yield</span> <span class="n">varint_bytes</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
     <span class="k">yield</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="numeric_array_to_wxf"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.utils.numeric_array_to_wxf">[docs]</a><span class="k">def</span> <span class="nf">numeric_array_to_wxf</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dimensions</span><span class="p">,</span> <span class="n">wl_type</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">array_to_wxf</span><span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">NumericArray</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">dimensions</span><span class="p">,</span> <span class="n">ARRAY_TYPES</span><span class="p">[</span><span class="n">wl_type</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="packed_array_to_wxf"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.utils.packed_array_to_wxf">[docs]</a><span class="k">def</span> <span class="nf">packed_array_to_wxf</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dimensions</span><span class="p">,</span> <span class="n">wl_type</span><span class="p">):</span>
+    <span class="n">array_type_token</span> <span class="o">=</span> <span class="n">ARRAY_TYPES</span><span class="p">[</span><span class="n">wl_type</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">array_type_token</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">VALID_PACKED_ARRAY_TYPES</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid PackedArray type </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">array_type_token</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">array_to_wxf</span><span class="p">(</span><span class="n">WXF_CONSTANTS</span><span class="o">.</span><span class="n">PackedArray</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">dimensions</span><span class="p">,</span> <span class="n">array_type_token</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="array_to_list"><a class="viewcode-back" href="../../../../api/wolframclient.serializers.wxfencoder.html#wolframclient.serializers.wxfencoder.utils.array_to_list">[docs]</a><span class="k">def</span> <span class="nf">array_to_list</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dimensions</span><span class="p">,</span> <span class="n">wl_type</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">dimension</span> <span class="ow">in</span> <span class="n">dimensions</span><span class="p">:</span>
+        <span class="n">valid_dimension_or_fail</span><span class="p">(</span><span class="n">dimension</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_array_to_list</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dimensions</span><span class="p">,</span> <span class="n">wl_type</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="nb">memoryview</span><span class="p">,</span> <span class="s2">&quot;cast&quot;</span><span class="p">):</span>
+    <span class="n">unpack_mapping</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">(</span>
+        <span class="n">Integer8</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span>
+        <span class="n">UnsignedInteger8</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+        <span class="n">Integer16</span><span class="o">=</span><span class="s2">&quot;h&quot;</span><span class="p">,</span>
+        <span class="n">UnsignedInteger16</span><span class="o">=</span><span class="s2">&quot;H&quot;</span><span class="p">,</span>
+        <span class="n">Integer32</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">,</span>
+        <span class="n">UnsignedInteger32</span><span class="o">=</span><span class="s2">&quot;I&quot;</span><span class="p">,</span>
+        <span class="n">Integer64</span><span class="o">=</span><span class="s2">&quot;q&quot;</span><span class="p">,</span>
+        <span class="n">UnsignedInteger64</span><span class="o">=</span><span class="s2">&quot;Q&quot;</span><span class="p">,</span>
+        <span class="n">Real32</span><span class="o">=</span><span class="s2">&quot;f&quot;</span><span class="p">,</span>
+        <span class="n">Real64</span><span class="o">=</span><span class="s2">&quot;d&quot;</span><span class="p">,</span>
+        <span class="n">ComplexReal32</span><span class="o">=</span><span class="s2">&quot;f&quot;</span><span class="p">,</span>
+        <span class="n">ComplexReal64</span><span class="o">=</span><span class="s2">&quot;d&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_to_complex</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">,</span> <span class="n">curr_depth</span><span class="p">):</span>
+        <span class="c1"># recursivelly traverse the array until the last (real) dimension is reached</span>
+        <span class="c1"># it correspond to an array of (fake) array of two elements (real and im parts).</span>
+        <span class="k">if</span> <span class="n">curr_depth</span> <span class="o">&lt;</span> <span class="n">max_depth</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">array</span><span class="p">:</span>
+                <span class="n">_to_complex</span><span class="p">(</span><span class="n">sub</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">,</span> <span class="n">curr_depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="c1"># iterate over the pairs</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">complex_pair</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+            <span class="n">array</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="o">*</span><span class="n">complex_pair</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_array_to_list</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">array_type</span><span class="p">):</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="nb">memoryview</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">array_type</span> <span class="o">==</span> <span class="s2">&quot;ComplexReal32&quot;</span> <span class="ow">or</span> <span class="n">array_type</span> <span class="o">==</span> <span class="s2">&quot;ComplexReal64&quot;</span><span class="p">:</span>
+            <span class="n">dimensions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">array_depth</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dimensions</span><span class="p">)</span>
+            <span class="c1"># In the given array, 2 reals give one complex,</span>
+            <span class="c1"># adding one last dimension to represent it.</span>
+            <span class="n">dimensions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">as_list</span> <span class="o">=</span> <span class="n">view</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">unpack_mapping</span><span class="p">[</span><span class="n">array_type</span><span class="p">],</span> <span class="n">shape</span><span class="o">=</span><span class="n">dimensions</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">_to_complex</span><span class="p">(</span><span class="n">as_list</span><span class="p">,</span> <span class="n">array_depth</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">as_list</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">view</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">unpack_mapping</span><span class="p">[</span><span class="n">array_type</span><span class="p">],</span> <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">unpack_mapping</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">(</span>
+        <span class="n">Integer8</span><span class="o">=</span><span class="n">StructInt8LE</span><span class="p">,</span>
+        <span class="n">UnsignedInteger8</span><span class="o">=</span><span class="n">StructUInt8LE</span><span class="p">,</span>
+        <span class="n">Integer16</span><span class="o">=</span><span class="n">StructInt16LE</span><span class="p">,</span>
+        <span class="n">UnsignedInteger16</span><span class="o">=</span><span class="n">StructUInt16LE</span><span class="p">,</span>
+        <span class="n">Integer32</span><span class="o">=</span><span class="n">StructInt32LE</span><span class="p">,</span>
+        <span class="n">UnsignedInteger32</span><span class="o">=</span><span class="n">StructUInt32LE</span><span class="p">,</span>
+        <span class="n">Integer64</span><span class="o">=</span><span class="n">StructInt64LE</span><span class="p">,</span>
+        <span class="n">UnsignedInteger64</span><span class="o">=</span><span class="n">StructUInt64LE</span><span class="p">,</span>
+        <span class="n">Real32</span><span class="o">=</span><span class="n">StructFloat</span><span class="p">,</span>
+        <span class="n">Real64</span><span class="o">=</span><span class="n">StructDouble</span><span class="p">,</span>
+        <span class="n">ComplexReal32</span><span class="o">=</span><span class="n">StructFloat</span><span class="p">,</span>
+        <span class="n">ComplexReal64</span><span class="o">=</span><span class="n">StructDouble</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_array_to_list</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">array_type</span><span class="p">):</span>
+        <span class="n">value</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_build_array_from_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">array_type</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">_build_array_from_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">array_type</span><span class="p">,</span> <span class="n">dimensions</span><span class="p">,</span> <span class="n">current_dim</span><span class="p">):</span>
+        <span class="n">new_array</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">current_dim</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">dimensions</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dimensions</span><span class="p">[</span><span class="n">current_dim</span><span class="p">]):</span>
+                <span class="n">new_elem</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">_build_array_from_bytes</span><span class="p">(</span>
+                    <span class="n">data</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">array_type</span><span class="p">,</span> <span class="n">dimensions</span><span class="p">,</span> <span class="n">current_dim</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="p">)</span>
+                <span class="n">new_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_elem</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">struct</span> <span class="o">=</span> <span class="n">unpack_mapping</span><span class="p">[</span><span class="n">array_type</span><span class="p">]</span>
+            <span class="c1"># complex values, need two reals for each.</span>
+            <span class="k">if</span> <span class="n">array_type</span> <span class="o">==</span> <span class="s2">&quot;ComplexReal32&quot;</span> <span class="ow">or</span> <span class="n">array_type</span> <span class="o">==</span> <span class="s2">&quot;ComplexReal64&quot;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dimensions</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                    <span class="c1"># this returns a tuple.</span>
+                    <span class="n">re</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">offset</span><span class="p">)</span>
+                    <span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">struct</span><span class="o">.</span><span class="n">size</span>
+                    <span class="n">im</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">offset</span><span class="p">)</span>
+                    <span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">struct</span><span class="o">.</span><span class="n">size</span>
+                    <span class="n">new_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">complex</span><span class="p">(</span><span class="n">re</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">im</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dimensions</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                    <span class="c1"># this returns a tuple.</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">offset</span><span class="p">)</span>
+                    <span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">struct</span><span class="o">.</span><span class="n">size</span>
+                    <span class="n">new_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">new_array</span><span class="p">,</span> <span class="n">offset</span>
 </pre></div>
 
           </div>

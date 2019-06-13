@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.evaluation.cloud.base &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
+    <title>wolframclient.evaluation.cloud.base &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
     <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.2</span>
+                        <span class='header right navigation darkgrey'>v 1.1.0</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -83,17 +83,20 @@
 <span class="kn">from</span> <span class="nn">wolframclient.utils.api</span> <span class="k">import</span> <span class="n">oauth</span><span class="p">,</span> <span class="n">urllib</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;SecuredAuthenticationKey&#39;</span><span class="p">,</span> <span class="s1">&#39;UserIDPassword&#39;</span><span class="p">,</span> <span class="s1">&#39;OAuthSessionBase&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;OAuthAsyncSessionBase&#39;</span>
+    <span class="s2">&quot;SecuredAuthenticationKey&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;UserIDPassword&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;OAuthSessionBase&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;OAuthAsyncSessionBase&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 
 <div class="viewcode-block" id="SecuredAuthenticationKey"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.SecuredAuthenticationKey">[docs]</a><span class="k">class</span> <span class="nc">SecuredAuthenticationKey</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Represents a Secured Authentication Key generated using the Wolfram Language</span>
+    <span class="sd">&quot;&quot;&quot; Represents a Secured Authentication Key generated using the Wolfram Language</span>
 <span class="sd">    function `GenerateSecuredAuthenticationKey[]`</span>
 
 <span class="sd">    It is used as an input when authenticating a cloud session.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">is_xauth</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consumer_key</span><span class="p">,</span> <span class="n">consumer_secret</span><span class="p">):</span>
@@ -102,10 +105,11 @@
 
 
 <div class="viewcode-block" id="UserIDPassword"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.UserIDPassword">[docs]</a><span class="k">class</span> <span class="nc">UserIDPassword</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Represents user credentials used to login to a cloud.</span>
+    <span class="sd">&quot;&quot;&quot; Represents user credentials used to login to a cloud.</span>
 
 <span class="sd">    It is used as an input when authenticating a cloud session.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">is_xauth</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
@@ -115,17 +119,20 @@
 
 <div class="viewcode-block" id="OAuthSessionBase"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.OAuthSessionBase">[docs]</a><span class="k">class</span> <span class="nc">OAuthSessionBase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A family of classes dealing with authentication with OAuth method.&quot;&quot;&quot;</span>
+
     <span class="n">DEFAULT_CONTENT_TYPE</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/x-www-form-urlencoded&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;WolframClientForPython/1.0&#39;</span>
+        <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/x-www-form-urlencoded&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;WolframClientForPython/1.0&quot;</span><span class="p">,</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">server</span><span class="p">,</span>
-                 <span class="n">consumer_key</span><span class="p">,</span>
-                 <span class="n">consumer_secret</span><span class="p">,</span>
-                 <span class="n">signature_method</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">client_class</span><span class="o">=</span><span class="n">oauth</span><span class="o">.</span><span class="n">Client</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">server</span><span class="p">,</span>
+        <span class="n">consumer_key</span><span class="p">,</span>
+        <span class="n">consumer_secret</span><span class="p">,</span>
+        <span class="n">signature_method</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">client_class</span><span class="o">=</span><span class="n">oauth</span><span class="o">.</span><span class="n">Client</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">consumer_key</span> <span class="o">=</span> <span class="n">consumer_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">consumer_secret</span> <span class="o">=</span> <span class="n">consumer_secret</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">signature_method</span> <span class="o">=</span> <span class="n">signature_method</span> <span class="ow">or</span> <span class="n">oauth</span><span class="o">.</span><span class="n">SIGNATURE_HMAC</span>
@@ -139,16 +146,18 @@
         <span class="sd">&quot;&quot;&quot; Authenticate with a given server using the user credentials&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="OAuthSessionBase.signed_request"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.OAuthSessionBase.signed_request">[docs]</a>    <span class="k">def</span> <span class="nf">signed_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{},</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;POST&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="OAuthSessionBase.signed_request"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.OAuthSessionBase.signed_request">[docs]</a>    <span class="k">def</span> <span class="nf">signed_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{},</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;POST&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sign a given request and issue it.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="OAuthSessionBase.authorized"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.OAuthSessionBase.authorized">[docs]</a>    <span class="k">def</span> <span class="nf">authorized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a reasonably accurate state of the authentication status.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">client_secret</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">resource_owner_key</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">resource_owner_secret</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">client_secret</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">resource_owner_key</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">resource_owner_secret</span><span class="p">)</span>
+        <span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_update_client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_class</span><span class="p">(</span>
@@ -158,17 +167,18 @@
             <span class="n">resource_owner_secret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token_secret</span><span class="p">,</span>
             <span class="n">signature_type</span><span class="o">=</span><span class="n">oauth</span><span class="o">.</span><span class="n">SIGNATURE_TYPE_AUTH_HEADER</span><span class="p">,</span>
             <span class="n">realm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">cloudbase</span><span class="p">,</span>
-            <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;iso-8859-1&#39;</span><span class="p">)</span>
+            <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;iso-8859-1&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_update_token_from_request_body</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">token</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token</span> <span class="o">=</span> <span class="n">token</span><span class="p">[</span><span class="s1">&#39;oauth_token&#39;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token_secret</span> <span class="o">=</span> <span class="n">token</span><span class="p">[</span><span class="s1">&#39;oauth_token_secret&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token</span> <span class="o">=</span> <span class="n">token</span><span class="p">[</span><span class="s2">&quot;oauth_token&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token_secret</span> <span class="o">=</span> <span class="n">token</span><span class="p">[</span><span class="s2">&quot;oauth_token_secret&quot;</span><span class="p">]</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="n">token</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse_qs</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token</span> <span class="o">=</span> <span class="n">token</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;oauth_token&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token_secret</span> <span class="o">=</span> <span class="n">token</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;oauth_token_secret&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token</span> <span class="o">=</span> <span class="n">token</span><span class="p">[</span><span class="sa">b</span><span class="s2">&quot;oauth_token&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_oauth_token_secret</span> <span class="o">=</span> <span class="n">token</span><span class="p">[</span><span class="sa">b</span><span class="s2">&quot;oauth_token_secret&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="OAuthAsyncSessionBase"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.OAuthAsyncSessionBase">[docs]</a><span class="k">class</span> <span class="nc">OAuthAsyncSessionBase</span><span class="p">(</span><span class="n">OAuthSessionBase</span><span class="p">):</span>
@@ -176,7 +186,7 @@
         <span class="sd">&quot;&quot;&quot; Asynchronous OAuth authentication class dealing with various tokens and signing requests. &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="OAuthAsyncSessionBase.signed_request"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.OAuthAsyncSessionBase.signed_request">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">signed_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{},</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;POST&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="OAuthAsyncSessionBase.signed_request"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.OAuthAsyncSessionBase.signed_request">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">signed_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{},</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;POST&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sign a given request and issue it asynchronously.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
 
@@ -209,38 +219,34 @@
         <span class="k">if</span> <span class="n">content_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">fp</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">fname</span> <span class="o">=</span> <span class="n">filename</span> <span class="ow">or</span> <span class="s1">&#39;tmp_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">name</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="n">filename</span> <span class="ow">or</span> <span class="s2">&quot;tmp_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">name</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">content_type</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">add_binary_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                             <span class="n">name</span><span class="p">,</span>
-                             <span class="n">data</span><span class="p">,</span>
-                             <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                             <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;application/octet-stream&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">add_binary_parameter</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;application/octet-stream&quot;</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add a new API input parameter as a blob of binary data.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">IOBase</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_file_parameter</span><span class="p">(</span>
-                <span class="n">name</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="n">content_type</span><span class="p">)</span>
+                <span class="n">name</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="n">content_type</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">binary_type</span><span class="p">):</span>
-            <span class="n">fname</span> <span class="o">=</span> <span class="n">filename</span> <span class="ow">or</span> <span class="s1">&#39;tmp_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">name</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="n">filename</span> <span class="ow">or</span> <span class="s2">&quot;tmp_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">name</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">content_type</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Input data must be bytes or IOBase.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Input data must be bytes or IOBase.&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">add_image_data_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                                 <span class="n">name</span><span class="p">,</span>
-                                 <span class="n">image_data</span><span class="p">,</span>
-                                 <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                                 <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;image/png&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">add_image_data_parameter</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">image_data</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;image/png&quot;</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add a new API image input parameter from binary data.</span>
 
 <span class="sd">        If the data in `image_data` does not represent an image in the `PNG` format, the optional parameter</span>
 <span class="sd">        `content_type` must be set accordingly to the appropriate content type, e.g. *image/jpeg*, *image/gif*, etc.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_binary_parameter</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">image_data</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span>
-                                         <span class="n">content_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_binary_parameter</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">image_data</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">content_type</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">perform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Make the API call and return the result.&quot;&quot;&quot;</span>
@@ -251,9 +257,11 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1"> api=</span><span class="si">%s</span><span class="s1">, parameters=</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="p">,</span>
-            <span class="nb">set</span><span class="p">()</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;</span><span class="si">%s</span><span class="s2"> api=</span><span class="si">%s</span><span class="s2">, parameters=</span><span class="si">%s</span><span class="s2">&gt;&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="p">,</span>
+            <span class="nb">set</span><span class="p">()</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>

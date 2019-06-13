@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.serializers.encoders package &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
+    <title>wolframclient.serializers.encoders package &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.2</span>
+                        <span class='header right navigation darkgrey'>v 1.1.0</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -245,6 +245,12 @@ hack and work around solutions to prevent them. That’s why we prioritize optio
 </div>
 <div class="section" id="module-wolframclient.serializers.encoders.numpy">
 <span id="wolframclient-serializers-encoders-numpy-module"></span><h2>wolframclient.serializers.encoders.numpy module<a class="headerlink" href="#module-wolframclient.serializers.encoders.numpy" title="Permalink to this headline">¶</a></h2>
+<dl class="data">
+<dt id="wolframclient.serializers.encoders.numpy.PACKEDARRAY_NUMPY_MAPPING">
+<code class="descclassname">wolframclient.serializers.encoders.numpy.</code><code class="descname">PACKEDARRAY_NUMPY_MAPPING</code><em class="property"> = {&lt;class 'numpy.int8'&gt;: ('Integer8', None), &lt;class 'numpy.int16'&gt;: ('Integer16', None), &lt;class 'numpy.int32'&gt;: ('Integer32', None), &lt;class 'numpy.int64'&gt;: ('Integer64', None), &lt;class 'numpy.uint8'&gt;: ('Integer16', &lt;class 'numpy.int16'&gt;), &lt;class 'numpy.uint16'&gt;: ('Integer32', &lt;class 'numpy.int32'&gt;), &lt;class 'numpy.uint32'&gt;: ('Integer64', &lt;class 'numpy.int64'&gt;), &lt;class 'numpy.float32'&gt;: ('Real32', None), &lt;class 'numpy.float64'&gt;: ('Real64', None), &lt;class 'numpy.complex64'&gt;: ('ComplexReal32', None), &lt;class 'numpy.complex128'&gt;: ('ComplexReal64', None)}</em><a class="headerlink" href="#wolframclient.serializers.encoders.numpy.PACKEDARRAY_NUMPY_MAPPING" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maps numpy dtype to appropriate wxf packed array type, eventually specifying the type to cast the data to.</p>
+</dd></dl>
+
 <dl class="function">
 <dt id="wolframclient.serializers.encoders.numpy.encode_complex">
 <code class="descclassname">wolframclient.serializers.encoders.numpy.</code><code class="descname">encode_complex</code><span class="sig-paren">(</span><em>serializer</em>, <em>o</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/encoders/numpy.html#encode_complex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.encoders.numpy.encode_complex" title="Permalink to this definition">¶</a></dt>
@@ -268,6 +274,11 @@ hack and work around solutions to prevent them. That’s why we prioritize optio
 <dl class="function">
 <dt id="wolframclient.serializers.encoders.numpy.encode_numpy_mp_float">
 <code class="descclassname">wolframclient.serializers.encoders.numpy.</code><code class="descname">encode_numpy_mp_float</code><span class="sig-paren">(</span><em>serializer</em>, <em>o</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/encoders/numpy.html#encode_numpy_mp_float"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.encoders.numpy.encode_numpy_mp_float" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="wolframclient.serializers.encoders.numpy.encode_packed_array">
+<code class="descclassname">wolframclient.serializers.encoders.numpy.</code><code class="descname">encode_packed_array</code><span class="sig-paren">(</span><em>serializer</em>, <em>o</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/encoders/numpy.html#encode_packed_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.encoders.numpy.encode_packed_array" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">

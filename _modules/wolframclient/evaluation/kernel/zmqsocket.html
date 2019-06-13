@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.evaluation.kernel.zmqsocket &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
+    <title>wolframclient.evaluation.kernel.zmqsocket &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
     <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.2</span>
+                        <span class='header right navigation darkgrey'>v 1.1.0</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -100,21 +100,19 @@
 <div class="viewcode-block" id="abortable"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.zmqsocket.abortable">[docs]</a><span class="k">def</span> <span class="nf">abortable</span><span class="p">():</span>
     <span class="k">def</span> <span class="nf">outer</span><span class="p">(</span><span class="n">recv_method</span><span class="p">):</span>
         <span class="nd">@wraps</span><span class="p">(</span><span class="n">recv_method</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">recv_abortable</span><span class="p">(</span><span class="n">socket</span><span class="p">,</span>
-                           <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                           <span class="n">abort_check_period</span><span class="o">=.</span><span class="mi">1</span><span class="p">,</span>
-                           <span class="n">abort_event</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                           <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">recv_abortable</span><span class="p">(</span>
+            <span class="n">socket</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">abort_check_period</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">abort_event</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">socket</span><span class="o">.</span><span class="n">bound</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">SocketException</span><span class="p">(</span><span class="s1">&#39;ZMQ socket not bound.&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">SocketException</span><span class="p">(</span><span class="s2">&quot;ZMQ socket not bound.&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">timeout</span> <span class="ow">and</span> <span class="n">timeout</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Timeout must be a positive number.&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Timeout must be a positive number.&quot;</span><span class="p">)</span>
             <span class="n">retry</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
             <span class="c1"># fix inconsistencies</span>
             <span class="k">if</span> <span class="n">timeout</span> <span class="ow">and</span> <span class="n">abort_check_period</span> <span class="o">&gt;</span> <span class="n">timeout</span><span class="p">:</span>
                 <span class="n">abort_check_period</span> <span class="o">=</span> <span class="n">timeout</span>
-            <span class="n">abort_check_period</span> <span class="o">=</span> <span class="mf">1000.</span> <span class="o">*</span> <span class="n">abort_check_period</span>
+            <span class="n">abort_check_period</span> <span class="o">=</span> <span class="mf">1000.0</span> <span class="o">*</span> <span class="n">abort_check_period</span>
             <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">socket</span><span class="o">.</span><span class="n">zmq_socket</span><span class="o">.</span><span class="n">poll</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">abort_check_period</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="k">try</span><span class="p">:</span>
@@ -125,12 +123,13 @@
                 <span class="n">retry</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">if</span> <span class="n">abort_event</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">abort_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
-                        <span class="k">raise</span> <span class="n">SocketAborted</span><span class="p">(</span><span class="s1">&#39;Socket operation aborted.&#39;</span><span class="p">)</span>
+                        <span class="k">raise</span> <span class="n">SocketAborted</span><span class="p">(</span><span class="s2">&quot;Socket operation aborted.&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">timeout</span> <span class="ow">and</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span> <span class="o">&gt;</span> <span class="n">timeout</span><span class="p">):</span>
                     <span class="k">break</span>
             <span class="k">raise</span> <span class="n">SocketOperationTimeout</span><span class="p">(</span>
-                <span class="s1">&#39;Failed to read any message from socket </span><span class="si">%s</span><span class="s1"> after </span><span class="si">%.1f</span><span class="s1"> seconds and </span><span class="si">%i</span><span class="s1"> retries.&#39;</span>
-                <span class="o">%</span> <span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">uri</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="n">retry</span><span class="p">))</span>
+                <span class="s2">&quot;Failed to read any message from socket </span><span class="si">%s</span><span class="s2"> after </span><span class="si">%.1f</span><span class="s2"> seconds and </span><span class="si">%i</span><span class="s2"> retries.&quot;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">uri</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="n">retry</span><span class="p">)</span>
+            <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">recv_abortable</span>
 
@@ -140,11 +139,7 @@
 <div class="viewcode-block" id="Socket"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.zmqsocket.Socket">[docs]</a><span class="k">class</span> <span class="nc">Socket</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Wrapper around ZMQ socket &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">protocol</span><span class="o">=</span><span class="s1">&#39;tcp&#39;</span><span class="p">,</span>
-                 <span class="n">host</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span>
-                 <span class="n">port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">zmq_type</span><span class="o">=</span><span class="n">zmq</span><span class="o">.</span><span class="n">PAIR</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="s2">&quot;tcp&quot;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">zmq_type</span><span class="o">=</span><span class="n">zmq</span><span class="o">.</span><span class="n">PAIR</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">zmq_type</span> <span class="o">=</span> <span class="n">zmq_type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bound</span> <span class="o">=</span> <span class="kc">False</span>
@@ -153,31 +148,30 @@
 
 <div class="viewcode-block" id="Socket.can_bind_or_fail"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.zmqsocket.Socket.can_bind_or_fail">[docs]</a>    <span class="k">def</span> <span class="nf">can_bind_or_fail</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bound</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">SocketException</span><span class="p">(</span><span class="s1">&#39;Already bounded.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">SocketException</span><span class="p">(</span><span class="s2">&quot;Already bounded.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">SocketException</span><span class="p">(</span><span class="s1">&#39;Socket has been closed.&#39;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="n">SocketException</span><span class="p">(</span><span class="s2">&quot;Socket has been closed.&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Socket.bind_to_uri"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.zmqsocket.Socket.bind_to_uri">[docs]</a>    <span class="k">def</span> <span class="nf">bind_to_uri</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">can_bind_or_fail</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">zmq_socket</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="n">uri</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;ZMQ socket bound to &#39;</span> <span class="o">+</span> <span class="n">uri</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;ZMQ socket bound to &quot;</span> <span class="o">+</span> <span class="n">uri</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bound</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmq_socket</span></div>
 
-<div class="viewcode-block" id="Socket.bind"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.zmqsocket.Socket.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="s1">&#39;tcp&#39;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Socket.bind"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.zmqsocket.Socket.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="s2">&quot;tcp&quot;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">can_bind_or_fail</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">protocol</span> <span class="o">==</span> <span class="s1">&#39;inproc&#39;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="s1">&#39;inproc://</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">host</span>
+        <span class="k">if</span> <span class="n">protocol</span> <span class="o">==</span> <span class="s2">&quot;inproc&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;inproc://</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">host</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">zmq_socket</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">port</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">://</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">://</span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">zmq_socket</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmq_socket</span><span class="o">.</span><span class="n">bind_to_random_port</span><span class="p">(</span>
-                <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">://</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">host</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">://</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;ZMQ socket bound to &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">)</span>
+            <span class="n">port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmq_socket</span><span class="o">.</span><span class="n">bind_to_random_port</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">://</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">host</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">://</span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;ZMQ socket bound to &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bound</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">zmq_socket</span></div>
 
@@ -211,9 +205,9 @@
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bound</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;&lt;Socket: uri=</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">uri</span>
+            <span class="k">return</span> <span class="s2">&quot;&lt;Socket: uri=</span><span class="si">%s</span><span class="s2">&gt;&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">uri</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;&lt;Socket (not bounded): uri=</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">uri</span></div>
+            <span class="k">return</span> <span class="s2">&quot;&lt;Socket (not bounded): uri=</span><span class="si">%s</span><span class="s2">&gt;&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">uri</span></div>
 </pre></div>
 
           </div>

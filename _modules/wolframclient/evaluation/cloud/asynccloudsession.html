@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.evaluation.cloud.asynccloudsession &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
+    <title>wolframclient.evaluation.cloud.asynccloudsession &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
     <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.2</span>
+                        <span class='header right navigation darkgrey'>v 1.1.0</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -79,14 +79,18 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">from</span> <span class="nn">wolframclient.evaluation.base</span> <span class="k">import</span> <span class="n">WolframAsyncEvaluator</span>
-<span class="kn">from</span> <span class="nn">wolframclient.evaluation.cloud.asyncoauth</span> <span class="k">import</span> \
-    <span class="n">OAuth1AIOHttpAsyncSession</span> <span class="k">as</span> <span class="n">OAuthAsyncSession</span>
-<span class="kn">from</span> <span class="nn">wolframclient.evaluation.cloud.asyncoauth</span> <span class="k">import</span> \
-    <span class="n">XAuthAIOHttpAsyncSession</span> <span class="k">as</span> <span class="n">XAuthAsyncSession</span>
+<span class="kn">from</span> <span class="nn">wolframclient.evaluation.cloud.asyncoauth</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">OAuth1AIOHttpAsyncSession</span> <span class="k">as</span> <span class="n">OAuthAsyncSession</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">wolframclient.evaluation.cloud.asyncoauth</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">XAuthAIOHttpAsyncSession</span> <span class="k">as</span> <span class="n">XAuthAsyncSession</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">wolframclient.evaluation.cloud.base</span> <span class="k">import</span> <span class="n">WolframAPICallBase</span>
 <span class="kn">from</span> <span class="nn">wolframclient.evaluation.cloud.server</span> <span class="k">import</span> <span class="n">WOLFRAM_PUBLIC_CLOUD_SERVER</span>
-<span class="kn">from</span> <span class="nn">wolframclient.evaluation.result</span> <span class="k">import</span> <span class="p">(</span><span class="n">WolframAPIResponseBuilder</span><span class="p">,</span>
-                                             <span class="n">WolframEvaluationWXFResponseAsync</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">wolframclient.evaluation.result</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">WolframAPIResponseBuilder</span><span class="p">,</span>
+    <span class="n">WolframEvaluationWXFResponseAsync</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">wolframclient.exception</span> <span class="k">import</span> <span class="n">AuthenticationException</span>
 <span class="kn">from</span> <span class="nn">wolframclient.serializers</span> <span class="k">import</span> <span class="n">export</span>
 <span class="kn">from</span> <span class="nn">wolframclient.utils</span> <span class="k">import</span> <span class="n">six</span>
@@ -95,7 +99,7 @@
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;WolframCloudAsyncSession&#39;</span><span class="p">,</span> <span class="s1">&#39;WolframAPICallAsync&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;WolframCloudAsyncSession&quot;</span><span class="p">,</span> <span class="s2">&quot;WolframAPICallAsync&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="WolframCloudAsyncSession"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframCloudAsyncSession">[docs]</a><span class="k">class</span> <span class="nc">WolframCloudAsyncSession</span><span class="p">(</span><span class="n">WolframAsyncEvaluator</span><span class="p">):</span>
@@ -114,17 +118,19 @@
 <span class="sd">    The initialization options of the class :class:`~wolframclient.evaluation.WolframCloudSession` are also supported by</span>
 <span class="sd">    this class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">server</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">inputform_string_evaluation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                 <span class="n">oauth_session_class</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">xauth_session_class</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">http_sessionclass</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">ssl_context_class</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">loop</span><span class="p">,</span> <span class="n">inputform_string_evaluation</span><span class="o">=</span><span class="n">inputform_string_evaluation</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">server</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">inputform_string_evaluation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">oauth_session_class</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">xauth_session_class</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">http_sessionclass</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ssl_context_class</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">loop</span><span class="p">,</span> <span class="n">inputform_string_evaluation</span><span class="o">=</span><span class="n">inputform_string_evaluation</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="n">server</span> <span class="ow">or</span> <span class="n">WOLFRAM_PUBLIC_CLOUD_SERVER</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">http_sessionclass</span> <span class="o">=</span> <span class="n">http_sessionclass</span> <span class="ow">or</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">ClientSession</span>
@@ -150,7 +156,8 @@
             <span class="n">oauth_session_class</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">oauth_session_class</span><span class="p">,</span>
             <span class="n">xauth_session_class</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xauth_session_class</span><span class="p">,</span>
             <span class="n">http_sessionclass</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">http_sessionclass</span><span class="p">,</span>
-            <span class="n">ssl_context_class</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ssl_context_class</span><span class="p">)</span></div>
+            <span class="n">ssl_context_class</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ssl_context_class</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="WolframCloudAsyncSession.start"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudAsyncSession.start">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span> <span class="o">=</span> <span class="kc">False</span>
@@ -158,8 +165,8 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">started</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_sessionclass</span><span class="p">(</span>
-                        <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;WolframClientForPython/1.0&#39;</span><span class="p">},</span>
-                        <span class="n">loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">)</span>
+                        <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;WolframClientForPython/1.0&quot;</span><span class="p">},</span> <span class="n">loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span>
+                    <span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">anonymous</span><span class="p">():</span>
                     <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_authenticate</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -170,8 +177,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">started</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">anonymous</span><span class="p">()</span>
-                                                  <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">authorized</span><span class="p">())</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">anonymous</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">authorized</span><span class="p">())</span>
 
     <span class="sd">&quot;&quot;&quot; Terminate gracefully stops. &quot;&quot;&quot;</span>
 
@@ -189,8 +195,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span> <span class="ow">is</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="WolframCloudAsyncSession.authorized"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframCloudAsyncSession.authorized">[docs]</a>    <span class="k">def</span> <span class="nf">authorized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session</span><span class="o">.</span><span class="n">authorized</span><span class="p">(</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session</span><span class="o">.</span><span class="n">authorized</span><span class="p">()</span></div>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_authenticate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Authenticate with the server using the credentials.</span>
@@ -198,25 +203,31 @@
 <span class="sd">        This method supports both oauth and xauth methods. It is not necessary</span>
 <span class="sd">        to call it, since the session will try to authenticate when the first</span>
 <span class="sd">        request is issued. &quot;&quot;&quot;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Authenticating to the server.&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Authenticating to the server.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">AuthenticationException</span><span class="p">(</span><span class="s1">&#39;Missing credentials.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">AuthenticationException</span><span class="p">(</span><span class="s2">&quot;Missing credentials.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="o">.</span><span class="n">is_xauth</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xauth_session_class</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session_class</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="o">.</span><span class="n">consumer_key</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="o">.</span><span class="n">consumer_secret</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="o">.</span><span class="n">consumer_key</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="o">.</span><span class="n">consumer_secret</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session</span><span class="o">.</span><span class="n">authenticate</span><span class="p">()</span>
 
-<div class="viewcode-block" id="WolframCloudAsyncSession.call"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframCloudAsyncSession.call">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                   <span class="n">api</span><span class="p">,</span>
-                   <span class="n">input_parameters</span><span class="o">=</span><span class="p">{},</span>
-                   <span class="n">files</span><span class="o">=</span><span class="p">{},</span>
-                   <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wl&#39;</span><span class="p">,</span>
-                   <span class="n">permissions_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                   <span class="o">**</span><span class="n">kwargv</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframCloudAsyncSession.call"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframCloudAsyncSession.call">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">call</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">api</span><span class="p">,</span>
+        <span class="n">input_parameters</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">files</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">target_format</span><span class="o">=</span><span class="s2">&quot;wl&quot;</span><span class="p">,</span>
+        <span class="n">permissions_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargv</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Call a given API using the provided input parameters.</span>
 
 <span class="sd">        `api` can be a string url or a :class:`tuple` (`username`, `api name`). The username is generally the Wolfram</span>
@@ -243,23 +254,19 @@
         <span class="n">url</span> <span class="o">=</span> <span class="n">user_api_url</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="n">api</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">permissions_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;_key&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">permissions_key</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;_key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">permissions_key</span>
         <span class="n">is_multipart</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="n">encoded_inputs</span> <span class="o">=</span> <span class="n">encode_api_inputs</span><span class="p">(</span>
-            <span class="n">input_parameters</span><span class="p">,</span>
-            <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span>
-            <span class="n">target_format</span><span class="o">=</span><span class="n">target_format</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">kwargv</span><span class="p">)</span>
+            <span class="n">input_parameters</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="n">target_format</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargv</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Encoded input </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">encoded_inputs</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Encoded input </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">encoded_inputs</span><span class="p">)</span>
         <span class="c1"># in multipart requests we have to merge input parameters with files.</span>
         <span class="c1"># and use the same format for both.</span>
         <span class="k">if</span> <span class="n">is_multipart</span><span class="p">:</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span>
-                <span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">encoded_inputs</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">encoded_inputs</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span>
-                <span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">encoded_inputs</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">encoded_inputs</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">WolframAPIResponseBuilder</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
 
@@ -269,25 +276,20 @@
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">()</span>
-        <span class="n">headers</span><span class="p">[</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;WolframClientForPython/1.0&#39;</span>
+        <span class="n">headers</span><span class="p">[</span><span class="s2">&quot;User-Agent&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;WolframClientForPython/1.0&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">authorized</span><span class="p">():</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Authenticated call to api </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
-            <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session</span><span class="o">.</span><span class="n">signed_request</span><span class="p">(</span>
-                <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Authenticated call to api </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth_session</span><span class="o">.</span><span class="n">signed_request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Anonymous call to api </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Anonymous call to api </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
             <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
-                <span class="n">url</span><span class="p">,</span>
-                <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
-                <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
-                <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
-                <span class="n">ssl</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ssl_context</span><span class="p">)</span>
+                <span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">ssl</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ssl_context</span>
+            <span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_call_evaluation_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">BytesPayload</span><span class="p">(</span><span class="n">export</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wl&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">BytesPayload</span><span class="p">(</span><span class="n">export</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="s2">&quot;wl&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s1">&#39;Sending expression to cloud server for evaluation: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Sending expression to cloud server for evaluation: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluation_api_url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">WolframEvaluationWXFResponseAsync</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 
@@ -297,25 +299,23 @@
 <span class="sd">        `expr` can be a Python object serializable by :func:`~wolframclient.serializers.export` or the string</span>
 <span class="sd">        :wl:`InputForm` of an expression to evaluate.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_evaluation_api</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_evaluation_api</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="WolframCloudAsyncSession.evaluate_wrap"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframCloudAsyncSession.evaluate_wrap">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">evaluate_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Similar to :func:`~wolframclient.evaluation.cloud.asynccloudsession.WolframCloudAsyncSession.evaluate` but</span>
 <span class="sd">        return the result as a :class:`~wolframclient.evaluation.result.WolframEvaluationJSONResponseAsync`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_evaluation_api</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_evaluation_api</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="WolframCloudAsyncSession.wolfram_api_call"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframCloudAsyncSession.wolfram_api_call">[docs]</a>    <span class="k">def</span> <span class="nf">wolfram_api_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Build an helper class instance to call a given API. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">WolframAPICallAsync</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">{}</span><span class="s1">:base=</span><span class="si">{}</span><span class="s1">, anonymous=</span><span class="si">{}</span><span class="s1">, autorized=</span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">cloudbase</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">anonymous</span><span class="p">(),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">authorized</span><span class="p">())</span></div>
+        <span class="k">return</span> <span class="s2">&quot;&lt;</span><span class="si">{}</span><span class="s2">:base=</span><span class="si">{}</span><span class="s2">, anonymous=</span><span class="si">{}</span><span class="s2">, autorized=</span><span class="si">{}</span><span class="s2">&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">cloudbase</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">anonymous</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">authorized</span><span class="p">()</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="WolframAPICallAsync"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.cloud.html#wolframclient.evaluation.WolframAPICallAsync">[docs]</a><span class="k">class</span> <span class="nc">WolframAPICallAsync</span><span class="p">(</span><span class="n">WolframAPICallBase</span><span class="p">):</span>
@@ -328,7 +328,8 @@
             <span class="n">input_parameters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span>
             <span class="n">files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">,</span>
             <span class="n">permissions_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">permission_key</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div></div>
 
 
 <span class="c1">### Some internal utilities focused on cloud data manipulation and</span>
@@ -337,13 +338,12 @@
 
 <span class="k">def</span> <span class="nf">_encode_inputs_as_wxf</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">multipart</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">form_data</span><span class="o">.</span><span class="n">add_field</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;__wxf&#39;</span><span class="p">,</span>
-                            <span class="n">export</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wxf&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="n">form_data</span><span class="o">.</span><span class="n">add_field</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;__wxf&quot;</span><span class="p">,</span> <span class="n">export</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="s2">&quot;wxf&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
 
 <span class="k">def</span> <span class="nf">_encode_inputs_as_json</span><span class="p">(</span><span class="n">form_data</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">form_data</span><span class="o">.</span><span class="n">add_field</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;__json&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="n">form_data</span><span class="o">.</span><span class="n">add_field</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;__json&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
 
 <span class="k">def</span> <span class="nf">_encode_inputs_as_wl</span><span class="p">(</span><span class="n">form_data</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -352,36 +352,34 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
             <span class="n">form_data</span><span class="o">.</span><span class="n">add_field</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">form_data</span><span class="o">.</span><span class="n">add_field</span><span class="p">(</span><span class="n">name</span><span class="p">,</span>
-                                <span class="n">export</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wl&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+            <span class="n">form_data</span><span class="o">.</span><span class="n">add_field</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">export</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="s2">&quot;wl&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
 
 <span class="n">SUPPORTED_ENCODING_FORMATS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;json&#39;</span><span class="p">:</span> <span class="n">_encode_inputs_as_json</span><span class="p">,</span>
-    <span class="s1">&#39;wxf&#39;</span><span class="p">:</span> <span class="n">_encode_inputs_as_wxf</span><span class="p">,</span>
-    <span class="s1">&#39;wl&#39;</span><span class="p">:</span> <span class="n">_encode_inputs_as_wl</span>
+    <span class="s2">&quot;json&quot;</span><span class="p">:</span> <span class="n">_encode_inputs_as_json</span><span class="p">,</span>
+    <span class="s2">&quot;wxf&quot;</span><span class="p">:</span> <span class="n">_encode_inputs_as_wxf</span><span class="p">,</span>
+    <span class="s2">&quot;wl&quot;</span><span class="p">:</span> <span class="n">_encode_inputs_as_wl</span><span class="p">,</span>
 <span class="p">}</span>
 
 
-<span class="k">def</span> <span class="nf">encode_api_inputs</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="p">{},</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;wl&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">encode_api_inputs</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="p">{},</span> <span class="n">target_format</span><span class="o">=</span><span class="s2">&quot;wl&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">inputs</span> <span class="o">==</span> <span class="p">{}</span> <span class="ow">and</span> <span class="n">files</span> <span class="o">==</span> <span class="p">{}:</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="n">encoder</span> <span class="o">=</span> <span class="n">SUPPORTED_ENCODING_FORMATS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">target_format</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">encoder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s1">&#39;Invalid encoding format </span><span class="si">%s</span><span class="s1">. Choices are: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
-            <span class="p">(</span><span class="n">target_format</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SUPPORTED_ENCODING_FORMATS</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+            <span class="s2">&quot;Invalid encoding format </span><span class="si">%s</span><span class="s2">. Choices are: </span><span class="si">%s</span><span class="s2">&quot;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="n">target_format</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SUPPORTED_ENCODING_FORMATS</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="p">)</span>
     <span class="n">form_data</span> <span class="o">=</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">FormData</span><span class="p">()</span>
     <span class="c1"># files are specified by file pointer or bytes, or a tuple.</span>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">file_info</span> <span class="ow">in</span> <span class="n">files</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="c1"># tuple must contain: the filename, the data as bytes, the content type.</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_info</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_info</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
             <span class="n">form_data</span><span class="o">.</span><span class="n">add_field</span><span class="p">(</span>
-                <span class="n">name</span><span class="p">,</span>
-                <span class="n">file_info</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                <span class="n">filename</span><span class="o">=</span><span class="n">file_info</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                <span class="n">content_type</span><span class="o">=</span><span class="n">file_info</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                <span class="n">name</span><span class="p">,</span> <span class="n">file_info</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">filename</span><span class="o">=</span><span class="n">file_info</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">content_type</span><span class="o">=</span><span class="n">file_info</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="p">)</span>
         <span class="c1"># otherwise it must be the filename. Delegate input validation to FormData:</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">form_data</span><span class="o">.</span><span class="n">add_field</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">file_info</span><span class="p">)</span>

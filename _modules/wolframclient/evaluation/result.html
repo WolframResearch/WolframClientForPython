@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.evaluation.result &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
+    <title>wolframclient.evaluation.result &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
     <link rel="stylesheet" href="../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.2</span>
+                        <span class='header right navigation darkgrey'>v 1.1.0</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -81,8 +81,11 @@
 <span class="kn">from</span> <span class="nn">wolframclient.deserializers</span> <span class="k">import</span> <span class="n">binary_deserialize</span>
 <span class="kn">from</span> <span class="nn">wolframclient.evaluation.cloud.request_adapter</span> <span class="k">import</span> <span class="n">wrap_response</span>
 <span class="kn">from</span> <span class="nn">wolframclient.exception</span> <span class="k">import</span> <span class="p">(</span>
-    <span class="n">RequestException</span><span class="p">,</span> <span class="n">WolframEvaluationException</span><span class="p">,</span> <span class="n">WolframLanguageException</span><span class="p">,</span>
-    <span class="n">WolframParserException</span><span class="p">)</span>
+    <span class="n">RequestException</span><span class="p">,</span>
+    <span class="n">WolframEvaluationException</span><span class="p">,</span>
+    <span class="n">WolframLanguageException</span><span class="p">,</span>
+    <span class="n">WolframParserException</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">wolframclient.utils</span> <span class="k">import</span> <span class="n">six</span>
 <span class="kn">from</span> <span class="nn">wolframclient.utils.api</span> <span class="k">import</span> <span class="n">json</span>
 <span class="kn">from</span> <span class="nn">wolframclient.utils.decorators</span> <span class="k">import</span> <span class="n">cached_property</span>
@@ -91,10 +94,16 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;WolframResult&#39;</span><span class="p">,</span> <span class="s1">&#39;WolframAPIResponseBuilder&#39;</span><span class="p">,</span> <span class="s1">&#39;WolframAPIResponse&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;WolframCloudEvaluationResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;WolframCloudEvaluationWXFResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;WolframCloudEvaluationJSONResponse&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;WolframKernelEvaluationResult&#39;</span><span class="p">,</span> <span class="s1">&#39;WolframAPIResponseAsync&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;WolframEvaluationJSONResponseAsync&#39;</span><span class="p">,</span> <span class="s1">&#39;WolframEvaluationWXFResponseAsync&#39;</span>
+    <span class="s2">&quot;WolframResult&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;WolframAPIResponseBuilder&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;WolframAPIResponse&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;WolframCloudEvaluationResponse&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;WolframCloudEvaluationWXFResponse&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;WolframCloudEvaluationJSONResponse&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;WolframKernelEvaluationResult&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;WolframAPIResponseAsync&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;WolframEvaluationJSONResponseAsync&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;WolframEvaluationWXFResponseAsync&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -124,11 +133,13 @@
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&lt;success=</span><span class="si">{}</span><span class="s1">, result=</span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">success</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&lt;success=</span><span class="si">{}</span><span class="s2">, result=</span><span class="si">{}</span><span class="s2">&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">success</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&lt;success=</span><span class="si">{}</span><span class="s1">, failure=</span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">success</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">failure</span><span class="p">)</span></div>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&lt;success=</span><span class="si">{}</span><span class="s2">, failure=</span><span class="si">{}</span><span class="s2">&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">success</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">failure</span>
+            <span class="p">)</span></div>
 
 
 <span class="k">class</span> <span class="nc">WolframAsyncResult</span><span class="p">(</span><span class="n">WolframResultBase</span><span class="p">):</span>
@@ -236,8 +247,7 @@
                     <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">WolframEvaluationException</span><span class="p">(</span>
-                <span class="s1">&#39;Evaluation failed.&#39;</span><span class="p">,</span> <span class="n">messages</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">failure</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">WolframEvaluationException</span><span class="p">(</span><span class="s2">&quot;Evaluation failed.&quot;</span><span class="p">,</span> <span class="n">messages</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">failure</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">parse_response</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Parse the result input and set the attribute `parsed_response`.</span>
@@ -247,46 +257,44 @@
 <span class="sd">        :wl:`EvaluationData`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> does not implement parse_response method.&#39;</span> <span class="o">%</span>
-            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="p">))</span>
+            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> does not implement parse_response method.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,)</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">build_invalid_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response_format_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Build a result object for invalid format cases. &quot;&quot;&quot;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s1">&#39;Invalid format. Failed to parse result.&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s2">&quot;Invalid format. Failed to parse result.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_success</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">response_format_name</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="s1">&#39;Failed to decode response encoded with </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">response_format_name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="s2">&quot;Failed to decode response encoded with </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">response_format_name</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="s1">&#39;Failed to decode response.&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="s2">&quot;Failed to decode response.&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_built</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">build_from_parsed_response</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_success</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span><span class="p">[</span><span class="s1">&#39;Success&#39;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span><span class="p">[</span><span class="s1">&#39;Result&#39;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Output&#39;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_success</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span><span class="p">[</span><span class="s2">&quot;Success&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span><span class="p">[</span><span class="s2">&quot;Result&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Output&quot;</span><span class="p">,</span> <span class="p">[])</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_success</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span><span class="p">[</span><span class="s1">&#39;FailureType&#39;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">==</span> <span class="s1">&#39;MessageFailure&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span><span class="p">[</span><span class="s2">&quot;FailureType&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">==</span> <span class="s2">&quot;MessageFailure&quot;</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_is_message_failure</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_messages_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span><span class="p">[</span><span class="s1">&#39;Messages&#39;</span><span class="p">]</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_messages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span><span class="p">[</span><span class="s1">&#39;MessagesText&#39;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_messages_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span><span class="p">[</span><span class="s2">&quot;Messages&quot;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_messages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span><span class="p">[</span><span class="s2">&quot;MessagesText&quot;</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Evaluation failed.&#39;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Evaluation failed.&quot;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_is_message_failure</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_built</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&lt;expression=</span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-                                              <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&lt;expression=</span><span class="si">{}</span><span class="s2">&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_message_failure</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&lt;success=</span><span class="si">{}</span><span class="s1">, result=</span><span class="si">{}</span><span class="s1">, messages=</span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">success</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">messages</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&lt;success=</span><span class="si">{}</span><span class="s2">, result=</span><span class="si">{}</span><span class="s2">, messages=</span><span class="si">{}</span><span class="s2">&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">success</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">messages</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&lt;failure=</span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-                                           <span class="bp">self</span><span class="o">.</span><span class="n">failure</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&lt;failure=</span><span class="si">{}</span><span class="s2">&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">failure</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="WolframKernelEvaluationResult"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframKernelEvaluationResult">[docs]</a><span class="k">class</span> <span class="nc">WolframKernelEvaluationResult</span><span class="p">(</span><span class="n">WolframEvaluationResultBase</span><span class="p">):</span>
@@ -311,7 +319,7 @@
 
 <div class="viewcode-block" id="WolframKernelEvaluationResult.parse_response"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframKernelEvaluationResult.parse_response">[docs]</a>    <span class="k">def</span> <span class="nf">parse_response</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span> <span class="o">=</span> <span class="n">binary_deserialize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wxf_evaluation_data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">wxf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span><span class="p">[</span><span class="s1">&#39;Result&#39;</span><span class="p">]</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wxf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span><span class="p">[</span><span class="s2">&quot;Result&quot;</span><span class="p">]</span></div>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -336,11 +344,13 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_built</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_error</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_error</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&lt;request error </span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-                                                 <span class="bp">self</span><span class="o">.</span><span class="n">http_response</span><span class="o">.</span><span class="n">status</span><span class="p">())</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&lt;request error </span><span class="si">{}</span><span class="s2">&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_response</span><span class="o">.</span><span class="n">status</span><span class="p">()</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&lt;successful request, request body not yet parsed&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&lt;successful request, request body not yet parsed&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="p">)</span>
 
 <div class="viewcode-block" id="WolframCloudEvaluationResponse.get"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframCloudEvaluationResponse.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">silent</span><span class="p">)</span></div>
@@ -349,9 +359,11 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_error</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s1">&#39;Server invalid response </span><span class="si">%i</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
-                         <span class="bp">self</span><span class="o">.</span><span class="n">http_response</span><span class="o">.</span><span class="n">status</span><span class="p">(),</span>
-                         <span class="bp">self</span><span class="o">.</span><span class="n">http_response</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span>
+                <span class="s2">&quot;Server invalid response </span><span class="si">%i</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">http_response</span><span class="o">.</span><span class="n">status</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">http_response</span><span class="o">.</span><span class="n">text</span><span class="p">(),</span>
+            <span class="p">)</span>
             <span class="k">raise</span> <span class="n">RequestException</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">http_response</span><span class="p">)</span></div></div>
 
 
@@ -363,7 +375,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span> <span class="o">=</span> <span class="n">binary_deserialize</span><span class="p">(</span><span class="n">wxf</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">WolframLanguageException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">build_invalid_format</span><span class="p">(</span><span class="n">response_format_name</span><span class="o">=</span><span class="s1">&#39;WXF&#39;</span><span class="p">)</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">build_invalid_format</span><span class="p">(</span><span class="n">response_format_name</span><span class="o">=</span><span class="s2">&quot;WXF&quot;</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="WolframCloudEvaluationJSONResponse"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframCloudEvaluationJSONResponse">[docs]</a><span class="k">class</span> <span class="nc">WolframCloudEvaluationJSONResponse</span><span class="p">(</span><span class="n">WolframCloudEvaluationResponse</span><span class="p">):</span>
@@ -373,7 +385,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">build_invalid_format</span><span class="p">(</span><span class="n">response_format_name</span><span class="o">=</span><span class="s1">&#39;JSON&#39;</span><span class="p">)</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">build_invalid_format</span><span class="p">(</span><span class="n">response_format_name</span><span class="o">=</span><span class="s2">&quot;JSON&quot;</span><span class="p">)</span></div></div>
 
 
 <span class="k">class</span> <span class="nc">WolframCloudEvaluationResponseAsync</span><span class="p">(</span><span class="n">WolframCloudEvaluationResponse</span><span class="p">):</span>
@@ -388,15 +400,15 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">build_invalid_format</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_response</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s1">&#39;Server invalid response </span><span class="si">%i</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
-                         <span class="bp">self</span><span class="o">.</span><span class="n">http_response</span><span class="o">.</span><span class="n">status</span><span class="p">(),</span> <span class="n">msg</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s2">&quot;Server invalid response </span><span class="si">%i</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_response</span><span class="o">.</span><span class="n">status</span><span class="p">(),</span> <span class="n">msg</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_built</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">raise</span> <span class="n">RequestException</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">http_response</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">parse_response</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> does not implement parse_response asynchronous method.&#39;</span> <span class="o">%</span>
-            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="p">))</span>
+            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> does not implement parse_response asynchronous method.&quot;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,)</span>
+        <span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">success</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -490,8 +502,7 @@
                     <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">WolframEvaluationException</span><span class="p">(</span>
-                <span class="s1">&#39;Evaluation failed.&#39;</span><span class="p">,</span> <span class="n">messages</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">failure</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">WolframEvaluationException</span><span class="p">(</span><span class="s2">&quot;Evaluation failed.&quot;</span><span class="p">,</span> <span class="n">messages</span><span class="o">=</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">failure</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="WolframEvaluationJSONResponseAsync"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframEvaluationJSONResponseAsync">[docs]</a><span class="k">class</span> <span class="nc">WolframEvaluationJSONResponseAsync</span><span class="p">(</span><span class="n">WolframCloudEvaluationResponseAsync</span><span class="p">):</span>
@@ -501,7 +512,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">http_response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">build_invalid_format</span><span class="p">(</span><span class="n">response_format_name</span><span class="o">=</span><span class="s1">&#39;JSON&#39;</span><span class="p">)</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">build_invalid_format</span><span class="p">(</span><span class="n">response_format_name</span><span class="o">=</span><span class="s2">&quot;JSON&quot;</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="WolframEvaluationWXFResponseAsync"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframEvaluationWXFResponseAsync">[docs]</a><span class="k">class</span> <span class="nc">WolframEvaluationWXFResponseAsync</span><span class="p">(</span><span class="n">WolframCloudEvaluationResponseAsync</span><span class="p">):</span>
@@ -512,12 +523,12 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span> <span class="o">=</span> <span class="n">binary_deserialize</span><span class="p">(</span><span class="n">wxf</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">WolframLanguageException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">build_invalid_format</span><span class="p">(</span><span class="n">response_format_name</span><span class="o">=</span><span class="s1">&#39;WXF&#39;</span><span class="p">)</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">build_invalid_format</span><span class="p">(</span><span class="n">response_format_name</span><span class="o">=</span><span class="s2">&quot;WXF&quot;</span><span class="p">)</span></div></div>
 
 
 <span class="n">_DEFAULT_DECODERS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;application/vnd.wolfram.wxf&#39;</span><span class="p">:</span> <span class="n">binary_deserialize</span><span class="p">,</span>
-    <span class="s1">&#39;application/json&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">,</span>
+    <span class="s2">&quot;application/vnd.wolfram.wxf&quot;</span><span class="p">:</span> <span class="n">binary_deserialize</span><span class="p">,</span>
+    <span class="s2">&quot;application/json&quot;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">,</span>
 <span class="p">}</span>
 
 
@@ -531,7 +542,7 @@
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">decoder</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">response</span> <span class="o">=</span> <span class="n">response</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">decoder</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">decoder</span>
         <span class="k">else</span><span class="p">:</span>
@@ -562,7 +573,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span></div>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1">:success=</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">success</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="s2">&quot;&lt;</span><span class="si">%s</span><span class="s2">:success=</span><span class="si">%s</span><span class="s2">&gt;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">success</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="WolframAPIResponseAsync"><a class="viewcode-back" href="../../../docpages/public_api.html#wolframclient.evaluation.result.WolframAPIResponseAsync">[docs]</a><span class="k">class</span> <span class="nc">WolframAPIResponseAsync</span><span class="p">(</span><span class="n">WolframAPIResponse</span><span class="p">):</span>
@@ -572,6 +583,7 @@
 <span class="sd">    Most of the class logic is implemented in :data:`WolframAPIResponse`, except the build method which has to be a</span>
 <span class="sd">    coroutine.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="WolframAPIResponseAsync.get"><a class="viewcode-back" href="../../../docpages/public_api.html#wolframclient.evaluation.result.WolframAPIResponseAsync.get">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return the result or raise an exception based on the success status.</span>
 
@@ -590,8 +602,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
 
 
-<span class="k">class</span> <span class="nc">WolframAPIFailureResponseAsync</span><span class="p">(</span><span class="n">WolframAPIResponseAsync</span><span class="p">,</span>
-                                     <span class="n">WolframAPIFailureResponse</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">WolframAPIFailureResponseAsync</span><span class="p">(</span><span class="n">WolframAPIResponseAsync</span><span class="p">,</span> <span class="n">WolframAPIFailureResponse</span><span class="p">):</span>
     <span class="k">pass</span>
 
 
@@ -607,21 +618,20 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">())</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="s1">&#39;Decoder error: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="s2">&quot;Decoder error: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">exception</span> <span class="o">=</span> <span class="n">e</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">()</span>
 
 
-<span class="k">class</span> <span class="nc">WolframAPIResponse200Async</span><span class="p">(</span><span class="n">WolframAPIResponseAsync</span><span class="p">,</span>
-                                 <span class="n">WolframAPIResponse200</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">WolframAPIResponse200Async</span><span class="p">(</span><span class="n">WolframAPIResponseAsync</span><span class="p">,</span> <span class="n">WolframAPIResponse200</span><span class="p">):</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">())</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="s1">&#39;Decoder error: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="s2">&quot;Decoder error: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">exception</span> <span class="o">=</span> <span class="n">e</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">()</span>
@@ -634,8 +644,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Redirected to </span><span class="si">%s</span><span class="s1">.&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;location&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Redirected to </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_specific_failure</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_built</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -645,28 +655,24 @@
 
 <span class="k">class</span> <span class="nc">WolframAPIResponse301</span><span class="p">(</span><span class="n">WolframAPIResponseRedirect</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">_specific_failure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; should not happen since we follow redirection &#39;&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="s1">&#39;Resource permanently moved to new location </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">)</span>
+        <span class="sd">&quot;&quot;&quot; should not happen since we follow redirection &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="s2">&quot;Resource permanently moved to new location </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">WolframAPIResponse301Async</span><span class="p">(</span><span class="n">WolframAPIResponse301</span><span class="p">,</span>
-                                 <span class="n">WolframAPIResponseAsync</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">WolframAPIResponse301Async</span><span class="p">(</span><span class="n">WolframAPIResponse301</span><span class="p">,</span> <span class="n">WolframAPIResponseAsync</span><span class="p">):</span>
     <span class="k">pass</span>
 
 
 <span class="k">class</span> <span class="nc">WolframAPIResponse302</span><span class="p">(</span><span class="n">WolframAPIResponseRedirect</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">_specific_failure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># hack because the server is not returning 403. cf. CLOUD-12946</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s1">&#39;j_spring_oauth_security_check&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="s1">&#39;Not allowed to access requested resource.&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;j_spring_oauth_security_check&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="s2">&quot;Not allowed to access requested resource.&quot;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="s1">&#39;Resource moved to new location </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="s2">&quot;Resource moved to new location </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">WolframAPIResponse302Async</span><span class="p">(</span><span class="n">WolframAPIResponse302</span><span class="p">,</span>
-                                 <span class="n">WolframAPIResponseAsync</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">WolframAPIResponse302Async</span><span class="p">(</span><span class="n">WolframAPIResponse302</span><span class="p">,</span> <span class="n">WolframAPIResponseAsync</span><span class="p">):</span>
     <span class="k">pass</span>
 
 
@@ -682,9 +688,11 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unexpected_content_type</span><span class="p">()</span>
         <span class="k">except</span> <span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">,</span> <span class="n">WolframParserException</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s1">&#39;Failed to parse server response as </span><span class="si">%s</span><span class="s1">:</span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
-                         <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span><span class="p">,</span>
-                         <span class="n">str_trim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">(),</span> <span class="n">max_char</span><span class="o">=</span><span class="mi">200</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span>
+                <span class="s2">&quot;Failed to parse server response as </span><span class="si">%s</span><span class="s2">:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span><span class="p">,</span>
+                <span class="n">str_trim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">(),</span> <span class="n">max_char</span><span class="o">=</span><span class="mi">200</span><span class="p">),</span>
+            <span class="p">)</span>
             <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_failed_to_parse</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_from_response</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_built</span> <span class="o">=</span> <span class="kc">True</span>
@@ -696,57 +704,59 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields_in_error</span>
 
     <span class="k">def</span> <span class="nf">_failed_to_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">RequestException</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Failed to parse server response.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">RequestException</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Failed to parse server response.&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_unexpected_content_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-            <span class="s1">&#39;Response content-type: </span><span class="si">%s</span><span class="s1"> is not supported. Cannot decode content: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span><span class="p">,</span> <span class="n">str_trim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">()))</span>
+            <span class="s2">&quot;Response content-type: </span><span class="si">%s</span><span class="s2"> is not supported. Cannot decode content: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span><span class="p">,</span>
+            <span class="n">str_trim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">()),</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s1">&#39;Failure&#39;</span><span class="p">:</span>
-            <span class="s1">&#39;Cannot decode server response. No decoder found for content-type: </span><span class="si">%s</span><span class="s1">.&#39;</span>
+            <span class="s2">&quot;Failure&quot;</span><span class="p">:</span> <span class="s2">&quot;Cannot decode server response. No decoder found for content-type: </span><span class="si">%s</span><span class="s2">.&quot;</span>
             <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span>
         <span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">_update_from_response</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Failure&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Fields&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Wolfram API error response: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Failure&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Fields&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Wolfram API error response: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">fields</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">fields</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Fields in error: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Fields in error: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_fields_in_error</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">err</span> <span class="ow">in</span> <span class="n">fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">failure</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Failure&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">failure</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Failure&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">failure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_fields_in_error</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">field</span><span class="p">,</span> <span class="n">failure</span><span class="p">))</span>
 
 
-<span class="k">class</span> <span class="nc">WolframAPIResponse400Async</span><span class="p">(</span><span class="n">WolframAPIResponse400</span><span class="p">,</span>
-                                 <span class="n">WolframAPIResponseAsync</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">WolframAPIResponse400Async</span><span class="p">(</span><span class="n">WolframAPIResponse400</span><span class="p">,</span> <span class="n">WolframAPIResponseAsync</span><span class="p">):</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># ignoring content-type. Must be JSON. Make sure it&#39;s robust enough.</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="k">await</span>
-                                                    <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">())</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">())</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">parsed_response</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unexpected_content_type</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s1">&#39;Failed to parse server response as </span><span class="si">%s</span><span class="s1">:</span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
-                         <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span><span class="p">,</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">())</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span>
+                <span class="s2">&quot;Failed to parse server response as </span><span class="si">%s</span><span class="s2">:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span><span class="p">,</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">(),</span>
+            <span class="p">)</span>
             <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_failed_to_parse</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_from_response</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_built</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_unexpected_content_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-            <span class="s1">&#39;Response content-type: </span><span class="si">%s</span><span class="s1"> is not supported. Cannot decode content: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span><span class="p">,</span> <span class="n">str_trim</span><span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">()))</span>
+            <span class="s2">&quot;Response content-type: </span><span class="si">%s</span><span class="s2"> is not supported. Cannot decode content: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span><span class="p">,</span>
+            <span class="n">str_trim</span><span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">()),</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s1">&#39;Failure&#39;</span><span class="p">:</span>
-            <span class="s1">&#39;Cannot decode server response. No decoder found for content-type: </span><span class="si">%s</span><span class="s1">.&#39;</span>
+            <span class="s2">&quot;Failure&quot;</span><span class="p">:</span> <span class="s2">&quot;Cannot decode server response. No decoder found for content-type: </span><span class="si">%s</span><span class="s2">.&quot;</span>
             <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span>
         <span class="p">}</span>
 
@@ -760,31 +770,26 @@
 <span class="k">class</span> <span class="nc">WolframAPIResponse401</span><span class="p">(</span><span class="n">WolframAPIFailureResponse</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Authentication missing or failed. Server response: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
-                       <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Authentication missing or failed. Server response: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_built</span> <span class="o">=</span> <span class="kc">True</span>
 
 
-<span class="k">class</span> <span class="nc">WolframAPIResponse401Async</span><span class="p">(</span><span class="n">WolframAPIResponse401</span><span class="p">,</span>
-                                 <span class="n">WolframAPIResponseAsync</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">WolframAPIResponse401Async</span><span class="p">(</span><span class="n">WolframAPIResponse401</span><span class="p">,</span> <span class="n">WolframAPIResponseAsync</span><span class="p">):</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># ignoring content-type. Must be JSON. Make sure it&#39;s robust enough.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_built</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Authentication missing or failed. Server response: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
-                       <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Authentication missing or failed. Server response: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">WolframAPIResponse404</span><span class="p">(</span><span class="n">WolframAPIFailureResponse</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="s2">&quot;The resource </span><span class="si">%s</span><span class="s2"> can&#39;t not be found.&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="p">(</span>
-        <span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Wolfram API error response: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span> <span class="o">=</span> <span class="s2">&quot;The resource </span><span class="si">%s</span><span class="s2"> can&#39;t not be found.&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Wolfram API error response: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_failure</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_built</span> <span class="o">=</span> <span class="kc">True</span>
 
 
-<span class="k">class</span> <span class="nc">WolframAPIResponse404Async</span><span class="p">(</span><span class="n">WolframAPIResponse404</span><span class="p">,</span>
-                                 <span class="n">WolframAPIResponseAsync</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">WolframAPIResponse404Async</span><span class="p">(</span><span class="n">WolframAPIResponse404</span><span class="p">,</span> <span class="n">WolframAPIResponseAsync</span><span class="p">):</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">WolframAPIResponse404</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
@@ -804,19 +809,20 @@
 <span class="k">class</span> <span class="nc">WolframAPIResponse500</span><span class="p">(</span><span class="n">WolframAPIResponseGeneric</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">decoder</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">decoder</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s1">&#39;Internal server error occurred.&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s2">&quot;Internal server error occurred.&quot;</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">WolframAPIResponse500Async</span><span class="p">(</span><span class="n">WolframAPIResponseGenericAsync</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">decoder</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">decoder</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s1">&#39;Internal server error occurred.&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="s2">&quot;Internal server error occurred.&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="WolframAPIResponseBuilder"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframAPIResponseBuilder">[docs]</a><span class="k">class</span> <span class="nc">WolframAPIResponseBuilder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Map error code to handler building the appropriate</span>
 <span class="sd">    :class:`~wolframclient.evaluation.result.WolframAPIResponse`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">response_mapper</span> <span class="o">=</span> <span class="p">{</span>
         <span class="mi">200</span><span class="p">:</span> <span class="n">WolframAPIResponse200</span><span class="p">,</span>
         <span class="mi">301</span><span class="p">:</span> <span class="n">WolframAPIResponse301</span><span class="p">,</span>
@@ -824,7 +830,7 @@
         <span class="mi">400</span><span class="p">:</span> <span class="n">WolframAPIResponse400</span><span class="p">,</span>
         <span class="mi">401</span><span class="p">:</span> <span class="n">WolframAPIResponse401</span><span class="p">,</span>
         <span class="mi">404</span><span class="p">:</span> <span class="n">WolframAPIResponse404</span><span class="p">,</span>
-        <span class="mi">500</span><span class="p">:</span> <span class="n">WolframAPIResponse500</span>
+        <span class="mi">500</span><span class="p">:</span> <span class="n">WolframAPIResponse500</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="n">async_response_mapper</span> <span class="o">=</span> <span class="p">{</span>
         <span class="mi">200</span><span class="p">:</span> <span class="n">WolframAPIResponse200Async</span><span class="p">,</span>
@@ -833,7 +839,7 @@
         <span class="mi">400</span><span class="p">:</span> <span class="n">WolframAPIResponse400Async</span><span class="p">,</span>
         <span class="mi">401</span><span class="p">:</span> <span class="n">WolframAPIResponse401Async</span><span class="p">,</span>
         <span class="mi">404</span><span class="p">:</span> <span class="n">WolframAPIResponse404Async</span><span class="p">,</span>
-        <span class="mi">500</span><span class="p">:</span> <span class="n">WolframAPIResponse500Async</span>
+        <span class="mi">500</span><span class="p">:</span> <span class="n">WolframAPIResponse500Async</span><span class="p">,</span>
     <span class="p">}</span>
 
 <div class="viewcode-block" id="WolframAPIResponseBuilder.build"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframAPIResponseBuilder.build">[docs]</a>    <span class="nd">@staticmethod</span>
@@ -841,29 +847,32 @@
         <span class="n">adapter</span> <span class="o">=</span> <span class="n">wrap_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">adapter</span><span class="o">.</span><span class="n">asynchronous</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">WolframAPIResponseBuilder</span><span class="o">.</span><span class="n">async_response_mapper</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-                <span class="n">adapter</span><span class="o">.</span><span class="n">status</span><span class="p">(),</span> <span class="n">WolframAPIResponseGenericAsync</span><span class="p">)(</span>
-                    <span class="n">adapter</span><span class="p">,</span> <span class="n">decoder</span><span class="o">=</span><span class="n">decoder</span><span class="p">)</span>
+                <span class="n">adapter</span><span class="o">.</span><span class="n">status</span><span class="p">(),</span> <span class="n">WolframAPIResponseGenericAsync</span>
+            <span class="p">)(</span><span class="n">adapter</span><span class="p">,</span> <span class="n">decoder</span><span class="o">=</span><span class="n">decoder</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">WolframAPIResponseBuilder</span><span class="o">.</span><span class="n">response_mapper</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-                <span class="n">adapter</span><span class="o">.</span><span class="n">status</span><span class="p">(),</span> <span class="n">WolframAPIResponseGeneric</span><span class="p">)(</span>
-                    <span class="n">adapter</span><span class="p">,</span> <span class="n">decoder</span><span class="o">=</span><span class="n">decoder</span><span class="p">)</span></div>
+                <span class="n">adapter</span><span class="o">.</span><span class="n">status</span><span class="p">(),</span> <span class="n">WolframAPIResponseGeneric</span>
+            <span class="p">)(</span><span class="n">adapter</span><span class="p">,</span> <span class="n">decoder</span><span class="o">=</span><span class="n">decoder</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="WolframAPIResponseBuilder.map"><a class="viewcode-back" href="../../../api/wolframclient.evaluation.html#wolframclient.evaluation.result.WolframAPIResponseBuilder.map">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">map</span><span class="p">(</span><span class="n">status_code</span><span class="p">,</span> <span class="n">response_class</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response_class</span><span class="p">,</span> <span class="n">WolframAPIResponse</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Response class </span><span class="si">%s</span><span class="s1"> is not a subclass of </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
-                             <span class="p">(</span><span class="n">response_class</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-                              <span class="n">WolframAPIResponse</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Response class </span><span class="si">%s</span><span class="s2"> is not a subclass of </span><span class="si">%s</span><span class="s2">&quot;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">response_class</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">WolframAPIResponse</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">status_code</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">integer_types</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Invalid status code: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;HTTP status code must be string.&#39;</span><span class="p">,</span> <span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Mapping http response status </span><span class="si">%i</span><span class="s1"> to function </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
-                     <span class="n">status_code</span><span class="p">,</span> <span class="n">response_class</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Invalid status code: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">status_code</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;HTTP status code must be string.&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Mapping http response status </span><span class="si">%i</span><span class="s2"> to function </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">status_code</span><span class="p">,</span>
+            <span class="n">response_class</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="n">WolframAPIResponseBuilder</span><span class="o">.</span><span class="n">response_mapper</span><span class="p">[</span><span class="n">status_code</span><span class="p">]</span> <span class="o">=</span> <span class="n">response_class</span></div>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s2">&quot;Cannot initialize. Use static &#39;method&#39; build.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Cannot initialize. Use static &#39;method&#39; build.&quot;</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

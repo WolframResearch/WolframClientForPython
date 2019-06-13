@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.deserializers package &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
+    <title>wolframclient.deserializers package &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.2</span>
+                        <span class='header right navigation darkgrey'>v 1.1.0</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -260,11 +260,6 @@ applied to the head and arguments.</p>
 <dd><p>Deserialize the next expression starting at the next token yield by <cite>tokens</cite>.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="wolframclient.deserializers.WXFConsumer.unpack_mapping">
-<code class="descname">unpack_mapping</code><em class="property"> = {b'\x00': 'b', b'\x01': 'h', b'\x02': 'i', b'\x03': 'q', b'\x10': 'B', b'\x11': 'H', b'\x12': 'I', b'\x13': 'Q', b'&quot;': 'f', b'#': 'd', b'3': 'f', b'4': 'd'}</em><a class="headerlink" href="#wolframclient.deserializers.WXFConsumer.unpack_mapping" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 <dl class="class">
@@ -320,8 +315,8 @@ applied to the head and arguments.</p>
 <p>A stream of <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> is generated from the WXF input by a instance
 of <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFParser" title="wolframclient.deserializers.wxf.wxfparser.WXFParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFParser</span></code></a>.</p>
 <p>The consumer must be an instance of <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumer</span></code></a>. If none is
-provided, <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumer</span></code></a> is used. To enable NumPy array support,
-use <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumerNumpy</span></code></a>.</p>
+provided, <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumerNumpy</span></code></a> is used. To disable NumPy array support,
+use <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumer</span></code></a>.</p>
 <p>Named parameters are passed to the consumer. They can be any valid parameter of
 <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.next_expression" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.next_expression"><code class="xref py py-meth docutils literal notranslate"><span class="pre">next_expression()</span></code></a>, namely:</p>
 <ul class="simple">
@@ -500,11 +495,6 @@ applied to the head and arguments.</p>
 <dd><p>Deserialize the next expression starting at the next token yield by <cite>tokens</cite>.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt>
-<code class="descname">unpack_mapping</code><em class="property"> = {b'\x00': 'b', b'\x01': 'h', b'\x02': 'i', b'\x03': 'q', b'\x10': 'B', b'\x11': 'H', b'\x12': 'I', b'\x13': 'Q', b'&quot;': 'f', b'#': 'd', b'3': 'f', b'4': 'd'}</em></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 <dl class="class">
@@ -518,19 +508,17 @@ applied to the head and arguments.</p>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="wolframclient.deserializers.WXFConsumerNumpy.consume_array">
-<code class="descname">consume_array</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumerNumpy.consume_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.deserializers.WXFConsumerNumpy.consume_array" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
 <dt id="wolframclient.deserializers.WXFConsumerNumpy.consume_numeric_array">
-<code class="descname">consume_numeric_array</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#wolframclient.deserializers.WXFConsumerNumpy.consume_numeric_array" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">consume_numeric_array</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumerNumpy.consume_numeric_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.deserializers.WXFConsumerNumpy.consume_numeric_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>raw array</em>.</p>
+<p>This method return <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, and made the assumption that system is little endian.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="wolframclient.deserializers.WXFConsumerNumpy.consume_packed_array">
-<code class="descname">consume_packed_array</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#wolframclient.deserializers.WXFConsumerNumpy.consume_packed_array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Build a numpy array from a NumericArray.</p>
+<code class="descname">consume_packed_array</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumerNumpy.consume_packed_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.deserializers.WXFConsumerNumpy.consume_packed_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>packed array</em>.</p>
+<p>This method return <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, and made the assumption that system is little endian.</p>
 </dd></dl>
 
 </dd></dl>

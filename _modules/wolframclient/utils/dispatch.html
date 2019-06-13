@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.utils.dispatch &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
+    <title>wolframclient.utils.dispatch &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
     <link rel="stylesheet" href="../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.2</span>
+                        <span class='header right navigation darkgrey'>v 1.1.0</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -80,11 +80,11 @@
 
 <span class="kn">from</span> <span class="nn">wolframclient.utils.functional</span> <span class="k">import</span> <span class="n">flatten</span>
 
-<span class="c1">#original idea by Guido in person.</span>
-<span class="c1">#https://www.artima.com/weblogs/viewpost.jsp?thread=101605</span>
+<span class="c1"># original idea by Guido in person.</span>
+<span class="c1"># https://www.artima.com/weblogs/viewpost.jsp?thread=101605</span>
 
 
-<div class="viewcode-block" id="Dispatch"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoder.Dispatch">[docs]</a><span class="k">class</span> <span class="nc">Dispatch</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Dispatch"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoders.pil.Dispatch">[docs]</a><span class="k">class</span> <span class="nc">Dispatch</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A method dispatcher class allowing for multiple implementations of a function. Each implementation is associated to a specific input type.</span>
 <span class="sd">    </span>
 <span class="sd">    Implementations are registered with the annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch`.</span>
@@ -102,7 +102,7 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 
-<div class="viewcode-block" id="Dispatch.dispatch"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoder.Dispatch.dispatch">[docs]</a>    <span class="k">def</span> <span class="nf">dispatch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
+<div class="viewcode-block" id="Dispatch.dispatch"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoders.pil.Dispatch.dispatch">[docs]</a>    <span class="k">def</span> <span class="nf">dispatch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Annotate a function and map it to a given set of type(s).</span>
 <span class="sd">        </span>
 <span class="sd">        Declare an implementation to use on :data:`bytearray` input::</span>
@@ -131,7 +131,7 @@
 
         <span class="k">return</span> <span class="n">register</span></div>
 
-<div class="viewcode-block" id="Dispatch.update"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoder.Dispatch.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dispatch</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
+<div class="viewcode-block" id="Dispatch.update"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoders.pil.Dispatch.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dispatch</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update current mapping with the one from `dispatch`.</span>
 <span class="sd">        </span>
 <span class="sd">        `dispatch` can be a Dispatch instance or a :class:`dict`.</span>
@@ -142,29 +142,25 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dispatch</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="n">dispatchmapping</span> <span class="o">=</span> <span class="n">dispatch</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> is not an instance of Dispatch&#39;</span> <span class="o">%</span> <span class="n">dispatch</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is not an instance of Dispatch&quot;</span> <span class="o">%</span> <span class="n">dispatch</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">function</span> <span class="ow">in</span> <span class="n">dispatchmapping</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Dispatch.validate_types"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoder.Dispatch.validate_types">[docs]</a>    <span class="k">def</span> <span class="nf">validate_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">types</span><span class="p">):</span>
+<div class="viewcode-block" id="Dispatch.validate_types"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoders.pil.Dispatch.validate_types">[docs]</a>    <span class="k">def</span> <span class="nf">validate_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">types</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">flatten</span><span class="p">(</span><span class="n">types</span><span class="p">)):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> is not a class&#39;</span> <span class="o">%</span> <span class="n">t</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is not a class&quot;</span> <span class="o">%</span> <span class="n">t</span><span class="p">)</span>
             <span class="k">yield</span> <span class="n">t</span></div>
 
-<div class="viewcode-block" id="Dispatch.register"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoder.Dispatch.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">function</span><span class="p">,</span>
-                 <span class="n">types</span><span class="o">=</span><span class="nb">object</span><span class="p">,</span>
-                 <span class="n">keep_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">replace_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Dispatch.register"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoders.pil.Dispatch.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="nb">object</span><span class="p">,</span> <span class="n">keep_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">replace_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Equivalent to annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch` but as </span>
 <span class="sd">        a function.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">function</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Function </span><span class="si">%s</span><span class="s1"> is not callable&#39;</span> <span class="o">%</span> <span class="n">function</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Function </span><span class="si">%s</span><span class="s2"> is not callable&quot;</span> <span class="o">%</span> <span class="n">function</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">keep_existing</span> <span class="ow">and</span> <span class="n">replace_existing</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s1">&#39;Option values keep_existing and replace_existing cannot be both True.&#39;</span>
+                <span class="s2">&quot;Option values keep_existing and replace_existing cannot be both True.&quot;</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">clear_cache</span><span class="p">()</span>
@@ -174,15 +170,13 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">dispatch_dict</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">function</span>
             <span class="k">elif</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispatch_dict</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">keep_existing</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                        <span class="s2">&quot;Duplicated registration for input type(s): </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span>
-                        <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="p">))</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Duplicated registration for input type(s): </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="p">,))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">dispatch_dict</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">function</span>
 
         <span class="k">return</span> <span class="n">function</span></div>
 
-<div class="viewcode-block" id="Dispatch.unregister"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoder.Dispatch.unregister">[docs]</a>    <span class="k">def</span> <span class="nf">unregister</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Dispatch.unregister"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoders.pil.Dispatch.unregister">[docs]</a>    <span class="k">def</span> <span class="nf">unregister</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="nb">object</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Remove implementations associated with types. &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">clear_cache</span><span class="p">()</span>
@@ -193,16 +187,16 @@
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Dispatch.clear"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoder.Dispatch.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Dispatch.clear"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoders.pil.Dispatch.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Reset the dispatcher to its initial state. &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dispatch_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dispatch_dict_cache</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Dispatch.clear_cache"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoder.Dispatch.clear_cache">[docs]</a>    <span class="k">def</span> <span class="nf">clear_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Dispatch.clear_cache"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoders.pil.Dispatch.clear_cache">[docs]</a>    <span class="k">def</span> <span class="nf">clear_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispatch_dict_cache</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dispatch_dict_cache</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Dispatch.resolve"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoder.Dispatch.resolve">[docs]</a>    <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+<div class="viewcode-block" id="Dispatch.resolve"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoders.pil.Dispatch.resolve">[docs]</a>    <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return the implementation better matching the type the argument type. &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">arg</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
@@ -215,14 +209,14 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_function</span></div>
 
-<div class="viewcode-block" id="Dispatch.default_function"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoder.Dispatch.default_function">[docs]</a>    <span class="k">def</span> <span class="nf">default_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
+<div class="viewcode-block" id="Dispatch.default_function"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoders.pil.Dispatch.default_function">[docs]</a>    <span class="k">def</span> <span class="nf">default_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Ultimately called when no type was found. &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unable to handle args&#39;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unable to handle args&quot;</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">arg</span><span class="p">)(</span><span class="n">arg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Dispatch.as_method"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoder.Dispatch.as_method">[docs]</a>    <span class="k">def</span> <span class="nf">as_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Dispatch.as_method"><a class="viewcode-back" href="../../../api/wolframclient.utils.html#wolframclient.serializers.encoders.pil.Dispatch.as_method">[docs]</a>    <span class="k">def</span> <span class="nf">as_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return the dispatch as a class method. </span>
 <span class="sd">        </span>
 <span class="sd">        Create a new dispatcher::</span>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.cli.dispatch &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
+    <title>wolframclient.cli.dispatch &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
     <link rel="stylesheet" href="../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.2</span>
+                        <span class='header right navigation darkgrey'>v 1.1.0</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -85,12 +85,12 @@
 
 <div class="viewcode-block" id="DispatchCommand"><a class="viewcode-back" href="../../../api/wolframclient.cli.html#wolframclient.cli.dispatch.DispatchCommand">[docs]</a><span class="k">class</span> <span class="nc">DispatchCommand</span><span class="p">(</span><span class="n">SimpleCommand</span><span class="p">):</span>
 
-    <span class="n">modules</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;wolframclient.cli.commands&#39;</span><span class="p">]</span>
-    <span class="n">class_name</span> <span class="o">=</span> <span class="s1">&#39;Command&#39;</span>
+    <span class="n">modules</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;wolframclient.cli.commands&quot;</span><span class="p">]</span>
+    <span class="n">class_name</span> <span class="o">=</span> <span class="s2">&quot;Command&quot;</span>
 
     <span class="n">default_command</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">dependencies</span> <span class="o">=</span> <span class="p">()</span>
 
 <div class="viewcode-block" id="DispatchCommand.subcommands"><a class="viewcode-back" href="../../../api/wolframclient.cli.html#wolframclient.cli.dispatch.DispatchCommand.subcommands">[docs]</a>    <span class="k">def</span> <span class="nf">subcommands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">discover_with_convention</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modules</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_name</span><span class="p">)</span></div>
@@ -104,11 +104,12 @@
 
         <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">all_commands</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">import_string</span><span class="p">(</span><span class="n">all_commands</span><span class="p">[</span><span class="n">attr</span><span class="p">])(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">subcommand_args</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="n">all_commands</span><span class="p">[</span><span class="n">attr</span><span class="p">])</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">subcommand_args</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="n">all_commands</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Select one of the following commands:&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;Select one of the following commands:&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_commands</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s1">&#39; -&#39;</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot; -&quot;</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span>
 
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
 

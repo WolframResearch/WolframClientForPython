@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Guide &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
+    <title>Guide &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -63,7 +63,7 @@
                                 </span>
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.2</span>
+                        <span class='header right navigation darkgrey'>v 1.1.0</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -504,8 +504,8 @@ e.g. have one plugin dedicated to NumPy and one to Pandas, which makes heavy use
 <p>A stream of <a class="reference internal" href="../api/wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> is generated from the WXF input by a instance
 of <a class="reference internal" href="../api/wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFParser" title="wolframclient.deserializers.wxf.wxfparser.WXFParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFParser</span></code></a>.</p>
 <p>The consumer must be an instance of <a class="reference internal" href="../api/wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumer</span></code></a>. If none is
-provided, <a class="reference internal" href="../api/wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumer</span></code></a> is used. To enable NumPy array support,
-use <a class="reference internal" href="../api/wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumerNumpy</span></code></a>.</p>
+provided, <a class="reference internal" href="../api/wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumerNumpy"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumerNumpy</span></code></a> is used. To disable NumPy array support,
+use <a class="reference internal" href="../api/wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumer</span></code></a>.</p>
 <p>Named parameters are passed to the consumer. They can be any valid parameter of
 <a class="reference internal" href="../api/wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.next_expression" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.next_expression"><code class="xref py py-meth docutils literal notranslate"><span class="pre">next_expression()</span></code></a>, namely:</p>
 <ul class="simple">

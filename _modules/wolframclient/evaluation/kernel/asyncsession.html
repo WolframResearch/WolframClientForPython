@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.evaluation.kernel.asyncsession &#8212; Wolfram Client Library for Python 1.0.2 documentation</title>
+    <title>wolframclient.evaluation.kernel.asyncsession &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
     <link rel="stylesheet" href="../../../../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.0.2</span>
+                        <span class='header right navigation darkgrey'>v 1.1.0</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -85,11 +85,10 @@
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;WolframLanguageAsyncSession&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;WolframLanguageAsyncSession&quot;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="WolframLanguageAsyncSession"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageAsyncSession">[docs]</a><span class="k">class</span> <span class="nc">WolframLanguageAsyncSession</span><span class="p">(</span><span class="n">WolframAsyncEvaluator</span><span class="p">,</span>
-                                  <span class="n">WolframLanguageSession</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageAsyncSession"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageAsyncSession">[docs]</a><span class="k">class</span> <span class="nc">WolframLanguageAsyncSession</span><span class="p">(</span><span class="n">WolframAsyncEvaluator</span><span class="p">,</span> <span class="n">WolframLanguageSession</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Evaluate expressions asynchronously using coroutines.</span>
 
 <span class="sd">    Asynchronous evaluations are provided through coroutines and the :mod:`asyncio` modules.</span>
@@ -110,17 +109,19 @@
 <span class="sd">    complexity of the code without any real drawback.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">kernel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">consumer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">initfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">kernel_loglevel</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">NOTSET</span><span class="p">,</span>
-                 <span class="n">stdin</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span>
-                 <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span>
-                 <span class="n">stderr</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span>
-                 <span class="n">inputform_string_evaluation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">kernel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">consumer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">initfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">kernel_loglevel</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">NOTSET</span><span class="p">,</span>
+        <span class="n">stdin</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span>
+        <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span>
+        <span class="n">stderr</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span>
+        <span class="n">inputform_string_evaluation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span>
             <span class="n">consumer</span><span class="o">=</span><span class="n">consumer</span><span class="p">,</span>
@@ -131,7 +132,8 @@
             <span class="n">stderr</span><span class="o">=</span><span class="n">stderr</span><span class="p">,</span>
             <span class="n">inputform_string_evaluation</span><span class="o">=</span><span class="n">inputform_string_evaluation</span><span class="p">,</span>
             <span class="n">loop</span><span class="o">=</span><span class="n">loop</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="WolframLanguageAsyncSession.duplicate"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageAsyncSession.duplicate">[docs]</a>    <span class="k">def</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span>
@@ -144,25 +146,26 @@
             <span class="n">stdout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stdout</span><span class="p">,</span>
             <span class="n">stderr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stderr</span><span class="p">,</span>
             <span class="n">inputform_string_evaluation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inputform_string_evaluation</span><span class="p">,</span>
-            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span></div>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span>
+        <span class="p">)</span></div>
 
-<div class="viewcode-block" id="WolframLanguageAsyncSession.do_evaluate_future"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageAsyncSession.do_evaluate_future">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_evaluate_future</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                                 <span class="n">expr</span><span class="p">,</span>
-                                 <span class="n">result_update_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="WolframLanguageAsyncSession.do_evaluate_future"><a class="viewcode-back" href="../../../../api/wolframclient.evaluation.kernel.html#wolframclient.evaluation.WolframLanguageAsyncSession.do_evaluate_future">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_evaluate_future</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">result_update_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">future</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">do_evaluate_future</span><span class="p">(</span>
-            <span class="n">expr</span><span class="p">,</span> <span class="n">result_update_callback</span><span class="o">=</span><span class="n">result_update_callback</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">expr</span><span class="p">,</span> <span class="n">result_update_callback</span><span class="o">=</span><span class="n">result_update_callback</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wrap_future</span><span class="p">(</span><span class="n">future</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="WolframLanguageAsyncSession.evaluate_future"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageAsyncSession.evaluate_future">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">evaluate_future</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_started</span><span class="p">()</span>
         <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_evaluate_future</span><span class="p">(</span>
-            <span class="n">expr</span><span class="p">,</span> <span class="n">result_update_callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CALLBACK_GET</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+            <span class="n">expr</span><span class="p">,</span> <span class="n">result_update_callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CALLBACK_GET</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="WolframLanguageAsyncSession.evaluate_wxf_future"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageAsyncSession.evaluate_wxf_future">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">evaluate_wxf_future</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_started</span><span class="p">()</span>
         <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_evaluate_future</span><span class="p">(</span>
-            <span class="n">expr</span><span class="p">,</span> <span class="n">result_update_callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CALLBACK_GET_WXF</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+            <span class="n">expr</span><span class="p">,</span> <span class="n">result_update_callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CALLBACK_GET_WXF</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="WolframLanguageAsyncSession.evaluate_wrap_future"><a class="viewcode-back" href="../../../../docpages/public_api.html#wolframclient.evaluation.WolframLanguageAsyncSession.evaluate_wrap_future">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">evaluate_wrap_future</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_started</span><span class="p">()</span>
@@ -226,7 +229,7 @@
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_async_terminate</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_async_terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gracefully</span><span class="p">):</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Terminating asynchronous kernel session.&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Terminating asynchronous kernel session.&quot;</span><span class="p">)</span>
         <span class="n">future</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">stop_future</span><span class="p">(</span><span class="n">gracefully</span><span class="o">=</span><span class="n">gracefully</span><span class="p">)</span>
         <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wrap_future</span><span class="p">(</span><span class="n">future</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">)</span></div>
 </pre></div>
