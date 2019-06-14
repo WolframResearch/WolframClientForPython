@@ -28,7 +28,7 @@ CLASSIFIERS = [
     "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
-    "Topic :: Software Development :: Libraries :: Wolfram Language Library"
+    "Topic :: Software Development :: Libraries"
 ]
 
 
@@ -68,6 +68,7 @@ setup(
         'oauthlib',
         'zmq',
     ],
+    classifiers = CLASSIFIERS,
     project_urls={
         'Source code': 'https://github.com/WolframResearch/WolframClientForPython',
         'Documentation': 'https://wolfr.am/wolframclientdoc',
