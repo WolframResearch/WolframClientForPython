@@ -159,6 +159,7 @@ class FormatSerializer(Encoder):
 
         if callable(o):
             try:
+                # force tuple to avoid calling this method again on `map`.
                 yield "Arguments", tuple(map(force_text, first(inspect.getfullargspec(o))))
             except TypeError:
                 # this function can fail with TypeError unsupported callable
