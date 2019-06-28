@@ -21,13 +21,19 @@ disconnect;
 
 Begin["`Private`"];
 
-{SocketWriteByteArrayFunc, SocketReadByteArrayFunc} = If[
+(*Define the most efficient pair of write bytearray and non-blocking read, for various WL versions. *)
+{SocketWriteByteArrayFunc, SocketReadByteArrayFuncNoWait} = If[
 	$VersionNumber < 12,
-	iSocketWriteByteArray[socket_,ba_ByteArray] := ZeroMQLink`Private`ZMQWriteInternal[socket, Normal[ba]];
-	iSocketReadByteArray[uuid_String, flags_Integer]:= ByteArray@iRecvSingleMultipartMessageSocket[uuid, flags];
-	{iSocketWriteByteArray, iSocketReadByteArray}
+	{
+		Function[{socket, ba}, ZeroMQLink`Private`ZMQWriteInternal[socket, Normal[ba]]],
+		Function[{socketIn}, ByteArray@iRecvSingleMultipartMessageSocket[First@socketIn, 1(*Flag NOWAIT*)]]
+	}
 	,
-	{ZMQSocketWriteMessage, iRecvSingleMultipartBinaryMessageSocket}
+	{
+		ZMQSocketWriteMessage,
+		Function[socketIn_SocketObject, SocketReadMessage[socketIn, "Blocking"->False]]
+	}
+
 ];
 
 $DEBUG=1;
@@ -168,12 +174,11 @@ Which[
 	$VersionNumber < $TaskSupportMinVersion,
 	(* Low CPU wait but need synchronous loop. *)
 	evaluationLoop[socketIn_SocketObject]:= With[
-		{maxPause=$MaxIdlePause, minPause=$MinIdlePause, incr=$PauseIncrement, 
-		uuidIn=First@socketIn, poller={socketIn}},
+		{maxPause=$MaxIdlePause, minPause=$MinIdlePause, incr=$PauseIncrement, poller={socketIn}},
 		Block[{msg},
 			SendAck[];
 			While[True,
-				msg = SocketReadByteArrayFunc[uuidIn, 1 (* NOWAIT *)];
+				msg = SocketReadByteArrayFunc[socketIn];
 				If[Length[msg]>3, 
 					socketEventHandler[msg[[4;;]]];
 					,
@@ -185,12 +190,11 @@ Which[
 	True,
 	(* Version with fixed asynchronous tasks *)
 	evaluationLoop[socketIn_SocketObject]:= With[
-		{maxPause=$MaxIdlePause, minPause=$MinIdlePause, incr=$PauseIncrement, 
-		uuidIn=First@socketIn, poller={socketIn}}, 
+		{maxPause=$MaxIdlePause, minPause=$MinIdlePause, incr=$PauseIncrement, poller={socketIn}},
 		$Task = SessionSubmit[
 			ScheduledTask[
 			(
-				msg = SocketReadByteArrayFunc[uuidIn, 1 (* NOWAIT *)];
+				msg = SocketReadByteArrayFunc[socketIn];
 				If[Length[msg]>3, 
 					socketEventHandler[msg[[4;;]]];
 					,
