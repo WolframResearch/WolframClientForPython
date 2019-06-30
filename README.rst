@@ -41,4 +41,4 @@ This project is released under the MIT licence.
 Contributions
 =============
 
-The library is maintained by Wolfram Research. The code is on Github. Pull requests and suggestions are always welcomed.
+The library is maintained by Wolfram Research. The code is on Github. Pull requests and suggestions are always welcomed. See `our contributor's guide <https://github.com/WolframResearch/WolframClientForPython/blob/master/CONTRIBUTING.md>`_ for more info.
