@@ -498,7 +498,7 @@ class WolframKernelController(Thread):
 
     def _do_evaluate(self, wxf, future, result_update_callback):
         start = time.perf_counter()
-        self.kernel_socket_out.send(wxf)
+        self.kernel_socket_out.send(zmq.Frame(wxf))
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug("Expression sent to kernel in %.06fsec", time.perf_counter() - start)
             start = time.perf_counter()
