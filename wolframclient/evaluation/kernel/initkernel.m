@@ -25,13 +25,18 @@ Begin["`Private`"];
 {SocketWriteByteArrayFunc, SocketReadByteArrayFuncNoWait} = If[
 	$VersionNumber < 12,
 	{
-		Function[{socket, ba}, ZeroMQLink`Private`ZMQWriteInternal[socket, Normal[ba]]],
-		Function[{socketIn}, ByteArray@iRecvSingleMultipartMessageSocket[First@socketIn, 1(*Flag NOWAIT*)]]
+		Function[{socketOut, ba}, ZeroMQLink`Private`ZMQWriteInternal[socketOut, Normal[ba]]],
+		Function[{socketIn},
+			Block[
+				{data=ByteArray@iRecvSingleMultipartMessageSocket[First@socketIn, 1(*Flag NOWAIT*)]},
+				If[Length[data] >= 3, Part[data,4;;], {}]
+			]
+		]
 	}
 	,
 	{
 		ZMQSocketWriteMessage,
-		Function[socketIn_SocketObject, SocketReadMessage[socketIn, "Blocking"->False]]
+		SocketReadMessage[#, "Blocking"->False] &
 	}
 
 ];
@@ -178,9 +183,9 @@ Which[
 		Block[{msg},
 			SendAck[];
 			While[True,
-				msg = SocketReadByteArrayFunc[socketIn];
-				If[Length[msg]>3, 
-					socketEventHandler[msg[[4;;]]];
+				msg = SocketReadByteArrayFuncNoWait[socketIn];
+				If[Length[msg]>0,
+					socketEventHandler[msg];
 					,
 					SocketWaitNext[poller];
 				]
@@ -194,9 +199,9 @@ Which[
 		$Task = SessionSubmit[
 			ScheduledTask[
 			(
-				msg = SocketReadByteArrayFunc[socketIn];
-				If[Length[msg]>3, 
-					socketEventHandler[msg[[4;;]]];
+				msg = SocketReadByteArrayFuncNoWait[socketIn];
+				If[Length[msg]>0,
+					socketEventHandler[msg];
 					,
 					SocketWaitNext[poller];
 				]
