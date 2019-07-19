@@ -5,8 +5,7 @@ import decimal
 import platform
 import sys
 import types
-from itertools import chain
-
+import itertools
 # stripped version of SIX
 
 PY2 = sys.version_info[0] == 2
@@ -58,7 +57,9 @@ else:
         memoryview = buffer
     buffer_types = (bytearray, memoryview, buffer)
 
-iterable_types = (list, tuple, set, frozenset, types.GeneratorType, chain)
+iterable_types = [list, tuple, set, frozenset, types.GeneratorType, itertools.chain, itertools.groupby]
+if not PY2:
+    iterable_types.extend((map, range))
 
 protected_types = tuple(
     chain(
