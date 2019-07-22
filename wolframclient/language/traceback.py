@@ -236,6 +236,7 @@ def _get_lines_from_file(filename, lineno, context_lines, loader=None, module_na
                 break
         source = [force_text(sline, encoding, "replace") for sline in source]
 
+    lineno = min(lineno, len(source) - 1)
     lower_bound = max(0, lineno - context_lines)
     upper_bound = lineno + context_lines
 
