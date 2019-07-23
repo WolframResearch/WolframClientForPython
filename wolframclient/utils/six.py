@@ -2,10 +2,11 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import datetime
 import decimal
+import itertools
 import platform
 import sys
 import types
-import itertools
+
 # stripped version of SIX
 
 PY2 = sys.version_info[0] == 2
@@ -57,12 +58,20 @@ else:
         memoryview = buffer
     buffer_types = (bytearray, memoryview, buffer)
 
-iterable_types = [list, tuple, set, frozenset, types.GeneratorType, itertools.chain, itertools.groupby]
+iterable_types = [
+    list,
+    tuple,
+    set,
+    frozenset,
+    types.GeneratorType,
+    itertools.chain,
+    itertools.groupby,
+]
 if not PY2:
     iterable_types.extend((map, range))
 
 protected_types = tuple(
-    chain(
+    itertools.chain(
         string_types,
         integer_types,
         (
