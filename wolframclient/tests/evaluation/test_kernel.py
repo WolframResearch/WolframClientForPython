@@ -289,10 +289,8 @@ class TestCase(TestCaseSettings):
 
     def test_throw(self):
 
-        self.assertEqual(
-            self.kernel_session.evaluate(wl.Throw(2)),
-            wl.Hold(wl.Throw(2))
-        )
+        self.assertEqual(self.kernel_session.evaluate(wl.Throw(2)), wl.Hold(wl.Throw(2)))
+
 
 class TestSessionTimeout(TestCaseSettings):
     def test_evaluate_async_basic_inputform(self):
