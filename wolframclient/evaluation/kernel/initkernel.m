@@ -141,7 +141,7 @@ socketEventHandler[data_] := Block[
 	ClientLibrary`debug["Evaluating a new expression."];
 	expr = EvaluationData[BinaryDeserialize[data]];
 	(* Produce inline InputForm string messages. *)
-	expr = Append[
+	AssociateTo[
 		expr, {
 			"Result" -> BinarySerialize[expr["Result"]],
 			"MessagesText" -> Map[
