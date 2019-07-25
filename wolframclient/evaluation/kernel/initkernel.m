@@ -136,12 +136,12 @@ addPrintHandler[] := Internal`AddHandler[
  	Composition[ClientLibrary`info, ReleaseHold]
 ];
 
-socketEventHandler[data_] := Module[
+socketEventHandler[data_] := Block[
 	{expr},
 	ClientLibrary`debug["Evaluating a new expression."];
 	expr = EvaluationData[BinaryDeserialize[data]];
 	(* Produce inline InputForm string messages. *)
-	expr = Prepend[
+	expr = Append[
 		expr, {
 			"Result" -> BinarySerialize[expr["Result"]],
 			"MessagesText" -> Map[
