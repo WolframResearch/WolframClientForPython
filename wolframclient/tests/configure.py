@@ -106,7 +106,7 @@ if six.PY_35 and _json_config_path is not None:
     try:
         with open(expended_path, "r") as fp:
             json_config = json.load(fp)
-            secured_authentication_key, user_configuration, server, kernel_path, api_owner= _parse_config(
+            secured_authentication_key, user_configuration, server, kernel_path, api_owner = _parse_config(
                 json_config
             )
     except IOError:

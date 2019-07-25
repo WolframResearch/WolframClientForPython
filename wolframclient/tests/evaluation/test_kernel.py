@@ -287,6 +287,13 @@ class TestCase(TestCaseSettings):
         self.assertFalse(session.started)
         self.assertTrue(session.stopped)
 
+    def test_throw(self):
+
+        self.assertEqual(self.kernel_session.evaluate(wl.Throw(2)), wl.Hold(wl.Throw(2)))
+        self.assertEqual(
+            self.kernel_session.evaluate(wl.Throw(2, "foo")), wl.Hold(wl.Throw(2, "foo"))
+        )
+
 
 class TestSessionTimeout(TestCaseSettings):
     def test_evaluate_async_basic_inputform(self):
