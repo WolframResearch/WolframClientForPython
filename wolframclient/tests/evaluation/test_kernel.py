@@ -290,6 +290,9 @@ class TestCase(TestCaseSettings):
     def test_throw(self):
 
         self.assertEqual(self.kernel_session.evaluate(wl.Throw(2)), wl.Hold(wl.Throw(2)))
+        self.assertEqual(
+            self.kernel_session.evaluate(wl.Throw(2, "foo")), wl.Hold(wl.Throw(2, "foo"))
+        )
 
 
 class TestSessionTimeout(TestCaseSettings):
