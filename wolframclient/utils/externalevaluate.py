@@ -151,7 +151,7 @@ def evaluate_message(input=None, return_type=None, args=None, **opts):
 
 
 @to_wl(**EXPORT_KWARGS)
-def handle_message(socket):
+def handle_message(socket, evaluate_message = evaluate_message):
 
     __traceback_hidden_variables__ = True
 
@@ -180,7 +180,7 @@ def start_zmq_instance(port=None, write_to_stdout=True, **opts):
     return sock
 
 
-def start_zmq_loop(message_limit=float("inf"), redirect_stdout=True, **opts):
+def start_zmq_loop(message_limit=float("inf"), redirect_stdout=True, evaluate_message = evaluate_message, **opts):
     socket = start_zmq_instance(**opts)
 
     stream = SocketWriter(socket)
@@ -194,7 +194,7 @@ def start_zmq_loop(message_limit=float("inf"), redirect_stdout=True, **opts):
 
     # now sit in a while loop, evaluating input
     while messages < message_limit:
-        stream.write(handle_message(socket))
+        stream.write(handle_message(socket, evaluate_message = evaluate_message))
         messages += 1
 
     if redirect_stdout:
