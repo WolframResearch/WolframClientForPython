@@ -150,11 +150,11 @@ def evaluate_message(input=None, return_type=None, args=None, **opts):
     return result
 
 
-def handle_message(socket, evaluate_message=evaluate_message):
+def handle_message(socket, evaluate_message=evaluate_message, consumer = None):
 
     __traceback_hidden_variables__ = True
 
-    message = binary_deserialize(socket.recv())
+    message = binary_deserialize(socket.recv(), consumer = consumer)
     result = evaluate_message(**message)
 
     sys.stdout.flush()
@@ -184,6 +184,7 @@ def start_zmq_loop(
     redirect_stdout=True,
     export_kwargs=EXPORT_KWARGS,
     evaluate_message=evaluate_message,
+    consumer = None, 
     **opts
 ):
 
@@ -202,7 +203,7 @@ def start_zmq_loop(
 
     # now sit in a while loop, evaluating input
     while messages < message_limit:
-        stream.write(handler(socket, evaluate_message=evaluate_message))
+        stream.write(handler(socket, evaluate_message=evaluate_message, consumer = consumer))
         messages += 1
 
     if redirect_stdout:
