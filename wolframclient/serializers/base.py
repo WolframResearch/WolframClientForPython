@@ -134,12 +134,22 @@ class FormatSerializer(Encoder):
     def _serialize_external_object(self, o):
 
         yield "System", "Python"
-        yield "Type", "PythonFunction"
+
+        if callable(o):
+            yield "Type", "PythonFunction"
+            try:
+                # force tuple to avoid calling this method again on `map`.
+                yield "Arguments", tuple(map(force_text, first(inspect.getfullargspec(o))))
+            except TypeError:
+                # this function can fail with TypeError unsupported callable
+                pass
+        else:
+            yield "Type", "PythonObject"
 
         if hasattr(o, "__name__"):
-            yield "Name", force_text(o.__name__)
+            yield "Command", force_text(o.__name__)
         else:
-            yield "Name", force_text(o.__class__.__name__)
+            yield "Command", force_text(o.__class__.__name__)
 
         is_module = inspect.ismodule(o)
 
@@ -155,13 +165,7 @@ class FormatSerializer(Encoder):
         yield "IsMethod", inspect.ismethod(o),
         yield "IsCallable", callable(o),
 
-        if callable(o):
-            try:
-                # force tuple to avoid calling this method again on `map`.
-                yield "Arguments", tuple(map(force_text, first(inspect.getfullargspec(o))))
-            except TypeError:
-                # this function can fail with TypeError unsupported callable
-                pass
+
 
     def serialize_external_object(self, obj):
         return self.serialize_function(
