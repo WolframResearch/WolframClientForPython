@@ -28,7 +28,7 @@ class PandasSeriesTestCase(PandasTestCase):
 
     def create_numpy_data_zero(self):
         # zero-based
-        arr, index = create_numpy_data_nan()
+        arr, index = self.create_numpy_data_nan()
         arr[numpy.isnan(arr)] = 0
         return arr, index
 
