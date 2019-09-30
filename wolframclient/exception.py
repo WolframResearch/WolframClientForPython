@@ -14,7 +14,7 @@ class RequestException(WolframLanguageException):
         else:
             try:
                 self.msg = response.text()
-            except UnicodeDecodeErrors:
+            except UnicodeDecodeError:
                 self.msg = "Failed to decode request body."
 
     def __str__(self):
