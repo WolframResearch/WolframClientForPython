@@ -199,10 +199,11 @@ class XAuthRequestsSyncSession(OAuthRequestsSyncSessionBase):
             )
         # todo use xauth server key/secret
         client = self.client_class(self.consumer_key, self.consumer_secret)
-        params = dict()
-        params["x_auth_username"] = self.xauth_credentials.user
-        params["x_auth_password"] = self.xauth_credentials.password
-        params["x_auth_mode"] = "client_auth"
+        params = {
+            "x_auth_username": self.xauth_credentials.user,
+            "x_auth_password": self.xauth_credentials.password,
+            "x_auth_mode": "client_auth"
+        }
 
         # avoid dumping password in log files.
         logging.disable(logging.DEBUG)
