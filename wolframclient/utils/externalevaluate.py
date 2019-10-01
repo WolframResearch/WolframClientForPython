@@ -64,7 +64,9 @@ def execute_from_string(code, globals={}, **opts):
     if not expressions:
         return
 
-    if isinstance(last(expressions), ast.Expr):
+    last_expr = last(expressions)
+
+    if isinstance(last_expr, ast.Expr):
         result = expressions.pop(-1)
 
     if expressions:
@@ -72,6 +74,9 @@ def execute_from_string(code, globals={}, **opts):
 
     if result:
         return eval(compile(ast.Expression(result.value), "", "eval"), env)
+
+    elif isinstance(last_expr, (ast.FunctionDef, ast.ClassDef)):
+        return env[last_expr.name]
 
 
 class SideEffectSender(logging.Handler):
