@@ -150,14 +150,16 @@ addPrintHandler[] := Internal`AddHandler[
 socketEventHandler[data_] := Block[
 	{expr},
 	ClientLibrary`debug["Evaluating a new expression."];
-	expr = EvaluationData[BinarySerialize[BinaryDeserialize[data]]];
+	expr = EvaluationData[BinaryDeserialize[data]];
 	(* Produce inline InputForm string messages. *)
 	AssociateTo[
-		expr,
-		"MessagesText" -> Map[
-			fmtmsg,
-			expr["MessagesExpressions"]
-		]
+		expr, {
+			"Result" -> BinarySerialize[expr["Result"]],
+			"MessagesText" -> Map[
+				fmtmsg,
+				expr["MessagesExpressions"]
+			]
+		}
 	];
 	ClientLibrary`debug["Done evaluating."];
 	SocketWriteByteArrayFunc[
@@ -166,7 +168,6 @@ socketEventHandler[data_] := Block[
 	];
 	ClientLibrary`debug["Done responding."];
 ];
-
 
 SendAck[] := WriteString[$OutputSocket, "OK"]
 

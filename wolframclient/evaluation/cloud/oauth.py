@@ -192,17 +192,18 @@ class XAuthRequestsSyncSession(OAuthRequestsSyncSessionBase):
 
     def authenticate(self):
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug("xauth authentication of user %s", user)
+            logger.debug("xauth authentication of user %s", self.xauth_credentials.user)
         if not self.server.is_xauth():
             raise AuthenticationException(
                 "XAuth is not configured. Missing consumer key and/or secret."
             )
         # todo use xauth server key/secret
         client = self.client_class(self.consumer_key, self.consumer_secret)
-        params = {}
-        params["x_auth_username"] = self.xauth_credentials.user
-        params["x_auth_password"] = self.xauth_credentials.password
-        params["x_auth_mode"] = "client_auth"
+        params = {
+            "x_auth_username": self.xauth_credentials.user,
+            "x_auth_password": self.xauth_credentials.password,
+            "x_auth_mode": "client_auth"
+        }
 
         # avoid dumping password in log files.
         logging.disable(logging.DEBUG)

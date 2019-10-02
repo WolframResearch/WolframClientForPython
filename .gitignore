@@ -10,3 +10,4 @@ wolframclient/tests/local_config.json
 .vscode
 *.code-workspace
 /test-reports
+.DS_Store

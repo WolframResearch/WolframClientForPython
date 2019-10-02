@@ -27,6 +27,7 @@ logger.setLevel(logging.INFO)
 
 LOOP = get_event_loop()
 
+
 class TestCoroutineSession(BaseTestCase):
     @classmethod
     def setUpClass(cls):
