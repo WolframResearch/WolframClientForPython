@@ -64,6 +64,7 @@ pip = API(
 
 zmq = API(
     Context="zmq.Context",
+    Frame="zmq.Frame",
     PUSH="zmq.PUSH",
     PULL="zmq.PULL",
     PAIR="zmq.PAIR",

@@ -283,10 +283,7 @@ class WolframLanguageSession(WolframEvaluator):
     set_parameter.__doc__ = WolframKernelController.set_parameter.__doc__
 
     def __repr__(self):
-        if self.started:
-            return "<%s: kernel controller=%s>" % (
-                self.__class__.__name__,
-                self.kernel_controller,
-            )
-        else:
-            return "<%s: not started>" % self.__class__.__name__
+        return "<%s: %s>" % (
+            self.__class__.__name__,
+            self.kernel_controller,
+        )

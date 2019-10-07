@@ -90,8 +90,7 @@ class SocketWriter:
         self.socket = socket
 
     def write(self, bytes):
-        self.socket.send(bytes)
-
+        self.socket.send(zmq.Frame(bytes))
 
 class StdoutProxy:
 
@@ -159,7 +158,7 @@ def handle_message(socket, evaluate_message=evaluate_message, consumer=None):
 
     __traceback_hidden_variables__ = True
 
-    message = binary_deserialize(socket.recv(), consumer=consumer)
+    message = binary_deserialize(socket.recv(copy=False).buffer, consumer=consumer)
     result = evaluate_message(**message)
 
     sys.stdout.flush()

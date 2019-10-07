@@ -21,13 +21,24 @@ disconnect;
 
 Begin["`Private`"];
 
-{SocketWriteByteArrayFunc, SocketReadByteArrayFunc} = If[
+(*Define the most efficient pair of write bytearray and non-blocking read, for various WL versions. *)
+{SocketWriteByteArrayFunc, SocketReadByteArrayFuncNoWait} = If[
 	$VersionNumber < 12,
-	iSocketWriteByteArray[socket_,ba_ByteArray] := ZeroMQLink`Private`ZMQWriteInternal[socket, Normal[ba]];
-	iSocketReadByteArray[uuid_String, flags_Integer]:= ByteArray@iRecvSingleMultipartMessageSocket[uuid, flags];
-	{iSocketWriteByteArray, iSocketReadByteArray}
+	{
+		Function[{socketOut, ba}, ZeroMQLink`Private`ZMQWriteInternal[socketOut, Normal[ba]]],
+		Function[{socketIn},
+			Block[
+				{data=ByteArray@iRecvSingleMultipartMessageSocket[First@socketIn, 1(*Flag NOWAIT*)]},
+				If[Length[data] >= 3, Part[data,4;;], {}]
+			]
+		]
+	}
 	,
-	{ZMQSocketWriteMessage, iRecvSingleMultipartBinaryMessageSocket}
+	{
+		ZMQSocketWriteMessage,
+		SocketReadMessage[#, "Blocking"->False] &
+	}
+
 ];
 
 $DEBUG=1;
@@ -169,14 +180,13 @@ Which[
 	$VersionNumber < $TaskSupportMinVersion,
 	(* Low CPU wait but need synchronous loop. *)
 	evaluationLoop[socketIn_SocketObject]:= With[
-		{maxPause=$MaxIdlePause, minPause=$MinIdlePause, incr=$PauseIncrement, 
-		uuidIn=First@socketIn, poller={socketIn}},
+		{maxPause=$MaxIdlePause, minPause=$MinIdlePause, incr=$PauseIncrement, poller={socketIn}},
 		Block[{msg},
 			SendAck[];
 			While[True,
-				msg = SocketReadByteArrayFunc[uuidIn, 1 (* NOWAIT *)];
-				If[Length[msg]>3, 
-					socketEventHandler[msg[[4;;]]];
+				msg = SocketReadByteArrayFuncNoWait[socketIn];
+				If[Length[msg]>0,
+					socketEventHandler[msg];
 					,
 					SocketWaitNext[poller];
 				]
@@ -186,14 +196,13 @@ Which[
 	True,
 	(* Version with fixed asynchronous tasks *)
 	evaluationLoop[socketIn_SocketObject]:= With[
-		{maxPause=$MaxIdlePause, minPause=$MinIdlePause, incr=$PauseIncrement, 
-		uuidIn=First@socketIn, poller={socketIn}}, 
+		{maxPause=$MaxIdlePause, minPause=$MinIdlePause, incr=$PauseIncrement, poller={socketIn}},
 		$Task = SessionSubmit[
 			ScheduledTask[
 			(
-				msg = SocketReadByteArrayFunc[uuidIn, 1 (* NOWAIT *)];
-				If[Length[msg]>3, 
-					socketEventHandler[msg[[4;;]]];
+				msg = SocketReadByteArrayFuncNoWait[socketIn];
+				If[Length[msg]>0,
+					socketEventHandler[msg];
 					,
 					SocketWaitNext[poller];
 				]
