@@ -64,7 +64,7 @@ setup(
         'requests',
         'aiohttp',
         'oauthlib',
-        'zmq',
+        'pyzmq',
     ],
     classifiers = CLASSIFIERS,
     project_urls={
