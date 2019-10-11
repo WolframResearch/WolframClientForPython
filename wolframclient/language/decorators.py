@@ -84,12 +84,16 @@ def safe_wl_execute(
                 ]
 
 
-def to_wl(**export_opts):
+def to_wl(exception_class=WolframLanguageException, **export_opts):
     def outer(function):
         @wraps(function)
         def inner(*args, **opts):
             return safe_wl_execute(
-                function=function, args=args, opts=opts, export_opts=export_opts
+                function=function,
+                args=args,
+                opts=opts,
+                export_opts=export_opts,
+                exception_class=exception_class,
             )
 
         return inner
