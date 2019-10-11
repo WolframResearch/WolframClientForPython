@@ -188,11 +188,12 @@ def start_zmq_loop(
     redirect_stdout=True,
     export_kwargs=EXPORT_KWARGS,
     evaluate_message=evaluate_message,
+    exception_class=None,
     consumer=None,
     **opts
 ):
 
-    handler = to_wl(**export_kwargs)(handle_message)
+    handler = to_wl(exception_class=exception_class, **export_kwargs)(handle_message)
 
     socket = start_zmq_instance(**opts)
 
