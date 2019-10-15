@@ -53,6 +53,8 @@ setup(
     keywords=['Wolfram Language', 'Wolfram Desktop', 'Mathematica', 'parser', 'serializer', 'WXF'],
     author = ABOUT['__author__'],
     author_email = ABOUT['__author_email__'],
+    license = 'MIT',
+    url = 'https://www.wolfram.com/',
     include_package_data=True,
     packages=find_packages(),
     test_suite='setup.load_tests',
@@ -64,7 +66,7 @@ setup(
         'requests',
         'aiohttp',
         'oauthlib',
-        'zmq',
+        'pyzmq',
     ],
     classifiers = CLASSIFIERS,
     project_urls={
