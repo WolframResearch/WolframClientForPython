@@ -16,7 +16,7 @@ DEFAULT_UNKNOWN_FAILURE = {
 
 
 def safe_wl_execute(
-    function, args=(), opts={}, export_opts={}, exception_class=WolframLanguageException
+    function, args=(), opts={}, export_opts={}, exception_class=None
 ):
 
     __traceback_hidden_variables__ = True
@@ -37,7 +37,7 @@ def safe_wl_execute(
                     except Exception:
                         pass
 
-                if exception_class is WolframLanguageException:
+                if not exception_class or exception_class is WolframLanguageException:
                     return export(
                         WolframLanguageException(export_exception, exec_info=sys.exc_info()),
                         **export_opts
@@ -84,12 +84,16 @@ def safe_wl_execute(
                 ]
 
 
-def to_wl(**export_opts):
+def to_wl(exception_class=None, **export_opts):
     def outer(function):
         @wraps(function)
         def inner(*args, **opts):
             return safe_wl_execute(
-                function=function, args=args, opts=opts, export_opts=export_opts
+                function=function,
+                args=args,
+                opts=opts,
+                export_opts=export_opts,
+                exception_class=exception_class,
             )
 
         return inner
