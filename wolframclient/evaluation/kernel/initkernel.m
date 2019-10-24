@@ -21,8 +21,9 @@ disconnect;
 
 Begin["`Private`"];
 
+
 (*Define the most efficient pair of write bytearray and non-blocking read, for various WL versions. *)
-{SocketWriteByteArrayFunc, SocketReadByteArrayFuncNoWait} = If[
+{SocketWriteByteArrayFunc, SocketReadByteArrayFuncNoWait} = Which[
 	$VersionNumber < 12,
 	{
 		Function[{socketOut, ba}, ZeroMQLink`Private`ZMQWriteInternal[socketOut, Normal[ba]]],
@@ -32,13 +33,23 @@ Begin["`Private`"];
 				If[Length[data] >= 3, Part[data,4;;], {}]
 			]
 		]
-	}
+	},
+	$VersionNumber < 12.1,
+	{
+		Function[{socketOut, ba}, ZMQSocketWriteMessage[socketOut, ba]],
+		Function[{socketIn},
+			Block[
+				{data = iRecvSingleMultipartBinaryMessageSocket[First@socketIn, 1(*Flag NOWAIT*)]},
+				If[Length[data] >= 3, Part[data,4;;], {}]
+			]
+		]
+	},
+	True
 	,
 	{
 		ZMQSocketWriteMessage,
 		SocketReadMessage[#, "Blocking"->False] &
 	}
-
 ];
 
 $DEBUG=1;
