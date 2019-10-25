@@ -32,7 +32,7 @@ class ExactSizeReader(object):
     def __init__(self, reader):
         self._reader = reader
 
-    @decorate(concatenate_bytes)
+    
     def read(self, size=-1):
         """Read from an underlying readable object.
 
@@ -45,17 +45,20 @@ class ExactSizeReader(object):
         # Negative values read until EOF and 0 returns b''. Both remain unchanged.
         # Also a fast path when the requested amount of bytes is returned in one go.
         if size <= 0 or len(data) == size:
-            yield data
-        else:
-            # need an intermediary buffer
-            out_len = len(data)
-            while out_len < size:
-                chunk = self._reader.read(size - out_len)
-                if chunk == b"":
-                    raise EOFError("Not enough data to read.")
-                yield chunk
-                out_len = out_len + len(chunk)
+            return data
 
+        return self._read_rest(data, size)
+
+    @decorate(concatenate_bytes)
+    def _read_rest(self, data, size=-1):
+        # need an intermediary buffer
+        out_len = len(data)
+        while out_len < size:
+            chunk = self._reader.read(size - out_len)
+            if chunk == b"":
+                raise EOFError("Not enough data to read.")
+            yield chunk
+            out_len = out_len + len(chunk)
 
 class ZipCompressedReader(object):
     """A buffer implementation reading zip compressed data from a source buffer and returning uncompressed data.
