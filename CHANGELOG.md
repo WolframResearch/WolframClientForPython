@@ -1,3 +1,7 @@
+# Version 1.1.2
+- Fix a backward incompatible change introduced in 12.1. Make sure the library works with any kernel version starting with 11.3.
+- Minor changes and tweaks.
+
 # Version 1.1.0
 - WXF deserialization maps `List` to `tuple`, was `list` before for two reasons. `List` and tuple are immutable. `tuple` contrary to `list` are hashable object and as such can be keys in `dict`.
 - WXF deserialization maps numeric arrays to `NumPy` arrays. Numpy being a pre-requisite of the library, and lazily loaded, this change will boost performances while causing very little trouble, if any.
