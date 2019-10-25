@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Basic Usage &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
+    <title>Basic Usage &#8212; Wolfram Client Library for Python 1.1.2 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -70,7 +70,7 @@
                                 </span>
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.1.0</span>
+                        <span class='header right navigation darkgrey'>v 1.1.2</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -180,7 +180,7 @@
 <span class="go">&#39;cba&#39;</span>
 </pre></div>
 </div>
-<p>Evaluate <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">MinMax</span></span><span class="p"><span class="pre">[{</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">5</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">9</span></span><span class="p"><span class="pre">}]</span></span></code>, using the Wolfram Language function <a class="wl external reference" href="http://reference.wolfram.com/language/ref/MinMax.html">MinMax</a> on a Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>:</p>
+<p>Evaluate <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">MinMax</span></span><span class="p"><span class="pre">[{</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">5</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">9</span></span><span class="p"><span class="pre">}]</span></span></code>, using the Wolfram Language function <a class="wl external reference" href="http://reference.wolfram.com/language/ref/MinMax.html">MinMax</a> on a Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">MinMax</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">]))</span>
 <span class="go">[-3, 9]</span>
 </pre></div>
@@ -521,7 +521,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">api</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;MyWolframID&#39;</span><span class="p">,</span> <span class="s1">&#39;api/private/xsquared&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The API’s sole input is “<cite>list</cite>”. In general, an API value is specified as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, in which keys are parameter names. A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> in Python is automatically converted to a Wolfram Language <a class="wl external reference" href="http://reference.wolfram.com/language/ref/List.html">List</a> and is thus a valid API input value.</p>
+<p>The API’s sole input is “<cite>list</cite>”. In general, an API value is specified as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, in which keys are parameter names. A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> in Python is automatically converted to a Wolfram Language <a class="wl external reference" href="http://reference.wolfram.com/language/ref/List.html">List</a> and is thus a valid API input value.</p>
 <p>Call the API:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">api</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span> <span class="p">:</span> <span class="mi">4</span><span class="p">})</span>
 </pre></div>
@@ -536,7 +536,7 @@
 <span class="go">b&#39;16&#39;</span>
 </pre></div>
 </div>
-<p>Parse it as an <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>:</p>
+<p>Parse it as an <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">int</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
 <span class="go">16</span>
 </pre></div>
@@ -575,7 +575,7 @@
 <span class="p">]</span><span class="w"></span>
 </pre></div>
 </div>
-<p>Specify the API as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>:</p>
+<p>Specify the API as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">api</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;MyWolframID&#39;</span><span class="p">,</span> <span class="s1">&#39;api/private/imagedimensions&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -587,7 +587,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">api_call</span> <span class="o">=</span>  <span class="n">session</span><span class="o">.</span><span class="n">wolfram_api_call</span><span class="p">(</span><span class="n">api</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Add a new file parameter. File parameters have a name, and their values must be an opened file object as returned by <a class="reference external" href="https://docs.python.org/3/library/functions.html#open" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">open()</span></code></a>. Call the API using an image stored in <cite>/path/to/example/image.png</cite>:</p>
+<p>Add a new file parameter. File parameters have a name, and their values must be an opened file object as returned by <a class="reference external" href="https://docs.python.org/3/library/functions.html#open" title="(in Python v3.8)"><code class="xref py py-func docutils literal notranslate"><span class="pre">open()</span></code></a>. Call the API using an image stored in <cite>/path/to/example/image.png</cite>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/path/to/example/image.png&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="n">api_call</span><span class="o">.</span><span class="n">add_file_parameter</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">,</span> <span class="n">fp</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="n">result</span> <span class="o">=</span> <span class="n">api_call</span><span class="o">.</span><span class="n">perform</span><span class="p">()</span>
@@ -613,7 +613,7 @@
 <div class="section" id="serialize">
 <h3>Serialize<a class="headerlink" href="#serialize" title="Permalink to this headline">¶</a></h3>
 <p>The modules <a class="reference internal" href="../api/wolframclient.serializers.html#module-wolframclient.serializers" title="wolframclient.serializers"><code class="xref py py-mod docutils literal notranslate"><span class="pre">serializers</span></code></a> and <a class="reference internal" href="../api/wolframclient.language.html#module-wolframclient.language" title="wolframclient.language"><code class="xref py py-mod docutils literal notranslate"><span class="pre">language</span></code></a> provide tools to represent and serialize arbitrary Wolfram Language expressions.
-The function <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a> can serialize a variety of standard Python objects, such as <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>.</p>
+The function <a class="reference internal" href="../api/wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a> can serialize a variety of standard Python objects, such as <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>.</p>
 <p>Import the function:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">wolframclient.serializers</span> <span class="k">import</span> <span class="n">export</span>
 </pre></div>
@@ -750,7 +750,7 @@ The function <a class="reference internal" href="../api/wolframclient.deserializ
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">make sure to <a class="reference external" href="https://docs.python.org/3/library/functions.html#open" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">open()</span></code></a> WXF files in binary mode <strong>‘b’</strong> to avoid encoding issues.</p>
+<p class="last">make sure to <a class="reference external" href="https://docs.python.org/3/library/functions.html#open" title="(in Python v3.8)"><code class="xref py py-func docutils literal notranslate"><span class="pre">open()</span></code></a> WXF files in binary mode <strong>‘b’</strong> to avoid encoding issues.</p>
 </div>
 </div>
 </div>

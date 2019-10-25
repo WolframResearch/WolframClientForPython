@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.utils package &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
+    <title>wolframclient.utils package &#8212; Wolfram Client Library for Python 1.1.2 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.1.0</span>
+                        <span class='header right navigation darkgrey'>v 1.1.2</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -107,14 +107,14 @@
 <dl class="class">
 <dt id="wolframclient.utils.datastructures.Association">
 <em class="property">class </em><code class="descclassname">wolframclient.utils.datastructures.</code><code class="descname">Association</code><a class="reference internal" href="../_modules/wolframclient/utils/datastructures.html#Association"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.datastructures.Association" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.OrderedDict</span></code></a></p>
-<p>A <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">OrderedDict</span></code></a> that serializes to an Association</p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.OrderedDict</span></code></a></p>
+<p>A <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">OrderedDict</span></code></a> that serializes to an Association</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="wolframclient.utils.datastructures.Settings">
 <em class="property">class </em><code class="descclassname">wolframclient.utils.datastructures.</code><code class="descname">Settings</code><a class="reference internal" href="../_modules/wolframclient/utils/datastructures.html#Settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.datastructures.Settings" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
 <p>Dictionary subclass enabling attribute lookup/assignment of keys/values.</p>
 <p>For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">({</span><span class="s1">&#39;foo&#39;</span><span class="p">:</span> <span class="s1">&#39;bar&#39;</span><span class="p">})</span>
@@ -169,7 +169,7 @@ the first hit, e.g.:</p>
 <dl class="class">
 <dt id="wolframclient.utils.decorators.cached_property">
 <em class="property">class </em><code class="descclassname">wolframclient.utils.decorators.</code><code class="descname">cached_property</code><span class="sig-paren">(</span><em>func</em>, <em>name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/decorators.html#cached_property"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.decorators.cached_property" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Decorator that converts a method with a single self argument into a
 property cached on the instance.</p>
 <p>Optional <code class="docutils literal notranslate"><span class="pre">name</span></code> argument allows you to make cached properties of other
@@ -197,13 +197,13 @@ methods. (e.g.  url = cached_property(get_absolute_url, name=’url’) )</p>
 <dl class="class">
 <dt id="wolframclient.utils.dispatch.Dispatch">
 <em class="property">class </em><code class="descclassname">wolframclient.utils.dispatch.</code><code class="descname">Dispatch</code><a class="reference internal" href="../_modules/wolframclient/utils/dispatch.html#Dispatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.dispatch.Dispatch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A method dispatcher class allowing for multiple implementations of a function. Each implementation is associated to a specific input type.</p>
 <p>Implementations are registered with the annotation <a class="reference internal" href="#wolframclient.utils.dispatch.Dispatch.dispatch" title="wolframclient.utils.dispatch.Dispatch.dispatch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dispatch()</span></code></a>.</p>
 <p>The Dispatch class is callable, it behaves as a function that uses the implementation corresponding to the input parameter.</p>
 <p>When a type is a subtype, the type and its parents are checked in the order given by <code class="xref py py-data docutils literal notranslate"><span class="pre">__mro__</span></code> (method resolution order).</p>
-<p><em>Example:</em> method <a class="reference internal" href="#wolframclient.utils.dispatch.Dispatch.resolve" title="wolframclient.utils.dispatch.Dispatch.resolve"><code class="xref py py-meth docutils literal notranslate"><span class="pre">resolve()</span></code></a> applied to an instance of <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.OrderedDict</span></code></a>,
-check for the first implementation to match with <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.OrderedDict</span></code></a>, then with <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, and ultimately to <code class="xref py py-data docutils literal notranslate"><span class="pre">object</span></code>.</p>
+<p><em>Example:</em> method <a class="reference internal" href="#wolframclient.utils.dispatch.Dispatch.resolve" title="wolframclient.utils.dispatch.Dispatch.resolve"><code class="xref py py-meth docutils literal notranslate"><span class="pre">resolve()</span></code></a> applied to an instance of <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.OrderedDict</span></code></a>,
+check for the first implementation to match with <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.OrderedDict</span></code></a>, then with <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, and ultimately to <code class="xref py py-data docutils literal notranslate"><span class="pre">object</span></code>.</p>
 <p>Once the mapping is determined, it is cached for later use.</p>
 <dl class="method">
 <dt id="wolframclient.utils.dispatch.Dispatch.as_method">
@@ -263,8 +263,8 @@ Declare a function used for both <code class="xref py py-data docutils literal n
 </pre></div>
 </div>
 <p>Implementation must be unique. By default, registering the same combination of types will raise an error.
-Set <cite>replace_existing</cite> to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">True</span></code></a> to update the current mapping.
-Or, set <cite>keep_existing</cite> to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">True</span></code></a> to ignore duplicate registration and keep the existing mapping.</p>
+Set <cite>replace_existing</cite> to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">True</span></code></a> to update the current mapping.
+Or, set <cite>keep_existing</cite> to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">True</span></code></a> to ignore duplicate registration and keep the existing mapping.</p>
 </dd></dl>
 
 <dl class="method">
@@ -290,7 +290,7 @@ a function.</p>
 <dt id="wolframclient.utils.dispatch.Dispatch.update">
 <code class="descname">update</code><span class="sig-paren">(</span><em>dispatch</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/dispatch.html#Dispatch.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.dispatch.Dispatch.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update current mapping with the one from <cite>dispatch</cite>.</p>
-<p><cite>dispatch</cite> can be a Dispatch instance or a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>.
+<p><cite>dispatch</cite> can be a Dispatch instance or a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>.
 <cite>**opts</cite> are passed to <a class="reference internal" href="#wolframclient.utils.dispatch.Dispatch.register" title="wolframclient.utils.dispatch.Dispatch.register"><code class="xref py py-meth docutils literal notranslate"><span class="pre">register()</span></code></a></p>
 </dd></dl>
 
@@ -343,7 +343,7 @@ strings, rather than kept as lazy objects.</p>
 <dl class="class">
 <dt id="wolframclient.utils.externalevaluate.SideEffectSender">
 <em class="property">class </em><code class="descclassname">wolframclient.utils.externalevaluate.</code><code class="descname">SideEffectSender</code><span class="sig-paren">(</span><em>level=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/externalevaluate.html#SideEffectSender"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.externalevaluate.SideEffectSender" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Handler" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Handler</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Handler" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Handler</span></code></a></p>
 <dl class="method">
 <dt id="wolframclient.utils.externalevaluate.SideEffectSender.emit">
 <code class="descname">emit</code><span class="sig-paren">(</span><em>record</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/externalevaluate.html#SideEffectSender.emit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.externalevaluate.SideEffectSender.emit" title="Permalink to this definition">¶</a></dt>
@@ -357,7 +357,7 @@ raises a NotImplementedError.</p>
 <dl class="class">
 <dt id="wolframclient.utils.externalevaluate.SocketWriter">
 <em class="property">class </em><code class="descclassname">wolframclient.utils.externalevaluate.</code><code class="descname">SocketWriter</code><span class="sig-paren">(</span><em>socket</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/externalevaluate.html#SocketWriter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.externalevaluate.SocketWriter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <dl class="method">
 <dt id="wolframclient.utils.externalevaluate.SocketWriter.write">
 <code class="descname">write</code><span class="sig-paren">(</span><em>bytes</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/externalevaluate.html#SocketWriter.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.externalevaluate.SocketWriter.write" title="Permalink to this definition">¶</a></dt>
@@ -368,7 +368,7 @@ raises a NotImplementedError.</p>
 <dl class="class">
 <dt id="wolframclient.utils.externalevaluate.StdoutProxy">
 <em class="property">class </em><code class="descclassname">wolframclient.utils.externalevaluate.</code><code class="descname">StdoutProxy</code><span class="sig-paren">(</span><em>stream</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/externalevaluate.html#StdoutProxy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.externalevaluate.StdoutProxy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <dl class="method">
 <dt id="wolframclient.utils.externalevaluate.StdoutProxy.clear">
 <code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/externalevaluate.html#StdoutProxy.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.externalevaluate.StdoutProxy.clear" title="Permalink to this definition">¶</a></dt>
@@ -435,7 +435,7 @@ the same specific context.</p>
 
 <dl class="function">
 <dt id="wolframclient.utils.externalevaluate.handle_message">
-<code class="descclassname">wolframclient.utils.externalevaluate.</code><code class="descname">handle_message</code><span class="sig-paren">(</span><em>socket</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/externalevaluate.html#handle_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.externalevaluate.handle_message" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">wolframclient.utils.externalevaluate.</code><code class="descname">handle_message</code><span class="sig-paren">(</span><em>socket</em>, <em>evaluate_message=&lt;function evaluate_message&gt;</em>, <em>consumer=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/externalevaluate.html#handle_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.externalevaluate.handle_message" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -445,7 +445,7 @@ the same specific context.</p>
 
 <dl class="function">
 <dt id="wolframclient.utils.externalevaluate.start_zmq_loop">
-<code class="descclassname">wolframclient.utils.externalevaluate.</code><code class="descname">start_zmq_loop</code><span class="sig-paren">(</span><em>message_limit=inf</em>, <em>redirect_stdout=True</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/externalevaluate.html#start_zmq_loop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.externalevaluate.start_zmq_loop" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">wolframclient.utils.externalevaluate.</code><code class="descname">start_zmq_loop</code><span class="sig-paren">(</span><em>message_limit=inf</em>, <em>redirect_stdout=True</em>, <em>export_kwargs={'allow_external_objects': True</em>, <em>'target_format': 'wxf'}</em>, <em>evaluate_message=&lt;function evaluate_message&gt;</em>, <em>exception_class=None</em>, <em>consumer=None</em>, <em>**opts</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/externalevaluate.html#start_zmq_loop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.externalevaluate.start_zmq_loop" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -508,7 +508,7 @@ the same specific context.</p>
 <dl class="class">
 <dt id="wolframclient.utils.importutils.API">
 <em class="property">class </em><code class="descclassname">wolframclient.utils.importutils.</code><code class="descname">API</code><span class="sig-paren">(</span><em>importer=&lt;function safe_import_string&gt;</em>, <em>**mapping</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/importutils.html#API"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.importutils.API" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <dl class="method">
 <dt id="wolframclient.utils.importutils.API.items">
 <code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/utils/importutils.html#API.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.utils.importutils.API.items" title="Permalink to this definition">¶</a></dt>

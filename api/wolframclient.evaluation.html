@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.evaluation package &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
+    <title>wolframclient.evaluation package &#8212; Wolfram Client Library for Python 1.1.2 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.1.0</span>
+                        <span class='header right navigation darkgrey'>v 1.1.2</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -174,7 +174,7 @@ except that they are coroutines.</p>
 <dt id="wolframclient.evaluation.base.WolframEvaluator.evaluate_future">
 <code class="descname">evaluate_future</code><span class="sig-paren">(</span><em>expr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/base.html#WolframEvaluator.evaluate_future"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.base.WolframEvaluator.evaluate_future" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate a given Wolfram Language expression asynchronously.</p>
-<p>Return a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> object.</p>
+<p>Return a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> object.</p>
 </dd></dl>
 
 <dl class="method">
@@ -195,7 +195,7 @@ information.</p>
 <dt id="wolframclient.evaluation.base.WolframEvaluator.evaluate_wrap_future">
 <code class="descname">evaluate_wrap_future</code><span class="sig-paren">(</span><em>expr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/base.html#WolframEvaluator.evaluate_wrap_future"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.base.WolframEvaluator.evaluate_wrap_future" title="Permalink to this definition">¶</a></dt>
 <dd><p>Asynchronously call <cite>evaluate_wrap</cite>.</p>
-<p>Return a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> object.</p>
+<p>Return a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> object.</p>
 </dd></dl>
 
 <dl class="method">
@@ -244,7 +244,7 @@ first.</p>
 <dl class="class">
 <dt id="wolframclient.evaluation.base.WolframEvaluatorBase">
 <em class="property">class </em><code class="descclassname">wolframclient.evaluation.base.</code><code class="descname">WolframEvaluatorBase</code><span class="sig-paren">(</span><em>inputform_string_evaluation=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/base.html#WolframEvaluatorBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.base.WolframEvaluatorBase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>All evaluators should inherit from this base class.</p>
 <dl class="docutils">
 <dt><cite>string_as_inputform</cite> specifies if strings should be treated</dt>
@@ -403,7 +403,7 @@ error message.</p>
 <dl class="class">
 <dt id="wolframclient.evaluation.result.WolframAPIResponseBuilder">
 <em class="property">class </em><code class="descclassname">wolframclient.evaluation.result.</code><code class="descname">WolframAPIResponseBuilder</code><a class="reference internal" href="../_modules/wolframclient/evaluation/result.html#WolframAPIResponseBuilder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.result.WolframAPIResponseBuilder" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Map error code to handler building the appropriate
 <a class="reference internal" href="#wolframclient.evaluation.result.WolframAPIResponse" title="wolframclient.evaluation.result.WolframAPIResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframAPIResponse</span></code></a></p>
 <dl class="attribute">
@@ -594,7 +594,7 @@ The <cite>parsed_response</cite> dict is expected to have keys corresponding to 
 <dl class="class">
 <dt id="wolframclient.evaluation.SecuredAuthenticationKey">
 <em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">SecuredAuthenticationKey</code><span class="sig-paren">(</span><em>consumer_key</em>, <em>consumer_secret</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/base.html#SecuredAuthenticationKey"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.SecuredAuthenticationKey" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Represents a Secured Authentication Key generated using the Wolfram Language
 function <cite>GenerateSecuredAuthenticationKey[]</cite></p>
 <p>It is used as an input when authenticating a cloud session.</p>
@@ -608,7 +608,7 @@ function <cite>GenerateSecuredAuthenticationKey[]</cite></p>
 <dl class="class">
 <dt id="wolframclient.evaluation.UserIDPassword">
 <em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">UserIDPassword</code><span class="sig-paren">(</span><em>user</em>, <em>password</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/base.html#UserIDPassword"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.UserIDPassword" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Represents user credentials used to login to a cloud.</p>
 <p>It is used as an input when authenticating a cloud session.</p>
 <dl class="attribute">
@@ -721,7 +721,7 @@ coroutine.</p>
 <em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframCloudAsyncSession</code><span class="sig-paren">(</span><em>credentials=None</em>, <em>server=None</em>, <em>loop=None</em>, <em>inputform_string_evaluation=True</em>, <em>oauth_session_class=None</em>, <em>xauth_session_class=None</em>, <em>http_sessionclass=None</em>, <em>ssl_context_class=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/asynccloudsession.html#WolframCloudAsyncSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.WolframCloudAsyncSession" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#wolframclient.evaluation.base.WolframAsyncEvaluator" title="wolframclient.evaluation.base.WolframAsyncEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.evaluation.base.WolframAsyncEvaluator</span></code></a></p>
 <p>Interact with a Wolfram Cloud asynchronously using coroutines.</p>
-<p>Asynchronous cloud operations are provided through coroutines using modules <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> and
+<p>Asynchronous cloud operations are provided through coroutines using modules <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.8)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> and
 <a class="reference external" href="https://pypi.org/project/aiohttp/">aiohttp</a>.</p>
 <p>Instances of this class can be managed with an asynchronous context manager:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">with</span> <span class="n">WolframCloudAsyncSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
@@ -729,7 +729,7 @@ coroutine.</p>
 </pre></div>
 </div>
 <p>An event loop can be explicitly passed using the named parameter <cite>loop</cite>; otherwise, the one
-returned by <a class="reference external" href="https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.get_event_loop" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_event_loop()</span></code></a> is used.
+returned by <a class="reference external" href="https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.get_event_loop" title="(in Python v3.8)"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_event_loop()</span></code></a> is used.
 The initialization options of the class <a class="reference internal" href="#wolframclient.evaluation.WolframCloudSession" title="wolframclient.evaluation.WolframCloudSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframCloudSession</span></code></a> are also supported by
 this class.</p>
 <dl class="method">
@@ -746,7 +746,7 @@ this class.</p>
 <dt id="wolframclient.evaluation.WolframCloudAsyncSession.call">
 <code class="descname">call</code><span class="sig-paren">(</span><em>api</em>, <em>input_parameters={}</em>, <em>files={}</em>, <em>target_format='wl'</em>, <em>permissions_key=None</em>, <em>**kwargv</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/asynccloudsession.html#WolframCloudAsyncSession.call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.WolframCloudAsyncSession.call" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call a given API using the provided input parameters.</p>
-<p><cite>api</cite> can be a string url or a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> (<cite>username</cite>, <cite>api name</cite>). The username is generally the Wolfram
+<p><cite>api</cite> can be a string url or a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> (<cite>username</cite>, <cite>api name</cite>). The username is generally the Wolfram
 Language symbol <code class="docutils literal notranslate"><span class="pre">$UserName</span></code>. The API name can be a UUID or a relative path, e.g. <em>myapi/foo/bar</em>.</p>
 <p>The input parameters are provided as a dictionary with string keys being the name
 of the parameters associated to their value.</p>
@@ -848,7 +848,7 @@ forms of authentication:</p>
 <a class="reference internal" href="wolframclient.evaluation.cloud.html#wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.call" title="wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.call"><code class="xref py py-func docutils literal notranslate"><span class="pre">call()</span></code></a>, which will return an instance of
 <a class="reference internal" href="#wolframclient.evaluation.result.WolframAPIResponse" title="wolframclient.evaluation.result.WolframAPIResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">WolframAPIResponse</span></code></a>.
 It is strongly advised to reuse a session to make multiple calls to mitigate the cost of initialization.</p>
-<p><cite>max_workers</cite> can be specified and is passed to the <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThreadPoolExecutor</span></code></a> used for future methods.</p>
+<p><cite>max_workers</cite> can be specified and is passed to the <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThreadPoolExecutor</span></code></a> used for future methods.</p>
 <dl class="method">
 <dt id="wolframclient.evaluation.WolframCloudSession.anonymous">
 <code class="descname">anonymous</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.anonymous"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.WolframCloudSession.anonymous" title="Permalink to this definition">¶</a></dt>
@@ -863,7 +863,7 @@ It is strongly advised to reuse a session to make multiple calls to mitigate the
 <dt id="wolframclient.evaluation.WolframCloudSession.call">
 <code class="descname">call</code><span class="sig-paren">(</span><em>api</em>, <em>input_parameters={}</em>, <em>files={}</em>, <em>target_format='wl'</em>, <em>permissions_key=None</em>, <em>**kwargv</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.WolframCloudSession.call" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call a given API using the provided input parameters.</p>
-<p><cite>api</cite> can be a string url or a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> (<cite>username</cite>, <cite>api name</cite>). The username is generally the Wolfram
+<p><cite>api</cite> can be a string url or a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> (<cite>username</cite>, <cite>api name</cite>). The username is generally the Wolfram
 Language symbol <code class="docutils literal notranslate"><span class="pre">$UserName</span></code>. The API name can be a UUID or a relative path, e.g. <em>myapi/foo/bar</em>.</p>
 <p>The input parameters are provided as a dictionary with string keys being the name of the parameters associated
 to their value.</p>
@@ -886,7 +886,7 @@ resource.</p>
 <dl class="method">
 <dt id="wolframclient.evaluation.WolframCloudSession.call_future">
 <code class="descname">call_future</code><span class="sig-paren">(</span><em>api</em>, <em>input_parameters={}</em>, <em>target_format='wl'</em>, <em>permissions_key=None</em>, <em>**kwargv</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.call_future"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.WolframCloudSession.call_future" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call a given API asynchronously and return a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> object.</p>
+<dd><p>Call a given API asynchronously and return a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> object.</p>
 <p>See <a class="reference internal" href="#wolframclient.evaluation.WolframCloudSession.call" title="wolframclient.evaluation.WolframCloudSession.call"><code class="xref py py-func docutils literal notranslate"><span class="pre">WolframCloudSession.call()</span></code></a> for more details about input parameters.</p>
 </dd></dl>
 
@@ -912,7 +912,7 @@ resource.</p>
 <dl class="method">
 <dt id="wolframclient.evaluation.WolframCloudSession.evaluate_future">
 <code class="descname">evaluate_future</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.evaluate_future"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.WolframCloudSession.evaluate_future" title="Permalink to this definition">¶</a></dt>
-<dd><p>Send <cite>expr</cite> to the cloud for asynchronous evaluation and return a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> object.</p>
+<dd><p>Send <cite>expr</cite> to the cloud for asynchronous evaluation and return a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> object.</p>
 <p><cite>expr</cite> can be a Python object serializable by <a class="reference internal" href="wolframclient.serializers.html#wolframclient.serializers.export" title="wolframclient.serializers.export"><code class="xref py py-func docutils literal notranslate"><span class="pre">export()</span></code></a> or the string
 <a class="wl external reference" href="http://reference.wolfram.com/language/ref/InputForm.html">InputForm</a> of an expression to evaluate.</p>
 </dd></dl>
@@ -928,7 +928,7 @@ result as a <a class="reference internal" href="#wolframclient.evaluation.result
 <dt id="wolframclient.evaluation.WolframCloudSession.evaluate_wrap_future">
 <code class="descname">evaluate_wrap_future</code><span class="sig-paren">(</span><em>expr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/cloudsession.html#WolframCloudSession.evaluate_wrap_future"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.WolframCloudSession.evaluate_wrap_future" title="Permalink to this definition">¶</a></dt>
 <dd><p>Asynchronously call <cite>evaluate_wrap</cite>.</p>
-<p>Return a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> object.</p>
+<p>Return a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> object.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1110,14 +1110,14 @@ The <cite>parsed_response</cite> dict is expected to have keys corresponding to 
 <em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframLanguageAsyncSession</code><span class="sig-paren">(</span><em>kernel=None</em>, <em>consumer=None</em>, <em>loop=None</em>, <em>initfile=None</em>, <em>kernel_loglevel=0</em>, <em>stdin=-1</em>, <em>stdout=-1</em>, <em>stderr=-1</em>, <em>inputform_string_evaluation=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/asyncsession.html#WolframLanguageAsyncSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.WolframLanguageAsyncSession" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#wolframclient.evaluation.base.WolframAsyncEvaluator" title="wolframclient.evaluation.base.WolframAsyncEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.evaluation.base.WolframAsyncEvaluator</span></code></a>, <a class="reference internal" href="wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.localsession.WolframLanguageSession" title="wolframclient.evaluation.kernel.localsession.WolframLanguageSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">wolframclient.evaluation.kernel.localsession.WolframLanguageSession</span></code></a></p>
 <p>Evaluate expressions asynchronously using coroutines.</p>
-<p>Asynchronous evaluations are provided through coroutines and the <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> modules.</p>
+<p>Asynchronous evaluations are provided through coroutines and the <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.8)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> modules.</p>
 <p>Instances of this class can be managed with an asynchronous context manager:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">with</span> <span class="n">WolframLanguageAsyncSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
     <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;Now&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>An event loop can be explicitly passed using the named parameter <cite>loop</cite>; otherwise, the one
-returned by <a class="reference external" href="https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.get_event_loop" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_event_loop()</span></code></a> is used.</p>
+returned by <a class="reference external" href="https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.get_event_loop" title="(in Python v3.8)"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_event_loop()</span></code></a> is used.</p>
 <p>Coroutines all run in a unique thread. Since a Wolfram kernel is single threaded, there can
 be only one evaluation at a time. In a sense, from the event loop point of view, evaluations 
 are atomic operations. Even when many asynchronous sessions are started, the number of 
@@ -1232,7 +1232,7 @@ See <a class="reference internal" href="#wolframclient.evaluation.WolframLanguag
 </pre></div>
 </div>
 <p>Set <cite>timeout</cite> to a number to set an evaluation timeout in seconds. If the evaluation
-time extends the timeout, a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.TimeoutError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeoutError</span></code></a> is raised.</p>
+time extends the timeout, a <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.TimeoutError" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeoutError</span></code></a> is raised.</p>
 <p>Evaluate an expression taking 10 seconds to return using a 5-second timeout:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">long_evaluation</span> <span class="o">=</span> <span class="n">wl</span><span class="o">.</span><span class="n">Pause</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 <span class="k">with</span> <span class="n">WolframLanguageSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
@@ -1241,7 +1241,7 @@ time extends the timeout, a <a class="reference external" href="https://docs.pyt
 </div>
 <p>The asynchronous evaluation method
 <a class="reference internal" href="wolframclient.evaluation.kernel.html#wolframclient.evaluation.kernel.localsession.WolframLanguageSession.evaluate_future" title="wolframclient.evaluation.kernel.localsession.WolframLanguageSession.evaluate_future"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate_future()</span></code></a>
-returns an instance of <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> class wrapping the evaluation result:</p>
+returns an instance of <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Future</span></code></a> class wrapping the evaluation result:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">WolframLanguageSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
     <span class="n">future</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">evaluate_future</span><span class="p">(</span><span class="s1">&#39;1+1&#39;</span><span class="p">)</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
@@ -1249,7 +1249,7 @@ returns an instance of <a class="reference external" href="https://docs.python.o
 </div>
 <p>When <cite>consumer</cite> is set to a <a class="reference internal" href="wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumer" title="wolframclient.deserializers.WXFConsumer"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumer</span></code></a> instance, this instance is passed to
 <a class="reference internal" href="wolframclient.deserializers.html#wolframclient.deserializers.binary_deserialize" title="wolframclient.deserializers.binary_deserialize"><code class="xref py py-func docutils literal notranslate"><span class="pre">binary_deserialize()</span></code></a> when deserializing the WXF output.</p>
-<p>By default, packed arrays are deserialized as <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>. Specify a consumer instance that supports NumPy arrays
+<p>By default, packed arrays are deserialized as <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>. Specify a consumer instance that supports NumPy arrays
 <a class="reference internal" href="wolframclient.deserializers.html#wolframclient.deserializers.WXFConsumerNumpy" title="wolframclient.deserializers.WXFConsumerNumpy"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFConsumerNumpy</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">wolframclient.deserializers</span> <span class="k">import</span> <span class="n">WXFConsumerNumpy</span>
 
@@ -1267,10 +1267,10 @@ specified by the parameter <cite>kernel_loglevel</cite>.
 If the log level was not set at initialization, logging is not available for the entire session.</p>
 <p>The kernel associated with a given session provides the following logging functions:</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">ClientLibrary`debug</span></code> corresponding to <a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Logger.debug" title="(in Python v3.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">logging.Logger.debug()</span></code></a></li>
-<li><code class="docutils literal notranslate"><span class="pre">ClientLibrary`info</span></code> corresponding to <a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Logger.info" title="(in Python v3.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">logging.Logger.info()</span></code></a></li>
-<li><code class="docutils literal notranslate"><span class="pre">ClientLibrary`warn</span></code> corresponding to <a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Logger.warning" title="(in Python v3.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">logging.Logger.warning()</span></code></a></li>
-<li><code class="docutils literal notranslate"><span class="pre">ClientLibrary`error</span></code> corresponding to <a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Logger.error" title="(in Python v3.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">logging.Logger.error()</span></code></a></li>
+<li><code class="docutils literal notranslate"><span class="pre">ClientLibrary`debug</span></code> corresponding to <a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Logger.debug" title="(in Python v3.8)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">logging.Logger.debug()</span></code></a></li>
+<li><code class="docutils literal notranslate"><span class="pre">ClientLibrary`info</span></code> corresponding to <a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Logger.info" title="(in Python v3.8)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">logging.Logger.info()</span></code></a></li>
+<li><code class="docutils literal notranslate"><span class="pre">ClientLibrary`warn</span></code> corresponding to <a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Logger.warning" title="(in Python v3.8)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">logging.Logger.warning()</span></code></a></li>
+<li><code class="docutils literal notranslate"><span class="pre">ClientLibrary`error</span></code> corresponding to <a class="reference external" href="https://docs.python.org/3/library/logging.html#logging.Logger.error" title="(in Python v3.8)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">logging.Logger.error()</span></code></a></li>
 <li><code class="docutils literal notranslate"><span class="pre">ClientLibrary`SetDebugLogLevel[]</span></code> send debug messages and above</li>
 <li><code class="docutils literal notranslate"><span class="pre">ClientLibrary`SetInfoLogLevel[]</span></code> send info messages and above</li>
 <li><code class="docutils literal notranslate"><span class="pre">ClientLibrary`SetWarnLogLevel[]</span></code> send warning messages and above</li>
@@ -1278,7 +1278,7 @@ If the log level was not set at initialization, logging is not available for the
 <li><code class="docutils literal notranslate"><span class="pre">ClientLibrary`DisableKernelLogging[]</span></code> stop sending error message to the logging socket</li>
 </ul>
 <p>The standard input, output and error file handles can be specified with <cite>stdin</cite>, <cite>stdout</cite> and <cite>stderr</cite> named
-parameters. Valid values are those accepted by <a class="reference external" href="https://docs.python.org/3/library/subprocess.html#subprocess.Popen" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">subprocess.Popen</span></code></a> (e.g. <a class="reference external" href="https://docs.python.org/3/library/sys.html#sys.stdout" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">sys.stdout</span></code></a>). Those parameters
+parameters. Valid values are those accepted by <a class="reference external" href="https://docs.python.org/3/library/subprocess.html#subprocess.Popen" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">subprocess.Popen</span></code></a> (e.g. <a class="reference external" href="https://docs.python.org/3/library/sys.html#sys.stdout" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">sys.stdout</span></code></a>). Those parameters
 should be handled with care as deadlocks can arise from misconfiguration.</p>
 <dl class="staticmethod">
 <dt id="wolframclient.evaluation.WolframLanguageSession.CALLBACK_GET">
@@ -1387,7 +1387,7 @@ See <a class="reference internal" href="#wolframclient.evaluation.WolframLanguag
 <dt id="wolframclient.evaluation.WolframLanguageSession.start">
 <code class="descname">start</code><span class="sig-paren">(</span><em>block=True</em>, <em>timeout=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.WolframLanguageSession.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start a kernel controller and eventually start a fresh one if the previous one was terminated.</p>
-<p>Set <cite>block</cite> to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">True</span></code></a> (default is <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">False</span></code></a>) to wait for the kernel to be up and running 
+<p>Set <cite>block</cite> to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">True</span></code></a> (default is <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">False</span></code></a>) to wait for the kernel to be up and running 
 before returning. Optionally, set a timeout in seconds. If the timeout is reached, a <code class="xref py py-data docutils literal notranslate"><span class="pre">TimeoutError</span></code>
 will be raised and the kernel is terminated.</p>
 </dd></dl>
@@ -1396,7 +1396,7 @@ will be raised and the kernel is terminated.</p>
 <dt id="wolframclient.evaluation.WolframLanguageSession.start_future">
 <code class="descname">start_future</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.start_future"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.WolframLanguageSession.start_future" title="Permalink to this definition">¶</a></dt>
 <dd><p>Request the Wolfram kernel to start and return a future object.</p>
-<p>The result of the future object is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">True</span></code></a> when the kernel is ready to evaluate input.</p>
+<p>The result of the future object is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">True</span></code></a> when the kernel is ready to evaluate input.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1414,8 +1414,8 @@ will be raised and the kernel is terminated.</p>
 <dt id="wolframclient.evaluation.WolframLanguageSession.stop_future">
 <code class="descname">stop_future</code><span class="sig-paren">(</span><em>gracefully=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/kernel/localsession.html#WolframLanguageSession.stop_future"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.WolframLanguageSession.stop_future" title="Permalink to this definition">¶</a></dt>
 <dd><p>Request the Wolfram kernel to stop and return a future object.</p>
-<p>The result of the future object is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">True</span></code></a> when the controller thread is no longer alive.
-Set <cite>gracefully</cite> to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">False</span></code></a> to request an immediate stop, eventually cancelling ongoing
+<p>The result of the future object is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">True</span></code></a> when the controller thread is no longer alive.
+Set <cite>gracefully</cite> to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">False</span></code></a> to request an immediate stop, eventually cancelling ongoing
 evaluations.</p>
 </dd></dl>
 
@@ -1447,7 +1447,7 @@ error message.</p>
 <dl class="class">
 <dt id="wolframclient.evaluation.WolframServer">
 <em class="property">class </em><code class="descclassname">wolframclient.evaluation.</code><code class="descname">WolframServer</code><span class="sig-paren">(</span><em>cloudbase</em>, <em>request_token_endpoint</em>, <em>access_token_endpoint</em>, <em>xauth_consumer_key=None</em>, <em>xauth_consumer_secret=None</em>, <em>certificate=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/evaluation/cloud/server.html#WolframServer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.evaluation.WolframServer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Represents the cloud server.</p>
 <p>Contains the authentication endpoints information, the API endpoint aka. the
 cloud base (<cite>$CloudBase</cite> in the Wolfram Language), and eventually the xauth

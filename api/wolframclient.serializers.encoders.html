@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.serializers.encoders package &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
+    <title>wolframclient.serializers.encoders package &#8212; Wolfram Client Library for Python 1.1.2 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.1.0</span>
+                        <span class='header right navigation darkgrey'>v 1.1.2</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -136,7 +136,7 @@
 <p><code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">Null</span></span></code> in the Wolfram Language <em>‘is a symbol used to indicate the absence of an expression or a result’</em>,
 whereas <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">None</span></span></code> <em>‘is a setting used for certain options.’</em>.
 Ref: <a class="reference external" href="http://reference.wolfram.com/language/ref/Null.html">http://reference.wolfram.com/language/ref/Null.html</a> and <a class="reference external" href="http://reference.wolfram.com/language/ref/None.html">http://reference.wolfram.com/language/ref/None.html</a></p>
-<p>Python <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">None</span></code></a> is similar to <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">Null</span></span></code> when it means absence of value, like in:</p>
+<p>Python <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">None</span></code></a> is similar to <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">Null</span></span></code> when it means absence of value, like in:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">foo</span><span class="p">():</span>
     <span class="k">pass</span>
 
@@ -147,21 +147,21 @@ Ref: <a class="reference external" href="http://reference.wolfram.com/language/r
 <span class="nv">foo</span><span class="p">[]</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="nb">InputForm</span><span class="w">  </span><span class="c">(* Null *)</span><span class="w"></span>
 </pre></div>
 </div>
-<p>Both are usually suppressed similarly, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">None</span></code></a> and <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">Null</span></span></code> are not displayed, whereas <cite>[None]</cite> and
+<p>Both are usually suppressed similarly, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">None</span></code></a> and <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">Null</span></span></code> are not displayed, whereas <cite>[None]</cite> and
 <code class="code wlcode wolfram docutils literal notranslate"><span class="p"><span class="pre">{</span></span><span class="nb"><span class="pre">Null</span></span><span class="p"><span class="pre">}</span></span></code> are.</p>
-<p>On the other hand Python <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">None</span></code></a> is similar to Wolfram Language <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">None</span></span></code> when it comes to option values,
+<p>On the other hand Python <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">None</span></code></a> is similar to Wolfram Language <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">None</span></span></code> when it comes to option values,
 like in:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">my_function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">option</span><span class="p">:</span> <span class="kc">None</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">option</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># ....</span>
 </pre></div>
 </div>
-<p>Obviously the mapping of <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">None</span></code></a> is not straight forward. The options are:</p>
+<p>Obviously the mapping of <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">None</span></code></a> is not straight forward. The options are:</p>
 <blockquote>
 <div><ol class="arabic simple">
-<li>map <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">Null</span></span></code> and <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">None</span></span></code> to Python <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">None</span></code></a>.</li>
-<li>map <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">Null</span></span></code> to Python <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">None</span></code></a>.</li>
-<li>map <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">None</span></span></code> to Python <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">None</span></code></a>.</li>
+<li>map <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">Null</span></span></code> and <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">None</span></span></code> to Python <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">None</span></code></a>.</li>
+<li>map <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">Null</span></span></code> to Python <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">None</span></code></a>.</li>
+<li>map <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">None</span></span></code> to Python <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">None</span></code></a>.</li>
 </ol>
 </div></blockquote>
 <p>1. One symbol no more round trips. In the Wolfram Language <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">None</span></span></code> has a specific meaning and is used and
@@ -171,11 +171,11 @@ something is consistent with Python functions. From the Wolfram Language, Python
 <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">None</span></span></code> and therefore their output inconsistent. When the result is part of a bigger expression, checking for
 one value (<code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">Null</span></span></code>) or the other (<code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">None</span></span></code>) is roughly equivalent, especially
 as long as the library returns the same symbol.</p>
-<p>2. Python <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">None</span></code></a> is mapped to <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">Null</span></span></code> and <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">None</span></span></code> to <code class="xref py py-data docutils literal notranslate"><span class="pre">WLSymbol('None')</span></code>. It create a UX
-issue, in the sense that <code class="xref py py-data docutils literal notranslate"><span class="pre">wl.None</span></code> is not available because <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">None</span></code></a> is reserved keyword. Testing if
+<p>2. Python <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">None</span></code></a> is mapped to <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">Null</span></span></code> and <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">None</span></span></code> to <code class="xref py py-data docutils literal notranslate"><span class="pre">WLSymbol('None')</span></code>. It create a UX
+issue, in the sense that <code class="xref py py-data docutils literal notranslate"><span class="pre">wl.None</span></code> is not available because <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">None</span></code></a> is reserved keyword. Testing if
 functions have returned is consistent and straight forward in both languages. We lose the opportunity to
 preserve the name <em>None</em>, which can cause confusion. <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">Null</span></span></code> can easily be represented in Python even though
-that’s certainly less useful than a straight forward representation of <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">None</span></span></code> with <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+that’s certainly less useful than a straight forward representation of <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">None</span></span></code> with <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 <p>3. Functions that do not return in Python, now return <code class="code wlcode wolfram docutils literal notranslate"><span class="nb"><span class="pre">None</span></span></code> symbol. The result is not suppressed
 consistently in both languages. Similarly, on the Python side, a Wolfram Language function result must be compared
 to <cite>wl.Null</cite> to check if the function returned anything.</p>

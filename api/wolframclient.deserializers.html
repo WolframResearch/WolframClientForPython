@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.deserializers package &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
+    <title>wolframclient.deserializers package &#8212; Wolfram Client Library for Python 1.1.2 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.1.0</span>
+                        <span class='header right navigation darkgrey'>v 1.1.2</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -92,7 +92,7 @@
 <dl class="class">
 <dt id="wolframclient.deserializers.WXFConsumer">
 <em class="property">class </em><code class="descclassname">wolframclient.deserializers.</code><code class="descname">WXFConsumer</code><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.deserializers.WXFConsumer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Map WXF types to Python object generating functions.</p>
 <p>This class exposes a comprehensive list of methods consuming WXF types.
 Subclasses can override these members to implement custom parsing logic.</p>
@@ -149,7 +149,7 @@ from various heads. e.g: DateObject, Complex, etc.</p>
 <dt id="wolframclient.deserializers.WXFConsumer.consume_association">
 <code class="descname">consume_association</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>dict_class=&lt;class 'dict'&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer.consume_association"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.deserializers.WXFConsumer.consume_association" title="Permalink to this definition">¶</a></dt>
 <dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>association</em>.</p>
-<p>By default, return a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> made from the rules.
+<p>By default, return a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> made from the rules.
 The named option <cite>dict_class</cite> can be set to any type in which case an instance of
 <code class="xref py py-class docutils literal notranslate"><span class="pre">dict_class</span></code> is returned.</p>
 </dd></dl>
@@ -157,7 +157,7 @@ The named option <cite>dict_class</cite> can be set to any type in which case an
 <dl class="method">
 <dt id="wolframclient.deserializers.WXFConsumer.consume_bigint">
 <code class="descname">consume_bigint</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer.consume_bigint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.deserializers.WXFConsumer.consume_bigint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>big integer</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
+<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>big integer</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -180,7 +180,7 @@ code from being introduced in place of an actual real.</p>
 <dt id="wolframclient.deserializers.WXFConsumer.consume_function">
 <code class="descname">consume_function</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer.consume_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.deserializers.WXFConsumer.consume_function" title="Permalink to this definition">¶</a></dt>
 <dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>function</em>.</p>
-<p>Return a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> if the head is symbol <cite>List</cite>, otherwise returns the result of <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function"><code class="xref py py-func docutils literal notranslate"><span class="pre">build_function()</span></code></a>
+<p>Return a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> if the head is symbol <cite>List</cite>, otherwise returns the result of <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function"><code class="xref py py-func docutils literal notranslate"><span class="pre">build_function()</span></code></a>
 applied to the head and arguments.</p>
 <p>Usually custom parsing rules target Functions, but not List. To do so, it is recommended to override
 <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function"><code class="xref py py-func docutils literal notranslate"><span class="pre">build_function()</span></code></a>.</p>
@@ -189,45 +189,45 @@ applied to the head and arguments.</p>
 <dl class="method">
 <dt id="wolframclient.deserializers.WXFConsumer.consume_integer16">
 <code class="descname">consume_integer16</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer.consume_integer16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.deserializers.WXFConsumer.consume_integer16" title="Permalink to this definition">¶</a></dt>
-<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>integer</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
+<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>integer</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="wolframclient.deserializers.WXFConsumer.consume_integer32">
 <code class="descname">consume_integer32</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer.consume_integer32"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.deserializers.WXFConsumer.consume_integer32" title="Permalink to this definition">¶</a></dt>
-<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>integer</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
+<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>integer</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="wolframclient.deserializers.WXFConsumer.consume_integer64">
 <code class="descname">consume_integer64</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer.consume_integer64"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.deserializers.WXFConsumer.consume_integer64" title="Permalink to this definition">¶</a></dt>
-<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>integer</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
+<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>integer</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="wolframclient.deserializers.WXFConsumer.consume_integer8">
 <code class="descname">consume_integer8</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer.consume_integer8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.deserializers.WXFConsumer.consume_integer8" title="Permalink to this definition">¶</a></dt>
-<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>integer</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
+<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>integer</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="wolframclient.deserializers.WXFConsumer.consume_numeric_array">
 <code class="descname">consume_numeric_array</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer.consume_numeric_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.deserializers.WXFConsumer.consume_numeric_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>raw array</em>.</p>
-<p>This method return <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, and made the assumption that system is little endian.</p>
+<p>This method return <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, and made the assumption that system is little endian.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="wolframclient.deserializers.WXFConsumer.consume_packed_array">
 <code class="descname">consume_packed_array</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer.consume_packed_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.deserializers.WXFConsumer.consume_packed_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>packed array</em>.</p>
-<p>This method return <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, and made the assumption that system is little endian.</p>
+<p>This method return <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, and made the assumption that system is little endian.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="wolframclient.deserializers.WXFConsumer.consume_real64">
 <code class="descname">consume_real64</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer.consume_real64"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.deserializers.WXFConsumer.consume_real64" title="Permalink to this definition">¶</a></dt>
-<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>real</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>.</p>
+<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>real</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -265,7 +265,7 @@ applied to the head and arguments.</p>
 <dl class="class">
 <dt id="wolframclient.deserializers.WXFToken">
 <em class="property">class </em><code class="descclassname">wolframclient.deserializers.</code><code class="descname">WXFToken</code><span class="sig-paren">(</span><em>wxf_type</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfparser.html#WXFToken"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.deserializers.WXFToken" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Represent a WXF element, often referred as WXF tokens.</p>
 <dl class="attribute">
 <dt id="wolframclient.deserializers.WXFToken.array_type">
@@ -320,14 +320,14 @@ use <a class="reference internal" href="wolframclient.deserializers.wxf.html#wol
 <p>Named parameters are passed to the consumer. They can be any valid parameter of
 <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.next_expression" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.next_expression"><code class="xref py py-meth docutils literal notranslate"><span class="pre">next_expression()</span></code></a>, namely:</p>
 <ul class="simple">
-<li><cite>dict_class</cite>: map WXF <cite>Association</cite> to <cite>dict_class</cite> in place of a regular <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></li>
+<li><cite>dict_class</cite>: map WXF <cite>Association</cite> to <cite>dict_class</cite> in place of a regular <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></li>
 </ul>
 </dd></dl>
 
 <dl class="class">
 <dt>
 <em class="property">class </em><code class="descclassname">wolframclient.deserializers.</code><code class="descname">WXFConsumer</code><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Map WXF types to Python object generating functions.</p>
 <p>This class exposes a comprehensive list of methods consuming WXF types.
 Subclasses can override these members to implement custom parsing logic.</p>
@@ -384,7 +384,7 @@ from various heads. e.g: DateObject, Complex, etc.</p>
 <dt>
 <code class="descname">consume_association</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>dict_class=&lt;class 'dict'&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer.consume_association"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>association</em>.</p>
-<p>By default, return a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> made from the rules.
+<p>By default, return a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> made from the rules.
 The named option <cite>dict_class</cite> can be set to any type in which case an instance of
 <code class="xref py py-class docutils literal notranslate"><span class="pre">dict_class</span></code> is returned.</p>
 </dd></dl>
@@ -392,7 +392,7 @@ The named option <cite>dict_class</cite> can be set to any type in which case an
 <dl class="method">
 <dt>
 <code class="descname">consume_bigint</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer.consume_bigint"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>big integer</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
+<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>big integer</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -415,7 +415,7 @@ code from being introduced in place of an actual real.</p>
 <dt>
 <code class="descname">consume_function</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer.consume_function"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>function</em>.</p>
-<p>Return a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> if the head is symbol <cite>List</cite>, otherwise returns the result of <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function"><code class="xref py py-func docutils literal notranslate"><span class="pre">build_function()</span></code></a>
+<p>Return a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> if the head is symbol <cite>List</cite>, otherwise returns the result of <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function"><code class="xref py py-func docutils literal notranslate"><span class="pre">build_function()</span></code></a>
 applied to the head and arguments.</p>
 <p>Usually custom parsing rules target Functions, but not List. To do so, it is recommended to override
 <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function" title="wolframclient.deserializers.wxf.wxfconsumer.WXFConsumer.build_function"><code class="xref py py-func docutils literal notranslate"><span class="pre">build_function()</span></code></a>.</p>
@@ -424,45 +424,45 @@ applied to the head and arguments.</p>
 <dl class="method">
 <dt>
 <code class="descname">consume_integer16</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer.consume_integer16"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>integer</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
+<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>integer</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">consume_integer32</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer.consume_integer32"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>integer</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
+<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>integer</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">consume_integer64</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer.consume_integer64"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>integer</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
+<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>integer</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">consume_integer8</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer.consume_integer8"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>integer</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
+<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>integer</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">consume_numeric_array</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer.consume_numeric_array"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>raw array</em>.</p>
-<p>This method return <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, and made the assumption that system is little endian.</p>
+<p>This method return <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, and made the assumption that system is little endian.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">consume_packed_array</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer.consume_packed_array"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>packed array</em>.</p>
-<p>This method return <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, and made the assumption that system is little endian.</p>
+<p>This method return <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, and made the assumption that system is little endian.</p>
 </dd></dl>
 
 <dl class="method">
 <dt>
 <code class="descname">consume_real64</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumer.consume_real64"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>real</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>.</p>
+<dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>real</em> as a <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -511,14 +511,14 @@ applied to the head and arguments.</p>
 <dt id="wolframclient.deserializers.WXFConsumerNumpy.consume_numeric_array">
 <code class="descname">consume_numeric_array</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumerNumpy.consume_numeric_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.deserializers.WXFConsumerNumpy.consume_numeric_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>raw array</em>.</p>
-<p>This method return <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, and made the assumption that system is little endian.</p>
+<p>This method return <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, and made the assumption that system is little endian.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="wolframclient.deserializers.WXFConsumerNumpy.consume_packed_array">
 <code class="descname">consume_packed_array</code><span class="sig-paren">(</span><em>current_token</em>, <em>tokens</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/deserializers/wxf/wxfconsumer.html#WXFConsumerNumpy.consume_packed_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.deserializers.WXFConsumerNumpy.consume_packed_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Consume a <a class="reference internal" href="wolframclient.deserializers.wxf.html#wolframclient.deserializers.wxf.wxfparser.WXFToken" title="wolframclient.deserializers.wxf.wxfparser.WXFToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFToken</span></code></a> of type <em>packed array</em>.</p>
-<p>This method return <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, and made the assumption that system is little endian.</p>
+<p>This method return <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, and made the assumption that system is little endian.</p>
 </dd></dl>
 
 </dd></dl>

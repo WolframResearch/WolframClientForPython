@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>wolframclient.serializers.wxfencoder package &#8212; Wolfram Client Library for Python 1.1.0 documentation</title>
+    <title>wolframclient.serializers.wxfencoder package &#8212; Wolfram Client Library for Python 1.1.2 documentation</title>
     <link rel="stylesheet" href="../_static/wri.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -56,7 +56,7 @@
                                 modules
                         </a></span><span class='reldelimiter'>|</span></li>
                     <li class="right">
-                        <span class='header right navigation darkgrey'>v 1.1.0</span>
+                        <span class='header right navigation darkgrey'>v 1.1.2</span>
                         <span class='reldelimiter'>|</span>
                     </li>
                 </ul>
@@ -91,7 +91,7 @@ There is no restriction for NumericArray value types.</p>
 <dl class="class">
 <dt id="wolframclient.serializers.wxfencoder.serializer.WXFExprSerializer">
 <em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.serializer.</code><code class="descname">WXFExprSerializer</code><span class="sig-paren">(</span><em>stream</em>, <em>expr_provider=None</em>, <em>compress=False</em>, <em>enforce=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/serializer.html#WXFExprSerializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.serializer.WXFExprSerializer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Main serialization class that convert internal object into bytes.</p>
 <p>Pulls instances of <code class="xref py py-class docutils literal notranslate"><span class="pre">WXFExpr</span></code> from an
 <a class="reference internal" href="#wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider" title="wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFExprProvider</span></code></a>, serializes
@@ -173,7 +173,7 @@ expression in the Wolfram Language.</p>
 <dl class="exception">
 <dt id="wolframclient.serializers.wxfencoder.serializer.WXFSerializerException">
 <em class="property">exception </em><code class="descclassname">wolframclient.serializers.wxfencoder.serializer.</code><code class="descname">WXFSerializerException</code><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/serializer.html#WXFSerializerException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.serializer.WXFSerializerException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
 </dd></dl>
 
 </div>
@@ -182,7 +182,7 @@ expression in the Wolfram Language.</p>
 <dl class="class">
 <dt id="wolframclient.serializers.wxfencoder.streaming.ExactSizeReader">
 <em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.streaming.</code><code class="descname">ExactSizeReader</code><span class="sig-paren">(</span><em>reader</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/streaming.html#ExactSizeReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.streaming.ExactSizeReader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Read exactly the amount of bytes requested and fails otherwise.</p>
 <dl class="method">
 <dt id="wolframclient.serializers.wxfencoder.streaming.ExactSizeReader.read">
@@ -199,9 +199,9 @@ one call may be necessary.</p>
 <dl class="class">
 <dt id="wolframclient.serializers.wxfencoder.streaming.ZipCompressedReader">
 <em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.streaming.</code><code class="descname">ZipCompressedReader</code><span class="sig-paren">(</span><em>reader</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/streaming.html#ZipCompressedReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.streaming.ZipCompressedReader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A buffer implementation reading zip compressed data from a source buffer and returning uncompressed data.</p>
-<p>This class is instantiated from a reader, any object implementing a <a class="reference external" href="https://docs.python.org/3/library/io.html#io.BufferedIOBase.read" title="(in Python v3.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">read()</span></code></a> method.</p>
+<p>This class is instantiated from a reader, any object implementing a <a class="reference external" href="https://docs.python.org/3/library/io.html#io.BufferedIOBase.read" title="(in Python v3.8)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">read()</span></code></a> method.</p>
 <dl class="attribute">
 <dt id="wolframclient.serializers.wxfencoder.streaming.ZipCompressedReader.CHUNK_SIZE">
 <code class="descname">CHUNK_SIZE</code><em class="property"> = 8192</em><a class="headerlink" href="#wolframclient.serializers.wxfencoder.streaming.ZipCompressedReader.CHUNK_SIZE" title="Permalink to this definition">¶</a></dt>
@@ -220,7 +220,7 @@ then the reader is read until EOF is reached.</p>
 <dl class="class">
 <dt id="wolframclient.serializers.wxfencoder.streaming.ZipCompressedWriter">
 <em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.streaming.</code><code class="descname">ZipCompressedWriter</code><span class="sig-paren">(</span><em>writer</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/streaming.html#ZipCompressedWriter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.streaming.ZipCompressedWriter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <dl class="method">
 <dt id="wolframclient.serializers.wxfencoder.streaming.ZipCompressedWriter.flush">
 <code class="descname">flush</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/streaming.html#ZipCompressedWriter.flush"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.streaming.ZipCompressedWriter.flush" title="Permalink to this definition">¶</a></dt>
@@ -301,7 +301,7 @@ then the reader is read until EOF is reached.</p>
 <p>The most straight forward serialization of python expressions to their Wolfram Language counterpart.</p>
 <p>This class is meant to represent basically JSON like objects, and is intended to be used in all providers.
 As such it should only deal with obvious convertion.</p>
-<p>e.g: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> to Wolfram Language <code class="docutils literal notranslate"><span class="pre">Integer</span></code>, but iterators are not supported but user defined implementation
+<p>e.g: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> to Wolfram Language <code class="docutils literal notranslate"><span class="pre">Integer</span></code>, but iterators are not supported but user defined implementation
 can be added easily.</p>
 <dl class="method">
 <dt id="wolframclient.serializers.wxfencoder.wxfencoder.DefaultWXFEncoder.encode">
@@ -314,14 +314,14 @@ can be added easily.</p>
 <dl class="exception">
 <dt id="wolframclient.serializers.wxfencoder.wxfencoder.NotEncodedException">
 <em class="property">exception </em><code class="descclassname">wolframclient.serializers.wxfencoder.wxfencoder.</code><code class="descname">NotEncodedException</code><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/wxfencoder.html#NotEncodedException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfencoder.NotEncodedException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
 <p>Exception used during encoding to signal that a given Python object has been ignored by a <code class="xref py py-class docutils literal notranslate"><span class="pre">WXFEncoder</span></code>.</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder">
 <em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.wxfencoder.</code><code class="descname">WXFEncoder</code><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/wxfencoder.html#WXFEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfencoder.WXFEncoder" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Encode a given Python object into a stream of <code class="xref py py-class docutils literal notranslate"><span class="pre">WXFExpr</span></code>.</p>
 <p>This class is meant to be subclassed in order to add support for new classes. The encoder does not have to do anything
 since more than one can be attached to a given <a class="reference internal" href="#wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider" title="wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">WXFExprProvider</span></code></a>.
@@ -444,7 +444,7 @@ required.</p>
 <dl class="class">
 <dt id="wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider">
 <em class="property">class </em><code class="descclassname">wolframclient.serializers.wxfencoder.wxfexprprovider.</code><code class="descname">WXFExprProvider</code><span class="sig-paren">(</span><em>encoder=None</em>, <em>default=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/wolframclient/serializers/wxfencoder/wxfexprprovider.html#WXFExprProvider"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#wolframclient.serializers.wxfencoder.wxfexprprovider.WXFExprProvider" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Expression provider pull instances of WXFExpr from instances of <cite>WXFEncoder</cite>.</p>
 <p><cite>WXFExprProvider</cite> can be initialized with an encoder. If none is provided the
 default class <cite>DefaultWXFEncoder</cite> is used to instantiate one. It is possible
