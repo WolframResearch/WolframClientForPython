@@ -82,7 +82,7 @@ Example::
 If no converter is defined for a class that has an `__iter__` method, it is converted to a Wolfram Language :wl:`List`::
 
     >>> export((i + 2 for i in range(10)))
-    '"{2, 3, 4, 5, 6, 7, 8, 9, 10, 11}"'
+    '{2, 3, 4, 5, 6, 7, 8, 9, 10, 11}'
 
 Python generators are also serialized as :wl:`List`::
 
