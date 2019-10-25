@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
 
 import asyncio
@@ -19,7 +17,7 @@ from wolframclient.exception import (
 from wolframclient.language import wl
 from wolframclient.language.expression import WLFunction
 from wolframclient.tests.configure import (
-    json_config,
+    api_owner,
     secured_authentication_key,
     server,
     skip_for_jython,
@@ -47,7 +45,7 @@ class TestCaseSettings(BaseTestCase):
     @classmethod
     def setupCloudSession(cls):
         cls.sak = secured_authentication_key
-        cls.api_owner = json_config["ApiOwner"]
+        cls.api_owner = api_owner
         cls.user_cred = user_configuration
         cls.server = server
         cls.cloud_session_async = WolframCloudAsyncSession(credentials=cls.sak, server=server)

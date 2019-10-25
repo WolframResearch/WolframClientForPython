@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.utils.importutils import API
@@ -52,7 +50,7 @@ oauth = API(
 )
 
 pip = API(
-    main=("pip.main", "pip._internal.main"),
+    main=("pip.main", "pip._internal.main", "pip._internal.main.main"),
     get_installed_distributions=(
         "pip.get_installed_distributions",
         "pip.utils.get_installed_distributions",
@@ -66,6 +64,7 @@ pip = API(
 
 zmq = API(
     Context="zmq.Context",
+    Frame="zmq.Frame",
     PUSH="zmq.PUSH",
     PULL="zmq.PULL",
     PAIR="zmq.PAIR",

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
 
 import ast
@@ -66,7 +64,9 @@ def execute_from_string(code, globals={}, **opts):
     if not expressions:
         return
 
-    if isinstance(last(expressions), ast.Expr):
+    last_expr = last(expressions)
+
+    if isinstance(last_expr, ast.Expr):
         result = expressions.pop(-1)
 
     if expressions:
@@ -74,6 +74,9 @@ def execute_from_string(code, globals={}, **opts):
 
     if result:
         return eval(compile(ast.Expression(result.value), "", "eval"), env)
+
+    elif isinstance(last_expr, (ast.FunctionDef, ast.ClassDef)):
+        return env[last_expr.name]
 
 
 class SideEffectSender(logging.Handler):
@@ -87,8 +90,7 @@ class SocketWriter:
         self.socket = socket
 
     def write(self, bytes):
-        self.socket.send(bytes)
-
+        self.socket.send(zmq.Frame(bytes))
 
 class StdoutProxy:
 
@@ -152,12 +154,11 @@ def evaluate_message(input=None, return_type=None, args=None, **opts):
     return result
 
 
-@to_wl(**EXPORT_KWARGS)
-def handle_message(socket):
+def handle_message(socket, evaluate_message=evaluate_message, consumer=None):
 
     __traceback_hidden_variables__ = True
 
-    message = binary_deserialize(socket.recv())
+    message = binary_deserialize(socket.recv(copy=False).buffer, consumer=consumer)
     result = evaluate_message(**message)
 
     sys.stdout.flush()
@@ -182,7 +183,18 @@ def start_zmq_instance(port=None, write_to_stdout=True, **opts):
     return sock
 
 
-def start_zmq_loop(message_limit=float("inf"), redirect_stdout=True, **opts):
+def start_zmq_loop(
+    message_limit=float("inf"),
+    redirect_stdout=True,
+    export_kwargs=EXPORT_KWARGS,
+    evaluate_message=evaluate_message,
+    exception_class=None,
+    consumer=None,
+    **opts
+):
+
+    handler = to_wl(exception_class=exception_class, **export_kwargs)(handle_message)
+
     socket = start_zmq_instance(**opts)
 
     stream = SocketWriter(socket)
@@ -196,7 +208,7 @@ def start_zmq_loop(message_limit=float("inf"), redirect_stdout=True, **opts):
 
     # now sit in a while loop, evaluating input
     while messages < message_limit:
-        stream.write(handle_message(socket))
+        stream.write(handler(socket, evaluate_message=evaluate_message, consumer=consumer))
         messages += 1
 
     if redirect_stdout:

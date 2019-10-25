@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
 
 import sys
@@ -28,7 +26,7 @@ CLASSIFIERS = [
     "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
-    "Topic :: Software Development :: Libraries :: Wolfram Language Library"
+    "Topic :: Software Development :: Libraries"
 ]
 
 
@@ -55,6 +53,8 @@ setup(
     keywords=['Wolfram Language', 'Wolfram Desktop', 'Mathematica', 'parser', 'serializer', 'WXF'],
     author = ABOUT['__author__'],
     author_email = ABOUT['__author_email__'],
+    license = 'MIT',
+    url = 'https://www.wolfram.com/',
     include_package_data=True,
     packages=find_packages(),
     test_suite='setup.load_tests',
@@ -66,8 +66,9 @@ setup(
         'requests',
         'aiohttp',
         'oauthlib',
-        'zmq',
+        'pyzmq',
     ],
+    classifiers = CLASSIFIERS,
     project_urls={
         'Source code': 'https://github.com/WolframResearch/WolframClientForPython',
         'Documentation': 'https://wolfr.am/wolframclientdoc',

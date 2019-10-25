@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
 
 import itertools
@@ -75,7 +73,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
     ):
         super().__init__(loop)
         if poolsize <= 0:
-            raise ValueError("Invalid pool size value %i. Expecting a positive integer." % i)
+            raise ValueError("Invalid pool size value %i. Expecting a positive integer." % poolsize)
         self._queue = asyncio.Queue(load_factor * poolsize, loop=self._loop)
         self.async_language_session_class = async_language_session_class
         self._evaluators = set()

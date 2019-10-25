@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
@@ -9,7 +7,7 @@ from wolframclient.evaluation import WolframLanguageSession
 from wolframclient.exception import WolframKernelException
 from wolframclient.language import wl, wlexpr
 from wolframclient.language.expression import WLFunction, WLSymbol
-from wolframclient.tests.configure import json_config
+from wolframclient.tests.configure import kernel_path
 from wolframclient.utils.api import PIL
 from wolframclient.utils.tests import TestCase as BaseTestCase
 from wolframclient.utils.tests import path_to_file_in_data_dir
@@ -19,9 +17,6 @@ logger.setLevel(logging.INFO)
 
 
 class TestCaseSettings(BaseTestCase):
-
-    KERNEL_PATH = json_config and json_config.get("kernel", None) or None
-
     @classmethod
     def setUpClass(cls):
         cls.setupKernelSession()
@@ -37,9 +32,7 @@ class TestCaseSettings(BaseTestCase):
 
     @classmethod
     def setupKernelSession(cls):
-        cls.kernel_session = WolframLanguageSession(
-            cls.KERNEL_PATH, kernel_loglevel=logging.INFO
-        )
+        cls.kernel_session = WolframLanguageSession(kernel_path, kernel_loglevel=logging.INFO)
         cls.kernel_session.set_parameter("STARTUP_TIMEOUT", 5)
         cls.kernel_session.set_parameter("TERMINATE_TIMEOUT", 3)
         cls.kernel_session.start()
@@ -47,7 +40,7 @@ class TestCaseSettings(BaseTestCase):
     @classmethod
     def class_kwargs_parameters(cls, testcase, kernelclass):
         kernel_session = kernelclass(
-            cls.KERNEL_PATH,
+            kernel_path,
             kernel_loglevel=logging.INFO,
             STARTUP_TIMEOUT=5,
             TERMINATE_TIMEOUT=3,
@@ -60,7 +53,7 @@ class TestCaseSettings(BaseTestCase):
     @classmethod
     def class_bad_kwargs_parameters(cls, testcase, kernelclass):
         with testcase.assertRaises(KeyError):
-            kernel_session = kernelclass(cls.KERNEL_PATH, kernel_loglevel=logging.INFO, foo=1)
+            kernel_session = kernelclass(kernel_path, kernel_loglevel=logging.INFO, foo=1)
             kernel_session.get_parameter("foo")
 
 
@@ -176,7 +169,7 @@ class TestCase(TestCaseSettings):
 
     def test_auto_start_session(self):
         try:
-            session = WolframLanguageSession(self.KERNEL_PATH)
+            session = WolframLanguageSession(kernel_path)
             res = session.evaluate("1+1")
             self.assertEqual(res, 2)
         except Exception as e:
@@ -270,7 +263,7 @@ class TestCase(TestCaseSettings):
 
     def test_stop_start_restart_status(self):
 
-        session = WolframLanguageSession(self.KERNEL_PATH)
+        session = WolframLanguageSession(kernel_path)
         self.assertFalse(session.started)
         self.assertTrue(session.stopped)
         session.start()
@@ -286,13 +279,20 @@ class TestCase(TestCaseSettings):
         self.assertFalse(session.started)
         self.assertTrue(session.stopped)
 
-        session = WolframLanguageSession(self.KERNEL_PATH)
+        session = WolframLanguageSession(kernel_path)
         session.stop()
         self.assertFalse(session.started)
         self.assertTrue(session.stopped)
         session.terminate()
         self.assertFalse(session.started)
         self.assertTrue(session.stopped)
+
+    def test_throw(self):
+
+        self.assertEqual(self.kernel_session.evaluate(wl.Throw(2)), wl.Hold(wl.Throw(2)))
+        self.assertEqual(
+            self.kernel_session.evaluate(wl.Throw(2, "foo")), wl.Hold(wl.Throw(2, "foo"))
+        )
 
 
 class TestSessionTimeout(TestCaseSettings):
@@ -305,7 +305,7 @@ class TestSessionTimeout(TestCaseSettings):
         self.assertEqual(future.result(timeout=1), 3)
 
     def test_evaluate_multiple_async(self):
-        with WolframLanguageSession(self.KERNEL_PATH) as kernel_session:
+        with WolframLanguageSession(kernel_path) as kernel_session:
             future1 = kernel_session.evaluate_future("3+4")
             result1 = future1.result(timeout=3)
             self.assertEqual(result1, 7)
@@ -355,7 +355,7 @@ class TestCaseSession(TestCaseSettings):
     def test_terminated_session_autorestart(self):
         session = None
         try:
-            session = WolframLanguageSession(self.KERNEL_PATH)
+            session = WolframLanguageSession(kernel_path)
             session.start()
             session.stop()
             res = session.evaluate("1+1")
@@ -367,7 +367,7 @@ class TestCaseSession(TestCaseSettings):
 
 class TestCaseInternalFunctions(TestCaseSettings):
     def test_default_loglevel(self):
-        with WolframLanguageSession(self.KERNEL_PATH) as session:
+        with WolframLanguageSession(kernel_path) as session:
             res = session.evaluate("ClientLibrary`Private`$LogLevel == Infinity")
             self.assertTrue(res)
             # This is not possible. Logging was not enabled in the first place.
@@ -380,7 +380,7 @@ class TestCaseInternalFunctions(TestCaseSettings):
             self.assertTrue(res)
 
     def test_set_loglevel(self):
-        with WolframLanguageSession(self.KERNEL_PATH, kernel_loglevel=logging.WARN) as session:
+        with WolframLanguageSession(kernel_path, kernel_loglevel=logging.WARN) as session:
             res = session.evaluate(
                 "ClientLibrary`Private`$LogLevel == ClientLibrary`Private`$WARN"
             )

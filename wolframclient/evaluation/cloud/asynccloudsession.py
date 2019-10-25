@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
 
+import json
 import logging
 
 from wolframclient.evaluation.base import WolframAsyncEvaluator
@@ -262,7 +261,7 @@ class WolframAPICallAsync(WolframAPICallBase):
 # formatting for http requests, based on aiohttp objects.
 
 
-def _encode_inputs_as_wxf(inputs, multipart, **kwargs):
+def _encode_inputs_as_wxf(form_data, inputs, **kwargs):
     for name, value in inputs.items():
         form_data.add_field(name + "__wxf", export(value, target_format="wxf", **kwargs))
 

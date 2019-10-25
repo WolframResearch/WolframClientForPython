@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
@@ -500,7 +498,7 @@ class WolframKernelController(Thread):
 
     def _do_evaluate(self, wxf, future, result_update_callback):
         start = time.perf_counter()
-        self.kernel_socket_out.send(wxf)
+        self.kernel_socket_out.send(zmq.Frame(wxf))
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug("Expression sent to kernel in %.06fsec", time.perf_counter() - start)
             start = time.perf_counter()
@@ -594,14 +592,17 @@ class WolframKernelController(Thread):
 
     def __repr__(self):
         if self.started:
-            return "<%s: pid:%i, kernel sockets: (in:%s, out:%s)>" % (
+            return '<%s[%s🔵], "%s", pid:%i, kernel sockets: (in:%s, out:%s)>'\
+                   % (
                 self.__class__.__name__,
+                self.name,
+                self.kernel,
                 self.kernel_proc.pid,
                 self.kernel_socket_in.uri,
                 self.kernel_socket_out.uri,
             )
         else:
-            return "<%s: %s>" % (self.__class__.__name__, self.name)
+            return '<%s[%s🔴], "%s">' % (self.__class__.__name__, self.name, self.kernel)
 
 
 class _StartEvent(object):

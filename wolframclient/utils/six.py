@@ -1,13 +1,11 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
 
 import datetime
 import decimal
+import itertools
 import platform
 import sys
 import types
-from itertools import chain
 
 # stripped version of SIX
 
@@ -60,10 +58,20 @@ else:
         memoryview = buffer
     buffer_types = (bytearray, memoryview, buffer)
 
-iterable_types = (list, tuple, set, frozenset, types.GeneratorType, chain)
+iterable_types = [
+    list,
+    tuple,
+    set,
+    frozenset,
+    types.GeneratorType,
+    itertools.chain,
+    itertools.groupby,
+]
+if not PY2:
+    iterable_types.extend((map, range))
 
 protected_types = tuple(
-    chain(
+    itertools.chain(
         string_types,
         integer_types,
         (
