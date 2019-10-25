@@ -34,7 +34,6 @@ if PY3:
     StringIO = io.StringIO
     BytesIO = io.BytesIO
 
-    memoryview = memoryview
     buffer_types = (bytes, bytearray, memoryview)
 
 else:
@@ -49,13 +48,6 @@ else:
 
     StringIO = BytesIO = StringIO.StringIO
 
-    # memoryview and buffer are not strictly equivalent, but should be fine for
-    # django core usage (mainly BinaryField). However, Jython doesn't support
-    # buffer (see http://bugs.jython.org/issue1521), so we have to be careful.
-    if JYTHON:
-        memoryview = memoryview
-    else:
-        memoryview = buffer
     buffer_types = (bytearray, memoryview, buffer)
 
 iterable_types = [
