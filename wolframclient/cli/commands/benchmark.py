@@ -6,6 +6,7 @@ import os
 import tempfile
 
 from wolframclient.cli.utils import SimpleCommand
+from wolframclient.deserializers import binary_deserialize
 from wolframclient.language import wl
 from wolframclient.serializers import export
 from wolframclient.utils.debug import timed
@@ -39,13 +40,9 @@ class Command(SimpleCommand):
             "functions": repeat(wl.Function(1, 2, 3), complexity),
         }
 
-    @timed
-    def export(self, *args, **opts):
-        return export(*args, **opts)
+    def formatted_time(self, function, *args, **opts):
 
-    def formatted_time(self, *args, **opts):
-
-        time = sum(first(self.export(*args, **opts)) for i in range(self.repetitions))
+        time = sum(first(timed(function)(*args, **opts)) for i in range(self.repetitions))
 
         return "%.5f" % (time / self.repetitions)
 
@@ -55,27 +52,50 @@ class Command(SimpleCommand):
     def table_divider(self, length):
         self.print(*("-" * self.col_size for i in range(length)))
 
+    def stream_generators(self, path):
+        yield "Memory", lambda complexity, export_format, path=path: None
+        yield "File", lambda complexity, export_format, path=path: os.path.join(
+            path, "benchmark-test-%s.%s" % (force_text(complexity).zfill(7), export_format)
+        )
+
     def report(self):
 
         path = tempfile.gettempdir()
 
         benchmarks = [(c, self.complexity_handler(c)) for c in self.complexity]
 
-        self.print("dumping results in", path)
+        self.table_line("dumping results in %s" % path)
+        self.table_line()
 
         # running export to do all lazy loadings
         export(1)
 
-        for title, stream_generator in (
-            ("Memory", lambda complexity: None),
-            (
-                "File",
-                lambda complexity: os.path.join(
-                    path,
-                    "benchmark-test-%s.%s" % (force_text(complexity).zfill(7), export_format),
-                ),
-            ),
-        ):
+        self.table_line("* Binary deserialize")
+        self.table_line()
+
+        self.table_line(
+            "Memory", *(force_text(c).ljust(self.col_size) for c in self.complexity)
+        )
+        self.table_divider(len(self.complexity) + 1)
+
+        for label, opts in (("wxf", dict()), ("wxf zip", dict(compress=True))):
+
+            self.table_line(
+                label,
+                *(
+                    self.formatted_time(
+                        binary_deserialize, export(expr, target_format="wxf", **opts)
+                    )
+                    for complexity, expr in benchmarks
+                )
+            )
+
+        self.table_line()
+
+        self.table_line("* Export")
+        self.table_line()
+
+        for title, stream_generator in self.stream_generators(path):
 
             self.table_line(
                 title, *(force_text(c).ljust(self.col_size) for c in self.complexity)
@@ -91,8 +111,9 @@ class Command(SimpleCommand):
                     label,
                     *(
                         self.formatted_time(
+                            export,
                             expr,
-                            stream=stream_generator(complexity),
+                            stream=stream_generator(complexity, export_format),
                             target_format=export_format,
                             **opts
                         )
@@ -101,8 +122,6 @@ class Command(SimpleCommand):
                 )
 
             self.table_line()
-
-        self.table_line()
 
     def handle(self, profile, **opts):
         if profile:
