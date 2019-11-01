@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.utils import six
 from wolframclient.utils.dispatch import Dispatch
+from wolframclient.utils.encoding import force_bytes, force_text
 from wolframclient.utils.functional import composition, flatten, iterate, partition, riffle
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
@@ -37,6 +39,24 @@ class TestCase(BaseTestCase):
         )
 
         self.assertEqual(list(partition([], 3)), [])
+
+    def test_force_encoding(self):
+
+        self.assertEqual(force_text("aà"), "aà")
+        self.assertEqual(force_text(abs), "<built-in function abs>")
+        self.assertEqual(force_text(b"a\xc3\xa0"), "aà")
+
+        self.assertEqual(force_text(memoryview(b"abc")), "abc")
+        self.assertEqual(force_text(bytearray(b"abc")), "abc")
+
+        self.assertEqual(force_bytes(b"abc"), b"abc")
+        self.assertEqual(force_bytes(abs), b"<built-in function abs>")
+        self.assertEqual(force_bytes("aà"), b"a\xc3\xa0")
+
+        self.assertEqual(force_text(force_bytes("aà")), "aà")
+
+        self.assertEqual(force_bytes(memoryview(b"abc")), b"abc")
+        self.assertEqual(force_bytes(bytearray(b"abc")), b"abc")
 
     def test_dispatch(self):
 
