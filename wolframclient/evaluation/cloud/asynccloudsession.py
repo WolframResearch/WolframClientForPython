@@ -38,8 +38,6 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
         async with WolframCloudAsyncSession() as session:
             await session.call(...)
 
-    An event loop can be explicitly passed using the named parameter `loop`; otherwise, the one
-    returned by :func:`~asyncio.get_event_loop` is used.
     The initialization options of the class :class:`~wolframclient.evaluation.WolframCloudSession` are also supported by
     this class.
     """
@@ -48,14 +46,13 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
         self,
         credentials=None,
         server=None,
-        loop=None,
         inputform_string_evaluation=True,
         oauth_session_class=None,
         xauth_session_class=None,
         http_sessionclass=None,
         ssl_context_class=None,
     ):
-        super().__init__(loop, inputform_string_evaluation=inputform_string_evaluation)
+        super().__init__(inputform_string_evaluation=inputform_string_evaluation)
         self.server = server or WOLFRAM_PUBLIC_CLOUD_SERVER
         self.http_session = None
         self.http_sessionclass = http_sessionclass or aiohttp.ClientSession
@@ -76,7 +73,6 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
         return self.__class__(
             credentials=self.credentials,
             server=self.server,
-            loop=self._loop,
             inputform_string_evaluation=self.inputform_string_evaluation,
             oauth_session_class=self.oauth_session_class,
             xauth_session_class=self.xauth_session_class,
@@ -90,8 +86,7 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
             if not self.started:
                 if self.http_session is None or self.http_session.closed:
                     self.http_session = self.http_sessionclass(
-                        headers={"User-Agent": "WolframClientForPython/1.0"}, loop=self._loop
-                    )
+                        headers={"User-Agent": "WolframClientForPython/1.0"})
                 if not self.anonymous():
                     await self._authenticate()
         except Exception as e:

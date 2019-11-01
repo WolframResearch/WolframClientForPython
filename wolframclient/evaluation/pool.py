@@ -58,8 +58,6 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
     Set `load_factor` to specify how many workloads are queued per kernel before a new evaluation becomes a blocking
     operation. Values below or equal to 0 mean an infinite queue size.
 
-    Set `loop` to the event loop to use.
-
     `kwargs` are passed to :class:`~wolframclient.evaluation.WolframLanguageAsyncSession` during initialization.
     """
 
@@ -68,14 +66,13 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         async_evaluators=None,
         poolsize=4,
         load_factor=0,
-        loop=None,
         async_language_session_class=WolframLanguageAsyncSession,
         **kwargs
     ):
-        super().__init__(loop)
+        super().__init__()
         if poolsize <= 0:
             raise ValueError("Invalid pool size value %i. Expecting a positive integer." % poolsize)
-        self._queue = asyncio.Queue(load_factor * poolsize, loop=self._loop)
+        self._queue = asyncio.Queue(load_factor * poolsize)
         self.async_language_session_class = async_language_session_class
         self._evaluators = set()
         if async_evaluators is None or isinstance(async_evaluators, six.string_types):
@@ -98,7 +95,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
     def _add_evaluator(self, evaluator, **kwargs):
         if evaluator is None or isinstance(evaluator, six.string_types):
             self._evaluators.add(
-                self.async_language_session_class(kernel=evaluator, loop=self._loop, **kwargs)
+                self.async_language_session_class(kernel=evaluator, **kwargs)
             )
         elif isinstance(evaluator, WolframAsyncEvaluator):
             if evaluator in self._evaluators:
@@ -196,11 +193,10 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         self.stopped = False
         # keep track of the init tasks. We have to wait before terminating.
         self._kernel_start_tasks = {
-            (asyncio.ensure_future(self._async_start_kernel(kernel), loop=self._loop))
-            for kernel in self._evaluators
+            asyncio.ensure_future(self._async_start_kernel(kernel)) for kernel in self._evaluators
         }
         # uninitialized kernels are removed if they failed to start
-        # if they do start, the task (the loop) is added to _kernel_evaluation_loop_tasks.
+        # if they do start, the task is added to _kernel_evaluation_loop_tasks.
         # we need at least one working kernel.
         # we also need to keep track of start kernel tasks in case of early termination.
         while len(self._kernel_evaluation_loop_tasks) == 0:
@@ -228,7 +224,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
                 for _ in range(len(self._kernel_evaluation_loop_tasks)):
                     await self._queue.put(None)
                 # wait for loop to finish before terminating the kernels
-                await asyncio.wait(self._kernel_evaluation_loop_tasks, loop=self._loop)
+                await asyncio.wait(self._kernel_evaluation_loop_tasks)
             except CancelledError:
                 pass
             except Exception as e:
@@ -236,7 +232,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         # terminate the kernel instances, if any started.
         tasks = {asyncio.create_task(kernel.stop()) for kernel in self._evaluators}
         # `wait` raises the first exception, but wait for all tasks to finish.
-        await asyncio.wait(tasks, loop=self._loop)
+        await asyncio.wait(tasks)
 
     async def terminate(self):
         await self.stop()
@@ -253,17 +249,17 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         self.eval_count += 1
 
     async def evaluate(self, expr, **kwargs):
-        future = asyncio.Future(loop=self._loop)
+        future = asyncio.Future()
         await self._put_evaluation_task(future, "evaluate", expr, **kwargs)
         return await future
 
     async def evaluate_wxf(self, expr, **kwargs):
-        future = asyncio.Future(loop=self._loop)
+        future = asyncio.Future()
         await self._put_evaluation_task(future, "evaluate_wxf", expr, **kwargs)
         return await future
 
     async def evaluate_wrap(self, expr, **kwargs):
-        future = asyncio.Future(loop=self._loop)
+        future = asyncio.Future()
         await self._put_evaluation_task(future, "evaluate_wrap", expr, **kwargs)
         return await future
 
@@ -283,7 +279,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         return len(self._kernel_evaluation_loop_tasks)
 
 
-def parallel_evaluate(expressions, evaluator_spec=None, max_evaluators=4, loop=None):
+def parallel_evaluate(expressions, evaluator_spec=None, max_evaluators=4):
     """ Start a kernel pool and evaluate the expressions in parallel. 
     
     The pool is created with the value of `evaluator_spec`. The pool is automatically stopped when it is no longer

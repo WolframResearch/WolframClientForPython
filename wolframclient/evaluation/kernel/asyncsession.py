@@ -22,10 +22,7 @@ class WolframLanguageAsyncSession(WolframAsyncEvaluator, WolframLanguageSession)
         async with WolframLanguageAsyncSession() as session:
             await session.evaluate('Now')
 
-    An event loop can be explicitly passed using the named parameter `loop`; otherwise, the one
-    returned by :func:`~asyncio.get_event_loop` is used.
-
-    Coroutines all run in a unique thread. Since a Wolfram kernel is single threaded, there can
+    Coroutines all run in their own thread. Since a Wolfram kernel is single threaded, there can
     be only one evaluation at a time. In a sense, from the event loop point of view, evaluations 
     are atomic operations. Even when many asynchronous sessions are started, the number of 
     threads equals the number of kernel instances running and should not be problematic. Ensuring 
@@ -37,7 +34,6 @@ class WolframLanguageAsyncSession(WolframAsyncEvaluator, WolframLanguageSession)
         self,
         kernel=None,
         consumer=None,
-        loop=None,
         initfile=None,
         kernel_loglevel=logging.NOTSET,
         stdin=PIPE,
@@ -55,14 +51,12 @@ class WolframLanguageAsyncSession(WolframAsyncEvaluator, WolframLanguageSession)
             stdout=stdout,
             stderr=stderr,
             inputform_string_evaluation=inputform_string_evaluation,
-            loop=loop,
             **kwargs
         )
 
     def duplicate(self):
         return self.__class__(
             kernel=self.kernel,
-            loop=self._loop,
             consumer=self.consumer,
             initfile=self.initfile,
             kernel_loglevel=self.kernel_loglevel,
@@ -77,7 +71,7 @@ class WolframLanguageAsyncSession(WolframAsyncEvaluator, WolframLanguageSession)
         future = super().do_evaluate_future(
             expr, result_update_callback=result_update_callback, **kwargs
         )
-        return asyncio.wrap_future(future, loop=self._loop)
+        return asyncio.wrap_future(future)
 
     async def evaluate_future(self, expr, **kwargs):
         await self.ensure_started()
@@ -138,7 +132,7 @@ class WolframLanguageAsyncSession(WolframAsyncEvaluator, WolframLanguageSession)
         
         This method is a coroutine."""
         future = super().start_future()
-        await asyncio.wrap_future(future, loop=self._loop)
+        await asyncio.wrap_future(future)
 
     async def stop(self):
         """Asynchronously stop the session (graceful termination).
@@ -155,4 +149,4 @@ class WolframLanguageAsyncSession(WolframAsyncEvaluator, WolframLanguageSession)
     async def _async_terminate(self, gracefully):
         logger.info("Terminating asynchronous kernel session.")
         future = super().stop_future(gracefully=gracefully)
-        await asyncio.wrap_future(future, loop=self._loop)
+        await asyncio.wrap_future(future)
