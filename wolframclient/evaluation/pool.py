@@ -122,7 +122,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
                     break
                 # func is one of the evaluate* methods from WolframAsyncEvaluator.
                 future, func, args, kwargs = task
-                # those method can't be cancelled since the kernel is evaluating anyway.
+                # these methods can't be cancelled since the kernel is evaluating anyway.
                 try:
                     func = getattr(kernel, func)
                     result = await asyncio.shield(func(*args, **kwargs))
@@ -169,7 +169,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
                     )
                 await kernel.stop()
             except asyncio.CancelledError:
-                logger.info("Cancelled signal.")
+                logger.info("Cancelled signal during kernel termination following a failed start.")
             except Exception as e2:
                 logger.info("Exception raised during clean-up after failed start: %s", e2)
 
