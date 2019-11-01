@@ -15,9 +15,7 @@ DEFAULT_UNKNOWN_FAILURE = {
 }
 
 
-def safe_wl_execute(
-    function, args=(), opts={}, export_opts={}, exception_class=None
-):
+def safe_wl_execute(function, args=(), opts={}, export_opts={}, exception_class=None):
 
     __traceback_hidden_variables__ = True
 

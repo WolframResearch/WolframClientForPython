@@ -3,8 +3,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 import asyncio
 import functools
 
-from wolframclient.utils.functional import first, iterate
-
 
 def run_in_loop(cor, loop=None):
     @functools.wraps(cor)
@@ -23,9 +21,10 @@ def get_event_loop(loop=None):
         return loop
 
 
-if hasattr(asyncio, 'run'):
+if hasattr(asyncio, "run"):
     run = asyncio.run
 else:
+
     def run(main):
         loop = get_event_loop()
         return loop.run_until_complete(main)

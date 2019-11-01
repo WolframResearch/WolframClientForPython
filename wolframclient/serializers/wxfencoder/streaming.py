@@ -32,7 +32,6 @@ class ExactSizeReader(object):
     def __init__(self, reader):
         self._reader = reader
 
-    
     def read(self, size=-1):
         """Read from an underlying readable object.
 
@@ -59,6 +58,7 @@ class ExactSizeReader(object):
                 raise EOFError("Not enough data to read.")
             yield chunk
             out_len += len(chunk)
+
 
 class ZipCompressedReader(object):
     """A buffer implementation reading zip compressed data from a source buffer and returning uncompressed data.

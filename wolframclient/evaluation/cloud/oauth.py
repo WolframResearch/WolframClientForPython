@@ -202,7 +202,7 @@ class XAuthRequestsSyncSession(OAuthRequestsSyncSessionBase):
         params = {
             "x_auth_username": self.xauth_credentials.user,
             "x_auth_password": self.xauth_credentials.password,
-            "x_auth_mode": "client_auth"
+            "x_auth_mode": "client_auth",
         }
 
         # avoid dumping password in log files.

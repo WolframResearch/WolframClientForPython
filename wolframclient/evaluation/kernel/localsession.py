@@ -283,7 +283,4 @@ class WolframLanguageSession(WolframEvaluator):
     set_parameter.__doc__ = WolframKernelController.set_parameter.__doc__
 
     def __repr__(self):
-        return "<%s: %s>" % (
-            self.__class__.__name__,
-            self.kernel_controller,
-        )
+        return "<%s: %s>" % (self.__class__.__name__, self.kernel_controller)

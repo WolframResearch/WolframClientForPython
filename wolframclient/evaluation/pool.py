@@ -3,7 +3,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 import itertools
 import logging
 from asyncio import CancelledError
-from wolframclient.utils.asyncio import get_event_loop
 
 from wolframclient.evaluation.base import WolframAsyncEvaluator
 from wolframclient.evaluation.kernel.asyncsession import WolframLanguageAsyncSession
@@ -71,7 +70,9 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
     ):
         super().__init__()
         if poolsize <= 0:
-            raise ValueError("Invalid pool size value %i. Expecting a positive integer." % poolsize)
+            raise ValueError(
+                "Invalid pool size value %i. Expecting a positive integer." % poolsize
+            )
         self._queue = asyncio.Queue(load_factor * poolsize)
         self.async_language_session_class = async_language_session_class
         self._evaluators = set()
@@ -94,9 +95,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
 
     def _add_evaluator(self, evaluator, **kwargs):
         if evaluator is None or isinstance(evaluator, six.string_types):
-            self._evaluators.add(
-                self.async_language_session_class(kernel=evaluator, **kwargs)
-            )
+            self._evaluators.add(self.async_language_session_class(kernel=evaluator, **kwargs))
         elif isinstance(evaluator, WolframAsyncEvaluator):
             if evaluator in self._evaluators:
                 self._evaluators.add(evaluator.duplicate())
@@ -167,7 +166,9 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
                     )
                 await kernel.stop()
             except asyncio.CancelledError:
-                logger.info("Cancelled signal during kernel termination following a failed start.")
+                logger.info(
+                    "Cancelled signal during kernel termination following a failed start."
+                )
             except Exception as e2:
                 logger.info("Exception raised during clean-up after failed start: %s", e2)
 
@@ -193,7 +194,8 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         self.stopped = False
         # keep track of the init tasks. We have to wait before terminating.
         self._kernel_start_tasks = {
-            asyncio.ensure_future(self._async_start_kernel(kernel)) for kernel in self._evaluators
+            asyncio.ensure_future(self._async_start_kernel(kernel))
+            for kernel in self._evaluators
         }
         # uninitialized kernels are removed if they failed to start
         # if they do start, the task is added to _kernel_evaluation_loop_tasks.
@@ -205,7 +207,9 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
             _, self._kernel_start_tasks = await asyncio.wait(
                 self._kernel_start_tasks, return_when=asyncio.FIRST_COMPLETED
             )
-        logger.info("Pool initialized with %i running kernels", len(self._kernel_evaluation_loop_tasks))
+        logger.info(
+            "Pool initialized with %i running kernels", len(self._kernel_evaluation_loop_tasks)
+        )
 
     async def stop(self):
 
@@ -288,6 +292,7 @@ def parallel_evaluate(expressions, evaluator_spec=None, max_evaluators=4):
     Note that each evaluation should be independent and not rely on any previous one. There is no guarantee that two
     given expressions evaluate on the same kernel.
     """
+
     async def cor():
         async with WolframEvaluatorPool(evaluator_spec, poolsize=max_evaluators) as pool:
             return await pool.evaluate_all(expressions)

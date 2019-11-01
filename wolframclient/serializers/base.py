@@ -165,8 +165,6 @@ class FormatSerializer(Encoder):
         yield "IsMethod", inspect.ismethod(o),
         yield "IsCallable", callable(o),
 
-
-
     def serialize_external_object(self, obj):
         return self.serialize_function(
             self.serialize_symbol(callable(obj) and b"ExternalFunction" or b"ExternalObject"),

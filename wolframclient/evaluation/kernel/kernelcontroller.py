@@ -592,8 +592,7 @@ class WolframKernelController(Thread):
 
     def __repr__(self):
         if self.started:
-            return '<%s[%s ✅], "%s", pid:%i, kernel sockets: (in:%s, out:%s)>'\
-                   % (
+            return '<%s[%s ✅], "%s", pid:%i, kernel sockets: (in:%s, out:%s)>' % (
                 self.__class__.__name__,
                 self.name,
                 self.kernel,
