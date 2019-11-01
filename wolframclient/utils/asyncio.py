@@ -14,15 +14,6 @@ def run_in_loop(cor, loop=None):
     return wrapped
 
 
-def run_all(args, **opts):
-    done = tuple(iterate(*args))
-    if done and len(done) > 1:
-        return asyncio.ensure_future(asyncio.wait(done), **opts)
-    elif done:
-        return asyncio.ensure_future(first(done), **opts)
-    return done
-
-
 def get_event_loop(loop=None):
     try:
         return loop or asyncio.get_event_loop()
@@ -32,18 +23,12 @@ def get_event_loop(loop=None):
         return loop
 
 
-def silence(*exceptions):
-    def wrap(fn):
-        @functools.wraps(fn)
-        def wrapper(*args, **kwargs):
-            try:
-                return fn(*args, **kwargs)
-            except tuple(exceptions):
-                pass
-
-        return wrapper
-
-    return wrap
+if hasattr(asyncio, 'run'):
+    run = asyncio.run
+else:
+    def run(main):
+        loop = get_event_loop()
+        return loop.run_until_complete(main)
 
 
 if hasattr(asyncio, "create_task"):
