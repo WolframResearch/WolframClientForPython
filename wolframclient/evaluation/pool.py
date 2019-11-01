@@ -292,4 +292,4 @@ def parallel_evaluate(expressions, evaluator_spec=None, max_evaluators=4):
         async with WolframEvaluatorPool(evaluator_spec, poolsize=max_evaluators) as pool:
             return await pool.evaluate_all(expressions)
 
-    return get_event_loop(loop).run_until_complete(cor())
+    return asyncio.run(cor())
