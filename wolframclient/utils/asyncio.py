@@ -1,15 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import asyncio
-import functools
 
-
-def run_in_loop(cor, loop=None):
-    @functools.wraps(cor)
-    def wrapped(*args, **kwargs):
-        return get_event_loop(loop).run_until_complete(cor(*args, **kwargs))
-
-    return wrapped
+from wolframclient.utils.decorators import decorate
 
 
 def get_event_loop(loop=None):
@@ -21,21 +14,15 @@ def get_event_loop(loop=None):
         return loop
 
 
-if hasattr(asyncio, "run"):
-    run = asyncio.run
-else:
-
-    def run(main):
-        loop = get_event_loop()
-        return loop.run_until_complete(main)
+def run(coro):
+    return get_event_loop().run_until_complete(coro)
 
 
-if hasattr(asyncio, "create_task"):
-    create_task = asyncio.create_task
-else:
+run_in_loop = decorate(run)
 
-    def create_task(coro):
-        """ ensure_future using get_event_loop, so that it behaves similarly to
-        create_task, and gets the same signature.
-        """
-        return asyncio.ensure_future(coro, loop=asyncio.get_event_loop())
+
+def create_task(coro):
+    """ ensure_future using get_event_loop, so that it behaves similarly to
+    create_task, and gets the same signature.
+    """
+    return asyncio.ensure_future(coro, loop=get_event_loop())
