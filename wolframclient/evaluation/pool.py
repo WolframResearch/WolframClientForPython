@@ -3,6 +3,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import itertools
 import logging
 from asyncio import CancelledError
+from wolframclient.utils.asyncio import get_event_loop
 
 from wolframclient.evaluation.base import WolframAsyncEvaluator
 from wolframclient.evaluation.kernel.asyncsession import WolframLanguageAsyncSession
@@ -291,12 +292,8 @@ def parallel_evaluate(expressions, evaluator_spec=None, max_evaluators=4, loop=N
     Note that each evaluation should be independent and not rely on any previous one. There is no guarantee that two
     given expressions evaluate on the same kernel.
     """
-    loop = loop or asyncio.get_event_loop()
-    pool = None
-    try:
-        pool = WolframEvaluatorPool(evaluator_spec, poolsize=max_evaluators, loop=loop)
-        loop.run_until_complete(pool.start())
-        return pool.evaluate_all(expressions)
-    finally:
-        if pool:
-            loop.run_until_complete(pool.terminate())
+    async def cor():
+        async with WolframEvaluatorPool(evaluator_spec, poolsize=max_evaluators) as pool:
+            return await pool.evaluate_all(expressions)
+
+    return get_event_loop(loop).run_until_complete(cor())
