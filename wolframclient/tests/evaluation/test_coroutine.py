@@ -227,10 +227,10 @@ class TestParallelEvaluate(BaseTestCase):
         res = parallel_evaluate(exprs, evaluator_spec=kernel_path, max_evaluators=1)
         self.assertEqual(res, ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"])
 
-    def test_parallel_evaluate_sizeone(self):
+    def test_parallel_evaluate_siztwo(self):
         exprs = [wl.FromLetterNumber(i) for i in range(1, 11)]
         res = parallel_evaluate(
-            exprs, evaluator_spec=[kernel_path, kernel_path, kernel_path], max_evaluators=1
+            exprs, evaluator_spec=[kernel_path, kernel_path, kernel_path], max_evaluators=2
         )
         self.assertEqual(res, ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"])
 
