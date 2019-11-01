@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.utils import six
 from wolframclient.utils.api import zlib
-from wolframclient.utils.encoding import force_bytes
+from wolframclient.utils.decorators import decorate
+from wolframclient.utils.encoding import concatenate_bytes, force_bytes
 
 
 class ZipCompressedWriter(object):
@@ -32,6 +32,7 @@ class ExactSizeReader(object):
     def __init__(self, reader):
         self._reader = reader
 
+    
     def read(self, size=-1):
         """Read from an underlying readable object.
 
@@ -45,17 +46,19 @@ class ExactSizeReader(object):
         # Also a fast path when the requested amount of bytes is returned in one go.
         if size <= 0 or len(data) == size:
             return data
+
+        return self._read_rest(data, size)
+
+    @decorate(concatenate_bytes)
+    def _read_rest(self, data, size=-1):
         # need an intermediary buffer
         out_len = len(data)
-        data = six.BytesIO(data)
         while out_len < size:
             chunk = self._reader.read(size - out_len)
-            if chunk == b"":
+            if not chunk:
                 raise EOFError("Not enough data to read.")
-            data.write(chunk)
-            out_len = out_len + len(chunk)
-        return data.getvalue()
-
+            yield chunk
+            out_len += len(chunk)
 
 class ZipCompressedReader(object):
     """A buffer implementation reading zip compressed data from a source buffer and returning uncompressed data.
@@ -70,6 +73,7 @@ class ZipCompressedReader(object):
         self._compressor = zlib.decompressobj()
         self._reader = reader
 
+    @decorate(concatenate_bytes)
     def read(self, size=-1):
         """Read from a compressed stream of bytes and return the inflated byte sequence.
 
@@ -81,19 +85,19 @@ class ZipCompressedReader(object):
             size = -1
         else:
             chunk_size = ZipCompressedReader.CHUNK_SIZE
-        out_data = six.BytesIO()
+
         out_len = 0
         while True:
             # first step find try to find some data to uncompress.
             # sometimes some bytes are left over. We have to send them first to zlib.
-            if self._compressor.unconsumed_tail != b"":
+            if self._compressor.unconsumed_tail:
                 data_in = self._compressor.unconsumed_tail
             else:
                 # read more data from input reader. Read in chunk since we can't guess how
                 # big the inflated result is.
                 data_in = self._reader.read(chunk_size)
                 # no more data is available.
-                if data_in == b"":
+                if not data_in:
                     break
             # second step, decompress the new chunk
             if size > 0:
@@ -101,10 +105,9 @@ class ZipCompressedReader(object):
             else:
                 chunk = self._compressor.decompress(data_in)
             # increment output len.
-            out_len = out_len + len(chunk)
+            out_len += len(chunk)
             # write to buffer
-            out_data.write(chunk)
+            yield chunk
             # check requested size against output length.
             if size > 0 and out_len == size:
                 break
-        return out_data.getvalue()
