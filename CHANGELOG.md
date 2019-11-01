@@ -1,3 +1,6 @@
+# Version 1.1.3
+- Update asynchronous evaluator classes. Remove the `loop` parameter. Most optional loop parameters are deprecated in the Python standart library `asyncio` and in most libraries, mainly because it is misleading and lead to misuses and bugs. The loop parameter is useful when instantiating asynchronous evaluators outside the scope of an event loop. It's implementation was not good enough and was relying on usages deprecated in 3.8.
+
 # Version 1.1.2
 - Fix a backward incompatible change introduced in 12.1. Make sure the library works with any kernel version starting with 11.3.
 - Minor changes and tweaks.
