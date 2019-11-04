@@ -92,6 +92,7 @@ class SocketWriter:
     def write(self, bytes):
         self.socket.send(zmq.Frame(bytes))
 
+
 class StdoutProxy:
 
     keep_listening = wl.ExternalEvaluate.Private.ExternalEvaluateKeepListening

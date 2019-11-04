@@ -372,29 +372,39 @@ class WolframCloudEvaluationResponseAsync(WolframCloudEvaluationResponse):
             await self.build()
         return self._messages_name
 
-    async def iter_messages(self):
-        """
-        Iterator over all text messages issued during the evaluation.
-        :return: message text as a string.
-        """
-        msgs = await self.messages
-        if msgs:
-            for msg in msgs:
-                yield msg
-
-    async def iter_messages_name(self):
-        names = await self.messages_name
-        if names:
-            for name in names:
-                yield name
-
-    async def iter_messages_tuple(self):
-        """ Iterator over all messages returned as a tuple: (message name, message text)"""
-        msg = await self.messages
-        names = await self.messages_name
-        if msg and names:
-            for tuple_msg in zip(names, msg):
-                yield tuple_msg
+    # a bunch of asynchronous generators. These functions are not critical and we can't define them on 3.5.
+    # removing them for now.
+    #
+    # async def iter_messages(self):
+    #     """
+    #     Iterator over all text messages issued during the evaluation.
+    #     :return: message text as a string.
+    #     """
+    #     msgs = await self.messages
+    #     if msgs:
+    #         for msg in msgs:
+    #             yield msg
+    #
+    # async def iter_messages_name(self):
+    #     names = await self.messages_name
+    #     if names:
+    #         for name in names:
+    #             yield name
+    #
+    # async def iter_messages_tuple(self):
+    #     """ Iterator over all messages returned as a tuple: (message name, message text)"""
+    #     msg = await self.messages
+    #     names = await self.messages_name
+    #     if msg and names:
+    #         for tuple_msg in zip(names, msg):
+    #             yield tuple_msg
+    #
+    # async def iter_output(self):
+    #     """ Iterator over all printed output."""
+    #     output = await self.output
+    #     if output:
+    #         for line in self.output:
+    #             yield line
 
     @property
     async def output(self):
@@ -402,13 +412,6 @@ class WolframCloudEvaluationResponseAsync(WolframCloudEvaluationResponse):
         if not self._built:
             await self.build()
         return self._output
-
-    async def iter_output(self):
-        """ Iterator over all printed output."""
-        output = await self.output
-        if output:
-            for line in self.output:
-                yield line
 
     @property
     async def is_message_failure(self):

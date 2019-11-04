@@ -83,6 +83,7 @@ asyncio = API(
     create_task="wolframclient.utils.asyncio.create_task",
     ensure_future="asyncio.ensure_future",
     wrap_future="asyncio.wrap_future",
+    run="wolframclient.utils.asyncio.run",
     get_event_loop="asyncio.get_event_loop",
     new_event_loop="asyncio.new_event_loop",
     Queue="asyncio.Queue",

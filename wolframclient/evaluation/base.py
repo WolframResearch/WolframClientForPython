@@ -143,13 +143,12 @@ class WolframEvaluator(WolframEvaluatorBase):
 
 class WolframAsyncEvaluator(WolframEvaluatorBase):
     """ Asynchronous evaluators are similar to synchronous ones except that they make heavy use of coroutines
-    and need an event loop. 
+    and need to run in an event loop.
     
-    Most methods from this class are similar to their counterpart from :class:`~wolframclient.evaluation.base.WolframEvaluator`,
-    except that they are coroutines. """
+    Most methods from this class are similar to their counterpart from
+    :class:`~wolframclient.evaluation.base.WolframEvaluator`, except that they are coroutines. """
 
-    def __init__(self, loop=None, **kwargs):
-        self._loop = loop or asyncio.get_event_loop()
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
     async def evaluate(self, expr):
@@ -157,7 +156,7 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
         return await result.get()
 
     async def evaluate_many(self, expr_list):
-        return await asyncio.gather(*map(self.evaluate, expr_list), loop=self._loop)
+        return await asyncio.gather(*map(self.evaluate, expr_list))
 
     async def evaluate_wrap(self, expr):
         raise NotImplementedError
@@ -215,7 +214,13 @@ class WolframAsyncEvaluator(WolframEvaluatorBase):
 
     def __del__(self, _warnings=warnings):
         super().__del__(_warnings=warnings)
-        if not self.stopped and self._loop and not self._loop.is_closed():
-            self._loop.call_exception_handler(
-                {self.__class__.__name__: self, "message": "Unclosed evaluator."}
-            )
+        if not self.stopped:
+            loop = None
+            try:
+                loop = asyncio.get_running_loop()
+            except RuntimeError:
+                pass
+            if loop and not loop.is_closed():
+                loop.call_exception_handler(
+                    {self.__class__.__name__: self, "message": "Unclosed evaluator."}
+                )
