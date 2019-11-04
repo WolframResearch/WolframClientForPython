@@ -6,6 +6,9 @@ from wolframclient.utils.functional import map
 
 force_text = Dispatch()
 
+@force_text.dispatch(six.buffer_types)
+def encode(s, *args, **opts):
+    return force_text(force_bytes(s, *args, **opts), *args, **opts)
 
 @force_text.dispatch(six.text_type)
 def encode(s, encoding="utf-8", errors="strict"):
