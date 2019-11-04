@@ -14,24 +14,27 @@ from wolframclient.utils.dispatch import Dispatch
 
 wxf_input_to_buffer = Dispatch()
 
+
 @wxf_input_to_buffer.dispatch((six.binary_type, six.buffer_types))
 def encode_buffer(wxf_input):
     return six.BytesIO(wxf_input)
 
+
 if six.PY2:
-    @wxf_input_to_buffer.dispatch(memoryview, replace_existing = True)
+
+    @wxf_input_to_buffer.dispatch(memoryview, replace_existing=True)
     def encode_buffer(wxf_input):
-        return six.BytesIO(wxf_input.tobytes())    
+        return six.BytesIO(wxf_input.tobytes())
+
 
 @wxf_input_to_buffer.dispatch(object)
 def encode_default(wxf_input):
-    if hasattr(wxf_input, 'read'):
+    if hasattr(wxf_input, "read"):
         return wxf_input
     raise TypeError(
         "Class %s neither implements a read method nor is a binary type."
         % wxf_input.__class__.__name__
     )
-
 
 
 class WXFParser(object):
@@ -80,7 +83,7 @@ class WXFParser(object):
         """WXF parser returning Python object from a WXF encoded byte sequence.
         """
         self.context = SerializationContext()
-        self.reader  = wxf_input_to_buffer(wxf_input)
+        self.reader = wxf_input_to_buffer(wxf_input)
 
         version, compress = self.parse_header()
         if compress == True:

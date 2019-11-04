@@ -8,8 +8,8 @@ from wolframclient.evaluation.base import WolframAsyncEvaluator
 from wolframclient.evaluation.kernel.asyncsession import WolframLanguageAsyncSession
 from wolframclient.exception import WolframKernelException
 from wolframclient.utils import six
-from wolframclient.utils.asyncio import run_in_loop
 from wolframclient.utils.api import asyncio
+from wolframclient.utils.asyncio import run_in_loop
 from wolframclient.utils.functional import is_iterable
 
 logger = logging.getLogger(__name__)
