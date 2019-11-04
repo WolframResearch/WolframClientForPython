@@ -8,6 +8,7 @@ from wolframclient.evaluation.base import WolframAsyncEvaluator
 from wolframclient.evaluation.kernel.asyncsession import WolframLanguageAsyncSession
 from wolframclient.exception import WolframKernelException
 from wolframclient.utils import six
+from wolframclient.utils.asyncio import run_in_loop
 from wolframclient.utils.api import asyncio
 from wolframclient.utils.functional import is_iterable
 
@@ -283,7 +284,8 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         return len(self._kernel_evaluation_loop_tasks)
 
 
-def parallel_evaluate(expressions, evaluator_spec=None, max_evaluators=4):
+@run_in_loop
+async def parallel_evaluate(expressions, evaluator_spec=None, max_evaluators=4):
     """ Start a kernel pool and evaluate the expressions in parallel. 
     
     The pool is created with the value of `evaluator_spec`. The pool is automatically stopped when it is no longer
@@ -292,9 +294,5 @@ def parallel_evaluate(expressions, evaluator_spec=None, max_evaluators=4):
     Note that each evaluation should be independent and not rely on any previous one. There is no guarantee that two
     given expressions evaluate on the same kernel.
     """
-
-    async def cor():
-        async with WolframEvaluatorPool(evaluator_spec, poolsize=max_evaluators) as pool:
-            return await pool.evaluate_all(expressions)
-
-    return asyncio.run(cor())
+    async with WolframEvaluatorPool(evaluator_spec, poolsize=max_evaluators) as pool:
+        return await pool.evaluate_all(expressions)
