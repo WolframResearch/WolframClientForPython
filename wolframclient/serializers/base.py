@@ -139,7 +139,7 @@ class FormatSerializer(Encoder):
             yield "Type", "PythonFunction"
             try:
                 # force tuple to avoid calling this method again on `map`.
-                yield "Arguments", tuple(map(force_text, first(inspect.getfullargspec(o))))
+                yield "Arguments", tuple(map(force_text, first(inspect.getargspec(o))))
             except TypeError:
                 # this function can fail with TypeError unsupported callable
                 pass
