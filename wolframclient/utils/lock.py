@@ -1,5 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
+import warnings
+
 try:
     import multithreading
 
@@ -18,4 +20,5 @@ except (ImportError, OSError):
 
     @contextmanager
     def Lock():
+        warnings.warn("Lock is not implemented in the current interpreter.", RuntimeWarning)
         yield
