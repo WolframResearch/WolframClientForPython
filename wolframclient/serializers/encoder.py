@@ -8,7 +8,6 @@ from functools import partial
 import pkg_resources
 
 from wolframclient.serializers.utils import safe_len
-from wolframclient.utils import six
 from wolframclient.utils.api import multiprocessing
 from wolframclient.utils.dispatch import Dispatch
 from wolframclient.utils.functional import composition, is_iterable, iterate, map
@@ -64,18 +63,10 @@ class WolframDispatch(Dispatch):
                     raise e
             self.plugins_registry = defaultdict(list)
 
-    if not six.JYTHON:
-        # global lock to avoid multiple dispatcher updating in multithreaded programs.
-        _lock = multiprocessing.Lock()
+    # global lock to avoid multiple dispatcher updating in multithreaded programs.
 
-        def update_dispatch(self):
-            with self._lock:
-                self._update_dispatch()
-                self._update_plugins()
-
-    else:
-
-        def update_dispatch(self):
+    def update_dispatch(self):
+        with multiprocessing.Lock():
             self._update_dispatch()
             self._update_plugins()
 

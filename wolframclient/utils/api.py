@@ -138,7 +138,7 @@ numpy = API(
     PackedArray="wolframclient.utils.packedarray.PackedArray",
 )
 
-multiprocessing = API(Lock="multiprocessing.Lock")
+multiprocessing = API(Lock="wolframclient.utils.lock.Lock")
 
 PIL = API(Image="PIL.Image.Image", fromarray="PIL.Image.fromarray", open="PIL.Image.open")
 
