@@ -169,7 +169,7 @@ class WXFConsumer(object):
 
         if match:
 
-            num, prec, pow, exp = match.groups()
+            num, _, _, exp = match.groups()
 
             if exp:
                 return decimal.Decimal("%se%s" % (num, exp))
