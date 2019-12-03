@@ -154,7 +154,7 @@ class WXFConsumer(object):
         except ValueError:
             raise WolframParserException("Invalid big integer value: %s" % current_token.data)
 
-    BIGREAL_RE = re.compile(r"([^`]+)(`[0-9.]+){0,1}(\*\^[0-9]+){0,1}")
+    BIGREAL_RE = re.compile(r"([^`]+)(`[0-9.]+){0,1}(\*\^){0,1}(-?[0-9]+){0,1}")
 
     def consume_bigreal(self, current_token, tokens, **kwargs):
         """Parse a WXF big real as a WXF serializable big real.
@@ -169,10 +169,10 @@ class WXFConsumer(object):
 
         if match:
 
-            num, prec, exp = match.groups()
+            num, _, _, exp = match.groups()
 
             if exp:
-                return decimal.Decimal("%se%s" % (num, exp[2:]))
+                return decimal.Decimal("%se%s" % (num, exp))
 
             return decimal.Decimal(num)
 
