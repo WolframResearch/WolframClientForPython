@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
-
 from wolframclient.evaluation.cloud.base import OAuthAsyncSessionBase, UserIDPassword
+from wolframclient.evaluation.cloud.server import DEFAULT_CA_PATH
 from wolframclient.exception import AuthenticationException
 from wolframclient.utils import six
 from wolframclient.utils.api import aiohttp, oauth, ssl
@@ -35,7 +35,8 @@ class OAuthAIOHttpAsyncSessionBase(OAuthAsyncSessionBase):
         if self.server.certificate is not None:
             self._ssl_context = self.ssl_context_class()
             self._ssl_context.load_verify_locations(self.server.certificate)
-            # self._ssl_context = ssl.create_default_context(cafile=self.server.certificate)
+        elif DEFAULT_CA_PATH:
+            self._ssl_context = ssl.create_default_context(cafile=DEFAULT_CA_PATH)
         else:
             self._ssl_context = None
 
