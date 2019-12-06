@@ -7,7 +7,6 @@ try:
 except ImportError:
     certifi = None
     DEFAULT_CA_PATH = None
-    pass
 
 
 __all__ = ["WolframServer", "DEFAULT_CA_PATH"]
