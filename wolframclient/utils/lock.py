@@ -18,7 +18,8 @@ except (ImportError, OSError):
 
     from contextlib import contextmanager
 
+    warnings.warn("Lock is not implemented in the current interpreter.", RuntimeWarning)
+
     @contextmanager
     def Lock():
-        warnings.warn("Lock is not implemented in the current interpreter.", RuntimeWarning)
         yield
