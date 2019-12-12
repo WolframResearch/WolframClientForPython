@@ -141,6 +141,14 @@ class TestCase(TestCaseSettings):
             ) as cloud_session:
                 cloud_session.authorized()
 
+    def test_sslcontext(self):
+        from wolframclient.evaluation.cloud.server import DEFAULT_CA_PATH
+        s = WolframCloudAsyncSession()
+        if DEFAULT_CA_PATH is None:
+            self.assertIsNone(s._ssl_context)
+        else:
+            self.assertIsNotNone(s._ssl_context)
+
     @run_in_loop
     async def test_section_api_call_no_param(self):
         url = "api/private/requesterid"
