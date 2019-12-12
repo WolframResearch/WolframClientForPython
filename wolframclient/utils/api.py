@@ -139,7 +139,7 @@ numpy = API(
 )
 
 multithreading = API(Lock="wolframclient.utils.lock.Lock")
-pkg_resources = API(iter_entry_points="pkg_resources.iter_entry_points")
+pkg_resources = API(iter_entry_points=("pkg_resources.iter_entry_points", lambda *args, **opts: ()))
 
 PIL = API(Image="PIL.Image.Image", fromarray="PIL.Image.fromarray", open="PIL.Image.open")
 
