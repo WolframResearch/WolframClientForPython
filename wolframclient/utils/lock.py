@@ -1,15 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-import warnings
+from wolframclient.utils.importutils import safe_import_string_and_call
 
 try:
-    import multithreading
 
-    _lock = multithreading.Lock()
-
+    _lock = safe_import_string_and_call('multithreading.Lock')
     def Lock():
         return _lock
-
 
 except (ImportError, OSError):
 
@@ -17,6 +14,7 @@ except (ImportError, OSError):
     # GVisor is raising an OSError when running "multithreading.Lock()" because the feature is not implemented
 
     from contextlib import contextmanager
+    import warnings
 
     @contextmanager
     def Lock():
