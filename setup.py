@@ -32,7 +32,7 @@ CLASSIFIERS = [
 
 def read(*rellibpath):
     with codecs.open(os.path.join(HERE, *rellibpath), 'r', encoding='utf-8') as fp:
-          return fp.read()
+        return fp.read()
 
 def load_tests():
     import unittest
