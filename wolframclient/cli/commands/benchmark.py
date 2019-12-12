@@ -1,6 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-import cProfile
 import decimal
 import os
 import tempfile
@@ -12,6 +11,7 @@ from wolframclient.serializers import export
 from wolframclient.utils.debug import timed
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import first
+from wolframclient.utils.importutils import safe_import_string_and_call
 
 
 def repeat(el, n=1):
@@ -125,6 +125,8 @@ class Command(SimpleCommand):
 
     def handle(self, profile, **opts):
         if profile:
-            cProfile.runctx("report()", {"report": self.report}, {})
+            safe_import_string_and_call(
+                "cProfile.runctx", "report()", {"report": self.report}, {}
+            )
         else:
             self.report()
