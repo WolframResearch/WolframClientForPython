@@ -1,4 +1,7 @@
 # Version 1.1.3
+- Async cloud evaluator based on `aiohttp` now use `certifi` to create a default `SSLContext` if none is provided. Other cloud evaluator are based on the `requests` module which also uses this library. 
+- Updating dependency list accordingly in `setup.py`. `certifi` was already listed as a `requests` dependency, so this should have no direct impact on user site package.
+# Version 1.1.3
 - Update asynchronous evaluator classes. Remove the `loop` parameter. Most optional loop parameters are deprecated in the Python standart library `asyncio` and in most libraries, mainly because it is misleading and lead to misuses and bugs. The loop parameter is useful when instantiating asynchronous evaluators outside the scope of an event loop. It's implementation was not good enough and was relying on usages deprecated in 3.8.
 - Removing four asynchronous generators in asynchronous evaluation result classes: `iter_messages`, `iter_messages_name`, `iter_messages_tuple` and `iter_output`. These coroutines are only working on python 3.6+ and are not critical enough to drop support for 3.5. Asynchronous properties: `messages`, `messages_name` and `output` provide the same information.
 
