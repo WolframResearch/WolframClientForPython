@@ -4,6 +4,7 @@ from wolframclient.utils.importutils import safe_import_string_and_call
 
 try:
     _lock = safe_import_string_and_call('multithreading.Lock')
+
     def Lock():
         return _lock
 
@@ -15,7 +16,8 @@ except (ImportError, OSError):
     from contextlib import contextmanager
     import warnings
 
+    warnings.warn("Lock is not implemented in the current interpreter.", RuntimeWarning)
+
     @contextmanager
     def Lock():
-        warnings.warn("Lock is not implemented in the current interpreter.", RuntimeWarning)
         yield

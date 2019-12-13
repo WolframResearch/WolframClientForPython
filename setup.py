@@ -67,6 +67,7 @@ setup(
         'aiohttp',
         'oauthlib',
         'pyzmq',
+        'certifi>=2017.4.17' # for consistency with requests module.
     ],
     classifiers = CLASSIFIERS,
     project_urls={

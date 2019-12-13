@@ -169,7 +169,10 @@ aiohttp = API(
     StringPayload="aiohttp.StringPayload",
 )
 
-ssl = API(SSLContext="ssl.SSLContext")
+ssl = API(
+    SSLContext="ssl.SSLContext",
+    create_default_context="ssl.create_default_context",
+)
 
 externalevaluate = API(
     execute_from_file="wolframclient.utils.externalevaluate.execute_from_file",

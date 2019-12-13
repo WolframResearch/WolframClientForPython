@@ -1,8 +1,15 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from wolframclient.utils import six
+try:
+    import certifi
+    DEFAULT_CA_PATH = certifi.where()
+except ImportError:
+    certifi = None
+    DEFAULT_CA_PATH = None
 
-__all__ = ["WolframServer"]
+
+__all__ = ["WolframServer", "DEFAULT_CA_PATH"]
 
 
 class WolframServer(object):
