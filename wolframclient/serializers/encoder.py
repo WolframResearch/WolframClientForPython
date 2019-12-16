@@ -6,7 +6,7 @@ from collections import defaultdict
 from functools import partial
 
 from wolframclient.serializers.utils import safe_len
-from wolframclient.utils.api import pkg_resources, multithreading
+from wolframclient.utils.api import multithreading, pkg_resources
 from wolframclient.utils.dispatch import Dispatch
 from wolframclient.utils.functional import composition, is_iterable, iterate, map
 from wolframclient.utils.importutils import safe_import_string

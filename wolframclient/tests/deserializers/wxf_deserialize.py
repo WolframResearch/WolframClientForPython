@@ -148,9 +148,11 @@ class TestCase(BaseTestCase):
         self.assertEqual(res, decimal.Decimal("9.999999999999996843873323328588479844E+999"))
 
     def test_bigreal_precision_negexponent(self):
-            wxf = b'8:RC4.590261537982443550699999999999999999999281`19.66183743091127*^-16'
-            res = binary_deserialize(wxf, consumer=WXFConsumer())
-            self.assertEqual(res, decimal.Decimal('4.590261537982443550699999999999999999999281E-16'))
+        wxf = b"8:RC4.590261537982443550699999999999999999999281`19.66183743091127*^-16"
+        res = binary_deserialize(wxf, consumer=WXFConsumer())
+        self.assertEqual(
+            res, decimal.Decimal("4.590261537982443550699999999999999999999281E-16")
+        )
 
     def test_empty_lists(self):
         value = ((), ((),), (1, ()), ())

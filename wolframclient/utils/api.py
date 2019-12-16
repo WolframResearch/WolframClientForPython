@@ -139,7 +139,9 @@ numpy = API(
 )
 
 multithreading = API(Lock="wolframclient.utils.lock.Lock")
-pkg_resources = API(iter_entry_points=("pkg_resources.iter_entry_points", lambda *args, **opts: ()))
+pkg_resources = API(
+    iter_entry_points=("pkg_resources.iter_entry_points", lambda *args, **opts: ())
+)
 
 PIL = API(Image="PIL.Image.Image", fromarray="PIL.Image.fromarray", open="PIL.Image.open")
 
@@ -169,10 +171,7 @@ aiohttp = API(
     StringPayload="aiohttp.StringPayload",
 )
 
-ssl = API(
-    SSLContext="ssl.SSLContext",
-    create_default_context="ssl.create_default_context",
-)
+ssl = API(SSLContext="ssl.SSLContext", create_default_context="ssl.create_default_context")
 
 externalevaluate = API(
     execute_from_file="wolframclient.utils.externalevaluate.execute_from_file",

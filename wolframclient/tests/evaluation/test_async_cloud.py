@@ -143,6 +143,7 @@ class TestCase(TestCaseSettings):
 
     def test_sslcontext(self):
         from wolframclient.evaluation.cloud.server import DEFAULT_CA_PATH
+
         s = WolframCloudAsyncSession()
         if DEFAULT_CA_PATH is None:
             self.assertIsNone(s._ssl_context)

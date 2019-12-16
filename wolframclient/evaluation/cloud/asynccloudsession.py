@@ -11,7 +11,7 @@ from wolframclient.evaluation.cloud.asyncoauth import (
     XAuthAIOHttpAsyncSession as XAuthAsyncSession,
 )
 from wolframclient.evaluation.cloud.base import WolframAPICallBase
-from wolframclient.evaluation.cloud.server import WOLFRAM_PUBLIC_CLOUD_SERVER, DEFAULT_CA_PATH
+from wolframclient.evaluation.cloud.server import DEFAULT_CA_PATH, WOLFRAM_PUBLIC_CLOUD_SERVER
 from wolframclient.evaluation.result import (
     WolframAPIResponseBuilder,
     WolframEvaluationWXFResponseAsync,
@@ -69,7 +69,6 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
             self._ssl_context = ssl.create_default_context(cafile=DEFAULT_CA_PATH)
         else:
             self._ssl_context = None
-
 
     def duplicate(self):
         return self.__class__(
