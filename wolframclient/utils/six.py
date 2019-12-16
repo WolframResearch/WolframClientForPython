@@ -61,19 +61,3 @@ iterable_types = [
 ]
 if not PY2:
     iterable_types.extend((map, range))
-
-protected_types = tuple(
-    itertools.chain(
-        string_types,
-        integer_types,
-        (
-            float,
-            decimal.Decimal,
-            datetime.date,
-            datetime.datetime,
-            datetime.time,
-            bool,
-            none_type,
-        ),
-    )
-)
