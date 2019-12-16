@@ -40,8 +40,7 @@ if six.PY_38:
 
 else:
 
-    def Module(code):
-        return ast.Module(code)
+    Module = ast.Module
 
 
 def EvaluationEnvironment(code, session_data={}, constants=None, **extra):
