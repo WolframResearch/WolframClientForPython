@@ -1,6 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
+
 from wolframclient.evaluation.cloud.base import OAuthAsyncSessionBase, UserIDPassword
 from wolframclient.evaluation.cloud.server import DEFAULT_CA_PATH
 from wolframclient.exception import AuthenticationException

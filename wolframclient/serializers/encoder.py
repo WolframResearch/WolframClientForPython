@@ -5,10 +5,8 @@ import sys
 from collections import defaultdict
 from functools import partial
 
-import pkg_resources
-
 from wolframclient.serializers.utils import safe_len
-from wolframclient.utils.api import multiprocessing
+from wolframclient.utils.api import multithreading, pkg_resources
 from wolframclient.utils.dispatch import Dispatch
 from wolframclient.utils.functional import composition, is_iterable, iterate, map
 from wolframclient.utils.importutils import safe_import_string
@@ -66,7 +64,7 @@ class WolframDispatch(Dispatch):
     # global lock to avoid multiple dispatcher updating in multithreaded programs.
 
     def update_dispatch(self):
-        with multiprocessing.Lock():
+        with multithreading.Lock():
             self._update_dispatch()
             self._update_plugins()
 
