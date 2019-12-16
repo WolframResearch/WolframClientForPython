@@ -27,6 +27,22 @@ HIDDEN_VARIABLES = (
 
 EXPORT_KWARGS = {"target_format": "wxf", "allow_external_objects": True}
 
+if six.PY_38:
+
+    # https://bugs.python.org/issue35766
+    # https://bugs.python.org/issue35894
+    # https://github.com/ipython/ipython/issues/11590
+    # PY_38 requires type_ignores to be a list, other versions are not accepting a second argument
+
+    def Module(code):
+        return ast.Module(code, [])
+
+
+else:
+
+    def Module(code):
+        return ast.Module(code)
+
 
 def EvaluationEnvironment(code, session_data={}, constants=None, **extra):
 
@@ -70,7 +86,7 @@ def execute_from_string(code, globals={}, **opts):
         result = expressions.pop(-1)
 
     if expressions:
-        exec(compile(ast.Module(expressions), "", "exec"), env)
+        exec(compile(Module(expressions), "", "exec"), env)
 
     if result:
         return eval(compile(ast.Expression(result.value), "", "eval"), env)
