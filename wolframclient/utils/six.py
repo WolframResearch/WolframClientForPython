@@ -14,6 +14,7 @@ PY3 = sys.version_info[0] == 3
 PY_35 = sys.version_info >= (3, 5)
 PY_36 = sys.version_info >= (3, 6)
 PY_37 = sys.version_info >= (3, 7)
+PY_38 = sys.version_info >= (3, 8)
 
 WINDOWS = platform.system() == "Windows"
 LINUX = platform.system() == "Linux"
@@ -61,19 +62,3 @@ iterable_types = [
 ]
 if not PY2:
     iterable_types.extend((map, range))
-
-protected_types = tuple(
-    itertools.chain(
-        string_types,
-        integer_types,
-        (
-            float,
-            decimal.Decimal,
-            datetime.date,
-            datetime.datetime,
-            datetime.time,
-            bool,
-            none_type,
-        ),
-    )
-)
