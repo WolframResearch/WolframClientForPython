@@ -1,6 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-import ast
 import logging
 import os
 import sys
@@ -11,7 +10,7 @@ from wolframclient.language.decorators import to_wl
 from wolframclient.language.side_effects import side_effect_logger
 from wolframclient.serializers import export
 from wolframclient.utils import six
-from wolframclient.utils.api import zmq
+from wolframclient.utils.api import ast, zmq
 from wolframclient.utils.datastructures import Settings
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import last
@@ -34,13 +33,14 @@ if six.PY_38:
     # https://github.com/ipython/ipython/issues/11590
     # PY_38 requires type_ignores to be a list, other versions are not accepting a second argument
 
-    def Module(code):
-        return ast.Module(code, [])
+    def Module(code, type_ignores = []):
+        return ast.Module(code, type_ignores)
 
 
 else:
 
-    Module = ast.Module
+    def Module(code):
+        return ast.Module(code)
 
 
 def EvaluationEnvironment(code, session_data={}, constants=None, **extra):
