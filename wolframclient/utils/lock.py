@@ -3,7 +3,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.utils.importutils import safe_import_string_and_call
 
 try:
-    _lock = safe_import_string_and_call("multithreading.Lock")
+    _lock = safe_import_string_and_call("multiprocessing.Lock")
 
     def Lock():
         return _lock

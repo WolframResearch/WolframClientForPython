@@ -147,7 +147,7 @@ numpy = API(
     PackedArray="wolframclient.utils.packedarray.PackedArray",
 )
 
-multithreading = API(Lock="wolframclient.utils.lock.Lock")
+multiprocessing = API(Lock="wolframclient.utils.lock.Lock")
 pkg_resources = API(
     iter_entry_points=("pkg_resources.iter_entry_points", lambda *args, **opts: ())
 )
