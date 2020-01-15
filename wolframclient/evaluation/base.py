@@ -1,11 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-import asyncio
 import warnings
 
 from wolframclient.language import wlexpr
 from wolframclient.language.expression import WLFunction
 from wolframclient.utils import six
+from wolframclient.utils.api import asyncio
 from wolframclient.utils.functional import map
 
 

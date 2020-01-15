@@ -1,11 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-import warnings
+from wolframclient.utils.importutils import safe_import_string_and_call
 
 try:
-    import multiprocessing
-
-    _lock = multiprocessing.Lock()
+    _lock = safe_import_string_and_call("multiprocessing.Lock")
 
     def Lock():
         return _lock
@@ -17,6 +15,7 @@ except (ImportError, OSError):
     # GVisor is raising an OSError when running "multiprocessing.Lock()" because the feature is not implemented
 
     from contextlib import contextmanager
+    import warnings
 
     warnings.warn("Lock is not implemented in the current interpreter.", RuntimeWarning)
 
