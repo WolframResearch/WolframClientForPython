@@ -92,7 +92,7 @@ class TestCase(BaseTestCase):
 
     def test_date(self):
 
-        self.compare(test_datetime().date(), b"DateObject[{2000, 1, 1}]")
+        self.compare(test_datetime().date(), b'DateObject[{2000, 1, 1}, "Day", "Gregorian", None]')
 
     def test_timedelta(self):
 
