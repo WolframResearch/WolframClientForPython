@@ -57,6 +57,9 @@ def encode_date(serializer, o):
                     serializer.serialize_int(o.day),
                 )
             ),
+            serializer.serialize_string("Day"),
+            serializer.serialize_string("Gregorian"),
+            serializer.serialize_symbol(b"None"),
         ),
     )
 
