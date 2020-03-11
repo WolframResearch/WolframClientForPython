@@ -77,7 +77,7 @@ if six.JYTHON:
 
     def integer_to_bytes(value, int_size):
         buffer = jarray.zeros(8, "c")
-        _packing.get(int_size).pack_into(buffer, 0, value)
+        _packing[int_size].pack_into(buffer, 0, value)
         return buffer[:int_size].tostring()
 
 
@@ -85,7 +85,7 @@ elif six.PY2:
 
     def integer_to_bytes(value, int_size):
         buffer = bytearray(8)
-        _packing.get(int_size).pack_into(buffer, 0, value)
+        _packing[int_size].pack_into(buffer, 0, value)
         return buffer[:int_size]
 
 
