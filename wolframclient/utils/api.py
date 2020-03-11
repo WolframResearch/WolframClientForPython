@@ -3,12 +3,12 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.utils.importutils import API
 
 ast = API(
-    Module = 'ast.Module',
-    PyCF_ONLY_AST = 'ast.PyCF_ONLY_AST',
-    Expr = 'ast.Expr',
-    Expression = 'ast.Expression',
-    FunctionDef = 'ast.FunctionDef',
-    ClassDef = 'ast.ClassDef',
+    Module="ast.Module",
+    PyCF_ONLY_AST="ast.PyCF_ONLY_AST",
+    Expr="ast.Expr",
+    Expression="ast.Expression",
+    FunctionDef="ast.FunctionDef",
+    ClassDef="ast.ClassDef",
 )
 
 pytz = API(
