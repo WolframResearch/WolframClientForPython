@@ -91,13 +91,17 @@ VALID_PACKED_ARRAY_TYPES = frozenset(
     )
 )
 
-StructInt8LE = struct.Struct(b"<b")
-StructUInt8LE = struct.Struct(b"<B")
-StructInt16LE = struct.Struct(b"<h")
-StructUInt16LE = struct.Struct(b"<H")
-StructInt32LE = struct.Struct(b"<i")
-StructUInt32LE = struct.Struct(b"<I")
-StructInt64LE = struct.Struct(b"<q")
-StructUInt64LE = struct.Struct(b"<Q")
-StructFloat = struct.Struct(b"<f")
-StructDouble = struct.Struct(b"<d")
+STRUCT_MAPPING = Settings(
+    Integer8=struct.Struct(b"<b"),
+    UnsignedInteger8=struct.Struct(b"<B"),
+    Integer16=struct.Struct(b"<h"),
+    UnsignedInteger16=struct.Struct(b"<H"),
+    Integer32=struct.Struct(b"<i"),
+    UnsignedInteger32=struct.Struct(b"<I"),
+    Integer64=struct.Struct(b"<q"),
+    UnsignedInteger64=struct.Struct(b"<Q"),
+    Real32=struct.Struct(b"<f"),
+    Real64=struct.Struct(b"<d"),
+    ComplexReal32=struct.Struct(b"<f"),
+    ComplexReal64=struct.Struct(b"<d"),
+)

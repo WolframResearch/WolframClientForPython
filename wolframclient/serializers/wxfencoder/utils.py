@@ -3,18 +3,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.exception import WolframLanguageException
 from wolframclient.serializers.wxfencoder.constants import (
     ARRAY_TYPES,
+    STRUCT_MAPPING,
     VALID_PACKED_ARRAY_TYPES,
     WXF_CONSTANTS,
-    StructDouble,
-    StructFloat,
-    StructInt8LE,
-    StructInt16LE,
-    StructInt32LE,
-    StructInt64LE,
-    StructUInt8LE,
-    StructUInt16LE,
-    StructUInt32LE,
-    StructUInt64LE,
 )
 from wolframclient.utils import six
 from wolframclient.utils.datastructures import Settings
@@ -71,7 +62,12 @@ def integer_size(value):
         raise ValueError("Value %i is not a machine-sized integer." % value)
 
 
-_packing = {1: StructInt8LE, 2: StructInt16LE, 4: StructInt32LE, 8: StructInt64LE}
+_packing = {
+    1: STRUCT_MAPPING.Integer8,
+    2: STRUCT_MAPPING.Integer16,
+    4: STRUCT_MAPPING.Integer32,
+    8: STRUCT_MAPPING.Integer64,
+}
 
 if six.JYTHON:
 
@@ -97,17 +93,17 @@ else:
 
 if six.JYTHON:
 
-    def float_to_bytes(value):
+    def float_to_bytes(value, pack_into=STRUCT_MAPPING.Real64.pack_into):
         buffer = jarray.zeros(8, "c")
-        StructDouble.pack_into(buffer, 0, value)
+        pack_into(buffer, 0, value)
         return buffer.tostring()
 
 
 else:
 
-    def float_to_bytes(value):
+    def float_to_bytes(value, pack_into=STRUCT_MAPPING.Real64.pack_into):
         buffer = bytearray(8)
-        StructDouble.pack_into(buffer, 0, value)
+        pack_into(buffer, 0, value)
         return buffer
 
 
@@ -146,20 +142,7 @@ def array_to_list(data, dimensions, wl_type):
 
 
 if hasattr(memoryview, "cast"):
-    unpack_mapping = Settings(
-        Integer8="b",
-        UnsignedInteger8="B",
-        Integer16="h",
-        UnsignedInteger16="H",
-        Integer32="i",
-        UnsignedInteger32="I",
-        Integer64="q",
-        UnsignedInteger64="Q",
-        Real32="f",
-        Real64="d",
-        ComplexReal32="f",
-        ComplexReal64="d",
-    )
+    unpack_mapping = Settings((k, v.format[1:]) for k, v in STRUCT_MAPPING.items())
 
     def _to_complex(array, max_depth, curr_depth):
         # recursivelly traverse the array until the last (real) dimension is reached
@@ -188,20 +171,6 @@ if hasattr(memoryview, "cast"):
 
 
 else:
-    unpack_mapping = Settings(
-        Integer8=StructInt8LE,
-        UnsignedInteger8=StructUInt8LE,
-        Integer16=StructInt16LE,
-        UnsignedInteger16=StructUInt16LE,
-        Integer32=StructInt32LE,
-        UnsignedInteger32=StructUInt32LE,
-        Integer64=StructInt64LE,
-        UnsignedInteger64=StructUInt64LE,
-        Real32=StructFloat,
-        Real64=StructDouble,
-        ComplexReal32=StructFloat,
-        ComplexReal64=StructDouble,
-    )
 
     def _array_to_list(data, shape, array_type):
         value, _ = _build_array_from_bytes(data, 0, array_type, shape, 0)
@@ -216,7 +185,7 @@ else:
                 )
                 new_array.append(new_elem)
         else:
-            struct = unpack_mapping[array_type]
+            struct = STRUCT_MAPPING[array_type]
             # complex values, need two reals for each.
             if array_type == "ComplexReal32" or array_type == "ComplexReal64":
                 for i in range(dimensions[-1]):
