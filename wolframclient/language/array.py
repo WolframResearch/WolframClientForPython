@@ -25,3 +25,6 @@ class NumericArray(Sequence):
 
     def __len__(self):
         return len(self.array)
+
+class PackedArray(NumericArray):
+    pass
