@@ -13,6 +13,7 @@ class TestCase(BaseTestCase):
     def test_python_array(self):
 
         for array, numpy_type, wl_type in (
+            ([True, False, True, False, True, False], numpy.int8, "Integer8"),
             ([1, 2, 3, 4, 5, 6], numpy.int8, "Integer8"),
             ([1, 2, 3, 4, 5, 6], numpy.int32, "Integer32"),
             ([1, 2, 3, 4, 5, 6], numpy.int64, "Integer64"),
