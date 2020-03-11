@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from wolframclient.language.array import PythonArray
+from wolframclient.language.array import NumericArray
 from wolframclient.serializers import export
 from wolframclient.utils.api import numpy
 from wolframclient.utils.tests import TestCase as BaseTestCase
@@ -28,5 +28,5 @@ class TestCase(BaseTestCase):
 
                 self.assertEqual(
                     export(arr, target_format="wxf"),
-                    export(PythonArray(array, wl_type, shape = shape), target_format="wxf"),
+                    export(NumericArray(array, wl_type, shape = shape), target_format="wxf"),
                 )

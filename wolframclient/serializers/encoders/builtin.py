@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import math
 
-from wolframclient.language.array import PythonArray
+from wolframclient.language.array import NumericArray
 from wolframclient.language.expression import WLFunction, WLInputExpression, WLSymbol
 from wolframclient.serializers.serializable import WLSerializable
 from wolframclient.serializers.utils import safe_len
@@ -176,6 +176,6 @@ def encode_association(serializer, o):
     return _to_key_value(serializer.serialize_association, serializer, o)
 
 
-@encoder.dispatch(PythonArray)
+@encoder.dispatch(NumericArray)
 def encode_array(serializer, o):
     return serializer.serialize_numeric_array(o.tobytes(), o.shape, o.type)

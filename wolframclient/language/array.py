@@ -9,7 +9,7 @@ except ImportError:
     from collections import Sequence
 
 
-class PythonArray(Sequence):
+class NumericArray(Sequence):
     def __init__(self, array, type, shape=None):
 
         self.array = array
