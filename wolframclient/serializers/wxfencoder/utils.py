@@ -9,6 +9,7 @@ from wolframclient.serializers.wxfencoder.constants import (
 )
 from wolframclient.utils import six
 from wolframclient.utils.datastructures import Settings
+from wolframclient.utils.functional import last
 
 if six.JYTHON:
     import jarray
@@ -142,7 +143,7 @@ def array_to_list(data, dimensions, wl_type):
 
 
 if hasattr(memoryview, "cast"):
-    unpack_mapping = Settings((k, v.format[1:]) for k, v in STRUCT_MAPPING.items())
+    unpack_mapping = Settings((k, last(v.format)) for k, v in STRUCT_MAPPING.items())
 
     def _to_complex(array, max_depth, curr_depth):
         # recursivelly traverse the array until the last (real) dimension is reached
