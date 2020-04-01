@@ -69,7 +69,7 @@ class Command(SimpleCommand):
                 )
 
         # verbosity > 1 print test name
-        verbosity = opts.get("verbosity")
+        verbosity = opts.get("verbosity") or 1;
         xml_path = opts.get("xml_output_dir")
         # if opts.get('produce_xml'):
         if xml_path is not None or opts.get("produce_xml"):
