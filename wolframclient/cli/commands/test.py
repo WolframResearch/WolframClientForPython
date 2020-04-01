@@ -69,7 +69,10 @@ class Command(SimpleCommand):
                 )
 
         # verbosity > 1 print test name
-        verbosity = opts.get("verbosity") or 1;
+        verbosity = opts.get("verbosity")
+        # for consistency with parser, set default to 2. This is only possible when calling test from setup.py
+        if verbosity is None:
+            verbosity = 2
         xml_path = opts.get("xml_output_dir")
         # if opts.get('produce_xml'):
         if xml_path is not None or opts.get("produce_xml"):
