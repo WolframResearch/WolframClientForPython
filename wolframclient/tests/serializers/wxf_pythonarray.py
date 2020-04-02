@@ -9,7 +9,6 @@ from wolframclient.utils.tests import TestCase as BaseTestCase
 
 
 class TestCase(BaseTestCase):
-    
     def test_python_array(self):
 
         for array, numpy_type, wl_type in (
@@ -29,5 +28,5 @@ class TestCase(BaseTestCase):
 
                 self.assertEqual(
                     export(arr, target_format="wxf"),
-                    export(NumericArray(array, wl_type, shape = shape), target_format="wxf"),
+                    export(NumericArray(array, wl_type, shape=shape), target_format="wxf"),
                 )

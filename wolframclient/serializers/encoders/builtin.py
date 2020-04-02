@@ -180,6 +180,7 @@ def encode_association(serializer, o):
 def encode_array(serializer, o):
     return serializer.serialize_numeric_array(o.tobytes(), o.shape, o.type)
 
+
 @encoder.dispatch(PackedArray)
 def encode_array(serializer, o):
     return serializer.serialize_packed_array(o.tobytes(), o.shape, o.type)
