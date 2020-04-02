@@ -37,10 +37,9 @@ class NumericArray(Sequence):
 
 
 class PackedArray(NumericArray):
-
     def _valid_type_or_fail(self, type):
         if type not in constants.VALID_PACKED_ARRAY_LABEL_TYPES:
             raise WolframLanguageException(
                 "Type %s is not one of the supported packed array types: %s."
-                % (type, ', '.join(constants.VALID_PACKED_ARRAY_LABEL_TYPES_TUPLE))
+                % (type, ", ".join(constants.VALID_PACKED_ARRAY_LABEL_TYPES_TUPLE))
             )

@@ -91,7 +91,16 @@ VALID_PACKED_ARRAY_TYPES = frozenset(
     )
 )
 
-VALID_PACKED_ARRAY_LABEL_TYPES_TUPLE = ('Integer8', 'Integer16', 'Integer32', 'Integer64', 'Real32', 'Real64', 'ComplexReal32', 'ComplexReal64')
+VALID_PACKED_ARRAY_LABEL_TYPES_TUPLE = (
+    "Integer8",
+    "Integer16",
+    "Integer32",
+    "Integer64",
+    "Real32",
+    "Real64",
+    "ComplexReal32",
+    "ComplexReal64",
+)
 VALID_PACKED_ARRAY_LABEL_TYPES = frozenset(VALID_PACKED_ARRAY_LABEL_TYPES_TUPLE)
 
 STRUCT_MAPPING = Settings(
