@@ -16,9 +16,11 @@ class NumericArray(Sequence):
         self.array = array
         self.shape = shape or (len(array),)
         self.type = type
-        try:
-            self.struct = constants.STRUCT_MAPPING[type]
-        except KeyError:
+        self._valid_type_or_fail(type)
+        self.struct = constants.STRUCT_MAPPING[type]
+
+    def _valid_type_or_fail(self, type):
+        if type not in constants.STRUCT_MAPPING:
             raise WolframLanguageException(
                 "Type %s is not one of the supported array types: %s."
                 % (type, ", ".join(constants.STRUCT_MAPPING.keys()))
@@ -35,4 +37,10 @@ class NumericArray(Sequence):
 
 
 class PackedArray(NumericArray):
-    pass
+
+    def _valid_type_or_fail(self, type):
+        if type not in constants.VALID_PACKED_ARRAY_LABEL_TYPES:
+            raise WolframLanguageException(
+                "Type %s is not one of the supported packed array types: %s."
+                % (type, ', '.join(constants.VALID_PACKED_ARRAY_LABEL_TYPES_TUPLE))
+            )
