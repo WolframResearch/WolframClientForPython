@@ -141,27 +141,27 @@ class WXFParser(object):
 
     def token_for_integer8(self, token):
         self.context.add_part()
-        token.data = constants.StructInt8LE.unpack(self.reader.read(1))[0]
+        token.data = constants.STRUCT_MAPPING.Integer8.unpack(self.reader.read(1))[0]
         return token
 
     def token_for_integer16(self, token):
         self.context.add_part()
-        token.data = constants.StructInt16LE.unpack(self.reader.read(2))[0]
+        token.data = constants.STRUCT_MAPPING.Integer16.unpack(self.reader.read(2))[0]
         return token
 
     def token_for_integer32(self, token):
         self.context.add_part()
-        token.data = constants.StructInt32LE.unpack(self.reader.read(4))[0]
+        token.data = constants.STRUCT_MAPPING.Integer32.unpack(self.reader.read(4))[0]
         return token
 
     def token_for_integer64(self, token):
         self.context.add_part()
-        token.data = constants.StructInt64LE.unpack(self.reader.read(8))[0]
+        token.data = constants.STRUCT_MAPPING.Integer64.unpack(self.reader.read(8))[0]
         return token
 
     def token_for_real64(self, token):
         self.context.add_part()
-        token.data = constants.StructDouble.unpack(self.reader.read(8))[0]
+        token.data = constants.STRUCT_MAPPING.Real64.unpack(self.reader.read(8))[0]
         return token
 
     def token_for_function(self, token):

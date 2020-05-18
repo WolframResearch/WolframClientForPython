@@ -33,7 +33,7 @@ if six.PY_38:
     # https://github.com/ipython/ipython/issues/11590
     # PY_38 requires type_ignores to be a list, other versions are not accepting a second argument
 
-    def Module(code, type_ignores = []):
+    def Module(code, type_ignores=[]):
         return ast.Module(code, type_ignores)
 
 
