@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-from itertools import chain
+from itertools import chain, starmap
 
 from wolframclient.serializers.base import FormatSerializer
 from wolframclient.serializers.utils import py_encode_decimal, safe_len
@@ -20,7 +20,12 @@ from wolframclient.serializers.wxfencoder.utils import (
 )
 from wolframclient.utils import six
 from wolframclient.utils.api import zlib
-from wolframclient.utils.encoding import force_bytes, force_text
+from wolframclient.utils.encoding import concatenate_bytes, force_bytes, force_text
+from wolframclient.utils.functional import partition
+
+
+def serialize_rule(key, value, sep=(WXF_CONSTANTS.Rule,)):
+    return chain(sep, key, value)
 
 
 def get_length(iterable, length=None):
@@ -37,6 +42,16 @@ def get_length(iterable, length=None):
     return iterable, len(iterable)
 
 
+def compress(data):
+
+    compressor = zlib.compressobj()
+
+    for token in map(compressor.compress, map(concatenate_bytes, partition(data, 100))):
+        yield token
+
+    yield compressor.flush()
+
+
 class WXFSerializer(FormatSerializer):
     """ Serialize python objects to WXF. """
 
@@ -46,25 +61,14 @@ class WXFSerializer(FormatSerializer):
 
     def generate_bytes(self, data):
 
-        yield WXF_VERSION
-
         if self.compress:
-            yield WXF_HEADER_COMPRESS
 
-        yield WXF_HEADER_SEPARATOR
+            return chain(
+                (WXF_VERSION, WXF_HEADER_COMPRESS, WXF_HEADER_SEPARATOR),
+                compress(self.encode(data)),
+            )
 
-        if self.compress:
-            compressor = zlib.compressobj()
-            if six.PY2:
-                for payload in self.encode(data):
-                    yield compressor.compress(six.binary_type(payload))
-            else:
-                for payload in self.encode(data):
-                    yield compressor.compress(payload)
-            yield compressor.flush()
-        else:
-            for payload in self.encode(data):
-                yield payload
+        return chain((WXF_VERSION, WXF_HEADER_SEPARATOR), self.encode(data))
 
     def serialize_symbol(self, name):
         yield WXF_CONSTANTS.Symbol
@@ -116,12 +120,9 @@ class WXFSerializer(FormatSerializer):
 
     def serialize_bytes(self, bytes, as_byte_array=not six.PY2):
         if as_byte_array:
-            yield WXF_CONSTANTS.BinaryString
-            yield varint_bytes(len(bytes))
-            yield bytes
+            return (WXF_CONSTANTS.BinaryString, varint_bytes(len(bytes)), bytes)
         else:
-            for token in self.serialize_string(force_text(bytes, encoding="iso8859-1")):
-                yield token
+            return self.serialize_string(force_text(bytes, encoding="iso8859-1"))
 
     def serialize_mapping(self, keyvalue, **opts):
         # the normalizer is always sending an generator key, value
@@ -130,9 +131,7 @@ class WXFSerializer(FormatSerializer):
 
         return chain(
             (WXF_CONSTANTS.Association, varint_bytes(length)),
-            chain.from_iterable(
-                chain((WXF_CONSTANTS.Rule,), key, value) for key, value in iterable
-            ),
+            chain.from_iterable(starmap(serialize_rule, iterable)),
         )
 
     def serialize_numeric_array(self, data, dimensions, wl_type):
