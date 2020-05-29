@@ -13,7 +13,6 @@ from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import first
 from wolframclient.utils.importutils import safe_import_string_and_call
 from wolframclient.language.array import NumericArray, PackedArray
-from wolframclient.utils.api import numpy
 
 def repeat(el, n=1):
     return tuple(el for _ in range(n))
@@ -43,7 +42,7 @@ class Command(SimpleCommand):
                 "functions": repeat(wl.Function(1, 2, 3), complexity),
             },
             'array': {
-                '%s_%s' % (func.__name__, t): func(numpy.arange(complexity * 100), t)
+                '%s_%s' % (func.__name__, t): func(tuple(range(complexity * 100)), t)
                 for func in (PackedArray, NumericArray)
                 for t in ('Integer64', 'Real64')
             }
