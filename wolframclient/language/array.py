@@ -3,6 +3,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.exception import WolframLanguageException
 from wolframclient.serializers.wxfencoder import constants
 from wolframclient.utils.encoding import concatenate_bytes
+from wolframclient.utils.functional import map
 
 try:
     from collections.abc import Sequence
@@ -27,7 +28,7 @@ class NumericArray(Sequence):
             )
 
     def tobytes(self):
-        return concatenate_bytes(self.struct.pack(el) for el in self.array)
+        return concatenate_bytes(map(self.struct.pack, self.array))
 
     def __getitem__(self, k):
         return self.array[k]
