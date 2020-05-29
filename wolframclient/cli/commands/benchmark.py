@@ -7,12 +7,13 @@ import tempfile
 from wolframclient.cli.utils import SimpleCommand
 from wolframclient.deserializers import binary_deserialize
 from wolframclient.language import wl
+from wolframclient.language.array import NumericArray, PackedArray
 from wolframclient.serializers import export
 from wolframclient.utils.debug import timed
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import first
 from wolframclient.utils.importutils import safe_import_string_and_call
-from wolframclient.language.array import NumericArray, PackedArray
+
 
 def repeat(el, n=1):
     return tuple(el for _ in range(n))
@@ -30,7 +31,7 @@ class Command(SimpleCommand):
 
     def expression_handler(self, complexity):
         return {
-            'expr': {
+            "expr": {
                 "symbols": repeat(wl.Symbol, complexity),
                 "strings": repeat("string", complexity),
                 "bytes": repeat(b"bytes", complexity),
@@ -41,13 +42,12 @@ class Command(SimpleCommand):
                 "list": repeat([1, 2, 3], complexity),
                 "functions": repeat(wl.Function(1, 2, 3), complexity),
             },
-            'array': {
-                '%s_%s' % (func.__name__, t): func(tuple(range(complexity * 100)), t)
+            "array": {
+                "%s_%s" % (func.__name__, t): func(tuple(range(complexity * 100)), t)
                 for func in (PackedArray, NumericArray)
-                for t in ('Integer64', 'Real64')
-            }
+                for t in ("Integer64", "Real64")
+            },
         }
-
 
     def formatted_time(self, function, *args, **opts):
 
@@ -56,7 +56,12 @@ class Command(SimpleCommand):
         return "%.5f" % (time / self.repetitions)
 
     def table_line(self, *iterable):
-        self.print(*(force_text(c).ljust(i and self.col_size or self.title_size) for i, c in enumerate(iterable)))
+        self.print(
+            *(
+                force_text(c).ljust(i and self.col_size or self.title_size)
+                for i, c in enumerate(iterable)
+            )
+        )
 
     def table_divider(self, length):
         self.print(*("-" * (i and self.col_size or self.title_size) for i in range(length)))
@@ -111,15 +116,15 @@ class Command(SimpleCommand):
             )
             self.table_divider(len(self.complexity) + 1)
 
-            for key in ('expr', 'array'):
+            for key in ("expr", "array"):
                 for label, export_format, opts in (
                     ("wl", "wl", dict()),
                     ("wxf", "wxf", dict()),
                     ("wxf zip", "wxf", dict(compress=True)),
                 ):
-                    if key == 'expr' or (key == 'array' and not label == 'wl'):
+                    if key == "expr" or (key == "array" and not label == "wl"):
                         self.table_line(
-                            key == 'expr' and label or '%s %s' % (label, key),
+                            key == "expr" and label or "%s %s" % (label, key),
                             *(
                                 self.formatted_time(
                                     export,
