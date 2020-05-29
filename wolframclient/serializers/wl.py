@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-from itertools import chain
+from itertools import chain, starmap
 
 from wolframclient.serializers.base import FormatSerializer
 from wolframclient.serializers.utils import py_encode_decimal, py_encode_text
@@ -9,16 +9,14 @@ from wolframclient.utils.api import base64
 from wolframclient.utils.encoding import force_bytes, force_text
 
 
-def yield_with_separators(iterable, separator=b", ", first=None, last=None):
-    if first:
-        yield first
+def yield_with_separators(iterable, first, last, separator=b", "):
+    yield first
     for i, arg in enumerate(iterable):
         if i:
             yield separator
         for sub in arg:
             yield sub
-    if last:
-        yield last
+    yield last
 
 
 class WLSerializer(FormatSerializer):
@@ -60,16 +58,14 @@ class WLSerializer(FormatSerializer):
         yield b"%i" % number
 
     def serialize_rule(self, lhs, rhs):
-        return yield_with_separators((lhs, rhs), separator=b" -> ")
+        return chain(lhs, (b" -> ",), rhs)
 
     def serialize_rule_delayed(self, lhs, rhs):
-        return yield_with_separators((lhs, rhs), separator=b" :> ")
+        return chain(lhs, (b" :> ",), rhs)
 
     def serialize_mapping(self, mapping, **opts):
         return yield_with_separators(
-            (self.serialize_rule(key, value) for key, value in mapping),
-            first=b"<|",
-            last=b"|>",
+            starmap(self.serialize_rule, mapping), first=b"<|", last=b"|>"
         )
 
     def serialize_association(self, mapping, **opts):
