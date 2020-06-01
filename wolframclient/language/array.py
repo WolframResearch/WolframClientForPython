@@ -47,3 +47,4 @@ class PackedArray(NumericArray):
                 "Type %s is not one of the supported packed array types: %s."
                 % (type, ", ".join(constants.VALID_PACKED_ARRAY_LABEL_TYPES_TUPLE))
             )
+        return type
