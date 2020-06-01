@@ -1,9 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
+import struct
+
 from wolframclient.exception import WolframLanguageException
 from wolframclient.serializers.wxfencoder import constants
 from wolframclient.utils.encoding import force_bytes
-import struct
 
 try:
     from collections.abc import Sequence
@@ -28,7 +29,9 @@ class NumericArray(Sequence):
             )
 
     def tobytes(self):
-        return struct.pack(b'<%i%s' % (len(self), force_bytes(self.struct.format[1])), *self.array)
+        return struct.pack(
+            b"<%i%s" % (len(self), force_bytes(self.struct.format[1])), *self.array
+        )
 
     def __getitem__(self, k):
         return self.array[k]
