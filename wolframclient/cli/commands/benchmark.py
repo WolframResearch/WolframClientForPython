@@ -82,7 +82,7 @@ class Command(SimpleCommand):
         self.table_line()
 
         # running export to do all lazy loadings
-        export(1)
+        binary_deserialize(export(1, target_format = 'wxf'))
 
         self.table_line("* Binary deserialize")
         self.table_line()
