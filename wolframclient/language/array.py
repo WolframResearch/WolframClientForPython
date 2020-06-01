@@ -17,9 +17,8 @@ class NumericArray(Sequence):
 
         self.array = array
         self.shape = shape or (len(array),)
-        self.type = type
-        self._valid_type_or_fail(type)
-        self.struct = constants.STRUCT_MAPPING[type]
+        self.type = self._valid_type_or_fail(type)
+        self.struct = constants.STRUCT_MAPPING[self.type]
 
     def _valid_type_or_fail(self, type):
         if type not in constants.STRUCT_MAPPING:
@@ -27,6 +26,7 @@ class NumericArray(Sequence):
                 "Type %s is not one of the supported array types: %s."
                 % (type, ", ".join(constants.STRUCT_MAPPING.keys()))
             )
+        return type
 
     def tobytes(self):
         return struct.pack(
