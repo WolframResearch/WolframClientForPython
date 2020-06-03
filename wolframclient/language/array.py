@@ -1,8 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
+import struct
+
 from wolframclient.exception import WolframLanguageException
 from wolframclient.serializers.wxfencoder import constants
-from wolframclient.utils.encoding import concatenate_bytes
+from wolframclient.utils.encoding import force_bytes
 
 try:
     from collections.abc import Sequence
@@ -15,9 +17,8 @@ class NumericArray(Sequence):
 
         self.array = array
         self.shape = shape or (len(array),)
-        self.type = type
-        self._valid_type_or_fail(type)
-        self.struct = constants.STRUCT_MAPPING[type]
+        self.type = self._valid_type_or_fail(type)
+        self.struct = constants.STRUCT_MAPPING[self.type]
 
     def _valid_type_or_fail(self, type):
         if type not in constants.STRUCT_MAPPING:
@@ -25,9 +26,12 @@ class NumericArray(Sequence):
                 "Type %s is not one of the supported array types: %s."
                 % (type, ", ".join(constants.STRUCT_MAPPING.keys()))
             )
+        return type
 
     def tobytes(self):
-        return concatenate_bytes(self.struct.pack(el) for el in self.array)
+        return struct.pack(
+            b"<%i%s" % (len(self), force_bytes(self.struct.format[1])), *self.array
+        )
 
     def __getitem__(self, k):
         return self.array[k]
@@ -43,3 +47,4 @@ class PackedArray(NumericArray):
                 "Type %s is not one of the supported packed array types: %s."
                 % (type, ", ".join(sorted(constants.VALID_PACKED_ARRAY_LABEL_TYPES)))
             )
+        return type
