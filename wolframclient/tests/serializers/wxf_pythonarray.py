@@ -32,7 +32,21 @@ class TestCase(BaseTestCase):
                 )
 
     def test_generators(self):
+
+        array = NumericArray((i for i in range(10)), "Integer8", shape=(10, ))
+
         self.assertEqual(
             export(numpy.arange(10).astype(numpy.int8), target_format="wxf"),
-            export(NumericArray((i for i in range(10)), "Integer8", shape=(10, )), target_format="wxf"),
+            export(array, target_format="wxf"),
         )
+
+        self.assertEqual(len(array), 10)
+
+        array = NumericArray((i for i in range(10)), "Integer8", shape=(5, 2))
+
+        self.assertEqual(
+            export(numpy.arange(10).astype(numpy.int8).reshape(5, 2), target_format="wxf"),
+            export(array, target_format="wxf"),
+        )
+
+        self.assertEqual(len(array), 10)
