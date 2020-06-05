@@ -1,6 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import struct
+from functools import reduce
+from operator import mul
 
 from wolframclient.exception import WolframLanguageException
 from wolframclient.serializers.wxfencoder import constants
@@ -10,6 +12,10 @@ try:
     from collections.abc import Sequence
 except ImportError:
     from collections import Sequence
+
+
+def pack(format, *elements):
+    return struct.pack(b"<%i%s" % (len(elements), force_bytes(format)), *elements)
 
 
 class NumericArray(Sequence):
@@ -29,15 +35,13 @@ class NumericArray(Sequence):
         return type
 
     def tobytes(self):
-        return struct.pack(
-            b"<%i%s" % (len(self), force_bytes(self.struct.format[1])), *self.array
-        )
+        return pack(self.struct.format[1], *self.array)
 
     def __getitem__(self, k):
         return self.array[k]
 
     def __len__(self):
-        return len(self.array)
+        return reduce(mul, self.shape, 1)
 
 
 class PackedArray(NumericArray):
