@@ -16,7 +16,7 @@ def dependencies():
 
     if not six.JYTHON:
         yield ("numpy", not six.PY2 and "1.15.3" or None)
-        yield ("pillow", "5.3.0")
+        yield ("pillow", "7.1.2")
         yield ("requests", "2.20.0")
         yield ("oauthlib", "2.1.0")
         yield ("pyzmq", "17.1.2")
