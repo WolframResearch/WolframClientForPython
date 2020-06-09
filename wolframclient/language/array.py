@@ -37,7 +37,6 @@ class NumericArray(Sequence):
     def tobytes(self):
         return pack(self.struct.format[1], *self.array)
 
-
     def __getitem__(self, k):
         return self.array[k]
 
