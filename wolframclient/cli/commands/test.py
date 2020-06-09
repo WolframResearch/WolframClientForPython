@@ -20,7 +20,7 @@ def dependencies():
         yield ("requests", "2.20.0")
         yield ("oauthlib", "2.1.0")
         yield ("pyzmq", "17.1.2")
-        yield ("pandas", "0.23.4")
+        yield ("pandas", "1.0.4")
         yield ("unittest-xml-reporting", None)
     if not six.PY2:
         yield ("aiohttp", "3.4.4")
