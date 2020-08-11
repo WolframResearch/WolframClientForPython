@@ -10,6 +10,50 @@ class Association(OrderedDict):
         return dict.__repr__(self)
 
 
+def _fail(self, *args, **opts):
+    raise TypeError("{0} does not support item assignment".format(self.__class__.__name__))
+
+
+class immutabledict(dict):
+    """
+    hashable dict implementation, suitable for use as a key into
+    other dicts.
+
+        >>> h1 = immutabledict({"apples": 1, "bananas":2})
+        >>> h2 = immutabledict({"bananas": 3, "mangoes": 5})
+        >>> h1+h2
+        immutabledict(apples=1, bananas=3, mangoes=5)
+        >>> d1 = {}
+        >>> d1[h1] = "salad"
+        >>> d1[h1]
+        'salad'
+        >>> d1[h2]
+        Traceback (most recent call last):
+        ...
+        KeyError: immutabledict(bananas=3, mangoes=5)
+
+    based on answers from
+       http://stackoverflow.com/questions/1151658/python-hashable-dicts
+
+    """
+
+    def __hash__(self):
+        return hash(tuple(self.items()))
+
+    __setitem__ = _fail
+    __delitem__ = _fail
+    clear = _fail
+    pop = _fail
+    popitem = _fail
+    setdefault = _fail
+    update = _fail
+
+    def __add__(self, right):
+        result = hashdict(self)
+        dict.update(result, right)
+        return result
+
+
 class Settings(dict):
     """
     Dictionary subclass enabling attribute lookup/assignment of keys/values.
