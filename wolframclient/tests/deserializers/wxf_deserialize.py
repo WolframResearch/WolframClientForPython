@@ -18,8 +18,8 @@ from wolframclient.serializers.wxfencoder.utils import write_varint
 from wolframclient.tests.configure import skip_for_jython
 from wolframclient.utils import six
 from wolframclient.utils.api import numpy
+from wolframclient.utils.datastructures import immutabledict
 from wolframclient.utils.tests import TestCase as BaseTestCase
-
 
 class TestCase(BaseTestCase):
     def test_token_dimensions(self):
@@ -195,6 +195,13 @@ class TestCase(BaseTestCase):
 
     def test_compressed_input(self):
         expr = (1, 2, 3)
+        wxf = export(expr, target_format="wxf", compress=True)
+        res = binary_deserialize(wxf, consumer=WXFConsumer())
+        self.assertEqual(expr, res)
+
+    def test_nested_associations(self):
+        expr = immutabledict((('a', 2), ('a', 3)))
+        expr = immutabledict(((expr, expr), (2, 3)))
         wxf = export(expr, target_format="wxf", compress=True)
         res = binary_deserialize(wxf, consumer=WXFConsumer())
         self.assertEqual(expr, res)

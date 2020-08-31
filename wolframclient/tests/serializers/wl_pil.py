@@ -33,7 +33,7 @@ class TestCase(BaseTestCase):
         out = export(img, target_format="wl")
         self.assertTrue(
             out
-            == b'Image[BinaryDeserialize[ByteArray["ODrCEAICAgEAAAA="]], "Bit", Rule[ColorSpace, Automatic], Rule[Interleaving, True]]'
+            == b'Image[BinaryDeserialize[ByteArray["ODrCEAICAgEAAAE="]], "Bit", Rule[ColorSpace, Automatic], Rule[Interleaving, True]]'
             or out
-            == b'Image[BinaryDeserialize[ByteArray["ODrCEAICAgEAAAA="]], "Bit", Rule[Interleaving, True], Rule[ColorSpace, Automatic]]'
+            == b'Image[BinaryDeserialize[ByteArray["ODrCEAICAgEAAAE="]], "Bit", Rule[Interleaving, True], Rule[ColorSpace, Automatic]]'
         )

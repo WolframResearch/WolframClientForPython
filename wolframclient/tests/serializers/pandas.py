@@ -37,27 +37,19 @@ class PandasSeriesTestCase(PandasTestCase):
         d["b"] = 1
         d["a"] = 0
         d["c"] = 2
-        return pandas.SparseSeries(d)
+        return pandas.Series(d, dtype='Sparse[int]')
 
     def sparse_series_dict_indexed(self):
         constructor_dict = {1: 1.0}
         index = [0, 1, 2]
         # Series with index passed in
-        series = pandas.Series(constructor_dict)
-        return pandas.SparseSeries(series, index=index)
-
-    def sparse_series_list_fill_zero(self):
-        return pandas.SparseArray([1, 0, 3, 0], dtype=numpy.int64, fill_value=0)
-
-    def sparse_series_date(self):
-        arr, index = self.create_numpy_data_nan()
-        date_index = pandas.bdate_range("1/1/2011", periods=len(index))
-        return pandas.SparseSeries(arr, index=date_index, kind="block", name="bseries")
+        series = pandas.Series(constructor_dict, dtype='Sparse[float]')
+        return pandas.Series(series, index=index)
 
     def multiindex_series(self):
         mi = pandas.MultiIndex(
             levels=[["a", "b"], ["x", "y"], [0]],
-            labels=[
+            codes=[
                 [1, 1, 1, 1, 0, 0, 0, 0],
                 [0, 0, 1, 1, 0, 0, 1, 1],
                 [0, -1, 0, -1, 0, -1, 0, -1],
@@ -190,24 +182,6 @@ class PandasSeriesTestCase(PandasTestCase):
             wl=b"Dataset[<|0 -> Indeterminate, 1 -> 1., 2 -> Indeterminate|>]",
             wxf=b"8:f\x01s\x07Datasetf\x03s\x0bAssociationf\x02s\x04RuleC\x00s\rIndeterminatef\x02s\x04RuleC\x01r\x00\x00\x00\x00\x00\x00\xf0?f\x02s\x04RuleC\x02s\rIndeterminate",
             pandas_series_head="dataset",
-        )
-
-    # sparse array with zeros
-    def test_sparse_array_as_numpy(self):
-        sparse_s = self.sparse_series_list_fill_zero()
-        self.export_compare(
-            sparse_s,
-            wl=b'BinaryDeserialize[ByteArray["ODrCAwEEAQAAAAAAAAADAAAAAAAAAA=="]]',
-            wxf=b"8:\xc2\x03\x01\x04\x01\x00\x00\x00\x00\x00\x00\x00\x03\x00\x00\x00\x00\x00\x00\x00",
-        )
-
-    # timeseries
-    def test_timeseries(self):
-        ts = self.sparse_series_date()
-        self.export_compare(
-            ts,
-            wl=b'TimeSeries[{{DateObject[{2011, 1, 3, 0, 0, 0.}, "Instant", "Gregorian", $TimeZone], 0.}, {DateObject[{2011, 1, 4, 0, 0, 0.}, "Instant", "Gregorian", $TimeZone], Indeterminate}, {DateObject[{2011, 1, 5, 0, 0, 0.}, "Instant", "Gregorian", $TimeZone], 2.}, {DateObject[{2011, 1, 6, 0, 0, 0.}, "Instant", "Gregorian", $TimeZone], Indeterminate}, {DateObject[{2011, 1, 7, 0, 0, 0.}, "Instant", "Gregorian", $TimeZone], 4.}}]',
-            wxf=b"8:f\x01s\nTimeSeriesf\x05s\x04Listf\x02s\x04Listf\x04s\nDateObjectf\x06s\x04Listj\xdb\x07C\x01C\x03C\x00C\x00r\x00\x00\x00\x00\x00\x00\x00\x00S\x07InstantS\tGregorians\t$TimeZoner\x00\x00\x00\x00\x00\x00\x00\x00f\x02s\x04Listf\x04s\nDateObjectf\x06s\x04Listj\xdb\x07C\x01C\x04C\x00C\x00r\x00\x00\x00\x00\x00\x00\x00\x00S\x07InstantS\tGregorians\t$TimeZones\rIndeterminatef\x02s\x04Listf\x04s\nDateObjectf\x06s\x04Listj\xdb\x07C\x01C\x05C\x00C\x00r\x00\x00\x00\x00\x00\x00\x00\x00S\x07InstantS\tGregorians\t$TimeZoner\x00\x00\x00\x00\x00\x00\x00@f\x02s\x04Listf\x04s\nDateObjectf\x06s\x04Listj\xdb\x07C\x01C\x06C\x00C\x00r\x00\x00\x00\x00\x00\x00\x00\x00S\x07InstantS\tGregorians\t$TimeZones\rIndeterminatef\x02s\x04Listf\x04s\nDateObjectf\x06s\x04Listj\xdb\x07C\x01C\x07C\x00C\x00r\x00\x00\x00\x00\x00\x00\x00\x00S\x07InstantS\tGregorians\t$TimeZoner\x00\x00\x00\x00\x00\x00\x10@",
         )
 
     # multi index

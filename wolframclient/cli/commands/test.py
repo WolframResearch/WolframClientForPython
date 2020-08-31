@@ -23,7 +23,7 @@ def dependencies():
         yield ("pandas", "1.0.4")
         yield ("unittest-xml-reporting", None)
     if not six.PY2:
-        yield ("aiohttp", "3.4.4")
+        yield ("aiohttp", "3.6.2")
 
 
 class Command(SimpleCommand):

@@ -8,6 +8,7 @@ from wolframclient.language.expression import WLFunction, WLSymbol
 from wolframclient.serializers.wxfencoder import constants
 from wolframclient.serializers.wxfencoder.utils import array_to_list
 from wolframclient.utils.api import numpy
+from wolframclient.utils.datastructures import immutabledict
 
 __all__ = ["WXFConsumer", "WXFConsumerNumpy"]
 
@@ -112,7 +113,7 @@ class WXFConsumer(object):
         """
         return WLFunction(head, *arg_list)
 
-    def consume_association(self, current_token, tokens, dict_class=dict, **kwargs):
+    def consume_association(self, current_token, tokens, dict_class=immutabledict, **kwargs):
         """Consume a :class:`~wolframclient.deserializers.wxf.wxfparser.WXFToken` of type *association*.
 
         By default, return a :class:`dict` made from the rules.
