@@ -1,7 +1,6 @@
 (* ::Package:: *)
 
-(* Not useful since we apparently never receive multipart messages,
-no matter the total size (tested with 80MB) *)
+
 $NotSupportedVersionErrNo = 10;
 $MinVersionSupported = 11.3;
 If[$VersionNumber < $MinVersionSupported, Exit[$NotSupportedVersionErrNo]];
@@ -44,10 +43,14 @@ Begin["`Private`"];
 			]
 		]
 	},
-	True
-	,
+	PacletFind["ZeroMQLink" -> "1.2*"] == {},
 	{
 		ZMQSocketWriteMessage,
+		SocketReadMessage[#, "Blocking"->False] &
+	},
+	True,
+	{
+		SocketWriteMessage[##, "Blocking"->False] &,
 		SocketReadMessage[#, "Blocking"->False] &
 	}
 ];
