@@ -246,7 +246,7 @@ $InputSocket=None;
 $MaxMessagesReturned = 31;
 $NoMessage = ByteArray[{0}];
 
-SlaveKernelPrivateStart[inputsocket_String, outputsocket_String, logsocket_String, loglevel_Integer] := (
+KernelPrivateStart[inputsocket_String, outputsocket_String, logsocket_String, loglevel_Integer] := (
 	$LoggerSocket=SocketConnect[logsocket,"ZMQ_PUB"];
 	If[FailureQ[$LoggerSocket],
 		Print["Failed to connect to logging socket: ", logsocket]
@@ -255,12 +255,12 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String, logsocket_Strin
 		setLogLevel[loglevel];
 		addMessageHandler[];
 		addPrintHandler[];
-		SlaveKernelPrivateStart[inputsocket, outputsocket]
+		KernelPrivateStart[inputsocket, outputsocket]
 	];
 );
 
 
-SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
+KernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 	{listener, msg},
 	$InputSocket = SocketConnect[inputsocket, "ZMQ_Pull"];
 	$OutputSocket = SocketConnect[outputsocket, "ZMQ_Push"];
