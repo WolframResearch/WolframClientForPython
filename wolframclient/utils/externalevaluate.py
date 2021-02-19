@@ -94,60 +94,18 @@ def execute_from_string(code, globals={}, **opts):
         return env[last_expr.name]
 
 
-class SideEffectSender(logging.Handler):
-    def emit(self, record):
-        if isinstance(sys.stdout, StdoutProxy):
-            sys.stdout.send_side_effect(record.msg)
-
-
 class SocketWriter:
+
+    keep_listening = wl.ExternalEvaluate.Private.ExternalEvaluateKeepListening
+
     def __init__(self, socket):
         self.socket = socket
 
     def write(self, bytes):
         self.socket.send(zmq.Frame(bytes))
 
-
-class StdoutProxy:
-
-    keep_listening = wl.ExternalEvaluate.Private.ExternalEvaluateKeepListening
-
-    def __init__(self, stream):
-        self.stream = stream
-        self.clear()
-
-    def clear(self):
-        self.current_line = []
-        self.lines = []
-
-    def write(self, message):
-        messages = force_text(message).split("\n")
-
-        if len(messages) == 1:
-            self.current_line.extend(messages)
-        else:
-            self.current_line.append(messages.pop(0))
-            rest = messages.pop(-1)
-
-            self.lines.extend(messages)
-            self.flush()
-            if rest:
-                self.current_line.append(rest)
-
-    def flush(self):
-        if self.current_line or self.lines:
-            self.send_lines("".join(self.current_line), *self.lines)
-            self.clear()
-
-    def send_lines(self, *lines):
-        if len(lines) == 1:
-            return self.send_side_effect(wl.Print(*lines))
-        elif lines:
-            return self.send_side_effect(wl.CompoundExpression(*map(wl.Print, lines)))
-
     def send_side_effect(self, expr):
-        self.stream.write(export(self.keep_listening(expr), **EXPORT_KWARGS))
-
+        self.write(export(self.keep_listening(expr), **EXPORT_KWARGS))
 
 def evaluate_message(input=None, return_type=None, args=None, **opts):
 
@@ -201,7 +159,6 @@ def start_zmq_instance(port=None, write_to_stdout=True, **opts):
 
 def start_zmq_loop(
     message_limit=float("inf"),
-    redirect_stdout=True,
     export_kwargs=EXPORT_KWARGS,
     evaluate_message=evaluate_message,
     exception_class=None,
@@ -210,15 +167,13 @@ def start_zmq_loop(
 ):
 
     handler = to_wl(exception_class=exception_class, **export_kwargs)(handle_message)
-
     socket = start_zmq_instance(**opts)
-
     stream = SocketWriter(socket)
-
     messages = 0
 
-    if redirect_stdout:
-        sys.stdout = StdoutProxy(stream)
+    class SideEffectSender(logging.Handler):
+        def emit(self, record):
+            stream.send_side_effect(record.msg)
 
     side_effect_logger.addHandler(SideEffectSender())
 
@@ -226,6 +181,3 @@ def start_zmq_loop(
     while messages < message_limit:
         stream.write(handler(socket, evaluate_message=evaluate_message, consumer=consumer))
         messages += 1
-
-    if redirect_stdout:
-        sys.stdout = sys.__stdout__
