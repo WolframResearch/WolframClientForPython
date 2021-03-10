@@ -188,8 +188,8 @@ SendAck[] := WriteString[$OutputSocket, "OK"]
 $MaxIdlePause=.001;
 $MinIdlePause=0.0001;
 $PauseIncrement=0.0001;
-$ListenerSupportMinVersion = 12.3;
-
+(*$ListenerSupportMinVersion = 12.3;*)
+$ListenerSupportMinVersion = Infinity;
 Which[
 	$VersionNumber < $ListenerSupportMinVersion,
 	(* Low CPU wait but need synchronous loop. *)
@@ -207,6 +207,9 @@ Which[
 			]
 		]
 	],
+	(* Version with SocketListen, code is cleaner is 3 times slower as the version above.
+	Possibly during the async events and pre-emptive evaluation.
+	 *)
 	True,
 	evaluationLoop[socketIn_SocketObject]:= (
 		$SocketListener = SocketListen[
