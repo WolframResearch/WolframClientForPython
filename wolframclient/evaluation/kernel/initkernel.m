@@ -188,10 +188,10 @@ SendAck[] := WriteString[$OutputSocket, "OK"]
 $MaxIdlePause=.001;
 $MinIdlePause=0.0001;
 $PauseIncrement=0.0001;
-$TaskSupportMinVersion = Infinity;
+$ListenerSupportMinVersion = 12.3;
 
 Which[
-	$VersionNumber < $TaskSupportMinVersion,
+	$VersionNumber < $ListenerSupportMinVersion,
 	(* Low CPU wait but need synchronous loop. *)
 	evaluationLoop[socketIn_SocketObject]:= With[
 		{maxPause=$MaxIdlePause, minPause=$MinIdlePause, incr=$PauseIncrement, poller={socketIn}},
@@ -208,7 +208,16 @@ Which[
 		]
 	],
 	True,
-	(* Version with fixed asynchronous tasks *)
+	evaluationLoop[socketIn_SocketObject]:= (
+		$SocketListener = SocketListen[
+			socketIn,
+			socketEventHandler[#DataByteArray]&
+		];
+		SendAck[];
+		Pause[2^60];
+	);
+	(*
+	 Version with fixed asynchronous tasks
 	evaluationLoop[socketIn_SocketObject]:= With[
 		{maxPause=$MaxIdlePause, minPause=$MinIdlePause, incr=$PauseIncrement, poller={socketIn}},
 		$Task = SessionSubmit[
@@ -221,24 +230,25 @@ Which[
 					SocketWaitNext[poller];
 				]
 			),
-			0.0001 (*negligeable compared to IO operations ~1ms. We basically need 0 but can't use this value. *)
+			0.0001 negligeable compared to IO operations ~1ms. We basically need 0 but can't use this value.
 			],
 			Method->"Idle",
 			HandlerFunctions-><|"TaskStarted"->SendAck[]|>
 		];
 	];
+	*)
 ];
 (* can be useful for loopback connections which are available only if a task can be used. 
 Does not kill the kernel *)
 ClientLibrary`disconnect[] := Quit[];
-ClientLibrary`disconnect[] /; ($Task =!= None) := (
-	TaskRemove[$Task];
+ClientLibrary`disconnect[] /; ($SocketListener =!= None) := (
+	DeleteObject[$SocketListener];
 	Scan[
 		If[# =!= None, Close[#]] &,
 		{$LoggerSocket, $OutputSocket, $InputSocket}
 	]
 );
-$Task = None;
+$SocketListener = None;
 $LoggerSocket=None;
 $OutputSocket=None;
 $InputSocket=None;
