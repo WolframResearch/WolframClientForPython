@@ -1,2 +1,2 @@
-Pygments==2.2
+Pygments==2.7.4
 pygments-mathematica==0.3.3
