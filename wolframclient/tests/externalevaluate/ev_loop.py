@@ -3,7 +3,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 from threading import Thread
 
 import zmq
-
 from wolframclient.language import wl
 from wolframclient.serializers import export
 from wolframclient.utils.externalevaluate import EXPORT_KWARGS, StdoutProxy, start_zmq_loop
