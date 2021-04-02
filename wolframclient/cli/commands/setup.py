@@ -1,13 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-import sys
-import unittest
-
 from wolframclient.cli.utils import SimpleCommand
 from wolframclient.utils import six
 from wolframclient.utils.decorators import to_tuple
-from wolframclient.utils.functional import map
-from wolframclient.utils.importutils import module_path
 
 
 @to_tuple
