@@ -392,7 +392,7 @@ class WolframKernelController(Thread):
             self.kernel_logger.start()
             cmd.append("-run")
             cmd.append(
-                'ClientLibrary`Private`SlaveKernelPrivateStart["%s", "%s", "%s", %i];'
+                'ClientLibrary`Private`KernelPrivateStart["%s", "%s", "%s", %i];'
                 % (
                     self.kernel_socket_out.uri,
                     self.kernel_socket_in.uri,
@@ -403,7 +403,7 @@ class WolframKernelController(Thread):
         else:
             cmd.append("-run")
             cmd.append(
-                'ClientLibrary`Private`SlaveKernelPrivateStart["%s", "%s"];'
+                'ClientLibrary`Private`KernelPrivateStart["%s", "%s"];'
                 % (self.kernel_socket_out.uri, self.kernel_socket_in.uri)
             )
 
