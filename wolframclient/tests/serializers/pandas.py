@@ -37,13 +37,13 @@ class PandasSeriesTestCase(PandasTestCase):
         d["b"] = 1
         d["a"] = 0
         d["c"] = 2
-        return pandas.Series(d, dtype='Sparse[int]')
+        return pandas.Series(d, dtype="Sparse[int]")
 
     def sparse_series_dict_indexed(self):
         constructor_dict = {1: 1.0}
         index = [0, 1, 2]
         # Series with index passed in
-        series = pandas.Series(constructor_dict, dtype='Sparse[float]')
+        series = pandas.Series(constructor_dict, dtype="Sparse[float]")
         return pandas.Series(series, index=index)
 
     def multiindex_series(self):

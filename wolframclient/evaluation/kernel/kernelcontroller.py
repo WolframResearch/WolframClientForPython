@@ -19,7 +19,7 @@ from wolframclient.utils import six
 from wolframclient.utils.api import json, os, time, zmq
 
 if six.WINDOWS:
-    from subprocess import STARTUPINFO, STARTF_USESHOWWINDOW
+    from subprocess import STARTF_USESHOWWINDOW, STARTUPINFO
 
 __all__ = ["WolframKernelController"]
 

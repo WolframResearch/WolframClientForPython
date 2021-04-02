@@ -14,8 +14,8 @@ except (ImportError, OSError):
     # JYTHON is raising an ImportError when running "import multiprocessing"
     # GVisor is raising an OSError when running "multiprocessing.Lock()" because the feature is not implemented
 
-    from contextlib import contextmanager
     import warnings
+    from contextlib import contextmanager
 
     warnings.warn("Lock is not implemented in the current interpreter.", RuntimeWarning)
 
