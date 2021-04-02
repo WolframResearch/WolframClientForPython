@@ -298,11 +298,11 @@ class TestCase(TestCaseSettings):
 class TestSessionTimeout(TestCaseSettings):
     def test_evaluate_async_basic_inputform(self):
         future = self.kernel_session.evaluate_future("1+1")
-        self.assertEqual(future.result(timeout=1), 2)
+        self.assertEqual(future.result(timeout=2), 2)
 
     def test_evaluate_async_basic_wl(self):
         future = self.kernel_session.evaluate_future(wl.Plus(1, 2))
-        self.assertEqual(future.result(timeout=1), 3)
+        self.assertEqual(future.result(timeout=2), 3)
 
     def test_evaluate_multiple_async(self):
         with WolframLanguageSession(kernel_path) as kernel_session:
@@ -310,15 +310,15 @@ class TestSessionTimeout(TestCaseSettings):
             result1 = future1.result(timeout=3)
             self.assertEqual(result1, 7)
             future2 = kernel_session.evaluate_future("10+1")
-            self.assertEqual(future2.result(timeout=1), 11)
+            self.assertEqual(future2.result(timeout=2), 11)
             future3 = kernel_session.evaluate_future("100+1")
-            self.assertEqual(future3.result(timeout=1), 101)
+            self.assertEqual(future3.result(timeout=2), 101)
 
     def test_many_failures_wrap_async(self):
         future = self.kernel_session.evaluate_wrap_future(
             'ImportString["[1,2", "RawJSON"]; 1/0'
         )
-        res = future.result(timeout=1)
+        res = future.result(timeout=2)
         self.assertFalse(res.success)
         expected_msgs = (
             "Expecting end of array or a value separator.",
@@ -342,7 +342,7 @@ class TestSessionTimeout(TestCaseSettings):
 
     def test_valid_evaluate_wxf_async(self):
         future = self.kernel_session.evaluate_wxf_future("Range[3]")
-        wxf = future.result(timeout=1)
+        wxf = future.result(timeout=2)
         result = binary_deserialize(wxf, consumer=WXFConsumer())
         self.assertEqual(result, [1, 2, 3])
 

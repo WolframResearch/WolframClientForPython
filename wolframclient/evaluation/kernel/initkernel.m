@@ -1,7 +1,6 @@
 (* ::Package:: *)
 
-(* Not useful since we apparently never receive multipart messages,
-no matter the total size (tested with 80MB) *)
+
 $NotSupportedVersionErrNo = 10;
 $MinVersionSupported = 11.3;
 If[$VersionNumber < $MinVersionSupported, Exit[$NotSupportedVersionErrNo]];
@@ -44,10 +43,14 @@ Begin["`Private`"];
 			]
 		]
 	},
-	True
-	,
+	PacletFind["ZeroMQLink" -> "1.2*"] == {},
 	{
 		ZMQSocketWriteMessage,
+		SocketReadMessage[#, "Blocking"->False] &
+	},
+	True,
+	{
+		SocketWriteMessage[##, "Blocking"->False] &,
 		SocketReadMessage[#, "Blocking"->False] &
 	}
 ];
@@ -185,10 +188,10 @@ SendAck[] := WriteString[$OutputSocket, "OK"]
 $MaxIdlePause=.001;
 $MinIdlePause=0.0001;
 $PauseIncrement=0.0001;
-$TaskSupportMinVersion = Infinity;
-
+(*$ListenerSupportMinVersion = 12.3;*)
+$ListenerSupportMinVersion = Infinity;
 Which[
-	$VersionNumber < $TaskSupportMinVersion,
+	$VersionNumber < $ListenerSupportMinVersion,
 	(* Low CPU wait but need synchronous loop. *)
 	evaluationLoop[socketIn_SocketObject]:= With[
 		{maxPause=$MaxIdlePause, minPause=$MinIdlePause, incr=$PauseIncrement, poller={socketIn}},
@@ -204,8 +207,20 @@ Which[
 			]
 		]
 	],
+	(* Version with SocketListen, code is cleaner is 3 times slower as the version above.
+	Possibly during the async events and pre-emptive evaluation.
+	 *)
 	True,
-	(* Version with fixed asynchronous tasks *)
+	evaluationLoop[socketIn_SocketObject]:= (
+		$SocketListener = SocketListen[
+			socketIn,
+			socketEventHandler[#DataByteArray]&
+		];
+		SendAck[];
+		Pause[2^60];
+	);
+	(*
+	 Version with fixed asynchronous tasks
 	evaluationLoop[socketIn_SocketObject]:= With[
 		{maxPause=$MaxIdlePause, minPause=$MinIdlePause, incr=$PauseIncrement, poller={socketIn}},
 		$Task = SessionSubmit[
@@ -218,24 +233,25 @@ Which[
 					SocketWaitNext[poller];
 				]
 			),
-			0.0001 (*negligeable compared to IO operations ~1ms. We basically need 0 but can't use this value. *)
+			0.0001 negligeable compared to IO operations ~1ms. We basically need 0 but can't use this value.
 			],
 			Method->"Idle",
 			HandlerFunctions-><|"TaskStarted"->SendAck[]|>
 		];
 	];
+	*)
 ];
 (* can be useful for loopback connections which are available only if a task can be used. 
 Does not kill the kernel *)
 ClientLibrary`disconnect[] := Quit[];
-ClientLibrary`disconnect[] /; ($Task =!= None) := (
-	TaskRemove[$Task];
+ClientLibrary`disconnect[] /; ($SocketListener =!= None) := (
+	DeleteObject[$SocketListener];
 	Scan[
 		If[# =!= None, Close[#]] &,
 		{$LoggerSocket, $OutputSocket, $InputSocket}
 	]
 );
-$Task = None;
+$SocketListener = None;
 $LoggerSocket=None;
 $OutputSocket=None;
 $InputSocket=None;
@@ -243,7 +259,7 @@ $InputSocket=None;
 $MaxMessagesReturned = 31;
 $NoMessage = ByteArray[{0}];
 
-SlaveKernelPrivateStart[inputsocket_String, outputsocket_String, logsocket_String, loglevel_Integer] := (
+KernelPrivateStart[inputsocket_String, outputsocket_String, logsocket_String, loglevel_Integer] := (
 	$LoggerSocket=SocketConnect[logsocket,"ZMQ_PUB"];
 	If[FailureQ[$LoggerSocket],
 		Print["Failed to connect to logging socket: ", logsocket]
@@ -252,12 +268,12 @@ SlaveKernelPrivateStart[inputsocket_String, outputsocket_String, logsocket_Strin
 		setLogLevel[loglevel];
 		addMessageHandler[];
 		addPrintHandler[];
-		SlaveKernelPrivateStart[inputsocket, outputsocket]
+		KernelPrivateStart[inputsocket, outputsocket]
 	];
 );
 
 
-SlaveKernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
+KernelPrivateStart[inputsocket_String, outputsocket_String] := Block[
 	{listener, msg},
 	$InputSocket = SocketConnect[inputsocket, "ZMQ_Pull"];
 	$OutputSocket = SocketConnect[outputsocket, "ZMQ_Push"];
