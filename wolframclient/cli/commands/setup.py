@@ -7,17 +7,22 @@ from wolframclient.utils.decorators import to_tuple
 
 @to_tuple
 def dependencies():
-    yield ("pytz", "2018.6")
+    yield "pytz"
+
     if not six.JYTHON:
-        yield ("numpy", not six.PY2 and "1.15.3" or None)
-        yield ("pillow", "7.1.2")
-        yield ("requests", "2.20.0")
-        yield ("oauthlib", "2.1.0")
-        yield ("pyzmq", "17.1.2")
-        yield ("pandas", "1.0.4")
-        yield ("unittest-xml-reporting", None)
+        yield "aiohttp"
+        yield "numpy"
+        yield "oauthlib"
+        yield "pandas"
+        yield "pandas"
+        yield "pillow"
+        yield "pyzmq"
+        yield "requests"
+        yield "unittest-xml-reporting"
+        yield 'certifi>=2017.4.17'
+
     if not six.PY2:
-        yield ("aiohttp", "3.6.2")
+        yield "aiohttp"
 
 
 class Command(SimpleCommand):
