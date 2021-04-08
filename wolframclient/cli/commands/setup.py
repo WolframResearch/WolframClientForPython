@@ -14,7 +14,6 @@ def dependencies():
         yield "numpy"
         yield "oauthlib"
         yield "pandas"
-        yield "pandas"
         yield "pillow"
         yield "pyzmq"
         yield "requests"
