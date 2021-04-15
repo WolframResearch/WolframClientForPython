@@ -9,7 +9,7 @@ from wolframclient.utils.decorators import to_tuple
 def dependencies():
     yield "pytz"
 
-    if not six.JYTHON:
+    if not six.PY2:
         yield "aiohttp"
         yield "numpy"
         yield "oauthlib"
@@ -19,10 +19,6 @@ def dependencies():
         yield "requests"
         yield "unittest-xml-reporting"
         yield 'certifi>=2017.4.17'
-
-    if not six.PY2:
-        yield "aiohttp"
-
 
 class Command(SimpleCommand):
     """ Run test suites from the tests modules.
