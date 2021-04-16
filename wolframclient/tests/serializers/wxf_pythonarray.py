@@ -33,7 +33,7 @@ class TestCase(BaseTestCase):
 
     def test_generators(self):
 
-        array = NumericArray((i for i in range(10)), "Integer8", shape=(10, ))
+        array = NumericArray((i for i in range(10)), "Integer8", shape=(10,))
 
         self.assertEqual(
             export(numpy.arange(10).astype(numpy.int8), target_format="wxf"),

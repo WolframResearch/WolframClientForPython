@@ -21,6 +21,7 @@ from wolframclient.utils.api import numpy
 from wolframclient.utils.datastructures import immutabledict
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
+
 class TestCase(BaseTestCase):
     def test_token_dimensions(self):
         token = WXFToken(None)
@@ -200,7 +201,7 @@ class TestCase(BaseTestCase):
         self.assertEqual(expr, res)
 
     def test_nested_associations(self):
-        expr = immutabledict((('a', 2), ('a', 3)))
+        expr = immutabledict((("a", 2), ("a", 3)))
         expr = immutabledict(((expr, expr), (2, 3)))
         wxf = export(expr, target_format="wxf", compress=True)
         res = binary_deserialize(wxf, consumer=WXFConsumer())
