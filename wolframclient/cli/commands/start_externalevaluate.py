@@ -24,7 +24,11 @@ class Command(SimpleCommand):
         try:
             zmq.Context
         except ImportError as e:
-            print("Error importing zmq: %s. Please install zmq. https://zeromq.org/languages/python/" % e, file=sys.stderr)
+            print(
+                "Error importing zmq: %s. Please install zmq. https://zeromq.org/languages/python/"
+                % e,
+                file=sys.stderr,
+            )
             sys.stderr.flush()
             sys.exit(1)
 
