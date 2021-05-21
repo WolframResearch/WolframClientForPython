@@ -18,7 +18,8 @@ def dependencies():
         yield "pyzmq"
         yield "requests"
         yield "unittest-xml-reporting"
-        yield 'certifi>=2017.4.17'
+        yield "certifi>=2017.4.17"
+
 
 class Command(SimpleCommand):
     """ Run test suites from the tests modules.

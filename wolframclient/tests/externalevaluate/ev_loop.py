@@ -3,18 +3,11 @@ from __future__ import absolute_import, print_function, unicode_literals
 from threading import Thread
 
 import zmq
+
 from wolframclient.language import wl
 from wolframclient.serializers import export
 from wolframclient.utils.externalevaluate import EXPORT_KWARGS, start_zmq_loop
 from wolframclient.utils.tests import TestCase as BaseTestCase
-
-STRING = "foo"
-STRING_NEWLINE = "abc\nABC"
-STRING_MULTILINE = """first
-second
-third
-"""
-
 
 class TestCase(BaseTestCase):
     def compare(self, string_version, result):
@@ -42,4 +35,3 @@ class TestCase(BaseTestCase):
             msg = client.recv()
 
             self.compare(msg, result)
-
