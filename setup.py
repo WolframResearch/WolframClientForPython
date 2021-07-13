@@ -60,7 +60,6 @@ setup(
     test_suite='setup.load_tests',
     python_requires='>=3.5.3',
     install_requires = [
-        'pip',
         'numpy',
         'pytz',
         'requests',
