@@ -178,6 +178,21 @@ class TestCase(TestCaseSettings):
             session.terminate()
             self.assertTrue(session.stopped)
 
+    def test_kernel_dies_restart(self):
+        try:
+            session = WolframLanguageSession(kernel_path)
+            pid1 = session.evaluate("$ProcessID")
+            self.assertEqual(pid1, session.kernel_controller.pid)
+            with self.assertRaises(WolframKernelException):
+                session.evaluate("Quit[]")
+            session.terminate()
+            pid2 = session.evaluate("$ProcessID")
+            self.assertEqual(pid2, session.kernel_controller.pid)
+            self.assertNotEqual(pid1, pid2)
+        finally:
+            session.terminate()
+            self.assertTrue(session.stopped)
+
     def test_pure_function_inputform(self):
         f = self.kernel_session.function("#+1&")
         self.assertEqual(f(3), 4)
@@ -298,7 +313,7 @@ class TestCase(TestCaseSettings):
 class TestSessionTimeout(TestCaseSettings):
     def test_evaluate_async_basic_inputform(self):
         future = self.kernel_session.evaluate_future("1+1")
-        self.assertEqual(future.result(timeout=2), 2)
+        self.assertEqual(future.result(timeout=5), 2)
 
     def test_evaluate_async_basic_wl(self):
         future = self.kernel_session.evaluate_future(wl.Plus(1, 2))

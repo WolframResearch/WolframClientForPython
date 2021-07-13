@@ -2,6 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
 
+from wolframclient.exception import WolframKernelException
 from wolframclient.deserializers import WXFConsumer, binary_deserialize
 from wolframclient.evaluation import (
     WolframCloudAsyncSession,
@@ -111,6 +112,25 @@ class TestCoroutineSession(BaseTestCase):
         res = await asyncio.gather(*tasks)
         self.assertEqual(res, list(range(1, 11)))
 
+    @run_in_loop
+    async def test_quit_restart(self):
+        try:
+            async_session = WolframLanguageAsyncSession(
+                kernel_path, kernel_loglevel=logging.INFO
+            )
+            pid1 = await async_session.evaluate("$ProcessID")
+            self.assertEqual(pid1, async_session.kernel_controller.pid)
+            with self.assertRaises(WolframKernelException):
+                await async_session.evaluate("Quit[]")
+            await async_session.terminate()
+            pid2 = await async_session.evaluate("$ProcessID")
+            self.assertEqual(pid2, async_session.kernel_controller.pid)
+            self.assertNotEqual(pid1, pid2)
+        finally:
+            if async_session:
+                await async_session.terminate()
+            self.assertTrue(async_session.stopped)
+
     def test_kwargs_parameters(self):
         TestKernelBase.class_kwargs_parameters(self, WolframLanguageAsyncSession)
 
@@ -207,7 +227,7 @@ class TestKernelCloudPool(TestKernelPool):
             kernel_path,
         )
         async with WolframEvaluatorPool(
-            sessions, kernel_loglevel=logging.INFO, STARTUP_TIMEOUT=5, TERMINATE_TIMEOUT=3
+            sessions, kernel_loglevel=logging.INFO, STARTUP_TIMEOUT=20, TERMINATE_TIMEOUT=3
         ) as pool:
             await self._pool_evaluation_check(pool)
         for session in sessions:
