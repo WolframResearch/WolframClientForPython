@@ -170,13 +170,16 @@ class WolframLanguageSession(WolframEvaluator):
         return future
 
     def stop(self):
-        """ Request the Wolfram kernel to stop gracefully. """
+        """ Request the Wolfram kernel to stop gracefully.
+        When recovering from an error state, it's recommended to use terminate() which
+        is more resilient.
+        """
         self._stop(gracefully=True)
 
     def terminate(self):
         """ Request the Wolfram kernel to stop immediately.
-        
-        Ongoing evaluations may be cancelled. """
+        Ongoing evaluations are likely to be cancelled.
+        """
         self._stop(gracefully=False)
 
     def _stop(self, gracefully=True):

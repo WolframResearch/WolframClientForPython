@@ -483,7 +483,13 @@ class WolframKernelController(Thread):
             if not self.started:
                 future.set_result(True)
                 return future
-            self.enqueue_task(self.STOP, future, None)
+            # only enqueue task if the Event is not triggered.
+            # when trigger_termination_requested is set, the run function is
+            # already dealing with the exception and is about to terminate.
+            if self.trigger_termination_requested.is_set():
+                future.set_result(True)
+            else:
+                self.enqueue_task(self.STOP, future, None)
             self._state_terminated = True
             self.trigger_termination_requested.set()
         return future
@@ -496,13 +502,26 @@ class WolframKernelController(Thread):
     def evaluate_future(self, wxf, future, result_update_callback=None, **kwargs):
         self.enqueue_task(wxf, future, result_update_callback)
 
+    def _recv_check_process(self, copy=False):
+        """
+        Call recv on the kernel input socket. Regularly check that the kernel process
+        is running.
+        :param copy: whether or not to copy the socket data. Default is False.
+        :return:
+        """
+        try:
+            return self.kernel_socket_in.recv_abortable(copy=copy, abort_event=_KernelProcessDied(self.kernel_proc))
+        except SocketAborted:
+            logger.info("Kernel process is not running anymore.")
+            raise WolframKernelException("Kernel is not running anymore.")
+
     def _do_evaluate(self, wxf, future, result_update_callback):
         start = time.perf_counter()
         self.kernel_socket_out.send(zmq.Frame(wxf))
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug("Expression sent to kernel in %.06fsec", time.perf_counter() - start)
             start = time.perf_counter()
-        wxf_eval_data = self.kernel_socket_in.recv_abortable(copy=False)
+        wxf_eval_data = self._recv_check_process()
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(
                 "Expression received from kernel after %.06fsec", time.perf_counter() - start
@@ -577,11 +596,11 @@ class WolframKernelController(Thread):
                 else:
                     self._kernel_stop()
             except Exception as e:
-                if future:
+                if future and not future.cancelled():
                     future.set_exception(e)
                     future = None
             finally:
-                if future:
+                if future and not future.cancelled():
                     future.set_result(True)
 
     def _cancel_tasks(self):
@@ -611,3 +630,10 @@ class _StartEvent(object):
 
     def is_set(self):
         return self.subprocess.poll() is not None or self.abort_event.is_set()
+
+class _KernelProcessDied(object):
+    def __init__(self, subprocess):
+        self.subprocess = subprocess
+
+    def is_set(self):
+        return self.subprocess.poll() is not None
