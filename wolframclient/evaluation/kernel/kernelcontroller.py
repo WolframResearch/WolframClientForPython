@@ -588,7 +588,7 @@ class WolframKernelController(Thread):
             raise e
         except Exception as e:
             self.trigger_termination_requested.set()
-            if future and not future.cancelled():
+            if future and not future.done():
                 future.set_exception(e)
                 future = None
             else:
@@ -603,11 +603,11 @@ class WolframKernelController(Thread):
                 else:
                     self._kernel_stop()
             except Exception as e:
-                if future and not future.cancelled():
+                if future and not future.done():
                     future.set_exception(e)
                     future = None
             finally:
-                if future and not future.cancelled():
+                if future and not future.done():
                     future.set_result(True)
 
     def _cancel_tasks(self):
