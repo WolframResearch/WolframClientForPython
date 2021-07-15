@@ -1,6 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
+from concurrent.futures import TimeoutError
+from time import time
 
 from wolframclient.deserializers import WXFConsumer, binary_deserialize
 from wolframclient.evaluation import WolframLanguageSession
@@ -189,6 +191,20 @@ class TestCase(TestCaseSettings):
             pid2 = session.evaluate("$ProcessID")
             self.assertEqual(pid2, session.kernel_controller.pid)
             self.assertNotEqual(pid1, pid2)
+        finally:
+            session.terminate()
+            self.assertTrue(session.stopped)
+
+    def test_kernel_abort_restart(self):
+        try:
+            session = WolframLanguageSession(kernel_path)
+            session.start()
+            start=time()
+            future = session.evaluate_future("Pause[10]")
+            with self.assertRaises(TimeoutError):
+                future.result(timeout=1.0)
+            session.terminate()
+            self.assertTrue((time() - start) < 10)
         finally:
             session.terminate()
             self.assertTrue(session.stopped)
