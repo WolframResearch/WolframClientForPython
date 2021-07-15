@@ -2,7 +2,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import logging
 
-from wolframclient.exception import WolframKernelException
 from wolframclient.deserializers import WXFConsumer, binary_deserialize
 from wolframclient.evaluation import (
     WolframCloudAsyncSession,
@@ -10,6 +9,7 @@ from wolframclient.evaluation import (
     WolframLanguageAsyncSession,
     parallel_evaluate,
 )
+from wolframclient.exception import WolframKernelException
 from wolframclient.language import wl, wlexpr
 from wolframclient.tests.configure import (
     kernel_path,

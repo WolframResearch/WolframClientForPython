@@ -507,7 +507,9 @@ class WolframKernelController(Thread):
         Create a new event that triggers when the kernel process has terminated or when termination was requested.
         :return:
         """
-        return _ProcessAliveNotAbortedEvent(self.kernel_proc, self.trigger_termination_requested)
+        return _ProcessAliveNotAbortedEvent(
+            self.kernel_proc, self.trigger_termination_requested
+        )
 
     def _recv_check_process(self, copy=False):
         """
@@ -517,7 +519,9 @@ class WolframKernelController(Thread):
         :return:
         """
         try:
-            return self.kernel_socket_in.recv_abortable(copy=copy, abort_event=self._new_running_event())
+            return self.kernel_socket_in.recv_abortable(
+                copy=copy, abort_event=self._new_running_event()
+            )
         except SocketAborted:
             logger.info("Kernel process is not running anymore.")
             raise WolframKernelException("Kernel is not running anymore.")
@@ -637,6 +641,7 @@ class _ProcessAliveNotAbortedEvent(object):
 
     def is_set(self):
         return self.subprocess.poll() is not None or self.abort_event.is_set()
+
 
 class _KernelProcessDied(object):
     def __init__(self, subprocess):

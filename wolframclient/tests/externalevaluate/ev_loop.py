@@ -9,6 +9,7 @@ from wolframclient.serializers import export
 from wolframclient.utils.externalevaluate import EXPORT_KWARGS, start_zmq_loop
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
+
 class TestCase(BaseTestCase):
     def compare(self, string_version, result):
         self.assertEqual(string_version, export(result, **EXPORT_KWARGS))

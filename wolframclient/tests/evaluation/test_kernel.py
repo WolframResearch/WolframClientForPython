@@ -199,7 +199,7 @@ class TestCase(TestCaseSettings):
         try:
             session = WolframLanguageSession(kernel_path)
             session.start()
-            start=time()
+            start = time()
             future = session.evaluate_future("Pause[10]")
             with self.assertRaises(TimeoutError):
                 future.result(timeout=1.0)
