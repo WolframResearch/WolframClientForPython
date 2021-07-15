@@ -1,7 +1,10 @@
+# Version 1.1.7
+- kernel controller class detects terminated kernel process while waiting for an evaluation result instead of hanging.
+
 # Version 1.1.5 and 1.1.6
-    - update Wolfram Language code with latest addition from 12.3.
-    - fix various deprecated naming convention in class names.
-    
+- update Wolfram Language code with latest addition from 12.3.
+- fix various deprecated naming convention in class names.
+
 # Version 1.1.4
 - Async cloud evaluator based on `aiohttp` now use `certifi` to create a default `SSLContext` if none is provided. Other cloud evaluator are based on the `requests` module which also uses this library. 
 - Updating dependency list accordingly in `setup.py`. `certifi` was already listed as a `requests` dependency, so this should have no direct impact on user site package.
