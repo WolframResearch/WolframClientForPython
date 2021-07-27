@@ -434,7 +434,7 @@ class WolframKernelController(Thread):
             # on the kernel side.
             response = self.kernel_socket_in.recv_abortable(
                 timeout=self.get_parameter("STARTUP_TIMEOUT"),
-                abort_event=_StartEvent(self.kernel_proc, self.trigger_termination_requested),
+                abort_event=self._new_running_event(),
             )
             if response == self._KERNEL_OK:
                 if logger.isEnabledFor(logging.INFO):
@@ -483,9 +483,15 @@ class WolframKernelController(Thread):
             if not self.started:
                 future.set_result(True)
                 return future
-            self.enqueue_task(self.STOP, future, None)
+            # only enqueue task if the Event is not triggered.
+            # when trigger_termination_requested is set, the run function is
+            # already dealing with the exception and is about to terminate.
+            if not self.trigger_termination_requested.is_set():
+                self.enqueue_task(self.STOP, future, None)
+                self.trigger_termination_requested.set()
+
+            future.set_result(True)
             self._state_terminated = True
-            self.trigger_termination_requested.set()
         return future
 
     def join(self, timeout=None):
@@ -496,13 +502,37 @@ class WolframKernelController(Thread):
     def evaluate_future(self, wxf, future, result_update_callback=None, **kwargs):
         self.enqueue_task(wxf, future, result_update_callback)
 
+    def _new_running_event(self):
+        """
+        Create a new event that triggers when the kernel process has terminated or when termination was requested.
+        :return:
+        """
+        return _ProcessAliveNotAbortedEvent(
+            self.kernel_proc, self.trigger_termination_requested
+        )
+
+    def _recv_check_process(self, copy=False):
+        """
+        Call recv on the kernel input socket. Regularly check that the kernel process
+        is running.
+        :param copy: whether or not to copy the socket data. Default is False.
+        :return:
+        """
+        try:
+            return self.kernel_socket_in.recv_abortable(
+                copy=copy, abort_event=self._new_running_event()
+            )
+        except SocketAborted:
+            logger.info("Kernel process is not running anymore.")
+            raise WolframKernelException("Kernel is not running anymore.")
+
     def _do_evaluate(self, wxf, future, result_update_callback):
         start = time.perf_counter()
         self.kernel_socket_out.send(zmq.Frame(wxf))
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug("Expression sent to kernel in %.06fsec", time.perf_counter() - start)
             start = time.perf_counter()
-        wxf_eval_data = self.kernel_socket_in.recv_abortable(copy=False)
+        wxf_eval_data = self._recv_check_process()
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(
                 "Expression received from kernel after %.06fsec", time.perf_counter() - start
@@ -562,7 +592,7 @@ class WolframKernelController(Thread):
             raise e
         except Exception as e:
             self.trigger_termination_requested.set()
-            if future and not future.cancelled():
+            if future and not future.done():
                 future.set_exception(e)
                 future = None
             else:
@@ -577,11 +607,11 @@ class WolframKernelController(Thread):
                 else:
                     self._kernel_stop()
             except Exception as e:
-                if future:
+                if future and not future.done():
                     future.set_exception(e)
                     future = None
             finally:
-                if future:
+                if future and not future.done():
                     future.set_result(True)
 
     def _cancel_tasks(self):
@@ -604,10 +634,18 @@ class WolframKernelController(Thread):
             return '<%s[%s ❌], "%s">' % (self.__class__.__name__, self.name, self.kernel)
 
 
-class _StartEvent(object):
+class _ProcessAliveNotAbortedEvent(object):
     def __init__(self, subprocess, abort_event):
         self.subprocess = subprocess
         self.abort_event = abort_event
 
     def is_set(self):
         return self.subprocess.poll() is not None or self.abort_event.is_set()
+
+
+class _KernelProcessDied(object):
+    def __init__(self, subprocess):
+        self.subprocess = subprocess
+
+    def is_set(self):
+        return self.subprocess.poll() is not None
