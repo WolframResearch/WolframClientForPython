@@ -41,6 +41,9 @@ def to_little_endian(array, inplace=False):
 @encoder.dispatch(numpy.ndarray)
 def encode_ndarray(serializer, o):
 
+    if not o.shape:
+        return serializer.encode(o.item())
+
     try:
         wl_type = NUMPY_MAPPING[o.dtype.type]
     except KeyError:
