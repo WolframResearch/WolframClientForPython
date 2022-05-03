@@ -224,6 +224,13 @@ class TestCase(BaseTestCase):
             b"{65535, -2147483648, 0, -9223372036854775808, 18446744073709551615}",
         )
 
+    def test_scalars(self):
+        for arr, result in (
+            (numpy.array(1, dtype=numpy.int8), b"1"),
+            (numpy.array(0.5, dtype=numpy.float32), b"0.5"),
+            ):
+            self.assertEqual(export(arr), result)
+
     def test_bad_options(self):
         with self.assertRaises(ValueError):
             NumPyWXFEncoder(packed_array_support=False, numeric_array_support=False)
