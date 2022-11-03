@@ -5,6 +5,7 @@ import sys
 from collections import defaultdict
 from functools import partial
 
+from wolframclient.utils.environment import installation_version
 from wolframclient.serializers.utils import safe_len
 from wolframclient.utils.api import multiprocessing, pkg_resources
 from wolframclient.utils.dispatch import Dispatch
@@ -205,7 +206,7 @@ class Encoder(object):
             normalizer, encoder=safe_import_string(encoder or wolfram_encoder)
         )
         self.allow_external_objects = allow_external_objects
-        self.target_kernel_version = target_kernel_version or 11.3
+        self.target_kernel_version = target_kernel_version or installation_version()
         self._properties = kwargs
 
     def chain_normalizer(self, func, encoder):

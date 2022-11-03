@@ -15,11 +15,13 @@ class Command(SimpleCommand):
     def add_arguments(self, parser):
         parser.add_argument("--port", dest="port", default=None)
         parser.add_argument("--installpath", dest="installpath", default=None)
+        parser.add_argument("--kernelversion", dest="kernelversion", default=None)
 
-    def handle(self, port=None, installpath=None, **opts):
+    def handle(self, port=None, installpath=None, kernelversion=None, **opts):
 
-        if installpath:
-            os.environ["WOLFRAM_INSTALLATION_DIRECTORY"] = installpath
+        for key, value in (("WOLFRAM_INSTALLATION_DIRECTORY", installpath), ("WOLFRAM_KERNEL_VERSION", kernelversion)):
+            if value:
+                os.environ[key] = value
 
         try:
             zmq.Context

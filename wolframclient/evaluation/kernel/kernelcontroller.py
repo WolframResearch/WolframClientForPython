@@ -7,7 +7,7 @@ from queue import Queue
 from subprocess import PIPE, Popen
 from threading import Event, RLock, Thread
 
-from wolframclient.evaluation.kernel.path import find_default_kernel_path
+from wolframclient.utils.environment import find_default_kernel_path
 from wolframclient.evaluation.kernel.zmqsocket import (
     Socket,
     SocketAborted,
