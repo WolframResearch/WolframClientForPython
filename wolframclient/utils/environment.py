@@ -3,8 +3,18 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.utils import six
 from wolframclient.utils.api import os
 
+from wolframclient.utils import six
+from wolframclient.utils.api import os
 
-def explore_paths(*paths):
+def installation_version():
+
+    v = os.environ.get('WOLFRAM_KERNEL_VERSION', None)
+    if v:
+        return float(v)
+
+    return 12.0
+
+def _explore_paths(*paths):
     highest_version = -1
     best_path = None
     for root in paths:
@@ -23,13 +33,13 @@ def explore_paths(*paths):
         yield best_path
 
 
-def installation_directories():
+def _installation_directories():
     env = os.environ.get("WOLFRAM_INSTALLATION_DIRECTORY", None)
     if env:
         yield env
 
     if six.WINDOWS:
-        for p in explore_paths(
+        for p in _explore_paths(
             "C:\\Program Files\\Wolfram Research\\Wolfram Desktop",
             "C:\\Program Files\\Wolfram Research\\Mathematica",
             "C:\\Program Files\\Wolfram Research\\Wolfram Engine",
@@ -37,7 +47,7 @@ def installation_directories():
             yield p
 
     elif six.LINUX:
-        for p in explore_paths(
+        for p in _explore_paths(
             "/usr/local/Wolfram/Desktop",
             "/usr/local/Wolfram/Mathematica",
             "/usr/local/Wolfram/WolframEngine",
@@ -50,19 +60,19 @@ def installation_directories():
         yield "/Applications/Wolfram Engine.app/Contents"
 
 
-def exe_path():
-    if six.WINDOWS:
-        return "WolframKernel.exe"
-    elif six.LINUX:
-        return "Executables/WolframKernel"
-    elif six.MACOS:
-        return "MacOS/WolframKernel"
-
 
 def find_default_kernel_path():
     """ Look for the most recent installed kernel. """
-    rel = exe_path()
-    for path in installation_directories():
+
+    if six.WINDOWS:
+        rel = "WolframKernel.exe"
+    elif six.LINUX:
+        rel =  "Executables/WolframKernel"
+    elif six.MACOS:
+        rel =  "MacOS/WolframKernel"
+    
+
+    for path in _installation_directories():
         if rel:
             path = os.path_join(path, rel)
         if os.isfile(path):
