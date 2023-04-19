@@ -73,7 +73,7 @@
 	<target name='Installer.WolframClientForPython.execute' extensionOf='Deploy.execute'>
 
 		<!-- Ensure all necessary modules are installed -->
-		<exec executable="python">
+		<exec executable="${python.exe}">
 			<arg value="-m" />
 			<arg value="pip" />
 			<arg value="install" />
@@ -84,7 +84,7 @@
 		</exec>
 
 		<!-- Run setup script -->
-		<exec executable="python">
+		<exec executable="${python.exe}">
 			<arg value="setup.py" />
 			<arg value="sdist" />
 			<arg value="bdist_wheel" />
@@ -113,7 +113,7 @@
 	<target name='Web.WolframClientForPython.execute.custom' extensionOf='Web.execute.custom'>
 
 		<!-- Create a virtual environment to build docs in -->
-		<exec executable="python3.6">
+		<exec executable="${python.exe}">
 			<arg value="-m" />
 			<arg value="venv" />
 			<arg value="${tmp_directory}/venv" />
