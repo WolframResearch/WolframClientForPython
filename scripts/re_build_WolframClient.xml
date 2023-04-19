@@ -134,7 +134,7 @@
 		<exec dir= "${basedir}/docs" executable="build_docs.sh">
 			<arg value="-b" />
 			<arg value="${files_directory}" />
-			<env key="PATH" path="${env.PATH}:${tmp_directory}/venv/bin"/>
+			<env key="PATH" path="${tmp_directory}/venv/bin:${env.PATH}"/>
 		</exec>
 
 	</target>
