@@ -15,6 +15,14 @@ from wolframclient.utils import six
 from wolframclient.utils.encoding import concatenate_bytes, force_text
 from wolframclient.utils.functional import first
 
+if hasattr(inspect, 'getfullargspec'):
+    inspect_args = inspect.getfullargspec
+elif hasattr(inspect, 'getargspec'):
+    inspect_args = inspect.getargspec
+else:
+    def inspect_args(f):
+        raise TypeError()
+
 
 class FormatSerializer(Encoder):
     def generate_bytes(self, data):
@@ -139,7 +147,7 @@ class FormatSerializer(Encoder):
             yield "Type", "PythonFunction"
             try:
                 # force tuple to avoid calling this method again on `map`.
-                yield "Arguments", tuple(map(force_text, first(inspect.getargspec(o))))
+                yield "Arguments", tuple(map(force_text, first(inspect_args(o))))
             except TypeError:
                 # this function can fail with TypeError unsupported callable
                 pass
