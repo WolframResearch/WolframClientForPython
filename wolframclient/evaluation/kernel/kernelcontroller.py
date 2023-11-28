@@ -7,7 +7,6 @@ from queue import Queue
 from subprocess import PIPE, Popen
 from threading import Event, RLock, Thread
 
-from wolframclient.utils.environment import find_default_kernel_path
 from wolframclient.evaluation.kernel.zmqsocket import (
     Socket,
     SocketAborted,
@@ -17,6 +16,8 @@ from wolframclient.evaluation.result import WolframKernelEvaluationResult
 from wolframclient.exception import WolframKernelException
 from wolframclient.utils import six
 from wolframclient.utils.api import json, os, time, zmq
+from wolframclient.utils.environment import find_default_kernel_path
+from wolframclient.utils.functional import iterate
 
 if six.WINDOWS:
     from subprocess import STARTF_USESHOWWINDOW, STARTUPINFO
@@ -130,12 +131,13 @@ class WolframKernelController(Thread):
                 "Cannot locate a kernel automatically. Please provide an explicit kernel path."
             )
 
-        if initfile is None:
-            self.initfile = os.path_join(os.dirname(__file__), "initkernel.m")
-        else:
-            self.initfile = initfile
-        if not os.isfile(self.initfile):
-            raise FileNotFoundError("Kernel initialization file %s not found." % self.initfile)
+        self.initfile = tuple(
+            iterate(initfile or (), os.path_join(os.dirname(__file__), "initkernel.m"))
+        )
+        for path in self.initfile:
+            if not os.isfile(path):
+                raise FileNotFoundError("Kernel initialization file %s not found." % path)
+
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(
                 "Initializing kernel %s using script: %s" % (self.kernel, self.initfile)
@@ -384,7 +386,12 @@ class WolframKernelController(Thread):
                 "Kernel receives evaluated expressions from socket: %s", self.kernel_socket_in
             )
         # start the kernel process
-        cmd = [self.kernel, "-noprompt", "-initfile", self.initfile]
+        cmd = [self.kernel, "-noprompt"]
+
+        for path in self.initfile:
+            cmd.append('-initfile')
+            cmd.append(path)
+
         if self.loglevel != logging.NOTSET:
             self.kernel_logger = KernelLogger(
                 name="wolfram-kernel-logger-%i" % self.id, level=self.loglevel
