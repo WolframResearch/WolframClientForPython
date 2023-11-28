@@ -3,16 +3,15 @@ from __future__ import absolute_import, print_function, unicode_literals
 from wolframclient.utils import six
 from wolframclient.utils.api import os
 
-from wolframclient.utils import six
-from wolframclient.utils.api import os
 
 def installation_version():
 
-    v = os.environ.get('WOLFRAM_KERNEL_VERSION', None)
+    v = os.environ.get("WOLFRAM_KERNEL_VERSION", None)
     if v:
         return float(v)
 
     return 12.0
+
 
 def _explore_paths(*paths):
     highest_version = -1
@@ -60,17 +59,15 @@ def _installation_directories():
         yield "/Applications/Wolfram Engine.app/Contents"
 
 
-
 def find_default_kernel_path():
     """ Look for the most recent installed kernel. """
 
     if six.WINDOWS:
         rel = "WolframKernel.exe"
     elif six.LINUX:
-        rel =  "Executables/WolframKernel"
+        rel = "Executables/WolframKernel"
     elif six.MACOS:
-        rel =  "MacOS/WolframKernel"
-    
+        rel = "MacOS/WolframKernel"
 
     for path in _installation_directories():
         if rel:

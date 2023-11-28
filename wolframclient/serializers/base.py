@@ -15,11 +15,12 @@ from wolframclient.utils import six
 from wolframclient.utils.encoding import concatenate_bytes, force_text
 from wolframclient.utils.functional import first
 
-if hasattr(inspect, 'getfullargspec'):
+if hasattr(inspect, "getfullargspec"):
     inspect_args = inspect.getfullargspec
-elif hasattr(inspect, 'getargspec'):
+elif hasattr(inspect, "getargspec"):
     inspect_args = inspect.getargspec
 else:
+
     def inspect_args(f):
         raise TypeError()
 

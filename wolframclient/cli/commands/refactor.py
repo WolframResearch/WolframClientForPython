@@ -10,7 +10,8 @@ class Command(SimpleCommand):
 
     modules = ["wolframclient"]
 
-    dependencies = (("isort", "5.3.2"), ("autoflake", "1.3"), ("black", "19.3b0"))
+    #dependencies = (("isort", "5.3.2"), ("autoflake", "1.3"), ("black", "19.3b0"))
+    #dependencies is broken please install isort==5.3.2 autoflake==1.3 black==19.3b0"
 
     def _module_args(self, *args):
 
