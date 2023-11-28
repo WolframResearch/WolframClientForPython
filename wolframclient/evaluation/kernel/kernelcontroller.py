@@ -389,7 +389,7 @@ class WolframKernelController(Thread):
         cmd = [self.kernel, "-noprompt"]
 
         for path in self.initfile:
-            cmd.append('-initfile')
+            cmd.append("-initfile")
             cmd.append(path)
 
         if self.loglevel != logging.NOTSET:

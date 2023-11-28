@@ -19,7 +19,10 @@ class Command(SimpleCommand):
 
     def handle(self, port=None, installpath=None, kernelversion=None, **opts):
 
-        for key, value in (("WOLFRAM_INSTALLATION_DIRECTORY", installpath), ("WOLFRAM_KERNEL_VERSION", kernelversion)):
+        for key, value in (
+            ("WOLFRAM_INSTALLATION_DIRECTORY", installpath),
+            ("WOLFRAM_KERNEL_VERSION", kernelversion),
+        ):
             if value:
                 os.environ[key] = value
 
