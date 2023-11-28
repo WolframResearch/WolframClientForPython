@@ -1,3 +1,7 @@
+# Version 1.1.10
+- fix for https://github.com/WolframResearch/WolframWebEngineForPython/issues/10
+
+
 # Version 1.1.7
 - kernel controller class detects terminated kernel process while waiting for an evaluation result instead of hanging.
 
