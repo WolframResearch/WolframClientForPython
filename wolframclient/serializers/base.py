@@ -140,7 +140,7 @@ class FormatSerializer(Encoder):
             tzinfo.utcoffset(date or datetime.datetime.utcnow()).total_seconds() / 3600
         )
 
-    def _serialize_external_object(self, o):
+    def _serialize_external_object(self, o, **opts):
 
         yield "System", "Python"
 
@@ -174,13 +174,15 @@ class FormatSerializer(Encoder):
         yield "IsMethod", inspect.ismethod(o),
         yield "IsCallable", callable(o),
 
-    def serialize_external_object(self, obj):
+        yield from opts.items()
+
+    def serialize_external_object(self, obj, **opts):
         return self.serialize_function(
             self.serialize_symbol(callable(obj) and b"ExternalFunction" or b"ExternalObject"),
             (
                 self.serialize_mapping(
                     (self.encode(key), self.encode(value))
-                    for key, value in self._serialize_external_object(obj)
+                    for key, value in self._serialize_external_object(obj,  **opts)
                 ),
             ),
         )

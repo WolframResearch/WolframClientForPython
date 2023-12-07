@@ -91,8 +91,11 @@ wolfram_encoder.register_plugins()
 @wolfram_encoder.dispatch(object)
 def encode(serializer, o):
 
-    if serializer.allow_external_objects:
-        return serializer.serialize_external_object(o)
+    if serializer.external_object_processor:
+        return serializer.external_object_processor(
+            serializer,
+            o
+        )
 
     if is_iterable(o):
         return serializer.serialize_iterable(map(serializer.encode, o), length=safe_len(o))
@@ -197,7 +200,7 @@ class Encoder(object):
         self,
         normalizer=None,
         encoder=None,
-        allow_external_objects=False,
+        external_object_processor=None,
         target_kernel_version=None,
         **kwargs
     ):
@@ -205,7 +208,7 @@ class Encoder(object):
         self.encode = self.chain_normalizer(
             normalizer, encoder=safe_import_string(encoder or wolfram_encoder)
         )
-        self.allow_external_objects = allow_external_objects
+        self.external_object_processor = external_object_processor
         self.target_kernel_version = target_kernel_version or installation_version()
         self._properties = kwargs
 

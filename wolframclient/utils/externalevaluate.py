@@ -14,6 +14,33 @@ from wolframclient.utils.api import ast, zmq
 from wolframclient.utils.datastructures import Settings
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import last
+from wolframclient.utils.functional import identity
+from wolframclient.language.expression import WLFunction, WLSymbol
+from functools import partial
+from wolframclient.deserializers.wxf.wxfconsumer import WXFConsumerNumpy
+
+
+class WXFExternalObjectConsumer(WXFConsumerNumpy):
+
+    def __init__(self, external_object_registry):
+        self.external_object_registry = external_object_registry
+
+    def consume_function(self, *args, **kwargs):
+        expr = super().consume_function(*args, **kwargs)
+
+        if isinstance(expr, WLFunction) and isinstance(expr.head, WLSymbol) and expr.head.name == 'ExternalObject':
+            session_id = expr.args[0]["SessionID"]
+
+            return self.external_object_registry[session_id]
+
+        return expr
+
+
+def external_object_processor(serializer, instance, external_object_registry):
+    pk = id(instance)
+    external_object_registry[pk] = instance
+    return serializer.serialize_external_object(instance, SessionID = pk)
+
 
 HIDDEN_VARIABLES = (
     "__loader__",
@@ -24,7 +51,10 @@ HIDDEN_VARIABLES = (
     "unicode_literals",
 )
 
-EXPORT_KWARGS = {"target_format": "wxf", "allow_external_objects": True}
+EXPORT_KWARGS = {
+    "target_format": "wxf", 
+}
+
 
 if six.PY_38:
 
@@ -58,7 +88,7 @@ def execute_from_file(path, *args, **opts):
         return execute_from_string(force_text(f.read()), *args, **opts)
 
 
-def execute_from_string(code, globals={}, **opts):
+def execute_from_string(code, globals, **opts):
 
     __traceback_hidden_variables__ = ["env", "current", "__traceback_hidden_variables__"]
 
@@ -129,7 +159,7 @@ def evaluate_message(input=None, return_type=None, args=None, **opts):
     return result
 
 
-def handle_message(socket, evaluate_message=evaluate_message, consumer=None):
+def handle_message(socket, evaluate_message, consumer):
 
     __traceback_hidden_variables__ = True
 
@@ -163,11 +193,25 @@ def start_zmq_loop(
     export_kwargs=EXPORT_KWARGS,
     evaluate_message=evaluate_message,
     exception_class=None,
-    consumer=None,
     **opts
 ):
 
-    handler = to_wl(exception_class=exception_class, **export_kwargs)(handle_message)
+    external_object_registry = {}
+    evaluate_message = partial(
+        evaluate_message,
+        external_object_registry = external_object_registry,
+        globals = {}
+    )
+
+    consumer = WXFExternalObjectConsumer(external_object_registry)
+
+
+    handler = to_wl(
+        exception_class=exception_class, 
+        external_object_processor = partial(external_object_processor, external_object_registry = external_object_registry),
+        **export_kwargs
+
+    )(handle_message)
     socket = start_zmq_instance(**opts)
     stream = SocketWriter(socket)
     messages = 0
