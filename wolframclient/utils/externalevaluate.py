@@ -3,10 +3,13 @@ from __future__ import absolute_import, print_function, unicode_literals
 import logging
 import os
 import sys
+from functools import partial
 
 from wolframclient.deserializers import binary_deserialize
+from wolframclient.deserializers.wxf.wxfconsumer import WXFConsumerNumpy
 from wolframclient.language import wl
 from wolframclient.language.decorators import to_wl
+from wolframclient.language.expression import WLFunction, WLSymbol
 from wolframclient.language.side_effects import side_effect_logger
 from wolframclient.serializers import export
 from wolframclient.utils import six
@@ -14,21 +17,20 @@ from wolframclient.utils.api import ast, zmq
 from wolframclient.utils.datastructures import Settings
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import last
-from wolframclient.utils.functional import identity
-from wolframclient.language.expression import WLFunction, WLSymbol
-from functools import partial
-from wolframclient.deserializers.wxf.wxfconsumer import WXFConsumerNumpy
 
 
 class WXFExternalObjectConsumer(WXFConsumerNumpy):
-
     def __init__(self, external_object_registry):
         self.external_object_registry = external_object_registry
 
     def consume_function(self, *args, **kwargs):
         expr = super().consume_function(*args, **kwargs)
 
-        if isinstance(expr, WLFunction) and isinstance(expr.head, WLSymbol) and expr.head.name == 'ExternalObject':
+        if (
+            isinstance(expr, WLFunction)
+            and isinstance(expr.head, WLSymbol)
+            and expr.head.name == "ExternalObject"
+        ):
             session_id = expr.args[0]["SessionID"]
 
             return self.external_object_registry[session_id]
@@ -39,7 +41,7 @@ class WXFExternalObjectConsumer(WXFConsumerNumpy):
 def external_object_processor(serializer, instance, external_object_registry):
     pk = id(instance)
     external_object_registry[pk] = instance
-    return serializer.serialize_external_object(instance, SessionID = pk)
+    return serializer.serialize_external_object(instance, SessionID=pk)
 
 
 HIDDEN_VARIABLES = (
@@ -50,10 +52,6 @@ HIDDEN_VARIABLES = (
     "print_function",
     "unicode_literals",
 )
-
-EXPORT_KWARGS = {
-    "target_format": "wxf", 
-}
 
 
 if six.PY_38:
@@ -135,7 +133,7 @@ class SocketWriter:
         self.socket.send(zmq.Frame(bytes))
 
     def send_side_effect(self, expr):
-        self.write(export(self.keep_listening(expr), **EXPORT_KWARGS))
+        self.write(export(self.keep_listening(expr), target_format="wxf"))
 
 
 def evaluate_message(input=None, return_type=None, args=None, **opts):
@@ -189,28 +187,22 @@ def start_zmq_instance(port=None, write_to_stdout=True, **opts):
 
 
 def start_zmq_loop(
-    message_limit=float("inf"),
-    export_kwargs=EXPORT_KWARGS,
-    evaluate_message=evaluate_message,
-    exception_class=None,
-    **opts
+    message_limit=float("inf"), evaluate_message=evaluate_message, exception_class=None, **opts
 ):
 
     external_object_registry = {}
     evaluate_message = partial(
-        evaluate_message,
-        external_object_registry = external_object_registry,
-        globals = {}
+        evaluate_message, external_object_registry=external_object_registry, globals={}
     )
 
     consumer = WXFExternalObjectConsumer(external_object_registry)
 
-
     handler = to_wl(
-        exception_class=exception_class, 
-        external_object_processor = partial(external_object_processor, external_object_registry = external_object_registry),
-        **export_kwargs
-
+        exception_class=exception_class,
+        external_object_processor=partial(
+            external_object_processor, external_object_registry=external_object_registry
+        ),
+        target_format="wxf",
     )(handle_message)
     socket = start_zmq_instance(**opts)
     stream = SocketWriter(socket)
