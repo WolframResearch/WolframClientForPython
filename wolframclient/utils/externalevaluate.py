@@ -29,9 +29,12 @@ class WXFExternalObjectConsumer(WXFConsumerNumpy):
         if (
             isinstance(expr, WLFunction)
             and isinstance(expr.head, WLSymbol)
-            and expr.head.name == "ExternalObject"
+            and (
+                expr.head.name == "ExternalObject"
+                or expr.head.name == "ExternalFunction"
+            )
         ):
-            session_id = expr.args[0]["SessionID"]
+            session_id = expr.args[0]["ObjectID"]
 
             return self.external_object_registry[session_id]
 
@@ -41,7 +44,7 @@ class WXFExternalObjectConsumer(WXFConsumerNumpy):
 def external_object_processor(serializer, instance, external_object_registry):
     pk = id(instance)
     external_object_registry[pk] = instance
-    return serializer.serialize_external_object(instance, SessionID=pk)
+    return serializer.serialize_external_object(instance, ObjectID=pk)
 
 
 HIDDEN_VARIABLES = (
