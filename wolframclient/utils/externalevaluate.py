@@ -18,6 +18,61 @@ from wolframclient.utils.datastructures import Settings
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import last
 
+"""
+
+The kernel will a WXF input to python.
+The message needs to be deserialized however a particular function called ExternalEvaluate`Private`MakePythonObject will be evaluated. The function call looks like this
+
+    MakePythonObject({"mode": "type", "input": "date", "arguments": {2012, 10, 10}})
+    MakePythonObject({"mode": "command", "input": "range", "arguments": {0, 10}})
+    MakePythonObject({"mode": "command", "input": 1, "arguments": {}})
+    MakePythonObject({"mode": "function", "input": 1, "arguments": {}})
+
+
+Possibile key of the commands are:
+
+## mode
+
+### type
+
+the mode type is used to create a type from argument. Possibile types include date, datetime, fraction, image.
+
+### command
+
+the mode command is used to create a python object, takes an input which is either a string or an integer. the string is python code to be parsed and executed, the integer is a reference to an existing python object in the session.
+
+### function
+
+the mode function is similar to the previous one but is supposed to return a function, so it will always curry the argument spec.
+
+## input
+
+the input of the function call, for type it identifies a function to execute by name, for object and function it is the command to create it.
+
+## arguments
+
+extra arguments to initialize the object or function with
+
+## return_type
+
+the return type of the object creation, 
+
+### expr
+
+expr will keep the result as is.
+
+### string
+
+will run repr over the result
+
+### object
+
+will return a WL ExternalObject or ExternalFunction.
+
+"""
+
+
+
 
 class WXFExternalObjectConsumer(WXFConsumerNumpy):
     def __init__(self, external_object_registry):
