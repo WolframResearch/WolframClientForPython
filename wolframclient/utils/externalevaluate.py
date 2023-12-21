@@ -139,16 +139,11 @@ def object_processor(serializer, instance, external_object_registry):
     pk = id(instance)
     external_object_registry[pk] = instance
 
-
     cmd = {'Command': id(instance)}
     meta = dict(_serialize_external_object_meta(instance))
+    func = callable(instance) and wl.ExternalFunction or wl.ExternalObject
 
-    if callable(instance):
-        expr = wl.ExternalFunction(wl.Inherited, cmd, meta)
-    else:
-        expr = wl.ExternalObject(wl.Inherited, cmd, meta)
-
-    return serializer.encode(expr)
+    return serializer.encode(func(wl.Inherited, cmd, meta))
 
 
 HIDDEN_VARIABLES = (
