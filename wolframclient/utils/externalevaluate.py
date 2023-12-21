@@ -135,7 +135,7 @@ def _serialize_external_object_meta(o):
     yield "IsCallable", callable(o),
 
 
-def external_object_processor(serializer, instance, external_object_registry):
+def object_processor(serializer, instance, external_object_registry):
     pk = id(instance)
     external_object_registry[pk] = instance
 
@@ -306,8 +306,8 @@ def start_zmq_loop(
 
     handler = to_wl(
         exception_class=exception_class,
-        external_object_processor=partial(
-            external_object_processor, external_object_registry=external_object_registry
+        object_processor=partial(
+            object_processor, external_object_registry=external_object_registry
         ),
         target_format="wxf",
     )(handle_message)

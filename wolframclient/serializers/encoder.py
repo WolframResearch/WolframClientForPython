@@ -91,8 +91,8 @@ wolfram_encoder.register_plugins()
 @wolfram_encoder.dispatch(object)
 def encode(serializer, o):
 
-    if serializer.external_object_processor:
-        return serializer.external_object_processor(
+    if serializer.object_processor:
+        return serializer.object_processor(
             serializer,
             o
         )
@@ -200,7 +200,7 @@ class Encoder(object):
         self,
         normalizer=None,
         encoder=None,
-        external_object_processor=None,
+        object_processor=None,
         target_kernel_version=None,
         **kwargs
     ):
@@ -208,7 +208,7 @@ class Encoder(object):
         self.encode = self.chain_normalizer(
             normalizer, encoder=safe_import_string(encoder or wolfram_encoder)
         )
-        self.external_object_processor = external_object_processor
+        self.object_processor = object_processor
         self.target_kernel_version = target_kernel_version or installation_version()
         self._properties = kwargs
 
