@@ -3,6 +3,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import logging
 import os
 import sys
+import inspect
 from functools import partial
 
 from wolframclient.deserializers import binary_deserialize
@@ -13,6 +14,7 @@ from wolframclient.language.expression import WLFunction, WLSymbol
 from wolframclient.language.side_effects import side_effect_logger
 from wolframclient.serializers import export
 from wolframclient.utils import six
+from wolframclient.utils.functional import first
 from wolframclient.utils.api import ast, zmq
 from wolframclient.utils.datastructures import Settings
 from wolframclient.utils.encoding import force_text
@@ -72,6 +74,15 @@ will return a WL ExternalObject or ExternalFunction.
 """
 
 
+if hasattr(inspect, "getfullargspec"):
+    inspect_args = inspect.getfullargspec
+elif hasattr(inspect, "getargspec"):
+    inspect_args = inspect.getargspec
+else:
+
+    def inspect_args(f):
+        raise TypeError()
+
 
 
 class WXFExternalObjectConsumer(WXFConsumerNumpy):
@@ -96,10 +107,48 @@ class WXFExternalObjectConsumer(WXFConsumerNumpy):
         return expr
 
 
+def _serialize_external_object_meta(o):
+
+    if callable(o):
+        yield "Type", "PythonFunction"
+        try:
+            # force tuple to avoid calling this method again on `map`.
+            yield "Arguments", tuple(map(force_text, first(inspect_args(o))))
+        except TypeError:
+            # this function can fail with TypeError unsupported callable
+            pass
+    else:
+        yield "Type", "PythonObject"
+
+    is_module = inspect.ismodule(o)
+
+    yield "IsModule", is_module
+
+    if not is_module:
+        module = inspect.getmodule(o)
+        if module:
+            yield "Module", force_text(module.__name__)
+
+    yield "IsClass", inspect.isclass(o),
+    yield "IsFunction", inspect.isfunction(o),
+    yield "IsMethod", inspect.ismethod(o),
+    yield "IsCallable", callable(o),
+
+
 def external_object_processor(serializer, instance, external_object_registry):
     pk = id(instance)
     external_object_registry[pk] = instance
-    return serializer.serialize_external_object(instance, ObjectID=pk)
+
+
+    cmd = {'Command': id(instance)}
+    meta = dict(_serialize_external_object_meta(instance))
+
+    if callable(instance):
+        expr = wl.ExternalFunction(wl.Inherited, cmd, meta)
+    else:
+        expr = wl.ExternalObject(wl.Inherited, cmd, meta)
+
+    return serializer.encode(expr)
 
 
 HIDDEN_VARIABLES = (
