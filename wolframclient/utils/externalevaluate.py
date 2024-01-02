@@ -1,9 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
+import inspect
 import logging
 import os
 import sys
-import inspect
 from functools import partial
 
 from wolframclient.deserializers import binary_deserialize
@@ -14,11 +14,10 @@ from wolframclient.language.expression import WLFunction, WLSymbol
 from wolframclient.language.side_effects import side_effect_logger
 from wolframclient.serializers import export
 from wolframclient.utils import six
-from wolframclient.utils.functional import first
 from wolframclient.utils.api import ast, zmq
 from wolframclient.utils.datastructures import Settings
 from wolframclient.utils.encoding import force_text
-from wolframclient.utils.functional import last
+from wolframclient.utils.functional import first, last
 
 """
 
@@ -84,11 +83,7 @@ else:
         raise TypeError()
 
 
-
-
-
 def _serialize_external_object_meta(o):
-
     if callable(o):
         yield "Type", "PythonFunction"
         try:
@@ -119,7 +114,7 @@ def object_processor(serializer, instance, external_object_registry):
     pk = id(instance)
     external_object_registry[pk] = instance
 
-    cmd = {'Command': id(instance)}
+    cmd = {"Command": id(instance)}
     meta = dict(_serialize_external_object_meta(instance))
     func = callable(instance) and wl.ExternalFunction or wl.ExternalObject
 
@@ -137,7 +132,6 @@ HIDDEN_VARIABLES = (
 
 
 if six.PY_38:
-
     # https://bugs.python.org/issue35766
     # https://bugs.python.org/issue35894
     # https://github.com/ipython/ipython/issues/11590
@@ -146,7 +140,6 @@ if six.PY_38:
     def Module(code, type_ignores=[]):
         return ast.Module(code, type_ignores)
 
-
 else:
 
     def Module(code):
@@ -154,7 +147,6 @@ else:
 
 
 def EvaluationEnvironment(code, session_data={}, constants=None, **extra):
-
     session_data["__loader__"] = Settings(get_source=lambda module, code=code: code)
     session_data["__traceback_hidden_variables__"] = HIDDEN_VARIABLES
     if constants:
@@ -163,9 +155,7 @@ def EvaluationEnvironment(code, session_data={}, constants=None, **extra):
     return session_data
 
 
-
 def execute_from_string(code, globals, **opts):
-
     __traceback_hidden_variables__ = ["env", "current", "__traceback_hidden_variables__"]
 
     # this is creating a custom __loader__ that is returning the source code
@@ -199,11 +189,12 @@ def execute_from_string(code, globals, **opts):
     elif isinstance(last_expr, (ast.FunctionDef, ast.ClassDef)):
         return env[last_expr.name]
 
+
 def execute_from_id(input, external_object_registry, **opts):
     return external_object_registry[input]
 
-def evaluate_message(input=None, return_type=None, args=None, run_functions = True, **opts):
 
+def evaluate_message(input=None, return_type=None, args=None, run_functions=True, **opts):
     __traceback_hidden_variables__ = True
 
     result = None
@@ -230,13 +221,17 @@ def evaluate_message(input=None, return_type=None, args=None, run_functions = Tr
     return result
 
 
-dispatch_routes = {'command': evaluate_message, 'function': partial(evaluate_message, run_functions = False)}
+dispatch_routes = {
+    "command": evaluate_message,
+    "function": partial(evaluate_message, run_functions=False),
+}
+
 
 def dispatch_wl_object(name, opts, **extra):
     return dispatch_routes[name](**opts, **extra)
 
-class WXFNestedObjectConsumer(WXFConsumerNumpy):
 
+class WXFNestedObjectConsumer(WXFConsumerNumpy):
     hook_symbol = wl.ExternalEvaluate.Private.ExternalEvaluateCommand
 
     def __init__(self, external_object_registry, session_globals):
@@ -252,13 +247,16 @@ class WXFNestedObjectConsumer(WXFConsumerNumpy):
             and expr.head == self.hook_symbol
         ):
             assert len(expr.args) == 2
-            return dispatch_wl_object(*expr.args, globals = self.session_globals, external_object_registry = self.external_object_registry)
+            return dispatch_wl_object(
+                *expr.args,
+                globals=self.session_globals,
+                external_object_registry=self.external_object_registry
+            )
 
         return expr
 
 
 class SocketWriter:
-
     keep_listening = wl.ExternalEvaluate.Private.ExternalEvaluateKeepListening
 
     def __init__(self, socket):
@@ -271,9 +269,7 @@ class SocketWriter:
         self.write(export(self.keep_listening(expr), target_format="wxf"))
 
 
-
 def handle_message(socket, evaluate_message, consumer):
-
     __traceback_hidden_variables__ = True
 
     message = binary_deserialize(socket.recv(copy=False).buffer, consumer=consumer)
@@ -284,7 +280,6 @@ def handle_message(socket, evaluate_message, consumer):
 
 
 def start_zmq_instance(port=None, write_to_stdout=True, **opts):
-
     # make a reply socket
     sock = zmq.Context.instance().socket(zmq.PAIR)
     # now bind to a open port on localhost
@@ -304,20 +299,24 @@ def start_zmq_instance(port=None, write_to_stdout=True, **opts):
 def start_zmq_loop(
     message_limit=float("inf"), evaluate_message=evaluate_message, exception_class=None, **opts
 ):
-
     external_object_registry = {}
     session_globals = {}
 
     evaluate_message = partial(
-        evaluate_message, external_object_registry=external_object_registry, globals=session_globals
+        evaluate_message,
+        external_object_registry=external_object_registry,
+        globals=session_globals,
     )
 
-    consumer = WXFNestedObjectConsumer(external_object_registry=external_object_registry, session_globals = session_globals)
+    consumer = WXFNestedObjectConsumer(
+        external_object_registry=external_object_registry, session_globals=session_globals
+    )
 
     handler = to_wl(
         exception_class=exception_class,
         object_processor=partial(
-            object_processor, external_object_registry=external_object_registry,
+            object_processor,
+            external_object_registry=external_object_registry,
         ),
         target_format="wxf",
     )(handle_message)
