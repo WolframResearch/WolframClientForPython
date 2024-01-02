@@ -156,7 +156,7 @@ def EvaluationEnvironment(code, session_globals, constants=None, **extra):
 
 
 def execute_from_string(code, session_globals, **opts):
-    __traceback_hidden_variables__ = ["env", "current", "__traceback_hidden_variables__", "session_globals"]
+    __traceback_hidden_variables__ = True
 
     # this is creating a custom __loader__ that is returning the source code
     # traceback serializers is inspecting global variables and looking for a standard loader that can return source code.
