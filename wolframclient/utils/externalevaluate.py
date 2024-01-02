@@ -85,26 +85,6 @@ else:
 
 
 
-class WXFExternalObjectConsumer(WXFConsumerNumpy):
-    def __init__(self, external_object_registry):
-        self.external_object_registry = external_object_registry
-
-    def consume_function(self, *args, **kwargs):
-        expr = super().consume_function(*args, **kwargs)
-
-        if (
-            isinstance(expr, WLFunction)
-            and isinstance(expr.head, WLSymbol)
-            and (
-                expr.head.name == "ExternalObject"
-                or expr.head.name == "ExternalFunction"
-            )
-        ):
-            session_id = expr.args[0]["ObjectID"]
-
-            return self.external_object_registry[session_id]
-
-        return expr
 
 
 def _serialize_external_object_meta(o):
@@ -183,10 +163,6 @@ def EvaluationEnvironment(code, session_data={}, constants=None, **extra):
     return session_data
 
 
-def execute_from_file(path, *args, **opts):
-    with open(path, "r") as f:
-        return execute_from_string(force_text(f.read()), *args, **opts)
-
 
 def execute_from_string(code, globals, **opts):
 
@@ -224,20 +200,6 @@ def execute_from_string(code, globals, **opts):
         return env[last_expr.name]
 
 
-class SocketWriter:
-
-    keep_listening = wl.ExternalEvaluate.Private.ExternalEvaluateKeepListening
-
-    def __init__(self, socket):
-        self.socket = socket
-
-    def write(self, bytes):
-        self.socket.send(zmq.Frame(bytes))
-
-    def send_side_effect(self, expr):
-        self.write(export(self.keep_listening(expr), target_format="wxf"))
-
-
 def evaluate_message(input=None, return_type=None, args=None, **opts):
 
     __traceback_hidden_variables__ = True
@@ -257,6 +219,48 @@ def evaluate_message(input=None, return_type=None, args=None, **opts):
         result = force_text(repr(result))
 
     return result
+
+
+dispatch_routes = {'command': evaluate_message}
+
+def dispatch_wl_object(name, opts, **extra):
+    return dispatch_routes[name](**opts, **extra)
+
+class WXFNestedObjectConsumer(WXFConsumerNumpy):
+
+    hook_symbol = wl.ExternalEvaluate.Private.ExternalEvaluateCommand
+
+    def __init__(self, external_object_registry, session_globals):
+        self.external_object_registry = external_object_registry
+        self.session_globals = session_globals
+
+    def consume_function(self, *args, **kwargs):
+        expr = super().consume_function(*args, **kwargs)
+
+        if (
+            isinstance(expr, WLFunction)
+            and isinstance(expr.head, WLSymbol)
+            and expr.head == self.hook_symbol
+        ):
+            assert len(expr.args) == 2
+            return dispatch_wl_object(*expr.args, globals = self.session_globals, external_object_registry = self.external_object_registry)
+
+        return expr
+
+
+class SocketWriter:
+
+    keep_listening = wl.ExternalEvaluate.Private.ExternalEvaluateKeepListening
+
+    def __init__(self, socket):
+        self.socket = socket
+
+    def write(self, bytes):
+        self.socket.send(zmq.Frame(bytes))
+
+    def send_side_effect(self, expr):
+        self.write(export(self.keep_listening(expr), target_format="wxf"))
+
 
 
 def handle_message(socket, evaluate_message, consumer):
@@ -293,16 +297,18 @@ def start_zmq_loop(
 ):
 
     external_object_registry = {}
+    session_globals = {}
+
     evaluate_message = partial(
-        evaluate_message, external_object_registry=external_object_registry, globals={}
+        evaluate_message, external_object_registry=external_object_registry, globals=session_globals
     )
 
-    consumer = WXFExternalObjectConsumer(external_object_registry)
+    consumer = WXFNestedObjectConsumer(external_object_registry=external_object_registry, session_globals = session_globals)
 
     handler = to_wl(
         exception_class=exception_class,
         object_processor=partial(
-            object_processor, external_object_registry=external_object_registry
+            object_processor, external_object_registry=external_object_registry, session_globals = session_globals
         ),
         target_format="wxf",
     )(handle_message)
