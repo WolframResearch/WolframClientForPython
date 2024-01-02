@@ -191,7 +191,12 @@ def execute_from_string(code, globals, **opts):
 
 
 def execute_from_id(input, external_object_registry, **opts):
-    return external_object_registry[input]
+    __traceback_hidden_variables__ = True
+    
+    try:
+        return external_object_registry[input]
+    except KeyError:
+        raise KeyError('Object with id %s cannot be found in this session' % input)
 
 
 def evaluate_message(input=None, return_type=None, args=None, run_functions=True, **opts):
