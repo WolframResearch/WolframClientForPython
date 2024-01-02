@@ -199,6 +199,8 @@ def execute_from_string(code, globals, **opts):
     elif isinstance(last_expr, (ast.FunctionDef, ast.ClassDef)):
         return env[last_expr.name]
 
+def execute_from_id(input, external_object_registry, **opts):
+    return external_object_registry[input]
 
 def evaluate_message(input=None, return_type=None, args=None, **opts):
 
@@ -208,6 +210,10 @@ def evaluate_message(input=None, return_type=None, args=None, **opts):
 
     if isinstance(input, six.string_types):
         result = execute_from_string(input, **opts)
+    elif isinstance(input, six.integer_types):
+        result = execute_from_id(input, **opts)
+    else:
+        raise NotImplementedError(input)
 
     if isinstance(args, (list, tuple)):
         # then we have a function call to do
@@ -308,7 +314,7 @@ def start_zmq_loop(
     handler = to_wl(
         exception_class=exception_class,
         object_processor=partial(
-            object_processor, external_object_registry=external_object_registry, session_globals = session_globals
+            object_processor, external_object_registry=external_object_registry,
         ),
         target_format="wxf",
     )(handle_message)
