@@ -146,22 +146,22 @@ else:
         return ast.Module(code)
 
 
-def EvaluationEnvironment(code, session_data={}, constants=None, **extra):
-    session_data["__loader__"] = Settings(get_source=lambda module, code=code: code)
-    session_data["__traceback_hidden_variables__"] = HIDDEN_VARIABLES
+def EvaluationEnvironment(code, session_globals, constants=None, **extra):
+    session_globals["__loader__"] = Settings(get_source=lambda module, code=code: code)
+    session_globals["__traceback_hidden_variables__"] = HIDDEN_VARIABLES
     if constants:
-        session_data.update(constants)
+        session_globals.update(constants)
 
-    return session_data
+    return session_globals
 
 
-def execute_from_string(code, globals, **opts):
-    __traceback_hidden_variables__ = ["env", "current", "__traceback_hidden_variables__", "globals"]
+def execute_from_string(code, session_globals, **opts):
+    __traceback_hidden_variables__ = ["env", "current", "__traceback_hidden_variables__", "session_globals"]
 
     # this is creating a custom __loader__ that is returning the source code
     # traceback serializers is inspecting global variables and looking for a standard loader that can return source code.
 
-    env = EvaluationEnvironment(code=code, **opts)
+    env = EvaluationEnvironment(code=code, session_globals = session_globals, **opts)
     result = None
     expressions = list(
         compile(
@@ -254,7 +254,7 @@ class WXFNestedObjectConsumer(WXFConsumerNumpy):
             assert len(expr.args) == 2
             return dispatch_wl_object(
                 *expr.args,
-                globals=self.session_globals,
+                session_globals=self.session_globals,
                 external_object_registry=self.external_object_registry
             )
 
@@ -310,7 +310,7 @@ def start_zmq_loop(
     evaluate_message = partial(
         evaluate_message,
         external_object_registry=external_object_registry,
-        globals=session_globals,
+        session_globals=session_globals,
     )
 
     consumer = WXFNestedObjectConsumer(
