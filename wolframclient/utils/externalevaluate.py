@@ -202,7 +202,7 @@ def execute_from_string(code, globals, **opts):
 def execute_from_id(input, external_object_registry, **opts):
     return external_object_registry[input]
 
-def evaluate_message(input=None, return_type=None, args=None, **opts):
+def evaluate_message(input=None, return_type=None, args=None, run_functions = True, **opts):
 
     __traceback_hidden_variables__ = True
 
@@ -218,7 +218,10 @@ def evaluate_message(input=None, return_type=None, args=None, **opts):
     if isinstance(args, (list, tuple)):
         # then we have a function call to do
         # first get the function object we need to call
-        result = result(*args)
+        if run_functions:
+            result = result(*args)
+        else:
+            result = partial(result, *args)
 
     if return_type == "string":
         # bug 354267 repr returns a 'str' even on py2 (i.e. bytes).
@@ -227,7 +230,7 @@ def evaluate_message(input=None, return_type=None, args=None, **opts):
     return result
 
 
-dispatch_routes = {'command': evaluate_message}
+dispatch_routes = {'command': evaluate_message, 'function': partial(evaluate_message, run_functions = False)}
 
 def dispatch_wl_object(name, opts, **extra):
     return dispatch_routes[name](**opts, **extra)
