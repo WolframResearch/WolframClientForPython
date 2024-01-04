@@ -2,6 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import decimal
 import re
+import math
 
 from wolframclient.exception import WolframParserException
 from wolframclient.language.expression import WLFunction, WLSymbol
@@ -135,6 +136,7 @@ class WXFConsumer(object):
     BUILTIN_SYMBOL = {
         "True": True,
         "False": False,
+        "None": None,
         "Null": None,
         "Indeterminate": float("NaN"),
     }
