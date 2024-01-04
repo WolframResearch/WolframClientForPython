@@ -109,6 +109,8 @@ def _serialize_external_object_meta(o):
     yield "IsMethod", inspect.ismethod(o),
     yield "IsCallable", callable(o),
 
+    yield "Repr", repr(o)
+
 
 def object_processor(serializer, instance, external_object_registry):
     pk = id(instance)
@@ -199,7 +201,7 @@ def execute_from_id(input, external_object_registry, **opts):
         raise KeyError('Object with id %s cannot be found in this session' % input)
 
 
-def evaluate_message(input=None, return_type=None, args=None, run_functions=True, **opts):
+def evaluate_message(input=None, return_type=None, args=None, call=False, **opts):
     __traceback_hidden_variables__ = True
 
     result = None
@@ -214,7 +216,7 @@ def evaluate_message(input=None, return_type=None, args=None, run_functions=True
     if isinstance(args, (list, tuple)):
         # then we have a function call to do
         # first get the function object we need to call
-        if run_functions:
+        if call:
             result = result(*args)
         else:
             result = partial(result, *args)
@@ -226,22 +228,19 @@ def evaluate_message(input=None, return_type=None, args=None, run_functions=True
     return result
 
 
-dispatch_routes = {
-    "command": evaluate_message,
-    "function": partial(evaluate_message, run_functions=False),
-}
 
 
-def dispatch_wl_object(name, opts, **extra):
+def dispatch_wl_object(name, opts, dispatch_routes, **extra):
     return dispatch_routes[name](**opts, **extra)
 
 
 class WXFNestedObjectConsumer(WXFConsumerNumpy):
     hook_symbol = wl.ExternalEvaluate.Private.ExternalEvaluateCommand
 
-    def __init__(self, external_object_registry, session_globals):
+    def __init__(self, external_object_registry, session_globals, dispatch_routes):
         self.external_object_registry = external_object_registry
         self.session_globals = session_globals
+        self.dispatch_routes = dispatch_routes
 
     def consume_function(self, *args, **kwargs):
         expr = super().consume_function(*args, **kwargs)
@@ -254,6 +253,7 @@ class WXFNestedObjectConsumer(WXFConsumerNumpy):
             assert len(expr.args) == 2
             return dispatch_wl_object(
                 *expr.args,
+                dispatch_routes = self.dispatch_routes,
                 session_globals=self.session_globals,
                 external_object_registry=self.external_object_registry
             )
@@ -274,11 +274,10 @@ class SocketWriter:
         self.write(export(self.keep_listening(expr), target_format="wxf"))
 
 
-def handle_message(socket, evaluate_message, consumer):
+def handle_message(socket, consumer):
     __traceback_hidden_variables__ = True
 
-    message = binary_deserialize(socket.recv(copy=False).buffer, consumer=consumer)
-    result = evaluate_message(**message)
+    result = binary_deserialize(socket.recv(copy=False).buffer, consumer=consumer)
 
     sys.stdout.flush()
     return result
@@ -302,19 +301,18 @@ def start_zmq_instance(port=None, write_to_stdout=True, **opts):
 
 
 def start_zmq_loop(
-    message_limit=float("inf"), evaluate_message=evaluate_message, exception_class=None, **opts
+    message_limit=float("inf"), exception_class=None, evaluate_message = evaluate_message, **opts
 ):
+
+
     external_object_registry = {}
     session_globals = {}
 
-    evaluate_message = partial(
-        evaluate_message,
-        external_object_registry=external_object_registry,
-        session_globals=session_globals,
-    )
 
     consumer = WXFNestedObjectConsumer(
-        external_object_registry=external_object_registry, session_globals=session_globals
+        external_object_registry=external_object_registry, 
+        session_globals=session_globals,
+        dispatch_routes={'command': evaluate_message}
     )
 
     handler = to_wl(
@@ -337,5 +335,5 @@ def start_zmq_loop(
 
     # now sit in a while loop, evaluating input
     while messages < message_limit:
-        stream.write(handler(socket, evaluate_message=evaluate_message, consumer=consumer))
+        stream.write(handler(socket, consumer=consumer))
         messages += 1
