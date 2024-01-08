@@ -112,6 +112,17 @@ def _serialize_external_object_meta(o):
     yield "Repr", repr(o)
 
 
+def to_external_object(instance, external_object_registry):
+    pk = id(instance)
+    external_object_registry[pk] = instance
+
+    cmd = {"Command": id(instance)}
+    meta = dict(_serialize_external_object_meta(instance))
+    func = callable(instance) and wl.ExternalFunction or wl.ExternalObject
+
+    return func(wl.Inherited, cmd, meta)
+
+
 def object_processor(serializer, instance, external_object_registry):
     pk = id(instance)
     external_object_registry[pk] = instance
@@ -163,7 +174,7 @@ def execute_from_string(code, session_globals, **opts):
     # this is creating a custom __loader__ that is returning the source code
     # traceback serializers is inspecting global variables and looking for a standard loader that can return source code.
 
-    env = EvaluationEnvironment(code=code, session_globals = session_globals, **opts)
+    env = EvaluationEnvironment(code=code, session_globals=session_globals, **opts)
     result = None
     expressions = list(
         compile(
@@ -198,10 +209,12 @@ def execute_from_id(input, external_object_registry, **opts):
     try:
         return external_object_registry[input]
     except KeyError:
-        raise KeyError('Object with id %s cannot be found in this session' % input)
+        raise KeyError("Object with id %s cannot be found in this session" % input)
 
 
-def evaluate_message(input=None, return_type=None, args=None, call=False, **opts):
+def evaluate_message(
+    external_object_registry, input=None, return_type=None, args=None, call=False, **opts
+):
     __traceback_hidden_variables__ = True
 
     result = None
@@ -224,10 +237,12 @@ def evaluate_message(input=None, return_type=None, args=None, call=False, **opts
     if return_type == "string":
         # bug 354267 repr returns a 'str' even on py2 (i.e. bytes).
         result = force_text(repr(result))
+    elif return_type == "externalobject":
+        result = to_external_object(result, external_object_registry)
+    elif return_type != "expression":
+        raise NotImplementedError("Return type %s is not implemented" % return_type)
 
     return result
-
-
 
 
 def dispatch_wl_object(name, opts, dispatch_routes, **extra):
@@ -253,7 +268,7 @@ class WXFNestedObjectConsumer(WXFConsumerNumpy):
             assert len(expr.args) == 2
             return dispatch_wl_object(
                 *expr.args,
-                dispatch_routes = self.dispatch_routes,
+                dispatch_routes=self.dispatch_routes,
                 session_globals=self.session_globals,
                 external_object_registry=self.external_object_registry
             )
@@ -301,25 +316,21 @@ def start_zmq_instance(port=None, write_to_stdout=True, **opts):
 
 
 def start_zmq_loop(
-    message_limit=float("inf"), exception_class=None, evaluate_message = evaluate_message, **opts
+    message_limit=float("inf"), exception_class=None, evaluate_message=evaluate_message, **opts
 ):
-
-
     external_object_registry = {}
     session_globals = {}
 
-
     consumer = WXFNestedObjectConsumer(
-        external_object_registry=external_object_registry, 
+        external_object_registry=external_object_registry,
         session_globals=session_globals,
-        dispatch_routes={'command': evaluate_message}
+        dispatch_routes={"command": evaluate_message},
     )
 
     handler = to_wl(
         exception_class=exception_class,
-        object_processor=partial(
-            object_processor,
-            external_object_registry=external_object_registry,
+        object_processor=lambda serializer, instance, external_object_registry=external_object_registry: serializer.encode(
+            to_external_object(instance, external_object_registry)
         ),
         target_format="wxf",
     )(handle_message)
