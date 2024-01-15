@@ -168,7 +168,7 @@ def EvaluationEnvironment(code, session_globals, constants=None, **extra):
     return session_globals
 
 
-def execute_from_string(code, session_globals, **opts):
+def execute_eval(code, session_globals, **opts):
     __traceback_hidden_variables__ = True
 
     # this is creating a custom __loader__ that is returning the source code
@@ -212,50 +212,51 @@ def execute_from_id(input, external_object_registry, **opts):
         raise KeyError("Object with id %s cannot be found in this session" % input)
 
 
-def evaluate_message(
-    external_object_registry, input=None, return_type=None, args=None, call=False, **opts
-):
-    __traceback_hidden_variables__ = True
 
-    result = None
+def execute_set(name, value, external_object_registry, **extra):
 
-    if isinstance(input, six.string_types):
-        result = execute_from_string(input, **opts)
-    elif isinstance(input, six.integer_types):
-        result = execute_from_id(input, **opts)
-    else:
-        raise NotImplementedError(input)
+    assert isinstance(name, six.string_types)
 
-    if isinstance(args, (list, tuple)):
-        # then we have a function call to do
-        # first get the function object we need to call
-        if call:
-            result = result(*args)
-        else:
-            result = partial(result, *args)
+    external_object_registry[name] = value
 
-    if return_type == "string":
+    return value
+
+def execute_effect(*args, **extra):
+    return last(args)
+
+def execute_call(result, args, **extra):
+    return result(*args)
+
+def execute_return_rype(result, return_type, **extra):
+    if return_type == "String":
         # bug 354267 repr returns a 'str' even on py2 (i.e. bytes).
-        result = force_text(repr(result))
-    elif return_type == "externalobject":
-        result = to_external_object(result, external_object_registry)
-    elif return_type != "expression":
+        return force_text(repr(result))
+    elif return_type == "ExternalObject":
+        return to_external_object(result, external_object_registry)
+    elif return_type != "Expression":
         raise NotImplementedError("Return type %s is not implemented" % return_type)
 
     return result
 
-
-def dispatch_wl_object(name, opts, dispatch_routes, **extra):
-    return dispatch_routes[name](**opts, **extra)
+def dispatch_wl_object(name, args, dispatch_routes, **extra):
+    return dispatch_routes[name](*args, **extra)
 
 
 class WXFNestedObjectConsumer(WXFConsumerNumpy):
     hook_symbol = wl.ExternalEvaluate.Private.ExternalEvaluateCommand
 
+    builtin_routes = {
+        'Set': execute_set,
+        'Effect': execute_effect,
+        'Eval': execute_eval,
+        'Call': execute_call,
+        'ReturnType': execute_return_rype
+    }
+
     def __init__(self, external_object_registry, session_globals, dispatch_routes):
         self.external_object_registry = external_object_registry
         self.session_globals = session_globals
-        self.dispatch_routes = dispatch_routes
+        self.dispatch_routes = dict(dispatch_routes, **self.builtin_routes)
 
     def consume_function(self, *args, **kwargs):
         expr = super().consume_function(*args, **kwargs)
@@ -316,7 +317,7 @@ def start_zmq_instance(port=None, write_to_stdout=True, **opts):
 
 
 def start_zmq_loop(
-    message_limit=float("inf"), exception_class=None, evaluate_message=evaluate_message, **opts
+    message_limit=float("inf"), exception_class=None, evaluate_message=execute_eval, **opts
 ):
     external_object_registry = {}
     session_globals = {}
@@ -324,7 +325,7 @@ def start_zmq_loop(
     consumer = WXFNestedObjectConsumer(
         external_object_registry=external_object_registry,
         session_globals=session_globals,
-        dispatch_routes={"command": evaluate_message},
+        dispatch_routes={"Eval": evaluate_message},
     )
 
     handler = to_wl(
