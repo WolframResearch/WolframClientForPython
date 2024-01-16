@@ -219,6 +219,10 @@ def execute_effect(*args, **extra):
 def execute_call(result, *args, **extra):
     return result(*args)
 
+def execute_curry(result, *args, **extra):
+    return partial(*args)
+
+
 def execute_return_rype(result, return_type, **extra):
     if return_type == "String":
         # bug 354267 repr returns a 'str' even on py2 (i.e. bytes).
@@ -253,6 +257,7 @@ class WXFNestedObjectConsumer(WXFConsumerNumpy):
         'Effect': execute_effect,
         'Eval': execute_eval,
         'Call': execute_call,
+        'Curry': execute_curry,
         'GetAttribute': execute_getattr,
         'GetItem': execute_getitem,
         'ReturnType': execute_return_rype,
