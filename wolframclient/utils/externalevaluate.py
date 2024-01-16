@@ -221,7 +221,7 @@ def execute_call(result, *args, **extra):
 
 
 def execute_curry(result, *args, **extra):
-    return partial(*args)
+    return partial(result, *args)
 
 
 def execute_return_rype(result, return_type, **extra):
