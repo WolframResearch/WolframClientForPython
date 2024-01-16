@@ -116,22 +116,14 @@ def to_external_object(instance, external_object_registry):
     pk = id(instance)
     external_object_registry[pk] = instance
 
-    cmd = {"Command": id(instance)}
     meta = dict(_serialize_external_object_meta(instance))
     func = callable(instance) and wl.ExternalFunction or wl.ExternalObject
 
-    return func(wl.Inherited, cmd, meta)
+    return func(wl.Inherited, pk, meta)
 
 
 def object_processor(serializer, instance, external_object_registry):
-    pk = id(instance)
-    external_object_registry[pk] = instance
-
-    cmd = {"Command": id(instance)}
-    meta = dict(_serialize_external_object_meta(instance))
-    func = callable(instance) and wl.ExternalFunction or wl.ExternalObject
-
-    return serializer.encode(func(wl.Inherited, cmd, meta))
+    return serializer.encode(to_external_object(instance, external_object_registry))
 
 
 HIDDEN_VARIABLES = (
@@ -203,7 +195,7 @@ def execute_eval(code, session_globals, **opts):
         return env[last_expr.name]
 
 
-def execute_from_id(input, external_object_registry, **opts):
+def execute_fetch(input, external_object_registry, **opts):
     __traceback_hidden_variables__ = True
 
     try:
@@ -213,18 +205,18 @@ def execute_from_id(input, external_object_registry, **opts):
 
 
 
-def execute_set(name, value, external_object_registry, **extra):
+def execute_set(name, value, session_globals, **extra):
 
     assert isinstance(name, six.string_types)
 
-    external_object_registry[name] = value
+    session_globals[name] = value
 
     return value
 
 def execute_effect(*args, **extra):
     return last(args)
 
-def execute_call(result, args, **extra):
+def execute_call(result, *args, **extra):
     return result(*args)
 
 def execute_return_rype(result, return_type, **extra):
@@ -238,7 +230,18 @@ def execute_return_rype(result, return_type, **extra):
 
     return result
 
-def dispatch_wl_object(name, args, dispatch_routes, **extra):
+def execute_getattr(result, *args, **opts):
+    for arg in args:
+        result = getattr(result, arg)
+    return result
+
+def execute_getitem(result, *args, **opts):
+    for arg in args:
+        result = result[arg]
+    return result
+
+
+def dispatch_wl_object(name, *args, dispatch_routes, **extra):
     return dispatch_routes[name](*args, **extra)
 
 
@@ -250,7 +253,10 @@ class WXFNestedObjectConsumer(WXFConsumerNumpy):
         'Effect': execute_effect,
         'Eval': execute_eval,
         'Call': execute_call,
-        'ReturnType': execute_return_rype
+        'GetAttribute': execute_getattr,
+        'GetItem': execute_getitem,
+        'ReturnType': execute_return_rype,
+        'Fetch': execute_fetch
     }
 
     def __init__(self, external_object_registry, session_globals, dispatch_routes):
@@ -266,7 +272,7 @@ class WXFNestedObjectConsumer(WXFConsumerNumpy):
             and isinstance(expr.head, WLSymbol)
             and expr.head == self.hook_symbol
         ):
-            assert len(expr.args) == 2
+            assert len(expr.args) >= 1
             return dispatch_wl_object(
                 *expr.args,
                 dispatch_routes=self.dispatch_routes,
