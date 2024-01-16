@@ -204,20 +204,21 @@ def execute_fetch(input, external_object_registry, **opts):
         raise KeyError("Object with id %s cannot be found in this session" % input)
 
 
-
 def execute_set(name, value, session_globals, **extra):
-
     assert isinstance(name, six.string_types)
 
     session_globals[name] = value
 
     return value
 
+
 def execute_effect(*args, **extra):
     return last(args)
 
+
 def execute_call(result, *args, **extra):
     return result(*args)
+
 
 def execute_curry(result, *args, **extra):
     return partial(*args)
@@ -234,10 +235,12 @@ def execute_return_rype(result, return_type, **extra):
 
     return result
 
+
 def execute_getattr(result, *args, **opts):
     for arg in args:
         result = getattr(result, arg)
     return result
+
 
 def execute_getitem(result, *args, **opts):
     for arg in args:
@@ -253,15 +256,15 @@ class WXFNestedObjectConsumer(WXFConsumerNumpy):
     hook_symbol = wl.ExternalEvaluate.Private.ExternalEvaluateCommand
 
     builtin_routes = {
-        'Set': execute_set,
-        'Effect': execute_effect,
-        'Eval': execute_eval,
-        'Call': execute_call,
-        'Curry': execute_curry,
-        'GetAttribute': execute_getattr,
-        'GetItem': execute_getitem,
-        'ReturnType': execute_return_rype,
-        'Fetch': execute_fetch
+        "Set": execute_set,
+        "Effect": execute_effect,
+        "Eval": execute_eval,
+        "Call": execute_call,
+        "Curry": execute_curry,
+        "GetAttribute": execute_getattr,
+        "GetItem": execute_getitem,
+        "ReturnType": execute_return_rype,
+        "Fetch": execute_fetch,
     }
 
     def __init__(self, external_object_registry, session_globals, dispatch_routes):
