@@ -224,7 +224,7 @@ def execute_curry(result, *args, **extra):
     return partial(result, *args)
 
 
-def execute_return_rype(result, return_type, **extra):
+def execute_return_rype(result, return_type, external_object_registry, **extra):
     if return_type == "String":
         # bug 354267 repr returns a 'str' even on py2 (i.e. bytes).
         return force_text(repr(result))
@@ -248,7 +248,7 @@ def execute_getitem(result, *args, **opts):
     return result
 
 
-def dispatch_wl_object(name, *args, dispatch_routes, **extra):
+def dispatch_wl_object(name, args, dispatch_routes, **extra):
     return dispatch_routes[name](*args, **extra)
 
 
@@ -280,7 +280,7 @@ class WXFNestedObjectConsumer(WXFConsumerNumpy):
             and isinstance(expr.head, WLSymbol)
             and expr.head == self.hook_symbol
         ):
-            assert len(expr.args) >= 1
+            assert len(expr.args) ==2
             return dispatch_wl_object(
                 *expr.args,
                 dispatch_routes=self.dispatch_routes,
