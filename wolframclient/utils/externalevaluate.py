@@ -116,7 +116,8 @@ def to_external_object(instance, external_object_registry):
     pk = id(instance)
     external_object_registry[pk] = instance
 
-    meta = dict(_serialize_external_object_meta(instance))
+    #meta = dict(_serialize_external_object_meta(instance))
+    meta = {}
     func = callable(instance) and wl.ExternalFunction or wl.ExternalObject
 
     return func(wl.Inherited, pk, meta)
@@ -204,10 +205,11 @@ def execute_fetch(input, external_object_registry, **opts):
         raise KeyError("Object with id %s cannot be found in this session" % input)
 
 
-def execute_set(name, value, session_globals, **extra):
-    assert isinstance(name, six.string_types)
+def execute_set(value, *names, session_globals, **extra):
 
-    session_globals[name] = value
+    for name in names:
+        assert isinstance(name, six.string_types)
+        session_globals[name] = value
 
     return value
 
@@ -334,11 +336,10 @@ def start_zmq_loop(
     message_limit=float("inf"), exception_class=None, evaluate_message=execute_eval, **opts
 ):
     external_object_registry = {}
-    session_globals = {}
 
     consumer = WXFNestedObjectConsumer(
         external_object_registry=external_object_registry,
-        session_globals=session_globals,
+        session_globals={},
         dispatch_routes={"Eval": evaluate_message},
     )
 
