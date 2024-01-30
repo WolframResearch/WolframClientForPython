@@ -157,16 +157,9 @@ else:
         return ast.Module(code)
 
 
-def EvaluationEnvironment(code, globals_registry, constants=None, **extra):
-    globals_registry["__loader__"] = Settings(get_source=lambda module, code=code: code)
-    globals_registry["__traceback_hidden_variables__"] = DEFAULT_HIDDEN_VARIABLES
-    if constants:
-        globals_registry.update(constants)
-
-    return globals_registry
 
 
-# ROUTES DEFINITION, we declare a global registry and series of functions
+
 
 def check_wl_symbol(expr, symbol):
     return (
@@ -188,6 +181,8 @@ def unpack_optionals(args, symbol = wl.Rule):
 
     return positional, optionals
 
+# ROUTES DEFINITION, we declare a global registry and series of functions
+
 
 BUILTIN_ROUTES = registry()
 
@@ -199,10 +194,16 @@ def register_route(func):
 
 @register_route
 def Eval(consumer, code):
+
+    __traceback_hidden_variables__ = True
+
     # this is creating a custom __loader__ that is returning the source code
     # traceback serializers is inspecting global variables and looking for a standard loader that can return source code.
 
-    env = EvaluationEnvironment(code=code, globals_registry=consumer.globals_registry)
+    env = consumer.globals_registry
+    env["__loader__"] = Settings(get_source=lambda module, code=code: code)
+    env["__traceback_hidden_variables__"] = DEFAULT_HIDDEN_VARIABLES
+
     result = None
     expressions = list(
         compile(
@@ -313,8 +314,12 @@ def SetItem(consumer, result, name, value):
 
 
 @register_route
-def Length(consumer, result):
+def Len(consumer, result):
     return len(result)
+
+@register_route
+def Bool(consumer, result):
+    return bool(result)
 
 
 class ExternalEvaluateConsumer(WXFConsumerNumpy):
