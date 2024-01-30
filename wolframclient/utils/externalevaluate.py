@@ -170,7 +170,16 @@ def EvaluationEnvironment(code, globals_registry, constants=None, **extra):
     return globals_registry
 
 
-def execute_eval(consumer, code):
+# ROUTES DEFINITION, we declare a global registry and series of functions 
+
+BUILTIN_ROUTES = registry()
+
+def route(func):
+    BUILTIN_ROUTES[func.__name__] = func
+    return func
+
+@route
+def Eval(consumer, code):
 
     # this is creating a custom __loader__ that is returning the source code
     # traceback serializers is inspecting global variables and looking for a standard loader that can return source code.
@@ -203,33 +212,39 @@ def execute_eval(consumer, code):
     elif isinstance(last_expr, (ast.FunctionDef, ast.ClassDef)):
         return env[last_expr.name]
 
-
-def execute_fetch(consumer, input):
+@route
+def Fetch(consumer, input):
 
     try:
         return consumer.objects_registry[input]
     except KeyError:
         raise KeyError("Object with id %s cannot be found in this session" % input)
 
-def execute_set(consumer, value, *names):
+@route
+def Set(consumer, value, *names):
     for name in names:
         assert isinstance(name, six.string_types)
         consumer.globals_registry[name] = value
     return value
 
-def execute_effect(consumer, *args):
+@route
+def Effect(consumer, *args):
     return last(args)
 
-
-def execute_call(consumer, result, *args):
+@route
+def Call(consumer, result, *args):
     return result(*args)
 
+@route
+def MethodCall(consumer, result, names, *args):
+    return GetAttribute(consumer, result, names)(*args)
 
-def execute_curry(consumer, result, *args):
+@route
+def Curry(consumer, result, *args):
     return partial(result, *args)
 
-
-def execute_return_rype(consumer, result, return_type):
+@route
+def ReturnType(consumer, result, return_type):
     if return_type == "String":
         # bug 354267 repr returns a 'str' even on py2 (i.e. bytes).
         return force_text(repr(result))
@@ -240,41 +255,41 @@ def execute_return_rype(consumer, result, return_type):
 
     return result
 
-
-def execute_getattr(consumer, result, names):
+@route
+def GetAttribute(consumer, result, names):
     for name in iterate(names):
         result = getattr(result, name)
     return result
 
-
-def execute_getitem(consumer, result, names):
+@route
+def GetItem(consumer, result, names):
     for name in iterate(names):
         result = result[name]
     return result
 
-def execute_methodcall(consumer, result, names, *args):
-    return execute_getattr(consumer, result, names)(*args)
+@route
+def SetAttribute(consumer, result, name, value):
+    setattr(result, name, value)
+    return result
+
+@route
+def SetItem(consumer, result, name, value):
+    result[name] = value
+    return result
 
 
-def dispatch_wl_object(consumer, route, args):
-    return consumer.routes_registry[route](consumer, *args)
+@route
+def Length(consumer, result):
+    return len(result)
+
+
+
 
 
 class ExternalEvaluateConsumer(WXFConsumerNumpy):
     hook_symbol = wl.ExternalEvaluate.Private.ExternalEvaluateCommand
 
-    builtin_routes = {
-        "Set": execute_set,
-        "Effect": execute_effect,
-        "Eval": execute_eval,
-        "Call": execute_call,
-        "Curry": execute_curry,
-        "GetAttribute": execute_getattr,
-        "MethodCall": execute_methodcall,
-        "GetItem": execute_getitem,
-        "ReturnType": execute_return_rype,
-        "Fetch": execute_fetch,
-    }
+    builtin_routes = BUILTIN_ROUTES
 
     def __init__(self, objects_registry, globals_registry, routes_registry):
         self.objects_registry = objects_registry
@@ -290,12 +305,15 @@ class ExternalEvaluateConsumer(WXFConsumerNumpy):
             and expr.head == self.hook_symbol
         ):
             assert len(expr.args) ==2
-            return dispatch_wl_object(
-                self,
+            return self.dispatch_wl_object(
                 *expr.args,
             )
 
         return expr
+
+    def dispatch_wl_object(self, route, args):
+        return self.routes_registry[route](self, *args)
+
 
     def __repr__(self):
         return '<%s globals=%s objects=%s>' % (
@@ -345,20 +363,19 @@ def start_zmq_instance(port=None, write_to_stdout=True, **opts):
 
 
 def start_zmq_loop(
-    message_limit=float("inf"), exception_class=None, evaluate_message=execute_eval, **opts
+    message_limit=float("inf"), exception_class=None, evaluate_message=None, **opts
 ):
-    objects_registry = registry()
 
     consumer = ExternalEvaluateConsumer(
-        objects_registry=objects_registry,
+        objects_registry=registry(),
         globals_registry=registry(),
-        routes_registry={"Eval": evaluate_message},
+        routes_registry=evaluate_message and {"Eval": evaluate_message} or {},
     )
 
     handler = to_wl(
         exception_class=exception_class,
-        object_processor=lambda serializer, instance, objects_registry=objects_registry: serializer.encode(
-            to_external_object(instance, objects_registry)
+        object_processor=lambda serializer, instance: serializer.encode(
+            to_external_object(instance, consumer.objects_registry)
         ),
         target_format="wxf",
     )(handle_message)
