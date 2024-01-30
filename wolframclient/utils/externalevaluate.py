@@ -262,7 +262,7 @@ def Call(consumer, result, *args):
 
 @register_route
 def MethodCall(consumer, result, names, *args):
-    return GetAttribute(consumer, result, names)(*args)
+    return Call(consumer, GetAttribute(consumer, result, names), *args)
 
 
 @register_route
