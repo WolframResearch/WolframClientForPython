@@ -17,8 +17,8 @@ from wolframclient.utils import six
 from wolframclient.utils.api import ast, zmq
 from wolframclient.utils.datastructures import Settings
 from wolframclient.utils.encoding import force_text
-from wolframclient.utils.functional import first, last
-from wolframclient.utils.functional import iterate
+from wolframclient.utils.functional import first, iterate, last
+
 """
 
 The kernel will a WXF input to python.
@@ -56,7 +56,7 @@ extra arguments to initialize the object or function with
 
 ## return_type
 
-the return type of the object creation, 
+the return type of the object creation,
 
 ### expr
 
@@ -80,7 +80,7 @@ elif hasattr(inspect, "getargspec"):
 else:
 
     def inspect_args(f):
-        raise TypeError()
+        raise TypeError
 
 
 DEFAULT_HIDDEN_VARIABLES = (
@@ -92,10 +92,10 @@ DEFAULT_HIDDEN_VARIABLES = (
     "unicode_literals",
 )
 
-class registry(dict):
 
+class registry(dict):
     def __repr__(self):
-        return '<registry len=%s>' % len(self)
+        return "<registry len=%s>" % len(self)
 
 
 def _serialize_external_object_meta(o):
@@ -128,11 +128,10 @@ def _serialize_external_object_meta(o):
 
 
 def to_external_object(instance, objects_registry):
-
     pk = id(instance)
     objects_registry[pk] = instance
 
-    #meta = dict(_serialize_external_object_meta(instance))
+    # meta = dict(_serialize_external_object_meta(instance))
     meta = {}
     func = callable(instance) and wl.ExternalFunction or wl.ExternalObject
 
@@ -140,10 +139,7 @@ def to_external_object(instance, objects_registry):
 
 
 def object_processor(serializer, instance, objects_registry):
-
     return serializer.encode(to_external_object(instance, objects_registry))
-
-
 
 
 if six.PY_38:
@@ -170,17 +166,18 @@ def EvaluationEnvironment(code, globals_registry, constants=None, **extra):
     return globals_registry
 
 
-# ROUTES DEFINITION, we declare a global registry and series of functions 
+# ROUTES DEFINITION, we declare a global registry and series of functions
 
 BUILTIN_ROUTES = registry()
+
 
 def route(func):
     BUILTIN_ROUTES[func.__name__] = func
     return func
 
+
 @route
 def Eval(consumer, code):
-
     # this is creating a custom __loader__ that is returning the source code
     # traceback serializers is inspecting global variables and looking for a standard loader that can return source code.
 
@@ -212,13 +209,14 @@ def Eval(consumer, code):
     elif isinstance(last_expr, (ast.FunctionDef, ast.ClassDef)):
         return env[last_expr.name]
 
+
 @route
 def Fetch(consumer, input):
-
     try:
         return consumer.objects_registry[input]
     except KeyError:
         raise KeyError("Object with id %s cannot be found in this session" % input)
+
 
 @route
 def Set(consumer, value, *names):
@@ -227,21 +225,26 @@ def Set(consumer, value, *names):
         consumer.globals_registry[name] = value
     return value
 
+
 @route
 def Effect(consumer, *args):
     return last(args)
+
 
 @route
 def Call(consumer, result, *args):
     return result(*args)
 
+
 @route
 def MethodCall(consumer, result, names, *args):
     return GetAttribute(consumer, result, names)(*args)
 
+
 @route
 def Curry(consumer, result, *args):
     return partial(result, *args)
+
 
 @route
 def ReturnType(consumer, result, return_type):
@@ -255,11 +258,13 @@ def ReturnType(consumer, result, return_type):
 
     return result
 
+
 @route
 def GetAttribute(consumer, result, names):
     for name in iterate(names):
         result = getattr(result, name)
     return result
+
 
 @route
 def GetItem(consumer, result, names):
@@ -267,10 +272,12 @@ def GetItem(consumer, result, names):
         result = result[name]
     return result
 
+
 @route
 def SetAttribute(consumer, result, name, value):
     setattr(result, name, value)
     return result
+
 
 @route
 def SetItem(consumer, result, name, value):
@@ -283,17 +290,14 @@ def Length(consumer, result):
     return len(result)
 
 
-
-
-
 class ExternalEvaluateConsumer(WXFConsumerNumpy):
     hook_symbol = wl.ExternalEvaluate.Private.ExternalEvaluateCommand
 
     builtin_routes = BUILTIN_ROUTES
 
-    def __init__(self, objects_registry, globals_registry, routes_registry):
-        self.objects_registry = objects_registry
-        self.globals_registry = globals_registry
+    def __init__(self, routes_registry={}):
+        self.objects_registry = registry()
+        self.globals_registry = registry()
         self.routes_registry = registry(routes_registry, **self.builtin_routes)
 
     def consume_function(self, *args, **kwargs):
@@ -304,22 +308,17 @@ class ExternalEvaluateConsumer(WXFConsumerNumpy):
             and isinstance(expr.head, WLSymbol)
             and expr.head == self.hook_symbol
         ):
-            assert len(expr.args) ==2
-            return self.dispatch_wl_object(
-                *expr.args,
-            )
+            assert len(expr.args) == 2
+            return self.dispatch_wl_object(*expr.args)
 
         return expr
 
     def dispatch_wl_object(self, route, args):
         return self.routes_registry[route](self, *args)
 
-
     def __repr__(self):
-        return '<%s globals=%s objects=%s>' % (
-            self.__class__.__name__,
-            len(self.globals_registry),
-            len(self.objects_registry)
+        return "<{} globals={} objects={}>".format(
+            self.__class__.__name__, len(self.globals_registry), len(self.objects_registry)
         )
 
 
@@ -337,8 +336,6 @@ class SocketWriter:
 
 
 def handle_message(socket, consumer):
-    __traceback_hidden_variables__ = True
-
     result = binary_deserialize(socket.recv(copy=False).buffer, consumer=consumer)
 
     sys.stdout.flush()
@@ -365,11 +362,8 @@ def start_zmq_instance(port=None, write_to_stdout=True, **opts):
 def start_zmq_loop(
     message_limit=float("inf"), exception_class=None, evaluate_message=None, **opts
 ):
-
     consumer = ExternalEvaluateConsumer(
-        objects_registry=registry(),
-        globals_registry=registry(),
-        routes_registry=evaluate_message and {"Eval": evaluate_message} or {},
+        routes_registry=evaluate_message and {"Eval": evaluate_message} or {}
     )
 
     handler = to_wl(
