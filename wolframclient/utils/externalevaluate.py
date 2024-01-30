@@ -18,7 +18,7 @@ from wolframclient.utils.api import ast, zmq
 from wolframclient.utils.datastructures import Settings
 from wolframclient.utils.encoding import force_text
 from wolframclient.utils.functional import first, last
-
+from wolframclient.utils.functional import iterate
 """
 
 The kernel will a WXF input to python.
@@ -83,6 +83,21 @@ else:
         raise TypeError()
 
 
+DEFAULT_HIDDEN_VARIABLES = (
+    "__loader__",
+    "__builtins__",
+    "__traceback_hidden_variables__",
+    "absolute_import",
+    "print_function",
+    "unicode_literals",
+)
+
+class registry(dict):
+
+    def __repr__(self):
+        return '<registry len=%s>' % len(self)
+
+
 def _serialize_external_object_meta(o):
     if callable(o):
         yield "Type", "PythonFunction"
@@ -112,9 +127,10 @@ def _serialize_external_object_meta(o):
     yield "Repr", repr(o)
 
 
-def to_external_object(instance, external_object_registry):
+def to_external_object(instance, objects_registry):
+
     pk = id(instance)
-    external_object_registry[pk] = instance
+    objects_registry[pk] = instance
 
     #meta = dict(_serialize_external_object_meta(instance))
     meta = {}
@@ -123,18 +139,11 @@ def to_external_object(instance, external_object_registry):
     return func(wl.Inherited, pk, meta)
 
 
-def object_processor(serializer, instance, external_object_registry):
-    return serializer.encode(to_external_object(instance, external_object_registry))
+def object_processor(serializer, instance, objects_registry):
+
+    return serializer.encode(to_external_object(instance, objects_registry))
 
 
-HIDDEN_VARIABLES = (
-    "__loader__",
-    "__builtins__",
-    "__traceback_hidden_variables__",
-    "absolute_import",
-    "print_function",
-    "unicode_literals",
-)
 
 
 if six.PY_38:
@@ -152,22 +161,21 @@ else:
         return ast.Module(code)
 
 
-def EvaluationEnvironment(code, session_globals, constants=None, **extra):
-    session_globals["__loader__"] = Settings(get_source=lambda module, code=code: code)
-    session_globals["__traceback_hidden_variables__"] = HIDDEN_VARIABLES
+def EvaluationEnvironment(code, globals_registry, constants=None, **extra):
+    globals_registry["__loader__"] = Settings(get_source=lambda module, code=code: code)
+    globals_registry["__traceback_hidden_variables__"] = DEFAULT_HIDDEN_VARIABLES
     if constants:
-        session_globals.update(constants)
+        globals_registry.update(constants)
 
-    return session_globals
+    return globals_registry
 
 
-def execute_eval(code, session_globals, **opts):
-    __traceback_hidden_variables__ = True
+def execute_eval(consumer, code):
 
     # this is creating a custom __loader__ that is returning the source code
     # traceback serializers is inspecting global variables and looking for a standard loader that can return source code.
 
-    env = EvaluationEnvironment(code=code, session_globals=session_globals, **opts)
+    env = EvaluationEnvironment(code=code, globals_registry=consumer.globals_registry)
     result = None
     expressions = list(
         compile(
@@ -196,65 +204,63 @@ def execute_eval(code, session_globals, **opts):
         return env[last_expr.name]
 
 
-def execute_fetch(input, external_object_registry, **opts):
-    __traceback_hidden_variables__ = True
+def execute_fetch(consumer, input):
 
     try:
-        return external_object_registry[input]
+        return consumer.objects_registry[input]
     except KeyError:
         raise KeyError("Object with id %s cannot be found in this session" % input)
 
-
-def execute_set(value, *names, session_globals, **extra):
-
+def execute_set(consumer, value, *names):
     for name in names:
         assert isinstance(name, six.string_types)
-        session_globals[name] = value
-
+        consumer.globals_registry[name] = value
     return value
 
-
-def execute_effect(*args, **extra):
+def execute_effect(consumer, *args):
     return last(args)
 
 
-def execute_call(result, *args, **extra):
+def execute_call(consumer, result, *args):
     return result(*args)
 
 
-def execute_curry(result, *args, **extra):
+def execute_curry(consumer, result, *args):
     return partial(result, *args)
 
 
-def execute_return_rype(result, return_type, external_object_registry, **extra):
+def execute_return_rype(consumer, result, return_type):
     if return_type == "String":
         # bug 354267 repr returns a 'str' even on py2 (i.e. bytes).
         return force_text(repr(result))
     elif return_type == "ExternalObject":
-        return to_external_object(result, external_object_registry)
+        return to_external_object(result, consumer.objects_registry)
     elif return_type != "Expression":
         raise NotImplementedError("Return type %s is not implemented" % return_type)
 
     return result
 
 
-def execute_getattr(result, *args, **opts):
-    for arg in args:
-        result = getattr(result, arg)
+def execute_getattr(consumer, result, names):
+    for name in iterate(names):
+        result = getattr(result, name)
     return result
 
 
-def execute_getitem(result, *args, **opts):
-    for arg in args:
-        result = result[arg]
+def execute_getitem(consumer, result, names):
+    for name in iterate(names):
+        result = result[name]
     return result
 
+def execute_methodcall(consumer, result, names, *args):
+    return execute_getattr(consumer, result, names)(*args)
 
-def dispatch_wl_object(name, args, dispatch_routes, **extra):
-    return dispatch_routes[name](*args, **extra)
+
+def dispatch_wl_object(consumer, route, args):
+    return consumer.routes_registry[route](consumer, *args)
 
 
-class WXFNestedObjectConsumer(WXFConsumerNumpy):
+class ExternalEvaluateConsumer(WXFConsumerNumpy):
     hook_symbol = wl.ExternalEvaluate.Private.ExternalEvaluateCommand
 
     builtin_routes = {
@@ -264,15 +270,16 @@ class WXFNestedObjectConsumer(WXFConsumerNumpy):
         "Call": execute_call,
         "Curry": execute_curry,
         "GetAttribute": execute_getattr,
+        "MethodCall": execute_methodcall,
         "GetItem": execute_getitem,
         "ReturnType": execute_return_rype,
         "Fetch": execute_fetch,
     }
 
-    def __init__(self, external_object_registry, session_globals, dispatch_routes):
-        self.external_object_registry = external_object_registry
-        self.session_globals = session_globals
-        self.dispatch_routes = dict(dispatch_routes, **self.builtin_routes)
+    def __init__(self, objects_registry, globals_registry, routes_registry):
+        self.objects_registry = objects_registry
+        self.globals_registry = globals_registry
+        self.routes_registry = registry(routes_registry, **self.builtin_routes)
 
     def consume_function(self, *args, **kwargs):
         expr = super().consume_function(*args, **kwargs)
@@ -284,13 +291,18 @@ class WXFNestedObjectConsumer(WXFConsumerNumpy):
         ):
             assert len(expr.args) ==2
             return dispatch_wl_object(
+                self,
                 *expr.args,
-                dispatch_routes=self.dispatch_routes,
-                session_globals=self.session_globals,
-                external_object_registry=self.external_object_registry
             )
 
         return expr
+
+    def __repr__(self):
+        return '<%s globals=%s objects=%s>' % (
+            self.__class__.__name__,
+            len(self.globals_registry),
+            len(self.objects_registry)
+        )
 
 
 class SocketWriter:
@@ -335,18 +347,18 @@ def start_zmq_instance(port=None, write_to_stdout=True, **opts):
 def start_zmq_loop(
     message_limit=float("inf"), exception_class=None, evaluate_message=execute_eval, **opts
 ):
-    external_object_registry = {}
+    objects_registry = registry()
 
-    consumer = WXFNestedObjectConsumer(
-        external_object_registry=external_object_registry,
-        session_globals={},
-        dispatch_routes={"Eval": evaluate_message},
+    consumer = ExternalEvaluateConsumer(
+        objects_registry=objects_registry,
+        globals_registry=registry(),
+        routes_registry={"Eval": evaluate_message},
     )
 
     handler = to_wl(
         exception_class=exception_class,
-        object_processor=lambda serializer, instance, external_object_registry=external_object_registry: serializer.encode(
-            to_external_object(instance, external_object_registry)
+        object_processor=lambda serializer, instance, objects_registry=objects_registry: serializer.encode(
+            to_external_object(instance, objects_registry)
         ),
         target_format="wxf",
     )(handle_message)
