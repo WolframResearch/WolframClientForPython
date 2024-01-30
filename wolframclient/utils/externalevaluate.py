@@ -93,10 +93,6 @@ DEFAULT_HIDDEN_VARIABLES = (
 )
 
 
-class registry(dict):
-    def __repr__(self):
-        return "<registry len=%s>" % len(self)
-
 
 def _serialize_external_object_meta(o):
     if callable(o):
@@ -184,15 +180,24 @@ def unpack_optionals(args, symbol = wl.Rule):
 # ROUTES DEFINITION, we declare a global registry and series of functions
 
 
-BUILTIN_ROUTES = registry()
+class registry(dict):
+
+    def register_function(self, func):
+        self[func.__name__] = func
+        return func
+
+    def __repr__(self):
+        return "<registry len=%s>" % len(self)
 
 
-def register_route(func):
-    BUILTIN_ROUTES[func.__name__] = func
-    return func
 
 
-@register_route
+routes = registry()
+
+
+
+
+@routes.register_function
 def Eval(consumer, code):
 
     __traceback_hidden_variables__ = True
@@ -232,7 +237,7 @@ def Eval(consumer, code):
         return env[last_expr.name]
 
 
-@register_route
+@routes.register_function
 def Fetch(consumer, input):
     try:
         return consumer.objects_registry[input]
@@ -240,7 +245,7 @@ def Fetch(consumer, input):
         raise KeyError("Object with id %s cannot be found in this session" % input)
 
 
-@register_route
+@routes.register_function
 def Set(consumer, value, *names):
     for name in names:
         assert isinstance(name, six.string_types)
@@ -248,12 +253,12 @@ def Set(consumer, value, *names):
     return value
 
 
-@register_route
+@routes.register_function
 def Effect(consumer, *args):
     return last(args)
 
 
-@register_route
+@routes.register_function
 def Call(consumer, result, *args):
 
     pos, kwargs = unpack_optionals(args)
@@ -261,12 +266,12 @@ def Call(consumer, result, *args):
     return result(*pos, **kwargs)
 
 
-@register_route
+@routes.register_function
 def MethodCall(consumer, result, names, *args):
     return Call(consumer, GetAttribute(consumer, result, names), *args)
 
 
-@register_route
+@routes.register_function
 def Curry(consumer, result, *args):
 
     pos, kwargs = unpack_optionals(args)
@@ -274,7 +279,7 @@ def Curry(consumer, result, *args):
     return partial(result, *pos, **kwargs)
 
 
-@register_route
+@routes.register_function
 def ReturnType(consumer, result, return_type):
     if return_type == "String":
         # bug 354267 repr returns a 'str' even on py2 (i.e. bytes).
@@ -287,37 +292,37 @@ def ReturnType(consumer, result, return_type):
     return result
 
 
-@register_route
+@routes.register_function
 def GetAttribute(consumer, result, names):
     for name in iterate(names):
         result = getattr(result, name)
     return result
 
 
-@register_route
+@routes.register_function
 def GetItem(consumer, result, names):
     for name in iterate(names):
         result = result[name]
     return result
 
 
-@register_route
+@routes.register_function
 def SetAttribute(consumer, result, name, value):
     setattr(result, name, value)
     return result
 
 
-@register_route
+@routes.register_function
 def SetItem(consumer, result, name, value):
     result[name] = value
     return result
 
 
-@register_route
+@routes.register_function
 def Len(consumer, result):
     return len(result)
 
-@register_route
+@routes.register_function
 def Bool(consumer, result):
     return bool(result)
 
@@ -325,7 +330,7 @@ def Bool(consumer, result):
 class ExternalEvaluateConsumer(WXFConsumerNumpy):
     hook_symbol = wl.ExternalEvaluate.Private.ExternalEvaluateCommand
 
-    builtin_routes = BUILTIN_ROUTES
+    builtin_routes = routes
 
     def __init__(self, routes_registry={}):
         self.objects_registry = registry()
