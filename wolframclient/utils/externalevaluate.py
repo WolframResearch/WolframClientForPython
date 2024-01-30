@@ -168,6 +168,27 @@ def EvaluationEnvironment(code, globals_registry, constants=None, **extra):
 
 # ROUTES DEFINITION, we declare a global registry and series of functions
 
+def check_wl_symbol(expr, symbol):
+    return (
+        isinstance(expr, WLFunction)
+        and isinstance(expr.head, WLSymbol)
+        and expr.head == symbol
+    )
+
+def unpack_optionals(args, symbol = wl.Rule):
+    
+    positional = []
+    optionals = {}
+
+    for expr in args:
+        if check_wl_symbol(expr, symbol):
+            optionals[expr[0]] = expr[1]
+        else:
+            positional.append(expr)
+
+    return positional, optionals
+
+
 BUILTIN_ROUTES = registry()
 
 
@@ -233,7 +254,10 @@ def Effect(consumer, *args):
 
 @route
 def Call(consumer, result, *args):
-    return result(*args)
+
+    pos, kwargs = unpack_optionals(args)
+
+    return result(*pos, **kwargs)
 
 
 @route
@@ -243,7 +267,10 @@ def MethodCall(consumer, result, names, *args):
 
 @route
 def Curry(consumer, result, *args):
-    return partial(result, *args)
+
+    pos, kwargs = unpack_optionals(args)
+
+    return partial(result, *pos, **kwargs)
 
 
 @route
@@ -303,11 +330,7 @@ class ExternalEvaluateConsumer(WXFConsumerNumpy):
     def consume_function(self, *args, **kwargs):
         expr = super().consume_function(*args, **kwargs)
 
-        if (
-            isinstance(expr, WLFunction)
-            and isinstance(expr.head, WLSymbol)
-            and expr.head == self.hook_symbol
-        ):
+        if check_wl_symbol(expr, self.hook_symbol):
             assert len(expr.args) == 2
             return self.dispatch_wl_object(*expr.args)
 
