@@ -192,12 +192,12 @@ def unpack_optionals(args, symbol = wl.Rule):
 BUILTIN_ROUTES = registry()
 
 
-def route(func):
+def register_route(func):
     BUILTIN_ROUTES[func.__name__] = func
     return func
 
 
-@route
+@register_route
 def Eval(consumer, code):
     # this is creating a custom __loader__ that is returning the source code
     # traceback serializers is inspecting global variables and looking for a standard loader that can return source code.
@@ -231,7 +231,7 @@ def Eval(consumer, code):
         return env[last_expr.name]
 
 
-@route
+@register_route
 def Fetch(consumer, input):
     try:
         return consumer.objects_registry[input]
@@ -239,7 +239,7 @@ def Fetch(consumer, input):
         raise KeyError("Object with id %s cannot be found in this session" % input)
 
 
-@route
+@register_route
 def Set(consumer, value, *names):
     for name in names:
         assert isinstance(name, six.string_types)
@@ -247,12 +247,12 @@ def Set(consumer, value, *names):
     return value
 
 
-@route
+@register_route
 def Effect(consumer, *args):
     return last(args)
 
 
-@route
+@register_route
 def Call(consumer, result, *args):
 
     pos, kwargs = unpack_optionals(args)
@@ -260,12 +260,12 @@ def Call(consumer, result, *args):
     return result(*pos, **kwargs)
 
 
-@route
+@register_route
 def MethodCall(consumer, result, names, *args):
     return GetAttribute(consumer, result, names)(*args)
 
 
-@route
+@register_route
 def Curry(consumer, result, *args):
 
     pos, kwargs = unpack_optionals(args)
@@ -273,7 +273,7 @@ def Curry(consumer, result, *args):
     return partial(result, *pos, **kwargs)
 
 
-@route
+@register_route
 def ReturnType(consumer, result, return_type):
     if return_type == "String":
         # bug 354267 repr returns a 'str' even on py2 (i.e. bytes).
@@ -286,33 +286,33 @@ def ReturnType(consumer, result, return_type):
     return result
 
 
-@route
+@register_route
 def GetAttribute(consumer, result, names):
     for name in iterate(names):
         result = getattr(result, name)
     return result
 
 
-@route
+@register_route
 def GetItem(consumer, result, names):
     for name in iterate(names):
         result = result[name]
     return result
 
 
-@route
+@register_route
 def SetAttribute(consumer, result, name, value):
     setattr(result, name, value)
     return result
 
 
-@route
+@register_route
 def SetItem(consumer, result, name, value):
     result[name] = value
     return result
 
 
-@route
+@register_route
 def Length(consumer, result):
     return len(result)
 
