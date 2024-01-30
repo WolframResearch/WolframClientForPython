@@ -187,7 +187,7 @@ class registry(dict):
         return func
 
     def __repr__(self):
-        return "<registry len=%s>" % len(self)
+        return "<%s len=%s>" % (self.__class__.__name__, len(self))
 
 
 
