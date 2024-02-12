@@ -21,6 +21,7 @@ NUMPY_MAPPING = {
     numpy.float64: "Real64",
     numpy.complex64: "ComplexReal32",
     numpy.complex128: "ComplexReal64",
+    numpy.bool: "Integer8",
 }
 
 
@@ -76,6 +77,7 @@ PACKEDARRAY_NUMPY_MAPPING = {
     numpy.float64: ("Real64", None),
     numpy.complex64: ("ComplexReal32", None),
     numpy.complex128: ("ComplexReal64", None),
+    numpy.bool: ("Integer8", None)
 }
 """
 Maps numpy dtype to appropriate wxf packed array type, eventually specifying the type to cast the data to.

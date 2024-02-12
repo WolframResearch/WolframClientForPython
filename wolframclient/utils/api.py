@@ -120,6 +120,7 @@ numpy = API(
     array="numpy.array",
     ndarray="numpy.ndarray",
     arange="numpy.arange",
+    bool="numpy.bool_",
     int8="numpy.int8",
     int16="numpy.int16",
     int32="numpy.int32",
