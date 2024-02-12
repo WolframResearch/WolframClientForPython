@@ -310,14 +310,10 @@ def GetItem(consumer, result, names):
 @routes.register_function
 def SetAttribute(consumer, result, name, value):
     setattr(result, name, value)
-    return result
-
 
 @routes.register_function
 def SetItem(consumer, result, name, value):
     result[name] = value
-    return result
-
 
 @routes.register_function
 def Len(consumer, result):
