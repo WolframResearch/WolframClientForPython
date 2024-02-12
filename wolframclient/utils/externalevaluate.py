@@ -123,13 +123,14 @@ def _serialize_external_object_meta(o):
     yield "Repr", repr(o)
 
 
-def to_external_object(instance, objects_registry):
+def to_external_object(instance, objects_registry, force_externalobject = False):
     pk = id(instance)
     objects_registry[pk] = instance
 
     # meta = dict(_serialize_external_object_meta(instance))
     meta = {}
-    func = callable(instance) and wl.ExternalFunction or wl.ExternalObject
+
+    func = wl.ExternalObject if force_externalobject or not callable(instance) else wl.ExternalFunction
 
     return func(wl.Inherited, pk, meta)
 
@@ -285,7 +286,7 @@ def ReturnType(consumer, result, return_type):
         # bug 354267 repr returns a 'str' even on py2 (i.e. bytes).
         return force_text(repr(result))
     elif return_type == "ExternalObject":
-        return to_external_object(result, consumer.objects_registry)
+        return to_external_object(result, consumer.objects_registry, force_externalobject = True)
     elif return_type != "Expression":
         raise NotImplementedError("Return type %s is not implemented" % return_type)
 
