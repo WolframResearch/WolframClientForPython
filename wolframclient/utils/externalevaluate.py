@@ -199,7 +199,7 @@ routes = registry()
 
 
 @routes.register_function
-def Eval(consumer, code):
+def Eval(consumer, code, constants):
 
     __traceback_hidden_variables__ = True
 
@@ -209,6 +209,7 @@ def Eval(consumer, code):
     env = consumer.globals_registry
     env["__loader__"] = Settings(get_source=lambda module, code=code: code)
     env["__traceback_hidden_variables__"] = DEFAULT_HIDDEN_VARIABLES
+    env.update(constants)
 
     result = None
     expressions = list(
@@ -252,11 +253,6 @@ def Set(consumer, value, *names):
         assert isinstance(name, six.string_types)
         consumer.globals_registry[name] = value
     return value
-
-
-@routes.register_function
-def Effect(consumer, *args):
-    return last(args)
 
 
 @routes.register_function
@@ -332,7 +328,7 @@ class ExternalEvaluateConsumer(WXFConsumerNumpy):
     def __init__(self, routes_registry={}):
         self.objects_registry = registry()
         self.globals_registry = registry()
-        self.routes_registry = registry(routes_registry, **self.builtin_routes)
+        self.routes_registry = registry(self.builtin_routes, **routes_registry)
 
     def consume_function(self, *args, **kwargs):
         expr = super().consume_function(*args, **kwargs)
@@ -390,10 +386,11 @@ def start_zmq_instance(port=None, write_to_stdout=True, **opts):
 
 
 def start_zmq_loop(
-    message_limit=float("inf"), exception_class=None, evaluate_message=None, **opts
+    message_limit=float("inf"), exception_class=None, routes_registry={}, **opts
 ):
+
     consumer = ExternalEvaluateConsumer(
-        routes_registry=evaluate_message and {"Eval": evaluate_message} or {}
+        routes_registry=routes_registry
     )
 
     handler = to_wl(
