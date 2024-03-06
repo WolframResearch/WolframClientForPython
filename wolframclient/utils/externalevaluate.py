@@ -127,8 +127,7 @@ def to_external_object(instance, objects_registry, force_externalobject = False)
     pk = id(instance)
     objects_registry[pk] = instance
 
-    # meta = dict(_serialize_external_object_meta(instance))
-    meta = {}
+    meta = dict(_serialize_external_object_meta(instance))
 
     func = wl.ExternalObject if force_externalobject or not callable(instance) else wl.ExternalFunction
 
