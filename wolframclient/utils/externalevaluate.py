@@ -120,7 +120,6 @@ def _serialize_external_object_meta(o):
     yield "IsMethod", inspect.ismethod(o),
     yield "IsCallable", callable(o),
 
-    yield "Repr", repr(o)
 
 
 def to_external_object(instance, objects_registry, force_externalobject = False):
