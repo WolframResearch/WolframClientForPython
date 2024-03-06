@@ -96,15 +96,13 @@ DEFAULT_HIDDEN_VARIABLES = (
 
 def _serialize_external_object_meta(o):
     if callable(o):
-        yield "Type", "PythonFunction"
         try:
             # force tuple to avoid calling this method again on `map`.
             yield "Arguments", tuple(map(force_text, first(inspect_args(o))))
         except TypeError:
             # this function can fail with TypeError unsupported callable
             pass
-    else:
-        yield "Type", "PythonObject"
+
 
     is_module = inspect.ismodule(o)
 
