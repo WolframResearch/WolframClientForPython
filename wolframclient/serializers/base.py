@@ -1,7 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import datetime
-import inspect
 import re
 from itertools import chain
 
@@ -15,14 +14,6 @@ from wolframclient.utils import six
 from wolframclient.utils.encoding import concatenate_bytes, force_text
 from wolframclient.utils.functional import first
 
-if hasattr(inspect, "getfullargspec"):
-    inspect_args = inspect.getfullargspec
-elif hasattr(inspect, "getargspec"):
-    inspect_args = inspect.getargspec
-else:
-
-    def inspect_args(f):
-        raise TypeError()
 
 
 class FormatSerializer(Encoder):
@@ -140,47 +131,4 @@ class FormatSerializer(Encoder):
             tzinfo.utcoffset(date or datetime.datetime.utcnow()).total_seconds() / 3600
         )
 
-    def _serialize_external_object(self, o):
 
-        yield "System", "Python"
-
-        if callable(o):
-            yield "Type", "PythonFunction"
-            try:
-                # force tuple to avoid calling this method again on `map`.
-                yield "Arguments", tuple(map(force_text, first(inspect_args(o))))
-            except TypeError:
-                # this function can fail with TypeError unsupported callable
-                pass
-        else:
-            yield "Type", "PythonObject"
-
-        if hasattr(o, "__name__"):
-            yield "Command", force_text(o.__name__)
-        else:
-            yield "Command", force_text(o.__class__.__name__)
-
-        is_module = inspect.ismodule(o)
-
-        yield "IsModule", is_module
-
-        if not is_module:
-            module = inspect.getmodule(o)
-            if module:
-                yield "Module", force_text(module.__name__)
-
-        yield "IsClass", inspect.isclass(o),
-        yield "IsFunction", inspect.isfunction(o),
-        yield "IsMethod", inspect.ismethod(o),
-        yield "IsCallable", callable(o),
-
-    def serialize_external_object(self, obj):
-        return self.serialize_function(
-            self.serialize_symbol(callable(obj) and b"ExternalFunction" or b"ExternalObject"),
-            (
-                self.serialize_mapping(
-                    (self.encode(key), self.encode(value))
-                    for key, value in self._serialize_external_object(obj)
-                ),
-            ),
-        )
