@@ -77,6 +77,8 @@ wolfram_encoder.register_modules(
     decimal="wolframclient.serializers.encoders.decimal.encoder",
     datetime="wolframclient.serializers.encoders.datetime.encoder",
     fractions="wolframclient.serializers.encoders.fractions.encoder",
+    zoneinfo="wolframclient.serializers.encoders.zoneinfo.encoder",
+
     # wolfram language support
     numpy="wolframclient.serializers.encoders.numpy.encoder",
     pandas="wolframclient.serializers.encoders.pandas.encoder",

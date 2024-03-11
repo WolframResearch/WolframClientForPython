@@ -10,10 +10,18 @@ from wolframclient.serializers.wxfencoder.utils import (
     numeric_array_to_wxf,
     packed_array_to_wxf,
 )
+from wolframclient.utils.api import timezone
+
 from wolframclient.utils import six
 from wolframclient.utils.encoding import concatenate_bytes, force_text
 from wolframclient.utils.functional import first
 
+
+def _is_zoneinfo(tzinfo):
+    try:
+        return isinstance(tzinfo, timezone.ZoneInfo)
+    except ImportError:
+        return False
 
 
 class FormatSerializer(Encoder):
@@ -123,9 +131,16 @@ class FormatSerializer(Encoder):
             )
 
         if name_match:
-            name = tzinfo.tzname(None)
-            if name and name_match.match(name):
-                return self.serialize_string(name)
+
+            for name in (
+                tzinfo.tzname(None),
+                _is_zoneinfo(tzinfo) and tzinfo.key or None
+                ):
+
+                if name and name_match.match(name):
+                    return self.serialize_string(name)
+
+            
 
         return self.serialize_float(
             tzinfo.utcoffset(date or datetime.datetime.utcnow()).total_seconds() / 3600
