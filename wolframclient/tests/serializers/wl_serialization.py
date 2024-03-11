@@ -90,6 +90,12 @@ class TestCase(BaseTestCase):
             b'DateObject[{2000, 1, 1, 11, 15, 20.}, "Instant", "Gregorian", "Europe/Rome"]',
         )
 
+        self.compare(
+            test_datetime().replace(tzinfo=timezone.ZoneInfo("Europe/Rome")),
+            b'DateObject[{2000, 1, 1, 11, 15, 20.}, "Instant", "Gregorian", "Europe/Rome"]',
+        )
+
+
     def test_date(self):
 
         self.compare(
