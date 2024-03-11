@@ -9,7 +9,7 @@ from collections import OrderedDict
 from wolframclient.language import Global, System, wl, wlexpr
 from wolframclient.serializers import export
 from wolframclient.utils import six
-from wolframclient.utils.api import pytz
+from wolframclient.utils.api import timezone
 from wolframclient.utils.datastructures import Association
 from wolframclient.utils.encoding import force_bytes
 from wolframclient.utils.tests import TestCase as BaseTestCase
@@ -82,13 +82,19 @@ class TestCase(BaseTestCase):
             b'DateObject[{2000, 1, 1, 11, 15, 20.}, "Instant", "Gregorian", $TimeZone]',
         )
         self.compare(
-            pytz.FixedOffset(60).localize(test_datetime()),
+            timezone.FixedOffset(60).localize(test_datetime()),
             b'DateObject[{2000, 1, 1, 11, 15, 20.}, "Instant", "Gregorian", 1.]',
         )
         self.compare(
-            pytz.timezone("Europe/Rome").localize(test_datetime()),
+            timezone.timezone("Europe/Rome").localize(test_datetime()),
             b'DateObject[{2000, 1, 1, 11, 15, 20.}, "Instant", "Gregorian", "Europe/Rome"]',
         )
+
+        self.compare(
+            test_datetime().replace(tzinfo=timezone.ZoneInfo("Europe/Rome")),
+            b'DateObject[{2000, 1, 1, 11, 15, 20.}, "Instant", "Gregorian", "Europe/Rome"]',
+        )
+
 
     def test_date(self):
 
@@ -104,7 +110,7 @@ class TestCase(BaseTestCase):
 
         self.compare(test_datetime().time(), b"TimeObject[{11, 15, 20.}]")
         self.compare(
-            pytz.timezone("Europe/Rome").localize(test_datetime()).timetz(),
+            timezone.timezone("Europe/Rome").localize(test_datetime()).timetz(),
             b"TimeObject[{11, 15, 20.}, TimeZone -> 1.]",
         )
 

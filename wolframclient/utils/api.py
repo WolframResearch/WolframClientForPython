@@ -11,11 +11,12 @@ ast = API(
     ClassDef="ast.ClassDef",
 )
 
-pytz = API(
+timezone = API(
     FixedOffset="pytz.FixedOffset",
     timezone="pytz.timezone",
     utc="pytz.utc",
     UnknownTimeZoneError="pytz.UnknownTimeZoneError",
+    ZoneInfo="zoneinfo.ZoneInfo"
 )
 
 json = API(
