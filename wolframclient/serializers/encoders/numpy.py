@@ -15,6 +15,22 @@ NUMPY_MAPPING = {
     numpy.int16: ("Integer16", None),
     numpy.int32: ("Integer32", None),
     numpy.int64: ("Integer64", None),
+    numpy.uint8: ("UnsignedInteger8", None),
+    numpy.uint16: ("UnsignedInteger16", None),
+    numpy.uint32: ("UnsignedInteger32", None),
+    numpy.uint64: ("UnsignedInteger64", None),
+    numpy.float32: ("Real32", None),
+    numpy.float64: ("Real64", None),
+    numpy.complex64: ("ComplexReal32", None),
+    numpy.complex128: ("ComplexReal64", None),
+}
+
+
+PACKED_NUMPY_MAPPING = {
+    numpy.int8: ("Integer8", None),
+    numpy.int16: ("Integer16", None),
+    numpy.int32: ("Integer32", None),
+    numpy.int64: ("Integer64", None),
     numpy.uint8: ("Integer16", numpy.int16),
     numpy.uint16: ("Integer32", numpy.int32),
     numpy.uint32: ("Integer64", numpy.int64),
@@ -39,20 +55,17 @@ def to_little_endian(array, inplace=False):
         return array
 
 
-@encoder.dispatch(numpy.ndarray)
-def encode_ndarray(serializer, o):
+def _iencode(serializer, o, mapping, processor):
 
     if not o.shape:
         return serializer.encode(o.item())
 
-    is_packed_array = isinstance(o, numpy.PackedArray)
-
     try:
-        wl_type, cast_to = NUMPY_MAPPING[o.dtype.type]
+        wl_type, cast_to = mapping[o.dtype.type]
     except KeyError:
         raise NotImplementedError(
             "Numpy serialization not implemented for %s. Choices are: %s"
-            % (repr(o.dtype), ", ".join(map(repr, NUMPY_MAPPING.keys())))
+            % (repr(o.dtype), ", ".join(map(repr, mapping.keys())))
         )
     o = to_little_endian(o)
 
@@ -66,10 +79,15 @@ def encode_ndarray(serializer, o):
     else:
         data = o.tostring()
 
-    if is_packed_array:
-        return serializer.serialize_packed_array(data, o.shape, wl_type)
-    else:
-        return serializer.serialize_numeric_array(data, o.shape, wl_type)
+    return processor(data, o.shape, wl_type)
+
+@encoder.dispatch(numpy.PackedArray)
+def encode_ndarray(serializer, o):
+    return _iencode(serializer, o, PACKED_NUMPY_MAPPING, serializer.serialize_packed_array)
+
+@encoder.dispatch(numpy.ndarray)
+def encode_ndarray(serializer, o):
+    return _iencode(serializer, o, NUMPY_MAPPING, serializer.serialize_numeric_array)
 
 
 
