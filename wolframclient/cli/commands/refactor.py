@@ -1,6 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-
 import os
 import subprocess
 import sys
@@ -10,7 +9,6 @@ from wolframclient.cli.utils import SimpleCommand
 from wolframclient.utils.decorators import to_tuple
 from wolframclient.utils.functional import flatten, iterate
 from wolframclient.utils.importutils import module_path
-
 
 process_verbose = partial(
     subprocess.Popen,
@@ -29,6 +27,7 @@ def wait_for_process(processes, raise_errors=True, show_output=False):
 
         p.wait()
         yield p
+
 
 class Command(SimpleCommand):
 
@@ -139,7 +138,9 @@ class Command(SimpleCommand):
                     "T203",
                     "UP010",
                     "SIM105",
-                    "UP009"
+                    "UP009",
+                    "G010",
+                    "LOG009"
                 )
             ),
         )
