@@ -1,6 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import datetime
+import os
 import decimal
 import fractions
 import unittest
@@ -11,9 +12,26 @@ from wolframclient.serializers import export
 from wolframclient.utils import six
 from wolframclient.utils.api import timezone
 from wolframclient.utils.datastructures import Association
-from wolframclient.utils.encoding import force_bytes
+from wolframclient.utils.encoding import force_bytes, force_text
 from wolframclient.utils.tests import TestCase as BaseTestCase
 from wolframclient.utils.tests import path_to_file_in_data_dir
+
+from contextlib import contextmanager
+
+@contextmanager
+def with_version(n):
+
+    prev = os.environ.get('WOLFRAM_KERNEL_VERSION', None)
+
+    os.environ['WOLFRAM_KERNEL_VERSION'] = force_text(n)
+
+    yield n
+
+    if prev:
+        os.environ['WOLFRAM_KERNEL_VERSION'] = prev
+    else:
+        del os.environ['WOLFRAM_KERNEL_VERSION']
+
 
 
 def test_datetime():
@@ -79,8 +97,15 @@ class TestCase(BaseTestCase):
 
         self.compare(
             test_datetime(),
-            b'DateObject[{2000, 1, 1, 11, 15, 20.}, "Instant", "Gregorian", $TimeZone]',
+            b'DateObject[{2000, 1, 1, 11, 15, 20.}, "Instant", "Gregorian", None]',
         )
+
+        with with_version(11):
+            self.compare(
+                test_datetime(),
+                b'DateObject[{2000, 1, 1, 11, 15, 20.}, "Instant", "Gregorian", $TimeZone]',
+            )
+
         self.compare(
             timezone.FixedOffset(60).localize(test_datetime()),
             b'DateObject[{2000, 1, 1, 11, 15, 20.}, "Instant", "Gregorian", 1.]',
