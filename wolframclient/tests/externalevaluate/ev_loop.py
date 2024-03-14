@@ -15,9 +15,13 @@ class TestCase(BaseTestCase):
 
     def test_zmq_loop(self):
 
+        hook = wl.ExternalEvaluate.Private.ExternalEvaluateCommand
         port = 9000
 
-        messages = [("a = 2", wl.Null), ("a", 2)]
+        messages = [
+            (hook('Eval', ("a = 2", {})), wl.Null), 
+            (hook('Eval', ("a", {})), 2), 
+        ]
 
         def threaded_function(port=port, message_limit=len(messages)):
             start_zmq_loop(port=port, message_limit=message_limit)
@@ -30,7 +34,7 @@ class TestCase(BaseTestCase):
 
         for message, result in messages:
 
-            client.send(export({"input": message}, target_format="wxf"))
+            client.send(export(message, target_format="wxf"))
 
             msg = client.recv()
 
