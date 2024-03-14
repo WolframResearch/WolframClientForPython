@@ -145,6 +145,7 @@ class Command(SimpleCommand):
                     "T203",
                     "UP010",
                     "SIM105",
+                    "UP009"
                 )
             ),
         )
