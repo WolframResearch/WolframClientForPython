@@ -65,7 +65,7 @@ def encode_as_timeseries(serializer, o, length):
 
 def _distribute_multikey(o):
     expr_dict = OrderedDict()
-    for multikey, value in o.iteritems():
+    for multikey, value in o.items():
         cur_dict = expr_dict
         for key in multikey[:-1]:
             if key not in cur_dict:
