@@ -57,7 +57,7 @@ def encode_ndarray(serializer, o):
     o = to_little_endian(o)
 
 
-    if is_packed_array and cast_to is not None:
+    if cast_to is not None:
         o = o.astype(cast_to)
 
     if hasattr(o, "tobytes"):
