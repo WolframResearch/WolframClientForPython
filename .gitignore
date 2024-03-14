@@ -11,3 +11,4 @@ wolframclient/tests/local_config.json
 *.code-workspace
 /test-reports
 .DS_Store
+/env

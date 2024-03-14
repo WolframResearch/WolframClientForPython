@@ -232,7 +232,7 @@ class TestCase(TestCaseSettings):
     def test_built_in_symbols(self):
         self.assertEqual(self.kernel_session.evaluate(wl.Null), None)
         self.assertEqual(self.kernel_session.evaluate(None), None)
-        self.assertEqual(self.kernel_session.evaluate(wlexpr("None")), WLSymbol("None"))
+        self.assertEqual(self.kernel_session.evaluate(wlexpr("None")), None)
         self.assertEqual(self.kernel_session.evaluate(wlexpr("True")), True)
         self.assertEqual(self.kernel_session.evaluate(True), True)
         self.assertEqual(self.kernel_session.evaluate(wlexpr("False")), False)

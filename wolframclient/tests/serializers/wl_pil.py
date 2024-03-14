@@ -17,23 +17,19 @@ class TestCase(BaseTestCase):
             )
 
     def test_mode_L(self):
-        a = numpy.arange(10).reshape((2, 5))
+        a = numpy.arange(10).reshape((2, 5)).astype(numpy.int8)
         img = PIL.fromarray(a, mode="L")
         out = export(img, target_format="wl")
-        self.assertTrue(
-            out
-            == b'Image[BinaryDeserialize[ByteArray["ODrCEAICBQAAAAAAAAAAAQA="]], "Byte", Rule[ColorSpace, "Grayscale"], Rule[Interleaving, True]]'
-            or out
-            == b'Image[BinaryDeserialize[ByteArray["ODrCEAICBQAAAAAAAAAAAQA="]], "Byte", Rule[Interleaving, True], Rule[ColorSpace, "Grayscale"]]'
+        self.assertEqual(
+            out,
+            b'Image[BinaryDeserialize[ByteArray["ODrCEAICBQABAgMEBQYHCAk="]], "Byte", Rule[ColorSpace, "Grayscale"], Rule[Interleaving, True]]'
         )
 
     def test_bool_img(self):
         a = numpy.array([[1, 0], [0, 1]], dtype="bool")
         img = PIL.fromarray(a)
         out = export(img, target_format="wl")
-        self.assertTrue(
-            out
-            == b'Image[BinaryDeserialize[ByteArray["ODrCEAICAgEAAAE="]], "Bit", Rule[ColorSpace, Automatic], Rule[Interleaving, True]]'
-            or out
-            == b'Image[BinaryDeserialize[ByteArray["ODrCEAICAgEAAAE="]], "Bit", Rule[Interleaving, True], Rule[ColorSpace, Automatic]]'
+        self.assertEqual(
+            out,
+           b'Image[BinaryDeserialize[ByteArray["ODrCEAICAgEAAAE="]], "Bit", Rule[ColorSpace, Automatic], Rule[Interleaving, True]]'
         )
