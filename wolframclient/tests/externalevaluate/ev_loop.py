@@ -5,13 +5,13 @@ from threading import Thread
 import zmq
 from wolframclient.language import wl
 from wolframclient.serializers import export
-from wolframclient.utils.externalevaluate import EXPORT_KWARGS, start_zmq_loop
+from wolframclient.utils.externalevaluate import start_zmq_loop
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
 
 class TestCase(BaseTestCase):
     def compare(self, string_version, result):
-        self.assertEqual(string_version, export(result, **EXPORT_KWARGS))
+        self.assertEqual(string_version, export(result, target_format="wxf"))
 
     def test_zmq_loop(self):
 
