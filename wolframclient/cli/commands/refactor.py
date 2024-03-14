@@ -1,62 +1,156 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
+
+import os
+import subprocess
 import sys
+from functools import partial
 
 from wolframclient.cli.utils import SimpleCommand
-from wolframclient.utils.importutils import module_path, safe_import_string_and_call
+from wolframclient.utils.decorators import to_tuple
+from wolframclient.utils.functional import flatten, iterate
+from wolframclient.utils.importutils import module_path
 
+process = partial(
+    subprocess.Popen,
+    stdout=subprocess.PIPE,
+    stdin=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+    env=os.environ,
+)
+process_verbose = partial(
+    subprocess.Popen,
+    stdout=sys.stdout,
+    stdin=subprocess.PIPE,
+    stderr=sys.stderr,
+    env=os.environ,
+)
+
+
+@to_tuple
+def wait_for_process(processes, raise_errors=True, show_output=False):
+    for p in iterate(processes):
+        if raise_errors and not p.wait() == 0:
+            raise ValueError("Process finished with non zero status:")
+
+        p.wait()
+        yield p
 
 class Command(SimpleCommand):
 
     modules = ["wolframclient"]
 
-    #dependencies = (("isort", "5.3.2"), ("autoflake", "1.3"), ("black", "19.3b0"))
-    #dependencies is broken please install isort==5.3.2 autoflake==1.3 black==19.3b0"
+    @to_tuple
+    def _process_args(self, repo, pre, *args):
+        yield sys.executable
+        yield "-m"
+        yield from iterate(pre)
+        yield module_path(repo)
+        yield from args
 
-    def _module_args(self, *args):
+    def run(self, pre, *args):
+        args = tuple(flatten(args))
+        args = tuple(self._process_args(repo, pre, *args) for repo in self.modules)
 
-        yield __file__  # autopep main is dropping the first argument
+        for a in args:
+            print(" ".join(a))
 
-        for module in self.modules:
-            yield module_path(module)
-
-        for arg in args:
-            yield arg
-
-    def run(self, path, *args):
-        originals = sys.argv
-        sys.argv = list(self._module_args(*args))
-        safe_import_string_and_call(path)
-        sys.argv = originals
+        return wait_for_process(map(process_verbose, args), raise_errors=False)
 
     def handle(self, **opts):
-
-        # autoflake is not removing imports if they are in a list
-        # to fix this we first refactor the code using imports in single line
-
-        self.run(
-            "isort.main.main",
-            "-rc",
-            "-sl",
-            "-a",
-            "from __future__ import absolute_import, print_function, unicode_literals",
-        )
-
-        # then we remove all missing imports and we expand star imports
+        # self.run(("ruff", "format"), "--target-version", "py311")
+        # to do import replacement do python -m isort Git/rotostampa --force-single-line-imports
 
         self.run(
-            "autoflake.main",
-            "--in-place",
-            "--remove-duplicate-keys",
-            "--expand-star-import",
-            "--remove-all-unused-imports",
-            "--recursive",
+            ("ruff", "check"),
+            "--fix",
+            "--unsafe-fixes",
+            "--select",
+            "ALL",
+            (
+                ("--ignore", r)
+                for r in (
+                    "ANN001",
+                    "ANN002",
+                    "ANN003",
+                    "ANN101",
+                    "ANN102",
+                    "ANN201",
+                    "ANN202",
+                    "ANN204",
+                    "ANN205",
+                    "ANN206",
+                    "ANN401",
+                    "B006",
+                    "COM812",
+                    "D100",
+                    "D101",
+                    "D102",
+                    "D103",
+                    "D104",
+                    "D105",
+                    "D106",
+                    "D107",
+                    "D200",
+                    "D201",
+                    "D202",
+                    "D203",
+                    "D204",
+                    "D205",
+                    "D206",
+                    "D207",
+                    "D208",
+                    "D209",
+                    "D210",
+                    "D211",
+                    "D212",
+                    "D213",
+                    "D214",
+                    "D215",
+                    "D300",
+                    "D301",
+                    "D400",
+                    "D401",
+                    "D402",
+                    "D403",
+                    "D404",
+                    "D405",
+                    "D406",
+                    "D407",
+                    "D408",
+                    "D409",
+                    "D410",
+                    "D411",
+                    "D412",
+                    "D413",
+                    "D414",
+                    "D415",
+                    "D416",
+                    "D417",
+                    "D418",
+                    "D419",
+                    "E501",
+                    "E731",
+                    "EM101",
+                    "EM102",
+                    "EM103",
+                    "RET502",
+                    "RET503",
+                    "UP032",
+                    "FLY002",
+                    "PT009",
+                    "SIM118",
+                    "PT027",
+                    "T201",
+                    "T203",
+                )
+            ),
         )
-
-        # then we use refactor imports again using pretty newline style
-
-        self.run("isort.main.main", "-rc", "--multi-line", "5")
-
-        # after that we finally run black to refactor all code
-
-        self.run("black.main", "--line-length", "95", "--target-version", "py34")
+        self.run(
+            "black",
+            "--line-length",
+            "95",
+            "--target-version",
+            "py311",
+            "--skip-magic-trailing-comma",
+        )
