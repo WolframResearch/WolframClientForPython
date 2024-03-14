@@ -22,7 +22,7 @@ class TestCase(BaseTestCase):
         out = export(img, target_format="wl")
         self.assertEqual(
             out,
-            b'Image[BinaryDeserialize[ByteArray["ODrCAQICBQABAgMEBQYHCAk="]], "Byte", Rule[ColorSpace, "Grayscale"], Rule[Interleaving, True]]'
+            b'Image[BinaryDeserialize[ByteArray["ODrCEAICBQABAgMEBQYHCAk="]], "Byte", Rule[ColorSpace, "Grayscale"], Rule[Interleaving, True]]'
         )
 
     def test_bool_img(self):
@@ -31,5 +31,5 @@ class TestCase(BaseTestCase):
         out = export(img, target_format="wl")
         self.assertEqual(
             out,
-           b'Image[BinaryDeserialize[ByteArray["ODrCAQICAgEAAAE="]], "Bit", Rule[ColorSpace, Automatic], Rule[Interleaving, True]]'
+           b'Image[BinaryDeserialize[ByteArray["ODrCEAICAgEAAAE="]], "Bit", Rule[ColorSpace, Automatic], Rule[Interleaving, True]]'
         )
