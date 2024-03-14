@@ -143,6 +143,7 @@ class Command(SimpleCommand):
                     "PT027",
                     "T201",
                     "T203",
+                    "UP010"
                 )
             ),
         )
