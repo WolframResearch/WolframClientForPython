@@ -27,8 +27,7 @@ def _serialize_traceback(exc_type, exc_value, tb, **opts):
     frames = _get_traceback_frames(tb, exc_value, **opts)
 
     for i, frame in enumerate(frames):
-        for sub in _serialize_frames(is_opened=i + 1 > len(frames) - 2, **frame):
-            yield sub
+        yield from _serialize_frames(is_opened=i + 1 > len(frames) - 2, **frame)
 
 
 def _serialize_variables(variables):
@@ -44,7 +43,7 @@ def _serialize_variables(variables):
     variables = tuple(
         (safe_force_text(key), safe_force_text(value))
         for key, value in variables.items()
-        if not key in hidden
+        if key not in hidden
     )
 
     if variables:
@@ -64,7 +63,7 @@ def _serialize_variables(variables):
 
 
 def _paginate(i, line):
-    return "%s.  %s" % (force_text(i).rjust(4), line)
+    return "{}.  {}".format(force_text(i).rjust(4), line)
 
 
 def _serialize_frames(
@@ -77,7 +76,7 @@ def _serialize_frames(
     lineno,
     pre_context_lineno,
     is_opened=False,
-    **opts
+    **opts,
 ):
 
     if filename:
@@ -216,7 +215,7 @@ def _get_lines_from_file(filename, lineno, context_lines, loader=None, module_na
         try:
             with open(filename, "rb") as fp:
                 source = fp.read().splitlines()
-        except (OSError, IOError):
+        except OSError:
             pass
 
     if source is None:
@@ -230,7 +229,7 @@ def _get_lines_from_file(filename, lineno, context_lines, loader=None, module_na
         for line in source[:2]:
             # File coding may be specified. Match pattern from PEP-263
             # (http://www.python.org/dev/peps/pep-0263/)
-            match = re.search(br"coding[:=]\s*([-\w.]+)", line)
+            match = re.search(rb"coding[:=]\s*([-\w.]+)", line)
             if match:
                 encoding = match.group(1).decode("ascii")
                 break

@@ -27,7 +27,7 @@ class RequestException(WolframLanguageException):
             status = self.response.status_code
         else:
             status = "N/A"
-        return "<status: %s> %s" % (status, self.msg or "")
+        return "<status: {}> {}".format(status, self.msg or "")
 
 
 class AuthenticationException(RequestException):

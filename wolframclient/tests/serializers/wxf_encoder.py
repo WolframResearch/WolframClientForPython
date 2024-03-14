@@ -11,19 +11,19 @@ from wolframclient.utils import six
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
 
-class MyClass(object):
+class MyClass:
     def __init__(self, *values):
         self.values = values
 
 
 class MyClass1(MyClass):
     def __init__(self, *values):
-        super(MyClass1, self).__init__(*values)
+        super().__init__(*values)
 
 
 class MyClass2(MyClass):
     def __init__(self, *values):
-        super(MyClass2, self).__init__(*values)
+        super().__init__(*values)
 
 
 class MyClassEncoder(WXFEncoder):
@@ -32,13 +32,12 @@ class MyClassEncoder(WXFEncoder):
             yield WXFExprFunction(len(o.values))
             yield WXFExprSymbol("Global`%s" % o.__class__.__name__)
             for sub in o.values:
-                for wxfexpr in self.serialize(sub):
-                    yield wxfexpr
+                yield from self.serialize(sub)
 
 
 class TestCase(BaseTestCase):
     def test_custom_encoder(self):
-        """ test re-entrant calls """
+        """test re-entrant calls"""
         expr_provider = WXFExprProvider()
         expr_provider.add_encoder(MyClassEncoder())
         stream = six.BytesIO()

@@ -60,7 +60,7 @@ def _installation_directories():
 
 
 def find_default_kernel_path():
-    """ Look for the most recent installed kernel. """
+    """Look for the most recent installed kernel."""
 
     if six.WINDOWS:
         rel = "WolframKernel.exe"

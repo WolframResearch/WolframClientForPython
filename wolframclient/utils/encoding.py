@@ -28,7 +28,6 @@ if not six.PY2:
     def encode(s, encoding="utf-8", errors="strict"):
         return six.text_type(s)
 
-
 else:
 
     @force_text.dispatch(object)
@@ -69,7 +68,6 @@ if not six.PY2:
     def encode_default(s, encoding="utf-8", errors="strict"):
         return six.text_type(s).encode(encoding)
 
-
 else:
 
     def encode_default(s, encoding="utf-8", errors="strict"):
@@ -107,7 +105,6 @@ if six.PY2:
 
     def concatenate_bytes(iterable):
         return b"".join(map(six.binary_type, iterable))
-
 
 else:
     concatenate_bytes = b"".join

@@ -27,15 +27,15 @@ __all__ = ["WolframKernelController"]
 logger = logging.getLogger(__name__)
 
 TO_PY_LOG_LEVEL = {1: logging.DEBUG, 2: logging.INFO, 3: logging.WARN, 4: logging.FATAL}
-FROM_PY_LOG_LEVEL = dict((v, k) for k, v in TO_PY_LOG_LEVEL.items())
+FROM_PY_LOG_LEVEL = {v: k for k, v in TO_PY_LOG_LEVEL.items()}
 
 _thread_counter = _count().__next__
 _thread_counter()
 
 
 class KernelLogger(Thread):
-    """ Asynchronous logger for kernel messages. 
-    
+    """Asynchronous logger for kernel messages.
+
     A consumer of messages read from a PUB/SUB socket that turn them into log messages as expected
     by the :mod:`logging` module.
     """
@@ -89,7 +89,7 @@ class KernelLogger(Thread):
 
 
 class WolframKernelController(Thread):
-    """ Control a Wolfram kernel from a Python thread.
+    """Control a Wolfram kernel from a Python thread.
 
     A controller can start and stop a Wolfram kernel specified by its path `kernel`. It
     can evaluate expression, one at a time.
@@ -111,7 +111,7 @@ class WolframKernelController(Thread):
         stdin=PIPE,
         stdout=PIPE,
         stderr=PIPE,
-        **kwargs
+        **kwargs,
     ):
         self.id = _thread_counter()
         super().__init__(name="wolfram-kernel-%i" % self.id)
@@ -140,7 +140,7 @@ class WolframKernelController(Thread):
 
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(
-                "Initializing kernel %s using script: %s" % (self.kernel, self.initfile)
+                "Initializing kernel {} using script: {}".format(self.kernel, self.initfile)
             )
 
         self.tasks_queue = Queue()
@@ -170,7 +170,7 @@ class WolframKernelController(Thread):
         self.trigger_termination_requested = Event()
 
     def duplicate(self):
-        """ Build a new object using the same configuration as the current one. """
+        """Build a new object using the same configuration as the current one."""
         return self.__class__(
             kernel=self.kernel,
             initfile=self.initfile,
@@ -179,7 +179,7 @@ class WolframKernelController(Thread):
             stdin=self._stdin,
             stdout=self._stdout,
             stderr=self._stderr,
-            **self.parameters
+            **self.parameters,
         )
 
     _DEFAULT_PARAMETERS = {
@@ -202,8 +202,9 @@ class WolframKernelController(Thread):
             )
         except KeyError:
             raise KeyError(
-                "%s is not one of the valid parameters: %s"
-                % (parameter_name, ", ".join(self._DEFAULT_PARAMETERS.keys()))
+                "{} is not one of the valid parameters: {}".format(
+                    parameter_name, ", ".join(self._DEFAULT_PARAMETERS.keys())
+                )
             )
 
     def set_parameter(self, parameter_name, parameter_value):
@@ -216,8 +217,9 @@ class WolframKernelController(Thread):
         """
         if parameter_name not in self._DEFAULT_PARAMETERS:
             raise KeyError(
-                "%s is not one of the valid parameters: %s"
-                % (parameter_name, ", ".join(self._DEFAULT_PARAMETERS.keys()))
+                "{} is not one of the valid parameters: {}".format(
+                    parameter_name, ", ".join(self._DEFAULT_PARAMETERS.keys())
+                )
             )
         self.parameters[parameter_name] = parameter_value
 
@@ -315,18 +317,18 @@ class WolframKernelController(Thread):
 
     @property
     def started(self):
-        """ Is the kernel starting or being started. """
+        """Is the kernel starting or being started."""
         with self._state_lock:
             return self.is_alive() and not self._state_terminated
 
     @property
     def terminated(self):
-        """ Is the kernel terminated. Terminated kernel no more handle evaluations. """
+        """Is the kernel terminated. Terminated kernel no more handle evaluations."""
         with self._state_lock:
             return self._state_terminated
 
     def is_kernel_alive(self):
-        """ Return the status of the kernel process. """
+        """Return the status of the kernel process."""
         try:
             # subprocess poll function is thread safe.
             return self.kernel_proc is not None and self.kernel_proc.poll() is None
@@ -335,11 +337,11 @@ class WolframKernelController(Thread):
             return False
 
     def request_kernel_start(self):
-        """ Start the thread and the associated kernel. Return a future object indicating the kernel status.
-        
+        """Start the thread and the associated kernel. Return a future object indicating the kernel status.
+
         The future object result is True once the kernel is successfully started. Exception raised in the process
-        and passed to the future object. 
-        
+        and passed to the future object.
+
         Calling this method twice is a no-op."""
         with self._state_lock:
             future = futures.Future()
@@ -357,7 +359,7 @@ class WolframKernelController(Thread):
         self.tasks_queue.put((payload, future, callback))
 
     def _safe_kernel_start(self):
-        """ Start a kernel. If something went wrong, clean-up resources that may have been created. """
+        """Start a kernel. If something went wrong, clean-up resources that may have been created."""
         try:
             self._kernel_start()
         except Exception as e:
@@ -410,8 +412,9 @@ class WolframKernelController(Thread):
         else:
             cmd.append("-run")
             cmd.append(
-                'ClientLibrary`Private`KernelPrivateStart["%s", "%s"];'
-                % (self.kernel_socket_out.uri, self.kernel_socket_in.uri)
+                'ClientLibrary`Private`KernelPrivateStart["{}", "{}"];'.format(
+                    self.kernel_socket_out.uri, self.kernel_socket_in.uri
+                )
             )
 
         if logger.isEnabledFor(logging.DEBUG):
@@ -446,8 +449,9 @@ class WolframKernelController(Thread):
             if response == self._KERNEL_OK:
                 if logger.isEnabledFor(logging.INFO):
                     logger.info(
-                        "Kernel %s is ready. Startup took %.2f seconds."
-                        % (self.pid, time.perf_counter() - t_start)
+                        "Kernel {} is ready. Startup took {:.2f} seconds.".format(
+                            self.pid, time.perf_counter() - t_start
+                        )
                     )
             else:
                 raise WolframKernelException(
@@ -595,15 +599,15 @@ class WolframKernelController(Thread):
                 payload, future, result_update_callback = task
         except (KeyboardInterrupt, RuntimeError, futures.CancelledError) as e:
             self.trigger_termination_requested.set()
-            logger.error("Fatal error in kernel controller: %s", e)
-            raise e
+            logger.exception("Fatal error in kernel controller: %s", e)
+            raise
         except Exception as e:
             self.trigger_termination_requested.set()
             if future and not future.done():
                 future.set_exception(e)
                 future = None
             else:
-                raise e
+                raise
         finally:
             try:
                 if task:
@@ -638,10 +642,10 @@ class WolframKernelController(Thread):
                 self.kernel_socket_out.uri,
             )
         else:
-            return '<%s[%s ❌], "%s">' % (self.__class__.__name__, self.name, self.kernel)
+            return '<{}[{} ❌], "{}">'.format(self.__class__.__name__, self.name, self.kernel)
 
 
-class _ProcessAliveNotAbortedEvent(object):
+class _ProcessAliveNotAbortedEvent:
     def __init__(self, subprocess, abort_event):
         self.subprocess = subprocess
         self.abort_event = abort_event
@@ -650,7 +654,7 @@ class _ProcessAliveNotAbortedEvent(object):
         return self.subprocess.poll() is not None or self.abort_event.is_set()
 
 
-class _KernelProcessDied(object):
+class _KernelProcessDied:
     def __init__(self, subprocess):
         self.subprocess = subprocess
 

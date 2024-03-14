@@ -13,7 +13,6 @@ if six.PY2:
     def _bytes(value):
         return chr(value)
 
-
 else:
 
     def _bytes(value):

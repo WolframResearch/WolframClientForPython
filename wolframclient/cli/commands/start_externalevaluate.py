@@ -30,8 +30,9 @@ class Command(SimpleCommand):
             zmq.Context
         except ImportError as e:
             print(
-                'Error importing zmq: %s. Please install zmq by running:\nExternalEvaluate[{"Shell", "Target" :> $SystemShell}, "%s" -> {"-m", "pip", "install", "pyzmq", "--user", "--no-input"}]'
-                % (e, sys.executable),
+                'Error importing zmq: {}. Please install zmq by running:\nExternalEvaluate[{{"Shell", "Target" :> $SystemShell}}, "{}" -> {{"-m", "pip", "install", "pyzmq", "--user", "--no-input"}}]'.format(
+                    e, sys.executable
+                ),
                 file=sys.stderr,
             )
             sys.stderr.flush()

@@ -49,16 +49,16 @@ _exceptions = {
     -(1 << 31): (WXF_CONSTANTS.Integer32, 4),
     -(1 << 63): (WXF_CONSTANTS.Integer64, 8),
 }
-_size = dict(
-    (j, (WXF_CONSTANTS["Integer%i" % ih], ih // 8))
+_size = {
+    j: (WXF_CONSTANTS["Integer%i" % ih], ih // 8)
     for il, ih in ((1, 8), (9, 16), (17, 32), (33, 64))
     for j in range(il, ih + 1)
-)
+}
 
 
 def integer_size(value):
     try:
-        return _exceptions.get(value, None) or _size[value.bit_length() + 1]
+        return _exceptions.get(value) or _size[value.bit_length() + 1]
     except KeyError:
         raise ValueError("Value %i is not a machine-sized integer." % value)
 
@@ -77,14 +77,12 @@ if six.JYTHON:
         _packing[int_size].pack_into(buffer, 0, value)
         return buffer[:int_size].tostring()
 
-
 elif six.PY2:
 
     def integer_to_bytes(value, int_size):
         buffer = bytearray(8)
         _packing[int_size].pack_into(buffer, 0, value)
         return buffer[:int_size]
-
 
 else:
 
@@ -98,7 +96,6 @@ if six.JYTHON:
         buffer = jarray.zeros(8, "c")
         pack_into(buffer, 0, value)
         return buffer.tostring()
-
 
 else:
 
@@ -158,7 +155,7 @@ if hasattr(memoryview, "cast"):
 
     def _array_to_list(data, shape, array_type):
         view = memoryview(data)
-        if array_type == "ComplexReal32" or array_type == "ComplexReal64":
+        if array_type in ("ComplexReal32", "ComplexReal64"):
             dimensions = list(shape)
             array_depth = len(dimensions)
             # In the given array, 2 reals give one complex,
@@ -170,7 +167,6 @@ if hasattr(memoryview, "cast"):
         else:
             return view.cast(unpack_mapping[array_type], shape=shape).tolist()
 
-
 else:
 
     def _array_to_list(data, shape, array_type):
@@ -178,9 +174,9 @@ else:
         return value
 
     def _build_array_from_bytes(data, offset, array_type, dimensions, current_dim):
-        new_array = list()
+        new_array = []
         if current_dim < len(dimensions) - 1:
-            for i in range(dimensions[current_dim]):
+            for _i in range(dimensions[current_dim]):
                 new_elem, offset = _build_array_from_bytes(
                     data, offset, array_type, dimensions, current_dim + 1
                 )
@@ -188,8 +184,8 @@ else:
         else:
             struct = STRUCT_MAPPING[array_type]
             # complex values, need two reals for each.
-            if array_type == "ComplexReal32" or array_type == "ComplexReal64":
-                for i in range(dimensions[-1]):
+            if array_type in ("ComplexReal32", "ComplexReal64"):
+                for _i in range(dimensions[-1]):
                     # this returns a tuple.
                     re = struct.unpack_from(data, offset=offset)
                     offset = offset + struct.size
@@ -197,7 +193,7 @@ else:
                     offset = offset + struct.size
                     new_array.append(complex(re[0], im[0]))
             else:
-                for i in range(dimensions[-1]):
+                for _i in range(dimensions[-1]):
                     # this returns a tuple.
                     value = struct.unpack_from(data, offset=offset)
                     offset = offset + struct.size

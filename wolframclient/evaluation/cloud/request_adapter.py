@@ -6,8 +6,8 @@ from wolframclient.utils.encoding import force_text
 __all__ = ["wrap_response"]
 
 
-class HTTPResponseAdapterBase(object):
-    """ Unify various request classes as a unique API. """
+class HTTPResponseAdapterBase:
+    """Unify various request classes as a unique API."""
 
     asynchronous = False
 
@@ -18,27 +18,27 @@ class HTTPResponseAdapterBase(object):
         return self.response
 
     def status(self):
-        """ HTTP status code """
+        """HTTP status code"""
         return self.response.status_code
 
     def json(self):
-        """ Request body as a json object """
+        """Request body as a json object"""
         return self.response.json()
 
     def text(self):
-        """ Request body as decoded text. """
+        """Request body as decoded text."""
         return self.response.text
 
     def content(self):
-        """ Request body as raw bytes """
+        """Request body as raw bytes"""
         return self.response.content
 
     def url(self):
-        """ String URL. """
+        """String URL."""
         return force_text(self.response.url)
 
     def headers(self):
-        """ Headers as a dict. """
+        """Headers as a dict."""
         return self.response.headers
 
 

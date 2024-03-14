@@ -8,15 +8,15 @@ from wolframclient.utils.functional import flatten
 # https://www.artima.com/weblogs/viewpost.jsp?thread=101605
 
 
-class Dispatch(object):
-    """ A method dispatcher class allowing for multiple implementations of a function. Each implementation is associated to a specific input type.
-    
+class Dispatch:
+    """A method dispatcher class allowing for multiple implementations of a function. Each implementation is associated to a specific input type.
+
     Implementations are registered with the annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch`.
 
     The Dispatch class is callable, it behaves as a function that uses the implementation corresponding to the input parameter.
 
-    When a type is a subtype, the type and its parents are checked in the order given by :data:`__mro__` (method resolution order). 
-        
+    When a type is a subtype, the type and its parents are checked in the order given by :data:`__mro__` (method resolution order).
+
     *Example:* method :meth:`~wolframclient.utils.dispatch.Dispatch.resolve` applied to an instance of :class:`collections.OrderedDict`,
     check for the first implementation to match with :class:`collections.OrderedDict`, then with :class:`dict`, and ultimately to :data:`object`.
 
@@ -27,8 +27,8 @@ class Dispatch(object):
         self.clear()
 
     def dispatch(self, *args, **opts):
-        """ Annotate a function and map it to a given set of type(s).
-        
+        """Annotate a function and map it to a given set of type(s).
+
         Declare an implementation to use on :data:`bytearray` input::
 
             @dispatcher.dispatch(bytearray)
@@ -39,7 +39,7 @@ class Dispatch(object):
             @dispatcher.dispatch(object)
             def my_default_func(...)
 
-        A tuple can be used as input to associate more than one type with a function. 
+        A tuple can be used as input to associate more than one type with a function.
         Declare a function used for both :data:`bytes` and :data:`bytearray`::
 
             @dispatcher.dispatch((bytes, bytearray))
@@ -56,11 +56,11 @@ class Dispatch(object):
         return register
 
     def update(self, dispatch, **opts):
-        """ Update current mapping with the one from `dispatch`.
-        
+        """Update current mapping with the one from `dispatch`.
+
         `dispatch` can be a Dispatch instance or a :class:`dict`.
         `**opts` are passed to :meth:`~wolframclient.utils.dispatch.Dispatch.register`
-         """
+        """
         if isinstance(dispatch, Dispatch):
             dispatchmapping = dispatch.dispatch_dict
         elif isinstance(dispatch, dict):
@@ -77,7 +77,7 @@ class Dispatch(object):
             yield t
 
     def register(self, function, types=object, keep_existing=False, replace_existing=False):
-        """ Equivalent to annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch` but as 
+        """Equivalent to annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch` but as
         a function.
         """
         if not callable(function):
@@ -94,14 +94,14 @@ class Dispatch(object):
                 self.dispatch_dict[t] = function
             elif t in self.dispatch_dict:
                 if not keep_existing:
-                    raise TypeError("Duplicated registration for input type(s): %s" % (t,))
+                    raise TypeError("Duplicated registration for input type(s): {}".format(t))
             else:
                 self.dispatch_dict[t] = function
 
         return function
 
     def unregister(self, types=object):
-        """ Remove implementations associated with types. """
+        """Remove implementations associated with types."""
 
         self.clear_cache()
 
@@ -112,16 +112,16 @@ class Dispatch(object):
                 pass
 
     def clear(self):
-        """ Reset the dispatcher to its initial state. """
-        self.dispatch_dict = dict()
-        self.dispatch_dict_cache = dict()
+        """Reset the dispatcher to its initial state."""
+        self.dispatch_dict = {}
+        self.dispatch_dict_cache = {}
 
     def clear_cache(self):
         if self.dispatch_dict_cache:
-            self.dispatch_dict_cache = dict()
+            self.dispatch_dict_cache = {}
 
     def resolve(self, arg):
-        """ Return the implementation better matching the type the argument type. """
+        """Return the implementation better matching the type the argument type."""
         for t in arg.__class__.__mro__:
             try:
                 return self.dispatch_dict_cache[t]
@@ -134,15 +134,15 @@ class Dispatch(object):
         return self.default_function
 
     def default_function(self, *args, **opts):
-        """ Ultimately called when no type was found. """
+        """Ultimately called when no type was found."""
         raise ValueError("Unable to handle args")
 
     def __call__(self, arg, *args, **opts):
         return self.resolve(arg)(arg, *args, **opts)
 
     def as_method(self):
-        """ Return the dispatch as a class method. 
-        
+        """Return the dispatch as a class method.
+
         Create a new dispatcher::
 
             dispatch = Dispatcher()
@@ -153,7 +153,7 @@ class Dispatch(object):
                 myMethod = dispatch.as_method()
 
         Call the class method::
-            
+
             o = MyClass()
             o.myMethod(arg, *args, **kwargs)
 

@@ -18,8 +18,8 @@ def missing_requirements(*modules):
         if isinstance(module, (tuple, list)):
             module, version = module
 
-        if not module in distributions or version and not distributions[module] == version:
-            yield version and "%s==%s" % (module, version) or module
+        if module not in distributions or version and distributions[module] != version:
+            yield version and "{}=={}".format(module, version) or module
 
 
 def require_module(*modules):
@@ -31,9 +31,9 @@ def require_module(*modules):
         print("Update in progress: pip install %s --user" % " ".join(commands))
 
         if pip.running_under_virtualenv():
-            pip.main(["install"] + commands)
+            pip.main(["install", *commands])
         else:
-            pip.main(["install", "--user"] + commands)
+            pip.main(["install", "--user", *commands])
 
 
 def require(*modules):

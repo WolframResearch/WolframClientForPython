@@ -22,7 +22,7 @@ def dependencies():
 
 
 class Command(SimpleCommand):
-    """ Run test suites from the tests modules.
+    """Run test suites from the tests modules.
     A list of patterns can be provided to specify the tests to run.
     """
 

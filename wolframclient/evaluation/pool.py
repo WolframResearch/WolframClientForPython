@@ -18,7 +18,7 @@ __all__ = ["WolframEvaluatorPool", "parallel_evaluate"]
 
 
 class WolframEvaluatorPool(WolframAsyncEvaluator):
-    """ A pool of kernels to dispatch one-shot evaluations asynchronously.
+    """A pool of kernels to dispatch one-shot evaluations asynchronously.
 
     Evaluators can be specified in various ways: as a string representing the path to a local kernel,
     a :class:`~wolframclient.evaluation.WolframCloudAsyncSession` or
@@ -67,7 +67,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         poolsize=4,
         load_factor=0,
         async_language_session_class=WolframLanguageAsyncSession,
-        **kwargs
+        **kwargs,
     ):
         super().__init__()
         if poolsize <= 0:
@@ -128,15 +128,15 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
                 except Exception as e:
                     future.set_exception(e)
             # First exceptions are those we can't recover from.
-            except KeyboardInterrupt as interrupt:
-                logger.error("Loop associated to kernel %s interrupted by user.", kernel)
-                raise interrupt
-            except CancelledError as cancel:
+            except KeyboardInterrupt:
+                logger.exception("Loop associated to kernel %s interrupted by user.", kernel)
+                raise
+            except CancelledError:
                 logger.warning("Loop associated to kernel %s cancelled.", kernel)
-                raise cancel
+                raise
             except RuntimeError as runtime:
-                logger.error("Unexpected runtime error: {}", runtime)
-                raise runtime
+                logger.exception("Unexpected runtime error: {}", runtime)
+                raise
             except Exception as e:
                 if future:
                     logger.warning(
@@ -146,7 +146,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
                     future.set_exception(e)
                 else:
                     logger.warning("No future object. Exception raised in loop was: %s" % e)
-                    raise e
+                    raise
             finally:
                 if task:
                     self._queue.task_done()
@@ -186,7 +186,7 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
         return len(self._kernel_evaluation_loop_tasks) > 0
 
     async def start(self):
-        """ Start a pool of kernels and wait for at least one of them to 
+        """Start a pool of kernels and wait for at least one of them to
         be ready for evaluation.
 
         This method is a coroutine.
@@ -286,8 +286,8 @@ class WolframEvaluatorPool(WolframAsyncEvaluator):
 
 @run_in_loop
 async def parallel_evaluate(expressions, evaluator_spec=None, max_evaluators=4):
-    """ Start a kernel pool and evaluate the expressions in parallel. 
-    
+    """Start a kernel pool and evaluate the expressions in parallel.
+
     The pool is created with the value of `evaluator_spec`. The pool is automatically stopped when it is no longer
     needed. The expressions are evaluated and returned in order.
 

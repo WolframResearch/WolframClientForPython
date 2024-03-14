@@ -62,7 +62,7 @@ class TestCase(BaseTestCase):
 
         normalizer = Dispatch()
 
-        class Person(object):
+        class Person:
             pass
 
         class SportPlayer(Person):
@@ -129,7 +129,7 @@ class TestCase(BaseTestCase):
         def implementation(self, o):
             return o * 3
 
-        class Foo(object):
+        class Foo:
             attr = normalizer.as_method()
 
         self.assertEqual(Foo().attr("Ric"), "Hello Ric")

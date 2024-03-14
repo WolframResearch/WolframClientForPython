@@ -38,7 +38,9 @@ def import_string(dotted_path):
         return getattr(module, class_name)
     except AttributeError:
         raise ImportError(
-            'Module "%s" does not define a "%s" attribute/class' % (module_path, class_name)
+            'Module "{}" does not define a "{}" attribute/class'.format(
+                module_path, class_name
+            )
         )
 
 
@@ -49,7 +51,7 @@ def safe_import_string(f):
                 return import_string(path)
             except ImportError:
                 pass
-        raise ImportError("Cannot import %s" % (f,))
+        raise ImportError("Cannot import {}".format(f))
     if isinstance(f, six.string_types):
         return import_string(f)
     return f
@@ -59,7 +61,7 @@ def safe_import_string_and_call(f, *args, **kw):
     return safe_import_string(f)(*args, **kw)
 
 
-class API(object):
+class API:
     def __init__(self, importer=safe_import_string, **mapping):
         self.__dict__["importer"] = importer
         self.__dict__["mapping"] = mapping
@@ -96,7 +98,7 @@ class API(object):
         return zip(self.keys(), self.values())
 
     def __repr__(self):
-        return "<%s %s>" % (self.__class__.__name__, ", ".join(sorted(self)))
+        return "<{} {}>".format(self.__class__.__name__, ", ".join(sorted(self)))
 
     def __dir__(self):
         return list(self)

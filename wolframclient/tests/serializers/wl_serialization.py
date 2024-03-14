@@ -1,11 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import datetime
-import os
 import decimal
 import fractions
+import os
 import unittest
 from collections import OrderedDict
+from contextlib import contextmanager
 
 from wolframclient.language import Global, System, wl, wlexpr
 from wolframclient.serializers import export
@@ -16,22 +17,20 @@ from wolframclient.utils.encoding import force_bytes, force_text
 from wolframclient.utils.tests import TestCase as BaseTestCase
 from wolframclient.utils.tests import path_to_file_in_data_dir
 
-from contextlib import contextmanager
 
 @contextmanager
 def with_version(n):
 
-    prev = os.environ.get('WOLFRAM_KERNEL_VERSION', None)
+    prev = os.environ.get("WOLFRAM_KERNEL_VERSION", None)
 
-    os.environ['WOLFRAM_KERNEL_VERSION'] = force_text(n)
+    os.environ["WOLFRAM_KERNEL_VERSION"] = force_text(n)
 
     yield n
 
     if prev:
-        os.environ['WOLFRAM_KERNEL_VERSION'] = prev
+        os.environ["WOLFRAM_KERNEL_VERSION"] = prev
     else:
-        del os.environ['WOLFRAM_KERNEL_VERSION']
-
+        del os.environ["WOLFRAM_KERNEL_VERSION"]
 
 
 def test_datetime():
@@ -67,7 +66,7 @@ class TestCase(BaseTestCase):
 
         self.compare(Association(enumerate("abc")), b'<|0 -> "a", 1 -> "b", 2 -> "c"|>')
 
-        self.compare(dict(a=2), b'<|"a" -> 2|>')
+        self.compare({"a": 2}, b'<|"a" -> 2|>')
 
         self.compare(wl.YetAnotherSymbol, b"YetAnotherSymbol")
         self.compare(wl.Expression(1, 2, 3), b"Expression[1, 2, 3]")
@@ -120,7 +119,6 @@ class TestCase(BaseTestCase):
             b'DateObject[{2000, 1, 1, 11, 15, 20.}, "Instant", "Gregorian", "Europe/Rome"]',
         )
 
-
     def test_date(self):
 
         self.compare(
@@ -150,7 +148,7 @@ class TestCase(BaseTestCase):
 
     @unittest.skipIf(not six.PY2, "Python2 str test skipped.")
     def test_all_str_py2(self):
-        str_all_chr = b"".join([chr(i) for i in range(0, 256)])
+        str_all_chr = b"".join([chr(i) for i in range(256)])
         wl_data = export(str_all_chr, target_format="wl")
         with open(path_to_file_in_data_dir("allbytes.wl"), "rb") as r_file:
             expected = bytearray(r_file.read())
@@ -166,9 +164,7 @@ class TestCase(BaseTestCase):
 
         prec = decimal.getcontext().prec
 
-        self.compare(
-            decimal.Decimal(10 ** 20), force_bytes("100000000000000000000``%i" % prec)
-        )
+        self.compare(decimal.Decimal(10**20), force_bytes("100000000000000000000``%i" % prec))
         self.compare(decimal.Decimal("100"), force_bytes("100``%i" % prec))
         self.compare(decimal.Decimal("100.00"), force_bytes("100.00``%i" % prec))
         self.compare(decimal.Decimal("0.010"), force_bytes("0.010``%i" % prec))

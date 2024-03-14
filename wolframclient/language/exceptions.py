@@ -7,7 +7,7 @@ from wolframclient.utils.encoding import safe_force_text
 
 
 class WolframLanguageException(WLSerializable, Exception):
-    """ The most generic exception raised by the Wolfram Client Library.
+    """The most generic exception raised by the Wolfram Client Library.
 
     This class is :class:`~wolframclient.serializers.serializable.WLSerializable` and will automatically serialize to a
     failure box when evaluated in Wolfram Desktop.
@@ -72,4 +72,4 @@ class WolframLanguageException(WLSerializable, Exception):
             yield "Traceback", serialize_traceback(self.exc_type, self.exc_value, self.tb)
 
     def __repr__(self):
-        return "%s: %s" % (self.__class__.__name__, self.failure_template())
+        return "{}: {}".format(self.__class__.__name__, self.failure_template())

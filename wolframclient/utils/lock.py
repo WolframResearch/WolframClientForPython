@@ -8,7 +8,6 @@ try:
     def Lock():
         return _lock
 
-
 except (ImportError, OSError):
 
     # JYTHON is raising an ImportError when running "import multiprocessing"

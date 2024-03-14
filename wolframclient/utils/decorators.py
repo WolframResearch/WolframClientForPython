@@ -17,7 +17,7 @@ to_tuple = decorate(tuple)
 to_dict = decorate(Association)
 
 
-class cached_property(object):
+class cached_property:
     """
     Decorator that converts a method with a single self argument into a
     property cached on the instance.
@@ -28,7 +28,7 @@ class cached_property(object):
 
     def __init__(self, func, name=None):
         self.func = func
-        self.__doc__ = getattr(func, "__doc__")
+        self.__doc__ = func.__doc__
         self.name = name or func.__name__
 
     def __get__(self, instance, cls=None):

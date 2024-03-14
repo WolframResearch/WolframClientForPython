@@ -14,14 +14,13 @@ def yield_with_separators(iterable, first, last, separator=b", "):
     for i, arg in enumerate(iterable):
         if i:
             yield separator
-        for sub in arg:
-            yield sub
+        yield from arg
     yield last
 
 
 class WLSerializer(FormatSerializer):
     def __init__(self, normalizer=None, indent=None, **opts):
-        super(WLSerializer, self).__init__(normalizer=normalizer, **opts)
+        super().__init__(normalizer=normalizer, **opts)
         self.indent = indent
 
     def generate_bytes(self, data):

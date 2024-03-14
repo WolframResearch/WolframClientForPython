@@ -17,8 +17,6 @@ DEFAULT_UNKNOWN_FAILURE = {
 
 def safe_wl_execute(function, args=(), opts={}, export_opts={}, exception_class=None):
 
-    __traceback_hidden_variables__ = True
-
     try:
         return export(function(*args, **opts), **export_opts)
     except Exception as export_exception:
@@ -38,7 +36,7 @@ def safe_wl_execute(function, args=(), opts={}, export_opts={}, exception_class=
                 if not exception_class or exception_class is WolframLanguageException:
                     return export(
                         WolframLanguageException(export_exception, exec_info=sys.exc_info()),
-                        **export_opts
+                        **export_opts,
                     )
 
                 # A custom error class might fail, if this is happening then we can try to use the built in one

@@ -93,7 +93,6 @@ DEFAULT_HIDDEN_VARIABLES = (
 )
 
 
-
 def _serialize_external_object_meta(o):
     if callable(o):
         try:
@@ -102,7 +101,6 @@ def _serialize_external_object_meta(o):
         except TypeError:
             # this function can fail with TypeError unsupported callable
             pass
-
 
     is_module = inspect.ismodule(o)
 
@@ -119,14 +117,17 @@ def _serialize_external_object_meta(o):
     yield "IsCallable", callable(o),
 
 
-
-def to_external_object(instance, objects_registry, force_externalobject = False):
+def to_external_object(instance, objects_registry, force_externalobject=False):
     pk = id(instance)
     objects_registry[pk] = instance
 
     meta = dict(_serialize_external_object_meta(instance))
 
-    func = wl.ExternalObject if force_externalobject or not callable(instance) else wl.ExternalFunction
+    func = (
+        wl.ExternalObject
+        if force_externalobject or not callable(instance)
+        else wl.ExternalFunction
+    )
 
     return func(wl.Inherited, pk, meta)
 
@@ -150,10 +151,6 @@ else:
         return ast.Module(code)
 
 
-
-
-
-
 def check_wl_symbol(expr, symbol):
     return (
         isinstance(expr, WLFunction)
@@ -161,8 +158,9 @@ def check_wl_symbol(expr, symbol):
         and expr.head == symbol
     )
 
-def unpack_optionals(args, symbol = wl.Rule):
-    
+
+def unpack_optionals(args, symbol=wl.Rule):
+
     positional = []
     optionals = {}
 
@@ -174,6 +172,7 @@ def unpack_optionals(args, symbol = wl.Rule):
 
     return positional, optionals
 
+
 # ROUTES DEFINITION, we declare a global registry and series of functions
 
 
@@ -184,20 +183,14 @@ class registry(dict):
         return func
 
     def __repr__(self):
-        return "<%s len=%s>" % (self.__class__.__name__, len(self))
-
-
+        return "<{} len={}>".format(self.__class__.__name__, len(self))
 
 
 routes = registry()
 
 
-
-
 @routes.register_function
 def Eval(consumer, code, constants):
-
-    __traceback_hidden_variables__ = True
 
     # this is creating a custom __loader__ that is returning the source code
     # traceback serializers is inspecting global variables and looking for a standard loader that can return source code.
@@ -278,7 +271,7 @@ def ReturnType(consumer, result, return_type):
         # bug 354267 repr returns a 'str' even on py2 (i.e. bytes).
         return force_text(repr(result))
     elif return_type == "ExternalObject":
-        return to_external_object(result, consumer.objects_registry, force_externalobject = True)
+        return to_external_object(result, consumer.objects_registry, force_externalobject=True)
     elif return_type != "Expression":
         raise NotImplementedError("Return type %s is not implemented" % return_type)
 
@@ -303,13 +296,16 @@ def GetItem(consumer, result, names):
 def SetAttribute(consumer, result, name, value):
     setattr(result, name, value)
 
+
 @routes.register_function
 def SetItem(consumer, result, name, value):
     result[name] = value
 
+
 @routes.register_function
 def Len(consumer, result):
     return len(result)
+
 
 @routes.register_function
 def Bool(consumer, result):
@@ -321,7 +317,7 @@ class ExternalEvaluateConsumer(WXFConsumerNumpy):
 
     builtin_routes = routes
 
-    def __init__(self, routes_registry={}, objects_registry = {}, globals_registry = {}):
+    def __init__(self, routes_registry={}, objects_registry={}, globals_registry={}):
         self.objects_registry = registry(objects_registry)
         self.globals_registry = registry(globals_registry)
         self.routes_registry = registry(self.builtin_routes, **routes_registry)
@@ -385,9 +381,7 @@ def start_zmq_loop(
     message_limit=float("inf"), exception_class=None, routes_registry={}, **opts
 ):
 
-    consumer = ExternalEvaluateConsumer(
-        routes_registry=routes_registry
-    )
+    consumer = ExternalEvaluateConsumer(routes_registry=routes_registry)
 
     handler = to_wl(
         exception_class=exception_class,

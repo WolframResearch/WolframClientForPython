@@ -28,7 +28,7 @@ __all__ = ["WolframCloudAsyncSession", "WolframAPICallAsync"]
 
 
 class WolframCloudAsyncSession(WolframAsyncEvaluator):
-    """ Interact with a Wolfram Cloud asynchronously using coroutines.
+    """Interact with a Wolfram Cloud asynchronously using coroutines.
 
     Asynchronous cloud operations are provided through coroutines using modules :mod:`asyncio` and
     `aiohttp <https://pypi.org/project/aiohttp/>`_.
@@ -124,7 +124,7 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
 
         This method supports both oauth and xauth methods. It is not necessary
         to call it, since the session will try to authenticate when the first
-        request is issued. """
+        request is issued."""
         logger.info("Authenticating to the server.")
         if self.credentials is None:
             raise AuthenticationException("Missing credentials.")
@@ -148,7 +148,7 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
         files={},
         target_format="wl",
         permissions_key=None,
-        **kwargv
+        **kwargv,
     ):
         """Call a given API using the provided input parameters.
 
@@ -225,13 +225,13 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
         return await response.get()
 
     async def evaluate_wrap(self, expr, **kwargs):
-        """ Similar to :func:`~wolframclient.evaluation.cloud.asynccloudsession.WolframCloudAsyncSession.evaluate` but
+        """Similar to :func:`~wolframclient.evaluation.cloud.asynccloudsession.WolframCloudAsyncSession.evaluate` but
         return the result as a :class:`~wolframclient.evaluation.result.WolframEvaluationJSONResponseAsync`.
         """
         return await self._call_evaluation_api(self.normalize_input(expr), **kwargs)
 
     def wolfram_api_call(self, api, **kwargs):
-        """ Build an helper class instance to call a given API. """
+        """Build an helper class instance to call a given API."""
         return WolframAPICallAsync(self, api, **kwargs)
 
     def __repr__(self):
@@ -241,7 +241,7 @@ class WolframCloudAsyncSession(WolframAsyncEvaluator):
 
 
 class WolframAPICallAsync(WolframAPICallBase):
-    """Perform an API call using an asynchronous cloud session. """
+    """Perform an API call using an asynchronous cloud session."""
 
     async def perform(self, **kwargs):
         """Make the API call and return the result."""
@@ -250,7 +250,7 @@ class WolframAPICallAsync(WolframAPICallBase):
             input_parameters=self.parameters,
             files=self.files,
             permissions_key=self.permission_key,
-            **kwargs
+            **kwargs,
         )
 
 
@@ -288,11 +288,12 @@ def encode_api_inputs(inputs, files={}, target_format="wl", **kwargs):
     if inputs == {} and files == {}:
         return None
 
-    encoder = SUPPORTED_ENCODING_FORMATS.get(target_format, None)
+    encoder = SUPPORTED_ENCODING_FORMATS.get(target_format)
     if encoder is None:
         raise ValueError(
-            "Invalid encoding format %s. Choices are: %s"
-            % (target_format, ", ".join(SUPPORTED_ENCODING_FORMATS.keys()))
+            "Invalid encoding format {}. Choices are: {}".format(
+                target_format, ", ".join(SUPPORTED_ENCODING_FORMATS.keys())
+            )
         )
     form_data = aiohttp.FormData()
     # files are specified by file pointer or bytes, or a tuple.

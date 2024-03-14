@@ -14,8 +14,8 @@ __all__ = [
 ]
 
 
-class SecuredAuthenticationKey(object):
-    """ Represents a Secured Authentication Key generated using the Wolfram Language
+class SecuredAuthenticationKey:
+    """Represents a Secured Authentication Key generated using the Wolfram Language
     function `GenerateSecuredAuthenticationKey[]`
 
     It is used as an input when authenticating a cloud session.
@@ -28,8 +28,8 @@ class SecuredAuthenticationKey(object):
         self.consumer_secret = consumer_secret
 
 
-class UserIDPassword(object):
-    """ Represents user credentials used to login to a cloud.
+class UserIDPassword:
+    """Represents user credentials used to login to a cloud.
 
     It is used as an input when authenticating a cloud session.
     """
@@ -41,8 +41,8 @@ class UserIDPassword(object):
         self.password = password
 
 
-class OAuthSessionBase(object):
-    """ A family of classes dealing with authentication with OAuth method."""
+class OAuthSessionBase:
+    """A family of classes dealing with authentication with OAuth method."""
 
     DEFAULT_CONTENT_TYPE = {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -67,11 +67,11 @@ class OAuthSessionBase(object):
         self.server = server
 
     def authenticate(self):
-        """ Authenticate with a given server using the user credentials"""
+        """Authenticate with a given server using the user credentials"""
         raise NotImplementedError
 
     def signed_request(self, uri, headers={}, data=None, method="POST"):
-        """ Sign a given request and issue it."""
+        """Sign a given request and issue it."""
         raise NotImplementedError
 
     def authorized(self):
@@ -107,15 +107,15 @@ class OAuthSessionBase(object):
 
 class OAuthAsyncSessionBase(OAuthSessionBase):
     async def authenticate(self):
-        """ Asynchronous OAuth authentication class dealing with various tokens and signing requests. """
+        """Asynchronous OAuth authentication class dealing with various tokens and signing requests."""
         raise NotImplementedError
 
     async def signed_request(self, uri, headers={}, data=None, method="POST"):
-        """ Sign a given request and issue it asynchronously."""
+        """Sign a given request and issue it asynchronously."""
         raise NotImplementedError
 
 
-class WolframAPICallBase(object):
+class WolframAPICallBase:
     """Perform an API call to a given target.
 
     The API call is actually performed when :func:`~wolframclient.evaluation.WolframAPICall.perform`
@@ -181,7 +181,7 @@ class WolframAPICallBase(object):
         raise NotImplementedError
 
     def __repr__(self):
-        return "<%s api=%s, parameters=%s>" % (
+        return "<{} api={}, parameters={}>".format(
             self.__class__.__name__,
             self.api,
             set().union(self.parameters.keys(), self.files.keys()) or None,

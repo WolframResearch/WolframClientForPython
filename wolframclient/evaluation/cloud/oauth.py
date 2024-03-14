@@ -13,7 +13,7 @@ __all__ = ["OAuth1RequestsSyncSession", "XAuthRequestsSyncSession"]
 
 
 class OAuthRequestsSyncSessionBase(OAuthSessionBase):
-    """ A wrapper around the OAuth client taking care of fetching the various oauth tokens,
+    """A wrapper around the OAuth client taking care of fetching the various oauth tokens,
     preparing data as expected by the requests library.
     """
 
@@ -68,7 +68,7 @@ class OAuthRequestsSyncSessionBase(OAuthSessionBase):
                         'Content type not provided by user. Setting it to "application/x-www-form-urlencoded".'
                     )
                     req_headers["Content-Type"] = "application/x-www-form-urlencoded"
-            elif isinstance(body, six.string_types) or isinstance(body, six.binary_type):
+            elif isinstance(body, (six.binary_type, six.string_types)):
                 # application/octet-stream for binary data?
                 if "Content-Type" not in req_headers:
                     logger.info(
@@ -76,7 +76,7 @@ class OAuthRequestsSyncSessionBase(OAuthSessionBase):
                     )
                     req_headers["Content-Type"] = "text/plain"
                     sign_body = False
-                elif "application/x-www-form-urlencoded" == req_headers["Content-Type"]:
+                elif req_headers["Content-Type"] == "application/x-www-form-urlencoded":
                     encoded_body = body
                     sign_body = True
                 else:
@@ -108,7 +108,7 @@ class OAuthRequestsSyncSessionBase(OAuthSessionBase):
 
 
 class OAuth1RequestsSyncSession(OAuthRequestsSyncSessionBase):
-    """ Oauth1 authentication using secured authentication key, as expected by the requests library. """
+    """Oauth1 authentication using secured authentication key, as expected by the requests library."""
 
     def authenticate(self):
         self.set_oauth_request_token()
@@ -154,10 +154,10 @@ class OAuth1RequestsSyncSession(OAuthRequestsSyncSessionBase):
 
 
 class XAuthRequestsSyncSession(OAuthRequestsSyncSessionBase):
-    """ XAuth authentication as expected by the requests library. 
-    
+    """XAuth authentication as expected by the requests library.
+
     xauth authenticates with user and password, but requires a specific server
-    configuration. """
+    configuration."""
 
     def __init__(
         self,
@@ -197,7 +197,7 @@ class XAuthRequestsSyncSession(OAuthRequestsSyncSessionBase):
             raise AuthenticationException(
                 "XAuth is not configured. Missing consumer key and/or secret."
             )
-        # todo use xauth server key/secret
+        # TODO use xauth server key/secret
         client = self.client_class(self.consumer_key, self.consumer_secret)
         params = {
             "x_auth_username": self.xauth_credentials.user,

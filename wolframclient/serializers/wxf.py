@@ -46,17 +46,16 @@ def compress(data):
 
     compressor = zlib.compressobj()
 
-    for token in map(compressor.compress, map(concatenate_bytes, partition(data, 100))):
-        yield token
+    yield from map(compressor.compress, map(concatenate_bytes, partition(data, 100)))
 
     yield compressor.flush()
 
 
 class WXFSerializer(FormatSerializer):
-    """ Serialize python objects to WXF. """
+    """Serialize python objects to WXF."""
 
     def __init__(self, normalizer=None, compress=False, **opts):
-        super(WXFSerializer, self).__init__(normalizer=normalizer, **opts)
+        super().__init__(normalizer=normalizer, **opts)
         self.compress = compress
 
     def generate_bytes(self, data):

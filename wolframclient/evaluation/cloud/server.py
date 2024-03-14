@@ -14,8 +14,8 @@ except ImportError:
 __all__ = ["WolframServer", "DEFAULT_CA_PATH"]
 
 
-class WolframServer(object):
-    """ Represents the cloud server.
+class WolframServer:
+    """Represents the cloud server.
 
     Contains the authentication endpoints information, the API endpoint aka. the
     cloud base (`$CloudBase` in the Wolfram Language), and eventually the xauth
@@ -45,16 +45,13 @@ class WolframServer(object):
         return self.xauth_consumer_key is not None and self.xauth_consumer_secret is not None
 
     def __repr__(self):
-        return (
-            "<%s: cloudbase=%s, request_token=%s, access_token=%s, certificate=%s, xauth support=%s>"
-            % (
-                self.__class__.__name__,
-                self.cloudbase,
-                self.request_token_endpoint,
-                self.access_token_endpoint,
-                self.certificate,
-                self.is_xauth(),
-            )
+        return "<{}: cloudbase={}, request_token={}, access_token={}, certificate={}, xauth support={}>".format(
+            self.__class__.__name__,
+            self.cloudbase,
+            self.request_token_endpoint,
+            self.access_token_endpoint,
+            self.certificate,
+            self.is_xauth(),
         )
 
 

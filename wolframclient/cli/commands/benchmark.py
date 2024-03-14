@@ -43,7 +43,7 @@ class Command(SimpleCommand):
                 "functions": repeat(wl.Function(1, 2, 3), complexity),
             },
             "array": {
-                "%s_%s" % (func.__name__, t): func(tuple(range(complexity * 100)), t)
+                "{}_{}".format(func.__name__, t): func(tuple(range(complexity * 100)), t)
                 for func in (PackedArray, NumericArray)
                 for t in ("Integer64", "Real64")
             },
@@ -69,7 +69,7 @@ class Command(SimpleCommand):
     def stream_generators(self, path):
         yield "Memory", lambda complexity, export_format, path=path: None
         yield "File", lambda complexity, export_format, path=path: os.path.join(
-            path, "benchmark-test-%s.%s" % (force_text(complexity).zfill(7), export_format)
+            path, "benchmark-test-{}.{}".format(force_text(complexity).zfill(7), export_format)
         )
 
     def report(self):
@@ -92,7 +92,7 @@ class Command(SimpleCommand):
         )
         self.table_divider(len(self.complexity) + 1)
 
-        for label, opts in (("wxf", dict()), ("wxf zip", dict(compress=True))):
+        for label, opts in (("wxf", {}), ("wxf zip", {"compress": True})):
 
             self.table_line(
                 label,
@@ -101,7 +101,7 @@ class Command(SimpleCommand):
                         binary_deserialize, export(expr, target_format="wxf", **opts)
                     )
                     for complexity, expr in benchmarks
-                )
+                ),
             )
 
         self.table_line()
@@ -118,23 +118,23 @@ class Command(SimpleCommand):
 
             for key in ("expr", "array"):
                 for label, export_format, opts in (
-                    ("wl", "wl", dict()),
-                    ("wxf", "wxf", dict()),
-                    ("wxf zip", "wxf", dict(compress=True)),
+                    ("wl", "wl", {}),
+                    ("wxf", "wxf", {}),
+                    ("wxf zip", "wxf", {"compress": True}),
                 ):
-                    if key == "expr" or (key == "array" and not label == "wl"):
+                    if key == "expr" or (key == "array" and label != "wl"):
                         self.table_line(
-                            key == "expr" and label or "%s %s" % (label, key),
+                            key == "expr" and label or "{} {}".format(label, key),
                             *(
                                 self.formatted_time(
                                     export,
                                     expr[key],
                                     stream=stream_generator(complexity, export_format),
                                     target_format=export_format,
-                                    **opts
+                                    **opts,
                                 )
                                 for complexity, expr in benchmarks
-                            )
+                            ),
                         )
 
             self.table_line()

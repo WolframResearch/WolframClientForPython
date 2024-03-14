@@ -41,8 +41,7 @@ class TestCase(BaseTestCase):
 
         expr_provider.add_encoder(numpy_encoder)
         expr_provider.add_encoder(DefaultWXFEncoder())
-        serializer = WXFExprSerializer(six.BytesIO(), expr_provider=expr_provider)
-        return serializer
+        return WXFExprSerializer(six.BytesIO(), expr_provider=expr_provider)
 
     def test_dimensions(self):
         provider = WXFExprProvider(NumPyWXFEncoder())
@@ -198,7 +197,7 @@ class TestCase(BaseTestCase):
         f64 = numpy.float64("-1.234567891234e-1")
         self.assertEqual(export(f64), b"-0.1234567891234")
 
-    #def test_numpy_float128(self):
+    # def test_numpy_float128(self):
     #    f128 = numpy.float128("1.23e-1234")
     #    self.assertEqual(export(f128), b"Times[0.5138393296553, Power[2, -4098.]]")
 

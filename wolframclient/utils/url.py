@@ -4,7 +4,7 @@ from wolframclient.utils import six
 
 
 def url_join(*fragments):
-    """ Join fragments of a URL, dealing with slashes."""
+    """Join fragments of a URL, dealing with slashes."""
     if len(fragments) == 0:
         return ""
     buff = []
@@ -26,8 +26,8 @@ def evaluation_api_url(server):
 
 
 def user_api_url(server, api):
-    """Build an API URL from a user name and an API id. """
-    if isinstance(api, tuple) or isinstance(api, list):
+    """Build an API URL from a user name and an API id."""
+    if isinstance(api, (list, tuple)):
         if len(api) == 2:
             return url_join(server.cloudbase, "objects", api[0], api[1])
         else:
