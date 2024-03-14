@@ -11,13 +11,7 @@ from wolframclient.utils.decorators import to_tuple
 from wolframclient.utils.functional import flatten, iterate
 from wolframclient.utils.importutils import module_path
 
-process = partial(
-    subprocess.Popen,
-    stdout=subprocess.PIPE,
-    stdin=subprocess.PIPE,
-    stderr=subprocess.PIPE,
-    env=os.environ,
-)
+
 process_verbose = partial(
     subprocess.Popen,
     stdout=sys.stdout,
