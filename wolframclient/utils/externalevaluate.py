@@ -321,9 +321,9 @@ class ExternalEvaluateConsumer(WXFConsumerNumpy):
 
     builtin_routes = routes
 
-    def __init__(self, routes_registry={}):
-        self.objects_registry = registry()
-        self.globals_registry = registry()
+    def __init__(self, routes_registry={}, objects_registry = {}, globals_registry = {}):
+        self.objects_registry = registry(objects_registry)
+        self.globals_registry = registry(globals_registry)
         self.routes_registry = registry(self.builtin_routes, **routes_registry)
 
     def consume_function(self, *args, **kwargs):
