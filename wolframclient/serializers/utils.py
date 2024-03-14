@@ -9,7 +9,7 @@ from wolframclient.utils.encoding import force_bytes
 
 ESCAPE = re.compile(r'[\x00\\"\b\f\n\r\t]')
 ESCAPE_DCT = {
-    chr(0): "\.00",
+    chr(0): r"\.00",
     "\\": "\\\\",
     '"': '\\"',
     "\b": "\\b",
@@ -31,7 +31,7 @@ def py_encode_text(s):
 
 
 def py_encode_decimal(number, prec=decimal.getcontext().prec):
-    return "{0:f}``{1:d}".format(number, prec).encode("utf-8")
+    return "{:f}``{:d}".format(number, prec).encode("utf-8")
 
 
 def safe_len(obj):

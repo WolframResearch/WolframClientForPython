@@ -29,7 +29,7 @@ def encode_booleans(serializer, o):
 
 @encoder.dispatch(six.none_type)
 def encode_none(serializer, o):
-    """ None in Python *'is frequently used to represent the absence of a value'*
+    """None in Python *'is frequently used to represent the absence of a value'*
     https://docs.python.org/3/library/constants.html#None
 
     :wlcode:`Null` in the Wolfram Language *'is a symbol used to indicate the absence of an expression or a result'*,
@@ -97,7 +97,6 @@ if six.PY2:
     @encoder.dispatch((bytearray, six.buffer_types))
     def encode_bytes(serializer, o):
         return serializer.serialize_bytes(o, as_byte_array=True)
-
 
 else:
 

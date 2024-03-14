@@ -37,7 +37,7 @@ def encode_default(wxf_input):
     )
 
 
-class WXFParser(object):
+class WXFParser:
     """Parse a WXF input.
 
     This class is initialized with a WXF input, and exposes a generator of
@@ -80,13 +80,12 @@ class WXFParser(object):
     }
 
     def __init__(self, wxf_input):
-        """WXF parser returning Python object from a WXF encoded byte sequence.
-        """
+        """WXF parser returning Python object from a WXF encoded byte sequence."""
         self.context = SerializationContext()
         self.reader = wxf_input_to_buffer(wxf_input)
 
         version, compress = self.parse_header()
-        if compress == True:
+        if compress is True:
             self.reader = ZipCompressedReader(self.reader)
         else:
             self.reader = ExactSizeReader(self.reader)
@@ -120,7 +119,7 @@ class WXFParser(object):
         if rank == 0:
             raise WolframParserException("Array rank cannot be zero.")
         token.dimensions = []
-        for i in range(rank):
+        for _i in range(rank):
             dim = parse_varint(self.reader)
             if dim == 0:
                 raise WolframParserException("Array dimensions cannot be zero.")
@@ -222,9 +221,8 @@ class WXFParser(object):
         return getattr(self, handler)(WXFToken(next_byte))
 
 
-class WXFToken(object):
-    """Represent a WXF element, often referred as WXF tokens.
-    """
+class WXFToken:
+    """Represent a WXF element, often referred as WXF tokens."""
 
     __slots__ = "wxf_type", "array_type", "length", "_dimensions", "_element_count", "data"
 
@@ -265,7 +263,7 @@ class WXFToken(object):
         if self.length is not None:
             return "WXFToken<%s, data=%s, len=%i>" % (self.wxf_type, self.data, self.length)
         else:
-            return "WXFToken<%s, data=%s>" % (self.wxf_type, self.data)
+            return "WXFToken<{}, data={}>".format(self.wxf_type, self.data)
 
 
 def parse_varint(reader):

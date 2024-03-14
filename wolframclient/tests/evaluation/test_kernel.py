@@ -240,7 +240,7 @@ class TestCase(TestCaseSettings):
         self.assertEqual(self.kernel_session.evaluate(wl.StringQ("foo")), True)
 
     def test_eval_many(self):
-        exprs = [("%s+%s" % (i, i)) for i in range(10)]
+        exprs = [("{}+{}".format(i, i)) for i in range(10)]
         expected = [i + i for i in range(10)]
         res = self.kernel_session.evaluate_many(exprs)
         self.assertEqual(res, expected)

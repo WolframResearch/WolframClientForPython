@@ -119,10 +119,7 @@ class TestCase(SerializeTest):
 
     def test_max_3bytes_unicode(self):
         max = (1 << 16) - 1
-        if six.PY2:
-            value = unichr(max)
-        else:
-            value = chr(max)
+        value = unichr(max) if six.PY2 else chr(max)
         wxf = b"\x38\x3a\x53\x03\xef\xbf\xbf"
         self.serialize_compare(value, wxf)
 
@@ -153,7 +150,7 @@ class TestCase(SerializeTest):
     def test_int8(self):
         values = [0, 1, 127, -1, -128]
         res = [0, 1, 127, 255, 128]
-        for i in range(0, len(values)):
+        for i in range(len(values)):
             wxf_expr = WXFExprInteger(values[i])
             self.assertEqual(wxf_expr.to_bytes()[0], res[i])
 
@@ -161,7 +158,7 @@ class TestCase(SerializeTest):
     def test_int16(self):
         values = [-(1 << 15), (1 << 15) - 1]
         res = [(0x00, 0x80), (0xFF, 0x7F)]
-        for i in range(0, len(values)):
+        for i in range(len(values)):
             wxf_expr = WXFExprInteger(values[i])
             self.assertSequenceEqual(wxf_expr.to_bytes(), res[i])
 
@@ -169,7 +166,7 @@ class TestCase(SerializeTest):
     def test_int32(self):
         values = [-(1 << 31), (1 << 31) - 1]
         res = [(0x00, 0x00, 0x00, 0x80), (0xFF, 0xFF, 0xFF, 0x7F)]
-        for i in range(0, len(values)):
+        for i in range(len(values)):
             wxf_expr = WXFExprInteger(values[i])
             self.assertSequenceEqual(wxf_expr.to_bytes(), res[i])
 
@@ -180,13 +177,13 @@ class TestCase(SerializeTest):
             (0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80),
             (0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F),
         ]
-        for i in range(0, len(values)):
+        for i in range(len(values)):
             wxf_expr = WXFExprInteger(values[i])
             self.assertSequenceEqual(wxf_expr.to_bytes(), res[i])
 
     @skip_for_jython
     def test_bigint_as_int(self):
-        value = 10 ** 20
+        value = 10**20
         with self.assertRaises(ValueError):
             WXFExprInteger(value)
 
@@ -255,7 +252,7 @@ class TestCase(SerializeTest):
 
     @unittest.skipIf(not six.PY2, "Python2 str test skipped.")
     def test_all_str_py2(self):
-        str_all_chr = b"".join([chr(i) for i in range(0, 256)])
+        str_all_chr = b"".join([chr(i) for i in range(256)])
         wxf = export(str_all_chr, target_format="wxf")
         with open(path_to_file_in_data_dir("allbytes.wxf"), "rb") as r_file:
             res = bytearray(r_file.read())

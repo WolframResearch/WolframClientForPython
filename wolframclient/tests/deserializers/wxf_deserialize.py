@@ -54,9 +54,9 @@ class TestCase(BaseTestCase):
         self.varint_round_trip_integer(127)
         self.varint_round_trip_integer(128)
         self.varint_round_trip_integer((1 << (7 * 2)) - 1)
-        self.varint_round_trip_integer((1 << (7 * 2)))
+        self.varint_round_trip_integer(1 << (7 * 2))
         self.varint_round_trip_integer((1 << (7 * 3)) - 1)
-        self.varint_round_trip_integer((1 << (7 * 8)))
+        self.varint_round_trip_integer(1 << (7 * 8))
         self.varint_round_trip_integer((1 << (7 * 9)) - 1)
 
     def wxf_assert_roundtrip(self, value):
@@ -83,10 +83,7 @@ class TestCase(BaseTestCase):
 
     def test_max_3bytes_unicode(self):
         max = (1 << 16) - 1
-        if six.PY2:
-            value = unichr(max)
-        else:
-            value = chr(max)
+        value = unichr(max) if six.PY2 else chr(max)
         self.wxf_assert_roundtrip(value)
 
     def test_all_char(self):
@@ -101,7 +98,7 @@ class TestCase(BaseTestCase):
                 all_char += unichr(i)
             else:
                 all_char += chr(i)
-        path = current_file_dir = os.path.dirname(__file__)
+        path = os.path.dirname(__file__)
         path = os.path.join(path, "..", "data", "allchars.wxf")
 
         with open(path, "rb") as r_file:
@@ -131,7 +128,7 @@ class TestCase(BaseTestCase):
 
     @skip_for_jython
     def test_bigint_as_int(self):
-        value = 10 ** 20
+        value = 10**20
         self.wxf_assert_roundtrip(value)
 
     def test_real(self):
@@ -227,8 +224,7 @@ class TestCase(BaseTestCase):
     class BadIncompleteConsumer(WXFConsumer):
         def consume_function(self, current_token, tokens, **kwargs):
             # fetch too few elements, head comes first and is not accounted for in length.
-            args = []
-            for i in range(current_token.length):
+            for _i in range(current_token.length):
                 self.next_expression(tokens, **kwargs)
 
     def test_bad_incomplete_consumer(self):
@@ -296,9 +292,7 @@ class TestCaseNumPyArray(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
         self.assertEqual(a.shape, (2, 2))
         self.assertEqual(a.dtype, "int16")
-        self.assertEqual(
-            a.tolist(), [[-1 + 2 ** 15, -1 + 2 ** 15], [-1 + 2 ** 15, -1 + 2 ** 15]]
-        )
+        self.assertEqual(a.tolist(), [[-1 + 2**15, -1 + 2**15], [-1 + 2**15, -1 + 2**15]])
 
     def test_int32_array(self):
         # ConstantArray[2^16, {2, 2}]
@@ -306,7 +300,7 @@ class TestCaseNumPyArray(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
         self.assertEqual(a.shape, (2, 2))
         self.assertEqual(a.dtype, "int32")
-        self.assertEqual(a.tolist(), [[2 ** 16, 2 ** 16], [2 ** 16, 2 ** 16]])
+        self.assertEqual(a.tolist(), [[2**16, 2**16], [2**16, 2**16]])
 
     def test_int64_array(self):
         # ConstantArray[2^40, {2, 1}]
@@ -314,7 +308,7 @@ class TestCaseNumPyArray(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
         self.assertEqual(a.shape, (2, 1))
         self.assertEqual(a.dtype, "int64")
-        self.assertEqual(a.tolist(), [[2 ** 40], [2 ** 40]])
+        self.assertEqual(a.tolist(), [[2**40], [2**40]])
 
     def test_double_array(self):
         # ConstantArray[1., {2, 1}]
@@ -346,9 +340,7 @@ class TestCaseNumPyArray(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
         self.assertEqual(a.shape, (2, 2))
         self.assertEqual(a.dtype, "int16")
-        self.assertEqual(
-            a.tolist(), [[-1 + 2 ** 15, -1 + 2 ** 15], [-1 + 2 ** 15, -1 + 2 ** 15]]
-        )
+        self.assertEqual(a.tolist(), [[-1 + 2**15, -1 + 2**15], [-1 + 2**15, -1 + 2**15]])
 
     def test_uint16_numeric_array(self):
         # NumericArray from ConstantArray[2^16 - 1, {2, 2}]
@@ -356,9 +348,7 @@ class TestCaseNumPyArray(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
         self.assertEqual(a.shape, (2, 2))
         self.assertEqual(a.dtype, "uint16")
-        self.assertEqual(
-            a.tolist(), [[-1 + 2 ** 16, -1 + 2 ** 16], [-1 + 2 ** 16, -1 + 2 ** 16]]
-        )
+        self.assertEqual(a.tolist(), [[-1 + 2**16, -1 + 2**16], [-1 + 2**16, -1 + 2**16]])
 
     def test_int32_numeric_array(self):
         # NumericArray from ConstantArray[2^16, {2, 2}]
@@ -366,7 +356,7 @@ class TestCaseNumPyArray(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
         self.assertEqual(a.shape, (2, 2))
         self.assertEqual(a.dtype, "int32")
-        self.assertEqual(a.tolist(), [[2 ** 16, 2 ** 16], [2 ** 16, 2 ** 16]])
+        self.assertEqual(a.tolist(), [[2**16, 2**16], [2**16, 2**16]])
 
     def test_uint32_numeric_array(self):
         # NumericArray from ConstantArray[2^32-1, {2, 1}]
@@ -374,7 +364,7 @@ class TestCaseNumPyArray(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
         self.assertEqual(a.shape, (2, 1))
         self.assertEqual(a.dtype, "uint32")
-        self.assertEqual(a.tolist(), [[-1 + 2 ** 32], [-1 + 2 ** 32]])
+        self.assertEqual(a.tolist(), [[-1 + 2**32], [-1 + 2**32]])
 
     def test_int64_numeric_array(self):
         # NumericArray from ConstantArray[2^40, {2, 1}]
@@ -382,7 +372,7 @@ class TestCaseNumPyArray(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
         self.assertEqual(a.shape, (2, 1))
         self.assertEqual(a.dtype, "int64")
-        self.assertEqual(a.tolist(), [[2 ** 40], [2 ** 40]])
+        self.assertEqual(a.tolist(), [[2**40], [2**40]])
 
     def test_uint64_numeric_array(self):
         # NumericArray from ConstantArray[2^64-1, {2, 1}]
@@ -390,7 +380,7 @@ class TestCaseNumPyArray(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumerNumpy())
         self.assertEqual(a.shape, (2, 1))
         self.assertEqual(a.dtype, "uint64")
-        self.assertEqual(a.tolist(), [[-1 + 2 ** 64], [-1 + 2 ** 64]])
+        self.assertEqual(a.tolist(), [[-1 + 2**64], [-1 + 2**64]])
 
     def test_float_numeric_array(self):
         # NumericArray["Real32", ConstantArray[1., {2, 1}]]
@@ -452,7 +442,7 @@ class TestCaseArrayAsList(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 2)
-        self.assertEqual(a, [[-1 + 2 ** 15, -1 + 2 ** 15], [-1 + 2 ** 15, -1 + 2 ** 15]])
+        self.assertEqual(a, [[-1 + 2**15, -1 + 2**15], [-1 + 2**15, -1 + 2**15]])
 
     def test_int32_array(self):
         # ConstantArray[2^16, {2, 2}]
@@ -460,7 +450,7 @@ class TestCaseArrayAsList(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 2)
-        self.assertEqual(a, [[2 ** 16, 2 ** 16], [2 ** 16, 2 ** 16]])
+        self.assertEqual(a, [[2**16, 2**16], [2**16, 2**16]])
 
     def test_int64_array(self):
         # ConstantArray[2^40, {2, 1}]
@@ -468,7 +458,7 @@ class TestCaseArrayAsList(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 1)
-        self.assertEqual(a, [[2 ** 40], [2 ** 40]])
+        self.assertEqual(a, [[2**40], [2**40]])
 
     def test_double_array(self):
         # ConstantArray[1., {2, 1}]
@@ -500,7 +490,7 @@ class TestCaseArrayAsList(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 2)
-        self.assertEqual(a, [[-1 + 2 ** 15, -1 + 2 ** 15], [-1 + 2 ** 15, -1 + 2 ** 15]])
+        self.assertEqual(a, [[-1 + 2**15, -1 + 2**15], [-1 + 2**15, -1 + 2**15]])
 
     def test_uint16_numeric_array(self):
         # NumericArray from ConstantArray[2^16 - 1, {2, 2}]
@@ -508,7 +498,7 @@ class TestCaseArrayAsList(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 2)
-        self.assertEqual(a, [[-1 + 2 ** 16, -1 + 2 ** 16], [-1 + 2 ** 16, -1 + 2 ** 16]])
+        self.assertEqual(a, [[-1 + 2**16, -1 + 2**16], [-1 + 2**16, -1 + 2**16]])
 
     def test_int32_numeric_array(self):
         # NumericArray from ConstantArray[2^16, {2, 2}]
@@ -516,7 +506,7 @@ class TestCaseArrayAsList(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 2)
-        self.assertEqual(a, [[2 ** 16, 2 ** 16], [2 ** 16, 2 ** 16]])
+        self.assertEqual(a, [[2**16, 2**16], [2**16, 2**16]])
 
     def test_uint32_numeric_array(self):
         # NumericArray from ConstantArray[2^32-1, {2, 1}]
@@ -524,7 +514,7 @@ class TestCaseArrayAsList(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 1)
-        self.assertEqual(a, [[-1 + 2 ** 32], [-1 + 2 ** 32]])
+        self.assertEqual(a, [[-1 + 2**32], [-1 + 2**32]])
 
     def test_int64_numeric_array(self):
         # NumericArray from ConstantArray[2^40, {2, 1}]
@@ -532,7 +522,7 @@ class TestCaseArrayAsList(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 1)
-        self.assertEqual(a, [[2 ** 40], [2 ** 40]])
+        self.assertEqual(a, [[2**40], [2**40]])
 
     def test_uint64_numeric_array(self):
         # NumericArray from ConstantArray[2^64-1, {2, 1}]
@@ -540,7 +530,7 @@ class TestCaseArrayAsList(BaseTestCase):
         a = binary_deserialize(wxf, consumer=WXFConsumer())
         self.assertEqual(len(a), 2)
         self.assertEqual(len(a[0]), 1)
-        self.assertEqual(a, [[-1 + 2 ** 64], [-1 + 2 ** 64]])
+        self.assertEqual(a, [[-1 + 2**64], [-1 + 2**64]])
 
     def test_float_numeric_array(self):
         # NumericArray["Real32", ConstantArray[1., {2, 1}]]

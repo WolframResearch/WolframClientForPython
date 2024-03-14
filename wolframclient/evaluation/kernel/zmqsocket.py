@@ -45,9 +45,8 @@ def abortable():
                     except zmq.Again:
                         pass
                 retry += 1
-                if abort_event:
-                    if abort_event.is_set():
-                        raise SocketAborted("Socket operation aborted.")
+                if abort_event and abort_event.is_set():
+                    raise SocketAborted("Socket operation aborted.")
                 if timeout and (time.perf_counter() - start > timeout):
                     break
             raise SocketOperationTimeout(
@@ -60,8 +59,8 @@ def abortable():
     return outer
 
 
-class Socket(object):
-    """ Wrapper around ZMQ socket """
+class Socket:
+    """Wrapper around ZMQ socket"""
 
     def __init__(self, protocol="tcp", host="127.0.0.1", port=None, zmq_type=zmq.PAIR):
         self.zmq_type = zmq_type
@@ -90,11 +89,11 @@ class Socket(object):
             self.uri = "inproc://%s" % host
             self.zmq_socket.bind(self.uri)
         elif port:
-            self.uri = "%s://%s:%s" % (protocol, host, port)
+            self.uri = "{}://{}:{}".format(protocol, host, port)
             self.zmq_socket.bind(self.uri)
         else:
-            port = self.zmq_socket.bind_to_random_port("%s://%s" % (protocol, host))
-            self.uri = "%s://%s:%s" % (protocol, host, port)
+            port = self.zmq_socket.bind_to_random_port("{}://{}".format(protocol, host))
+            self.uri = "{}://{}:{}".format(protocol, host, port)
         logger.debug("ZMQ socket bound to " + self.uri)
         self.bound = True
         return self.zmq_socket
@@ -114,12 +113,12 @@ class Socket(object):
     @abortable()
     def recv_abortable(self, **kwargs):
         # def abortable_recv(self, timeout=None, abort_check_period=0.1, abort_event=None, copy=True):
-        """ Read a socket in a non-blocking fashion, until a timeout is reached, or until an abort Event is set."""
+        """Read a socket in a non-blocking fashion, until a timeout is reached, or until an abort Event is set."""
         return self.recv(**kwargs)
 
     @abortable()
     def recv_json_abortable(self, **kwargs):
-        """ Read a socket for a json message, in a non-blocking fashion, until a timeout is reached, or until an abort Event is set."""
+        """Read a socket for a json message, in a non-blocking fashion, until a timeout is reached, or until an abort Event is set."""
         return self.recv_json(**kwargs)
 
     def close(self):

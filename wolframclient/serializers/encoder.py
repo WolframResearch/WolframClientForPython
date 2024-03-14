@@ -20,7 +20,7 @@ __all__ = ["wolfram_encoder", "Encoder"]
 class WolframDispatch(Dispatch):
     def __init__(self, *args, **opts):
 
-        super(WolframDispatch, self).__init__(*args, **opts)
+        super().__init__(*args, **opts)
 
         self.registry = defaultdict(list)
         self.modules = set()
@@ -55,11 +55,11 @@ class WolframDispatch(Dispatch):
                 handler = "".join(handler)
                 try:
                     self.update(safe_import_string(handler))
-                except TypeError as e:
+                except TypeError:
                     logger.fatal(
                         "Failed to load encoder associated to plugins %s." % plugins_name
                     )
-                    raise e
+                    raise
             self.plugins_registry = defaultdict(list)
 
     # global lock to avoid multiple dispatcher updating in multithreaded programs.
@@ -78,7 +78,6 @@ wolfram_encoder.register_modules(
     datetime="wolframclient.serializers.encoders.datetime.encoder",
     fractions="wolframclient.serializers.encoders.fractions.encoder",
     zoneinfo="wolframclient.serializers.encoders.zoneinfo.encoder",
-
     # wolfram language support
     numpy="wolframclient.serializers.encoders.numpy.encoder",
     pandas="wolframclient.serializers.encoders.pandas.encoder",
@@ -94,10 +93,7 @@ wolfram_encoder.register_plugins()
 def encode(serializer, o):
 
     if serializer.object_processor:
-        return serializer.object_processor(
-            serializer,
-            o
-        )
+        return serializer.object_processor(serializer, o)
 
     if is_iterable(o):
         return serializer.serialize_iterable(map(serializer.encode, o), length=safe_len(o))
@@ -105,16 +101,16 @@ def encode(serializer, o):
     raise NotImplementedError("Cannot serialize object of class %s" % o.__class__)
 
 
-wolfram_encoder.__doc__ = """ 
+wolfram_encoder.__doc__ = """
     Mapping between Python types and encoders used during serializations.
 
-    This instance of :class:`~wolframclient.utils.dispatch.Dispatch` is used in 
+    This instance of :class:`~wolframclient.utils.dispatch.Dispatch` is used in
     :func:`~wolframclient.serializers.export` to serialize Python expressions and produce a stream of bytes.
 
     **Register new encoders:**
 
 
-    The annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch` applied to a function, defines an encoder 
+    The annotation :meth:`~wolframclient.utils.dispatch.Dispatch.dispatch` applied to a function, defines an encoder
     and associates it to the types passed as argument of the annotation.
 
     Define a new class::
@@ -138,23 +134,23 @@ wolfram_encoder.__doc__ = """
         >>> export(MyPythonClass(1,2))
         b'MyWolframFunction[1, 2]'
 
-    Alternatively, apply :meth:`~wolframclient.utils.dispatch.Dispatch.register` to a function and its associated 
+    Alternatively, apply :meth:`~wolframclient.utils.dispatch.Dispatch.register` to a function and its associated
     type(s) achieves the same result.
 
-    It is not possible to associate two encoders with the same type, but it's possible to remove a mapping. First, 
+    It is not possible to associate two encoders with the same type, but it's possible to remove a mapping. First,
     unregister the previous encoder::
 
         wolfram_encoder.unregister(MyPythonClass)
 
     And register it again with :meth:`~wolframclient.utils.dispatch.Dispatch.register`::
 
-        wolfram_encoder.register(my_encoder, MyPythonClass) 
+        wolfram_encoder.register(my_encoder, MyPythonClass)
 
     **Update with a dispatcher:**
 
 
-    Another way to extend supported types is to create a new :class:`~wolframclient.utils.dispatch.Dispatch`, map 
-    various types and encoders and ultimately update :data:`wolfram_encoder` using 
+    Another way to extend supported types is to create a new :class:`~wolframclient.utils.dispatch.Dispatch`, map
+    various types and encoders and ultimately update :data:`wolfram_encoder` using
     :meth:`~wolframclient.utils.dispatch.Dispatch.update`.
 
     Create a new dispatcher and register :data:`MyPythonClass`::
@@ -176,26 +172,26 @@ wolfram_encoder.__doc__ = """
     **Define plugins:**
 
 
-    The library supports an entry point dedicated to new encoders: `wolframclient_serializers_encoder`. The library uses 
-    this entry point to loads plugins at runtime as separated libraries. For more information about entry points, refer 
+    The library supports an entry point dedicated to new encoders: `wolframclient_serializers_encoder`. The library uses
+    this entry point to loads plugins at runtime as separated libraries. For more information about entry points, refer
     to the documentation page about `entry points <https://packaging.python.org/specifications/entry-points/>`_.
 
-    The plugin name must be unique and the value must reference a dispatcher instance. This instance is loaded and used 
-    to update :data:`wolfram_encoder`. A plugin is a simple way to distribute encoders as a separate library. 
-    
-    One type must have a unique encoder associated to it; as a consequence, two plugins registering an encoder for the 
-    same type are incompatible. It is strongly advised to create one plugin for each existing Python library, 
+    The plugin name must be unique and the value must reference a dispatcher instance. This instance is loaded and used
+    to update :data:`wolfram_encoder`. A plugin is a simple way to distribute encoders as a separate library.
+
+    One type must have a unique encoder associated to it; as a consequence, two plugins registering an encoder for the
+    same type are incompatible. It is strongly advised to create one plugin for each existing Python library,
     e.g. have one plugin dedicated to NumPy and one to Pandas, which makes heavy use of NumPy arrays.
     """
 
 
-class Encoder(object):
-    """ A generic class exposing an :meth:`~wolframclient.serializers.encode.Encoder.encode`
-    method applying an optional normalizer function, followed the most relevant encoding available 
+class Encoder:
+    """A generic class exposing an :meth:`~wolframclient.serializers.encode.Encoder.encode`
+    method applying an optional normalizer function, followed the most relevant encoding available
     for a given type.
 
-    Arbitrary named parameters passed during initialization are later accessible with 
-    :meth:`~wolframclient.serializers.encode.Encoder.get_property`. 
+    Arbitrary named parameters passed during initialization are later accessible with
+    :meth:`~wolframclient.serializers.encode.Encoder.get_property`.
     """
 
     def __init__(
@@ -204,7 +200,7 @@ class Encoder(object):
         encoder=None,
         object_processor=None,
         target_kernel_version=None,
-        **kwargs
+        **kwargs,
     ):
 
         self.encode = self.chain_normalizer(
@@ -224,7 +220,7 @@ class Encoder(object):
         )
 
     def get_property(self, key, d=None):
-        """ Return the value of the named parameter passed during initialization.
+        """Return the value of the named parameter passed during initialization.
 
         Set `d` to the default value if key was not present.
         """

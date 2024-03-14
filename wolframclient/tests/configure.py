@@ -22,7 +22,7 @@ __all__ = [
 
 
 def create_dir_if_missing(path):
-    """ Create the directory structure represented by a `path`.
+    """Create the directory structure represented by a `path`.
 
     Path can represent a file or a directory depending if it ends with
     a path separator.
@@ -36,7 +36,7 @@ def create_dir_if_missing(path):
 
 
 def dir_test_data():
-    """ Return path to the data directory in tests"""
+    """Return path to the data directory in tests"""
     current_file_dir = os.dirname(__file__)
     return os.path_join(current_file_dir, "data")
 
@@ -104,12 +104,12 @@ _json_config_path = os.environ.get("WOLFRAMCLIENT_PY_JSON_CONFIG", None)
 if six.PY_35 and _json_config_path is not None:
     expended_path = os.expanduser(os.expandvars(_json_config_path))
     try:
-        with open(expended_path, "r") as fp:
+        with open(expended_path) as fp:
             json_config = json.load(fp)
-            secured_authentication_key, user_configuration, server, kernel_path, api_owner = _parse_config(
-                json_config
+            secured_authentication_key, user_configuration, server, kernel_path, api_owner = (
+                _parse_config(json_config)
             )
-    except IOError:
+    except OSError:
         raise ValueError("Failed to find json configuration file %s" % _json_config_path)
 
 

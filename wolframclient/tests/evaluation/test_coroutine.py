@@ -89,7 +89,7 @@ class TestCoroutineSession(BaseTestCase):
 
     @run_in_loop
     async def test_eval_many(self):
-        exprs = [("%s+%s" % (i, i)) for i in range(10)]
+        exprs = [("{}+{}".format(i, i)) for i in range(10)]
         expected = [i + i for i in range(10)]
         res = await self.async_session.evaluate_many(exprs)
         self.assertEqual(res, expected)

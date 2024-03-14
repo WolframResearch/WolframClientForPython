@@ -15,11 +15,11 @@ available_formats = API(
 
 
 def export(data, stream=None, target_format=DEFAULT_FORMAT, **options):
-    """ Serialize input `data` to a target format.
+    """Serialize input `data` to a target format.
 
     Input `data` can be any supported Python type, including :class:`list`, :class:`dict` or any serializable Python
     object.
-    
+
     Serializable python objects are class extending :class:`~wolframclient.serializers.serializable.WLSerializable` and
     types declared in an encoder.
 
@@ -60,9 +60,10 @@ def export(data, stream=None, target_format=DEFAULT_FORMAT, **options):
         <open file 'file.wl', mode 'wb' at 0x10a4f01e0>
 
     """
-    if not target_format in available_formats:
+    if target_format not in available_formats:
         raise ValueError(
-            "Invalid export format %s. Choices are: %s"
-            % (target_format, ", ".join(available_formats.keys()))
+            "Invalid export format {}. Choices are: {}".format(
+                target_format, ", ".join(available_formats.keys())
+            )
         )
     return available_formats[target_format](**options).export(data, stream=stream)

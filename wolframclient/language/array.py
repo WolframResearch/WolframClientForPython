@@ -11,7 +11,7 @@ from wolframclient.utils.encoding import force_bytes
 try:
     from collections.abc import Sequence
 except ImportError:
-    from collections import Sequence
+    from collections.abc import Sequence
 
 
 def pack(format, *elements):
@@ -29,8 +29,9 @@ class NumericArray(Sequence):
     def _valid_type_or_fail(self, type):
         if type not in constants.STRUCT_MAPPING:
             raise WolframLanguageException(
-                "Type %s is not one of the supported array types: %s."
-                % (type, ", ".join(constants.STRUCT_MAPPING.keys()))
+                "Type {} is not one of the supported array types: {}.".format(
+                    type, ", ".join(constants.STRUCT_MAPPING.keys())
+                )
             )
         return type
 
@@ -48,7 +49,8 @@ class PackedArray(NumericArray):
     def _valid_type_or_fail(self, type):
         if type not in constants.VALID_PACKED_ARRAY_LABEL_TYPES:
             raise WolframLanguageException(
-                "Type %s is not one of the supported packed array types: %s."
-                % (type, ", ".join(sorted(constants.VALID_PACKED_ARRAY_LABEL_TYPES)))
+                "Type {} is not one of the supported packed array types: {}.".format(
+                    type, ", ".join(sorted(constants.VALID_PACKED_ARRAY_LABEL_TYPES))
+                )
             )
         return type

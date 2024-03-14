@@ -19,11 +19,11 @@ encoder = Dispatch()
     the image is converted to its format, if specified, or ultimately to PNG. This may fail,
     in which case an exception is raised and there is nothing more we can do.
 
-    In theory we could represent any image, but due to :func:`~PIL.Image.convert()` behavior 
+    In theory we could represent any image, but due to :func:`~PIL.Image.convert()` behavior
     we can't. This function is not converting, but naively casts to a given type without rescaling.
     e.g. int32 values above 255 converted to bytes become 255. We can't cast properly from 'I' mode
     since some format are using 'I' for say 'I;16' (int16) and the rawmode is not always accessible.
-    
+
     See bug in convert: https://github.com/python-pillow/Pillow/issues/3159
 """
 

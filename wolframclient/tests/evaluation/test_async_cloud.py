@@ -127,7 +127,7 @@ class TestCase(TestCaseSettings):
 
     @run_in_loop
     async def test_need_auth_err(self):
-        bad_sak = SecuredAuthenticationKey("foo", "bar")
+        SecuredAuthenticationKey("foo", "bar")
         with self.assertRaises(RequestException):
             async with WolframCloudAsyncSession(server=server) as cloud_session:
                 await cloud_session.evaluate("1+1")

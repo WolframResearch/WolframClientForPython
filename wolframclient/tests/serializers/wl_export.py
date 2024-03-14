@@ -56,7 +56,7 @@ class TestCase(BaseTestCase):
         os.remove(path)
 
     def test_serialization_custom(self):
-        class MyStuff(object):
+        class MyStuff:
             def __init__(self, *stuff):
                 self.stuff = stuff
 
@@ -78,7 +78,7 @@ class TestCase(BaseTestCase):
 
         for export_format in available_formats:
 
-            with self.assertRaises(NotImplementedError) as context:
+            with self.assertRaises(NotImplementedError):
                 export(expr, normalizer=identity, target_format=export_format)
 
             self.assertEqual(

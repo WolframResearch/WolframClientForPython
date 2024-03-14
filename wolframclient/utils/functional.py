@@ -11,7 +11,6 @@ if six.PY2:
     def map(f, iterable):
         return (f(e) for e in iterable)
 
-
 else:
     map = map
 
@@ -63,8 +62,7 @@ def flatten(*args):
     for arg in args:
         if is_iterable(arg):
             for sub in arg:
-                for el in flatten(sub):
-                    yield el
+                yield from flatten(sub)
         else:
             yield arg
 
@@ -81,7 +79,7 @@ def riffle(iterable, separator):
 
 
 def partition(iterable, n):
-    """ Yield successive n-sized chunks from l. """
+    """Yield successive n-sized chunks from l."""
     iterable = iter(iterable)
     res = tuple(islice(iterable, n))
     while len(res) != 0:

@@ -118,7 +118,7 @@ class WolframCloudSession(WolframEvaluator):
 
         This method supports both oauth and xauth methods. It is not necessary
         to call it, since the session will try to authenticate when the first
-        request is issued. """
+        request is issued."""
         logger.info("Authenticating to the server.")
         if self.credentials is None:
             raise AuthenticationException("Missing credentials.")
@@ -167,7 +167,7 @@ class WolframCloudSession(WolframEvaluator):
         files={},
         target_format="wl",
         permissions_key=None,
-        **kwargv
+        **kwargv,
     ):
         """Call a given API using the provided input parameters.
 
@@ -226,8 +226,8 @@ class WolframCloudSession(WolframEvaluator):
         return self._call_evaluation_api(self.normalize_input(expr), **kwargs).get()
 
     def evaluate_wrap(self, expr, **kwargs):
-        """ Similar to :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate` but return the
-         result as a :class:`~wolframclient.evaluation.result.WolframCloudEvaluationResponse`.
+        """Similar to :func:`~wolframclient.evaluation.cloud.cloudsession.WolframCloudSession.evaluate` but return the
+        result as a :class:`~wolframclient.evaluation.result.WolframCloudEvaluationResponse`.
         """
         return self._call_evaluation_api(self.normalize_input(expr), **kwargs)
 
@@ -252,7 +252,7 @@ class WolframCloudSession(WolframEvaluator):
             input_parameters=input_parameters,
             target_format=target_format,
             permissions_key=permissions_key,
-            **kwargv
+            **kwargv,
         )
 
     def evaluate_future(self, expr, **kwargs):
@@ -267,7 +267,7 @@ class WolframCloudSession(WolframEvaluator):
         return self.pool.submit(self.evaluate_wrap, expr, **kwargs)
 
     def wolfram_api_call(self, api, **kwargs):
-        """ Build an helper class instance to call a given API. """
+        """Build an helper class instance to call a given API."""
         return WolframAPICall(self, api, **kwargs)
 
     def __repr__(self):
@@ -277,7 +277,7 @@ class WolframCloudSession(WolframEvaluator):
 
 
 class WolframAPICall(WolframAPICallBase):
-    """Helper class to perform an API call using a cloud session. """
+    """Helper class to perform an API call using a cloud session."""
 
     def perform(self, **kwargs):
         """Make the API call and return the result."""
@@ -286,7 +286,7 @@ class WolframAPICall(WolframAPICallBase):
             input_parameters=self.parameters,
             files=self.files,
             permissions_key=self.permission_key,
-            **kwargs
+            **kwargs,
         )
 
     def perform_future(self, **kwargs):
@@ -295,7 +295,7 @@ class WolframAPICall(WolframAPICallBase):
             input_parameters=self.parameters,
             files=self.files,
             permissions_key=self.permission_key,
-            **kwargs
+            **kwargs,
         )
 
 
@@ -328,8 +328,7 @@ def _encode_inputs_as_wl(inputs, multipart, **kwargs):
 
 
 def _to_multipart(name, value, multipart=False):
-    """ Update the given :class:`~parameters` with a new inputs using the appropriate form based on `multipart`.
-    """
+    """Update the given :class:`~parameters` with a new inputs using the appropriate form based on `multipart`."""
     if multipart:
         return ("tmp_file_%s" % name, value)
     else:
@@ -351,8 +350,9 @@ def encode_api_inputs(inputs, target_format="wl", multipart=False, **kwargs):
         encoder = SUPPORTED_ENCODING_FORMATS[target_format]
     except KeyError:
         raise ValueError(
-            "Invalid encoding format %s. Choices are: %s"
-            % (target_format, ", ".join(SUPPORTED_ENCODING_FORMATS.keys()))
+            "Invalid encoding format {}. Choices are: {}".format(
+                target_format, ", ".join(SUPPORTED_ENCODING_FORMATS.keys())
+            )
         )
 
     return encoder(inputs, multipart, **kwargs)

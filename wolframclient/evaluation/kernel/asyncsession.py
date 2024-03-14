@@ -18,14 +18,14 @@ class WolframLanguageAsyncSession(WolframAsyncEvaluator, WolframLanguageSession)
     Asynchronous evaluations are provided through coroutines and the :mod:`asyncio` modules.
 
     Instances of this class can be managed with an asynchronous context manager::
-        
+
         async with WolframLanguageAsyncSession() as session:
             await session.evaluate('Now')
 
     Coroutines all run in their own thread. Since a Wolfram kernel is single threaded, there can
-    be only one evaluation at a time. In a sense, from the event loop point of view, evaluations 
-    are atomic operations. Even when many asynchronous sessions are started, the number of 
-    threads equals the number of kernel instances running and should not be problematic. Ensuring 
+    be only one evaluation at a time. In a sense, from the event loop point of view, evaluations
+    are atomic operations. Even when many asynchronous sessions are started, the number of
+    threads equals the number of kernel instances running and should not be problematic. Ensuring
     that only one thread runs all operations of a given Wolfram kernel significantly reduces the
     complexity of the code without any real drawback.
     """
@@ -40,7 +40,7 @@ class WolframLanguageAsyncSession(WolframAsyncEvaluator, WolframLanguageSession)
         stdout=PIPE,
         stderr=PIPE,
         inputform_string_evaluation=True,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(
             kernel=kernel,
@@ -51,7 +51,7 @@ class WolframLanguageAsyncSession(WolframAsyncEvaluator, WolframLanguageSession)
             stdout=stdout,
             stderr=stderr,
             inputform_string_evaluation=inputform_string_evaluation,
-            **kwargs
+            **kwargs,
         )
 
     def duplicate(self):
@@ -64,7 +64,7 @@ class WolframLanguageAsyncSession(WolframAsyncEvaluator, WolframLanguageSession)
             stdout=self._stdout,
             stderr=self._stderr,
             inputform_string_evaluation=self.inputform_string_evaluation,
-            **self.parameters
+            **self.parameters,
         )
 
     async def do_evaluate_future(self, expr, result_update_callback=None, **kwargs):
@@ -129,20 +129,20 @@ class WolframLanguageAsyncSession(WolframAsyncEvaluator, WolframLanguageSession)
 
     async def start(self):
         """Asynchronously start the session.
-        
+
         This method is a coroutine."""
         future = super().start_future()
         await asyncio.wrap_future(future)
 
     async def stop(self):
         """Asynchronously stop the session (graceful termination).
-        
+
         This method is a coroutine."""
         await self._async_terminate(True)
 
     async def terminate(self):
         """Asynchronously terminate the session.
-        
+
         This method is a coroutine."""
         await self._async_terminate(False)
 

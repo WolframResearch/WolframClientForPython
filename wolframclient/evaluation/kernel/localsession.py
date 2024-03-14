@@ -32,7 +32,7 @@ class WolframLanguageSession(WolframEvaluator):
 
     Set `timeout` to a number to set an evaluation timeout in seconds. If the evaluation
     time extends the timeout, a :class:`~concurrent.futures.TimeoutError` is raised.
-    
+
     Evaluate an expression taking 10 seconds to return using a 5-second timeout::
 
         long_evaluation = wl.Pause(10)
@@ -49,7 +49,7 @@ class WolframLanguageSession(WolframEvaluator):
 
     When `consumer` is set to a :class:`~wolframclient.deserializers.WXFConsumer` instance, this instance is passed to
     :func:`~wolframclient.deserializers.binary_deserialize` when deserializing the WXF output.
-    
+
     By default, packed arrays are deserialized as :class:`list`. Specify a consumer instance that supports NumPy arrays
     :class:`~wolframclient.deserializers.WXFConsumerNumpy`::
 
@@ -97,7 +97,7 @@ class WolframLanguageSession(WolframEvaluator):
         inputform_string_evaluation=True,
         wxf_bytes_evaluation=True,
         controller_class=WolframKernelController,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(inputform_string_evaluation=inputform_string_evaluation)
         self.kernel = kernel
@@ -116,7 +116,7 @@ class WolframLanguageSession(WolframEvaluator):
             stdin=stdin,
             stdout=stdout,
             stderr=stderr,
-            **kwargs
+            **kwargs,
         )
         self.parameters = kwargs
         self.stopped = True
@@ -132,7 +132,7 @@ class WolframLanguageSession(WolframEvaluator):
             stderr=self._stderr,
             inputform_string_evaluation=self.inputform_string_evaluation,
             controller_class=self.controller_class,
-            **self.parameters
+            **self.parameters,
         )
 
     @property
@@ -140,9 +140,9 @@ class WolframLanguageSession(WolframEvaluator):
         return self.kernel_controller.started
 
     def start(self, block=True, timeout=None):
-        """ Start a kernel controller and eventually start a fresh one if the previous one was terminated.
-        
-        Set `block` to :data:`True` (default is :data:`False`) to wait for the kernel to be up and running 
+        """Start a kernel controller and eventually start a fresh one if the previous one was terminated.
+
+        Set `block` to :data:`True` (default is :data:`False`) to wait for the kernel to be up and running
         before returning. Optionally, set a timeout in seconds. If the timeout is reached, a :data:`TimeoutError`
         will be raised and the kernel is terminated.
         """
@@ -157,9 +157,10 @@ class WolframLanguageSession(WolframEvaluator):
                 raise e
 
     def start_future(self):
-        """ Request the Wolfram kernel to start and return a future object.
-        
-        The result of the future object is :data:`True` when the kernel is ready to evaluate input."""
+        """Request the Wolfram kernel to start and return a future object.
+
+        The result of the future object is :data:`True` when the kernel is ready to evaluate input.
+        """
         self.stopped = False
         if self.kernel_controller.terminated:
             self.kernel_controller = self.kernel_controller.duplicate()
@@ -170,14 +171,14 @@ class WolframLanguageSession(WolframEvaluator):
         return future
 
     def stop(self):
-        """ Request the Wolfram kernel to stop gracefully.
+        """Request the Wolfram kernel to stop gracefully.
         When recovering from an error state, it's recommended to use terminate() which
         is more resilient.
         """
         self._stop(gracefully=True)
 
     def terminate(self):
-        """ Request the Wolfram kernel to stop immediately.
+        """Request the Wolfram kernel to stop immediately.
         Ongoing evaluations are likely to be cancelled.
         """
         self._stop(gracefully=False)
@@ -189,8 +190,8 @@ class WolframLanguageSession(WolframEvaluator):
             future.result()
 
     def stop_future(self, gracefully=True):
-        """ Request the Wolfram kernel to stop and return a future object.
-        
+        """Request the Wolfram kernel to stop and return a future object.
+
         The result of the future object is :data:`True` when the controller thread is no longer alive.
         Set `gracefully` to :data:`False` to request an immediate stop, eventually cancelling ongoing
         evaluations.
@@ -208,7 +209,7 @@ class WolframLanguageSession(WolframEvaluator):
             self.restart()
 
     def restart(self, block=True, timeout=None):
-        """ Restart a given evaluator by stopping it in cases where it is already started. """
+        """Restart a given evaluator by stopping it in cases where it is already started."""
         if self.started:
             self.stop()
         self.start(block=block, timeout=timeout)
@@ -225,7 +226,7 @@ class WolframLanguageSession(WolframEvaluator):
         return future
 
     def evaluate_future(self, expr, **kwargs):
-        """ Evaluate an expression and return a future object.
+        """Evaluate an expression and return a future object.
 
         The future object result is the evaluated expression. See
         :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate`.
@@ -236,7 +237,7 @@ class WolframLanguageSession(WolframEvaluator):
         )
 
     def evaluate_wxf_future(self, expr, **kwargs):
-        """ Evaluate an expression and return a future object.
+        """Evaluate an expression and return a future object.
 
         The future object result is the WXF serialization of the evaluated expression.
         See :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wxf`.
@@ -247,7 +248,7 @@ class WolframLanguageSession(WolframEvaluator):
         )
 
     def evaluate_wrap_future(self, expr, **kwargs):
-        """ Evaluate an expression and return a future object.
+        """Evaluate an expression and return a future object.
 
         The future object result is the result object with the evaluated expression and meta information.
         See :func:`~wolframclient.evaluation.WolframLanguageSession.evaluate_wrap`.
@@ -264,9 +265,9 @@ class WolframLanguageSession(WolframEvaluator):
         return result.get()
 
     def evaluate_wxf(self, expr, **kwargs):
-        """ Evaluate an expression and return the serialized expression. 
-        
-        This method does not deserialize the Wolfram kernel input. """
+        """Evaluate an expression and return the serialized expression.
+
+        This method does not deserialize the Wolfram kernel input."""
         result = self.evaluate_wrap(expr, **kwargs)
         self.log_message_from_result(result)
         return result.wxf
@@ -286,4 +287,4 @@ class WolframLanguageSession(WolframEvaluator):
     set_parameter.__doc__ = WolframKernelController.set_parameter.__doc__
 
     def __repr__(self):
-        return "<%s: %s>" % (self.__class__.__name__, self.kernel_controller)
+        return "<{}: {}>".format(self.__class__.__name__, self.kernel_controller)

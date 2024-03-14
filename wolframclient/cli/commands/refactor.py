@@ -140,7 +140,7 @@ class Command(SimpleCommand):
                     "SIM105",
                     "UP009",
                     "G010",
-                    "LOG009"
+                    "LOG009",
                 )
             ),
         )

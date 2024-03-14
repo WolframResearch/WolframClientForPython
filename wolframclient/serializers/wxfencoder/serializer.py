@@ -14,7 +14,7 @@ class WXFSerializerException(Exception):
     pass
 
 
-class _Context(object):
+class _Context:
     def __init__(self):
         pass
 
@@ -50,7 +50,7 @@ class _Context(object):
 
 
 class NoEnforcingContext(_Context):
-    """ This context doesn't prevent inconsistent state. """
+    """This context doesn't prevent inconsistent state."""
 
     def add_part(self):
         pass
@@ -72,7 +72,7 @@ class NoEnforcingContext(_Context):
 
 
 class SerializationContext(_Context):
-    """ Keeps track of various parameter associated to an expression being serialized.
+    """Keeps track of various parameter associated to an expression being serialized.
     The finalized expression has a tree structure; it is serialized depth first. During
     the serialization process of an expression involving many non-atomic elements (e.g List),
     we end up having incomplete parts at various level.
@@ -144,7 +144,7 @@ class SerializationContext(_Context):
         self.step_into_new_expr(2)
 
     def step_into_new_expr(self, length, is_assoc=False):
-        """ Indicate the beginning of a new expr of a given length.
+        """Indicate the beginning of a new expr of a given length.
 
         Note that the length is the number of WXF elements which includes the head for functions.
         Association and rules don't have head in WXF so their length value matches the one of the
@@ -190,7 +190,7 @@ class SerializationContext(_Context):
         )
 
 
-class WXFExprSerializer(object):
+class WXFExprSerializer:
     """Main serialization class that convert internal object into bytes.
 
     Pulls instances of :class:`~wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr` from an

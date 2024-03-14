@@ -10,11 +10,9 @@ from wolframclient.serializers.wxfencoder.utils import (
     numeric_array_to_wxf,
     packed_array_to_wxf,
 )
-from wolframclient.utils.api import timezone
-
 from wolframclient.utils import six
-from wolframclient.utils.encoding import concatenate_bytes, force_text
-from wolframclient.utils.functional import first
+from wolframclient.utils.api import timezone
+from wolframclient.utils.encoding import concatenate_bytes
 
 
 def _is_zoneinfo(tzinfo):
@@ -93,14 +91,14 @@ class FormatSerializer(Encoder):
         return self.serialize_function(
             self.serialize_symbol(b"Association"),
             (self.serialize_rule(key, value) for key, value in mappable),
-            **opts
+            **opts,
         )
 
     def serialize_association(self, mappable, **opts):
         return self.serialize_function(
             self.serialize_symbol(b"Association"),
             (self.serialize_rule(key, value) for key, value in mappable),
-            **opts
+            **opts,
         )
 
     def serialize_fraction(self, o):
@@ -132,18 +130,11 @@ class FormatSerializer(Encoder):
 
         if name_match:
 
-            for name in (
-                tzinfo.tzname(None),
-                _is_zoneinfo(tzinfo) and tzinfo.key or None
-                ):
+            for name in (tzinfo.tzname(None), _is_zoneinfo(tzinfo) and tzinfo.key or None):
 
                 if name and name_match.match(name):
                     return self.serialize_string(name)
 
-            
-
         return self.serialize_float(
             tzinfo.utcoffset(date or datetime.datetime.utcnow()).total_seconds() / 3600
         )
-
-

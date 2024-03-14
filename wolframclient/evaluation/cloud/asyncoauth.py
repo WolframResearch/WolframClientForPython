@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class OAuthAIOHttpAsyncSessionBase(OAuthAsyncSessionBase):
-    """ Asynchronous OAuth authentication class using aiohttp library for requests. """
+    """Asynchronous OAuth authentication class using aiohttp library for requests."""
 
     def __init__(
         self,
@@ -42,14 +42,13 @@ class OAuthAIOHttpAsyncSessionBase(OAuthAsyncSessionBase):
             self._ssl_context = None
 
     async def signed_request(self, uri, headers={}, data=None, method="POST"):
-        """ Construct a signed request and send it."""
+        """Construct a signed request and send it."""
         if not self.authorized():
             await self.authenticate()
 
         req_headers = {}
         for k, v in headers.items():
             req_headers[k] = v
-        sign_body = False
 
         # Payload Instances are not encoded (e.g: octet stream). Only FormData are.
         form_encoded = isinstance(data, aiohttp.FormData) and not data.is_multipart
@@ -99,7 +98,7 @@ class OAuthAIOHttpAsyncSessionBase(OAuthAsyncSessionBase):
 
 
 class OAuth1AIOHttpAsyncSession(OAuthAIOHttpAsyncSessionBase):
-    """ OAuth1 using aiohttp."""
+    """OAuth1 using aiohttp."""
 
     async def set_oauth_request_token(self):
         if logger.isEnabledFor(logging.DEBUG):
@@ -145,7 +144,7 @@ class OAuth1AIOHttpAsyncSession(OAuthAIOHttpAsyncSessionBase):
 
 
 class XAuthAIOHttpAsyncSession(OAuthAIOHttpAsyncSessionBase):
-    """ XAuth using aiohttp."""
+    """XAuth using aiohttp."""
 
     def __init__(
         self,
@@ -207,7 +206,7 @@ class XAuthAIOHttpAsyncSession(OAuthAIOHttpAsyncSessionBase):
         self._update_client()
 
 
-class _AsyncBytesIO(object):
+class _AsyncBytesIO:
     def __init__(self, initial_bytes=None):
         self.buffer = six.BytesIO(initial_bytes)
 

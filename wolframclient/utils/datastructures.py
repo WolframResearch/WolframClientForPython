@@ -4,14 +4,14 @@ from collections import OrderedDict
 
 
 class Association(OrderedDict):
-    """ A :class:`~collections.OrderedDict` that serializes to an Association"""
+    """A :class:`~collections.OrderedDict` that serializes to an Association"""
 
     def __repr__(self):
         return dict.__repr__(self)
 
 
 def _fail(self, *args, **opts):
-    raise TypeError("{0} does not support item assignment".format(self.__class__.__name__))
+    raise TypeError("{} does not support item assignment".format(self.__class__.__name__))
 
 
 class immutabledict(dict):

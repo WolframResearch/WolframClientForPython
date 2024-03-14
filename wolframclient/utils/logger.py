@@ -15,7 +15,6 @@ if six.PY2:
             level=(level is not None) or logging.INFO,
         )
 
-
 else:
 
     def setup_logging_to_file(path, level=None):
@@ -28,8 +27,7 @@ else:
 
 
 def str_trim(o, max_char=80):
-    """Return the string representation of an object, trimmed to keep up to `max_char` characters.
-    """
+    """Return the string representation of an object, trimmed to keep up to `max_char` characters."""
     as_str = force_text(o)
     if len(as_str) > max_char:
         return "%s...(%i more)" % (as_str[:max_char], len(as_str) - max_char)

@@ -8,7 +8,7 @@ from wolframclient.utils.encoding import force_text
 __all__ = ["WLSymbol", "WLFunction", "WLSymbolFactory", "WLInputExpression"]
 
 
-class WLExpressionMeta(object):
+class WLExpressionMeta:
     """Abstract class to subclass when building representation of Wolfram Language expressions as Python object."""
 
     if six.PY2:
@@ -35,8 +35,9 @@ class WLSymbol(WLExpressionMeta):
             self.name = name
         else:
             raise ValueError(
-                "Symbol name should be %s not %s. You provided: %s"
-                % (six.text_type.__name__, name.__class__.__name__, name)
+                "Symbol name should be {} not {}. You provided: {}".format(
+                    six.text_type.__name__, name.__class__.__name__, name
+                )
             )
 
     def __hash__(self):
@@ -56,8 +57,7 @@ class WLSymbol(WLExpressionMeta):
 
 
 class WLFunction(WLExpressionMeta):
-    """Represent a Wolfram Language function with its head and arguments.
-    """
+    """Represent a Wolfram Language function with its head and arguments."""
 
     # reminder: use slots to reduce memory usage:
     # https://stackoverflow.com/questions/472000/usage-of-slots
@@ -100,7 +100,7 @@ class WLFunction(WLExpressionMeta):
                 ", ".join(repr(x) for x in self.args[-2:]),
             )
         else:
-            return "%s[%s]" % (repr(self.head), ", ".join(repr(x) for x in self.args))
+            return "{}[{}]".format(repr(self.head), ", ".join(repr(x) for x in self.args))
 
 
 class WLSymbolFactory(WLSymbol):
@@ -117,7 +117,7 @@ class WLSymbolFactory(WLSymbol):
         >>> dev = WLSymbolFactory('Developer')
         >>> dev.PackedArrayQ
         Developer`PackedArrayQ
-    
+
     Alternative::
 
         >>> wl.Developer.PackedArrayQ
@@ -130,11 +130,11 @@ class WLSymbolFactory(WLSymbol):
 
     def __getattr__(self, attr):
         # this operation is always creating a new immutable symbol factory
-        return self.__class__(self.name and "%s`%s" % (self.name, attr) or attr)
+        return self.__class__(self.name and "{}`{}".format(self.name, attr) or attr)
 
 
 class WLInputExpression(WLExpressionMeta):
-    """ Represent a string input form expression. """
+    """Represent a string input form expression."""
 
     def __init__(self, input):
         if isinstance(input, (six.binary_type, six.text_type)):

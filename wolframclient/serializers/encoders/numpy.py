@@ -4,10 +4,9 @@ import sys
 
 from wolframclient.utils.api import numpy
 from wolframclient.utils.dispatch import Dispatch
-from wolframclient.utils.functional import map, first
+from wolframclient.utils.functional import map
 
 encoder = Dispatch()
-
 
 
 NUMPY_MAPPING = {
@@ -45,9 +44,9 @@ SYS_IS_LE = sys.byteorder == "little"
 
 
 def to_little_endian(array, inplace=False):
-    """ Return a numpy array of the same type with little endian byte ordering.
+    """Return a numpy array of the same type with little endian byte ordering.
 
-    Set `inplace` to `True` to mutate the input array. """
+    Set `inplace` to `True` to mutate the input array."""
     endianness = array.dtype.byteorder
     if endianness == ">" or (endianness == "=" and not SYS_IS_LE):
         return array.byteswap(inplace=inplace).newbyteorder()
@@ -64,11 +63,11 @@ def _iencode(serializer, o, mapping, processor):
         wl_type, cast_to = mapping[o.dtype.type]
     except KeyError:
         raise NotImplementedError(
-            "Numpy serialization not implemented for %s. Choices are: %s"
-            % (repr(o.dtype), ", ".join(map(repr, mapping.keys())))
+            "Numpy serialization not implemented for {}. Choices are: {}".format(
+                repr(o.dtype), ", ".join(map(repr, mapping.keys()))
+            )
         )
     o = to_little_endian(o)
-
 
     if cast_to is not None:
         o = o.astype(cast_to)
@@ -81,16 +80,15 @@ def _iencode(serializer, o, mapping, processor):
 
     return processor(data, o.shape, wl_type)
 
+
 @encoder.dispatch(numpy.PackedArray)
 def encode_ndarray(serializer, o):
     return _iencode(serializer, o, PACKED_NUMPY_MAPPING, serializer.serialize_packed_array)
 
+
 @encoder.dispatch(numpy.ndarray)
 def encode_ndarray(serializer, o):
     return _iencode(serializer, o, NUMPY_MAPPING, serializer.serialize_numeric_array)
-
-
-
 
 
 @encoder.dispatch(numpy.integer)

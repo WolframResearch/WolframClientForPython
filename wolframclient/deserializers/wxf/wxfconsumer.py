@@ -2,7 +2,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import decimal
 import re
-import math
 
 from wolframclient.exception import WolframParserException
 from wolframclient.language.expression import WLFunction, WLSymbol
@@ -14,13 +13,13 @@ from wolframclient.utils.datastructures import immutabledict
 __all__ = ["WXFConsumer", "WXFConsumerNumpy"]
 
 
-class WXFConsumer(object):
+class WXFConsumer:
     """Map WXF types to Python object generating functions.
 
     This class exposes a comprehensive list of methods consuming WXF types.
     Subclasses can override these members to implement custom parsing logic.
 
-    Example implementing a consumer that maps any function with head 
+    Example implementing a consumer that maps any function with head
     :wl:`DirectedInfinity` to float('inf')::
 
         class ExampleConsumer(WXFConsumer):
@@ -81,8 +80,9 @@ class WXFConsumer(object):
             func = self._mapping[wxf_type]
         except KeyError:
             raise WolframParserException(
-                "Class %s does not implement any consumer method for WXF token %s"
-                % (self.__class__.__name__, wxf_type)
+                "Class {} does not implement any consumer method for WXF token {}".format(
+                    self.__class__.__name__, wxf_type
+                )
             )
         return getattr(self, func)
 
@@ -175,7 +175,7 @@ class WXFConsumer(object):
             num, _, _, exp = match.groups()
 
             if exp:
-                return decimal.Decimal("%se%s" % (num, exp))
+                return decimal.Decimal("{}e{}".format(num, exp))
 
             return decimal.Decimal(num)
 
@@ -233,15 +233,14 @@ class WXFConsumer(object):
 
 
 class WXFConsumerNumpy(WXFConsumer):
-    """ A WXF consumer that maps WXF array types to NumPy arrays. """
+    """A WXF consumer that maps WXF array types to NumPy arrays."""
 
     def consume_numeric_array(self, current_token, tokens, **kwargs):
         arr = numpy.frombuffer(
             current_token.data,
             dtype=WXFConsumerNumpy.WXF_TYPE_TO_DTYPE[current_token.array_type],
         )
-        arr = numpy.reshape(arr, tuple(current_token.dimensions))
-        return arr
+        return numpy.reshape(arr, tuple(current_token.dimensions))
 
     def consume_packed_array(self, current_token, tokens, **kwargs):
         arr = self.consume_numeric_array(current_token, tokens, **kwargs)

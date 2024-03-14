@@ -50,8 +50,9 @@ def print_elapsed_time(viewfunc):
         t = time.perf_counter()
         res = viewfunc(*args, **kw)
         print(
-            "Done %s: %s sec"
-            % (inner.__name__, Decimal(time.perf_counter() - t).quantize(Decimal("0.000000")))
+            "Done {}: {} sec".format(
+                inner.__name__, Decimal(time.perf_counter() - t).quantize(Decimal("0.000000"))
+            )
         )
         return res
 

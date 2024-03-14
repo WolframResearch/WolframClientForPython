@@ -31,12 +31,12 @@ __all__ = [
 ]
 
 
-class WolframResultBase(object):
+class WolframResultBase:
     pass
 
 
 class WolframResult(WolframResultBase):
-    """ The most generic result object.
+    """The most generic result object.
 
     The actual result is returned via the method :func:`~wolframclient.evaluation.result.WolframResult.get`. If the
     result is a `success`, the field `result` is returned; otherwise, `failure` is returned and most likely contains an
@@ -85,7 +85,7 @@ class WolframEvaluationResultBase(WolframResultBase):
 
     @property
     def success(self):
-        """ Evaluations succeed when it returns a result and no message is issued. """
+        """Evaluations succeed when it returns a result and no message is issued."""
         if not self._built:
             self.build()
         return self._success
@@ -98,14 +98,14 @@ class WolframEvaluationResultBase(WolframResultBase):
 
     @property
     def messages(self):
-        """ A list of the messages issued during the evaluation. """
+        """A list of the messages issued during the evaluation."""
         if not self._built:
             self.build()
         return self._messages
 
     @property
     def messages_name(self):
-        """ A list of the name of all the messages issued during the evaluation. """
+        """A list of the name of all the messages issued during the evaluation."""
         if not self._built:
             self.build()
         return self._messages_name
@@ -123,19 +123,19 @@ class WolframEvaluationResultBase(WolframResultBase):
             yield from self.messages_name
 
     def iter_messages_tuple(self):
-        """ Iterator over all messages returned as a tuple: (message name, message text)"""
+        """Iterator over all messages returned as a tuple: (message name, message text)"""
         if self.messages and self.messages_name:
             yield from zip(self.iter_messages_name(), self.iter_messages())
 
     @property
     def output(self):
-        """ A list of all content that got printed during evaluation e.g. using :wl:`Print`. """
+        """A list of all content that got printed during evaluation e.g. using :wl:`Print`."""
         if not self._built:
             self.build()
         return self._output
 
     def iter_output(self):
-        """ Iterator over all printed output."""
+        """Iterator over all printed output."""
         if self.output:
             yield from self.output
 
@@ -162,7 +162,7 @@ class WolframEvaluationResultBase(WolframResultBase):
     def get(self, silent=True):
         """Return the result or raise an exception.
 
-        `silent` can be set to False to log all messages with warning severity. """
+        `silent` can be set to False to log all messages with warning severity."""
         if self.success:
             return self.result
         elif self.is_message_failure:
@@ -174,18 +174,18 @@ class WolframEvaluationResultBase(WolframResultBase):
             raise WolframEvaluationException("Evaluation failed.", messages=self.failure)
 
     def parse_response(self):
-        """ Parse the result input and set the attribute `parsed_response`.
+        """Parse the result input and set the attribute `parsed_response`.
 
         The result input can be encoded in various formats such as WXF, JSON, etc.
         The `parsed_response` dict is expected to have keys corresponding to those of the association returned by
         :wl:`EvaluationData`.
         """
         raise NotImplementedError(
-            "%s does not implement parse_response method." % (self.__class__.__name__,)
+            "{} does not implement parse_response method.".format(self.__class__.__name__)
         )
 
     def build_invalid_format(self, response_format_name=None):
-        """ Build a result object for invalid format cases. """
+        """Build a result object for invalid format cases."""
         logger.fatal("Invalid format. Failed to parse result.")
         self._success = False
         if response_format_name:
@@ -292,28 +292,28 @@ class WolframCloudEvaluationResponse(WolframEvaluationResultBase):
 
 
 class WolframCloudEvaluationWXFResponse(WolframCloudEvaluationResponse):
-    """ Result object associated with cloud evaluation request WXF encoded. """
+    """Result object associated with cloud evaluation request WXF encoded."""
 
     def parse_response(self):
         wxf = self.http_response.content()
         try:
             self.parsed_response = binary_deserialize(wxf)
-        except WolframLanguageException as e:
+        except WolframLanguageException:
             self.build_invalid_format(response_format_name="WXF")
 
 
 class WolframCloudEvaluationJSONResponse(WolframCloudEvaluationResponse):
-    """ Result object associated with cloud evaluation request JSON encoded. """
+    """Result object associated with cloud evaluation request JSON encoded."""
 
     def parse_response(self):
         try:
             self.parsed_response = self.http_response.json()
-        except json.JSONDecodeError as e:
+        except json.JSONDecodeError:
             self.build_invalid_format(response_format_name="JSON")
 
 
 class WolframCloudEvaluationResponseAsync(WolframCloudEvaluationResponse):
-    """Asynchronous result object associated with cloud evaluation request. """
+    """Asynchronous result object associated with cloud evaluation request."""
 
     async def build(self):
         if not self.request_error:
@@ -330,8 +330,9 @@ class WolframCloudEvaluationResponseAsync(WolframCloudEvaluationResponse):
 
     async def parse_response(self):
         raise NotImplementedError(
-            "%s does not implement parse_response asynchronous method."
-            % (self.__class__.__name__,)
+            "{} does not implement parse_response asynchronous method.".format(
+                self.__class__.__name__
+            )
         )
 
     @property
@@ -360,14 +361,14 @@ class WolframCloudEvaluationResponseAsync(WolframCloudEvaluationResponse):
 
     @property
     async def messages(self):
-        """ A list of the messages issued during the evaluation. """
+        """A list of the messages issued during the evaluation."""
         if not self._built:
             await self.build()
         return self._messages
 
     @property
     async def messages_name(self):
-        """ A list of the name of all the messages issued during the evaluation. """
+        """A list of the name of all the messages issued during the evaluation."""
         if not self._built:
             await self.build()
         return self._messages_name
@@ -408,7 +409,7 @@ class WolframCloudEvaluationResponseAsync(WolframCloudEvaluationResponse):
 
     @property
     async def output(self):
-        """ A list of all content that got printed during evaluation e.g. using :wl:`Print`. """
+        """A list of all content that got printed during evaluation e.g. using :wl:`Print`."""
         if not self._built:
             await self.build()
         return self._output
@@ -433,23 +434,23 @@ class WolframCloudEvaluationResponseAsync(WolframCloudEvaluationResponse):
 
 
 class WolframEvaluationJSONResponseAsync(WolframCloudEvaluationResponseAsync):
-    """Asynchronous result object associated with cloud evaluation request encoded with JSON. """
+    """Asynchronous result object associated with cloud evaluation request encoded with JSON."""
 
     async def parse_response(self):
         try:
             self.parsed_response = await self.http_response.json()
-        except json.JSONDecodeError as e:
+        except json.JSONDecodeError:
             self.build_invalid_format(response_format_name="JSON")
 
 
 class WolframEvaluationWXFResponseAsync(WolframCloudEvaluationResponseAsync):
-    """Asynchronous result object associated with cloud evaluation request encoded with WXF. """
+    """Asynchronous result object associated with cloud evaluation request encoded with WXF."""
 
     async def parse_response(self):
         wxf = await self.http_response.content()
         try:
             self.parsed_response = binary_deserialize(wxf)
-        except WolframLanguageException as e:
+        except WolframLanguageException:
             self.build_invalid_format(response_format_name="WXF")
 
 
@@ -460,7 +461,7 @@ _DEFAULT_DECODERS = {
 
 
 class WolframAPIResponse(WolframResult):
-    """ A generic API response.
+    """A generic API response.
 
     This class is lazily constructed when the response body becomes available.
 
@@ -500,11 +501,11 @@ class WolframAPIResponse(WolframResult):
         return self._failure
 
     def __repr__(self):
-        return "<%s:success=%s>" % (self.__class__.__name__, self.success)
+        return "<{}:success={}>".format(self.__class__.__name__, self.success)
 
 
 class WolframAPIResponseAsync(WolframAPIResponse):
-    """ Asynchronous counterpart of :class:`~wolframclient.evaluation.result.WolframAPIResponse`, awaiting for the
+    """Asynchronous counterpart of :class:`~wolframclient.evaluation.result.WolframAPIResponse`, awaiting for the
     response body.
 
     Most of the class logic is implemented in :data:`WolframAPIResponse`, except the build method which has to be a
@@ -512,7 +513,7 @@ class WolframAPIResponseAsync(WolframAPIResponse):
     """
 
     async def get(self):
-        """ Return the result or raise an exception based on the success status.
+        """Return the result or raise an exception based on the success status.
 
         This is a coroutine."""
         if not self._built:
@@ -582,7 +583,7 @@ class WolframAPIResponseRedirect(WolframAPIFailureResponse):
 
 class WolframAPIResponse301(WolframAPIResponseRedirect):
     def _specific_failure(self):
-        """ should not happen since we follow redirection """
+        """should not happen since we follow redirection"""
         self._failure = "Resource permanently moved to new location {}".format(self.location)
 
 
@@ -666,7 +667,7 @@ class WolframAPIResponse400Async(WolframAPIResponse400, WolframAPIResponseAsync)
                 self.parsed_response = self.decoder(await self.response.content())
             else:
                 self.parsed_response = await self._unexpected_content_type()
-        except json.JSONDecodeError as e:
+        except json.JSONDecodeError:
             logger.fatal(
                 "Failed to parse server response as %s:\n%s",
                 self.content_type,
@@ -745,7 +746,7 @@ class WolframAPIResponse500Async(WolframAPIResponseGenericAsync):
         logger.fatal("Internal server error occurred.")
 
 
-class WolframAPIResponseBuilder(object):
+class WolframAPIResponseBuilder:
     """Map error code to handler building the appropriate
     :class:`~wolframclient.evaluation.result.WolframAPIResponse`
     """
@@ -785,8 +786,9 @@ class WolframAPIResponseBuilder(object):
     def map(status_code, response_class):
         if not isinstance(response_class, WolframAPIResponse):
             raise ValueError(
-                "Response class %s is not a subclass of %s"
-                % (response_class.__class__.__name__, WolframAPIResponse.__class__.__name__)
+                "Response class {} is not a subclass of {}".format(
+                    response_class.__class__.__name__, WolframAPIResponse.__class__.__name__
+                )
             )
         if not isinstance(status_code, six.integer_types):
             logger.warning("Invalid status code: %s", status_code)

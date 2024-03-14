@@ -9,7 +9,7 @@ from wolframclient.utils.importutils import module_path
 
 
 class Command(SimpleCommand):
-    """ Run test suites from the tests modules.
+    """Run test suites from the tests modules.
     A list of patterns can be provided to specify the tests to run.
     """
 

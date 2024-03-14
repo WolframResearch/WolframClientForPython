@@ -22,7 +22,7 @@ run_in_loop = decorate(run)
 
 
 def create_task(coro):
-    """ ensure_future using get_event_loop, so that it behaves similarly to
+    """ensure_future using get_event_loop, so that it behaves similarly to
     create_task, and gets the same signature.
     """
     return asyncio.ensure_future(coro, loop=get_event_loop())

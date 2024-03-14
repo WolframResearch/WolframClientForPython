@@ -2,9 +2,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import decimal
 
-import wolframclient.serializers.wxfencoder.wxfexpr as wxfexpr
 from wolframclient.language.expression import WLFunction, WLSymbol
 from wolframclient.serializers.utils import py_encode_decimal
+from wolframclient.serializers.wxfencoder import wxfexpr
 from wolframclient.utils import six
 
 
@@ -12,7 +12,7 @@ class NotEncodedException(Exception):
     """Exception used during encoding to signal that a given Python object has been ignored by a :class:`~wolframclient.serializers.wxfencoder.WXFEncoder`."""
 
 
-class WXFEncoder(object):
+class WXFEncoder:
     """Encode a given Python object into a stream of :class:`~wolframclient.serializers.wxfencoder.wxfexpr.WXFExpr`.
 
     This class is meant to be subclassed in order to add support for new classes. The encoder does not have to do anything
@@ -55,8 +55,7 @@ class WXFEncoder(object):
         It also enables transformation mechanism, say apply list to all iterable object and
         pass the result to the provider.
         """
-        for sub in self._provider.provide_wxfexpr(o):
-            yield sub
+        yield from self._provider.provide_wxfexpr(o)
 
     NOT_PROVIDED = object()
 

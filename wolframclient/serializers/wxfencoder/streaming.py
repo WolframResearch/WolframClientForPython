@@ -5,18 +5,18 @@ from wolframclient.utils.decorators import decorate
 from wolframclient.utils.encoding import concatenate_bytes, force_bytes
 
 
-class ZipCompressedWriter(object):
+class ZipCompressedWriter:
     def __init__(self, writer):
-        """ Write zip compressed data to a given buffer writer. """
+        """Write zip compressed data to a given buffer writer."""
         self._compressor = zlib.compressobj()
         self._writer = writer
 
     def flush(self):
-        """ Must be called when closing or destroying the object."""
+        """Must be called when closing or destroying the object."""
         self._writer.write(self._compressor.flush())
 
     def write(self, data):
-        """ Write the compression of `data` to the underlying buffer writer. """
+        """Write the compression of `data` to the underlying buffer writer."""
         self._writer.write(self._compressor.compress(force_bytes(data)))
 
     def __enter__(self):
@@ -26,8 +26,8 @@ class ZipCompressedWriter(object):
         self.flush()
 
 
-class ExactSizeReader(object):
-    """ Read exactly the amount of bytes requested and fails otherwise."""
+class ExactSizeReader:
+    """Read exactly the amount of bytes requested and fails otherwise."""
 
     def __init__(self, reader):
         self._reader = reader
@@ -60,7 +60,7 @@ class ExactSizeReader(object):
             out_len += len(chunk)
 
 
-class ZipCompressedReader(object):
+class ZipCompressedReader:
     """A buffer implementation reading zip compressed data from a source buffer and returning uncompressed data.
 
     This class is instantiated from a reader, any object implementing a :meth:`~io.BufferedIOBase.read` method.
@@ -69,7 +69,7 @@ class ZipCompressedReader(object):
     CHUNK_SIZE = 8192
 
     def __init__(self, reader):
-        """ Read zip compressed data from a given buffer reader."""
+        """Read zip compressed data from a given buffer reader."""
         self._compressor = zlib.decompressobj()
         self._reader = reader
 

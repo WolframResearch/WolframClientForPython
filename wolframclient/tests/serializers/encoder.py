@@ -4,7 +4,7 @@ from wolframclient.serializers import export, wolfram_encoder
 from wolframclient.utils.tests import TestCase as BaseTestCase
 
 
-class foo(object):
+class foo:
     pass
 
 
@@ -20,7 +20,7 @@ class subsubfoo2(subfoo):
     pass
 
 
-class bar(object):
+class bar:
     pass
 
 
@@ -65,7 +65,7 @@ class TestCase(BaseTestCase):
 
     def test_encode_not_registered(self):
         with self.assertRaises(NotImplementedError):
-            wl = export(bar())
+            export(bar())
 
     def test_register_twice_no_force(self):
         with self.assertRaises(TypeError):

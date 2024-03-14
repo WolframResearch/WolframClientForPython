@@ -7,7 +7,7 @@ from wolframclient.serializers.wxfencoder.wxfencoder import (
 )
 
 
-class WXFExprProvider(object):
+class WXFExprProvider:
     """
     Expression provider pull instances of WXFExpr from instances of `WXFEncoder`.
 
@@ -36,7 +36,7 @@ class WXFExprProvider(object):
         self.default = default
 
     def add_encoder(self, *encoders):
-        """ Add a new encoder to be called last if all others failed to encode an object. """
+        """Add a new encoder to be called last if all others failed to encode an object."""
         for encoder in encoders:
             if isinstance(encoder, WXFEncoder):
                 self.encoders.append(encoder)
@@ -46,12 +46,11 @@ class WXFExprProvider(object):
         return self
 
     def provide_wxfexpr(self, o):
-        """ Main function, a generator of wxf expr."""
-        for wxfexpr in self._iter(o):
-            yield wxfexpr
+        """Main function, a generator of wxf expr."""
+        yield from self._iter(o)
 
     def _iter(self, o, use_default=True):
-        """ Try to encode a given expr using encoders, if none was able to
+        """Try to encode a given expr using encoders, if none was able to
         process the expr and a `default` function was provided, applies it
         and try again. Otherwise fail.
         """
