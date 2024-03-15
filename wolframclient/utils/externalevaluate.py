@@ -229,7 +229,7 @@ def Eval(consumer, code, constants):
 
 
 @routes.register_function
-def Fetch(consumer, input):
+def GetReference(consumer, input):
     try:
         return consumer.objects_registry[input]
     except KeyError:
@@ -326,12 +326,12 @@ class ExternalEvaluateConsumer(WXFConsumerNumpy):
         expr = super().consume_function(*args, **kwargs)
 
         if check_wl_symbol(expr, self.hook_symbol):
-            assert len(expr.args) == 2
+            assert len(expr.args) >= 1
             return self.dispatch_wl_object(*expr.args)
 
         return expr
 
-    def dispatch_wl_object(self, route, args):
+    def dispatch_wl_object(self, route, *args):
         return self.routes_registry[route](self, *args)
 
     def __repr__(self):
