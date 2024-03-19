@@ -258,7 +258,7 @@ def MethodCall(consumer, result, names, *args):
 
 
 @routes.register_function
-def Curry(consumer, result, *args):
+def Partial(consumer, result, *args):
 
     pos, kwargs = unpack_optionals(args)
 
