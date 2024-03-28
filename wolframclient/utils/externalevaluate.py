@@ -4,8 +4,12 @@ import inspect
 import logging
 import os
 import sys
+import fractions
+import datetime
+from operator import methodcaller
+import decimal
 from functools import partial
-
+from wolframclient.utils.api import timezone as tz
 from wolframclient.deserializers import binary_deserialize
 from wolframclient.deserializers.wxf.wxfconsumer import WXFConsumerNumpy
 from wolframclient.language import wl
@@ -17,7 +21,7 @@ from wolframclient.utils import six
 from wolframclient.utils.api import ast, zmq
 from wolframclient.utils.datastructures import Settings
 from wolframclient.utils.encoding import force_text
-from wolframclient.utils.functional import first, iterate, last
+from wolframclient.utils.functional import first, iterate, last, identity
 
 """
 
@@ -252,10 +256,47 @@ def Call(consumer, result, *args):
     return result(*pos, **kwargs)
 
 
+_datetime_mapping = {
+    'Time': methodcaller('time'),
+    'Date': methodcaller('date'),
+    'DateTime': identity,
+}
+
+@routes.register_function
+def FromUnixTimeTZ(consumer, unixtime, cls, timezone):
+
+    date = datetime.datetime.fromtimestamp(float(unixtime))
+
+    if timezone is None:
+        pass
+    else:
+        date = date.astimezone(tz.ZoneInfo('UTC'))
+
+        if isinstance(timezone, six.string_types):
+            date = date.astimezone(tz.ZoneInfo(timezone))
+        elif isinstance(timezone, (six.integer_types, decimal.Decimal, float)):
+            date = date.astimezone(datetime.timezone(datetime.timedelta(hours = timezone)))
+        else:
+            raise NotImplementedError()
+
+
+    return _datetime_mapping[cls](date)
+
+@routes.register_function
+def FromRational(consumer, a, b):
+    return fractions.Fraction(a, b)
+
+@routes.register_function
+def FromComplex(consumer, a, b):
+    return complex(a, b)
+
 @routes.register_function
 def MethodCall(consumer, result, names, *args):
     return Call(consumer, GetAttribute(consumer, result, names), *args)
 
+@routes.register_function
+def FromMissing(consumer):
+    return 
 
 @routes.register_function
 def Partial(consumer, result, *args):

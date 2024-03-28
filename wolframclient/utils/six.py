@@ -4,6 +4,7 @@ import itertools
 import platform
 import sys
 import types
+import decimal
 
 # stripped version of SIX
 
@@ -58,5 +59,7 @@ iterable_types = [
     itertools.chain,
     itertools.groupby,
 ]
+
+
 if not PY2:
     iterable_types.extend((map, range))
