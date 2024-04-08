@@ -1,15 +1,15 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
+import datetime
+import decimal
+import fractions
 import inspect
 import logging
 import os
 import sys
-import fractions
-import datetime
-from operator import methodcaller
-import decimal
 from functools import partial
-from wolframclient.utils.api import timezone as tz
+from operator import methodcaller
+
 from wolframclient.deserializers import binary_deserialize
 from wolframclient.deserializers.wxf.wxfconsumer import WXFConsumerNumpy
 from wolframclient.language import wl
@@ -19,9 +19,10 @@ from wolframclient.language.side_effects import side_effect_logger
 from wolframclient.serializers import export
 from wolframclient.utils import six
 from wolframclient.utils.api import ast, zmq
+from wolframclient.utils.api import timezone as tz
 from wolframclient.utils.datastructures import Settings
 from wolframclient.utils.encoding import force_text
-from wolframclient.utils.functional import first, iterate, last, identity
+from wolframclient.utils.functional import first, identity, iterate, last
 
 """
 
@@ -257,46 +258,64 @@ def Call(consumer, result, *args):
 
 
 _datetime_mapping = {
-    'Time': methodcaller('time'),
-    'Date': methodcaller('date'),
-    'DateTime': identity,
+    "Time": methodcaller("timetz"),
+    "Date": methodcaller("date"),
+    "DateTime": identity,
 }
 
-@routes.register_function
-def FromUnixTimeTZ(consumer, unixtime, cls, timezone):
 
-    date = datetime.datetime.fromtimestamp(float(unixtime))
+def _to_time(tzinfo, h, m, ss):
+
+    s = int(ss)
+
+    if tzinfo:
+        return datetime.time(h, m, s, int((ss - s) * 1000000), tzinfo=tzinfo)
+    return datetime.time(h, m, s, int((ss - s) * 1000000))
+
+
+@routes.register_function
+def FromCalendar(consumer, date, time, timezone):
 
     if timezone is None:
         pass
+    elif isinstance(timezone, six.string_types):
+        timezone = tz.ZoneInfo(timezone)
+    elif isinstance(timezone, (six.integer_types, decimal.Decimal, float)):
+        timezone = datetime.timezone(datetime.timedelta(hours=timezone))
     else:
-        date = date.astimezone(tz.ZoneInfo('UTC'))
+        raise NotImplementedError
 
-        if isinstance(timezone, six.string_types):
-            date = date.astimezone(tz.ZoneInfo(timezone))
-        elif isinstance(timezone, (six.integer_types, decimal.Decimal, float)):
-            date = date.astimezone(datetime.timezone(datetime.timedelta(hours = timezone)))
-        else:
-            raise NotImplementedError()
+    if date:
+        date = datetime.date(*date)
 
+    if time:
+        time = _to_time(timezone, *time)
 
-    return _datetime_mapping[cls](date)
+    if date and time:
+        return datetime.datetime.combine(date, time)
+    else:
+        return date or time
+
 
 @routes.register_function
 def FromRational(consumer, a, b):
     return fractions.Fraction(a, b)
 
+
 @routes.register_function
 def FromComplex(consumer, a, b):
     return complex(a, b)
+
 
 @routes.register_function
 def MethodCall(consumer, result, names, *args):
     return Call(consumer, GetAttribute(consumer, result, names), *args)
 
+
 @routes.register_function
 def FromMissing(consumer):
-    return 
+    return
+
 
 @routes.register_function
 def Partial(consumer, result, *args):

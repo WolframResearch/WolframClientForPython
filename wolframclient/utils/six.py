@@ -4,7 +4,6 @@ import itertools
 import platform
 import sys
 import types
-import decimal
 
 # stripped version of SIX
 
