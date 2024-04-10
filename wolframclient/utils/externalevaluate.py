@@ -256,26 +256,8 @@ def Call(consumer, result, *args):
 
     return result(*pos, **kwargs)
 
-
-_datetime_mapping = {
-    "Time": methodcaller("timetz"),
-    "Date": methodcaller("date"),
-    "DateTime": identity,
-}
-
-
-def _to_time(tzinfo, h, m, ss):
-
-    s = int(ss)
-
-    if tzinfo:
-        return datetime.time(h, m, s, int((ss - s) * 1000000), tzinfo=tzinfo)
-    return datetime.time(h, m, s, int((ss - s) * 1000000))
-
-
 @routes.register_function
-def FromCalendar(consumer, date, time, timezone):
-
+def FromUnixTime(consumer, unixtime, timezone):
     if timezone is None:
         pass
     elif isinstance(timezone, six.string_types):
@@ -285,17 +267,16 @@ def FromCalendar(consumer, date, time, timezone):
     else:
         raise NotImplementedError
 
-    if date:
-        date = datetime.date(*date)
+    date = datetime.datetime.fromtimestamp(float(unixtime))
 
-    if time:
-        time = _to_time(timezone, *time)
+    if timezone:
+        return date.astimezone(timezone)
 
-    if date and time:
-        return datetime.datetime.combine(date, time)
-    else:
-        return date or time
+    return date
 
+@routes.register_function
+def FromTodayTime(consumer, unixtime, timezone):
+    return FromUnixTime(consumer, unixtime, timezone).timetz()
 
 @routes.register_function
 def FromRational(consumer, a, b):
