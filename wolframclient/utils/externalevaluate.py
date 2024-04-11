@@ -279,6 +279,10 @@ def FromTodayTime(consumer, unixtime, timezone):
     return FromUnixTime(consumer, unixtime, timezone).timetz()
 
 @routes.register_function
+def FromGregorianDay(consumer, year, month, day):
+    return datetime.date(year, month, day)
+
+@routes.register_function
 def FromRational(consumer, a, b):
     return fractions.Fraction(a, b)
 
