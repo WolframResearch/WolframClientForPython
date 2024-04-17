@@ -7,9 +7,9 @@ from wolframclient.utils.encoding import force_bytes
 
 # replacement method borrowed from json
 
-ESCAPE = re.compile(r'[\x00\\"\b\f\n\r\t]')
+
+ESCAPE = re.compile(r'[\x00-\x1f\\"\b\f\n\r\t]')
 ESCAPE_DCT = {
-    chr(0): r"\.00",
     "\\": "\\\\",
     '"': '\\"',
     "\b": "\\b",
@@ -18,6 +18,10 @@ ESCAPE_DCT = {
     "\r": "\\r",
     "\t": "\\t",
 }
+for i in range(0x20):
+    ESCAPE_DCT.setdefault(chr(i), "\\u{:04x}".format(i))
+    # ESCAPE_DCT.setdefault(chr(i), '\\u%04x' % (i,))
+del i
 
 
 def replace(match):

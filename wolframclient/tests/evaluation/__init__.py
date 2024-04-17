@@ -2,7 +2,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import fnmatch
 import os
-import unittest
 
 from wolframclient.utils import six
 
