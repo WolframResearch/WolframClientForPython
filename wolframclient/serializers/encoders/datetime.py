@@ -81,7 +81,11 @@ def encode_time(serializer, o):
         inner.append(
             serializer.serialize_rule(
                 serializer.serialize_symbol(b"TimeZone"),
-                serializer.serialize_tzinfo(o.tzinfo, o, name_match=None),
+                serializer.serialize_tzinfo(
+                    o.tzinfo,
+                    datetime.datetime.combine(datetime.date.today(), o),
+                    name_match=None,
+                ),
             )
         )
 

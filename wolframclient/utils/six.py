@@ -58,5 +58,7 @@ iterable_types = [
     itertools.chain,
     itertools.groupby,
 ]
+
+
 if not PY2:
     iterable_types.extend((map, range))

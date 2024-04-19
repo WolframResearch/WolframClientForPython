@@ -1,10 +1,14 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
+import datetime
+import decimal
+import fractions
 import inspect
 import logging
 import os
 import sys
 from functools import partial
+from operator import methodcaller
 
 from wolframclient.deserializers import binary_deserialize
 from wolframclient.deserializers.wxf.wxfconsumer import WXFConsumerNumpy
@@ -15,9 +19,10 @@ from wolframclient.language.side_effects import side_effect_logger
 from wolframclient.serializers import export
 from wolframclient.utils import six
 from wolframclient.utils.api import ast, zmq
+from wolframclient.utils.api import timezone as tz
 from wolframclient.utils.datastructures import Settings
 from wolframclient.utils.encoding import force_text
-from wolframclient.utils.functional import first, iterate, last
+from wolframclient.utils.functional import first, identity, iterate, last
 
 """
 
@@ -229,7 +234,7 @@ def Eval(consumer, code, constants):
 
 
 @routes.register_function
-def Fetch(consumer, input):
+def GetReference(consumer, input):
     try:
         return consumer.objects_registry[input]
     except KeyError:
@@ -251,6 +256,41 @@ def Call(consumer, result, *args):
 
     return result(*pos, **kwargs)
 
+@routes.register_function
+def FromUnixTime(consumer, unixtime, timezone):
+    if timezone is None:
+        pass
+    elif isinstance(timezone, six.string_types):
+        timezone = tz.ZoneInfo(timezone)
+    elif isinstance(timezone, (six.integer_types, decimal.Decimal, float)):
+        timezone = datetime.timezone(datetime.timedelta(hours=timezone))
+    else:
+        raise NotImplementedError
+
+    date = datetime.datetime.fromtimestamp(float(unixtime))
+
+    if timezone:
+        return date.astimezone(timezone)
+
+    return date
+
+@routes.register_function
+def FromTodayTime(consumer, unixtime, timezone):
+    return FromUnixTime(consumer, unixtime, timezone).timetz()
+
+@routes.register_function
+def FromGregorianDay(consumer, year, month, day):
+    return datetime.date(year, month, day)
+
+@routes.register_function
+def FromRational(consumer, a, b):
+    return fractions.Fraction(a, b)
+
+
+@routes.register_function
+def FromComplex(consumer, a, b):
+    return complex(a, b)
+
 
 @routes.register_function
 def MethodCall(consumer, result, names, *args):
@@ -258,7 +298,12 @@ def MethodCall(consumer, result, names, *args):
 
 
 @routes.register_function
-def Curry(consumer, result, *args):
+def FromMissing(consumer):
+    return
+
+
+@routes.register_function
+def Partial(consumer, result, *args):
 
     pos, kwargs = unpack_optionals(args)
 
@@ -326,12 +371,12 @@ class ExternalEvaluateConsumer(WXFConsumerNumpy):
         expr = super().consume_function(*args, **kwargs)
 
         if check_wl_symbol(expr, self.hook_symbol):
-            assert len(expr.args) == 2
+            assert len(expr.args) >= 1
             return self.dispatch_wl_object(*expr.args)
 
         return expr
 
-    def dispatch_wl_object(self, route, args):
+    def dispatch_wl_object(self, route, *args):
         return self.routes_registry[route](self, *args)
 
     def __repr__(self):
