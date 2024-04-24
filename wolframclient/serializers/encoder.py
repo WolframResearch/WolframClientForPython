@@ -92,11 +92,11 @@ wolfram_encoder.register_plugins()
 @wolfram_encoder.dispatch(object)
 def encode(serializer, o):
 
-    if serializer.object_processor:
-        return serializer.object_processor(serializer, o)
-
     if is_iterable(o):
         return serializer.serialize_iterable(map(serializer.encode, o), length=safe_len(o))
+
+    if serializer.object_processor:
+        return serializer.object_processor(serializer, o)
 
     raise NotImplementedError("Cannot serialize object of class %s" % o.__class__)
 
