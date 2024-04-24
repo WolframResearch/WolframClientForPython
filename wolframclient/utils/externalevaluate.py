@@ -137,8 +137,6 @@ def to_external_object(instance, objects_registry, force_externalobject=False):
     return func(wl.Inherited, pk, meta)
 
 
-def object_processor(serializer, instance, objects_registry):
-    return serializer.encode(to_external_object(instance, objects_registry))
 
 
 if six.PY_38:
