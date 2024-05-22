@@ -9,7 +9,7 @@ from wolframclient.utils.encoding import force_bytes
 
 ESCAPE = re.compile(r'[\x00\\"\b\f\n\r\t]')
 ESCAPE_DCT = {
-    chr(0): "\.00",
+    chr(0): "\\.00",
     "\\": "\\\\",
     '"': '\\"',
     "\b": "\\b",
