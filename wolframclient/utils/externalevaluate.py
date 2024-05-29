@@ -9,6 +9,7 @@ import os
 import sys
 from functools import partial
 from operator import methodcaller
+from importlib import import_module
 
 from wolframclient.deserializers import binary_deserialize
 from wolframclient.deserializers.wxf.wxfconsumer import WXFConsumerNumpy
@@ -193,7 +194,7 @@ routes = registry()
 
 
 @routes.register_function
-def Eval(consumer, code, constants):
+def Eval(consumer, code, constants = {}):
 
     # this is creating a custom __loader__ that is returning the source code
     # traceback serializers is inspecting global variables and looking for a standard loader that can return source code.
@@ -238,6 +239,13 @@ def GetReference(consumer, input):
     except KeyError:
         raise KeyError("Object with id %s cannot be found in this session" % input)
 
+@routes.register_function
+def DelReference(consumer, input):
+    try:
+        del consumer.objects_registry[input]
+    except KeyError:
+        raise KeyError("Object with id %s cannot be found in this session" % input)
+    
 
 @routes.register_function
 def Set(consumer, value, *names):
@@ -253,6 +261,17 @@ def Call(consumer, result, *args):
     pos, kwargs = unpack_optionals(args)
 
     return result(*pos, **kwargs)
+
+@routes.register_function
+def Import(consumer, path, attr = None):
+
+    result = import_module(path)
+
+    if attr:
+        return getattr(result, attr)
+
+    return result
+
 
 @routes.register_function
 def FromUnixTime(consumer, unixtime, timezone):
@@ -309,7 +328,7 @@ def Partial(consumer, result, *args):
 
 
 @routes.register_function
-def ReturnType(consumer, result, return_type):
+def Cast(consumer, result, return_type):
     if return_type == "String":
         # bug 354267 repr returns a 'str' even on py2 (i.e. bytes).
         return force_text(repr(result))
