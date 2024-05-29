@@ -241,9 +241,11 @@ def GetReference(consumer, input):
 
 @routes.register_function
 def DelReference(consumer, input):
-    del consumer.objects_registry[input]
-
-
+    try:
+        del consumer.objects_registry[input]
+    except KeyError:
+        raise KeyError("Object with id %s cannot be found in this session" % input)
+    
 
 @routes.register_function
 def Set(consumer, value, *names):
