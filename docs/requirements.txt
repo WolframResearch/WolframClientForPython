@@ -4,6 +4,6 @@ sphinx==7.3.7
 numpy==2.2.6
 pyzmq==27.0.0
 pyarrow==20.0.0
-pillow==11.3.0
+pillow==12.1.1
 pandas==2.3.1
 astropy==6.1.7
