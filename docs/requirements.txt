@@ -1,4 +1,4 @@
-Pygments==2.19.2
+Pygments==2.20.0
 pygments-mathematica==0.4.2
 sphinx==7.3.7
 numpy==2.2.6
